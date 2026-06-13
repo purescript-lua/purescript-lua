@@ -90,14 +90,14 @@ M.Golden_CharLiterals_Test_show = M.Data_Show_show({
   show = function(n)
       local code = n:byte()
       if code < 0x20 or code == 0x7F then
-        if n == "\x07" then return "'\\a'" end
+        if n == "\a" then return "'\\a'" end
         if n == "\b" then return "'\\b'" end
         if n == "\f" then return "'\\f'" end
         if n == "\n" then return "'\\n'" end
         if n == "\r" then return "'\\r'" end
         if n == "\t" then return "'\\t'" end
         if n == "\v" then return "'\\v'" end
-        return "'\\" .. code:toString(10) .. "'"
+        return "'\\" .. tostring(code) .. "'"
       end
       if n == "'" or n == "\\" then return "'\\" .. n .. "'" end
       return "'" .. n .. "'"

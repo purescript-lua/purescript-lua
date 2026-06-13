@@ -165,6 +165,8 @@ spec = do
                   , "--std min"
                   , "--no-color"
                   , "--no-unused" -- TODO: harden eventually
+                  , "--no-redefined" -- generated code shadows freely (e.g.
+                  -- inlined library fallbacks reusing a parameter name)
                   , "--no-max-line-length"
                   , "--formatter plain"
                   , "--allow-defined"
