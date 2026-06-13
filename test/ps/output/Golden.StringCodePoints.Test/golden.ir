@@ -1,0 +1,3043 @@
+UberModule
+  { uberModuleBindings =
+    [ Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.HeytingAlgebra", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Data.HeytingAlgebra" ) ".spago/prelude/v7.2.1/src/Data/HeytingAlgebra.purs"
+        [ ( Nothing, Name "boolConj" ), ( Nothing, Name "boolDisj" ), ( Nothing, Name "boolNot" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Eq", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Data.Eq" ) ".spago/prelude/v7.2.1/src/Data/Eq.purs"
+        [
+          ( Nothing, Name "eqIntImpl" ),
+          ( Nothing, Name "eqCharImpl" ),
+          ( Nothing, Name "eqStringImpl" )
+        ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Show", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Data.Show" ) ".spago/prelude/v7.2.1/src/Data/Show.purs"
+        [ ( Nothing, Name "showIntImpl" ), ( Nothing, Name "showArrayImpl" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Semiring", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Data.Semiring" ) ".spago/prelude/v7.2.1/src/Data/Semiring.purs"
+        [ ( Nothing, Name "intAdd" ), ( Nothing, Name "intMul" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Ord", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Data.Ord" ) ".spago/prelude/v7.2.1/src/Data/Ord.purs"
+        [ ( Nothing, Name "ordIntImpl" ), ( Nothing, Name "ordCharImpl" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Bounded", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Data.Bounded" ) ".spago/prelude/v7.2.1/src/Data/Bounded.purs"
+        [ ( Nothing, Name "topChar" ), ( Nothing, Name "bottomChar" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.EuclideanRing", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Data.EuclideanRing" ) ".spago/prelude/v7.2.1/src/Data/EuclideanRing.purs"
+        [ ( Nothing, Name "intDegree" ), ( Nothing, Name "intDiv" ), ( Nothing, Name "intMod" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Effect", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Effect" ) ".spago/effect/v4.1.0/src/Effect.purs"
+        [ ( Nothing, Name "pureE" ), ( Nothing, Name "bindE" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Enum", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Data.Enum" ) ".spago/enums/v6.1.0/src/Data/Enum.purs"
+        [ ( Nothing, Name "toCharCode" ), ( Nothing, Name "fromCharCode" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.String.CodeUnits", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Data.String.CodeUnits" ) ".spago/strings/v6.2.0/src/Data/String/CodeUnits.purs"
+        [ ( Nothing, Name "singleton" ), ( Nothing, Name "length" ), ( Nothing, Name "drop" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.String.CodePoints", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Data.String.CodePoints" ) ".spago/strings/v6.2.0/src/Data/String/CodePoints.purs"
+        [
+          ( Nothing, Name "_singleton" ),
+          ( Nothing, Name "_fromCodePointArray" ),
+          ( Nothing, Name "_toCodePointArray" ),
+          ( Nothing, Name "_codePointAt" ),
+          ( Nothing, Name "_take" ),
+          ( Nothing, Name "_unsafeCodePointAt0" )
+        ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Control.Semigroupoid", qnameName = Name "semigroupoidFn"
+        }, LiteralObject Nothing
+        [
+          ( PropName "compose", Abs Nothing
+            ( ParamNamed Nothing ( Name "f" ) )
+            ( Abs Nothing
+              ( ParamNamed Nothing ( Name "g" ) )
+              ( Abs Nothing
+                ( ParamNamed Nothing ( Name "x" ) )
+                ( App Nothing
+                  ( Ref Nothing ( Local ( Name "f" ) ) 0 )
+                  ( App Nothing
+                    ( Ref Nothing ( Local ( Name "g" ) ) 0 )
+                    ( Ref Nothing ( Local ( Name "x" ) ) 0 )
+                  )
+                )
+              )
+            )
+          )
+        ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Control.Semigroupoid", qnameName = Name "compose"
+        }, Abs Nothing
+        ( ParamNamed Nothing ( Name "dict" ) )
+        ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) 0 ) ( PropName "compose" ) )
+      ), RecursiveGroup
+      (
+        ( QName
+          { qnameModuleName = ModuleName "Data.HeytingAlgebra", qnameName = Name "heytingAlgebraBoolean"
+          }, LiteralObject Nothing
+          [
+            ( PropName "ff", LiteralBool Nothing False ),
+            ( PropName "tt", LiteralBool Nothing True ),
+            ( PropName "implies", Abs Nothing
+              ( ParamNamed Nothing ( Name "a" ) )
+              ( Abs Nothing
+                ( ParamNamed Nothing ( Name "b" ) )
+                ( App Nothing
+                  ( App Nothing
+                    ( ObjectProp Nothing
+                      ( Ref Nothing
+                        ( Imported
+                          ( ModuleName "Data.HeytingAlgebra" )
+                          ( Name "heytingAlgebraBoolean" )
+                        ) 0
+                      )
+                      ( PropName "disj" )
+                    )
+                    ( App Nothing
+                      ( ObjectProp Nothing
+                        ( Ref Nothing
+                          ( Imported
+                            ( ModuleName "Data.HeytingAlgebra" )
+                            ( Name "heytingAlgebraBoolean" )
+                          ) 0
+                        )
+                        ( PropName "not" )
+                      )
+                      ( Ref Nothing ( Local ( Name "a" ) ) 0 )
+                    )
+                  )
+                  ( Ref Nothing ( Local ( Name "b" ) ) 0 )
+                )
+              )
+            ),
+            ( PropName "conj", ObjectProp ( Just Always )
+              ( Ref Nothing
+                ( Imported ( ModuleName "Data.HeytingAlgebra" ) ( Name "foreign" ) ) 0
+              )
+              ( PropName "boolConj" )
+            ),
+            ( PropName "disj", ObjectProp ( Just Always )
+              ( Ref Nothing
+                ( Imported ( ModuleName "Data.HeytingAlgebra" ) ( Name "foreign" ) ) 0
+              )
+              ( PropName "boolDisj" )
+            ),
+            ( PropName "not", ObjectProp ( Just Always )
+              ( Ref Nothing
+                ( Imported ( ModuleName "Data.HeytingAlgebra" ) ( Name "foreign" ) ) 0
+              )
+              ( PropName "boolNot" )
+            )
+          ]
+        ) :| []
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.HeytingAlgebra", qnameName = Name "conj"
+        }, Abs Nothing
+        ( ParamNamed Nothing ( Name "dict" ) )
+        ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) 0 ) ( PropName "conj" ) )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Eq", qnameName = Name "eqInt" }, LiteralObject Nothing
+        [
+          ( PropName "eq", ObjectProp ( Just Always )
+            ( Ref Nothing ( Imported ( ModuleName "Data.Eq" ) ( Name "foreign" ) ) 0 )
+            ( PropName "eqIntImpl" )
+          )
+        ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Eq", qnameName = Name "eq" }, Abs Nothing
+        ( ParamNamed Nothing ( Name "dict" ) )
+        ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) 0 ) ( PropName "eq" ) )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Semigroup", qnameName = Name "semigroupString"
+        }, LiteralObject Nothing
+        [
+          ( PropName "append", ObjectProp ( Just Always )
+            ( ForeignImport Nothing
+              ( ModuleName "Data.Semigroup" ) ".spago/prelude/v7.2.1/src/Data/Semigroup.purs"
+              [ ( Nothing, Name "concatString" ) ]
+            )
+            ( PropName "concatString" )
+          )
+        ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Semigroup", qnameName = Name "append" }, Abs Nothing
+        ( ParamNamed Nothing ( Name "dict" ) )
+        ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) 0 ) ( PropName "append" ) )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Show", qnameName = Name "showInt"
+        }, LiteralObject Nothing
+        [
+          ( PropName "show", ObjectProp ( Just Always )
+            ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) 0 )
+            ( PropName "showIntImpl" )
+          )
+        ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Show", qnameName = Name "show" }, Abs Nothing
+        ( ParamNamed Nothing ( Name "dict" ) )
+        ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) 0 ) ( PropName "show" ) )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Ordering", qnameName = Name "LT"
+        }, Ctor Nothing SumType
+        ( ModuleName "Data.Ordering" )
+        ( TyName "Ordering" )
+        ( CtorName "LT" ) []
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Ordering", qnameName = Name "GT"
+        }, Ctor Nothing SumType
+        ( ModuleName "Data.Ordering" )
+        ( TyName "Ordering" )
+        ( CtorName "GT" ) []
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Ordering", qnameName = Name "EQ"
+        }, Ctor Nothing SumType
+        ( ModuleName "Data.Ordering" )
+        ( TyName "Ordering" )
+        ( CtorName "EQ" ) []
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Semiring", qnameName = Name "semiringInt"
+        }, LiteralObject Nothing
+        [
+          ( PropName "add", ObjectProp ( Just Always )
+            ( Ref Nothing ( Imported ( ModuleName "Data.Semiring" ) ( Name "foreign" ) ) 0 )
+            ( PropName "intAdd" )
+          ),
+          ( PropName "zero", LiteralInt Nothing 0 ),
+          ( PropName "mul", ObjectProp ( Just Always )
+            ( Ref Nothing ( Imported ( ModuleName "Data.Semiring" ) ( Name "foreign" ) ) 0 )
+            ( PropName "intMul" )
+          ),
+          ( PropName "one", LiteralInt Nothing 1 )
+        ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Semiring", qnameName = Name "add" }, Abs Nothing
+        ( ParamNamed Nothing ( Name "dict" ) )
+        ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) 0 ) ( PropName "add" ) )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Ring", qnameName = Name "sub" }, Abs Nothing
+        ( ParamNamed Nothing ( Name "dict" ) )
+        ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) 0 ) ( PropName "sub" ) )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Ring", qnameName = Name "ringInt"
+        }, LiteralObject Nothing
+        [
+          ( PropName "sub", ObjectProp ( Just Always )
+            ( ForeignImport Nothing
+              ( ModuleName "Data.Ring" ) ".spago/prelude/v7.2.1/src/Data/Ring.purs"
+              [ ( Nothing, Name "intSub" ) ]
+            )
+            ( PropName "intSub" )
+          ),
+          ( PropName "Semiring0", Abs Nothing ( ParamUnused Nothing )
+            ( Ref Nothing ( Imported ( ModuleName "Data.Semiring" ) ( Name "semiringInt" ) ) 0 )
+          )
+        ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Ord", qnameName = Name "ordInt"
+        }, LiteralObject Nothing
+        [
+          ( PropName "compare", App Nothing
+            ( App Nothing
+              ( App Nothing
+                ( ObjectProp ( Just Always )
+                  ( Ref Nothing ( Imported ( ModuleName "Data.Ord" ) ( Name "foreign" ) ) 0 )
+                  ( PropName "ordIntImpl" )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Data.Ordering" ) ( Name "LT" ) ) 0 )
+              )
+              ( Ref Nothing ( Imported ( ModuleName "Data.Ordering" ) ( Name "EQ" ) ) 0 )
+            )
+            ( Ref Nothing ( Imported ( ModuleName "Data.Ordering" ) ( Name "GT" ) ) 0 )
+          ),
+          ( PropName "Eq0", Abs Nothing ( ParamUnused Nothing )
+            ( Ref Nothing ( Imported ( ModuleName "Data.Eq" ) ( Name "eqInt" ) ) 0 )
+          )
+        ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Ord", qnameName = Name "ordChar"
+        }, LiteralObject Nothing
+        [
+          ( PropName "compare", App Nothing
+            ( App Nothing
+              ( App Nothing
+                ( ObjectProp ( Just Always )
+                  ( Ref Nothing ( Imported ( ModuleName "Data.Ord" ) ( Name "foreign" ) ) 0 )
+                  ( PropName "ordCharImpl" )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Data.Ordering" ) ( Name "LT" ) ) 0 )
+              )
+              ( Ref Nothing ( Imported ( ModuleName "Data.Ordering" ) ( Name "EQ" ) ) 0 )
+            )
+            ( Ref Nothing ( Imported ( ModuleName "Data.Ordering" ) ( Name "GT" ) ) 0 )
+          ),
+          ( PropName "Eq0", Abs Nothing ( ParamUnused Nothing )
+            ( LiteralObject Nothing
+              [
+                ( PropName "eq", ObjectProp ( Just Always )
+                  ( Ref Nothing ( Imported ( ModuleName "Data.Eq" ) ( Name "foreign" ) ) 0 )
+                  ( PropName "eqCharImpl" )
+                )
+              ]
+            )
+          )
+        ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Ord", qnameName = Name "compare" }, Abs Nothing
+        ( ParamNamed Nothing ( Name "dict" ) )
+        ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) 0 ) ( PropName "compare" ) )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Ord", qnameName = Name "greaterThanOrEq"
+        }, Abs Nothing
+        ( ParamNamed Nothing ( Name "dictOrd" ) )
+        ( Abs Nothing
+          ( ParamNamed Nothing ( Name "a1" ) )
+          ( Abs Nothing
+            ( ParamNamed Nothing ( Name "a2" ) )
+            ( IfThenElse Nothing
+              ( Eq Nothing
+                ( LiteralString Nothing "Data.Ordering∷Ordering.LT" )
+                ( ReflectCtor Nothing
+                  ( App Nothing
+                    ( App Nothing
+                      ( App Nothing
+                        ( Ref Nothing ( Imported ( ModuleName "Data.Ord" ) ( Name "compare" ) ) 0 )
+                        ( Ref Nothing ( Local ( Name "dictOrd" ) ) 0 )
+                      )
+                      ( Ref Nothing ( Local ( Name "a1" ) ) 0 )
+                    )
+                    ( Ref Nothing ( Local ( Name "a2" ) ) 0 )
+                  )
+                )
+              ) ( LiteralBool Nothing False ) ( LiteralBool Nothing True )
+            )
+          )
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Ord", qnameName = Name "lessThan" }, Abs Nothing
+        ( ParamNamed Nothing ( Name "dictOrd" ) )
+        ( Abs Nothing
+          ( ParamNamed Nothing ( Name "a1" ) )
+          ( Abs Nothing
+            ( ParamNamed Nothing ( Name "a2" ) )
+            ( IfThenElse Nothing
+              ( Eq Nothing
+                ( LiteralString Nothing "Data.Ordering∷Ordering.LT" )
+                ( ReflectCtor Nothing
+                  ( App Nothing
+                    ( App Nothing
+                      ( App Nothing
+                        ( Ref Nothing ( Imported ( ModuleName "Data.Ord" ) ( Name "compare" ) ) 0 )
+                        ( Ref Nothing ( Local ( Name "dictOrd" ) ) 0 )
+                      )
+                      ( Ref Nothing ( Local ( Name "a1" ) ) 0 )
+                    )
+                    ( Ref Nothing ( Local ( Name "a2" ) ) 0 )
+                  )
+                )
+              ) ( LiteralBool Nothing True ) ( LiteralBool Nothing False )
+            )
+          )
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Ord", qnameName = Name "lessThanOrEq" }, Abs Nothing
+        ( ParamNamed Nothing ( Name "dictOrd" ) )
+        ( Abs Nothing
+          ( ParamNamed Nothing ( Name "a1" ) )
+          ( Abs Nothing
+            ( ParamNamed Nothing ( Name "a2" ) )
+            ( IfThenElse Nothing
+              ( Eq Nothing
+                ( LiteralString Nothing "Data.Ordering∷Ordering.GT" )
+                ( ReflectCtor Nothing
+                  ( App Nothing
+                    ( App Nothing
+                      ( App Nothing
+                        ( Ref Nothing ( Imported ( ModuleName "Data.Ord" ) ( Name "compare" ) ) 0 )
+                        ( Ref Nothing ( Local ( Name "dictOrd" ) ) 0 )
+                      )
+                      ( Ref Nothing ( Local ( Name "a1" ) ) 0 )
+                    )
+                    ( Ref Nothing ( Local ( Name "a2" ) ) 0 )
+                  )
+                )
+              ) ( LiteralBool Nothing False ) ( LiteralBool Nothing True )
+            )
+          )
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Functor", qnameName = Name "map" }, Abs Nothing
+        ( ParamNamed Nothing ( Name "dict" ) )
+        ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) 0 ) ( PropName "map" ) )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Control.Applicative", qnameName = Name "pure"
+        }, Abs Nothing
+        ( ParamNamed Nothing ( Name "dict" ) )
+        ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) 0 ) ( PropName "pure" ) )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Control.Bind", qnameName = Name "bind" }, Abs Nothing
+        ( ParamNamed Nothing ( Name "dict" ) )
+        ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) 0 ) ( PropName "bind" ) )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Bounded", qnameName = Name "top" }, Abs Nothing
+        ( ParamNamed Nothing ( Name "dict" ) )
+        ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) 0 ) ( PropName "top" ) )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Bounded", qnameName = Name "boundedChar"
+        }, LiteralObject Nothing
+        [
+          ( PropName "top", ObjectProp ( Just Always )
+            ( Ref Nothing ( Imported ( ModuleName "Data.Bounded" ) ( Name "foreign" ) ) 0 )
+            ( PropName "topChar" )
+          ),
+          ( PropName "bottom", ObjectProp ( Just Always )
+            ( Ref Nothing ( Imported ( ModuleName "Data.Bounded" ) ( Name "foreign" ) ) 0 )
+            ( PropName "bottomChar" )
+          ),
+          ( PropName "Ord0", Abs Nothing ( ParamUnused Nothing )
+            ( Ref Nothing ( Imported ( ModuleName "Data.Ord" ) ( Name "ordChar" ) ) 0 )
+          )
+        ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Bounded", qnameName = Name "bottom" }, Abs Nothing
+        ( ParamNamed Nothing ( Name "dict" ) )
+        ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) 0 ) ( PropName "bottom" ) )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.EuclideanRing", qnameName = Name "euclideanRingInt"
+        }, LiteralObject Nothing
+        [
+          ( PropName "degree", ObjectProp ( Just Always )
+            ( Ref Nothing ( Imported ( ModuleName "Data.EuclideanRing" ) ( Name "foreign" ) ) 0 )
+            ( PropName "intDegree" )
+          ),
+          ( PropName "div", ObjectProp ( Just Always )
+            ( Ref Nothing ( Imported ( ModuleName "Data.EuclideanRing" ) ( Name "foreign" ) ) 0 )
+            ( PropName "intDiv" )
+          ),
+          ( PropName "mod", ObjectProp ( Just Always )
+            ( Ref Nothing ( Imported ( ModuleName "Data.EuclideanRing" ) ( Name "foreign" ) ) 0 )
+            ( PropName "intMod" )
+          ),
+          ( PropName "CommutativeRing0", Abs Nothing ( ParamUnused Nothing )
+            ( LiteralObject Nothing
+              [
+                ( PropName "Ring0", Abs Nothing ( ParamUnused Nothing )
+                  ( Ref Nothing ( Imported ( ModuleName "Data.Ring" ) ( Name "ringInt" ) ) 0 )
+                )
+              ]
+            )
+          )
+        ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Maybe", qnameName = Name "append" }, App Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Data.Semigroup" ) ( Name "append" ) ) 0 )
+        ( Ref Nothing ( Imported ( ModuleName "Data.Semigroup" ) ( Name "semigroupString" ) ) 0 )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Maybe", qnameName = Name "Nothing"
+        }, Ctor Nothing SumType
+        ( ModuleName "Data.Maybe" )
+        ( TyName "Maybe" )
+        ( CtorName "Nothing" ) []
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Maybe", qnameName = Name "Just"
+        }, Ctor Nothing SumType
+        ( ModuleName "Data.Maybe" )
+        ( TyName "Maybe" )
+        ( CtorName "Just" )
+        [ FieldName "value0" ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Maybe", qnameName = Name "showMaybe" }, Abs Nothing
+        ( ParamNamed Nothing ( Name "dictShow" ) )
+        ( LiteralObject Nothing
+          [
+            ( PropName "show", Abs Nothing
+              ( ParamNamed Nothing ( Name "v" ) )
+              ( IfThenElse Nothing
+                ( Eq Nothing
+                  ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
+                  ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v" ) ) 0 ) )
+                )
+                ( App Nothing
+                  ( App Nothing
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "append" ) ) 0 )
+                    ( LiteralString Nothing "(Just " )
+                  )
+                  ( App Nothing
+                    ( App Nothing
+                      ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "append" ) ) 0 )
+                      ( App Nothing
+                        ( App Nothing
+                          ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "show" ) ) 0 )
+                          ( Ref Nothing ( Local ( Name "dictShow" ) ) 0 )
+                        )
+                        ( ObjectProp Nothing
+                          ( Ref Nothing ( Local ( Name "v" ) ) 0 )
+                          ( PropName "value0" )
+                        )
+                      )
+                    )
+                    ( LiteralString Nothing ")" )
+                  )
+                )
+                ( IfThenElse Nothing
+                  ( Eq Nothing
+                    ( LiteralString Nothing "Data.Maybe∷Maybe.Nothing" )
+                    ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v" ) ) 0 ) )
+                  )
+                  ( LiteralString Nothing "Nothing" )
+                  ( Exception Nothing "No patterns matched" )
+                )
+              )
+            )
+          ]
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Maybe", qnameName = Name "isNothing" }, Abs Nothing
+        ( ParamNamed Nothing ( Name "v2" ) )
+        ( IfThenElse Nothing
+          ( Eq Nothing
+            ( LiteralString Nothing "Data.Maybe∷Maybe.Nothing" )
+            ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v2" ) ) 0 ) )
+          ) ( LiteralBool Nothing True )
+          ( IfThenElse Nothing
+            ( Eq Nothing
+              ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
+              ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v2" ) ) 0 ) )
+            ) ( LiteralBool Nothing False )
+            ( Exception Nothing "No patterns matched" )
+          )
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Maybe", qnameName = Name "functorMaybe"
+        }, LiteralObject Nothing
+        [
+          ( PropName "map", Abs Nothing
+            ( ParamNamed Nothing ( Name "v" ) )
+            ( Abs Nothing
+              ( ParamNamed Nothing ( Name "v1" ) )
+              ( IfThenElse Nothing
+                ( Eq Nothing
+                  ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
+                  ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v1" ) ) 0 ) )
+                )
+                ( App Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Just" ) ) 0 )
+                  ( App Nothing
+                    ( Ref Nothing ( Local ( Name "v" ) ) 0 )
+                    ( ObjectProp Nothing
+                      ( Ref Nothing ( Local ( Name "v1" ) ) 0 )
+                      ( PropName "value0" )
+                    )
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) 0 )
+              )
+            )
+          )
+        ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Maybe", qnameName = Name "fromJust"
+        }, Abs Nothing ( ParamUnused Nothing )
+        ( Abs Nothing
+          ( ParamNamed Nothing ( Name "v" ) )
+          ( IfThenElse Nothing
+            ( Eq Nothing
+              ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
+              ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v" ) ) 0 ) )
+            )
+            ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "v" ) ) 0 ) ( PropName "value0" ) )
+            ( Exception Nothing "No patterns matched" )
+          )
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Tuple", qnameName = Name "snd" }, Abs Nothing
+        ( ParamNamed Nothing ( Name "v" ) )
+        ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "v" ) ) 0 ) ( PropName "value1" ) )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Tuple", qnameName = Name "fst" }, Abs Nothing
+        ( ParamNamed Nothing ( Name "v" ) )
+        ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "v" ) ) 0 ) ( PropName "value0" ) )
+      ), RecursiveGroup
+      (
+        ( QName
+          { qnameModuleName = ModuleName "Effect", qnameName = Name "monadEffect"
+          }, LiteralObject Nothing
+          [
+            ( PropName "Applicative0", Abs Nothing ( ParamUnused Nothing )
+              ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "applicativeEffect" ) ) 0 )
+            ),
+            ( PropName "Bind1", Abs Nothing ( ParamUnused Nothing )
+              ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "bindEffect" ) ) 0 )
+            )
+          ]
+        ) :|
+        [
+          ( QName
+            { qnameModuleName = ModuleName "Effect", qnameName = Name "bindEffect"
+            }, LiteralObject Nothing
+            [
+              ( PropName "bind", ObjectProp ( Just Always )
+                ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "foreign" ) ) 0 )
+                ( PropName "bindE" )
+              ),
+              ( PropName "Apply0", Abs Nothing ( ParamUnused Nothing )
+                ( App Nothing
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Effect" ) ( Name "Lazy_applyEffect" ) ) 0
+                  )
+                  ( LiteralInt Nothing 0 )
+                )
+              )
+            ]
+          ),
+          ( QName
+            { qnameModuleName = ModuleName "Effect", qnameName = Name "applicativeEffect"
+            }, LiteralObject Nothing
+            [
+              ( PropName "pure", ObjectProp ( Just Always )
+                ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "foreign" ) ) 0 )
+                ( PropName "pureE" )
+              ),
+              ( PropName "Apply0", Abs Nothing ( ParamUnused Nothing )
+                ( App Nothing
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Effect" ) ( Name "Lazy_applyEffect" ) ) 0
+                  )
+                  ( LiteralInt Nothing 0 )
+                )
+              )
+            ]
+          ),
+          ( QName
+            { qnameModuleName = ModuleName "Effect", qnameName = Name "Lazy_functorEffect"
+            }, App Nothing
+            ( App Nothing
+              ( Ref Nothing ( Local ( Name "PSLUA_runtime_lazy" ) ) 0 )
+              ( LiteralString Nothing "functorEffect" )
+            )
+            ( Abs Nothing ( ParamUnused Nothing )
+              ( LiteralObject Nothing
+                [
+                  ( PropName "map", Abs Nothing
+                    ( ParamNamed Nothing ( Name "f" ) )
+                    ( Abs Nothing
+                      ( ParamNamed Nothing ( Name "a" ) )
+                      ( App Nothing
+                        ( App Nothing
+                          ( ObjectProp Nothing
+                            ( App Nothing
+                              ( ObjectProp Nothing
+                                ( Ref Nothing
+                                  ( Imported
+                                    ( ModuleName "Effect" )
+                                    ( Name "applicativeEffect" )
+                                  ) 0
+                                )
+                                ( PropName "Apply0" )
+                              )
+                              ( Ref Nothing
+                                ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) 0
+                              )
+                            )
+                            ( PropName "apply" )
+                          )
+                          ( App Nothing
+                            ( App Nothing
+                              ( Ref Nothing
+                                ( Imported ( ModuleName "Control.Applicative" ) ( Name "pure" ) ) 0
+                              )
+                              ( Ref Nothing
+                                ( Imported ( ModuleName "Effect" ) ( Name "applicativeEffect" ) ) 0
+                              )
+                            )
+                            ( Ref Nothing ( Local ( Name "f" ) ) 0 )
+                          )
+                        )
+                        ( Ref Nothing ( Local ( Name "a" ) ) 0 )
+                      )
+                    )
+                  )
+                ]
+              )
+            )
+          ),
+          ( QName
+            { qnameModuleName = ModuleName "Effect", qnameName = Name "Lazy_applyEffect"
+            }, App Nothing
+            ( App Nothing
+              ( Ref Nothing ( Local ( Name "PSLUA_runtime_lazy" ) ) 0 )
+              ( LiteralString Nothing "applyEffect" )
+            )
+            ( Abs Nothing ( ParamUnused Nothing )
+              ( LiteralObject Nothing
+                [
+                  ( PropName "apply", Let Nothing
+                    ( Standalone
+                      ( Nothing, Name "bind", App Nothing
+                        ( Ref Nothing
+                          ( Imported ( ModuleName "Control.Bind" ) ( Name "bind" ) ) 0
+                        )
+                        ( App Nothing
+                          ( ObjectProp Nothing
+                            ( Ref Nothing
+                              ( Imported ( ModuleName "Effect" ) ( Name "monadEffect" ) ) 0
+                            )
+                            ( PropName "Bind1" )
+                          )
+                          ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) 0 )
+                        )
+                      ) :| []
+                    )
+                    ( Abs Nothing
+                      ( ParamNamed Nothing ( Name "f" ) )
+                      ( Abs Nothing
+                        ( ParamNamed Nothing ( Name "a" ) )
+                        ( App Nothing
+                          ( App Nothing
+                            ( Ref Nothing ( Local ( Name "bind" ) ) 0 )
+                            ( Ref Nothing ( Local ( Name "f" ) ) 0 )
+                          )
+                          ( Abs Nothing
+                            ( ParamNamed Nothing ( Name "f'" ) )
+                            ( App Nothing
+                              ( App Nothing
+                                ( Ref Nothing ( Local ( Name "bind" ) ) 0 )
+                                ( Ref Nothing ( Local ( Name "a" ) ) 0 )
+                              )
+                              ( Abs Nothing
+                                ( ParamNamed Nothing ( Name "a'" ) )
+                                ( App Nothing
+                                  ( App Nothing
+                                    ( Ref Nothing
+                                      ( Imported
+                                        ( ModuleName "Control.Applicative" )
+                                        ( Name "pure" )
+                                      ) 0
+                                    )
+                                    ( App Nothing
+                                      ( ObjectProp Nothing
+                                        ( Ref Nothing
+                                          ( Imported
+                                            ( ModuleName "Effect" )
+                                            ( Name "monadEffect" )
+                                          ) 0
+                                        )
+                                        ( PropName "Applicative0" )
+                                      )
+                                      ( Ref Nothing
+                                        ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) 0
+                                      )
+                                    )
+                                  )
+                                  ( App Nothing
+                                    ( Ref Nothing ( Local ( Name "f'" ) ) 0 )
+                                    ( Ref Nothing ( Local ( Name "a'" ) ) 0 )
+                                  )
+                                )
+                              )
+                            )
+                          )
+                        )
+                      )
+                    )
+                  ),
+                  ( PropName "Functor0", Abs Nothing ( ParamUnused Nothing )
+                    ( App Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Effect" ) ( Name "Lazy_functorEffect" ) ) 0
+                      )
+                      ( LiteralInt Nothing 0 )
+                    )
+                  )
+                ]
+              )
+            )
+          )
+        ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Enum", qnameName = Name "sub" }, App Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Data.Ring" ) ( Name "sub" ) ) 0 )
+        ( Ref Nothing ( Imported ( ModuleName "Data.Ring" ) ( Name "ringInt" ) ) 0 )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Enum", qnameName = Name "bottom1" }, App Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Data.Bounded" ) ( Name "bottom" ) ) 0 )
+        ( Ref Nothing ( Imported ( ModuleName "Data.Bounded" ) ( Name "boundedChar" ) ) 0 )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Enum", qnameName = Name "top1" }, App Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Data.Bounded" ) ( Name "top" ) ) 0 )
+        ( Ref Nothing ( Imported ( ModuleName "Data.Bounded" ) ( Name "boundedChar" ) ) 0 )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Enum", qnameName = Name "toEnum" }, Abs Nothing
+        ( ParamNamed Nothing ( Name "dict" ) )
+        ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) 0 ) ( PropName "toEnum" ) )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Enum", qnameName = Name "fromEnum" }, Abs Nothing
+        ( ParamNamed Nothing ( Name "dict" ) )
+        ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) 0 ) ( PropName "fromEnum" ) )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Enum", qnameName = Name "defaultSucc" }, Abs Nothing
+        ( ParamNamed Nothing ( Name "toEnum'" ) )
+        ( Abs Nothing
+          ( ParamNamed Nothing ( Name "fromEnum'" ) )
+          ( Abs Nothing
+            ( ParamNamed Nothing ( Name "a" ) )
+            ( App Nothing
+              ( Ref Nothing ( Local ( Name "toEnum'" ) ) 0 )
+              ( App Nothing
+                ( App Nothing
+                  ( App Nothing
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Semiring" ) ( Name "add" ) ) 0 )
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Data.Semiring" ) ( Name "semiringInt" ) ) 0
+                    )
+                  )
+                  ( App Nothing
+                    ( Ref Nothing ( Local ( Name "fromEnum'" ) ) 0 )
+                    ( Ref Nothing ( Local ( Name "a" ) ) 0 )
+                  )
+                )
+                ( LiteralInt Nothing 1 )
+              )
+            )
+          )
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Enum", qnameName = Name "defaultPred" }, Abs Nothing
+        ( ParamNamed Nothing ( Name "toEnum'" ) )
+        ( Abs Nothing
+          ( ParamNamed Nothing ( Name "fromEnum'" ) )
+          ( Abs Nothing
+            ( ParamNamed Nothing ( Name "a" ) )
+            ( App Nothing
+              ( Ref Nothing ( Local ( Name "toEnum'" ) ) 0 )
+              ( App Nothing
+                ( App Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Data.Enum" ) ( Name "sub" ) ) 0 )
+                  ( App Nothing
+                    ( Ref Nothing ( Local ( Name "fromEnum'" ) ) 0 )
+                    ( Ref Nothing ( Local ( Name "a" ) ) 0 )
+                  )
+                )
+                ( LiteralInt Nothing 1 )
+              )
+            )
+          )
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Enum", qnameName = Name "charToEnum" }, Abs Nothing
+        ( ParamNamed Nothing ( Name "v" ) )
+        ( IfThenElse Nothing
+          ( App Nothing
+            ( App Nothing
+              ( App Nothing
+                ( Ref Nothing ( Imported ( ModuleName "Data.HeytingAlgebra" ) ( Name "conj" ) ) 0 )
+                ( Ref Nothing
+                  ( Imported
+                    ( ModuleName "Data.HeytingAlgebra" )
+                    ( Name "heytingAlgebraBoolean" )
+                  ) 0
+                )
+              )
+              ( App Nothing
+                ( App Nothing
+                  ( App Nothing
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Data.Ord" ) ( Name "greaterThanOrEq" ) ) 0
+                    )
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Ord" ) ( Name "ordInt" ) ) 0 )
+                  )
+                  ( Ref Nothing ( Local ( Name "v" ) ) 0 )
+                )
+                ( App Nothing
+                  ( ObjectProp ( Just Always )
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Enum" ) ( Name "foreign" ) ) 0 )
+                    ( PropName "toCharCode" )
+                  )
+                  ( Ref Nothing ( Imported ( ModuleName "Data.Enum" ) ( Name "bottom1" ) ) 0 )
+                )
+              )
+            )
+            ( App Nothing
+              ( App Nothing
+                ( App Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Data.Ord" ) ( Name "lessThanOrEq" ) ) 0 )
+                  ( Ref Nothing ( Imported ( ModuleName "Data.Ord" ) ( Name "ordInt" ) ) 0 )
+                )
+                ( Ref Nothing ( Local ( Name "v" ) ) 0 )
+              )
+              ( App Nothing
+                ( ObjectProp ( Just Always )
+                  ( Ref Nothing ( Imported ( ModuleName "Data.Enum" ) ( Name "foreign" ) ) 0 )
+                  ( PropName "toCharCode" )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Data.Enum" ) ( Name "top1" ) ) 0 )
+              )
+            )
+          )
+          ( App Nothing
+            ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Just" ) ) 0 )
+            ( App Nothing
+              ( ObjectProp ( Just Always )
+                ( Ref Nothing ( Imported ( ModuleName "Data.Enum" ) ( Name "foreign" ) ) 0 )
+                ( PropName "fromCharCode" )
+              )
+              ( Ref Nothing ( Local ( Name "v" ) ) 0 )
+            )
+          )
+          ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) 0 )
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Enum", qnameName = Name "boundedEnumChar"
+        }, LiteralObject Nothing
+        [
+          ( PropName "cardinality", App Nothing
+            ( App Nothing
+              ( Ref Nothing ( Imported ( ModuleName "Data.Enum" ) ( Name "sub" ) ) 0 )
+              ( App Nothing
+                ( ObjectProp ( Just Always )
+                  ( Ref Nothing ( Imported ( ModuleName "Data.Enum" ) ( Name "foreign" ) ) 0 )
+                  ( PropName "toCharCode" )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Data.Enum" ) ( Name "top1" ) ) 0 )
+              )
+            )
+            ( App Nothing
+              ( ObjectProp ( Just Always )
+                ( Ref Nothing ( Imported ( ModuleName "Data.Enum" ) ( Name "foreign" ) ) 0 )
+                ( PropName "toCharCode" )
+              )
+              ( Ref Nothing ( Imported ( ModuleName "Data.Enum" ) ( Name "bottom1" ) ) 0 )
+            )
+          ),
+          ( PropName "toEnum", Ref Nothing
+            ( Imported ( ModuleName "Data.Enum" ) ( Name "charToEnum" ) ) 0
+          ),
+          ( PropName "fromEnum", ObjectProp ( Just Always )
+            ( Ref Nothing ( Imported ( ModuleName "Data.Enum" ) ( Name "foreign" ) ) 0 )
+            ( PropName "toCharCode" )
+          ),
+          ( PropName "Bounded0", Abs Nothing ( ParamUnused Nothing )
+            ( Ref Nothing ( Imported ( ModuleName "Data.Bounded" ) ( Name "boundedChar" ) ) 0 )
+          ),
+          ( PropName "Enum1", Abs Nothing ( ParamUnused Nothing )
+            ( LiteralObject Nothing
+              [
+                ( PropName "succ", App Nothing
+                  ( App Nothing
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Data.Enum" ) ( Name "defaultSucc" ) ) 0
+                    )
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Enum" ) ( Name "charToEnum" ) ) 0 )
+                  )
+                  ( ObjectProp ( Just Always )
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Enum" ) ( Name "foreign" ) ) 0 )
+                    ( PropName "toCharCode" )
+                  )
+                ),
+                ( PropName "pred", App Nothing
+                  ( App Nothing
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Data.Enum" ) ( Name "defaultPred" ) ) 0
+                    )
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Enum" ) ( Name "charToEnum" ) ) 0 )
+                  )
+                  ( ObjectProp ( Just Always )
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Enum" ) ( Name "foreign" ) ) 0 )
+                    ( PropName "toCharCode" )
+                  )
+                ),
+                ( PropName "Ord0", Abs Nothing ( ParamUnused Nothing )
+                  ( Ref Nothing ( Imported ( ModuleName "Data.Ord" ) ( Name "ordChar" ) ) 0 )
+                )
+              ]
+            )
+          )
+        ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.String.CodePoints", qnameName = Name "add"
+        }, App Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Data.Semiring" ) ( Name "add" ) ) 0 )
+        ( Ref Nothing ( Imported ( ModuleName "Data.Semiring" ) ( Name "semiringInt" ) ) 0 )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.String.CodePoints", qnameName = Name "sub"
+        }, App Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Data.Ring" ) ( Name "sub" ) ) 0 )
+        ( Ref Nothing ( Imported ( ModuleName "Data.Ring" ) ( Name "ringInt" ) ) 0 )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.String.CodePoints", qnameName = Name "append"
+        }, App Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Data.Semigroup" ) ( Name "append" ) ) 0 )
+        ( Ref Nothing ( Imported ( ModuleName "Data.Semigroup" ) ( Name "semigroupString" ) ) 0 )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.String.CodePoints", qnameName = Name "conj"
+        }, App Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Data.HeytingAlgebra" ) ( Name "conj" ) ) 0 )
+        ( Ref Nothing
+          ( Imported ( ModuleName "Data.HeytingAlgebra" ) ( Name "heytingAlgebraBoolean" ) ) 0
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.String.CodePoints", qnameName = Name "lessThanOrEq"
+        }, App Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Data.Ord" ) ( Name "lessThanOrEq" ) ) 0 )
+        ( Ref Nothing ( Imported ( ModuleName "Data.Ord" ) ( Name "ordInt" ) ) 0 )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.String.CodePoints", qnameName = Name "fromEnum"
+        }, App Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Data.Enum" ) ( Name "fromEnum" ) ) 0 )
+        ( Ref Nothing ( Imported ( ModuleName "Data.Enum" ) ( Name "boundedEnumChar" ) ) 0 )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.String.CodePoints", qnameName = Name "compose"
+        }, App Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Control.Semigroupoid" ) ( Name "compose" ) ) 0 )
+        ( Ref Nothing
+          ( Imported ( ModuleName "Control.Semigroupoid" ) ( Name "semigroupoidFn" ) ) 0
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.String.CodePoints", qnameName = Name "eq"
+        }, App Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Data.Eq" ) ( Name "eq" ) ) 0 )
+        ( Ref Nothing ( Imported ( ModuleName "Data.Eq" ) ( Name "eqInt" ) ) 0 )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.String.CodePoints", qnameName = Name "lessThan"
+        }, App Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Data.Ord" ) ( Name "lessThan" ) ) 0 )
+        ( Ref Nothing ( Imported ( ModuleName "Data.Ord" ) ( Name "ordInt" ) ) 0 )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.String.CodePoints", qnameName = Name "unsafeCodePointAt0"
+        }, App Nothing
+        ( ObjectProp ( Just Always )
+          ( Ref Nothing ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "foreign" ) ) 0 )
+          ( PropName "_unsafeCodePointAt0" )
+        )
+        ( Abs Nothing
+          ( ParamNamed Nothing ( Name "s" ) )
+          ( Let Nothing
+            ( Standalone
+              ( Nothing, Name "cu0", App Nothing
+                ( Ref Nothing
+                  ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "fromEnum" ) ) 0
+                )
+                ( App Nothing
+                  ( App Nothing
+                    ( ObjectProp ( Just Always )
+                      ( ForeignImport Nothing
+                        ( ModuleName "Data.String.Unsafe" ) ".spago/strings/v6.2.0/src/Data/String/Unsafe.purs"
+                        [ ( Nothing, Name "charAt" ) ]
+                      )
+                      ( PropName "charAt" )
+                    )
+                    ( LiteralInt Nothing 0 )
+                  )
+                  ( Ref Nothing ( Local ( Name "s" ) ) 0 )
+                )
+              ) :| []
+            )
+            ( IfThenElse Nothing
+              ( App Nothing
+                ( App Nothing
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "conj" ) ) 0
+                  )
+                  ( App Nothing
+                    ( App Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "conj" ) ) 0
+                      )
+                      ( App Nothing
+                        ( App Nothing
+                          ( Ref Nothing
+                            ( Imported
+                              ( ModuleName "Data.String.CodePoints" )
+                              ( Name "lessThanOrEq" )
+                            ) 0
+                          )
+                          ( LiteralInt Nothing 55296 )
+                        )
+                        ( Ref Nothing ( Local ( Name "cu0" ) ) 0 )
+                      )
+                    )
+                    ( App Nothing
+                      ( App Nothing
+                        ( Ref Nothing
+                          ( Imported
+                            ( ModuleName "Data.String.CodePoints" )
+                            ( Name "lessThanOrEq" )
+                          ) 0
+                        )
+                        ( Ref Nothing ( Local ( Name "cu0" ) ) 0 )
+                      )
+                      ( LiteralInt Nothing 56319 )
+                    )
+                  )
+                )
+                ( IfThenElse Nothing
+                  ( Eq Nothing
+                    ( LiteralString Nothing "Data.Ordering∷Ordering.GT" )
+                    ( ReflectCtor Nothing
+                      ( App Nothing
+                        ( App Nothing
+                          ( App Nothing
+                            ( Ref Nothing
+                              ( Imported ( ModuleName "Data.Ord" ) ( Name "compare" ) ) 0
+                            )
+                            ( Ref Nothing
+                              ( Imported ( ModuleName "Data.Ord" ) ( Name "ordInt" ) ) 0
+                            )
+                          )
+                          ( App Nothing
+                            ( ObjectProp ( Just Always )
+                              ( Ref Nothing
+                                ( Imported
+                                  ( ModuleName "Data.String.CodeUnits" )
+                                  ( Name "foreign" )
+                                ) 0
+                              )
+                              ( PropName "length" )
+                            )
+                            ( Ref Nothing ( Local ( Name "s" ) ) 0 )
+                          )
+                        )
+                        ( LiteralInt Nothing 1 )
+                      )
+                    )
+                  ) ( LiteralBool Nothing True ) ( LiteralBool Nothing False )
+                )
+              )
+              ( Let Nothing
+                ( Standalone
+                  ( Nothing, Name "cu1", App Nothing
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "fromEnum" ) ) 0
+                    )
+                    ( App Nothing
+                      ( App Nothing
+                        ( ObjectProp ( Just Always )
+                          ( ForeignImport Nothing
+                            ( ModuleName "Data.String.Unsafe" ) ".spago/strings/v6.2.0/src/Data/String/Unsafe.purs"
+                            [ ( Nothing, Name "charAt" ) ]
+                          )
+                          ( PropName "charAt" )
+                        )
+                        ( LiteralInt Nothing 1 )
+                      )
+                      ( Ref Nothing ( Local ( Name "s" ) ) 0 )
+                    )
+                  ) :| []
+                )
+                ( IfThenElse Nothing
+                  ( App Nothing
+                    ( App Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "conj" ) ) 0
+                      )
+                      ( App Nothing
+                        ( App Nothing
+                          ( Ref Nothing
+                            ( Imported
+                              ( ModuleName "Data.String.CodePoints" )
+                              ( Name "lessThanOrEq" )
+                            ) 0
+                          )
+                          ( LiteralInt Nothing 56320 )
+                        )
+                        ( Ref Nothing ( Local ( Name "cu1" ) ) 0 )
+                      )
+                    )
+                    ( App Nothing
+                      ( App Nothing
+                        ( Ref Nothing
+                          ( Imported
+                            ( ModuleName "Data.String.CodePoints" )
+                            ( Name "lessThanOrEq" )
+                          ) 0
+                        )
+                        ( Ref Nothing ( Local ( Name "cu1" ) ) 0 )
+                      )
+                      ( LiteralInt Nothing 57343 )
+                    )
+                  )
+                  ( App Nothing
+                    ( App Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "add" ) ) 0
+                      )
+                      ( App Nothing
+                        ( App Nothing
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "add" ) ) 0
+                          )
+                          ( App Nothing
+                            ( App Nothing
+                              ( ObjectProp Nothing
+                                ( Ref Nothing
+                                  ( Imported
+                                    ( ModuleName "Data.Semiring" )
+                                    ( Name "semiringInt" )
+                                  ) 0
+                                )
+                                ( PropName "mul" )
+                              )
+                              ( App Nothing
+                                ( App Nothing
+                                  ( Ref Nothing
+                                    ( Imported
+                                      ( ModuleName "Data.String.CodePoints" )
+                                      ( Name "sub" )
+                                    ) 0
+                                  )
+                                  ( Ref Nothing ( Local ( Name "cu0" ) ) 0 )
+                                )
+                                ( LiteralInt Nothing 55296 )
+                              )
+                            )
+                            ( LiteralInt Nothing 1024 )
+                          )
+                        )
+                        ( App Nothing
+                          ( App Nothing
+                            ( Ref Nothing
+                              ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "sub" ) ) 0
+                            )
+                            ( Ref Nothing ( Local ( Name "cu1" ) ) 0 )
+                          )
+                          ( LiteralInt Nothing 56320 )
+                        )
+                      )
+                    )
+                    ( LiteralInt Nothing 65536 )
+                  )
+                  ( Ref Nothing ( Local ( Name "cu0" ) ) 0 )
+                )
+              )
+              ( Ref Nothing ( Local ( Name "cu0" ) ) 0 )
+            )
+          )
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.String.CodePoints", qnameName = Name "fromCharCode"
+        }, App Nothing
+        ( App Nothing
+          ( Ref Nothing ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "compose" ) ) 0 )
+          ( ObjectProp ( Just Always )
+            ( Ref Nothing
+              ( Imported ( ModuleName "Data.String.CodeUnits" ) ( Name "foreign" ) ) 0
+            )
+            ( PropName "singleton" )
+          )
+        )
+        ( Abs Nothing
+          ( ParamNamed Nothing ( Name "x" ) )
+          ( Let Nothing
+            ( Standalone
+              ( Nothing, Name "v", App Nothing
+                ( App Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Data.Enum" ) ( Name "toEnum" ) ) 0 )
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Data.Enum" ) ( Name "boundedEnumChar" ) ) 0
+                  )
+                )
+                ( Ref Nothing ( Local ( Name "x" ) ) 0 )
+              ) :| []
+            )
+            ( IfThenElse Nothing
+              ( Eq Nothing
+                ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
+                ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v" ) ) 0 ) )
+              )
+              ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "v" ) ) 0 ) ( PropName "value0" ) )
+              ( IfThenElse Nothing
+                ( Eq Nothing
+                  ( LiteralString Nothing "Data.Maybe∷Maybe.Nothing" )
+                  ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v" ) ) 0 ) )
+                )
+                ( IfThenElse Nothing
+                  ( App Nothing
+                    ( App Nothing
+                      ( App Nothing
+                        ( Ref Nothing
+                          ( Imported ( ModuleName "Data.Ord" ) ( Name "lessThan" ) ) 0
+                        )
+                        ( Ref Nothing ( Imported ( ModuleName "Data.Ord" ) ( Name "ordInt" ) ) 0 )
+                      )
+                      ( Ref Nothing ( Local ( Name "x" ) ) 0 )
+                    )
+                    ( App Nothing
+                      ( App Nothing
+                        ( Ref Nothing
+                          ( Imported ( ModuleName "Data.Enum" ) ( Name "fromEnum" ) ) 0
+                        )
+                        ( Ref Nothing
+                          ( Imported ( ModuleName "Data.Enum" ) ( Name "boundedEnumChar" ) ) 0
+                        )
+                      )
+                      ( App Nothing
+                        ( Ref Nothing
+                          ( Imported ( ModuleName "Data.Bounded" ) ( Name "bottom" ) ) 0
+                        )
+                        ( App Nothing
+                          ( ObjectProp Nothing
+                            ( Ref Nothing
+                              ( Imported ( ModuleName "Data.Enum" ) ( Name "boundedEnumChar" ) ) 0
+                            )
+                            ( PropName "Bounded0" )
+                          )
+                          ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) 0 )
+                        )
+                      )
+                    )
+                  )
+                  ( App Nothing
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Bounded" ) ( Name "bottom" ) ) 0 )
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Data.Bounded" ) ( Name "boundedChar" ) ) 0
+                    )
+                  )
+                  ( App Nothing
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Bounded" ) ( Name "top" ) ) 0 )
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Data.Bounded" ) ( Name "boundedChar" ) ) 0
+                    )
+                  )
+                )
+                ( Exception Nothing "No patterns matched" )
+              )
+            )
+          )
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.String.CodePoints", qnameName = Name "singletonFallback"
+        }, Abs Nothing
+        ( ParamNamed Nothing ( Name "v" ) )
+        ( IfThenElse Nothing
+          ( App Nothing
+            ( App Nothing
+              ( Ref Nothing
+                ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "lessThanOrEq" ) ) 0
+              )
+              ( Ref Nothing ( Local ( Name "v" ) ) 0 )
+            )
+            ( LiteralInt Nothing 65535 )
+          )
+          ( App Nothing
+            ( Ref Nothing
+              ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "fromCharCode" ) ) 0
+            )
+            ( Ref Nothing ( Local ( Name "v" ) ) 0 )
+          )
+          ( App Nothing
+            ( App Nothing
+              ( Ref Nothing
+                ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "append" ) ) 0
+              )
+              ( App Nothing
+                ( Ref Nothing
+                  ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "fromCharCode" ) ) 0
+                )
+                ( App Nothing
+                  ( App Nothing
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "add" ) ) 0
+                    )
+                    ( App Nothing
+                      ( App Nothing
+                        ( ObjectProp Nothing
+                          ( Ref Nothing
+                            ( Imported
+                              ( ModuleName "Data.EuclideanRing" )
+                              ( Name "euclideanRingInt" )
+                            ) 0
+                          )
+                          ( PropName "div" )
+                        )
+                        ( App Nothing
+                          ( App Nothing
+                            ( Ref Nothing
+                              ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "sub" ) ) 0
+                            )
+                            ( Ref Nothing ( Local ( Name "v" ) ) 0 )
+                          )
+                          ( LiteralInt Nothing 65536 )
+                        )
+                      )
+                      ( LiteralInt Nothing 1024 )
+                    )
+                  )
+                  ( LiteralInt Nothing 55296 )
+                )
+              )
+            )
+            ( App Nothing
+              ( Ref Nothing
+                ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "fromCharCode" ) ) 0
+              )
+              ( App Nothing
+                ( App Nothing
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "add" ) ) 0
+                  )
+                  ( App Nothing
+                    ( App Nothing
+                      ( ObjectProp Nothing
+                        ( Ref Nothing
+                          ( Imported
+                            ( ModuleName "Data.EuclideanRing" )
+                            ( Name "euclideanRingInt" )
+                          ) 0
+                        )
+                        ( PropName "mod" )
+                      )
+                      ( App Nothing
+                        ( App Nothing
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "sub" ) ) 0
+                          )
+                          ( Ref Nothing ( Local ( Name "v" ) ) 0 )
+                        )
+                        ( LiteralInt Nothing 65536 )
+                      )
+                    )
+                    ( LiteralInt Nothing 1024 )
+                  )
+                )
+                ( LiteralInt Nothing 56320 )
+              )
+            )
+          )
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.String.CodePoints", qnameName = Name "singleton"
+        }, App Nothing
+        ( ObjectProp ( Just Always )
+          ( Ref Nothing ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "foreign" ) ) 0 )
+          ( PropName "_singleton" )
+        )
+        ( Ref Nothing
+          ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "singletonFallback" ) ) 0
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.String.CodePoints", qnameName = Name "ordCodePoint"
+        }, LiteralObject Nothing
+        [
+          ( PropName "compare", Abs Nothing
+            ( ParamNamed Nothing ( Name "x" ) )
+            ( Abs Nothing
+              ( ParamNamed Nothing ( Name "y" ) )
+              ( App Nothing
+                ( App Nothing
+                  ( App Nothing
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Ord" ) ( Name "compare" ) ) 0 )
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Ord" ) ( Name "ordInt" ) ) 0 )
+                  )
+                  ( Ref Nothing ( Local ( Name "x" ) ) 0 )
+                )
+                ( Ref Nothing ( Local ( Name "y" ) ) 0 )
+              )
+            )
+          ),
+          ( PropName "Eq0", Abs Nothing ( ParamUnused Nothing )
+            ( LiteralObject Nothing
+              [
+                ( PropName "eq", Abs Nothing
+                  ( ParamNamed Nothing ( Name "x" ) )
+                  ( Abs Nothing
+                    ( ParamNamed Nothing ( Name "y" ) )
+                    ( App Nothing
+                      ( App Nothing
+                        ( Ref Nothing
+                          ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "eq" ) ) 0
+                        )
+                        ( Ref Nothing ( Local ( Name "x" ) ) 0 )
+                      )
+                      ( Ref Nothing ( Local ( Name "y" ) ) 0 )
+                    )
+                  )
+                )
+              ]
+            )
+          )
+        ]
+      ), RecursiveGroup
+      (
+        ( QName
+          { qnameModuleName = ModuleName "Data.String.CodePoints", qnameName = Name "uncons"
+          }, Abs Nothing
+          ( ParamNamed Nothing ( Name "s" ) )
+          ( IfThenElse Nothing
+            ( App Nothing
+              ( App Nothing
+                ( Ref Nothing
+                  ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "eq" ) ) 0
+                )
+                ( App Nothing
+                  ( ObjectProp ( Just Always )
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Data.String.CodeUnits" ) ( Name "foreign" ) ) 0
+                    )
+                    ( PropName "length" )
+                  )
+                  ( Ref Nothing ( Local ( Name "s" ) ) 0 )
+                )
+              )
+              ( LiteralInt Nothing 0 )
+            )
+            ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) 0 )
+            ( App Nothing
+              ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Just" ) ) 0 )
+              ( LiteralObject Nothing
+                [
+                  ( PropName "head", App Nothing
+                    ( Ref Nothing
+                      ( Imported
+                        ( ModuleName "Data.String.CodePoints" )
+                        ( Name "unsafeCodePointAt0" )
+                      ) 0
+                    )
+                    ( Ref Nothing ( Local ( Name "s" ) ) 0 )
+                  ),
+                  ( PropName "tail", App Nothing
+                    ( App Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "drop" ) ) 0
+                      )
+                      ( LiteralInt Nothing 1 )
+                    )
+                    ( Ref Nothing ( Local ( Name "s" ) ) 0 )
+                  )
+                ]
+              )
+            )
+          )
+        ) :|
+        [
+          ( QName
+            { qnameModuleName = ModuleName "Data.String.CodePoints", qnameName = Name "takeFallback"
+            }, Abs Nothing
+            ( ParamNamed Nothing ( Name "v" ) )
+            ( Abs Nothing
+              ( ParamNamed Nothing ( Name "v1" ) )
+              ( IfThenElse Nothing
+                ( App Nothing
+                  ( App Nothing
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "lessThan" ) ) 0
+                    )
+                    ( Ref Nothing ( Local ( Name "v" ) ) 0 )
+                  )
+                  ( LiteralInt Nothing 1 )
+                )
+                ( LiteralString Nothing "" )
+                ( Let Nothing
+                  ( Standalone
+                    ( Nothing, Name "v2", App Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "uncons" ) ) 0
+                      )
+                      ( Ref Nothing ( Local ( Name "v1" ) ) 0 )
+                    ) :| []
+                  )
+                  ( IfThenElse Nothing
+                    ( Eq Nothing
+                      ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
+                      ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v2" ) ) 0 ) )
+                    )
+                    ( App Nothing
+                      ( App Nothing
+                        ( Ref Nothing
+                          ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "append" ) ) 0
+                        )
+                        ( App Nothing
+                          ( Ref Nothing
+                            ( Imported
+                              ( ModuleName "Data.String.CodePoints" )
+                              ( Name "singleton" )
+                            ) 0
+                          )
+                          ( ObjectProp Nothing
+                            ( ObjectProp Nothing
+                              ( Ref Nothing ( Local ( Name "v2" ) ) 0 )
+                              ( PropName "value0" )
+                            )
+                            ( PropName "head" )
+                          )
+                        )
+                      )
+                      ( App Nothing
+                        ( App Nothing
+                          ( Ref Nothing
+                            ( Imported
+                              ( ModuleName "Data.String.CodePoints" )
+                              ( Name "takeFallback" )
+                            ) 0
+                          )
+                          ( App Nothing
+                            ( App Nothing
+                              ( Ref Nothing
+                                ( Imported
+                                  ( ModuleName "Data.String.CodePoints" )
+                                  ( Name "sub" )
+                                ) 0
+                              )
+                              ( Ref Nothing ( Local ( Name "v" ) ) 0 )
+                            )
+                            ( LiteralInt Nothing 1 )
+                          )
+                        )
+                        ( ObjectProp Nothing
+                          ( ObjectProp Nothing
+                            ( Ref Nothing ( Local ( Name "v2" ) ) 0 )
+                            ( PropName "value0" )
+                          )
+                          ( PropName "tail" )
+                        )
+                      )
+                    )
+                    ( Ref Nothing ( Local ( Name "v1" ) ) 0 )
+                  )
+                )
+              )
+            )
+          ),
+          ( QName
+            { qnameModuleName = ModuleName "Data.String.CodePoints", qnameName = Name "take"
+            }, Abs Nothing
+            ( ParamNamed Nothing ( Name "n" ) )
+            ( Abs Nothing
+              ( ParamNamed Nothing ( Name "s" ) )
+              ( App Nothing
+                ( App Nothing
+                  ( App Nothing
+                    ( ObjectProp ( Just Always )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "foreign" ) ) 0
+                      )
+                      ( PropName "_take" )
+                    )
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "takeFallback" ) ) 0
+                    )
+                  )
+                  ( Ref Nothing ( Local ( Name "n" ) ) 0 )
+                )
+                ( Ref Nothing ( Local ( Name "s" ) ) 0 )
+              )
+            )
+          ),
+          ( QName
+            { qnameModuleName = ModuleName "Data.String.CodePoints", qnameName = Name "drop"
+            }, Abs Nothing
+            ( ParamNamed Nothing ( Name "n" ) )
+            ( Abs Nothing
+              ( ParamNamed Nothing ( Name "s" ) )
+              ( App Nothing
+                ( App Nothing
+                  ( ObjectProp ( Just Always )
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Data.String.CodeUnits" ) ( Name "foreign" ) ) 0
+                    )
+                    ( PropName "drop" )
+                  )
+                  ( App Nothing
+                    ( ObjectProp ( Just Always )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Data.String.CodeUnits" ) ( Name "foreign" ) ) 0
+                      )
+                      ( PropName "length" )
+                    )
+                    ( App Nothing
+                      ( App Nothing
+                        ( Ref Nothing
+                          ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "take" ) ) 0
+                        )
+                        ( Ref Nothing ( Local ( Name "n" ) ) 0 )
+                      )
+                      ( Ref Nothing ( Local ( Name "s" ) ) 0 )
+                    )
+                  )
+                )
+                ( Ref Nothing ( Local ( Name "s" ) ) 0 )
+              )
+            )
+          )
+        ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.String.CodePoints", qnameName = Name "toCodePointArray"
+        }, App Nothing
+        ( App Nothing
+          ( ObjectProp ( Just Always )
+            ( Ref Nothing
+              ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "foreign" ) ) 0
+            )
+            ( PropName "_toCodePointArray" )
+          )
+          ( Abs Nothing
+            ( ParamNamed Nothing ( Name "s" ) )
+            ( App Nothing
+              ( App Nothing
+                ( ObjectProp Nothing
+                  ( LiteralObject Nothing
+                    [
+                      ( PropName "unfoldr", App Nothing
+                        ( App Nothing
+                          ( App Nothing
+                            ( App Nothing
+                              ( ObjectProp ( Just Always )
+                                ( ForeignImport Nothing
+                                  ( ModuleName "Data.Unfoldable" ) ".spago/unfoldable/v6.1.0/src/Data/Unfoldable.purs"
+                                  [ ( Nothing, Name "unfoldrArrayImpl" ) ]
+                                )
+                                ( PropName "unfoldrArrayImpl" )
+                              )
+                              ( Ref Nothing
+                                ( Imported ( ModuleName "Data.Maybe" ) ( Name "isNothing" ) ) 0
+                              )
+                            )
+                            ( App Nothing
+                              ( ObjectProp ( Just Always )
+                                ( ForeignImport Nothing
+                                  ( ModuleName "Partial.Unsafe" ) ".spago/partial/v4.1.0/src/Partial/Unsafe.purs"
+                                  [ ( Nothing, Name "_unsafePartial" ) ]
+                                )
+                                ( PropName "_unsafePartial" )
+                              )
+                              ( Abs Nothing ( ParamUnused Nothing )
+                                ( App Nothing
+                                  ( Ref Nothing
+                                    ( Imported ( ModuleName "Data.Maybe" ) ( Name "fromJust" ) ) 0
+                                  )
+                                  ( Ref Nothing
+                                    ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) 0
+                                  )
+                                )
+                              )
+                            )
+                          )
+                          ( Ref Nothing ( Imported ( ModuleName "Data.Tuple" ) ( Name "fst" ) ) 0 )
+                        )
+                        ( Ref Nothing ( Imported ( ModuleName "Data.Tuple" ) ( Name "snd" ) ) 0 )
+                      ),
+                      ( PropName "Unfoldable10", Abs Nothing ( ParamUnused Nothing )
+                        ( LiteralObject Nothing
+                          [
+                            ( PropName "unfoldr1", App Nothing
+                              ( App Nothing
+                                ( App Nothing
+                                  ( App Nothing
+                                    ( ObjectProp ( Just Always )
+                                      ( ForeignImport Nothing
+                                        ( ModuleName "Data.Unfoldable1" ) ".spago/unfoldable/v6.1.0/src/Data/Unfoldable1.purs"
+                                        [ ( Nothing, Name "unfoldr1ArrayImpl" ) ]
+                                      )
+                                      ( PropName "unfoldr1ArrayImpl" )
+                                    )
+                                    ( Ref Nothing
+                                      ( Imported
+                                        ( ModuleName "Data.Maybe" )
+                                        ( Name "isNothing" )
+                                      ) 0
+                                    )
+                                  )
+                                  ( App Nothing
+                                    ( ObjectProp ( Just Always )
+                                      ( ForeignImport Nothing
+                                        ( ModuleName "Partial.Unsafe" ) ".spago/partial/v4.1.0/src/Partial/Unsafe.purs"
+                                        [ ( Nothing, Name "_unsafePartial" ) ]
+                                      )
+                                      ( PropName "_unsafePartial" )
+                                    )
+                                    ( Abs Nothing ( ParamUnused Nothing )
+                                      ( App Nothing
+                                        ( Ref Nothing
+                                          ( Imported
+                                            ( ModuleName "Data.Maybe" )
+                                            ( Name "fromJust" )
+                                          ) 0
+                                        )
+                                        ( Ref Nothing
+                                          ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) 0
+                                        )
+                                      )
+                                    )
+                                  )
+                                )
+                                ( Ref Nothing
+                                  ( Imported ( ModuleName "Data.Tuple" ) ( Name "fst" ) ) 0
+                                )
+                              )
+                              ( Ref Nothing
+                                ( Imported ( ModuleName "Data.Tuple" ) ( Name "snd" ) ) 0
+                              )
+                            )
+                          ]
+                        )
+                      )
+                    ]
+                  )
+                  ( PropName "unfoldr" )
+                )
+                ( Abs Nothing
+                  ( ParamNamed Nothing ( Name "s1" ) )
+                  ( App Nothing
+                    ( App Nothing
+                      ( App Nothing
+                        ( Ref Nothing ( Imported ( ModuleName "Data.Functor" ) ( Name "map" ) ) 0 )
+                        ( Ref Nothing
+                          ( Imported ( ModuleName "Data.Maybe" ) ( Name "functorMaybe" ) ) 0
+                        )
+                      )
+                      ( Abs Nothing
+                        ( ParamNamed Nothing ( Name "v" ) )
+                        ( App Nothing
+                          ( App Nothing
+                            ( Ctor Nothing ProductType
+                              ( ModuleName "Data.Tuple" )
+                              ( TyName "Tuple" )
+                              ( CtorName "Tuple" )
+                              [ FieldName "value0", FieldName "value1" ]
+                            )
+                            ( ObjectProp Nothing
+                              ( Ref Nothing ( Local ( Name "v" ) ) 0 )
+                              ( PropName "head" )
+                            )
+                          )
+                          ( ObjectProp Nothing
+                            ( Ref Nothing ( Local ( Name "v" ) ) 0 )
+                            ( PropName "tail" )
+                          )
+                        )
+                      )
+                    )
+                    ( App Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "uncons" ) ) 0
+                      )
+                      ( Ref Nothing ( Local ( Name "s1" ) ) 0 )
+                    )
+                  )
+                )
+              )
+              ( Ref Nothing ( Local ( Name "s" ) ) 0 )
+            )
+          )
+        )
+        ( Ref Nothing
+          ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "unsafeCodePointAt0" ) ) 0
+        )
+      ), RecursiveGroup
+      (
+        ( QName
+          { qnameModuleName = ModuleName "Data.String.CodePoints", qnameName = Name "codePointAtFallback"
+          }, Abs Nothing
+          ( ParamNamed Nothing ( Name "n" ) )
+          ( Abs Nothing
+            ( ParamNamed Nothing ( Name "s" ) )
+            ( Let Nothing
+              ( Standalone
+                ( Nothing, Name "v", App Nothing
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "uncons" ) ) 0
+                  )
+                  ( Ref Nothing ( Local ( Name "s" ) ) 0 )
+                ) :| []
+              )
+              ( IfThenElse Nothing
+                ( Eq Nothing
+                  ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
+                  ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v" ) ) 0 ) )
+                )
+                ( IfThenElse Nothing
+                  ( App Nothing
+                    ( App Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "eq" ) ) 0
+                      )
+                      ( Ref Nothing ( Local ( Name "n" ) ) 0 )
+                    )
+                    ( LiteralInt Nothing 0 )
+                  )
+                  ( App Nothing
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Just" ) ) 0 )
+                    ( ObjectProp Nothing
+                      ( ObjectProp Nothing
+                        ( Ref Nothing ( Local ( Name "v" ) ) 0 )
+                        ( PropName "value0" )
+                      )
+                      ( PropName "head" )
+                    )
+                  )
+                  ( App Nothing
+                    ( App Nothing
+                      ( Ref Nothing
+                        ( Imported
+                          ( ModuleName "Data.String.CodePoints" )
+                          ( Name "codePointAtFallback" )
+                        ) 0
+                      )
+                      ( App Nothing
+                        ( App Nothing
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "sub" ) ) 0
+                          )
+                          ( Ref Nothing ( Local ( Name "n" ) ) 0 )
+                        )
+                        ( LiteralInt Nothing 1 )
+                      )
+                    )
+                    ( ObjectProp Nothing
+                      ( ObjectProp Nothing
+                        ( Ref Nothing ( Local ( Name "v" ) ) 0 )
+                        ( PropName "value0" )
+                      )
+                      ( PropName "tail" )
+                    )
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) 0 )
+              )
+            )
+          )
+        ) :| []
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.String.CodePoints", qnameName = Name "codePointAt"
+        }, Abs Nothing
+        ( ParamNamed Nothing ( Name "v" ) )
+        ( Abs Nothing
+          ( ParamNamed Nothing ( Name "v1" ) )
+          ( IfThenElse Nothing
+            ( App Nothing
+              ( App Nothing
+                ( Ref Nothing
+                  ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "lessThan" ) ) 0
+                )
+                ( Ref Nothing ( Local ( Name "v" ) ) 0 )
+              )
+              ( LiteralInt Nothing 0 )
+            )
+            ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) 0 )
+            ( IfThenElse Nothing
+              ( Eq Nothing ( LiteralInt Nothing 0 ) ( Ref Nothing ( Local ( Name "v" ) ) 0 ) )
+              ( IfThenElse Nothing
+                ( Eq Nothing
+                  ( LiteralString Nothing "" )
+                  ( Ref Nothing ( Local ( Name "v1" ) ) 0 )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) 0 )
+                ( IfThenElse Nothing
+                  ( Eq Nothing ( LiteralInt Nothing 0 ) ( Ref Nothing ( Local ( Name "v" ) ) 0 ) )
+                  ( App Nothing
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Just" ) ) 0 )
+                    ( App Nothing
+                      ( Ref Nothing
+                        ( Imported
+                          ( ModuleName "Data.String.CodePoints" )
+                          ( Name "unsafeCodePointAt0" )
+                        ) 0
+                      )
+                      ( Ref Nothing ( Local ( Name "v1" ) ) 0 )
+                    )
+                  )
+                  ( App Nothing
+                    ( App Nothing
+                      ( App Nothing
+                        ( App Nothing
+                          ( App Nothing
+                            ( App Nothing
+                              ( ObjectProp ( Just Always )
+                                ( Ref Nothing
+                                  ( Imported
+                                    ( ModuleName "Data.String.CodePoints" )
+                                    ( Name "foreign" )
+                                  ) 0
+                                )
+                                ( PropName "_codePointAt" )
+                              )
+                              ( Ref Nothing
+                                ( Imported
+                                  ( ModuleName "Data.String.CodePoints" )
+                                  ( Name "codePointAtFallback" )
+                                ) 0
+                              )
+                            )
+                            ( Ref Nothing
+                              ( Imported ( ModuleName "Data.Maybe" ) ( Name "Just" ) ) 0
+                            )
+                          )
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) 0
+                          )
+                        )
+                        ( Ref Nothing
+                          ( Imported
+                            ( ModuleName "Data.String.CodePoints" )
+                            ( Name "unsafeCodePointAt0" )
+                          ) 0
+                        )
+                      )
+                      ( Ref Nothing ( Local ( Name "v" ) ) 0 )
+                    )
+                    ( Ref Nothing ( Local ( Name "v1" ) ) 0 )
+                  )
+                )
+              )
+              ( IfThenElse Nothing
+                ( Eq Nothing ( LiteralInt Nothing 0 ) ( Ref Nothing ( Local ( Name "v" ) ) 0 ) )
+                ( App Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Just" ) ) 0 )
+                  ( App Nothing
+                    ( Ref Nothing
+                      ( Imported
+                        ( ModuleName "Data.String.CodePoints" )
+                        ( Name "unsafeCodePointAt0" )
+                      ) 0
+                    )
+                    ( Ref Nothing ( Local ( Name "v1" ) ) 0 )
+                  )
+                )
+                ( App Nothing
+                  ( App Nothing
+                    ( App Nothing
+                      ( App Nothing
+                        ( App Nothing
+                          ( App Nothing
+                            ( ObjectProp ( Just Always )
+                              ( Ref Nothing
+                                ( Imported
+                                  ( ModuleName "Data.String.CodePoints" )
+                                  ( Name "foreign" )
+                                ) 0
+                              )
+                              ( PropName "_codePointAt" )
+                            )
+                            ( Ref Nothing
+                              ( Imported
+                                ( ModuleName "Data.String.CodePoints" )
+                                ( Name "codePointAtFallback" )
+                              ) 0
+                            )
+                          )
+                          ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Just" ) ) 0 )
+                        )
+                        ( Ref Nothing
+                          ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) 0
+                        )
+                      )
+                      ( Ref Nothing
+                        ( Imported
+                          ( ModuleName "Data.String.CodePoints" )
+                          ( Name "unsafeCodePointAt0" )
+                        ) 0
+                      )
+                    )
+                    ( Ref Nothing ( Local ( Name "v" ) ) 0 )
+                  )
+                  ( Ref Nothing ( Local ( Name "v1" ) ) 0 )
+                )
+              )
+            )
+          )
+        )
+      ), RecursiveGroup
+      (
+        ( QName
+          { qnameModuleName = ModuleName "Data.String.CodePoints", qnameName = Name "boundedEnumCodePoint"
+          }, LiteralObject Nothing
+          [
+            ( PropName "cardinality", App Nothing
+              ( App Nothing
+                ( Ref Nothing
+                  ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "add" ) ) 0
+                )
+                ( LiteralInt Nothing 1114111 )
+              )
+              ( LiteralInt Nothing 1 )
+            ),
+            ( PropName "fromEnum", Abs Nothing
+              ( ParamNamed Nothing ( Name "v" ) )
+              ( Ref Nothing ( Local ( Name "v" ) ) 0 )
+            ),
+            ( PropName "toEnum", Abs Nothing
+              ( ParamNamed Nothing ( Name "n" ) )
+              ( IfThenElse Nothing
+                ( App Nothing
+                  ( App Nothing
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "conj" ) ) 0
+                    )
+                    ( App Nothing
+                      ( App Nothing
+                        ( App Nothing
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Data.Ord" ) ( Name "greaterThanOrEq" ) ) 0
+                          )
+                          ( Ref Nothing ( Imported ( ModuleName "Data.Ord" ) ( Name "ordInt" ) ) 0 )
+                        )
+                        ( Ref Nothing ( Local ( Name "n" ) ) 0 )
+                      )
+                      ( LiteralInt Nothing 0 )
+                    )
+                  )
+                  ( App Nothing
+                    ( App Nothing
+                      ( Ref Nothing
+                        ( Imported
+                          ( ModuleName "Data.String.CodePoints" )
+                          ( Name "lessThanOrEq" )
+                        ) 0
+                      )
+                      ( Ref Nothing ( Local ( Name "n" ) ) 0 )
+                    )
+                    ( LiteralInt Nothing 1114111 )
+                  )
+                )
+                ( App Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Just" ) ) 0 )
+                  ( Ref Nothing ( Local ( Name "n" ) ) 0 )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) 0 )
+              )
+            ),
+            ( PropName "Bounded0", Abs Nothing ( ParamUnused Nothing )
+              ( LiteralObject Nothing
+                [
+                  ( PropName "bottom", LiteralInt Nothing 0 ),
+                  ( PropName "top", LiteralInt Nothing 1114111 ),
+                  ( PropName "Ord0", Abs Nothing ( ParamUnused Nothing )
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "ordCodePoint" ) ) 0
+                    )
+                  )
+                ]
+              )
+            ),
+            ( PropName "Enum1", Abs Nothing ( ParamUnused Nothing )
+              ( App Nothing
+                ( Ref Nothing
+                  ( Imported
+                    ( ModuleName "Data.String.CodePoints" )
+                    ( Name "Lazy_enumCodePoint" )
+                  ) 0
+                )
+                ( LiteralInt Nothing 0 )
+              )
+            )
+          ]
+        ) :|
+        [
+          ( QName
+            { qnameModuleName = ModuleName "Data.String.CodePoints", qnameName = Name "Lazy_enumCodePoint"
+            }, App Nothing
+            ( App Nothing
+              ( Ref Nothing ( Local ( Name "PSLUA_runtime_lazy" ) ) 0 )
+              ( LiteralString Nothing "enumCodePoint" )
+            )
+            ( Abs Nothing ( ParamUnused Nothing )
+              ( LiteralObject Nothing
+                [
+                  ( PropName "succ", App Nothing
+                    ( App Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Data.Enum" ) ( Name "defaultSucc" ) ) 0
+                      )
+                      ( App Nothing
+                        ( Ref Nothing ( Imported ( ModuleName "Data.Enum" ) ( Name "toEnum" ) ) 0 )
+                        ( Ref Nothing
+                          ( Imported
+                            ( ModuleName "Data.String.CodePoints" )
+                            ( Name "boundedEnumCodePoint" )
+                          ) 0
+                        )
+                      )
+                    )
+                    ( App Nothing
+                      ( Ref Nothing ( Imported ( ModuleName "Data.Enum" ) ( Name "fromEnum" ) ) 0 )
+                      ( Ref Nothing
+                        ( Imported
+                          ( ModuleName "Data.String.CodePoints" )
+                          ( Name "boundedEnumCodePoint" )
+                        ) 0
+                      )
+                    )
+                  ),
+                  ( PropName "pred", App Nothing
+                    ( App Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Data.Enum" ) ( Name "defaultPred" ) ) 0
+                      )
+                      ( App Nothing
+                        ( Ref Nothing ( Imported ( ModuleName "Data.Enum" ) ( Name "toEnum" ) ) 0 )
+                        ( Ref Nothing
+                          ( Imported
+                            ( ModuleName "Data.String.CodePoints" )
+                            ( Name "boundedEnumCodePoint" )
+                          ) 0
+                        )
+                      )
+                    )
+                    ( App Nothing
+                      ( Ref Nothing ( Imported ( ModuleName "Data.Enum" ) ( Name "fromEnum" ) ) 0 )
+                      ( Ref Nothing
+                        ( Imported
+                          ( ModuleName "Data.String.CodePoints" )
+                          ( Name "boundedEnumCodePoint" )
+                        ) 0
+                      )
+                    )
+                  ),
+                  ( PropName "Ord0", Abs Nothing ( ParamUnused Nothing )
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "ordCodePoint" ) ) 0
+                    )
+                  )
+                ]
+              )
+            )
+          )
+        ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "logShow" }, Abs Nothing
+        ( ParamNamed Nothing ( Name "dictShow" ) )
+        ( Abs Nothing
+          ( ParamNamed Nothing ( Name "a" ) )
+          ( App Nothing
+            ( ObjectProp ( Just Always )
+              ( ForeignImport Nothing
+                ( ModuleName "Effect.Console" ) ".spago/console/v6.1.0/src/Effect/Console.purs"
+                [ ( Nothing, Name "log" ) ]
+              )
+              ( PropName "log" )
+            )
+            ( App Nothing
+              ( App Nothing
+                ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "show" ) ) 0 )
+                ( Ref Nothing ( Local ( Name "dictShow" ) ) 0 )
+              )
+              ( Ref Nothing ( Local ( Name "a" ) ) 0 )
+            )
+          )
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.StringCodePoints.Test", qnameName = Name "compose"
+        }, App Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Control.Semigroupoid" ) ( Name "compose" ) ) 0 )
+        ( Ref Nothing
+          ( Imported ( ModuleName "Control.Semigroupoid" ) ( Name "semigroupoidFn" ) ) 0
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.StringCodePoints.Test", qnameName = Name "fromEnum"
+        }, App Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Data.Enum" ) ( Name "fromEnum" ) ) 0 )
+        ( Ref Nothing
+          ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "boundedEnumCodePoint" ) ) 0
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.StringCodePoints.Test", qnameName = Name "discard"
+        }, App Nothing
+        ( ObjectProp Nothing
+          ( LiteralObject Nothing
+            [
+              ( PropName "discard", Abs Nothing
+                ( ParamNamed Nothing ( Name "dictBind" ) )
+                ( App Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Control.Bind" ) ( Name "bind" ) ) 0 )
+                  ( Ref Nothing ( Local ( Name "dictBind" ) ) 0 )
+                )
+              )
+            ]
+          )
+          ( PropName "discard" )
+        )
+        ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "bindEffect" ) ) 0 )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.StringCodePoints.Test", qnameName = Name "showArray"
+        }, LiteralObject Nothing
+        [
+          ( PropName "show", App Nothing
+            ( ObjectProp ( Just Always )
+              ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) 0 )
+              ( PropName "showArrayImpl" )
+            )
+            ( App Nothing
+              ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "show" ) ) 0 )
+              ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showInt" ) ) 0 )
+            )
+          )
+        ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.StringCodePoints.Test", qnameName = Name "logShow"
+        }, App Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow" ) ) 0 )
+        ( Ref Nothing
+          ( Imported ( ModuleName "Golden.StringCodePoints.Test" ) ( Name "showArray" ) ) 0
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.StringCodePoints.Test", qnameName = Name "logShow1"
+        }, App Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow" ) ) 0 )
+        ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showInt" ) ) 0 )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.StringCodePoints.Test", qnameName = Name "logShow2"
+        }, App Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow" ) ) 0 )
+        ( App Nothing
+          ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "showMaybe" ) ) 0 )
+          ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showInt" ) ) 0 )
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.StringCodePoints.Test", qnameName = Name "map"
+        }, App Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Data.Functor" ) ( Name "map" ) ) 0 )
+        ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "functorMaybe" ) ) 0 )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.StringCodePoints.Test", qnameName = Name "cp"
+        }, App Nothing
+        ( App Nothing
+          ( Ref Nothing
+            ( Imported ( ModuleName "Golden.StringCodePoints.Test" ) ( Name "compose" ) ) 0
+          )
+          ( App Nothing
+            ( ObjectProp ( Just Always )
+              ( ForeignImport Nothing
+                ( ModuleName "Partial.Unsafe" ) ".spago/partial/v4.1.0/src/Partial/Unsafe.purs"
+                [ ( Nothing, Name "_unsafePartial" ) ]
+              )
+              ( PropName "_unsafePartial" )
+            )
+            ( Abs Nothing ( ParamUnused Nothing )
+              ( App Nothing
+                ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "fromJust" ) ) 0 )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) 0 )
+              )
+            )
+          )
+        )
+        ( App Nothing
+          ( Ref Nothing ( Imported ( ModuleName "Data.Enum" ) ( Name "toEnum" ) ) 0 )
+          ( Ref Nothing
+            ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "boundedEnumCodePoint" ) ) 0
+          )
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.StringCodePoints.Test", qnameName = Name "codes"
+        }, App Nothing
+        ( App Nothing
+          ( Ref Nothing
+            ( Imported ( ModuleName "Golden.StringCodePoints.Test" ) ( Name "compose" ) ) 0
+          )
+          ( App Nothing
+            ( App Nothing
+              ( Ref Nothing ( Imported ( ModuleName "Data.Functor" ) ( Name "map" ) ) 0 )
+              ( LiteralObject Nothing
+                [
+                  ( PropName "map", ObjectProp ( Just Always )
+                    ( ForeignImport Nothing
+                      ( ModuleName "Data.Functor" ) ".spago/prelude/v7.2.1/src/Data/Functor.purs"
+                      [ ( Nothing, Name "arrayMap" ) ]
+                    )
+                    ( PropName "arrayMap" )
+                  )
+                ]
+              )
+            )
+            ( Ref Nothing
+              ( Imported ( ModuleName "Golden.StringCodePoints.Test" ) ( Name "fromEnum" ) ) 0
+            )
+          )
+        )
+        ( Ref Nothing
+          ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "toCodePointArray" ) ) 0
+        )
+      )
+    ], uberModuleForeigns = [], uberModuleExports =
+    [
+      ( Name "str", LiteralString Nothing "aéЯ𝐀z" ),
+      ( Name "codes", Ref Nothing
+        ( Imported ( ModuleName "Golden.StringCodePoints.Test" ) ( Name "codes" ) ) 0
+      ),
+      ( Name "main", App Nothing
+        ( App Nothing
+          ( Ref Nothing
+            ( Imported ( ModuleName "Golden.StringCodePoints.Test" ) ( Name "discard" ) ) 0
+          )
+          ( App Nothing
+            ( Ref Nothing
+              ( Imported ( ModuleName "Golden.StringCodePoints.Test" ) ( Name "logShow" ) ) 0
+            )
+            ( App Nothing
+              ( Ref Nothing
+                ( Imported ( ModuleName "Golden.StringCodePoints.Test" ) ( Name "codes" ) ) 0
+              )
+              ( LiteralString Nothing "aéЯ𝐀z" )
+            )
+          )
+        )
+        ( Abs Nothing ( ParamUnused Nothing )
+          ( App Nothing
+            ( App Nothing
+              ( Ref Nothing
+                ( Imported ( ModuleName "Golden.StringCodePoints.Test" ) ( Name "discard" ) ) 0
+              )
+              ( App Nothing
+                ( Ref Nothing
+                  ( Imported ( ModuleName "Golden.StringCodePoints.Test" ) ( Name "logShow1" ) ) 0
+                )
+                ( App Nothing
+                  ( App Nothing
+                    ( App Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "compose" ) ) 0
+                      )
+                      ( ObjectProp ( Just Always )
+                        ( ForeignImport Nothing
+                          ( ModuleName "Data.Array" ) ".spago/arrays/v7.3.0/src/Data/Array.purs"
+                          [ ( Nothing, Name "length" ) ]
+                        )
+                        ( PropName "length" )
+                      )
+                    )
+                    ( Ref Nothing
+                      ( Imported
+                        ( ModuleName "Data.String.CodePoints" )
+                        ( Name "toCodePointArray" )
+                      ) 0
+                    )
+                  )
+                  ( LiteralString Nothing "aéЯ𝐀z" )
+                )
+              )
+            )
+            ( Abs Nothing ( ParamUnused Nothing )
+              ( App Nothing
+                ( App Nothing
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Golden.StringCodePoints.Test" ) ( Name "discard" ) ) 0
+                  )
+                  ( App Nothing
+                    ( Ref Nothing
+                      ( Imported
+                        ( ModuleName "Golden.StringCodePoints.Test" )
+                        ( Name "logShow1" )
+                      ) 0
+                    )
+                    ( App Nothing
+                      ( ObjectProp ( Just Always )
+                        ( Ref Nothing
+                          ( Imported ( ModuleName "Data.String.CodeUnits" ) ( Name "foreign" ) ) 0
+                        )
+                        ( PropName "length" )
+                      )
+                      ( LiteralString Nothing "aéЯ𝐀z" )
+                    )
+                  )
+                )
+                ( Abs Nothing ( ParamUnused Nothing )
+                  ( App Nothing
+                    ( App Nothing
+                      ( Ref Nothing
+                        ( Imported
+                          ( ModuleName "Golden.StringCodePoints.Test" )
+                          ( Name "discard" )
+                        ) 0
+                      )
+                      ( App Nothing
+                        ( Ref Nothing
+                          ( Imported
+                            ( ModuleName "Golden.StringCodePoints.Test" )
+                            ( Name "logShow" )
+                          ) 0
+                        )
+                        ( App Nothing
+                          ( Ref Nothing
+                            ( Imported
+                              ( ModuleName "Golden.StringCodePoints.Test" )
+                              ( Name "codes" )
+                            ) 0
+                          )
+                          ( App Nothing
+                            ( App Nothing
+                              ( Ref Nothing
+                                ( Imported
+                                  ( ModuleName "Data.String.CodePoints" )
+                                  ( Name "take" )
+                                ) 0
+                              )
+                              ( LiteralInt Nothing 2 )
+                            )
+                            ( LiteralString Nothing "aéЯ𝐀z" )
+                          )
+                        )
+                      )
+                    )
+                    ( Abs Nothing ( ParamUnused Nothing )
+                      ( App Nothing
+                        ( App Nothing
+                          ( Ref Nothing
+                            ( Imported
+                              ( ModuleName "Golden.StringCodePoints.Test" )
+                              ( Name "discard" )
+                            ) 0
+                          )
+                          ( App Nothing
+                            ( Ref Nothing
+                              ( Imported
+                                ( ModuleName "Golden.StringCodePoints.Test" )
+                                ( Name "logShow" )
+                              ) 0
+                            )
+                            ( App Nothing
+                              ( Ref Nothing
+                                ( Imported
+                                  ( ModuleName "Golden.StringCodePoints.Test" )
+                                  ( Name "codes" )
+                                ) 0
+                              )
+                              ( App Nothing
+                                ( App Nothing
+                                  ( Ref Nothing
+                                    ( Imported
+                                      ( ModuleName "Data.String.CodePoints" )
+                                      ( Name "drop" )
+                                    ) 0
+                                  )
+                                  ( LiteralInt Nothing 2 )
+                                )
+                                ( LiteralString Nothing "aéЯ𝐀z" )
+                              )
+                            )
+                          )
+                        )
+                        ( Abs Nothing ( ParamUnused Nothing )
+                          ( App Nothing
+                            ( App Nothing
+                              ( Ref Nothing
+                                ( Imported
+                                  ( ModuleName "Golden.StringCodePoints.Test" )
+                                  ( Name "discard" )
+                                ) 0
+                              )
+                              ( App Nothing
+                                ( Ref Nothing
+                                  ( Imported
+                                    ( ModuleName "Golden.StringCodePoints.Test" )
+                                    ( Name "logShow2" )
+                                  ) 0
+                                )
+                                ( App Nothing
+                                  ( App Nothing
+                                    ( Ref Nothing
+                                      ( Imported
+                                        ( ModuleName "Golden.StringCodePoints.Test" )
+                                        ( Name "map" )
+                                      ) 0
+                                    )
+                                    ( Ref Nothing
+                                      ( Imported
+                                        ( ModuleName "Golden.StringCodePoints.Test" )
+                                        ( Name "fromEnum" )
+                                      ) 0
+                                    )
+                                  )
+                                  ( App Nothing
+                                    ( App Nothing
+                                      ( Ref Nothing
+                                        ( Imported
+                                          ( ModuleName "Data.String.CodePoints" )
+                                          ( Name "codePointAt" )
+                                        ) 0
+                                      )
+                                      ( LiteralInt Nothing 0 )
+                                    )
+                                    ( LiteralString Nothing "aéЯ𝐀z" )
+                                  )
+                                )
+                              )
+                            )
+                            ( Abs Nothing ( ParamUnused Nothing )
+                              ( App Nothing
+                                ( App Nothing
+                                  ( Ref Nothing
+                                    ( Imported
+                                      ( ModuleName "Golden.StringCodePoints.Test" )
+                                      ( Name "discard" )
+                                    ) 0
+                                  )
+                                  ( App Nothing
+                                    ( Ref Nothing
+                                      ( Imported
+                                        ( ModuleName "Golden.StringCodePoints.Test" )
+                                        ( Name "logShow2" )
+                                      ) 0
+                                    )
+                                    ( App Nothing
+                                      ( App Nothing
+                                        ( Ref Nothing
+                                          ( Imported
+                                            ( ModuleName "Golden.StringCodePoints.Test" )
+                                            ( Name "map" )
+                                          ) 0
+                                        )
+                                        ( Ref Nothing
+                                          ( Imported
+                                            ( ModuleName "Golden.StringCodePoints.Test" )
+                                            ( Name "fromEnum" )
+                                          ) 0
+                                        )
+                                      )
+                                      ( App Nothing
+                                        ( App Nothing
+                                          ( Ref Nothing
+                                            ( Imported
+                                              ( ModuleName "Data.String.CodePoints" )
+                                              ( Name "codePointAt" )
+                                            ) 0
+                                          )
+                                          ( LiteralInt Nothing 3 )
+                                        )
+                                        ( LiteralString Nothing "aéЯ𝐀z" )
+                                      )
+                                    )
+                                  )
+                                )
+                                ( Abs Nothing ( ParamUnused Nothing )
+                                  ( App Nothing
+                                    ( App Nothing
+                                      ( Ref Nothing
+                                        ( Imported
+                                          ( ModuleName "Golden.StringCodePoints.Test" )
+                                          ( Name "discard" )
+                                        ) 0
+                                      )
+                                      ( App Nothing
+                                        ( Ref Nothing
+                                          ( Imported
+                                            ( ModuleName "Golden.StringCodePoints.Test" )
+                                            ( Name "logShow2" )
+                                          ) 0
+                                        )
+                                        ( App Nothing
+                                          ( App Nothing
+                                            ( Ref Nothing
+                                              ( Imported
+                                                ( ModuleName "Golden.StringCodePoints.Test" )
+                                                ( Name "map" )
+                                              ) 0
+                                            )
+                                            ( Ref Nothing
+                                              ( Imported
+                                                ( ModuleName "Golden.StringCodePoints.Test" )
+                                                ( Name "fromEnum" )
+                                              ) 0
+                                            )
+                                          )
+                                          ( App Nothing
+                                            ( App Nothing
+                                              ( Ref Nothing
+                                                ( Imported
+                                                  ( ModuleName "Data.String.CodePoints" )
+                                                  ( Name "codePointAt" )
+                                                ) 0
+                                              )
+                                              ( LiteralInt Nothing 5 )
+                                            )
+                                            ( LiteralString Nothing "aéЯ𝐀z" )
+                                          )
+                                        )
+                                      )
+                                    )
+                                    ( Abs Nothing ( ParamUnused Nothing )
+                                      ( App Nothing
+                                        ( App Nothing
+                                          ( Ref Nothing
+                                            ( Imported
+                                              ( ModuleName "Golden.StringCodePoints.Test" )
+                                              ( Name "discard" )
+                                            ) 0
+                                          )
+                                          ( App Nothing
+                                            ( Ref Nothing
+                                              ( Imported
+                                                ( ModuleName "Golden.StringCodePoints.Test" )
+                                                ( Name "logShow2" )
+                                              ) 0
+                                            )
+                                            ( App Nothing
+                                              ( App Nothing
+                                                ( Ref Nothing
+                                                  ( Imported
+                                                    ( ModuleName "Golden.StringCodePoints.Test" )
+                                                    ( Name "map" )
+                                                  ) 0
+                                                )
+                                                ( App Nothing
+                                                  ( App Nothing
+                                                    ( Ref Nothing
+                                                      ( Imported
+                                                        ( ModuleName "Golden.StringCodePoints.Test" )
+                                                        ( Name "compose" )
+                                                      ) 0
+                                                    )
+                                                    ( Ref Nothing
+                                                      ( Imported
+                                                        ( ModuleName "Golden.StringCodePoints.Test" )
+                                                        ( Name "fromEnum" )
+                                                      ) 0
+                                                    )
+                                                  )
+                                                  ( Abs Nothing
+                                                    ( ParamNamed Nothing ( Name "v" ) )
+                                                    ( ObjectProp Nothing
+                                                      ( Ref Nothing ( Local ( Name "v" ) ) 0 )
+                                                      ( PropName "head" )
+                                                    )
+                                                  )
+                                                )
+                                              )
+                                              ( App Nothing
+                                                ( Ref Nothing
+                                                  ( Imported
+                                                    ( ModuleName "Data.String.CodePoints" )
+                                                    ( Name "uncons" )
+                                                  ) 0
+                                                )
+                                                ( LiteralString Nothing "aéЯ𝐀z" )
+                                              )
+                                            )
+                                          )
+                                        )
+                                        ( Abs Nothing ( ParamUnused Nothing )
+                                          ( App Nothing
+                                            ( App Nothing
+                                              ( Ref Nothing
+                                                ( Imported
+                                                  ( ModuleName "Golden.StringCodePoints.Test" )
+                                                  ( Name "discard" )
+                                                ) 0
+                                              )
+                                              ( App Nothing
+                                                ( App Nothing
+                                                  ( Ref Nothing
+                                                    ( Imported
+                                                      ( ModuleName "Effect.Console" )
+                                                      ( Name "logShow" )
+                                                    ) 0
+                                                  )
+                                                  ( App Nothing
+                                                    ( Ref Nothing
+                                                      ( Imported
+                                                        ( ModuleName "Data.Maybe" )
+                                                        ( Name "showMaybe" )
+                                                      ) 0
+                                                    )
+                                                    ( Ref Nothing
+                                                      ( Imported
+                                                        ( ModuleName "Golden.StringCodePoints.Test" )
+                                                        ( Name "showArray" )
+                                                      ) 0
+                                                    )
+                                                  )
+                                                )
+                                                ( App Nothing
+                                                  ( App Nothing
+                                                    ( Ref Nothing
+                                                      ( Imported
+                                                        ( ModuleName "Golden.StringCodePoints.Test" )
+                                                        ( Name "map" )
+                                                      ) 0
+                                                    )
+                                                    ( App Nothing
+                                                      ( App Nothing
+                                                        ( Ref Nothing
+                                                          ( Imported
+                                                            ( ModuleName "Golden.StringCodePoints.Test" )
+                                                            ( Name "compose" )
+                                                          ) 0
+                                                        )
+                                                        ( Ref Nothing
+                                                          ( Imported
+                                                            ( ModuleName "Golden.StringCodePoints.Test" )
+                                                            ( Name "codes" )
+                                                          ) 0
+                                                        )
+                                                      )
+                                                      ( Abs Nothing
+                                                        ( ParamNamed Nothing ( Name "v" ) )
+                                                        ( ObjectProp Nothing
+                                                          ( Ref Nothing ( Local ( Name "v" ) ) 0 )
+                                                          ( PropName "tail" )
+                                                        )
+                                                      )
+                                                    )
+                                                  )
+                                                  ( App Nothing
+                                                    ( Ref Nothing
+                                                      ( Imported
+                                                        ( ModuleName "Data.String.CodePoints" )
+                                                        ( Name "uncons" )
+                                                      ) 0
+                                                    )
+                                                    ( LiteralString Nothing "aéЯ𝐀z" )
+                                                  )
+                                                )
+                                              )
+                                            )
+                                            ( Abs Nothing ( ParamUnused Nothing )
+                                              ( App Nothing
+                                                ( App Nothing
+                                                  ( Ref Nothing
+                                                    ( Imported
+                                                      ( ModuleName "Golden.StringCodePoints.Test" )
+                                                      ( Name "discard" )
+                                                    ) 0
+                                                  )
+                                                  ( App Nothing
+                                                    ( App Nothing
+                                                      ( Ref Nothing
+                                                        ( Imported
+                                                          ( ModuleName "Effect.Console" )
+                                                          ( Name "logShow" )
+                                                        ) 0
+                                                      )
+                                                      ( LiteralObject Nothing
+                                                        [
+                                                          ( PropName "show", Abs Nothing
+                                                            ( ParamNamed Nothing ( Name "v" ) )
+                                                            ( IfThenElse Nothing
+                                                              ( Ref Nothing
+                                                                ( Local ( Name "v" ) ) 0
+                                                              )
+                                                              ( LiteralString Nothing "true" )
+                                                              ( IfThenElse Nothing
+                                                                ( Eq Nothing ( LiteralBool Nothing False )
+                                                                  ( Ref Nothing
+                                                                    ( Local ( Name "v" ) ) 0
+                                                                  )
+                                                                )
+                                                                ( LiteralString Nothing "false" )
+                                                                ( Exception Nothing "No patterns matched" )
+                                                              )
+                                                            )
+                                                          )
+                                                        ]
+                                                      )
+                                                    )
+                                                    ( App Nothing
+                                                      ( App Nothing
+                                                        ( App Nothing
+                                                          ( Ref Nothing
+                                                            ( Imported
+                                                              ( ModuleName "Data.Eq" )
+                                                              ( Name "eq" )
+                                                            ) 0
+                                                          )
+                                                          ( LiteralObject Nothing
+                                                            [
+                                                              ( PropName "eq", ObjectProp ( Just Always )
+                                                                ( Ref Nothing
+                                                                  ( Imported
+                                                                    ( ModuleName "Data.Eq" )
+                                                                    ( Name "foreign" )
+                                                                  ) 0
+                                                                )
+                                                                ( PropName "eqStringImpl" )
+                                                              )
+                                                            ]
+                                                          )
+                                                        )
+                                                        ( App Nothing
+                                                          ( App Nothing
+                                                            ( ObjectProp ( Just Always )
+                                                              ( Ref Nothing
+                                                                ( Imported
+                                                                  ( ModuleName "Data.String.CodePoints" )
+                                                                  ( Name "foreign" )
+                                                                ) 0
+                                                              )
+                                                              ( PropName "_fromCodePointArray" )
+                                                            )
+                                                            ( Ref Nothing
+                                                              ( Imported
+                                                                ( ModuleName "Data.String.CodePoints" )
+                                                                ( Name "singletonFallback" )
+                                                              ) 0
+                                                            )
+                                                          )
+                                                          ( App Nothing
+                                                            ( Ref Nothing
+                                                              ( Imported
+                                                                ( ModuleName "Data.String.CodePoints" )
+                                                                ( Name "toCodePointArray" )
+                                                              ) 0
+                                                            )
+                                                            ( LiteralString Nothing "aéЯ𝐀z" )
+                                                          )
+                                                        )
+                                                      )
+                                                      ( LiteralString Nothing "aéЯ𝐀z" )
+                                                    )
+                                                  )
+                                                )
+                                                ( Abs Nothing ( ParamUnused Nothing )
+                                                  ( App Nothing
+                                                    ( Ref Nothing
+                                                      ( Imported
+                                                        ( ModuleName "Golden.StringCodePoints.Test" )
+                                                        ( Name "logShow" )
+                                                      ) 0
+                                                    )
+                                                    ( App Nothing
+                                                      ( Ref Nothing
+                                                        ( Imported
+                                                          ( ModuleName "Golden.StringCodePoints.Test" )
+                                                          ( Name "codes" )
+                                                        ) 0
+                                                      )
+                                                      ( App Nothing
+                                                        ( Ref Nothing
+                                                          ( Imported
+                                                            ( ModuleName "Data.String.CodePoints" )
+                                                            ( Name "singleton" )
+                                                          ) 0
+                                                        )
+                                                        ( App Nothing
+                                                          ( Ref Nothing
+                                                            ( Imported
+                                                              ( ModuleName "Golden.StringCodePoints.Test" )
+                                                              ( Name "cp" )
+                                                            ) 0
+                                                          )
+                                                          ( LiteralInt Nothing 119808 )
+                                                        )
+                                                      )
+                                                    )
+                                                  )
+                                                )
+                                              )
+                                            )
+                                          )
+                                        )
+                                      )
+                                    )
+                                  )
+                                )
+                              )
+                            )
+                          )
+                        )
+                      )
+                    )
+                  )
+                )
+              )
+            )
+          )
+        )
+      ),
+      ( Name "cp", Ref Nothing
+        ( Imported ( ModuleName "Golden.StringCodePoints.Test" ) ( Name "cp" ) ) 0
+      )
+    ]
+  }

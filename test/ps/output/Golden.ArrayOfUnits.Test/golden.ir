@@ -4,13 +4,13 @@ UberModule
       ( QName
         { qnameModuleName = ModuleName "Data.Unit", qnameName = Name "foreign"
         }, ForeignImport Nothing
-        ( ModuleName "Data.Unit" ) ".spago/prelude/v7.2.0/src/Data/Unit.purs"
+        ( ModuleName "Data.Unit" ) ".spago/prelude/v7.2.1/src/Data/Unit.purs"
         [ ( Just Always, Name "unit" ) ]
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Data.Semiring", qnameName = Name "foreign"
         }, ForeignImport Nothing
-        ( ModuleName "Data.Semiring" ) ".spago/prelude/v7.2.0/src/Data/Semiring.purs"
+        ( ModuleName "Data.Semiring" ) ".spago/prelude/v7.2.1/src/Data/Semiring.purs"
         [ ( Nothing, Name "intAdd" ), ( Nothing, Name "intMul" ) ]
       ), Standalone
       ( QName
@@ -552,7 +552,7 @@ UberModule
                   [
                     ( PropName "show", ObjectProp ( Just Always )
                       ( ForeignImport Nothing
-                        ( ModuleName "Data.Show" ) ".spago/prelude/v7.2.0/src/Data/Show.purs"
+                        ( ModuleName "Data.Show" ) ".spago/prelude/v7.2.1/src/Data/Show.purs"
                         [ ( Nothing, Name "showIntImpl" ) ]
                       )
                       ( PropName "showIntImpl" )
