@@ -124,7 +124,7 @@ return M.Golden_CharLiterals_Test_discard(M.Effect_Console_foreign.log(M.Golden_
           return M.Golden_CharLiterals_Test_discard(M.Effect_Console_foreign.log(M.Golden_CharLiterals_Test_show("a")))(function(  )
             return M.Golden_CharLiterals_Test_discard(M.Effect_Console_foreign.log(M.Golden_CharLiterals_Test_show1(M.Data_Eq_eqChar.eq("\n")("\n"))))(function(  )
               return M.Effect_Console_foreign.log(M.Golden_CharLiterals_Test_show1((function(  )
-                if "Data.Ordering∷Ordering.LT" == ((function()
+                if "Data.Ordering∷Ordering.LT" == (((function()
                   local unsafeCoerceImpl = function(lt)
                     return function(eq)
                       return function(gt)
@@ -147,7 +147,7 @@ return M.Golden_CharLiterals_Test_discard(M.Effect_Console_foreign.log(M.Golden_
                   ["$ctor"] = "Data.Ordering∷Ordering.LT"
                 })({ ["$ctor"] = "Data.Ordering∷Ordering.EQ" })({
                   ["$ctor"] = "Data.Ordering∷Ordering.GT"
-                })("\t")("\n")["$ctor"] then
+                })("\t")("\n"))["$ctor"] then
                   return true
                 else
                   return false

@@ -35,6 +35,19 @@ spec = do
       let s = Lua.assign (Lua.VarName [Lua.name|foo|]) (Lua.Boolean True)
       renderedStatement s `shouldBe` "foo = true"
 
+  describe "VarIndex" do
+    it "var[index]" do
+      let e = Lua.varName [Lua.name|expr|]
+      renderedExpression (Lua.varIndex e (Lua.String "foo"))
+        `shouldBe` "expr[\"foo\"]"
+
+    -- A table constructor must be parenthesised before bracket indexing:
+    -- `{ ["foo"] = 1 }["foo"]` is a Lua syntax error, `({ … })["foo"]` is not.
+    it "({[\"foo\"] = 1})[\"foo\"]" do
+      let e = Lua.table [Lua.tableRowKV (Lua.String "foo") (Lua.Integer 1)]
+      renderedExpression (Lua.varIndex e (Lua.String "foo"))
+        `shouldBe` "({ [\"foo\"] = 1 })[\"foo\"]"
+
   describe "Local declaration" do
     it "without a value" do
       let s = Lua.Local [Lua.name|foo|] Nothing
