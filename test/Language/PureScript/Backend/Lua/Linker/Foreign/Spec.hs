@@ -68,8 +68,9 @@ rawExports =
       end),
       toStringAs = (function(radix)
         return function(i)
-          local floor = math.floor
+          local floor, insert = math.floor, table.insert
           n = floor(i)
+          insert({}, n)
           return n
         end
       end),
@@ -87,8 +88,9 @@ parsedExports =
          ,
            "function(radix)\n"
              <> "    return function(i)\n"
-             <> "      local floor = math.floor\n"
+             <> "      local floor, insert = math.floor, table.insert\n"
              <> "      local n = floor(i)\n"
+             <> "      insert({}, n)\n"
              <> "      return n\n"
              <> "    end\n"
              <> "  end"

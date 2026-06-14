@@ -11,6 +11,7 @@ module Language.PureScript.Backend.Lua.Linker.Foreign
 
 import Control.Monad.Combinators.NonEmpty qualified as NE
 import Control.Monad.Trans.Except (except, throwE)
+import Data.Char qualified as Char
 import Data.DList (DList)
 import Data.DList qualified as DL
 import Data.String qualified as String
@@ -55,7 +56,7 @@ parseForeignSource foreigns path = runExceptT do
     Left err → throwE $ ForeignErrorParse filePath err
     Right parsed → do
       let header = guarded (not . Text.null) (Text.strip (unlines headerLines))
-      pure $ Source header (fmap patchToStringAsGlobalLeak parsed)
+      pure $ Source header (fmap fixDataIntToStringAsGlobalLeak parsed)
  where
   isReturn ∷ Text → Bool
   isReturn = Text.isPrefixOf "return"
@@ -117,11 +118,42 @@ valueParser = char '(' *> go 0 DL.empty <* MP.space
 char ∷ Char → Parser ()
 char c = MP.char c *> MP.space
 
-patchToStringAsGlobalLeak ∷ (Key, Text) → (Key, Text)
-patchToStringAsGlobalLeak (key, value)
-  | Key.toSafeName key == Name.unsafeName "toStringAs" =
-      (key, Text.replace "n = floor(i)" "local n = floor(i)" value)
+fixDataIntToStringAsGlobalLeak ∷ (Key, Text) → (Key, Text)
+fixDataIntToStringAsGlobalLeak (key, value)
+  | Key.toSafeName key == Name.unsafeName "toStringAs"
+  , hasKnownContext linesOfValue =
+      (key, Text.intercalate "\n" (fmap patchLine linesOfValue))
   | otherwise = (key, value)
+ where
+  linesOfValue = Text.lines value
+
+  hasKnownContext ls =
+    any (("math.floor" `Text.isInfixOf`) . normalizeSpaces) ls
+      && any (("table.insert" `Text.isInfixOf`) . normalizeSpaces) ls
+      && any hasReturnFunctionArg ls
+
+  hasReturnFunctionArg line =
+    let compact = normalizeSpaces line
+     in "return" `Text.isPrefixOf` compact
+          && "function(i)" `Text.isSuffixOf` compact
+
+  patchLine line
+    | Just indent <- parseFloorAssignment line =
+        indent <> "local n = floor(i)"
+    | otherwise = line
+
+  parseFloorAssignment line = do
+    let indent = Text.takeWhile Char.isSpace line
+        stripped = Text.strip line
+    guard (not ("local " `Text.isPrefixOf` stripped))
+    (lhs, rhsWithEq) <- Just (Text.breakOn "=" stripped)
+    guard (not (Text.null rhsWithEq))
+    guard (Text.strip lhs == "n")
+    let rhs = Text.strip (Text.drop 1 rhsWithEq)
+    guard (rhs == "floor(i)")
+    pure indent
+
+  normalizeSpaces = Text.filter (not . Char.isSpace)
 
 --------------------------------------------------------------------------------
 -- Errors ----------------------------------------------------------------------
