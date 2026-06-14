@@ -200,7 +200,7 @@ fromIR foreigns topLevelNames modname ir = case ir of
       -- PS sometimes inserts syntetic unused argument "Prim.undefined"
       IR.Ref _ann (IR.Imported (IR.ModuleName "Prim") (IR.Name "undefined")) _ →
         pure []
-      _ → goExp arg <&> \a → [a]
+      _ → (: []) <$> goExp arg
   IR.Ref _ann qualifiedName index →
     case qualifiedName of
       IR.Local name
