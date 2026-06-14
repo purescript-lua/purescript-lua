@@ -66,6 +66,13 @@ rawExports =
       baz = (function(unused)
         return zoo
       end),
+      toStringAs = (function(radix)
+        return function(i)
+          local floor = math.floor
+          n = floor(i)
+          return n
+        end
+      end),
       [ "if"]= (function() return "if" end),
     }
   |]
@@ -75,6 +82,17 @@ parsedExports =
   (unsafeKey "foo", "42")
     :| [ (unsafeKey "bar", "\"ok\"")
        , (unsafeKey "baz", "function(unused)\n    return zoo\n  end")
+       ,
+         ( unsafeKey "toStringAs"
+         ,
+           "function(radix)\n"
+             <> "    return function(i)\n"
+             <> "      local floor = math.floor\n"
+             <> "      local n = floor(i)\n"
+             <> "      return n\n"
+             <> "    end\n"
+             <> "  end"
+         )
        , (KeyReserved "if", "function() return \"if\" end")
        ]
 

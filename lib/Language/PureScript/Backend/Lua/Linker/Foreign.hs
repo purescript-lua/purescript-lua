@@ -17,6 +17,7 @@ import Data.String qualified as String
 import Data.Text qualified as Text
 import Language.PureScript.Backend.Lua.Key (Key)
 import Language.PureScript.Backend.Lua.Key qualified as Key
+import Language.PureScript.Backend.Lua.Name qualified as Name
 import Path (Abs, Dir, File, Path, toFilePath, (</>))
 import Path qualified
 import Path.IO qualified as Path
@@ -54,7 +55,7 @@ parseForeignSource foreigns path = runExceptT do
     Left err → throwE $ ForeignErrorParse filePath err
     Right parsed → do
       let header = guarded (not . Text.null) (Text.strip (unlines headerLines))
-      pure $ Source header parsed
+      pure $ Source header (fmap patchToStringAsGlobalLeak parsed)
  where
   isReturn ∷ Text → Bool
   isReturn = Text.isPrefixOf "return"
@@ -115,6 +116,12 @@ valueParser = char '(' *> go 0 DL.empty <* MP.space
 
 char ∷ Char → Parser ()
 char c = MP.char c *> MP.space
+
+patchToStringAsGlobalLeak ∷ (Key, Text) → (Key, Text)
+patchToStringAsGlobalLeak (key, value)
+  | Key.toSafeName key == Name.unsafeName "toStringAs" =
+      (key, Text.replace "n = floor(i)" "local n = floor(i)" value)
+  | otherwise = (key, value)
 
 --------------------------------------------------------------------------------
 -- Errors ----------------------------------------------------------------------
