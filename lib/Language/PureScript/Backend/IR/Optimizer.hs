@@ -32,6 +32,7 @@ import Language.PureScript.Backend.IR.Types
   , substitute
   , thenRewrite
   , unIndex
+  , unshift
   )
 
 optimizedUberModule ∷ UberModule → UberModule
@@ -301,7 +302,11 @@ betaReduce ∷ RewriteRule Ann
 betaReduce =
   pure . \case
     App _ (Abs _ (ParamNamed _ param) body) r →
-      Rewritten Recurse $ substitute (Local param) 0 r body
+      -- Removing the λ closes a binder for 'param', so any reference to it
+      -- that the substitution shifted past the binder must be lowered back
+      -- with 'unshift'; otherwise it is left pointing one binder too far out
+      -- and reaches the Lua backend as an unbound local (issue #56).
+      Rewritten Recurse . unshift param 0 $ substitute (Local param) 0 r body
     _ → NoChange
 
 {- Note [Eta reduction is unsound]

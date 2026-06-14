@@ -30,6 +30,7 @@ import Language.PureScript.Backend.IR.Types
   , getAnn
   , listGrouping
   , rewriteExpTopDown
+  , unshift
   )
 
 data EntryPoint = EntryPoint ModuleName [Name]
@@ -122,16 +123,19 @@ eliminateDeadCode uber@UberModule {..} =
       pure . \case
         Abs ann param b
           | not (paramId `member` reachableIds) →
-              Rewritten Recurse (Abs ann param' b)
+              Rewritten Recurse (Abs ann param' b')
          where
           paramId ∷ Id =
             case param of
               ParamUnused (pid, _) → pid
               ParamNamed (pid, _) _name → pid
-          param' =
+          -- Blanking an unused named binder drops a slot from that name's
+          -- De Bruijn namespace, so references in the body that skipped over it
+          -- (index ≥ 1) must be lowered, just as in beta reduction (issue #56).
+          (param', b') =
             case param of
-              ParamUnused pann → ParamUnused pann
-              ParamNamed pann _name → ParamUnused pann
+              ParamUnused pann → (ParamUnused pann, b)
+              ParamNamed pann name → (ParamUnused pann, unshift name 0 b)
         Let ann binds body →
           Rewritten Recurse case NE.nonEmpty preservedBinds of
             Nothing → body

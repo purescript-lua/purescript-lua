@@ -10,6 +10,7 @@
   , "prelude"
   , "profunctor"
   , "strings"
+  , "tailrec"
   ]
 , packages = ./packages.dhall
 , sources = [ "golden/**/*.purs" ]

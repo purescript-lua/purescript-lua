@@ -736,7 +736,87 @@ substitute name idx replacement = substitute' idx
    where
     go = substitute' index
 
--- | Increase the index of all bound variables matching the given variable name
+{- | Rewrite the De Bruijn index of every reference to @namespace@ that is free
+with respect to @minIndex@, using @adjust minIndex index@. Binders for other
+names are transparent; a binder for @namespace@ raises @minIndex@ by one (see
+Note [Sequential scoping of Let bindings] for the @Let@ case). This is the
+shared traversal behind 'shift' (which makes room for a new binder) and
+'unshift' (which closes the gap left by a removed one); keeping both on one
+traversal stops them from drifting apart.
+-}
+overFreeIndex
+  ∷ (Index → Index → Index)
+  -- ^ Given the current @minIndex@ and a reference's index, the new index
+  → Name
+  -- ^ The variable name to match (a.k.a. the namespace)
+  → Index
+  -- ^ The minimum bound at or above which references are considered free
+  → RawExp ann
+  → RawExp ann
+overFreeIndex adjust namespace = go
+ where
+  go minIndex expression =
+    case expression of
+      Ref ann (Local name) index
+        | name == namespace →
+            Ref ann (Local name) (adjust minIndex index)
+      Abs ann argument body →
+        Abs ann argument (go minIndex' body)
+       where
+        minIndex'
+          | paramName argument == Just namespace = minIndex + 1
+          | otherwise = minIndex
+      -- See Note [Sequential scoping of Let bindings]
+      Let ann binds body →
+        Let ann binds' body'
+       where
+        (bodyMinIndex, binds') = mapAccumL withGrouping minIndex binds
+        body' = go bodyMinIndex body
+        withGrouping minIdx grouping =
+          case grouping of
+            Standalone (annotation, boundName, expr) →
+              ( if boundName == namespace then minIdx + 1 else minIdx
+              , Standalone (annotation, boundName, go minIdx expr)
+              )
+            RecursiveGroup recBinds →
+              ( minIdx'
+              , RecursiveGroup $
+                  recBinds <&> \(nameAnn, boundName, expr) →
+                    (nameAnn, boundName, go minIdx' expr)
+              )
+             where
+              minIdx' =
+                minIdx
+                  + fromIntegral
+                    (length (filter (== namespace) (bindingNames grouping)))
+      App ann argument function →
+        App ann (go minIndex argument) (go minIndex function)
+      LiteralArray ann as →
+        LiteralArray ann (go minIndex <$> as)
+      LiteralObject ann props →
+        LiteralObject ann (go minIndex <<$>> props)
+      ReflectCtor ann a →
+        ReflectCtor ann (go minIndex a)
+      DataArgumentByIndex ann idx a →
+        DataArgumentByIndex ann idx (go minIndex a)
+      Eq ann a b →
+        Eq ann (go minIndex a) (go minIndex b)
+      ArrayLength ann a →
+        ArrayLength ann (go minIndex a)
+      ArrayIndex ann a indx →
+        ArrayIndex ann (go minIndex a) indx
+      ObjectProp ann a prop →
+        ObjectProp ann (go minIndex a) prop
+      ObjectUpdate ann a patches →
+        ObjectUpdate ann (go minIndex a) (go minIndex <<$>> patches)
+      IfThenElse ann p th el →
+        IfThenElse ann (go minIndex p) (go minIndex th) (go minIndex el)
+      _ → expression
+
+{- | Increase the index of all references to the given name bound at or above
+@minIndex@. Used to make room when a new binder for that name is introduced,
+e.g. when substituting a term under a λ that shadows the name.
+-}
 shift
   ∷ Int
   -- ^ The amount to shift by
@@ -747,72 +827,29 @@ shift
   → RawExp ann
   -- ^ The expression to shift
   → RawExp ann
-shift offset namespace minIndex expression =
-  case expression of
-    Ref ann (Local name) index →
-      Ref ann (Local name) $
-        index
-          + if name == namespace && minIndex <= index
-            then fromIntegral offset
-            else 0
-    Abs ann argument body →
-      Abs ann argument (shift offset namespace minIndex' body)
-     where
-      minIndex'
-        | paramName argument == Just namespace = minIndex + 1
-        | otherwise = minIndex
-    -- See Note [Sequential scoping of Let bindings]
-    Let ann binds body →
-      Let ann binds' body'
-     where
-      (bodyMinIndex, binds') = mapAccumL withGrouping minIndex binds
-      body' = shift offset namespace bodyMinIndex body
-      withGrouping minIdx grouping =
-        case grouping of
-          Standalone (annotation, boundName, expr) →
-            ( if boundName == namespace then minIdx + 1 else minIdx
-            , Standalone
-                ( annotation
-                , boundName
-                , shift offset namespace minIdx expr
-                )
-            )
-          RecursiveGroup recBinds →
-            ( minIdx'
-            , RecursiveGroup $
-                recBinds <&> \(nameAnn, boundName, expr) →
-                  (nameAnn, boundName, shift offset namespace minIdx' expr)
-            )
-           where
-            minIdx' =
-              minIdx
-                + fromIntegral
-                  (length (filter (== namespace) (bindingNames grouping)))
-    App ann argument function →
-      App ann (go argument) (go function)
-    LiteralArray ann as →
-      LiteralArray ann (go <$> as)
-    LiteralObject ann props →
-      LiteralObject ann (go <<$>> props)
-    ReflectCtor ann a →
-      ReflectCtor ann (go a)
-    DataArgumentByIndex ann idx a →
-      DataArgumentByIndex ann idx (go a)
-    Eq ann a b →
-      Eq ann (go a) (go b)
-    ArrayLength ann a →
-      ArrayLength ann (go a)
-    ArrayIndex ann a indx →
-      ArrayIndex ann (go a) indx
-    ObjectProp ann a prop →
-      ObjectProp ann (go a) prop
-    ObjectUpdate ann a patches →
-      ObjectUpdate ann (go a) (go <<$>> patches)
-    IfThenElse ann p th el →
-      IfThenElse ann (go p) (go th) (go el)
-    _ → expression
- where
-  go = shift offset namespace minIndex
+shift offset =
+  overFreeIndex \minIndex index →
+    if minIndex <= index then index + fromIntegral offset else index
+
+{- | Decrease by one the index of references to the given name bound strictly
+above @minIndex@: the inverse of @shift 1@, to be applied after a binder for
+the name is removed (e.g. by beta reduction) so that references which pointed
+past that binder are lowered back into place. References at exactly @minIndex@
+are the removed binder itself and have already been consumed by the
+accompanying substitution, so the strict @minIndex < index@ guard both leaves
+genuine inner references untouched and keeps the 'Natural' index from
+underflowing.
+-}
+unshift
+  ∷ Name
+  -- ^ The variable name to match (a.k.a. the namespace)
+  → Index
+  -- ^ References bound strictly above this bound are lowered
+  → RawExp ann
+  → RawExp ann
+unshift =
+  overFreeIndex \minIndex index →
+    if minIndex < index then index - 1 else index
 
 $(makePrisms ''AlgebraicType)
 $(makePrisms ''Parameter)
