@@ -1,5 +1,3 @@
-{-# LANGUAGE QuasiQuotes #-}
-
 module Language.PureScript.Backend.Lua
   ( fromUberModule
   , fromIR
@@ -177,7 +175,10 @@ fromIR foreigns topLevelNames modname ir = case ir of
   IR.ArrayLength _ann e →
     Right . Lua.hash <$> goExp e
   IR.ArrayIndex _ann expr index →
-    Right . flip Lua.varIndex (Lua.Integer (fromIntegral index)) <$> goExp expr
+    -- IR array indices are 0-based (de Bruijn-style, like the source language),
+    -- but Lua tables are 1-based, so shift by one. This mirrors the arrays FFI
+    -- `indexImpl`, which reads `xs[i + 1]`. See issue #49.
+    Right . flip Lua.varIndex (Lua.Integer (fromIntegral index + 1)) <$> goExp expr
   IR.ObjectProp _ann expr propName →
     Right . flip Lua.varField (fromPropName propName) <$> goExp expr
   IR.ObjectUpdate _ann expr propValues → do
