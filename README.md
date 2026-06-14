@@ -1,11 +1,11 @@
 # Purescript Backend for Lua
 
-[![Purescript Lua CI](https://github.com/Unisay/purescript-lua/actions/workflows/ci.yaml/badge.svg)](https://github.com/Unisay/purescript-lua/actions/workflows/ci.yaml)
+[![Purescript Lua CI](https://github.com/purescript-lua/purescript-lua/actions/workflows/ci.yaml/badge.svg)](https://github.com/purescript-lua/purescript-lua/actions/workflows/ci.yaml)
 
 🔋 Status: (2024-04-20) the project is in the "_ready to be experimented with_" state (read: it likely contains bugs but is already usable). 
 
 💡 If you have an idea on how to use Purescript to Lua compilation please contribute it here:
-https://github.com/Unisay/purescript-lua/discussions/categories/ideas
+https://github.com/purescript-lua/purescript-lua/discussions/categories/ideas
 
 ## Features
 
@@ -13,7 +13,7 @@ https://github.com/Unisay/purescript-lua/discussions/categories/ideas
 - [x] FFI with Lua.
 - [x] Dead Code Elimination (DCE).
 - [x] Code inlining.
-- [x] [Package Set](https://github.com/Unisay/purescript-lua-package-sets) for PureScript/Lua libs.
+- [x] [Package Set](https://github.com/purescript-lua/purescript-lua-package-sets) for PureScript/Lua libs.
 - [x] All core libs added to the package set.
 
 ## Quick Start
@@ -56,15 +56,15 @@ Assuming that `pslua` executable is already available on your PATH
 ### Using nix with flakes
 
 ```
-nix run 'github:Unisay/purescript-lua' -- --help
+nix run 'github:purescript-lua/purescript-lua' -- --help
 ```
 
 ## Installation
 
-If you're on a x86 64bit Linux system then you can download a pre-built executable from the [releases](https://github.com/Unisay/purescript-lua/releases) page:
+If you're on a x86 64bit Linux system then you can download a pre-built executable from the [releases](https://github.com/purescript-lua/purescript-lua/releases) page:
 
 ```
-wget -c https://github.com/Unisay/purescript-lua/releases/download/0.1.1-alpha/pslua-linux_x86_64.tar.gz -O - | tar -xz
+wget -c https://github.com/purescript-lua/purescript-lua/releases/download/0.1.1-alpha/pslua-linux_x86_64.tar.gz -O - | tar -xz
 ```
 
 alternatively,
@@ -72,7 +72,7 @@ alternatively,
 ### Using nix with flakes
 
 ```
-nix profile install 'github:Unisay/purescript-lua'
+nix profile install 'github:purescript-lua/purescript-lua'
 ```
 
 will make `pslua` executable available for use.

@@ -296,7 +296,7 @@ The project uses Hedgehog for property-based testing:
    edit `compiler-nix-name` / `easy-ps.purs-*` in `flake.nix`.
 2. PureScript package sets live in `test/ps/packages.dhall` as
    `upstream-ps // upstream-lua`. The right operand wins: `upstream-lua`
-   (releases of `Unisay/purescript-lua-package-sets`) overrides core
+   (releases of `purescript-lua/purescript-lua-package-sets`) overrides core
    packages with Lua forks that ship `.lua` FFI files.
 3. After changing package sets or `purs`: `cd test/ps && spago build -u
    '-g corefn'`, then `cabal test all`. Drop the `sha256:` annotations
@@ -311,7 +311,7 @@ The project uses Hedgehog for property-based testing:
 
 - **`unit` must not be `nil`**: Lua tables cannot hold `nil` values, so
   `Array Unit` silently collapses to an empty table if the prelude defines
-  `unit = nil`. Requires `Unisay/purescript-lua-prelude` ≥ v7.2.0, where
+  `unit = nil`. Requires `purescript-lua/purescript-lua-prelude` ≥ v7.2.0, where
   `unit = {}`. If eval goldens for unit arrays start printing `0`, a
   package set downgraded the prelude — do not accept such goldens.
 - A generated-Lua change that only passes `luacheck` is not verified:
