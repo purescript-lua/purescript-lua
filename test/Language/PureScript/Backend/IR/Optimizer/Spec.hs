@@ -1,14 +1,15 @@
 module Language.PureScript.Backend.IR.Optimizer.Spec where
 
-import Control.Lens (universeOf)
+import Control.Lens (toListOf, universeOf)
 import Data.Map qualified as Map
-import Hedgehog (annotateShow, forAll, (===))
+import Hedgehog (PropertyT, annotateShow, forAll, (===))
 import Hedgehog.Gen qualified as Gen
 import Language.PureScript.Backend.IR.Gen qualified as Gen
 import Language.PureScript.Backend.IR.Linker (LinkMode (..))
 import Language.PureScript.Backend.IR.Linker qualified as Linker
 import Language.PureScript.Backend.IR.Names
   ( Name (..)
+  , PropName (..)
   , QName (..)
   , Qualified (Local)
   , moduleNameFromString
@@ -20,7 +21,8 @@ import Language.PureScript.Backend.IR.Optimizer
   )
 import Language.PureScript.Backend.IR.Types
   ( Exp
-  , Grouping (Standalone)
+  , Grouping (..)
+  , Index
   , Module (..)
   , RawExp (..)
   , abstraction
@@ -31,16 +33,58 @@ import Language.PureScript.Backend.IR.Types
   , lets
   , literalBool
   , literalInt
+  , literalObject
   , noAnn
+  , paramName
   , paramNamed
   , paramUnused
   , refImported
   , refLocal
   , refLocal0
   , subexpressions
+  , unIndex
   )
-import Test.Hspec (Spec, describe)
+import Test.Hspec (Spec, SpecWith, describe, it)
+import Test.Hspec.Hedgehog (hedgehog, modifyMaxShrinks, modifyMaxSuccess)
 import Test.Hspec.Hedgehog.Extended (test)
+
+-- | Like 'test', but runs the property over many generated inputs.
+prop ∷ String → PropertyT IO () → SpecWith ()
+prop title =
+  modifyMaxShrinks (const 20)
+    . modifyMaxSuccess (const 100)
+    . it title
+    . hedgehog
+
+{- | Local references whose De Bruijn index points past every enclosing binder
+of that name: unbound locals, which the Lua backend rejects (see
+Note [Locals are uniquely named after renameShadowedNames]). An empty result
+means the expression is well-scoped. The binder bookkeeping mirrors
+'shift'/'unshift'; see Note [Sequential scoping of Let bindings] for 'Let'.
+-}
+unboundLocals ∷ Exp → [(Name, Index)]
+unboundLocals = go Map.empty
+ where
+  go ∷ Map Name Natural → Exp → [(Name, Index)]
+  go scope = \case
+    Ref _ (Local nm) index
+      | unIndex index < Map.findWithDefault 0 nm scope → []
+      | otherwise → [(nm, index)]
+    Abs _ param body → go (bindName (paramName param) scope) body
+    Let _ binds body →
+      let (bodyScope, errs) = foldl' letGrouping (scope, []) (toList binds)
+       in errs <> go bodyScope body
+    other → foldMap (go scope) (toListOf subexpressions other)
+   where
+    bindName Nothing sc = sc
+    bindName (Just nm) sc = Map.insertWith (+) nm 1 sc
+    letGrouping (sc, errs) = \case
+      Standalone (_ann, nm, e) →
+        (Map.insertWith (+) nm 1 sc, errs <> go sc e)
+      RecursiveGroup recBinds →
+        let names = (\(_ann, nm, _e) → nm) <$> toList recBinds
+            sc' = foldr (\nm → Map.insertWith (+) nm 1) sc names
+         in (sc', errs <> foldMap (\(_ann, _nm, e) → go sc' e) recBinds)
 
 spec ∷ Spec
 spec = describe "IR Optimizer" do
@@ -211,6 +255,103 @@ spec = describe "IR Optimizer" do
             ]
       annotateShow optimized
       unboundLocalRefs === []
+
+    -- Issue #56: beta reduction removes a binder, so any reference that the
+    -- substitution shifted past it must be lowered back. Here `b` is bound by
+    -- an outer λ, while the reduced inner λ is *also* named `b`; reducing it
+    -- must drop the outer reference from index 1 back to 0 rather than leave it
+    -- unbound. This is the IR shape `Data.Array.foldRecM` boils down to.
+    test "beta reduction does not unbind a reference shadowed by the binder" do
+      let a = Name "a"
+          b = Name "b"
+          inner =
+            abstraction (paramNamed a) $
+              abstraction (paramNamed b) $
+                literalObject
+                  [ (PropName "p", refLocal a 0)
+                  , (PropName "q", refLocal b 0)
+                  ]
+          -- (\b -> (\a -> \b -> { p: a, q: b }) b 0)
+          shadowed =
+            abstraction (paramNamed b) $
+              application
+                (application inner (refLocal b 0))
+                (literalInt 0)
+          original =
+            Linker.UberModule
+              { uberModuleForeigns = []
+              , uberModuleBindings = []
+              , uberModuleExports = [(Name "foldRecMShape", shadowed)]
+              }
+          -- After the redexes are reduced only the outer λ remains, so the
+          -- surviving reference is `b` at index 0.
+          expected =
+            abstraction (paramNamed b) $
+              literalObject
+                [ (PropName "p", refLocal b 0)
+                , (PropName "q", literalInt 0)
+                ]
+          optimized = optimizedUberModule original
+          offending =
+            foldMap (unboundLocals . snd) (Linker.uberModuleExports optimized)
+      annotateShow optimized
+      offending === []
+      Linker.uberModuleExports optimized === [(Name "foldRecMShape", expected)]
+
+    -- Sibling of #56 in the DCE pass (found by the property below). Dead-code
+    -- elimination blanks an unused named binder to ParamUnused. Here the inner
+    -- λj is unused, yet the body references the *outer* j (at index 1, skipping
+    -- the inner one); blanking the inner binder must lower that reference to 0,
+    -- otherwise it is left unbound.
+    test "blanking an unused shadowing binder keeps outer references bound" do
+      let j = Name "j"
+          k = Name "k"
+          -- \j -> (\k -> { foo: (\_ -> \j -> k) 0 }) j
+          shadowed =
+            abstraction (paramNamed j) $
+              application
+                ( abstraction (paramNamed k) $
+                    literalObject
+                      [
+                        ( PropName "foo"
+                        , application
+                            ( abstraction paramUnused $
+                                abstraction (paramNamed j) (refLocal k 0)
+                            )
+                            (literalInt 0)
+                        )
+                      ]
+                )
+                (refLocal j 0)
+          original =
+            Linker.UberModule
+              { uberModuleForeigns = []
+              , uberModuleBindings = []
+              , uberModuleExports = [(Name "shape", shadowed)]
+              }
+          optimized = optimizedUberModule original
+          offending =
+            foldMap (unboundLocals . snd) (Linker.uberModuleExports optimized)
+      annotateShow optimized
+      offending === []
+
+    -- The general invariant behind #37 and #56: optimizing a well-scoped
+    -- expression must never produce an unbound local reference. Runs through the
+    -- whole 'optimizedUberModule' pipeline (not a single 'optimizedExpression'
+    -- pass) because the #56 dangling reference only surfaces once an enclosing
+    -- redex is reduced on a later iteration.
+    prop "optimization keeps expressions well-scoped" do
+      e ← forAll Gen.scopedExp
+      annotateShow e
+      unboundLocals e === [] -- the generator only emits well-scoped terms
+      let optimized =
+            optimizedUberModule
+              Linker.UberModule
+                { Linker.uberModuleForeigns = []
+                , Linker.uberModuleBindings = []
+                , Linker.uberModuleExports = [(Name "root", e)]
+                }
+      foldMap (unboundLocals . snd) (Linker.uberModuleExports optimized) === []
 
   describe "renames shadowed names" do
     test "nested λ-abstractions" do

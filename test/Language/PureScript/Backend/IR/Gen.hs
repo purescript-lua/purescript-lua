@@ -1,5 +1,6 @@
 module Language.PureScript.Backend.IR.Gen where
 
+import Data.Map.Strict qualified as Map
 import Data.Text qualified as Text
 import Hedgehog (MonadGen)
 import Hedgehog.Corpus qualified as Corpus
@@ -56,6 +57,75 @@ exp =
           (`IR.lets` e) <$> Gen.nonEmpty (Range.linear 1 5) binding
       )
     ]
+
+{- | A generation-time scope: each local name in scope mapped to the number of
+enclosing binders for it. Lets 'scopedExp' emit only references that resolve
+to a binder (a valid De Bruijn index for that name).
+-}
+type Scope = Map IR.Name Natural
+
+{- | Generate a closed, well-scoped expression: every local reference has an
+index below the number of enclosing binders of that name. Restricted to
+λ / application / if / object / reference / scalar, which is enough to
+exercise beta reduction and name shadowing (the surface of issues #37 and
+#56) while keeping well-scopedness easy to guarantee by construction. 'Let'
+is intentionally left out; its sequential scoping is covered by the
+hand-written specs.
+-}
+scopedExp ∷ ∀ m. MonadGen m ⇒ m IR.Exp
+scopedExp =
+  -- Cap the size hard: beta reduction duplicates substituted arguments, so an
+  -- unbounded term can blow the optimizer up exponentially in memory. Small
+  -- terms are plenty to surface scoping bugs (issues #37 / #56 both shrink to
+  -- a handful of binders).
+  Gen.scale (min 8) (scopedExpIn mempty)
+
+scopedExpIn ∷ ∀ m. MonadGen m ⇒ Scope → m IR.Exp
+scopedExpIn scope =
+  Gen.recursiveFrequency
+    ((4, scalarExp) : [(5, scopedRef) | not (null inScope)])
+    [ (6, IR.application <$> scopedExpIn scope <*> scopedExpIn scope)
+    ,
+      ( 3
+      , IR.ifThenElse
+          <$> scopedExpIn scope
+          <*> scopedExpIn scope
+          <*> scopedExpIn scope
+      )
+    , (5, genAbs)
+    , (4, genRedex)
+    ,
+      ( 2
+      , IR.literalObject
+          <$> Gen.list
+            (Range.linear 1 4)
+            ((,) <$> genPropName <*> scopedExpIn scope)
+      )
+    ]
+ where
+  inScope = [(nm, count) | (nm, count) ← Map.toList scope, count > 0]
+  scopedRef = do
+    (nm, count) ← Gen.element inScope
+    index ← Gen.integral (Range.linear 0 (fromIntegral count - 1))
+    pure (IR.refLocal nm index)
+  genAbs = do
+    (param, body) ← genBinderBody
+    pure (IR.abstraction param body)
+  -- An immediately-applied λ: a beta redex. Generating these directly (rather
+  -- than hoping an application's head happens to be a λ) is what makes the
+  -- well-scopedness property actually exercise beta reduction, including the
+  -- shadowing case behind issue #56.
+  genRedex = do
+    (param, body) ← genBinderBody
+    arg ← scopedExpIn scope
+    pure (IR.application (IR.abstraction param body) arg)
+  genBinderBody = do
+    param ← parameter
+    let scope' = case param of
+          IR.ParamNamed _ nm → Map.insertWith (+) nm 1 scope
+          IR.ParamUnused _ → scope
+    body ← scopedExpIn scope'
+    pure (param, body)
 
 binding ∷ MonadGen m ⇒ m IR.Binding
 binding = Gen.frequency [(8, standaloneBinding), (2, recursiveBinding)]
