@@ -301,7 +301,7 @@ M.Data_Ord_compare = function(dict) return dict.compare end
 M.Data_Ord_greaterThanOrEq = function(dictOrd)
   return function(a1)
     return function(a2)
-      if "Data.Ordering∷Ordering.LT" == M.Data_Ord_compare(dictOrd)(a1)(a2)["$ctor"] then
+      if "Data.Ordering∷Ordering.LT" == (M.Data_Ord_compare(dictOrd)(a1)(a2))["$ctor"] then
         return false
       else
         return true
@@ -312,7 +312,7 @@ end
 M.Data_Ord_lessThan = function(dictOrd)
   return function(a1)
     return function(a2)
-      if "Data.Ordering∷Ordering.LT" == M.Data_Ord_compare(dictOrd)(a1)(a2)["$ctor"] then
+      if "Data.Ordering∷Ordering.LT" == (M.Data_Ord_compare(dictOrd)(a1)(a2))["$ctor"] then
         return true
       else
         return false
@@ -323,7 +323,7 @@ end
 M.Data_Ord_lessThanOrEq = function(dictOrd)
   return function(a1)
     return function(a2)
-      if "Data.Ordering∷Ordering.GT" == M.Data_Ord_compare(dictOrd)(a1)(a2)["$ctor"] then
+      if "Data.Ordering∷Ordering.GT" == (M.Data_Ord_compare(dictOrd)(a1)(a2))["$ctor"] then
         return false
       else
         return true
@@ -496,7 +496,7 @@ M.Data_String_CodePoints_unsafeCodePointAt0 = M.Data_String_CodePoints_foreign._
       end
     end)(0)(s))
   if M.Data_String_CodePoints_conj(M.Data_String_CodePoints_conj(M.Data_String_CodePoints_lessThanOrEq(55296)(cu0))(M.Data_String_CodePoints_lessThanOrEq(cu0)(56319)))((function(  )
-    if "Data.Ordering∷Ordering.GT" == M.Data_Ord_compare(M.Data_Ord_ordInt)(M.Data_String_CodeUnits_foreign.length(s))(1)["$ctor"] then
+    if "Data.Ordering∷Ordering.GT" == (M.Data_Ord_compare(M.Data_Ord_ordInt)(M.Data_String_CodeUnits_foreign.length(s))(1))["$ctor"] then
       return true
     else
       return false
