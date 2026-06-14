@@ -9,6 +9,7 @@ import Language.PureScript.Backend qualified as Backend
 import Language.PureScript.Backend.IR qualified as IR
 import Language.PureScript.Backend.Lua qualified as Lua
 import Language.PureScript.Backend.Lua.Printer qualified as Printer
+import Language.PureScript.Backend.Output (withOutputFile)
 import Language.PureScript.CoreFn.Reader qualified as CoreFn
 import Language.PureScript.Names (runIdent, runModuleName)
 import Main.Utf8 qualified as Utf8
@@ -53,19 +54,19 @@ main = Utf8.withUtf8 do
       & Oops.runOops
 
   let outputFile = toFilePath luaOutput
-  withFile outputFile WriteMode \h →
+  withOutputFile luaOutput \h →
     renderIO h . layoutPretty defaultLayoutOptions $
       Printer.printLuaChunk lua
 
   when (OutputIR `elem` extraOutputs) do
-    irOutputFile ← toFilePath <$> replaceExtension ".ir" luaOutput
-    withFile irOutputFile WriteMode (`pHPrint` ir)
-    putTextLn $ "Wrote IR to " <> toText irOutputFile
+    irOutputPath ← replaceExtension ".ir" luaOutput
+    withOutputFile irOutputPath (`pHPrint` ir)
+    putTextLn $ "Wrote IR to " <> toText (toFilePath irOutputPath)
 
   when (OutputLuaAst `elem` extraOutputs) do
-    luaAstOutputFile ← toFilePath <$> replaceExtension ".lua-ast" luaOutput
-    withFile luaAstOutputFile WriteMode (`pHPrint` lua)
-    putTextLn $ "Wrote Lua AST to " <> toText luaAstOutputFile
+    luaAstOutputPath ← replaceExtension ".lua-ast" luaOutput
+    withOutputFile luaAstOutputPath (`pHPrint` lua)
+    putTextLn $ "Wrote Lua AST to " <> toText (toFilePath luaAstOutputPath)
 
   putTextLn $ "Wrote linked modules to " <> toText outputFile
 
