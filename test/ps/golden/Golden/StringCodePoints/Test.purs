@@ -1,5 +1,5 @@
 -- Exercises Data.String.CodePoints end to end on the released package set
--- (Unisay/purescript-lua-strings v6.2.0). The test string mixes UTF-8 widths
+-- (purescript-lua/purescript-lua-strings v6.2.0). The test string mixes UTF-8 widths
 -- 1..4: 'a' (1 byte), 'é' (2), 'Я' (2, Cyrillic), '𝐀' (4, astral), 'z' (1).
 -- Output is all Ints/Bools via fromEnum so the golden stays ASCII and does
 -- not depend on how strings are shown.
