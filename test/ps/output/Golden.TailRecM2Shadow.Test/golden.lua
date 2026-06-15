@@ -24,24 +24,9 @@ M.Data_Semiring_foreign = {
   intMul = function(x) return function(y) return x * y end end
 }
 M.Effect_foreign = {
-  pureE = function(a)
-      return function()
-        return a
-      end
-    end,
-  bindE = function(a)
-      return function(f)
-        return function()
-          return f(a())()
-        end
-      end
-    end,
-  untilE = function(f)
-      return function()
-        while not f() do
-        end
-      end
-    end
+  pureE = function(a) return function() return a end end,
+  bindE = function(a) return function(f) return function() return f(a())() end end end,
+  untilE = function(f) return function() while not f() do end end end
 }
 M.Effect_Ref_foreign = {
   _new = function(val) return function() return {value = val} end end,

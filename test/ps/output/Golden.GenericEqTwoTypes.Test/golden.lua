@@ -25,18 +25,8 @@ M.Data_HeytingAlgebra_foreign = {
   boolNot = function(b) return not b end
 }
 M.Effect_foreign = {
-  pureE = function(a)
-      return function()
-        return a
-      end
-    end,
-  bindE = function(a)
-      return function(f)
-        return function()
-          return f(a())()
-        end
-      end
-    end
+  pureE = function(a) return function() return a end end,
+  bindE = function(a) return function(f) return function() return f(a())() end end end
 }
 M.Type_Proxy_Proxy = { ["$ctor"] = "Type.Proxy∷Proxy.Proxy" }
 M.Data_HeytingAlgebra_heytingAlgebraBoolean = {

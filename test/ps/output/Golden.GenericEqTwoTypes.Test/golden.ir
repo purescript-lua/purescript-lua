@@ -4,13 +4,13 @@ UberModule
       ( QName
         { qnameModuleName = ModuleName "Data.HeytingAlgebra", qnameName = Name "foreign"
         }, ForeignImport Nothing
-        ( ModuleName "Data.HeytingAlgebra" ) ".spago/prelude/v7.2.1/src/Data/HeytingAlgebra.purs"
+        ( ModuleName "Data.HeytingAlgebra" ) ".spago/prelude/v7.3.0/src/Data/HeytingAlgebra.purs"
         [ ( Nothing, Name "boolConj" ), ( Nothing, Name "boolDisj" ), ( Nothing, Name "boolNot" ) ]
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Effect", qnameName = Name "foreign"
         }, ForeignImport Nothing
-        ( ModuleName "Effect" ) ".spago/effect/v4.1.0/src/Effect.purs"
+        ( ModuleName "Effect" ) ".spago/effect/v4.1.3/src/Effect.purs"
         [ ( Nothing, Name "pureE" ), ( Nothing, Name "bindE" ) ]
       ), Standalone
       ( QName
@@ -90,7 +90,7 @@ UberModule
         [
           ( PropName "eq", ObjectProp ( Just Always )
             ( ForeignImport Nothing
-              ( ModuleName "Data.Eq" ) ".spago/prelude/v7.2.1/src/Data/Eq.purs"
+              ( ModuleName "Data.Eq" ) ".spago/prelude/v7.3.0/src/Data/Eq.purs"
               [ ( Nothing, Name "eqIntImpl" ) ]
             )
             ( PropName "eqIntImpl" )
@@ -132,7 +132,7 @@ UberModule
                               ( Nothing, Name "get", App Nothing
                                 ( ObjectProp ( Just Always )
                                   ( ForeignImport Nothing
-                                    ( ModuleName "Record.Unsafe" ) ".spago/prelude/v7.2.1/src/Record/Unsafe.purs"
+                                    ( ModuleName "Record.Unsafe" ) ".spago/prelude/v7.3.0/src/Record/Unsafe.purs"
                                     [ ( Nothing, Name "unsafeGet" ) ]
                                   )
                                   ( PropName "unsafeGet" )
@@ -676,7 +676,7 @@ UberModule
         ( App Nothing
           ( ObjectProp ( Just Always )
             ( ForeignImport Nothing
-              ( ModuleName "Effect.Console" ) ".spago/console/v6.1.0/src/Effect/Console.purs"
+              ( ModuleName "Effect.Console" ) ".spago/console/v6.1.1/src/Effect/Console.purs"
               [ ( Nothing, Name "log" ) ]
             )
             ( PropName "log" )

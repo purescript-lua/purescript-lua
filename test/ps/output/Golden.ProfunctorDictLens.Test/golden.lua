@@ -25,18 +25,8 @@ M.Data_Semiring_foreign = {
 }
 M.Unsafe_Coerce_foreign = { unsafeCoerce = function(x) return x end }
 M.Effect_foreign = {
-  pureE = function(a)
-      return function()
-        return a
-      end
-    end,
-  bindE = function(a)
-      return function(f)
-        return function()
-          return f(a())()
-        end
-      end
-    end
+  pureE = function(a) return function() return a end end,
+  bindE = function(a) return function(f) return function() return f(a())() end end end
 }
 M.Data_Semiring_semiringInt = {
   add = M.Data_Semiring_foreign.intAdd,

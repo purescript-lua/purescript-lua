@@ -24,18 +24,8 @@ M.Data_Semiring_foreign = {
   intMul = function(x) return function(y) return x * y end end
 }
 M.Effect_foreign = {
-  pureE = function(a)
-      return function()
-        return a
-      end
-    end,
-  bindE = function(a)
-      return function(f)
-        return function()
-          return f(a())()
-        end
-      end
-    end
+  pureE = function(a) return function() return a end end,
+  bindE = function(a) return function(f) return function() return f(a())() end end end
 }
 M.Data_Semiring_semiringInt = {
   add = M.Data_Semiring_foreign.intAdd,

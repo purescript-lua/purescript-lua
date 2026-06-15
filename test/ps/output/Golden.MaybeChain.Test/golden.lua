@@ -20,18 +20,8 @@ local function PSLUA_runtime_lazy(name)
 end
 local M = {}
 M.Effect_foreign = {
-  pureE = function(a)
-      return function()
-        return a
-      end
-    end,
-  bindE = function(a)
-      return function(f)
-        return function()
-          return f(a())()
-        end
-      end
-    end
+  pureE = function(a) return function() return a end end,
+  bindE = function(a) return function(f) return function() return f(a())() end end end
 }
 M.Control_Applicative_pure = function(dict) return dict.pure end
 M.Control_Bind_bind = function(dict) return dict.bind end

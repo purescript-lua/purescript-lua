@@ -47,18 +47,8 @@ M.Data_Foldable_foreign = {
     end
 }
 M.Effect_foreign = {
-  pureE = function(a)
-      return function()
-        return a
-      end
-    end,
-  bindE = function(a)
-      return function(f)
-        return function()
-          return f(a())()
-        end
-      end
-    end
+  pureE = function(a) return function() return a end end,
+  bindE = function(a) return function(f) return function() return f(a())() end end end
 }
 M.Control_Semigroupoid_semigroupoidFn = {
   compose = function(f)

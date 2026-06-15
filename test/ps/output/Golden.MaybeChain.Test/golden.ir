@@ -4,7 +4,7 @@ UberModule
       ( QName
         { qnameModuleName = ModuleName "Effect", qnameName = Name "foreign"
         }, ForeignImport Nothing
-        ( ModuleName "Effect" ) ".spago/effect/v4.1.0/src/Effect.purs"
+        ( ModuleName "Effect" ) ".spago/effect/v4.1.3/src/Effect.purs"
         [ ( Nothing, Name "pureE" ), ( Nothing, Name "bindE" ) ]
       ), Standalone
       ( QName
@@ -268,7 +268,7 @@ UberModule
         ( App Nothing
           ( ObjectProp ( Just Always )
             ( ForeignImport Nothing
-              ( ModuleName "Effect.Console" ) ".spago/console/v6.1.0/src/Effect/Console.purs"
+              ( ModuleName "Effect.Console" ) ".spago/console/v6.1.1/src/Effect/Console.purs"
               [ ( Nothing, Name "log" ) ]
             )
             ( PropName "log" )
@@ -279,7 +279,7 @@ UberModule
                 [
                   ( PropName "show", ObjectProp ( Just Always )
                     ( ForeignImport Nothing
-                      ( ModuleName "Data.Show" ) ".spago/prelude/v7.2.1/src/Data/Show.purs"
+                      ( ModuleName "Data.Show" ) ".spago/prelude/v7.3.0/src/Data/Show.purs"
                       [ ( Nothing, Name "showIntImpl" ) ]
                     )
                     ( PropName "showIntImpl" )
