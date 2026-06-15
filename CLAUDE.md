@@ -84,11 +84,11 @@ This finds all files named `golden.*` in `test/ps/output` and deletes them, then
 ### Code Formatting & Linting
 
 ```bash
-# Format Haskell code with Fourmolu
-fourmolu -i lib/ exe/ test/
+# Format Cabal/Nix/YAML/Dhall via treefmt
+nix fmt
 
-# Or use treefmt to format all files
-treefmt
+# Haskell is formatted separately with Fourmolu (NOT part of `nix fmt`)
+fourmolu -i lib/ exe/ test/
 
 # Run HLint
 hlint lib/ exe/ test/

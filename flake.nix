@@ -4,6 +4,8 @@
     nixpkgs.follows = "haskellNix/nixpkgs-unstable";
     flake-utils.url = "github:numtide/flake-utils";
     easy-purescript-nix.url = "github:justinwoo/easy-purescript-nix";
+    treefmt-nix.url = "github:numtide/treefmt-nix";
+    treefmt-nix.inputs.nixpkgs.follows = "nixpkgs";
   };
   outputs =
     {
@@ -12,6 +14,7 @@
       flake-utils,
       haskellNix,
       easy-purescript-nix,
+      treefmt-nix,
     }:
     let
       supportedSystems = [ "x86_64-linux" ];
@@ -60,10 +63,13 @@
                   lua51Packages.lua
                   lua51Packages.luacheck
                   nil
-                  treefmt
                   upx
                   yamlfmt
                 ];
+                # `nix fmt` runs treefmt (treefmt.nix). Robust pre-commit hook:
+                # point git at the tracked .githooks/ dir (works in worktrees/
+                # submodules; never clobbers an existing .git/hooks/pre-commit).
+                shellHook = "git config core.hooksPath .githooks";
               };
 
               crossPlatforms =
@@ -75,12 +81,14 @@
           })
         ];
         flake = pkgs.psluaProject.flake { };
+        treefmtEval = treefmt-nix.lib.evalModule pkgs ./treefmt.nix;
       in
       flake
       // {
         legacyPackages = pkgs;
         packages.default = flake.packages."pslua:exe:pslua";
         packages.static = flake.ciJobs.x86_64-unknown-linux-musl.packages."pslua:exe:pslua";
+        formatter = treefmtEval.config.build.wrapper;
       }
     );
 

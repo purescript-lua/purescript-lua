@@ -24,3 +24,5 @@ jobs:
       - name: "🔨 Build & test"
         run: >-
           nix develop --accept-flake-config --allow-import-from-derivation --command cabal test all --test-show-details=direct
+      - name: "🎨 Format check"
+        run: nix --accept-flake-config fmt && git diff --exit-code

@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# Content-based format gate. CI's `nix fmt && git diff --exit-code` is
+# authoritative; this hook is just a local convenience.
+#
+# Tracked under .githooks/ and wired via `git config core.hooksPath .githooks`
+# in the dev-shell shellHook — robust across git worktrees and submodules
+# (where .git is a file) and it never clobbers a developer's .git/hooks.
+set -u
+command -v nix >/dev/null 2>&1 || exit 0 # no nix here → skip; CI still gates
+
+before=$(git diff)
+if ! nix fmt >/dev/null 2>&1; then
+  echo "pre-commit: 'nix fmt' failed — fix the formatter error, then commit." >&2
+  exit 1
+fi
+if [ "$before" != "$(git diff)" ]; then
+  echo "pre-commit: 'nix fmt' reformatted files — re-stage them, then commit." >&2
+  exit 1
+fi
