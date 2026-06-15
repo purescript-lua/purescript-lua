@@ -181,7 +181,16 @@ test-suite spec
     Test.Hspec.Hedgehog.Extended
 
   hs-source-dirs: test
-  ghc-options:    -threaded -rtsopts -fprof-auto -with-rtsopts=-N
+
+  -- Bound the test runner's memory. -N (= all cores) made the parallel GC's
+  -- peak RSS scale with the core count (24 here); -N4 caps that. -c compacts
+  -- the oldest generation to lower peak residency, and -M16g turns a runaway
+  -- (e.g. a large golden mismatch) into a clean "heap overflow" instead of an
+  -- OOM kill that takes the whole machine down. See Test.Hspec.Golden for the
+  -- bounded golden-diff that keeps failures cheap.
+  ghc-options:
+    -threaded -rtsopts -fprof-auto "-with-rtsopts=-N4 -c -M16g"
+
   build-depends:
     , call-stack                      ^>=0.4.0
     , exceptions                      ^>=0.10.8

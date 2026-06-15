@@ -8,6 +8,7 @@ module Test.Hspec.Golden
   )
 where
 
+import Data.Text qualified as Text
 import Path (Abs, File, Path, parent, toFilePath)
 import Path.IO (createDirIfMissing, doesFileExist)
 import Test.Hspec.Core.Spec
@@ -16,6 +17,15 @@ import Test.Hspec.Core.Spec
   , Result (..)
   , ResultStatus (..)
   )
+
+{- | Env var that opts back into the full expected/actual diff. By default a
+golden mismatch reports only a bounded, line-oriented summary (the first
+differing line plus a small window) so a run with many mismatches does not
+hold two full pretty-printed blobs — and their diff — per failure. Set this
+(to anything) for the complete diff, à la tasty-golden's options.
+-}
+fullDiffEnvVar ∷ String
+fullDiffEnvVar = "PSLUA_GOLDEN_FULL_DIFF"
 
 {- | Golden tests parameters
 
@@ -86,6 +96,10 @@ fromGoldenResult = \case
     Result
       "Files golden and actual not match"
       (Failure Nothing (ExpectedButGot Nothing expected actual))
+  MissmatchSummary summary →
+    Result
+      "Files golden and actual not match"
+      (Failure Nothing (Reason summary))
 
 defaultGolden
   ∷ Path Abs File
@@ -95,7 +109,7 @@ defaultGolden
 defaultGolden goldenFile actualFile produceOutput =
   Golden
     { produceOutput
-    , encodePretty = show
+    , encodePretty = toString
     , writeToFile = \f → writeFileBS (toFilePath f) . encodeUtf8
     , readFromFile = fmap decodeUtf8 . readFileBS . toFilePath
     , goldenFile
@@ -106,9 +120,47 @@ defaultGolden goldenFile actualFile produceOutput =
 -- | Possible results from a golden test execution
 data GoldenResult
   = MissmatchOutput String String
+  | -- | A bounded, line-oriented mismatch summary (the default).
+    MissmatchSummary String
   | SameOutput
   | FirstExecutionSucceed
   | FirstExecutionFail
+
+{- | A bounded, line-oriented summary of a golden mismatch: the first differing
+line, a small window of each side, the line counts, and a pointer to the actual
+file. Keeps each failure O(window) instead of retaining two full blobs (and
+their diff). Set 'fullDiffEnvVar' for the complete expected/actual diff.
+-}
+boundedSummary ∷ Maybe (Path Abs File) → String → String → String
+boundedSummary mActual expected actual =
+  let els = Text.lines (toText expected)
+      als = Text.lines (toText actual)
+      common = length (takeWhile (uncurry (==)) (zip els als))
+      win = 8
+      numbered ls =
+        [ "    " <> show (common + i + 1) <> " | " <> toString l
+        | (i, l) ← zip [0 ..] (take win (drop common ls))
+        ]
+   in toString . Text.unlines . fmap toText . concat $
+        [
+          [ "Golden mismatch (first difference at line "
+              <> show (common + 1)
+              <> ")."
+          , "  expected: "
+              <> show (length els)
+              <> " line(s); actual: "
+              <> show (length als)
+              <> " line(s)."
+          , "  expected, from the first difference:"
+          ]
+        , numbered els
+        , ["  actual, from the first difference:"]
+        , numbered als
+        ,
+          [ "  full actual output: " <> maybe "(not written)" toFilePath mActual
+          , "  re-run with " <> fullDiffEnvVar <> "=1 for the complete diff."
+          ]
+        ]
 
 -- | Runs a Golden test.
 runGolden ∷ Eq str ⇒ Golden str → IO GoldenResult
@@ -134,10 +186,19 @@ runGolden Golden {..} = do
           else FirstExecutionSucceed
     else do
       contentGolden ← readFromFile goldenFile
-      pure
-        if contentGolden == output
-          then SameOutput
-          else
-            MissmatchOutput
-              (encodePretty contentGolden)
-              (encodePretty output)
+      if contentGolden == output
+        then pure SameOutput
+        else do
+          wantFull ← isJust <$> lookupEnv fullDiffEnvVar
+          pure
+            if wantFull
+              then
+                MissmatchOutput
+                  (encodePretty contentGolden)
+                  (encodePretty output)
+              else
+                MissmatchSummary $
+                  boundedSummary
+                    actualFile
+                    (encodePretty contentGolden)
+                    (encodePretty output)
