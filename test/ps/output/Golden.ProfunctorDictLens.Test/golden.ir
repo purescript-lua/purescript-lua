@@ -422,54 +422,10 @@ UberModule
       ( Name "_Wrapped", Ref Nothing
         ( Imported ( ModuleName "Golden.ProfunctorDictLens.Test" ) ( Name "_Wrapped" ) ) 0
       ),
-      ( Name "main", App Nothing
-        ( App Nothing
-          ( Ref Nothing
-            ( Imported ( ModuleName "Golden.ProfunctorDictLens.Test" ) ( Name "discard" ) ) 0
-          )
-          ( App Nothing
-            ( Ref Nothing
-              ( Imported ( ModuleName "Golden.ProfunctorDictLens.Test" ) ( Name "logShow" ) ) 0
-            )
-            ( App Nothing
-              ( Ref Nothing
-                ( Imported ( ModuleName "Golden.ProfunctorDictLens.Test" ) ( Name "unwrap" ) ) 0
-              )
-              ( App Nothing
-                ( App Nothing
-                  ( Ref Nothing
-                    ( Imported
-                      ( ModuleName "Golden.ProfunctorDictLens.Test" )
-                      ( Name "_Wrapped1" )
-                    ) 0
-                  )
-                  ( Abs Nothing
-                    ( ParamNamed Nothing ( Name "v" ) )
-                    ( App Nothing
-                      ( App Nothing
-                        ( ObjectProp Nothing
-                          ( Ref Nothing
-                            ( Imported ( ModuleName "Data.Semiring" ) ( Name "semiringInt" ) ) 0
-                          )
-                          ( PropName "add" )
-                        )
-                        ( Ref Nothing ( Local ( Name "v" ) ) 0 )
-                      )
-                      ( LiteralInt Nothing 1 )
-                    )
-                  )
-                )
-                ( LiteralInt Nothing 10 )
-              )
-            )
-          )
-        )
-        ( Abs Nothing ( ParamUnused Nothing )
-          ( App Nothing
-            ( App Nothing
-              ( Ref Nothing
-                ( Imported ( ModuleName "Golden.ProfunctorDictLens.Test" ) ( Name "discard" ) ) 0
-              )
+      ( Name "main", Abs Nothing ( ParamUnused Nothing )
+        ( Let Nothing
+          ( Standalone
+            ( Nothing, Name "_", App Nothing
               ( App Nothing
                 ( Ref Nothing
                   ( Imported ( ModuleName "Golden.ProfunctorDictLens.Test" ) ( Name "logShow" ) ) 0
@@ -494,11 +450,11 @@ UberModule
                               ( Ref Nothing
                                 ( Imported ( ModuleName "Data.Semiring" ) ( Name "semiringInt" ) ) 0
                               )
-                              ( PropName "mul" )
+                              ( PropName "add" )
                             )
                             ( Ref Nothing ( Local ( Name "v" ) ) 0 )
                           )
-                          ( LiteralInt Nothing 2 )
+                          ( LiteralInt Nothing 1 )
                         )
                       )
                     )
@@ -506,84 +462,131 @@ UberModule
                   )
                 )
               )
-            )
-            ( Abs Nothing ( ParamUnused Nothing )
-              ( App Nothing
-                ( Ref Nothing
-                  ( Imported ( ModuleName "Golden.ProfunctorDictLens.Test" ) ( Name "logShow" ) ) 0
-                )
+              ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) 0 )
+            ) :|
+            [ Standalone
+              ( Nothing, Name "_", App Nothing
                 ( App Nothing
                   ( Ref Nothing
-                    ( Imported ( ModuleName "Golden.ProfunctorDictLens.Test" ) ( Name "unwrap" ) ) 0
+                    ( Imported
+                      ( ModuleName "Golden.ProfunctorDictLens.Test" )
+                      ( Name "logShow" )
+                    ) 0
                   )
+                  ( App Nothing
+                    ( Ref Nothing
+                      ( Imported
+                        ( ModuleName "Golden.ProfunctorDictLens.Test" )
+                        ( Name "unwrap" )
+                      ) 0
+                    )
+                    ( App Nothing
+                      ( App Nothing
+                        ( Ref Nothing
+                          ( Imported
+                            ( ModuleName "Golden.ProfunctorDictLens.Test" )
+                            ( Name "_Wrapped1" )
+                          ) 0
+                        )
+                        ( Abs Nothing
+                          ( ParamNamed Nothing ( Name "v" ) )
+                          ( App Nothing
+                            ( App Nothing
+                              ( ObjectProp Nothing
+                                ( Ref Nothing
+                                  ( Imported
+                                    ( ModuleName "Data.Semiring" )
+                                    ( Name "semiringInt" )
+                                  ) 0
+                                )
+                                ( PropName "mul" )
+                              )
+                              ( Ref Nothing ( Local ( Name "v" ) ) 0 )
+                            )
+                            ( LiteralInt Nothing 2 )
+                          )
+                        )
+                      )
+                      ( LiteralInt Nothing 10 )
+                    )
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) 0 )
+              )
+            ]
+          )
+          ( App Nothing
+            ( App Nothing
+              ( Ref Nothing
+                ( Imported ( ModuleName "Golden.ProfunctorDictLens.Test" ) ( Name "logShow" ) ) 0
+              )
+              ( App Nothing
+                ( Ref Nothing
+                  ( Imported ( ModuleName "Golden.ProfunctorDictLens.Test" ) ( Name "unwrap" ) ) 0
+                )
+                ( App Nothing
                   ( App Nothing
                     ( App Nothing
                       ( App Nothing
                         ( App Nothing
-                          ( App Nothing
-                            ( Ref Nothing
-                              ( Imported ( ModuleName "Data.Profunctor" ) ( Name "dimap" ) ) 0
-                            )
-                            ( Ref Nothing
-                              ( Imported
-                                ( ModuleName "Data.Profunctor" )
-                                ( Name "profunctorFn" )
-                              ) 0
-                            )
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Data.Profunctor" ) ( Name "dimap" ) ) 0
                           )
-                          ( App Nothing
-                            ( Ref Nothing
-                              ( Imported ( ModuleName "Data.Newtype" ) ( Name "unwrap" ) ) 0
-                            )
-                            ( Ref Nothing
-                              ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) 0
-                            )
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Data.Profunctor" ) ( Name "profunctorFn" ) ) 0
                           )
                         )
-                        ( ObjectProp ( Just Always )
+                        ( App Nothing
                           ( Ref Nothing
-                            ( Imported ( ModuleName "Unsafe.Coerce" ) ( Name "foreign" ) ) 0
+                            ( Imported ( ModuleName "Data.Newtype" ) ( Name "unwrap" ) ) 0
                           )
-                          ( PropName "unsafeCoerce" )
+                          ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) 0 )
                         )
                       )
-                      ( Abs Nothing
-                        ( ParamNamed Nothing ( Name "v" ) )
-                        ( App Nothing
-                          ( App Nothing
-                            ( ObjectProp Nothing
-                              ( LiteralObject Nothing
-                                [
-                                  ( PropName "sub", ObjectProp ( Just Always )
-                                    ( ForeignImport Nothing
-                                      ( ModuleName "Data.Ring" ) ".spago/prelude/v7.3.0/src/Data/Ring.purs"
-                                      [ ( Nothing, Name "intSub" ) ]
-                                    )
-                                    ( PropName "intSub" )
-                                  ),
-                                  ( PropName "Semiring0", Abs Nothing ( ParamUnused Nothing )
-                                    ( Ref Nothing
-                                      ( Imported
-                                        ( ModuleName "Data.Semiring" )
-                                        ( Name "semiringInt" )
-                                      ) 0
-                                    )
-                                  )
-                                ]
-                              )
-                              ( PropName "sub" )
-                            )
-                            ( Ref Nothing ( Local ( Name "v" ) ) 0 )
-                          )
-                          ( LiteralInt Nothing 5 )
+                      ( ObjectProp ( Just Always )
+                        ( Ref Nothing
+                          ( Imported ( ModuleName "Unsafe.Coerce" ) ( Name "foreign" ) ) 0
                         )
+                        ( PropName "unsafeCoerce" )
                       )
                     )
-                    ( LiteralInt Nothing 10 )
+                    ( Abs Nothing
+                      ( ParamNamed Nothing ( Name "v" ) )
+                      ( App Nothing
+                        ( App Nothing
+                          ( ObjectProp Nothing
+                            ( LiteralObject Nothing
+                              [
+                                ( PropName "sub", ObjectProp ( Just Always )
+                                  ( ForeignImport Nothing
+                                    ( ModuleName "Data.Ring" ) ".spago/prelude/v7.3.0/src/Data/Ring.purs"
+                                    [ ( Nothing, Name "intSub" ) ]
+                                  )
+                                  ( PropName "intSub" )
+                                ),
+                                ( PropName "Semiring0", Abs Nothing ( ParamUnused Nothing )
+                                  ( Ref Nothing
+                                    ( Imported
+                                      ( ModuleName "Data.Semiring" )
+                                      ( Name "semiringInt" )
+                                    ) 0
+                                  )
+                                )
+                              ]
+                            )
+                            ( PropName "sub" )
+                          )
+                          ( Ref Nothing ( Local ( Name "v" ) ) 0 )
+                        )
+                        ( LiteralInt Nothing 5 )
+                      )
+                    )
                   )
+                  ( LiteralInt Nothing 10 )
                 )
               )
             )
+            ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) 0 )
           )
         )
       ),

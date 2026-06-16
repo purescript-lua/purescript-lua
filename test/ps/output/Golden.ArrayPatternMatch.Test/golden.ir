@@ -396,29 +396,10 @@ UberModule
       ( Name "lastOfThree", Ref Nothing
         ( Imported ( ModuleName "Golden.ArrayPatternMatch.Test" ) ( Name "lastOfThree" ) ) 0
       ),
-      ( Name "main", App Nothing
-        ( App Nothing
-          ( Ref Nothing
-            ( Imported ( ModuleName "Golden.ArrayPatternMatch.Test" ) ( Name "discard" ) ) 0
-          )
-          ( App Nothing
-            ( Ref Nothing
-              ( Imported ( ModuleName "Golden.ArrayPatternMatch.Test" ) ( Name "logShow" ) ) 0
-            )
-            ( App Nothing
-              ( Ref Nothing
-                ( Imported ( ModuleName "Golden.ArrayPatternMatch.Test" ) ( Name "firstTwo" ) ) 0
-              )
-              ( LiteralArray Nothing [ LiteralInt Nothing 10, LiteralInt Nothing 20 ] )
-            )
-          )
-        )
-        ( Abs Nothing ( ParamUnused Nothing )
-          ( App Nothing
-            ( App Nothing
-              ( Ref Nothing
-                ( Imported ( ModuleName "Golden.ArrayPatternMatch.Test" ) ( Name "discard" ) ) 0
-              )
+      ( Name "main", Abs Nothing ( ParamUnused Nothing )
+        ( Let Nothing
+          ( Standalone
+            ( Nothing, Name "_", App Nothing
               ( App Nothing
                 ( Ref Nothing
                   ( Imported ( ModuleName "Golden.ArrayPatternMatch.Test" ) ( Name "logShow" ) ) 0
@@ -430,59 +411,68 @@ UberModule
                       ( Name "firstTwo" )
                     ) 0
                   )
-                  ( LiteralArray Nothing
-                    [ LiteralInt Nothing 1, LiteralInt Nothing 2, LiteralInt Nothing 3 ]
-                  )
+                  ( LiteralArray Nothing [ LiteralInt Nothing 10, LiteralInt Nothing 20 ] )
                 )
               )
-            )
-            ( Abs Nothing ( ParamUnused Nothing )
-              ( App Nothing
+              ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) 0 )
+            ) :|
+            [ Standalone
+              ( Nothing, Name "_", App Nothing
                 ( App Nothing
                   ( Ref Nothing
-                    ( Imported ( ModuleName "Golden.ArrayPatternMatch.Test" ) ( Name "discard" ) ) 0
+                    ( Imported ( ModuleName "Golden.ArrayPatternMatch.Test" ) ( Name "logShow" ) ) 0
                   )
                   ( App Nothing
                     ( Ref Nothing
                       ( Imported
                         ( ModuleName "Golden.ArrayPatternMatch.Test" )
-                        ( Name "logShow" )
+                        ( Name "firstTwo" )
                       ) 0
                     )
-                    ( App Nothing
-                      ( Ref Nothing
-                        ( Imported
-                          ( ModuleName "Golden.ArrayPatternMatch.Test" )
-                          ( Name "firstTwo" )
-                        ) 0
-                      )
-                      ( LiteralArray Nothing [] )
+                    ( LiteralArray Nothing
+                      [ LiteralInt Nothing 1, LiteralInt Nothing 2, LiteralInt Nothing 3 ]
                     )
                   )
                 )
-                ( Abs Nothing ( ParamUnused Nothing )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) 0 )
+              ), Standalone
+              ( Nothing, Name "_", App Nothing
+                ( App Nothing
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Golden.ArrayPatternMatch.Test" ) ( Name "logShow" ) ) 0
+                  )
                   ( App Nothing
                     ( Ref Nothing
                       ( Imported
                         ( ModuleName "Golden.ArrayPatternMatch.Test" )
-                        ( Name "logShow" )
+                        ( Name "firstTwo" )
                       ) 0
                     )
-                    ( App Nothing
-                      ( Ref Nothing
-                        ( Imported
-                          ( ModuleName "Golden.ArrayPatternMatch.Test" )
-                          ( Name "lastOfThree" )
-                        ) 0
-                      )
-                      ( LiteralArray Nothing
-                        [ LiteralInt Nothing 7, LiteralInt Nothing 8, LiteralInt Nothing 9 ]
-                      )
-                    )
+                    ( LiteralArray Nothing [] )
                   )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) 0 )
+              )
+            ]
+          )
+          ( App Nothing
+            ( App Nothing
+              ( Ref Nothing
+                ( Imported ( ModuleName "Golden.ArrayPatternMatch.Test" ) ( Name "logShow" ) ) 0
+              )
+              ( App Nothing
+                ( Ref Nothing
+                  ( Imported
+                    ( ModuleName "Golden.ArrayPatternMatch.Test" )
+                    ( Name "lastOfThree" )
+                  ) 0
+                )
+                ( LiteralArray Nothing
+                  [ LiteralInt Nothing 7, LiteralInt Nothing 8, LiteralInt Nothing 9 ]
                 )
               )
             )
+            ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) 0 )
           )
         )
       )

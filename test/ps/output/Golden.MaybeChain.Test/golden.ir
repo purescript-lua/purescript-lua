@@ -361,103 +361,94 @@ UberModule
       )
     ], uberModuleForeigns = [], uberModuleExports =
     [
-      ( Name "main", App Nothing
-        ( App Nothing
-          ( App Nothing
-            ( ObjectProp Nothing
-              ( LiteralObject Nothing
-                [
-                  ( PropName "discard", Abs Nothing
-                    ( ParamNamed Nothing ( Name "dictBind" ) )
+      ( Name "main", Abs Nothing ( ParamUnused Nothing )
+        ( Let Nothing
+          ( Standalone
+            ( Nothing, Name "_", App Nothing
+              ( App Nothing
+                ( Ref Nothing
+                  ( Imported ( ModuleName "Golden.MaybeChain.Test" ) ( Name "logShow" ) ) 0
+                )
+                ( App Nothing
+                  ( App Nothing
                     ( App Nothing
-                      ( Ref Nothing ( Imported ( ModuleName "Control.Bind" ) ( Name "bind" ) ) 0 )
-                      ( Ref Nothing ( Local ( Name "dictBind" ) ) 0 )
+                      ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "maybe" ) ) 0 )
+                      ( LiteralInt Nothing 0 )
+                    )
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Golden.MaybeChain.Test" ) ( Name "identity" ) ) 0
                     )
                   )
-                ]
+                  ( App Nothing
+                    ( App Nothing
+                      ( App Nothing
+                        ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "maybe" ) ) 0 )
+                        ( Ref Nothing
+                          ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) 0
+                        )
+                      )
+                      ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Just" ) ) 0 )
+                    )
+                    ( App Nothing
+                      ( App Nothing
+                        ( Ref Nothing
+                          ( Imported ( ModuleName "Golden.MaybeChain.Test" ) ( Name "map" ) ) 0
+                        )
+                        ( Abs Nothing
+                          ( ParamNamed Nothing ( Name "x" ) )
+                          ( Ref Nothing ( Local ( Name "x" ) ) 0 )
+                        )
+                      )
+                      ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) 0 )
+                    )
+                  )
+                )
               )
-              ( PropName "discard" )
-            )
-            ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "bindEffect" ) ) 0 )
+              ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) 0 )
+            ) :| []
           )
           ( App Nothing
-            ( Ref Nothing
-              ( Imported ( ModuleName "Golden.MaybeChain.Test" ) ( Name "logShow" ) ) 0
-            )
             ( App Nothing
-              ( App Nothing
-                ( App Nothing
-                  ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "maybe" ) ) 0 )
-                  ( LiteralInt Nothing 0 )
-                )
-                ( Ref Nothing
-                  ( Imported ( ModuleName "Golden.MaybeChain.Test" ) ( Name "identity" ) ) 0
-                )
+              ( Ref Nothing
+                ( Imported ( ModuleName "Golden.MaybeChain.Test" ) ( Name "logShow" ) ) 0
               )
               ( App Nothing
                 ( App Nothing
                   ( App Nothing
                     ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "maybe" ) ) 0 )
-                    ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) 0 )
+                    ( LiteralInt Nothing 0 )
                   )
-                  ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Just" ) ) 0 )
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Golden.MaybeChain.Test" ) ( Name "identity" ) ) 0
+                  )
                 )
                 ( App Nothing
                   ( App Nothing
-                    ( Ref Nothing
-                      ( Imported ( ModuleName "Golden.MaybeChain.Test" ) ( Name "map" ) ) 0
+                    ( App Nothing
+                      ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "maybe" ) ) 0 )
+                      ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) 0 )
                     )
-                    ( Abs Nothing
-                      ( ParamNamed Nothing ( Name "x" ) )
-                      ( Ref Nothing ( Local ( Name "x" ) ) 0 )
-                    )
-                  )
-                  ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) 0 )
-                )
-              )
-            )
-          )
-        )
-        ( Abs Nothing ( ParamUnused Nothing )
-          ( App Nothing
-            ( Ref Nothing
-              ( Imported ( ModuleName "Golden.MaybeChain.Test" ) ( Name "logShow" ) ) 0
-            )
-            ( App Nothing
-              ( App Nothing
-                ( App Nothing
-                  ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "maybe" ) ) 0 )
-                  ( LiteralInt Nothing 0 )
-                )
-                ( Ref Nothing
-                  ( Imported ( ModuleName "Golden.MaybeChain.Test" ) ( Name "identity" ) ) 0
-                )
-              )
-              ( App Nothing
-                ( App Nothing
-                  ( App Nothing
-                    ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "maybe" ) ) 0 )
-                    ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) 0 )
-                  )
-                  ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Just" ) ) 0 )
-                )
-                ( App Nothing
-                  ( App Nothing
-                    ( Ref Nothing
-                      ( Imported ( ModuleName "Golden.MaybeChain.Test" ) ( Name "map" ) ) 0
-                    )
-                    ( Abs Nothing
-                      ( ParamNamed Nothing ( Name "x" ) )
-                      ( Ref Nothing ( Local ( Name "x" ) ) 0 )
-                    )
-                  )
-                  ( App Nothing
                     ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Just" ) ) 0 )
-                    ( LiteralInt Nothing 42 )
+                  )
+                  ( App Nothing
+                    ( App Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Golden.MaybeChain.Test" ) ( Name "map" ) ) 0
+                      )
+                      ( Abs Nothing
+                        ( ParamNamed Nothing ( Name "x" ) )
+                        ( Ref Nothing ( Local ( Name "x" ) ) 0 )
+                      )
+                    )
+                    ( App Nothing
+                      ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Just" ) ) 0 )
+                      ( LiteralInt Nothing 42 )
+                    )
                   )
                 )
               )
             )
+            ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) 0 )
           )
         )
       )

@@ -6,6 +6,7 @@ import Data.Set qualified as Set
 import Language.PureScript.Backend.IR.DCE (eliminateDeadCode)
 import Language.PureScript.Backend.IR.Inliner (Annotation (..))
 import Language.PureScript.Backend.IR.Linker (UberModule (..))
+import Language.PureScript.Backend.IR.MagicDo (magicDo)
 import Language.PureScript.Backend.IR.Names
   ( Name (..)
   , QName
@@ -42,9 +43,14 @@ optimizedUberModule =
     -- unblock even more optimizations, e.g. inline foreign bindings.
     >>> mergeForeignsIntoBindings
     >>> idempotently (eliminateDeadCode . optimizeModule)
-    -- Must run last:
+    -- Must run last among the index-sensitive passes:
     -- see Note [Locals are uniquely named after renameShadowedNames]
     >>> renameShadowedNames
+    -- Magic-do is the final lowering (issue #46): it relies on the unique
+    -- naming established above and preserves it, and must run after dead-code
+    -- elimination so the statements it introduces for `discard` are not
+    -- dropped as dead. See Language.PureScript.Backend.IR.MagicDo.
+    >>> magicDo
 
 mergeForeignsIntoBindings ∷ UberModule → UberModule
 mergeForeignsIntoBindings uberModule@UberModule {..} =
@@ -68,10 +74,13 @@ Lua variable (issue #37).
 
 Two consequences:
 
-  * this pass must run LAST in 'optimizedUberModule' — passes like
-    inlining and DCE may introduce or remove shadowing and rely on
-    indices being meaningful, so running anything after the renaming
-    would invalidate it;
+  * this pass must run last among the index-sensitive passes of
+    'optimizedUberModule' — passes like inlining and DCE may introduce
+    or remove shadowing and rely on indices being meaningful, so running
+    such a pass after the renaming would invalidate it. (The 'magicDo'
+    lowering does run afterwards, but it only consumes the unique naming
+    and preserves it — its new binders are the unreferenced '_' of a
+    discarded result — so the invariant still holds.)
 
   * (name, index) references must be resolved according to
     Note [Sequential scoping of Let bindings], which this pass and the

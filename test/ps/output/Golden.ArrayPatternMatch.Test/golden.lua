@@ -98,21 +98,20 @@ M.Golden_ArrayPatternMatch_Test_firstTwo = function(v)
     return M.Golden_ArrayPatternMatch_Test_negate(1)
   end
 end
-return M.Golden_ArrayPatternMatch_Test_discard(M.Golden_ArrayPatternMatch_Test_logShow(M.Golden_ArrayPatternMatch_Test_firstTwo({
-  [1] = 10,
-  [2] = 20
-})))(function()
-  return M.Golden_ArrayPatternMatch_Test_discard(M.Golden_ArrayPatternMatch_Test_logShow(M.Golden_ArrayPatternMatch_Test_firstTwo({
+return (function()
+  local _ = M.Golden_ArrayPatternMatch_Test_logShow(M.Golden_ArrayPatternMatch_Test_firstTwo({
+    [1] = 10,
+    [2] = 20
+  }))()
+  local _ = M.Golden_ArrayPatternMatch_Test_logShow(M.Golden_ArrayPatternMatch_Test_firstTwo({
     [1] = 1,
     [2] = 2,
     [3] = 3
-  })))(function()
-    return M.Golden_ArrayPatternMatch_Test_discard(M.Golden_ArrayPatternMatch_Test_logShow(M.Golden_ArrayPatternMatch_Test_firstTwo({})))(function(  )
-      return M.Golden_ArrayPatternMatch_Test_logShow(M.Golden_ArrayPatternMatch_Test_lastOfThree({
-        [1] = 7,
-        [2] = 8,
-        [3] = 9
-      }))
-    end)
-  end)
+  }))()
+  local _ = M.Golden_ArrayPatternMatch_Test_logShow(M.Golden_ArrayPatternMatch_Test_firstTwo({}))()
+  return M.Golden_ArrayPatternMatch_Test_logShow(M.Golden_ArrayPatternMatch_Test_lastOfThree({
+    [1] = 7,
+    [2] = 8,
+    [3] = 9
+  }))()
 end)()

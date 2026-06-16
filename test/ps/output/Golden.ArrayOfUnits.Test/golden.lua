@@ -122,28 +122,27 @@ M.Effect_Console_logShow = function(dictShow)
   end
 end
 return (function()
-  local arr = {
-    [1] = M.Data_Unit_foreign.unit,
-    [2] = M.Data_Unit_foreign.unit,
-    [3] = M.Data_Unit_foreign.unit
-  }
-  return (function(dictBind)
-    return M.Control_Bind_bind(dictBind)
-  end)(M.Effect_bindEffect)(M.Data_Foldable_foldr(M.Data_Foldable_foldableArray)(M.Control_Semigroupoid_semigroupoidFn.compose(function( a )
-    return function(b)
-      return M.Control_Apply_apply(M.Effect_applicativeEffect.Apply0())(((M.Effect_applicativeEffect.Apply0()).Functor0()).map(function(  )
-        return function(x) return x end
-      end)(a))(b)
-    end
-  end)(M.Effect_Console_logShow({
-    show = function() return "unit" end
-  })))(M.Control_Applicative_pure(M.Effect_applicativeEffect)(M.Data_Unit_foreign.unit))(arr))(function(  )
+  return function()
+    local arr = {
+      [1] = M.Data_Unit_foreign.unit,
+      [2] = M.Data_Unit_foreign.unit,
+      [3] = M.Data_Unit_foreign.unit
+    }
+    local _ = M.Data_Foldable_foldr(M.Data_Foldable_foldableArray)(M.Control_Semigroupoid_semigroupoidFn.compose(function( a )
+      return function(b)
+        return M.Control_Apply_apply(M.Effect_applicativeEffect.Apply0())(((M.Effect_applicativeEffect.Apply0()).Functor0()).map(function(  )
+          return function(x) return x end
+        end)(a))(b)
+      end
+    end)(M.Effect_Console_logShow({
+      show = function() return "unit" end
+    })))(M.Control_Applicative_pure(M.Effect_applicativeEffect)(M.Data_Unit_foreign.unit))(arr)()
     return M.Effect_Console_logShow({
       show = function(n) return tostring(n) end
     })(M.Data_Foldable_foldableArray.foldl(function(c)
       return function()
         return M.Data_Semiring_semiringInt.add(M.Data_Semiring_semiringInt.one)(c)
       end
-    end)(M.Data_Semiring_semiringInt.zero)(arr))
-  end)
+    end)(M.Data_Semiring_semiringInt.zero)(arr))()
+  end
 end)()()

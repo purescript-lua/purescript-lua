@@ -2458,581 +2458,415 @@ UberModule
       ( Name "codes", Ref Nothing
         ( Imported ( ModuleName "Golden.StringCodePoints.Test" ) ( Name "codes" ) ) 0
       ),
-      ( Name "main", App Nothing
-        ( App Nothing
-          ( Ref Nothing
-            ( Imported ( ModuleName "Golden.StringCodePoints.Test" ) ( Name "discard" ) ) 0
-          )
-          ( App Nothing
-            ( Ref Nothing
-              ( Imported ( ModuleName "Golden.StringCodePoints.Test" ) ( Name "logShow" ) ) 0
-            )
-            ( App Nothing
-              ( Ref Nothing
-                ( Imported ( ModuleName "Golden.StringCodePoints.Test" ) ( Name "codes" ) ) 0
-              )
-              ( LiteralString Nothing "aéЯ𝐀z" )
-            )
-          )
-        )
-        ( Abs Nothing ( ParamUnused Nothing )
-          ( App Nothing
-            ( App Nothing
-              ( Ref Nothing
-                ( Imported ( ModuleName "Golden.StringCodePoints.Test" ) ( Name "discard" ) ) 0
-              )
+      ( Name "main", Abs Nothing ( ParamUnused Nothing )
+        ( Let Nothing
+          ( Standalone
+            ( Nothing, Name "_", App Nothing
               ( App Nothing
                 ( Ref Nothing
-                  ( Imported ( ModuleName "Golden.StringCodePoints.Test" ) ( Name "logShow1" ) ) 0
+                  ( Imported ( ModuleName "Golden.StringCodePoints.Test" ) ( Name "logShow" ) ) 0
                 )
                 ( App Nothing
-                  ( App Nothing
-                    ( App Nothing
-                      ( Ref Nothing
-                        ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "compose" ) ) 0
-                      )
-                      ( ObjectProp ( Just Always )
-                        ( ForeignImport Nothing
-                          ( ModuleName "Data.Array" ) ".spago/arrays/v7.4.1/src/Data/Array.purs"
-                          [ ( Nothing, Name "length" ) ]
-                        )
-                        ( PropName "length" )
-                      )
-                    )
-                    ( Ref Nothing
-                      ( Imported
-                        ( ModuleName "Data.String.CodePoints" )
-                        ( Name "toCodePointArray" )
-                      ) 0
-                    )
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Golden.StringCodePoints.Test" ) ( Name "codes" ) ) 0
                   )
                   ( LiteralString Nothing "aéЯ𝐀z" )
                 )
               )
-            )
-            ( Abs Nothing ( ParamUnused Nothing )
-              ( App Nothing
+              ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) 0 )
+            ) :|
+            [ Standalone
+              ( Nothing, Name "_", App Nothing
                 ( App Nothing
                   ( Ref Nothing
-                    ( Imported ( ModuleName "Golden.StringCodePoints.Test" ) ( Name "discard" ) ) 0
+                    ( Imported ( ModuleName "Golden.StringCodePoints.Test" ) ( Name "logShow1" ) ) 0
+                  )
+                  ( App Nothing
+                    ( App Nothing
+                      ( App Nothing
+                        ( Ref Nothing
+                          ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "compose" ) ) 0
+                        )
+                        ( ObjectProp ( Just Always )
+                          ( ForeignImport Nothing
+                            ( ModuleName "Data.Array" ) ".spago/arrays/v7.4.1/src/Data/Array.purs"
+                            [ ( Nothing, Name "length" ) ]
+                          )
+                          ( PropName "length" )
+                        )
+                      )
+                      ( Ref Nothing
+                        ( Imported
+                          ( ModuleName "Data.String.CodePoints" )
+                          ( Name "toCodePointArray" )
+                        ) 0
+                      )
+                    )
+                    ( LiteralString Nothing "aéЯ𝐀z" )
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) 0 )
+              ), Standalone
+              ( Nothing, Name "_", App Nothing
+                ( App Nothing
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Golden.StringCodePoints.Test" ) ( Name "logShow1" ) ) 0
+                  )
+                  ( App Nothing
+                    ( ObjectProp ( Just Always )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Data.String.CodeUnits" ) ( Name "foreign" ) ) 0
+                      )
+                      ( PropName "length" )
+                    )
+                    ( LiteralString Nothing "aéЯ𝐀z" )
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) 0 )
+              ), Standalone
+              ( Nothing, Name "_", App Nothing
+                ( App Nothing
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Golden.StringCodePoints.Test" ) ( Name "logShow" ) ) 0
                   )
                   ( App Nothing
                     ( Ref Nothing
-                      ( Imported
-                        ( ModuleName "Golden.StringCodePoints.Test" )
-                        ( Name "logShow1" )
-                      ) 0
+                      ( Imported ( ModuleName "Golden.StringCodePoints.Test" ) ( Name "codes" ) ) 0
                     )
                     ( App Nothing
-                      ( ObjectProp ( Just Always )
+                      ( App Nothing
                         ( Ref Nothing
-                          ( Imported ( ModuleName "Data.String.CodeUnits" ) ( Name "foreign" ) ) 0
+                          ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "take" ) ) 0
                         )
-                        ( PropName "length" )
+                        ( LiteralInt Nothing 2 )
                       )
                       ( LiteralString Nothing "aéЯ𝐀z" )
                     )
                   )
                 )
-                ( Abs Nothing ( ParamUnused Nothing )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) 0 )
+              ), Standalone
+              ( Nothing, Name "_", App Nothing
+                ( App Nothing
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Golden.StringCodePoints.Test" ) ( Name "logShow" ) ) 0
+                  )
+                  ( App Nothing
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Golden.StringCodePoints.Test" ) ( Name "codes" ) ) 0
+                    )
+                    ( App Nothing
+                      ( App Nothing
+                        ( Ref Nothing
+                          ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "drop" ) ) 0
+                        )
+                        ( LiteralInt Nothing 2 )
+                      )
+                      ( LiteralString Nothing "aéЯ𝐀z" )
+                    )
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) 0 )
+              ), Standalone
+              ( Nothing, Name "_", App Nothing
+                ( App Nothing
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Golden.StringCodePoints.Test" ) ( Name "logShow2" ) ) 0
+                  )
                   ( App Nothing
                     ( App Nothing
                       ( Ref Nothing
+                        ( Imported ( ModuleName "Golden.StringCodePoints.Test" ) ( Name "map" ) ) 0
+                      )
+                      ( Ref Nothing
                         ( Imported
                           ( ModuleName "Golden.StringCodePoints.Test" )
-                          ( Name "discard" )
+                          ( Name "fromEnum" )
                         ) 0
                       )
+                    )
+                    ( App Nothing
                       ( App Nothing
                         ( Ref Nothing
                           ( Imported
-                            ( ModuleName "Golden.StringCodePoints.Test" )
-                            ( Name "logShow" )
+                            ( ModuleName "Data.String.CodePoints" )
+                            ( Name "codePointAt" )
                           ) 0
                         )
+                        ( LiteralInt Nothing 0 )
+                      )
+                      ( LiteralString Nothing "aéЯ𝐀z" )
+                    )
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) 0 )
+              ), Standalone
+              ( Nothing, Name "_", App Nothing
+                ( App Nothing
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Golden.StringCodePoints.Test" ) ( Name "logShow2" ) ) 0
+                  )
+                  ( App Nothing
+                    ( App Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Golden.StringCodePoints.Test" ) ( Name "map" ) ) 0
+                      )
+                      ( Ref Nothing
+                        ( Imported
+                          ( ModuleName "Golden.StringCodePoints.Test" )
+                          ( Name "fromEnum" )
+                        ) 0
+                      )
+                    )
+                    ( App Nothing
+                      ( App Nothing
+                        ( Ref Nothing
+                          ( Imported
+                            ( ModuleName "Data.String.CodePoints" )
+                            ( Name "codePointAt" )
+                          ) 0
+                        )
+                        ( LiteralInt Nothing 3 )
+                      )
+                      ( LiteralString Nothing "aéЯ𝐀z" )
+                    )
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) 0 )
+              ), Standalone
+              ( Nothing, Name "_", App Nothing
+                ( App Nothing
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Golden.StringCodePoints.Test" ) ( Name "logShow2" ) ) 0
+                  )
+                  ( App Nothing
+                    ( App Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Golden.StringCodePoints.Test" ) ( Name "map" ) ) 0
+                      )
+                      ( Ref Nothing
+                        ( Imported
+                          ( ModuleName "Golden.StringCodePoints.Test" )
+                          ( Name "fromEnum" )
+                        ) 0
+                      )
+                    )
+                    ( App Nothing
+                      ( App Nothing
+                        ( Ref Nothing
+                          ( Imported
+                            ( ModuleName "Data.String.CodePoints" )
+                            ( Name "codePointAt" )
+                          ) 0
+                        )
+                        ( LiteralInt Nothing 5 )
+                      )
+                      ( LiteralString Nothing "aéЯ𝐀z" )
+                    )
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) 0 )
+              ), Standalone
+              ( Nothing, Name "_", App Nothing
+                ( App Nothing
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Golden.StringCodePoints.Test" ) ( Name "logShow2" ) ) 0
+                  )
+                  ( App Nothing
+                    ( App Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Golden.StringCodePoints.Test" ) ( Name "map" ) ) 0
+                      )
+                      ( App Nothing
                         ( App Nothing
+                          ( Ref Nothing
+                            ( Imported
+                              ( ModuleName "Golden.StringCodePoints.Test" )
+                              ( Name "compose" )
+                            ) 0
+                          )
+                          ( Ref Nothing
+                            ( Imported
+                              ( ModuleName "Golden.StringCodePoints.Test" )
+                              ( Name "fromEnum" )
+                            ) 0
+                          )
+                        )
+                        ( Abs Nothing
+                          ( ParamNamed Nothing ( Name "v" ) )
+                          ( ObjectProp Nothing
+                            ( Ref Nothing ( Local ( Name "v" ) ) 0 )
+                            ( PropName "head" )
+                          )
+                        )
+                      )
+                    )
+                    ( App Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "uncons" ) ) 0
+                      )
+                      ( LiteralString Nothing "aéЯ𝐀z" )
+                    )
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) 0 )
+              ), Standalone
+              ( Nothing, Name "_", App Nothing
+                ( App Nothing
+                  ( App Nothing
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow" ) ) 0
+                    )
+                    ( App Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Data.Maybe" ) ( Name "showMaybe" ) ) 0
+                      )
+                      ( Ref Nothing
+                        ( Imported
+                          ( ModuleName "Golden.StringCodePoints.Test" )
+                          ( Name "showArray" )
+                        ) 0
+                      )
+                    )
+                  )
+                  ( App Nothing
+                    ( App Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Golden.StringCodePoints.Test" ) ( Name "map" ) ) 0
+                      )
+                      ( App Nothing
+                        ( App Nothing
+                          ( Ref Nothing
+                            ( Imported
+                              ( ModuleName "Golden.StringCodePoints.Test" )
+                              ( Name "compose" )
+                            ) 0
+                          )
                           ( Ref Nothing
                             ( Imported
                               ( ModuleName "Golden.StringCodePoints.Test" )
                               ( Name "codes" )
                             ) 0
                           )
-                          ( App Nothing
-                            ( App Nothing
-                              ( Ref Nothing
-                                ( Imported
-                                  ( ModuleName "Data.String.CodePoints" )
-                                  ( Name "take" )
-                                ) 0
-                              )
-                              ( LiteralInt Nothing 2 )
-                            )
-                            ( LiteralString Nothing "aéЯ𝐀z" )
+                        )
+                        ( Abs Nothing
+                          ( ParamNamed Nothing ( Name "v" ) )
+                          ( ObjectProp Nothing
+                            ( Ref Nothing ( Local ( Name "v" ) ) 0 )
+                            ( PropName "tail" )
                           )
                         )
                       )
                     )
-                    ( Abs Nothing ( ParamUnused Nothing )
+                    ( App Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "uncons" ) ) 0
+                      )
+                      ( LiteralString Nothing "aéЯ𝐀z" )
+                    )
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) 0 )
+              ), Standalone
+              ( Nothing, Name "_", App Nothing
+                ( App Nothing
+                  ( App Nothing
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow" ) ) 0
+                    )
+                    ( LiteralObject Nothing
+                      [
+                        ( PropName "show", Abs Nothing
+                          ( ParamNamed Nothing ( Name "v" ) )
+                          ( IfThenElse Nothing
+                            ( Ref Nothing ( Local ( Name "v" ) ) 0 )
+                            ( LiteralString Nothing "true" )
+                            ( IfThenElse Nothing
+                              ( Eq Nothing ( LiteralBool Nothing False )
+                                ( Ref Nothing ( Local ( Name "v" ) ) 0 )
+                              )
+                              ( LiteralString Nothing "false" )
+                              ( Exception Nothing "No patterns matched" )
+                            )
+                          )
+                        )
+                      ]
+                    )
+                  )
+                  ( App Nothing
+                    ( App Nothing
                       ( App Nothing
+                        ( Ref Nothing ( Imported ( ModuleName "Data.Eq" ) ( Name "eq" ) ) 0 )
+                        ( LiteralObject Nothing
+                          [
+                            ( PropName "eq", ObjectProp ( Just Always )
+                              ( Ref Nothing
+                                ( Imported ( ModuleName "Data.Eq" ) ( Name "foreign" ) ) 0
+                              )
+                              ( PropName "eqStringImpl" )
+                            )
+                          ]
+                        )
+                      )
+                      ( App Nothing
+                        ( App Nothing
+                          ( ObjectProp ( Just Always )
+                            ( Ref Nothing
+                              ( Imported
+                                ( ModuleName "Data.String.CodePoints" )
+                                ( Name "foreign" )
+                              ) 0
+                            )
+                            ( PropName "_fromCodePointArray" )
+                          )
+                          ( Ref Nothing
+                            ( Imported
+                              ( ModuleName "Data.String.CodePoints" )
+                              ( Name "singletonFallback" )
+                            ) 0
+                          )
+                        )
                         ( App Nothing
                           ( Ref Nothing
                             ( Imported
-                              ( ModuleName "Golden.StringCodePoints.Test" )
-                              ( Name "discard" )
+                              ( ModuleName "Data.String.CodePoints" )
+                              ( Name "toCodePointArray" )
                             ) 0
                           )
-                          ( App Nothing
-                            ( Ref Nothing
-                              ( Imported
-                                ( ModuleName "Golden.StringCodePoints.Test" )
-                                ( Name "logShow" )
-                              ) 0
-                            )
-                            ( App Nothing
-                              ( Ref Nothing
-                                ( Imported
-                                  ( ModuleName "Golden.StringCodePoints.Test" )
-                                  ( Name "codes" )
-                                ) 0
-                              )
-                              ( App Nothing
-                                ( App Nothing
-                                  ( Ref Nothing
-                                    ( Imported
-                                      ( ModuleName "Data.String.CodePoints" )
-                                      ( Name "drop" )
-                                    ) 0
-                                  )
-                                  ( LiteralInt Nothing 2 )
-                                )
-                                ( LiteralString Nothing "aéЯ𝐀z" )
-                              )
-                            )
-                          )
-                        )
-                        ( Abs Nothing ( ParamUnused Nothing )
-                          ( App Nothing
-                            ( App Nothing
-                              ( Ref Nothing
-                                ( Imported
-                                  ( ModuleName "Golden.StringCodePoints.Test" )
-                                  ( Name "discard" )
-                                ) 0
-                              )
-                              ( App Nothing
-                                ( Ref Nothing
-                                  ( Imported
-                                    ( ModuleName "Golden.StringCodePoints.Test" )
-                                    ( Name "logShow2" )
-                                  ) 0
-                                )
-                                ( App Nothing
-                                  ( App Nothing
-                                    ( Ref Nothing
-                                      ( Imported
-                                        ( ModuleName "Golden.StringCodePoints.Test" )
-                                        ( Name "map" )
-                                      ) 0
-                                    )
-                                    ( Ref Nothing
-                                      ( Imported
-                                        ( ModuleName "Golden.StringCodePoints.Test" )
-                                        ( Name "fromEnum" )
-                                      ) 0
-                                    )
-                                  )
-                                  ( App Nothing
-                                    ( App Nothing
-                                      ( Ref Nothing
-                                        ( Imported
-                                          ( ModuleName "Data.String.CodePoints" )
-                                          ( Name "codePointAt" )
-                                        ) 0
-                                      )
-                                      ( LiteralInt Nothing 0 )
-                                    )
-                                    ( LiteralString Nothing "aéЯ𝐀z" )
-                                  )
-                                )
-                              )
-                            )
-                            ( Abs Nothing ( ParamUnused Nothing )
-                              ( App Nothing
-                                ( App Nothing
-                                  ( Ref Nothing
-                                    ( Imported
-                                      ( ModuleName "Golden.StringCodePoints.Test" )
-                                      ( Name "discard" )
-                                    ) 0
-                                  )
-                                  ( App Nothing
-                                    ( Ref Nothing
-                                      ( Imported
-                                        ( ModuleName "Golden.StringCodePoints.Test" )
-                                        ( Name "logShow2" )
-                                      ) 0
-                                    )
-                                    ( App Nothing
-                                      ( App Nothing
-                                        ( Ref Nothing
-                                          ( Imported
-                                            ( ModuleName "Golden.StringCodePoints.Test" )
-                                            ( Name "map" )
-                                          ) 0
-                                        )
-                                        ( Ref Nothing
-                                          ( Imported
-                                            ( ModuleName "Golden.StringCodePoints.Test" )
-                                            ( Name "fromEnum" )
-                                          ) 0
-                                        )
-                                      )
-                                      ( App Nothing
-                                        ( App Nothing
-                                          ( Ref Nothing
-                                            ( Imported
-                                              ( ModuleName "Data.String.CodePoints" )
-                                              ( Name "codePointAt" )
-                                            ) 0
-                                          )
-                                          ( LiteralInt Nothing 3 )
-                                        )
-                                        ( LiteralString Nothing "aéЯ𝐀z" )
-                                      )
-                                    )
-                                  )
-                                )
-                                ( Abs Nothing ( ParamUnused Nothing )
-                                  ( App Nothing
-                                    ( App Nothing
-                                      ( Ref Nothing
-                                        ( Imported
-                                          ( ModuleName "Golden.StringCodePoints.Test" )
-                                          ( Name "discard" )
-                                        ) 0
-                                      )
-                                      ( App Nothing
-                                        ( Ref Nothing
-                                          ( Imported
-                                            ( ModuleName "Golden.StringCodePoints.Test" )
-                                            ( Name "logShow2" )
-                                          ) 0
-                                        )
-                                        ( App Nothing
-                                          ( App Nothing
-                                            ( Ref Nothing
-                                              ( Imported
-                                                ( ModuleName "Golden.StringCodePoints.Test" )
-                                                ( Name "map" )
-                                              ) 0
-                                            )
-                                            ( Ref Nothing
-                                              ( Imported
-                                                ( ModuleName "Golden.StringCodePoints.Test" )
-                                                ( Name "fromEnum" )
-                                              ) 0
-                                            )
-                                          )
-                                          ( App Nothing
-                                            ( App Nothing
-                                              ( Ref Nothing
-                                                ( Imported
-                                                  ( ModuleName "Data.String.CodePoints" )
-                                                  ( Name "codePointAt" )
-                                                ) 0
-                                              )
-                                              ( LiteralInt Nothing 5 )
-                                            )
-                                            ( LiteralString Nothing "aéЯ𝐀z" )
-                                          )
-                                        )
-                                      )
-                                    )
-                                    ( Abs Nothing ( ParamUnused Nothing )
-                                      ( App Nothing
-                                        ( App Nothing
-                                          ( Ref Nothing
-                                            ( Imported
-                                              ( ModuleName "Golden.StringCodePoints.Test" )
-                                              ( Name "discard" )
-                                            ) 0
-                                          )
-                                          ( App Nothing
-                                            ( Ref Nothing
-                                              ( Imported
-                                                ( ModuleName "Golden.StringCodePoints.Test" )
-                                                ( Name "logShow2" )
-                                              ) 0
-                                            )
-                                            ( App Nothing
-                                              ( App Nothing
-                                                ( Ref Nothing
-                                                  ( Imported
-                                                    ( ModuleName "Golden.StringCodePoints.Test" )
-                                                    ( Name "map" )
-                                                  ) 0
-                                                )
-                                                ( App Nothing
-                                                  ( App Nothing
-                                                    ( Ref Nothing
-                                                      ( Imported
-                                                        ( ModuleName "Golden.StringCodePoints.Test" )
-                                                        ( Name "compose" )
-                                                      ) 0
-                                                    )
-                                                    ( Ref Nothing
-                                                      ( Imported
-                                                        ( ModuleName "Golden.StringCodePoints.Test" )
-                                                        ( Name "fromEnum" )
-                                                      ) 0
-                                                    )
-                                                  )
-                                                  ( Abs Nothing
-                                                    ( ParamNamed Nothing ( Name "v" ) )
-                                                    ( ObjectProp Nothing
-                                                      ( Ref Nothing ( Local ( Name "v" ) ) 0 )
-                                                      ( PropName "head" )
-                                                    )
-                                                  )
-                                                )
-                                              )
-                                              ( App Nothing
-                                                ( Ref Nothing
-                                                  ( Imported
-                                                    ( ModuleName "Data.String.CodePoints" )
-                                                    ( Name "uncons" )
-                                                  ) 0
-                                                )
-                                                ( LiteralString Nothing "aéЯ𝐀z" )
-                                              )
-                                            )
-                                          )
-                                        )
-                                        ( Abs Nothing ( ParamUnused Nothing )
-                                          ( App Nothing
-                                            ( App Nothing
-                                              ( Ref Nothing
-                                                ( Imported
-                                                  ( ModuleName "Golden.StringCodePoints.Test" )
-                                                  ( Name "discard" )
-                                                ) 0
-                                              )
-                                              ( App Nothing
-                                                ( App Nothing
-                                                  ( Ref Nothing
-                                                    ( Imported
-                                                      ( ModuleName "Effect.Console" )
-                                                      ( Name "logShow" )
-                                                    ) 0
-                                                  )
-                                                  ( App Nothing
-                                                    ( Ref Nothing
-                                                      ( Imported
-                                                        ( ModuleName "Data.Maybe" )
-                                                        ( Name "showMaybe" )
-                                                      ) 0
-                                                    )
-                                                    ( Ref Nothing
-                                                      ( Imported
-                                                        ( ModuleName "Golden.StringCodePoints.Test" )
-                                                        ( Name "showArray" )
-                                                      ) 0
-                                                    )
-                                                  )
-                                                )
-                                                ( App Nothing
-                                                  ( App Nothing
-                                                    ( Ref Nothing
-                                                      ( Imported
-                                                        ( ModuleName "Golden.StringCodePoints.Test" )
-                                                        ( Name "map" )
-                                                      ) 0
-                                                    )
-                                                    ( App Nothing
-                                                      ( App Nothing
-                                                        ( Ref Nothing
-                                                          ( Imported
-                                                            ( ModuleName "Golden.StringCodePoints.Test" )
-                                                            ( Name "compose" )
-                                                          ) 0
-                                                        )
-                                                        ( Ref Nothing
-                                                          ( Imported
-                                                            ( ModuleName "Golden.StringCodePoints.Test" )
-                                                            ( Name "codes" )
-                                                          ) 0
-                                                        )
-                                                      )
-                                                      ( Abs Nothing
-                                                        ( ParamNamed Nothing ( Name "v" ) )
-                                                        ( ObjectProp Nothing
-                                                          ( Ref Nothing ( Local ( Name "v" ) ) 0 )
-                                                          ( PropName "tail" )
-                                                        )
-                                                      )
-                                                    )
-                                                  )
-                                                  ( App Nothing
-                                                    ( Ref Nothing
-                                                      ( Imported
-                                                        ( ModuleName "Data.String.CodePoints" )
-                                                        ( Name "uncons" )
-                                                      ) 0
-                                                    )
-                                                    ( LiteralString Nothing "aéЯ𝐀z" )
-                                                  )
-                                                )
-                                              )
-                                            )
-                                            ( Abs Nothing ( ParamUnused Nothing )
-                                              ( App Nothing
-                                                ( App Nothing
-                                                  ( Ref Nothing
-                                                    ( Imported
-                                                      ( ModuleName "Golden.StringCodePoints.Test" )
-                                                      ( Name "discard" )
-                                                    ) 0
-                                                  )
-                                                  ( App Nothing
-                                                    ( App Nothing
-                                                      ( Ref Nothing
-                                                        ( Imported
-                                                          ( ModuleName "Effect.Console" )
-                                                          ( Name "logShow" )
-                                                        ) 0
-                                                      )
-                                                      ( LiteralObject Nothing
-                                                        [
-                                                          ( PropName "show", Abs Nothing
-                                                            ( ParamNamed Nothing ( Name "v" ) )
-                                                            ( IfThenElse Nothing
-                                                              ( Ref Nothing
-                                                                ( Local ( Name "v" ) ) 0
-                                                              )
-                                                              ( LiteralString Nothing "true" )
-                                                              ( IfThenElse Nothing
-                                                                ( Eq Nothing ( LiteralBool Nothing False )
-                                                                  ( Ref Nothing
-                                                                    ( Local ( Name "v" ) ) 0
-                                                                  )
-                                                                )
-                                                                ( LiteralString Nothing "false" )
-                                                                ( Exception Nothing "No patterns matched" )
-                                                              )
-                                                            )
-                                                          )
-                                                        ]
-                                                      )
-                                                    )
-                                                    ( App Nothing
-                                                      ( App Nothing
-                                                        ( App Nothing
-                                                          ( Ref Nothing
-                                                            ( Imported
-                                                              ( ModuleName "Data.Eq" )
-                                                              ( Name "eq" )
-                                                            ) 0
-                                                          )
-                                                          ( LiteralObject Nothing
-                                                            [
-                                                              ( PropName "eq", ObjectProp ( Just Always )
-                                                                ( Ref Nothing
-                                                                  ( Imported
-                                                                    ( ModuleName "Data.Eq" )
-                                                                    ( Name "foreign" )
-                                                                  ) 0
-                                                                )
-                                                                ( PropName "eqStringImpl" )
-                                                              )
-                                                            ]
-                                                          )
-                                                        )
-                                                        ( App Nothing
-                                                          ( App Nothing
-                                                            ( ObjectProp ( Just Always )
-                                                              ( Ref Nothing
-                                                                ( Imported
-                                                                  ( ModuleName "Data.String.CodePoints" )
-                                                                  ( Name "foreign" )
-                                                                ) 0
-                                                              )
-                                                              ( PropName "_fromCodePointArray" )
-                                                            )
-                                                            ( Ref Nothing
-                                                              ( Imported
-                                                                ( ModuleName "Data.String.CodePoints" )
-                                                                ( Name "singletonFallback" )
-                                                              ) 0
-                                                            )
-                                                          )
-                                                          ( App Nothing
-                                                            ( Ref Nothing
-                                                              ( Imported
-                                                                ( ModuleName "Data.String.CodePoints" )
-                                                                ( Name "toCodePointArray" )
-                                                              ) 0
-                                                            )
-                                                            ( LiteralString Nothing "aéЯ𝐀z" )
-                                                          )
-                                                        )
-                                                      )
-                                                      ( LiteralString Nothing "aéЯ𝐀z" )
-                                                    )
-                                                  )
-                                                )
-                                                ( Abs Nothing ( ParamUnused Nothing )
-                                                  ( App Nothing
-                                                    ( Ref Nothing
-                                                      ( Imported
-                                                        ( ModuleName "Golden.StringCodePoints.Test" )
-                                                        ( Name "logShow" )
-                                                      ) 0
-                                                    )
-                                                    ( App Nothing
-                                                      ( Ref Nothing
-                                                        ( Imported
-                                                          ( ModuleName "Golden.StringCodePoints.Test" )
-                                                          ( Name "codes" )
-                                                        ) 0
-                                                      )
-                                                      ( App Nothing
-                                                        ( Ref Nothing
-                                                          ( Imported
-                                                            ( ModuleName "Data.String.CodePoints" )
-                                                            ( Name "singleton" )
-                                                          ) 0
-                                                        )
-                                                        ( App Nothing
-                                                          ( Ref Nothing
-                                                            ( Imported
-                                                              ( ModuleName "Golden.StringCodePoints.Test" )
-                                                              ( Name "cp" )
-                                                            ) 0
-                                                          )
-                                                          ( LiteralInt Nothing 119808 )
-                                                        )
-                                                      )
-                                                    )
-                                                  )
-                                                )
-                                              )
-                                            )
-                                          )
-                                        )
-                                      )
-                                    )
-                                  )
-                                )
-                              )
-                            )
-                          )
+                          ( LiteralString Nothing "aéЯ𝐀z" )
                         )
                       )
                     )
+                    ( LiteralString Nothing "aéЯ𝐀z" )
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) 0 )
+              )
+            ]
+          )
+          ( App Nothing
+            ( App Nothing
+              ( Ref Nothing
+                ( Imported ( ModuleName "Golden.StringCodePoints.Test" ) ( Name "logShow" ) ) 0
+              )
+              ( App Nothing
+                ( Ref Nothing
+                  ( Imported ( ModuleName "Golden.StringCodePoints.Test" ) ( Name "codes" ) ) 0
+                )
+                ( App Nothing
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "singleton" ) ) 0
+                  )
+                  ( App Nothing
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Golden.StringCodePoints.Test" ) ( Name "cp" ) ) 0
+                    )
+                    ( LiteralInt Nothing 119808 )
                   )
                 )
               )
             )
+            ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) 0 )
           )
         )
       ),

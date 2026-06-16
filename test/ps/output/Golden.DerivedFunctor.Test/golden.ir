@@ -575,56 +575,10 @@ UberModule
       ( Name "sumTree", Ref Nothing
         ( Imported ( ModuleName "Golden.DerivedFunctor.Test" ) ( Name "sumTree" ) ) 0
       ),
-      ( Name "main", App Nothing
-        ( App Nothing
-          ( Ref Nothing
-            ( Imported ( ModuleName "Golden.DerivedFunctor.Test" ) ( Name "discard" ) ) 0
-          )
-          ( App Nothing
-            ( Ref Nothing
-              ( Imported ( ModuleName "Golden.DerivedFunctor.Test" ) ( Name "logShow" ) ) 0
-            )
-            ( App Nothing
-              ( App Nothing
-                ( Ref Nothing
-                  ( Imported ( ModuleName "Golden.DerivedFunctor.Test" ) ( Name "fromRight" ) ) 0
-                )
-                ( LiteralInt Nothing 0 )
-              )
-              ( App Nothing
-                ( App Nothing
-                  ( Ref Nothing
-                    ( Imported ( ModuleName "Golden.DerivedFunctor.Test" ) ( Name "map1" ) ) 0
-                  )
-                  ( Abs Nothing
-                    ( ParamNamed Nothing ( Name "v" ) )
-                    ( App Nothing
-                      ( App Nothing
-                        ( Ref Nothing
-                          ( Imported ( ModuleName "Golden.DerivedFunctor.Test" ) ( Name "add" ) ) 0
-                        )
-                        ( Ref Nothing ( Local ( Name "v" ) ) 0 )
-                      )
-                      ( LiteralInt Nothing 1 )
-                    )
-                  )
-                )
-                ( App Nothing
-                  ( Ref Nothing
-                    ( Imported ( ModuleName "Golden.DerivedFunctor.Test" ) ( Name "Right" ) ) 0
-                  )
-                  ( LiteralInt Nothing 41 )
-                )
-              )
-            )
-          )
-        )
-        ( Abs Nothing ( ParamUnused Nothing )
-          ( App Nothing
-            ( App Nothing
-              ( Ref Nothing
-                ( Imported ( ModuleName "Golden.DerivedFunctor.Test" ) ( Name "discard" ) ) 0
-              )
+      ( Name "main", Abs Nothing ( ParamUnused Nothing )
+        ( Let Nothing
+          ( Standalone
+            ( Nothing, Name "_", App Nothing
               ( App Nothing
                 ( Ref Nothing
                   ( Imported ( ModuleName "Golden.DerivedFunctor.Test" ) ( Name "logShow" ) ) 0
@@ -637,7 +591,7 @@ UberModule
                         ( Name "fromRight" )
                       ) 0
                     )
-                    ( LiteralInt Nothing 7 )
+                    ( LiteralInt Nothing 0 )
                   )
                   ( App Nothing
                     ( App Nothing
@@ -662,49 +616,134 @@ UberModule
                     )
                     ( App Nothing
                       ( Ref Nothing
-                        ( Imported ( ModuleName "Golden.DerivedFunctor.Test" ) ( Name "Left" ) ) 0
+                        ( Imported ( ModuleName "Golden.DerivedFunctor.Test" ) ( Name "Right" ) ) 0
                       )
-                      ( LiteralString Nothing "no" )
+                      ( LiteralInt Nothing 41 )
                     )
                   )
                 )
               )
-            )
-            ( Abs Nothing ( ParamUnused Nothing )
-              ( App Nothing
-                ( Ref Nothing
-                  ( Imported ( ModuleName "Golden.DerivedFunctor.Test" ) ( Name "logShow" ) ) 0
-                )
+              ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) 0 )
+            ) :|
+            [ Standalone
+              ( Nothing, Name "_", App Nothing
                 ( App Nothing
                   ( Ref Nothing
-                    ( Imported ( ModuleName "Golden.DerivedFunctor.Test" ) ( Name "sumTree" ) ) 0
+                    ( Imported ( ModuleName "Golden.DerivedFunctor.Test" ) ( Name "logShow" ) ) 0
+                  )
+                  ( App Nothing
+                    ( App Nothing
+                      ( Ref Nothing
+                        ( Imported
+                          ( ModuleName "Golden.DerivedFunctor.Test" )
+                          ( Name "fromRight" )
+                        ) 0
+                      )
+                      ( LiteralInt Nothing 7 )
+                    )
+                    ( App Nothing
+                      ( App Nothing
+                        ( Ref Nothing
+                          ( Imported ( ModuleName "Golden.DerivedFunctor.Test" ) ( Name "map1" ) ) 0
+                        )
+                        ( Abs Nothing
+                          ( ParamNamed Nothing ( Name "v" ) )
+                          ( App Nothing
+                            ( App Nothing
+                              ( Ref Nothing
+                                ( Imported
+                                  ( ModuleName "Golden.DerivedFunctor.Test" )
+                                  ( Name "add" )
+                                ) 0
+                              )
+                              ( Ref Nothing ( Local ( Name "v" ) ) 0 )
+                            )
+                            ( LiteralInt Nothing 1 )
+                          )
+                        )
+                      )
+                      ( App Nothing
+                        ( Ref Nothing
+                          ( Imported ( ModuleName "Golden.DerivedFunctor.Test" ) ( Name "Left" ) ) 0
+                        )
+                        ( LiteralString Nothing "no" )
+                      )
+                    )
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) 0 )
+              )
+            ]
+          )
+          ( App Nothing
+            ( App Nothing
+              ( Ref Nothing
+                ( Imported ( ModuleName "Golden.DerivedFunctor.Test" ) ( Name "logShow" ) ) 0
+              )
+              ( App Nothing
+                ( Ref Nothing
+                  ( Imported ( ModuleName "Golden.DerivedFunctor.Test" ) ( Name "sumTree" ) ) 0
+                )
+                ( App Nothing
+                  ( App Nothing
+                    ( App Nothing
+                      ( Ref Nothing ( Imported ( ModuleName "Data.Functor" ) ( Name "map" ) ) 0 )
+                      ( Ref Nothing
+                        ( Imported
+                          ( ModuleName "Golden.DerivedFunctor.Test" )
+                          ( Name "functorTree" )
+                        ) 0
+                      )
+                    )
+                    ( Abs Nothing
+                      ( ParamNamed Nothing ( Name "v" ) )
+                      ( App Nothing
+                        ( App Nothing
+                          ( ObjectProp Nothing
+                            ( Ref Nothing
+                              ( Imported ( ModuleName "Data.Semiring" ) ( Name "semiringInt" ) ) 0
+                            )
+                            ( PropName "mul" )
+                          )
+                          ( Ref Nothing ( Local ( Name "v" ) ) 0 )
+                        )
+                        ( LiteralInt Nothing 2 )
+                      )
+                    )
                   )
                   ( App Nothing
                     ( App Nothing
                       ( App Nothing
-                        ( Ref Nothing ( Imported ( ModuleName "Data.Functor" ) ( Name "map" ) ) 0 )
                         ( Ref Nothing
-                          ( Imported
-                            ( ModuleName "Golden.DerivedFunctor.Test" )
-                            ( Name "functorTree" )
-                          ) 0
+                          ( Imported ( ModuleName "Golden.DerivedFunctor.Test" ) ( Name "Node" ) ) 0
                         )
-                      )
-                      ( Abs Nothing
-                        ( ParamNamed Nothing ( Name "v" ) )
                         ( App Nothing
                           ( App Nothing
-                            ( ObjectProp Nothing
+                            ( App Nothing
                               ( Ref Nothing
-                                ( Imported ( ModuleName "Data.Semiring" ) ( Name "semiringInt" ) ) 0
+                                ( Imported
+                                  ( ModuleName "Golden.DerivedFunctor.Test" )
+                                  ( Name "Node" )
+                                ) 0
                               )
-                              ( PropName "mul" )
+                              ( Ref Nothing
+                                ( Imported
+                                  ( ModuleName "Golden.DerivedFunctor.Test" )
+                                  ( Name "Leaf" )
+                                ) 0
+                              )
                             )
-                            ( Ref Nothing ( Local ( Name "v" ) ) 0 )
+                            ( LiteralInt Nothing 1 )
                           )
-                          ( LiteralInt Nothing 2 )
+                          ( Ref Nothing
+                            ( Imported
+                              ( ModuleName "Golden.DerivedFunctor.Test" )
+                              ( Name "Leaf" )
+                            ) 0
+                          )
                         )
                       )
+                      ( LiteralInt Nothing 2 )
                     )
                     ( App Nothing
                       ( App Nothing
@@ -715,61 +754,24 @@ UberModule
                               ( Name "Node" )
                             ) 0
                           )
-                          ( App Nothing
-                            ( App Nothing
-                              ( App Nothing
-                                ( Ref Nothing
-                                  ( Imported
-                                    ( ModuleName "Golden.DerivedFunctor.Test" )
-                                    ( Name "Node" )
-                                  ) 0
-                                )
-                                ( Ref Nothing
-                                  ( Imported
-                                    ( ModuleName "Golden.DerivedFunctor.Test" )
-                                    ( Name "Leaf" )
-                                  ) 0
-                                )
-                              )
-                              ( LiteralInt Nothing 1 )
-                            )
-                            ( Ref Nothing
-                              ( Imported
-                                ( ModuleName "Golden.DerivedFunctor.Test" )
-                                ( Name "Leaf" )
-                              ) 0
-                            )
+                          ( Ref Nothing
+                            ( Imported
+                              ( ModuleName "Golden.DerivedFunctor.Test" )
+                              ( Name "Leaf" )
+                            ) 0
                           )
                         )
-                        ( LiteralInt Nothing 2 )
+                        ( LiteralInt Nothing 3 )
                       )
-                      ( App Nothing
-                        ( App Nothing
-                          ( App Nothing
-                            ( Ref Nothing
-                              ( Imported
-                                ( ModuleName "Golden.DerivedFunctor.Test" )
-                                ( Name "Node" )
-                              ) 0
-                            )
-                            ( Ref Nothing
-                              ( Imported
-                                ( ModuleName "Golden.DerivedFunctor.Test" )
-                                ( Name "Leaf" )
-                              ) 0
-                            )
-                          )
-                          ( LiteralInt Nothing 3 )
-                        )
-                        ( Ref Nothing
-                          ( Imported ( ModuleName "Golden.DerivedFunctor.Test" ) ( Name "Leaf" ) ) 0
-                        )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Golden.DerivedFunctor.Test" ) ( Name "Leaf" ) ) 0
                       )
                     )
                   )
                 )
               )
             )
+            ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) 0 )
           )
         )
       ),
