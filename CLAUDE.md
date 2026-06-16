@@ -309,6 +309,9 @@ The project uses Hedgehog for property-based testing:
 
 ### Known Pitfalls
 
+See also `docs/QUIRKS.md` for the catalogue of compiler/Lua-target quirks
+(parser nesting limit, `Char` byte-string shapes, Lua 5.1 floor, …).
+
 - **`unit` must not be `nil`**: Lua tables cannot hold `nil` values, so
   `Array Unit` silently collapses to an empty table if the prelude defines
   `unit = nil`. Requires `purescript-lua/purescript-lua-prelude` ≥ v7.2.0, where
