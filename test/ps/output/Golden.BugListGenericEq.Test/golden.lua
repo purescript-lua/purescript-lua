@@ -238,8 +238,8 @@ M.Golden_BugListGenericEq_Test_cons = function(head)
     return M.Golden_BugListGenericEq_Test_Cons({ head = head, tail = tail })
   end
 end
-return M.Golden_BugListGenericEq_Test_discard(M.Golden_BugListGenericEq_Test_logShow(M.Golden_BugListGenericEq_Test_eq(M.Golden_BugListGenericEq_Test_Nil)(M.Golden_BugListGenericEq_Test_Nil)))(function(  )
-  return M.Golden_BugListGenericEq_Test_discard(M.Golden_BugListGenericEq_Test_logShow(M.Golden_BugListGenericEq_Test_eq(M.Golden_BugListGenericEq_Test_cons(1)(M.Golden_BugListGenericEq_Test_cons(2)(M.Golden_BugListGenericEq_Test_Nil)))(M.Golden_BugListGenericEq_Test_cons(1)(M.Golden_BugListGenericEq_Test_cons(2)(M.Golden_BugListGenericEq_Test_Nil)))))(function(  )
-    return M.Golden_BugListGenericEq_Test_logShow(M.Golden_BugListGenericEq_Test_eq(M.Golden_BugListGenericEq_Test_cons(1)(M.Golden_BugListGenericEq_Test_Nil))(M.Golden_BugListGenericEq_Test_cons(2)(M.Golden_BugListGenericEq_Test_Nil)))
-  end)
+return (function()
+  local _ = M.Golden_BugListGenericEq_Test_logShow(M.Golden_BugListGenericEq_Test_eq(M.Golden_BugListGenericEq_Test_Nil)(M.Golden_BugListGenericEq_Test_Nil))()
+  local _ = M.Golden_BugListGenericEq_Test_logShow(M.Golden_BugListGenericEq_Test_eq(M.Golden_BugListGenericEq_Test_cons(1)(M.Golden_BugListGenericEq_Test_cons(2)(M.Golden_BugListGenericEq_Test_Nil)))(M.Golden_BugListGenericEq_Test_cons(1)(M.Golden_BugListGenericEq_Test_cons(2)(M.Golden_BugListGenericEq_Test_Nil))))()
+  return M.Golden_BugListGenericEq_Test_logShow(M.Golden_BugListGenericEq_Test_eq(M.Golden_BugListGenericEq_Test_cons(1)(M.Golden_BugListGenericEq_Test_Nil))(M.Golden_BugListGenericEq_Test_cons(2)(M.Golden_BugListGenericEq_Test_Nil)))()
 end)()

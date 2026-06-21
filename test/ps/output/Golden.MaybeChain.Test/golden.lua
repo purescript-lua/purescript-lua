@@ -95,12 +95,11 @@ M.Golden_MaybeChain_Test_map = function(v)
     end
   end
 end
-return (function(dictBind)
-  return M.Control_Bind_bind(dictBind)
-end)(M.Effect_bindEffect)(M.Golden_MaybeChain_Test_logShow(M.Data_Maybe_maybe(0)(M.Golden_MaybeChain_Test_identity)(M.Data_Maybe_maybe(M.Data_Maybe_Nothing)(M.Data_Maybe_Just)(M.Golden_MaybeChain_Test_map(function( x )
-  return x
-end)(M.Data_Maybe_Nothing)))))(function()
+return (function()
+  local _ = M.Golden_MaybeChain_Test_logShow(M.Data_Maybe_maybe(0)(M.Golden_MaybeChain_Test_identity)(M.Data_Maybe_maybe(M.Data_Maybe_Nothing)(M.Data_Maybe_Just)(M.Golden_MaybeChain_Test_map(function( x )
+    return x
+  end)(M.Data_Maybe_Nothing))))()
   return M.Golden_MaybeChain_Test_logShow(M.Data_Maybe_maybe(0)(M.Golden_MaybeChain_Test_identity)(M.Data_Maybe_maybe(M.Data_Maybe_Nothing)(M.Data_Maybe_Just)(M.Golden_MaybeChain_Test_map(function( x )
     return x
-  end)(M.Data_Maybe_Just(42)))))
+  end)(M.Data_Maybe_Just(42)))))()
 end)()

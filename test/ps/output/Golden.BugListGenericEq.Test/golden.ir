@@ -922,36 +922,10 @@ UberModule
       ( Name "cons", Ref Nothing
         ( Imported ( ModuleName "Golden.BugListGenericEq.Test" ) ( Name "cons" ) ) 0
       ),
-      ( Name "main", App Nothing
-        ( App Nothing
-          ( Ref Nothing
-            ( Imported ( ModuleName "Golden.BugListGenericEq.Test" ) ( Name "discard" ) ) 0
-          )
-          ( App Nothing
-            ( Ref Nothing
-              ( Imported ( ModuleName "Golden.BugListGenericEq.Test" ) ( Name "logShow" ) ) 0
-            )
-            ( App Nothing
-              ( App Nothing
-                ( Ref Nothing
-                  ( Imported ( ModuleName "Golden.BugListGenericEq.Test" ) ( Name "eq" ) ) 0
-                )
-                ( Ref Nothing
-                  ( Imported ( ModuleName "Golden.BugListGenericEq.Test" ) ( Name "Nil" ) ) 0
-                )
-              )
-              ( Ref Nothing
-                ( Imported ( ModuleName "Golden.BugListGenericEq.Test" ) ( Name "Nil" ) ) 0
-              )
-            )
-          )
-        )
-        ( Abs Nothing ( ParamUnused Nothing )
-          ( App Nothing
-            ( App Nothing
-              ( Ref Nothing
-                ( Imported ( ModuleName "Golden.BugListGenericEq.Test" ) ( Name "discard" ) ) 0
-              )
+      ( Name "main", Abs Nothing ( ParamUnused Nothing )
+        ( Let Nothing
+          ( Standalone
+            ( Nothing, Name "_", App Nothing
               ( App Nothing
                 ( Ref Nothing
                   ( Imported ( ModuleName "Golden.BugListGenericEq.Test" ) ( Name "logShow" ) ) 0
@@ -960,6 +934,57 @@ UberModule
                   ( App Nothing
                     ( Ref Nothing
                       ( Imported ( ModuleName "Golden.BugListGenericEq.Test" ) ( Name "eq" ) ) 0
+                    )
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Golden.BugListGenericEq.Test" ) ( Name "Nil" ) ) 0
+                    )
+                  )
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Golden.BugListGenericEq.Test" ) ( Name "Nil" ) ) 0
+                  )
+                )
+              )
+              ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) 0 )
+            ) :|
+            [ Standalone
+              ( Nothing, Name "_", App Nothing
+                ( App Nothing
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Golden.BugListGenericEq.Test" ) ( Name "logShow" ) ) 0
+                  )
+                  ( App Nothing
+                    ( App Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Golden.BugListGenericEq.Test" ) ( Name "eq" ) ) 0
+                      )
+                      ( App Nothing
+                        ( App Nothing
+                          ( Ref Nothing
+                            ( Imported
+                              ( ModuleName "Golden.BugListGenericEq.Test" )
+                              ( Name "cons" )
+                            ) 0
+                          )
+                          ( LiteralInt Nothing 1 )
+                        )
+                        ( App Nothing
+                          ( App Nothing
+                            ( Ref Nothing
+                              ( Imported
+                                ( ModuleName "Golden.BugListGenericEq.Test" )
+                                ( Name "cons" )
+                              ) 0
+                            )
+                            ( LiteralInt Nothing 2 )
+                          )
+                          ( Ref Nothing
+                            ( Imported
+                              ( ModuleName "Golden.BugListGenericEq.Test" )
+                              ( Name "Nil" )
+                            ) 0
+                          )
+                        )
+                      )
                     )
                     ( App Nothing
                       ( App Nothing
@@ -990,6 +1015,21 @@ UberModule
                       )
                     )
                   )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) 0 )
+              )
+            ]
+          )
+          ( App Nothing
+            ( App Nothing
+              ( Ref Nothing
+                ( Imported ( ModuleName "Golden.BugListGenericEq.Test" ) ( Name "logShow" ) ) 0
+              )
+              ( App Nothing
+                ( App Nothing
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Golden.BugListGenericEq.Test" ) ( Name "eq" ) ) 0
+                  )
                   ( App Nothing
                     ( App Nothing
                       ( Ref Nothing
@@ -997,63 +1037,25 @@ UberModule
                       )
                       ( LiteralInt Nothing 1 )
                     )
-                    ( App Nothing
-                      ( App Nothing
-                        ( Ref Nothing
-                          ( Imported
-                            ( ModuleName "Golden.BugListGenericEq.Test" )
-                            ( Name "cons" )
-                          ) 0
-                        )
-                        ( LiteralInt Nothing 2 )
-                      )
-                      ( Ref Nothing
-                        ( Imported ( ModuleName "Golden.BugListGenericEq.Test" ) ( Name "Nil" ) ) 0
-                      )
-                    )
-                  )
-                )
-              )
-            )
-            ( Abs Nothing ( ParamUnused Nothing )
-              ( App Nothing
-                ( Ref Nothing
-                  ( Imported ( ModuleName "Golden.BugListGenericEq.Test" ) ( Name "logShow" ) ) 0
-                )
-                ( App Nothing
-                  ( App Nothing
-                    ( Ref Nothing
-                      ( Imported ( ModuleName "Golden.BugListGenericEq.Test" ) ( Name "eq" ) ) 0
-                    )
-                    ( App Nothing
-                      ( App Nothing
-                        ( Ref Nothing
-                          ( Imported
-                            ( ModuleName "Golden.BugListGenericEq.Test" )
-                            ( Name "cons" )
-                          ) 0
-                        )
-                        ( LiteralInt Nothing 1 )
-                      )
-                      ( Ref Nothing
-                        ( Imported ( ModuleName "Golden.BugListGenericEq.Test" ) ( Name "Nil" ) ) 0
-                      )
-                    )
-                  )
-                  ( App Nothing
-                    ( App Nothing
-                      ( Ref Nothing
-                        ( Imported ( ModuleName "Golden.BugListGenericEq.Test" ) ( Name "cons" ) ) 0
-                      )
-                      ( LiteralInt Nothing 2 )
-                    )
                     ( Ref Nothing
                       ( Imported ( ModuleName "Golden.BugListGenericEq.Test" ) ( Name "Nil" ) ) 0
                     )
                   )
                 )
+                ( App Nothing
+                  ( App Nothing
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Golden.BugListGenericEq.Test" ) ( Name "cons" ) ) 0
+                    )
+                    ( LiteralInt Nothing 2 )
+                  )
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Golden.BugListGenericEq.Test" ) ( Name "Nil" ) ) 0
+                  )
+                )
               )
             )
+            ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) 0 )
           )
         )
       ),

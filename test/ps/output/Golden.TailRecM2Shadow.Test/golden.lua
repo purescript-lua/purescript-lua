@@ -133,27 +133,30 @@ M.Golden_TailRecM2Shadow_Test_sumFrom = function(dictMonadRec)
     end
   end
 end
-return M.Control_Bind_bind(M.Effect_bindEffect)(M.Golden_TailRecM2Shadow_Test_sumFrom({
-  tailRecM = function(f)
-    return function(a)
-      return M.Control_Monad_Rec_Class_bind(M.Control_Bind_bind(M.Effect_bindEffect)(f(a))(M.Effect_Ref_foreign._new))(function( r )
-        return (function(dictBind)
-          return M.Control_Bind_bind(dictBind)
-        end)(M.Effect_bindEffect)(M.Effect_foreign.untilE(M.Control_Monad_Rec_Class_bind(M.Effect_Ref_foreign.read(r))(function( v )
-          if "Control.Monad.Rec.Class∷Step.Loop" == v["$ctor"] then
-            return M.Control_Monad_Rec_Class_bind(f(v.value0))(function(e)
-              return M.Control_Monad_Rec_Class_bind(M.Effect_Ref_foreign.write(e)(r))(function(  )
-                return M.Control_Monad_Rec_Class_pure(false)
-              end)
-            end)
-          else
-            if "Control.Monad.Rec.Class∷Step.Done" == v["$ctor"] then
-              return M.Control_Monad_Rec_Class_pure(true)
-            else
-              return error("No patterns matched")
-            end
-          end
-        end)))(function()
+return (function()
+  local r = M.Golden_TailRecM2Shadow_Test_sumFrom({
+    tailRecM = function(f)
+      return function(a)
+        return function()
+          local r = M.Control_Bind_bind(M.Effect_bindEffect)(f(a))(M.Effect_Ref_foreign._new)()
+          local _ = M.Effect_foreign.untilE(function()
+            local v = M.Effect_Ref_foreign.read(r)()
+            return (function()
+              if "Control.Monad.Rec.Class∷Step.Loop" == v["$ctor"] then
+                return function()
+                  local e = f(v.value0)()
+                  local _ = M.Effect_Ref_foreign.write(e)(r)()
+                  return M.Control_Monad_Rec_Class_pure(false)()
+                end
+              else
+                if "Control.Monad.Rec.Class∷Step.Done" == v["$ctor"] then
+                  return M.Control_Monad_Rec_Class_pure(true)
+                else
+                  return error("No patterns matched")
+                end
+              end
+            end)()()
+          end)()
           return M.Effect_functorEffect.map((function(f) return f(); end)(function(  )
             return function(v)
               if "Control.Monad.Rec.Class∷Step.Done" == v["$ctor"] then
@@ -162,12 +165,11 @@ return M.Control_Bind_bind(M.Effect_bindEffect)(M.Golden_TailRecM2Shadow_Test_su
                 return error("No patterns matched")
               end
             end
-          end))(M.Effect_Ref_foreign.read(r))
-        end)
-      end)
-    end
-  end,
-  Monad0 = function() return M.Effect_monadEffect end
-})(0)(5))(function(r)
-  return (function(s) return function() print(s) end end)((function(n) return tostring(n) end)(r))
+          end))(M.Effect_Ref_foreign.read(r))()
+        end
+      end
+    end,
+    Monad0 = function() return M.Effect_monadEffect end
+  })(0)(5)()
+  return (function(s) return function() print(s) end end)((function(n) return tostring(n) end)(r))()
 end)()

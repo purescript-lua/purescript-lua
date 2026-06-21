@@ -106,47 +106,40 @@ M.Golden_CharLiterals_Test_show1 = M.Data_Show_show({
     end
   end
 })
-return M.Golden_CharLiterals_Test_discard(M.Effect_Console_foreign.log(M.Golden_CharLiterals_Test_show("\n")))(function(  )
-  return M.Golden_CharLiterals_Test_discard(M.Effect_Console_foreign.log(M.Golden_CharLiterals_Test_show("\t")))(function(  )
-    return M.Golden_CharLiterals_Test_discard(M.Effect_Console_foreign.log(M.Golden_CharLiterals_Test_show("\r")))(function(  )
-      return M.Golden_CharLiterals_Test_discard(M.Effect_Console_foreign.log(M.Golden_CharLiterals_Test_show("\'")))(function(  )
-        return M.Golden_CharLiterals_Test_discard(M.Effect_Console_foreign.log(M.Golden_CharLiterals_Test_show("\\")))(function(  )
-          return M.Golden_CharLiterals_Test_discard(M.Effect_Console_foreign.log(M.Golden_CharLiterals_Test_show("a")))(function(  )
-            return M.Golden_CharLiterals_Test_discard(M.Effect_Console_foreign.log(M.Golden_CharLiterals_Test_show1(M.Data_Eq_eqChar.eq("\n")("\n"))))(function(  )
-              return M.Effect_Console_foreign.log(M.Golden_CharLiterals_Test_show1((function(  )
-                if "Data.Ordering∷Ordering.LT" == (((function()
-                  local unsafeCoerceImpl = function(lt)
-                    return function(eq)
-                      return function(gt)
-                        return function(x)
-                          return function(y)
-                            if x < y then
-                              return lt
-                            elseif x == y then
-                              return eq
-                            else
-                              return gt
-                            end
-                          end
-                        end
-                      end
-                    end
-                  end
-                  return { ordCharImpl = unsafeCoerceImpl }
-                end)()).ordCharImpl({
-                  ["$ctor"] = "Data.Ordering∷Ordering.LT"
-                })({ ["$ctor"] = "Data.Ordering∷Ordering.EQ" })({
-                  ["$ctor"] = "Data.Ordering∷Ordering.GT"
-                })("\t")("\n"))["$ctor"] then
-                  return true
+return (function()
+  local _ = M.Effect_Console_foreign.log(M.Golden_CharLiterals_Test_show("\n"))()
+  local _ = M.Effect_Console_foreign.log(M.Golden_CharLiterals_Test_show("\t"))()
+  local _ = M.Effect_Console_foreign.log(M.Golden_CharLiterals_Test_show("\r"))()
+  local _ = M.Effect_Console_foreign.log(M.Golden_CharLiterals_Test_show("\'"))()
+  local _ = M.Effect_Console_foreign.log(M.Golden_CharLiterals_Test_show("\\"))()
+  local _ = M.Effect_Console_foreign.log(M.Golden_CharLiterals_Test_show("a"))()
+  local _ = M.Effect_Console_foreign.log(M.Golden_CharLiterals_Test_show1(M.Data_Eq_eqChar.eq("\n")("\n")))()
+  return M.Effect_Console_foreign.log(M.Golden_CharLiterals_Test_show1((function(  )
+    if "Data.Ordering∷Ordering.LT" == (((function()
+      local unsafeCoerceImpl = function(lt)
+        return function(eq)
+          return function(gt)
+            return function(x)
+              return function(y)
+                if x < y then
+                  return lt
+                elseif x == y then
+                  return eq
                 else
-                  return false
+                  return gt
                 end
-              end)()))
-            end)
-          end)
-        end)
-      end)
-    end)
-  end)
+              end
+            end
+          end
+        end
+      end
+      return { ordCharImpl = unsafeCoerceImpl }
+    end)()).ordCharImpl({ ["$ctor"] = "Data.Ordering∷Ordering.LT" })({
+      ["$ctor"] = "Data.Ordering∷Ordering.EQ"
+    })({ ["$ctor"] = "Data.Ordering∷Ordering.GT" })("\t")("\n"))["$ctor"] then
+      return true
+    else
+      return false
+    end
+  end)()))()
 end)()

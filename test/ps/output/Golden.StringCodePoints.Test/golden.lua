@@ -737,44 +737,35 @@ M.Golden_StringCodePoints_Test_codes = M.Golden_StringCodePoints_Test_compose(M.
       end
     end
 })(M.Golden_StringCodePoints_Test_fromEnum))(M.Data_String_CodePoints_toCodePointArray)
-return M.Golden_StringCodePoints_Test_discard(M.Golden_StringCodePoints_Test_logShow(M.Golden_StringCodePoints_Test_codes("aéЯ𝐀z")))(function(  )
-  return M.Golden_StringCodePoints_Test_discard(M.Golden_StringCodePoints_Test_logShow1(M.Data_String_CodePoints_compose(function(xs) return #xs end)(M.Data_String_CodePoints_toCodePointArray)("aéЯ𝐀z")))(function(  )
-    return M.Golden_StringCodePoints_Test_discard(M.Golden_StringCodePoints_Test_logShow1(M.Data_String_CodeUnits_foreign.length("aéЯ𝐀z")))(function(  )
-      return M.Golden_StringCodePoints_Test_discard(M.Golden_StringCodePoints_Test_logShow(M.Golden_StringCodePoints_Test_codes(M.Data_String_CodePoints_take(2)("aéЯ𝐀z"))))(function(  )
-        return M.Golden_StringCodePoints_Test_discard(M.Golden_StringCodePoints_Test_logShow(M.Golden_StringCodePoints_Test_codes(M.Data_String_CodePoints_drop(2)("aéЯ𝐀z"))))(function(  )
-          return M.Golden_StringCodePoints_Test_discard(M.Golden_StringCodePoints_Test_logShow2(M.Golden_StringCodePoints_Test_map(M.Golden_StringCodePoints_Test_fromEnum)(M.Data_String_CodePoints_codePointAt(0)("aéЯ𝐀z"))))(function(  )
-            return M.Golden_StringCodePoints_Test_discard(M.Golden_StringCodePoints_Test_logShow2(M.Golden_StringCodePoints_Test_map(M.Golden_StringCodePoints_Test_fromEnum)(M.Data_String_CodePoints_codePointAt(3)("aéЯ𝐀z"))))(function(  )
-              return M.Golden_StringCodePoints_Test_discard(M.Golden_StringCodePoints_Test_logShow2(M.Golden_StringCodePoints_Test_map(M.Golden_StringCodePoints_Test_fromEnum)(M.Data_String_CodePoints_codePointAt(5)("aéЯ𝐀z"))))(function(  )
-                return M.Golden_StringCodePoints_Test_discard(M.Golden_StringCodePoints_Test_logShow2(M.Golden_StringCodePoints_Test_map(M.Golden_StringCodePoints_Test_compose(M.Golden_StringCodePoints_Test_fromEnum)(function( v )
-                  return v.head
-                end))(M.Data_String_CodePoints_uncons("aéЯ𝐀z"))))(function()
-                  return M.Golden_StringCodePoints_Test_discard(M.Effect_Console_logShow(M.Data_Maybe_showMaybe(M.Golden_StringCodePoints_Test_showArray))(M.Golden_StringCodePoints_Test_map(M.Golden_StringCodePoints_Test_compose(M.Golden_StringCodePoints_Test_codes)(function( v )
-                    return v.tail
-                  end))(M.Data_String_CodePoints_uncons("aéЯ𝐀z"))))(function()
-                    return M.Golden_StringCodePoints_Test_discard(M.Effect_Console_logShow({
-                      show = function(v)
-                        if v then
-                          return "true"
-                        else
-                          if false == v then
-                            return "false"
-                          else
-                            return error("No patterns matched")
-                          end
-                        end
-                      end
-                    })(M.Data_Eq_eq({
-                      eq = M.Data_Eq_foreign.eqStringImpl
-                    })(M.Data_String_CodePoints_foreign._fromCodePointArray(M.Data_String_CodePoints_singletonFallback)(M.Data_String_CodePoints_toCodePointArray("aéЯ𝐀z")))("aéЯ𝐀z")))(function(  )
-                      return M.Golden_StringCodePoints_Test_logShow(M.Golden_StringCodePoints_Test_codes(M.Data_String_CodePoints_singleton(M.Golden_StringCodePoints_Test_cp(119808))))
-                    end)
-                  end)
-                end)
-              end)
-            end)
-          end)
-        end)
-      end)
-    end)
-  end)
+return (function()
+  local _ = M.Golden_StringCodePoints_Test_logShow(M.Golden_StringCodePoints_Test_codes("aéЯ𝐀z"))()
+  local _ = M.Golden_StringCodePoints_Test_logShow1(M.Data_String_CodePoints_compose(function(xs) return #xs end)(M.Data_String_CodePoints_toCodePointArray)("aéЯ𝐀z"))()
+  local _ = M.Golden_StringCodePoints_Test_logShow1(M.Data_String_CodeUnits_foreign.length("aéЯ𝐀z"))()
+  local _ = M.Golden_StringCodePoints_Test_logShow(M.Golden_StringCodePoints_Test_codes(M.Data_String_CodePoints_take(2)("aéЯ𝐀z")))()
+  local _ = M.Golden_StringCodePoints_Test_logShow(M.Golden_StringCodePoints_Test_codes(M.Data_String_CodePoints_drop(2)("aéЯ𝐀z")))()
+  local _ = M.Golden_StringCodePoints_Test_logShow2(M.Golden_StringCodePoints_Test_map(M.Golden_StringCodePoints_Test_fromEnum)(M.Data_String_CodePoints_codePointAt(0)("aéЯ𝐀z")))()
+  local _ = M.Golden_StringCodePoints_Test_logShow2(M.Golden_StringCodePoints_Test_map(M.Golden_StringCodePoints_Test_fromEnum)(M.Data_String_CodePoints_codePointAt(3)("aéЯ𝐀z")))()
+  local _ = M.Golden_StringCodePoints_Test_logShow2(M.Golden_StringCodePoints_Test_map(M.Golden_StringCodePoints_Test_fromEnum)(M.Data_String_CodePoints_codePointAt(5)("aéЯ𝐀z")))()
+  local _ = M.Golden_StringCodePoints_Test_logShow2(M.Golden_StringCodePoints_Test_map(M.Golden_StringCodePoints_Test_compose(M.Golden_StringCodePoints_Test_fromEnum)(function( v )
+    return v.head
+  end))(M.Data_String_CodePoints_uncons("aéЯ𝐀z")))()
+  local _ = M.Effect_Console_logShow(M.Data_Maybe_showMaybe(M.Golden_StringCodePoints_Test_showArray))(M.Golden_StringCodePoints_Test_map(M.Golden_StringCodePoints_Test_compose(M.Golden_StringCodePoints_Test_codes)(function( v )
+    return v.tail
+  end))(M.Data_String_CodePoints_uncons("aéЯ𝐀z")))()
+  local _ = M.Effect_Console_logShow({
+    show = function(v)
+      if v then
+        return "true"
+      else
+        if false == v then
+          return "false"
+        else
+          return error("No patterns matched")
+        end
+      end
+    end
+  })(M.Data_Eq_eq({
+    eq = M.Data_Eq_foreign.eqStringImpl
+  })(M.Data_String_CodePoints_foreign._fromCodePointArray(M.Data_String_CodePoints_singletonFallback)(M.Data_String_CodePoints_toCodePointArray("aéЯ𝐀z")))("aéЯ𝐀z"))()
+  return M.Golden_StringCodePoints_Test_logShow(M.Golden_StringCodePoints_Test_codes(M.Data_String_CodePoints_singleton(M.Golden_StringCodePoints_Test_cp(119808))))()
 end)()

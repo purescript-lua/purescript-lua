@@ -299,30 +299,10 @@ UberModule
       )
     ], uberModuleForeigns = [], uberModuleExports =
     [
-      ( Name "main", App Nothing
-        ( App Nothing
-          ( Ref Nothing
-            ( Imported ( ModuleName "Golden.CharLiterals.Test" ) ( Name "discard" ) ) 0
-          )
-          ( App Nothing
-            ( ObjectProp ( Just Always )
-              ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) 0 )
-              ( PropName "log" )
-            )
-            ( App Nothing
-              ( Ref Nothing
-                ( Imported ( ModuleName "Golden.CharLiterals.Test" ) ( Name "show" ) ) 0
-              )
-              ( LiteralChar Nothing ' ' )
-            )
-          )
-        )
-        ( Abs Nothing ( ParamUnused Nothing )
-          ( App Nothing
-            ( App Nothing
-              ( Ref Nothing
-                ( Imported ( ModuleName "Golden.CharLiterals.Test" ) ( Name "discard" ) ) 0
-              )
+      ( Name "main", Abs Nothing ( ParamUnused Nothing )
+        ( Let Nothing
+          ( Standalone
+            ( Nothing, Name "_", App Nothing
               ( App Nothing
                 ( ObjectProp ( Just Always )
                   ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) 0 )
@@ -332,240 +312,191 @@ UberModule
                   ( Ref Nothing
                     ( Imported ( ModuleName "Golden.CharLiterals.Test" ) ( Name "show" ) ) 0
                   )
-                  ( LiteralChar Nothing '\x9' )
+                  ( LiteralChar Nothing ' ' )
                 )
               )
-            )
-            ( Abs Nothing ( ParamUnused Nothing )
-              ( App Nothing
+              ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) 0 )
+            ) :|
+            [ Standalone
+              ( Nothing, Name "_", App Nothing
                 ( App Nothing
-                  ( Ref Nothing
-                    ( Imported ( ModuleName "Golden.CharLiterals.Test" ) ( Name "discard" ) ) 0
+                  ( ObjectProp ( Just Always )
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) 0
+                    )
+                    ( PropName "log" )
                   )
                   ( App Nothing
-                    ( ObjectProp ( Just Always )
-                      ( Ref Nothing
-                        ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) 0
-                      )
-                      ( PropName "log" )
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Golden.CharLiterals.Test" ) ( Name "show" ) ) 0
+                    )
+                    ( LiteralChar Nothing '\x9' )
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) 0 )
+              ), Standalone
+              ( Nothing, Name "_", App Nothing
+                ( App Nothing
+                  ( ObjectProp ( Just Always )
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) 0
+                    )
+                    ( PropName "log" )
+                  )
+                  ( App Nothing
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Golden.CharLiterals.Test" ) ( Name "show" ) ) 0
+                    )
+                    ( LiteralChar Nothing '\xd' )
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) 0 )
+              ), Standalone
+              ( Nothing, Name "_", App Nothing
+                ( App Nothing
+                  ( ObjectProp ( Just Always )
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) 0
+                    )
+                    ( PropName "log" )
+                  )
+                  ( App Nothing
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Golden.CharLiterals.Test" ) ( Name "show" ) ) 0
+                    )
+                    ( LiteralChar Nothing ''' )
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) 0 )
+              ), Standalone
+              ( Nothing, Name "_", App Nothing
+                ( App Nothing
+                  ( ObjectProp ( Just Always )
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) 0
+                    )
+                    ( PropName "log" )
+                  )
+                  ( App Nothing
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Golden.CharLiterals.Test" ) ( Name "show" ) ) 0
+                    )
+                    ( LiteralChar Nothing '\' )
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) 0 )
+              ), Standalone
+              ( Nothing, Name "_", App Nothing
+                ( App Nothing
+                  ( ObjectProp ( Just Always )
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) 0
+                    )
+                    ( PropName "log" )
+                  )
+                  ( App Nothing
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Golden.CharLiterals.Test" ) ( Name "show" ) ) 0
+                    )
+                    ( LiteralChar Nothing 'a' )
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) 0 )
+              ), Standalone
+              ( Nothing, Name "_", App Nothing
+                ( App Nothing
+                  ( ObjectProp ( Just Always )
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) 0
+                    )
+                    ( PropName "log" )
+                  )
+                  ( App Nothing
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Golden.CharLiterals.Test" ) ( Name "show1" ) ) 0
                     )
                     ( App Nothing
-                      ( Ref Nothing
-                        ( Imported ( ModuleName "Golden.CharLiterals.Test" ) ( Name "show" ) ) 0
+                      ( App Nothing
+                        ( ObjectProp Nothing
+                          ( Ref Nothing ( Imported ( ModuleName "Data.Eq" ) ( Name "eqChar" ) ) 0 )
+                          ( PropName "eq" )
+                        )
+                        ( LiteralChar Nothing ' ' )
                       )
-                      ( LiteralChar Nothing '\xd' )
+                      ( LiteralChar Nothing ' ' )
                     )
                   )
                 )
-                ( Abs Nothing ( ParamUnused Nothing )
-                  ( App Nothing
-                    ( App Nothing
-                      ( Ref Nothing
-                        ( Imported ( ModuleName "Golden.CharLiterals.Test" ) ( Name "discard" ) ) 0
-                      )
-                      ( App Nothing
-                        ( ObjectProp ( Just Always )
-                          ( Ref Nothing
-                            ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) 0
-                          )
-                          ( PropName "log" )
-                        )
-                        ( App Nothing
-                          ( Ref Nothing
-                            ( Imported ( ModuleName "Golden.CharLiterals.Test" ) ( Name "show" ) ) 0
-                          )
-                          ( LiteralChar Nothing ''' )
-                        )
-                      )
-                    )
-                    ( Abs Nothing ( ParamUnused Nothing )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) 0 )
+              )
+            ]
+          )
+          ( App Nothing
+            ( App Nothing
+              ( ObjectProp ( Just Always )
+                ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) 0 )
+                ( PropName "log" )
+              )
+              ( App Nothing
+                ( Ref Nothing
+                  ( Imported ( ModuleName "Golden.CharLiterals.Test" ) ( Name "show1" ) ) 0
+                )
+                ( IfThenElse Nothing
+                  ( Eq Nothing
+                    ( LiteralString Nothing "Data.Ordering∷Ordering.LT" )
+                    ( ReflectCtor Nothing
                       ( App Nothing
                         ( App Nothing
-                          ( Ref Nothing
-                            ( Imported
-                              ( ModuleName "Golden.CharLiterals.Test" )
-                              ( Name "discard" )
-                            ) 0
-                          )
-                          ( App Nothing
-                            ( ObjectProp ( Just Always )
-                              ( Ref Nothing
-                                ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) 0
-                              )
-                              ( PropName "log" )
-                            )
-                            ( App Nothing
-                              ( Ref Nothing
-                                ( Imported
-                                  ( ModuleName "Golden.CharLiterals.Test" )
-                                  ( Name "show" )
-                                ) 0
-                              )
-                              ( LiteralChar Nothing '\' )
-                            )
-                          )
-                        )
-                        ( Abs Nothing ( ParamUnused Nothing )
-                          ( App Nothing
-                            ( App Nothing
-                              ( Ref Nothing
-                                ( Imported
-                                  ( ModuleName "Golden.CharLiterals.Test" )
-                                  ( Name "discard" )
-                                ) 0
-                              )
-                              ( App Nothing
-                                ( ObjectProp ( Just Always )
-                                  ( Ref Nothing
-                                    ( Imported
-                                      ( ModuleName "Effect.Console" )
-                                      ( Name "foreign" )
-                                    ) 0
-                                  )
-                                  ( PropName "log" )
-                                )
-                                ( App Nothing
-                                  ( Ref Nothing
-                                    ( Imported
-                                      ( ModuleName "Golden.CharLiterals.Test" )
-                                      ( Name "show" )
-                                    ) 0
-                                  )
-                                  ( LiteralChar Nothing 'a' )
-                                )
-                              )
-                            )
-                            ( Abs Nothing ( ParamUnused Nothing )
-                              ( App Nothing
-                                ( App Nothing
-                                  ( Ref Nothing
-                                    ( Imported
-                                      ( ModuleName "Golden.CharLiterals.Test" )
-                                      ( Name "discard" )
-                                    ) 0
-                                  )
+                          ( ObjectProp Nothing
+                            ( LiteralObject Nothing
+                              [
+                                ( PropName "compare", App Nothing
                                   ( App Nothing
-                                    ( ObjectProp ( Just Always )
-                                      ( Ref Nothing
-                                        ( Imported
-                                          ( ModuleName "Effect.Console" )
-                                          ( Name "foreign" )
-                                        ) 0
-                                      )
-                                      ( PropName "log" )
-                                    )
                                     ( App Nothing
-                                      ( Ref Nothing
-                                        ( Imported
-                                          ( ModuleName "Golden.CharLiterals.Test" )
-                                          ( Name "show1" )
-                                        ) 0
-                                      )
-                                      ( App Nothing
-                                        ( App Nothing
-                                          ( ObjectProp Nothing
-                                            ( Ref Nothing
-                                              ( Imported
-                                                ( ModuleName "Data.Eq" )
-                                                ( Name "eqChar" )
-                                              ) 0
-                                            )
-                                            ( PropName "eq" )
-                                          )
-                                          ( LiteralChar Nothing ' ' )
+                                      ( ObjectProp ( Just Always )
+                                        ( ForeignImport Nothing
+                                          ( ModuleName "Data.Ord" ) ".spago/prelude/v7.3.0/src/Data/Ord.purs"
+                                          [ ( Nothing, Name "ordCharImpl" ) ]
                                         )
-                                        ( LiteralChar Nothing ' ' )
+                                        ( PropName "ordCharImpl" )
                                       )
+                                      ( Ctor Nothing SumType
+                                        ( ModuleName "Data.Ordering" )
+                                        ( TyName "Ordering" )
+                                        ( CtorName "LT" ) []
+                                      )
+                                    )
+                                    ( Ctor Nothing SumType
+                                      ( ModuleName "Data.Ordering" )
+                                      ( TyName "Ordering" )
+                                      ( CtorName "EQ" ) []
                                     )
                                   )
-                                )
-                                ( Abs Nothing ( ParamUnused Nothing )
-                                  ( App Nothing
-                                    ( ObjectProp ( Just Always )
-                                      ( Ref Nothing
-                                        ( Imported
-                                          ( ModuleName "Effect.Console" )
-                                          ( Name "foreign" )
-                                        ) 0
-                                      )
-                                      ( PropName "log" )
-                                    )
-                                    ( App Nothing
-                                      ( Ref Nothing
-                                        ( Imported
-                                          ( ModuleName "Golden.CharLiterals.Test" )
-                                          ( Name "show1" )
-                                        ) 0
-                                      )
-                                      ( IfThenElse Nothing
-                                        ( Eq Nothing
-                                          ( LiteralString Nothing "Data.Ordering∷Ordering.LT" )
-                                          ( ReflectCtor Nothing
-                                            ( App Nothing
-                                              ( App Nothing
-                                                ( ObjectProp Nothing
-                                                  ( LiteralObject Nothing
-                                                    [
-                                                      ( PropName "compare", App Nothing
-                                                        ( App Nothing
-                                                          ( App Nothing
-                                                            ( ObjectProp ( Just Always )
-                                                              ( ForeignImport Nothing
-                                                                ( ModuleName "Data.Ord" ) ".spago/prelude/v7.3.0/src/Data/Ord.purs"
-                                                                [ ( Nothing, Name "ordCharImpl" ) ]
-                                                              )
-                                                              ( PropName "ordCharImpl" )
-                                                            )
-                                                            ( Ctor Nothing SumType
-                                                              ( ModuleName "Data.Ordering" )
-                                                              ( TyName "Ordering" )
-                                                              ( CtorName "LT" ) []
-                                                            )
-                                                          )
-                                                          ( Ctor Nothing SumType
-                                                            ( ModuleName "Data.Ordering" )
-                                                            ( TyName "Ordering" )
-                                                            ( CtorName "EQ" ) []
-                                                          )
-                                                        )
-                                                        ( Ctor Nothing SumType
-                                                          ( ModuleName "Data.Ordering" )
-                                                          ( TyName "Ordering" )
-                                                          ( CtorName "GT" ) []
-                                                        )
-                                                      ),
-                                                      ( PropName "Eq0", Abs Nothing ( ParamUnused Nothing )
-                                                        ( Ref Nothing
-                                                          ( Imported
-                                                            ( ModuleName "Data.Eq" )
-                                                            ( Name "eqChar" )
-                                                          ) 0
-                                                        )
-                                                      )
-                                                    ]
-                                                  )
-                                                  ( PropName "compare" )
-                                                )
-                                                ( LiteralChar Nothing '\x9' )
-                                              )
-                                              ( LiteralChar Nothing ' ' )
-                                            )
-                                          )
-                                        ) ( LiteralBool Nothing True ) ( LiteralBool Nothing False )
-                                      )
-                                    )
+                                  ( Ctor Nothing SumType
+                                    ( ModuleName "Data.Ordering" )
+                                    ( TyName "Ordering" )
+                                    ( CtorName "GT" ) []
+                                  )
+                                ),
+                                ( PropName "Eq0", Abs Nothing ( ParamUnused Nothing )
+                                  ( Ref Nothing
+                                    ( Imported ( ModuleName "Data.Eq" ) ( Name "eqChar" ) ) 0
                                   )
                                 )
-                              )
+                              ]
                             )
+                            ( PropName "compare" )
                           )
+                          ( LiteralChar Nothing '\x9' )
                         )
+                        ( LiteralChar Nothing ' ' )
                       )
                     )
-                  )
+                  ) ( LiteralBool Nothing True ) ( LiteralBool Nothing False )
                 )
               )
             )
+            ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) 0 )
           )
         )
       )
