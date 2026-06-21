@@ -61,9 +61,11 @@ A foreign `.lua` file is split into a **header** and an **exports table**:
   a header of shared top-level `local` helpers, in scope for the exported
   values. `return`s *inside* header functions must be indented (only the
   exports `return` sits at column 0).
-- The exports are a single returned table of fields. **Do not put `--` comments
-  between table fields** — the parser does not accept them there. Put comments
-  inside function bodies or in the header.
+- The exports are a single returned table of fields. **Each export value must be
+  wrapped in parentheses** — `key = (<lua expression>)`. The FFI parser requires
+  the `(...)`; a bare `key = function … end` will not parse.
+- **Do not put `--` comments between table fields** — the parser does not accept
+  them there. Put comments inside function bodies or in the header.
 
 ```lua
 -- header: shared helpers (this comment is fine — it's in the header)
@@ -72,8 +74,8 @@ local function helper(x)
 end
 
 return {
-  foo = function(a) return helper(a) end,
-  bar = function(a) return function(b) return a + b end end,
+  foo = (function(a) return helper(a) end),
+  bar = (function(a) return function(b) return a + b end end),
 }
 ```
 
@@ -100,6 +102,30 @@ function is a normal call, not nested).
 sub-computations into separate functions and sequence them), or break a wide
 record decode into chunks. A general (monad-agnostic) fix is tracked in
 [#104](https://github.com/purescript-lua/purescript-lua/issues/104).
+
+## Lua's per-function size limits (locals & upvalues)
+
+Separate from the parser-nesting limit above, Lua 5.1 caps the *contents* of a
+single function at load time:
+
+- **~200 local variables** per function (`LUAI_MAXVARS`). Exceeding it fails to
+  load with `function at line N has more than 200 local variables`.
+- **~60 upvalues** per function (`LUAI_MAXUPVALUES`) — variables a closure
+  captures from an enclosing scope. Exceeding it fails with
+  `function at line N has more than 60 upvalues`. (Lua ≥5.2 raises this to 255;
+  5.1 is the floor pslua targets.)
+
+Both have bitten the compiler before: long `Effect` chains used to build deeply
+nested closures, each capturing many top-level references as upvalues
+([#19](https://github.com/purescript-lua/purescript-lua/issues/19)). The
+compiler now keeps its own output within these limits — Effect/ST `do` blocks
+are flattened to a flat statement sequence (no capturing closure per step), and
+that sequence is chunked so no generated function exceeds the local-variable
+limit.
+
+If you write your own FFI, the same caps apply to *your* Lua: a single function
+with hundreds of locals, or one that captures more than ~60 distinct outer
+variables, will not load under Lua 5.1 — split it into smaller functions.
 
 ## Deep recursion & stack safety
 
