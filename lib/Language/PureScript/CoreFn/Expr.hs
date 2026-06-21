@@ -1,74 +1,62 @@
-{- |
-The core functional representation
--}
+-- | The core functional representation
 module Language.PureScript.CoreFn.Expr where
 
 import Control.Arrow ((***))
 import Language.PureScript.Names
 import Language.PureScript.PSString (PSString)
 
-{- |
-Data type for expressions and terms
--}
+-- | Data type for expressions and terms
 data Expr a
-  = -- A literal value
+  = -- | literal value
     Literal a (Literal (Expr a))
-  | -- A data constructor (type name, constructor name, field names)
+  | -- | data constructor (type name, constructor name, field names)
     Constructor a (ProperName 'TypeName) (ProperName 'ConstructorName) [Ident]
-  | -- A record property accessor
+  | -- | record property accessor
     Accessor a PSString (Expr a)
-  | -- Partial record update
+  | -- | Partial record update
     ObjectUpdate a (Expr a) [(PSString, Expr a)]
-  | -- Function introduction
+  | -- | Function introduction
     Abs a Ident (Expr a)
-  | -- Function application
+  | -- | Function application
     App a (Expr a) (Expr a)
-  | -- Variable
+  | -- | Variable
     Var a (Qualified Ident)
-  | -- A case expression
+  | -- | Case expression
     Case a [Expr a] [CaseAlternative a]
-  | -- A let binding
+  | -- | Let binding
     Let a [Bind a] (Expr a)
   deriving stock (Eq, Ord, Show, Functor)
 
 data Binder a
-  = -- |
-    -- Wildcard binder
+  = -- | Wildcard binder
     NullBinder a
-  | -- |
-    -- A binder which matches a literal value
+  | -- | Binder which matches a literal value
     LiteralBinder a (Literal (Binder a))
-  | -- |
-    -- A binder which binds an identifier
+  | -- | Binder which binds an identifier
     VarBinder a Ident
-  | -- |
-    -- A binder which matches a data constructor
+  | -- | Binder which matches data constructor
     ConstructorBinder
       a
       (Qualified (ProperName 'TypeName))
       (Qualified (ProperName 'ConstructorName))
       [Binder a]
-  | -- |
-    -- A binder which binds its input to an identifier
+  | -- A binder which binds its input to an identifier
     NamedBinder a Ident (Binder a)
   deriving stock (Eq, Ord, Show, Functor)
 
 extractBinderAnn ∷ Binder a → a
-extractBinderAnn (NullBinder a) = a
-extractBinderAnn (LiteralBinder a _) = a
-extractBinderAnn (VarBinder a _) = a
-extractBinderAnn (ConstructorBinder a _ _ _) = a
-extractBinderAnn (NamedBinder a _ _) = a
+extractBinderAnn = \case
+  NullBinder a → a
+  LiteralBinder a _ → a
+  VarBinder a _ → a
+  ConstructorBinder a _ _ _ → a
+  NamedBinder a _ _ → a
 
-{- |
-A let or module binding.
--}
+-- | A let or module binding.
 data Bind a
-  = -- |
-    -- Non-recursive binding for a single value
+  = -- | Non-recursive binding for a single value
     NonRec a Ident (Expr a)
-  | -- |
-    -- Mutually recursive binding group for several values
+  | -- | Mutually recursive binding group for several values
     Rec [((a, Ident), Expr a)]
   deriving stock (Eq, Ord, Show, Functor)
 
@@ -78,16 +66,12 @@ that appears alongside a set of binders
 -}
 type Guard a = Expr a
 
-{- |
-An alternative in a case statement
--}
+-- | An alternative in a case statement
 data CaseAlternative a = CaseAlternative
   { caseAlternativeBinders ∷ [Binder a]
-  -- ^
-  -- A collection of binders with which to match the inputs
+  -- ^ A collection of binders with which to match the inputs
   , caseAlternativeResult ∷ Either [(Guard a, Expr a)] (Expr a)
-  -- ^
-  -- The result expression or a collect of guarded expressions
+  -- ^ The result expression or a collect of guarded expressions
   }
   deriving stock (Eq, Ord, Show)
 
@@ -97,55 +81,46 @@ instance Functor CaseAlternative where
       (fmap (fmap f) cabs)
       (either (Left . fmap (fmap f *** fmap f)) (Right . fmap f) car)
 
-{- |
-Data type for literal values. Parameterised so it can be used for Exprs and
-Binders.
+{- | Data type for literal values.
+Parameterised so it can be used for Exprs and Binders.
 -}
 data Literal a
-  = -- |
-    -- A numeric literal
+  = -- | A numeric literal
     NumericLiteral (Either Integer Double)
-  | -- |
-    -- A string literal
+  | -- | A string literal
     StringLiteral PSString
-  | -- |
-    -- A character literal
+  | -- | A character literal
     CharLiteral Char
-  | -- |
-    -- A literalBool literal
+  | -- | A literalBool literal
     BooleanLiteral Bool
-  | -- |
-    -- An array literal
+  | -- | An array literal
     ArrayLiteral [a]
-  | -- |
-    -- An object literal
+  | -- | An object literal
     ObjectLiteral [(PSString, a)]
   deriving stock (Eq, Ord, Show, Functor)
 
-{- |
-Extract the annotation from a term
--}
+-- | Extract the annotation from a term
 extractAnn ∷ Expr a → a
-extractAnn (Literal a _) = a
-extractAnn (Constructor a _ _ _) = a
-extractAnn (Accessor a _ _) = a
-extractAnn (ObjectUpdate a _ _) = a
-extractAnn (Abs a _ _) = a
-extractAnn (App a _ _) = a
-extractAnn (Var a _) = a
-extractAnn (Case a _ _) = a
-extractAnn (Let a _ _) = a
+extractAnn = \case
+  Literal a _ → a
+  Constructor a _ _ _ → a
+  Accessor a _ _ → a
+  ObjectUpdate a _ _ → a
+  Abs a _ _ → a
+  App a _ _ → a
+  Var a _ → a
+  Case a _ _ → a
+  Let a _ _ → a
 
-{- |
-Modify the annotation on a term
--}
+-- | Modify the annotation on a term
 modifyAnn ∷ (a → a) → Expr a → Expr a
-modifyAnn f (Literal a b) = Literal (f a) b
-modifyAnn f (Constructor a b c d) = Constructor (f a) b c d
-modifyAnn f (Accessor a b c) = Accessor (f a) b c
-modifyAnn f (ObjectUpdate a b c) = ObjectUpdate (f a) b c
-modifyAnn f (Abs a b c) = Abs (f a) b c
-modifyAnn f (App a b c) = App (f a) b c
-modifyAnn f (Var a b) = Var (f a) b
-modifyAnn f (Case a b c) = Case (f a) b c
-modifyAnn f (Let a b c) = Let (f a) b c
+modifyAnn f = \case
+  Literal a b → Literal (f a) b
+  Constructor a b c d → Constructor (f a) b c d
+  Accessor a b c → Accessor (f a) b c
+  ObjectUpdate a b c → ObjectUpdate (f a) b c
+  Abs a b c → Abs (f a) b c
+  App a b c → App (f a) b c
+  Var a b → Var (f a) b
+  Case a b c → Case (f a) b c
+  Let a b c → Let (f a) b c
