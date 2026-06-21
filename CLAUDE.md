@@ -267,6 +267,13 @@ Golden tests are the primary integration testing mechanism:
    - `golden.lua` - Generated Lua code
    - `eval/golden.txt` - Execution output (if module has a `main` function)
 
+**The golden harness re-implements the IR pipeline.** `compileCorefn` in
+`test/Language/PureScript/Backend/Lua/Golden/Spec.hs` calls
+`makeUberModule >>> optimizedUberModule` directly — it does *not* go through
+`Backend.compileModules`. Any new IR pipeline pass must live inside
+`optimizedUberModule` (the shared function), or the golden tests will silently
+bypass it.
+
 To add a new golden test:
 1. Create `test/ps/golden/Golden/NewTest/Test.purs`
 2. Run `cabal test` - it will fail and create `actual.*` files

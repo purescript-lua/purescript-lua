@@ -64,7 +64,7 @@ import Test.Hspec
   , shouldNotBe
   )
 import Test.Hspec.Extra (annotatingWith)
-import Test.Hspec.Golden (defaultGolden)
+import Test.Hspec.Golden (acceptableGolden, defaultGolden)
 import Text.Pretty.Simple
   ( OutputOptions (..)
   , defaultOutputOptionsNoColor
@@ -100,7 +100,7 @@ spec = do
         irTestName ← runIO do
           toFilePath <$> makeRelativeToCurrentDir irGolden
         it irTestName do
-          defaultGolden irGolden (Just irActual) do
+          acceptableGolden irGolden (Just irActual) do
             uberModule ← compileCorefn (Tagged (Rel psOutputPath)) moduleName
             pure . toStrict $
               pShowOpt
@@ -118,7 +118,7 @@ spec = do
         luaTestName ← runIO do
           toFilePath <$> makeRelativeToCurrentDir luaGolden
         it luaTestName do
-          defaultGolden luaGolden (Just luaActual) do
+          acceptableGolden luaGolden (Just luaActual) do
             appOrModule ←
               (doesFileExist evalGolden) <&> \case
                 True → AsApplication moduleName (PS.Ident "main")
