@@ -2,6 +2,7 @@
 , dependencies =
   [ "console"
   , "effect"
+  , "either"
   , "enums"
   , "foldable-traversable"
   , "maybe"
@@ -11,6 +12,8 @@
   , "profunctor"
   , "strings"
   , "tailrec"
+  , "transformers"
+  , "tuples"
   ]
 , packages = ./packages.dhall
 , sources = [ "golden/**/*.purs" ]

@@ -8,6 +8,7 @@ import Language.PureScript.Backend.IR qualified as IR
 import Language.PureScript.Backend.IR.Linker qualified as Linker
 import Language.PureScript.Backend.IR.Optimizer (optimizedUberModule)
 import Language.PureScript.Backend.Lua qualified as Lua
+import Language.PureScript.Backend.Lua.NestingCheck (exceedsNestingLimit)
 import Language.PureScript.Backend.Lua.Optimizer (optimizeChunk)
 import Language.PureScript.Backend.Lua.Types qualified as Lua
 import Language.PureScript.Backend.Types (AppOrModule (..), entryPointModule)
@@ -43,7 +44,12 @@ compileModules outputDir foreignDir appOrModule = do
           & optimizedUberModule
   let needsRuntimeLazy = Tagged (any untag needsRuntimeLazys)
   chunk ← Lua.fromUberModule foreignDir needsRuntimeLazy appOrModule uberModule
-  pure CompilationResult {lua = optimizeChunk chunk, ir = uberModule}
+  let optimizedChunk = optimizeChunk chunk
+  -- Safety net: reject a chunk that nests too deeply for Lua 5.1's parser
+  -- rather than emit Lua that cannot be loaded (issue #104). Catches whatever
+  -- 'flattenDeepBinds' bailed on, plus not-yet-flattened deep constructs.
+  whenJust (exceedsNestingLimit optimizedChunk) (Oops.throw . Lua.NestingTooDeep)
+  pure CompilationResult {lua = optimizedChunk, ir = uberModule}
 
 linkerMode ∷ AppOrModule → Linker.LinkMode
 linkerMode = \case

@@ -79,29 +79,40 @@ return {
 }
 ```
 
-## Very long `do` blocks in non-`Effect`/`ST` monads
+## Very long `do` blocks
 
 A straight-line `do` block compiles to a chain of `bind`/`discard` whose
 continuations nest lexically, and Lua's parser caps how deeply expressions may
-nest (~200 levels). A long enough chain fails to **load** (before any code
-runs) with:
+nest (~200 levels). A long enough chain would fail to **load** (before any code
+runs) with `chunk has too many syntax levels`.
 
-```
-lua: yourfile.lua:NNN: chunk has too many syntax levels
-```
+The compiler now flattens these so they have no practical length limit:
 
-`Effect` and `ST` blocks are exempt: the compiler flattens them into a plain
-statement sequence, so they have no practical length limit. The limit only
-bites **other** monads — `Maybe`, `Either`, `State`, a custom parser/decoder,
-or a large applicative (`ado`) constructor — and only at ~200+ straight-line
-statements in a single block. That is rare outside machine-generated code and
-very wide record decoders. Recursion does **not** trigger it (a recursive
-function is a normal call, not nested).
+- **`Effect` and `ST`** blocks are lowered to a plain statement sequence
+  (magic-do).
+- **Any other monad** — `Maybe`, `Either`, `State`, a custom parser/decoder —
+  has its `bind`/`>>=` chain **lambda-lifted**: long chains are split into
+  segments and each segment's continuation becomes a small named helper, so the
+  generated nesting stays flat regardless of chain length
+  ([#104](https://github.com/purescript-lua/purescript-lua/issues/104)).
 
-**If you hit it:** split the block into smaller named pieces (extract
-sub-computations into separate functions and sequence them), or break a wide
-record decode into chunks. A general (monad-agnostic) fix is tracked in
-[#104](https://github.com/purescript-lua/purescript-lua/issues/104).
+A few related shapes are **not** flattened yet and can still hit the limit at
+~200+ levels in a single expression:
+
+- **Applicative chains** built with `ado`/`apply` (`<*>`) or `bindFlipped`
+  (`=<<`), rather than `do`/`bind`.
+- A `bind` chain that forwards more than ~15 distinct earlier-bound variables
+  through a single cut: the lambda-lifter **bails** (a segment's helpers carry
+  those forwarded variables *plus* the segment's own binders as upvalues, which
+  would approach Lua 5.1's 60-upvalue cap, see below) and leaves it nested.
+- Deep nesting from non-`bind` constructs: a giant `case` tree, a long string
+  `<>` concatenation, or a very wide array/record literal.
+
+When one of these would overflow, the compiler now **rejects it with a clear
+error** (`Expression nests too deeply for Lua 5.1 …`) instead of emitting a Lua
+file that no interpreter can load. **If you hit it:** split the expression into
+smaller named pieces (extract sub-computations into separate functions and
+sequence them), or break a wide literal/decode into chunks.
 
 ## Lua's per-function size limits (locals & upvalues)
 

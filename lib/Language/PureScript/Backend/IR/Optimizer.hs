@@ -4,6 +4,7 @@ import Data.List.NonEmpty qualified as NE
 import Data.Map qualified as Map
 import Data.Set qualified as Set
 import Language.PureScript.Backend.IR.DCE (eliminateDeadCode)
+import Language.PureScript.Backend.IR.FlattenDeepBinds (flattenDeepBinds)
 import Language.PureScript.Backend.IR.Inliner (Annotation (..))
 import Language.PureScript.Backend.IR.Linker (UberModule (..))
 import Language.PureScript.Backend.IR.MagicDo (magicDo)
@@ -51,6 +52,11 @@ optimizedUberModule =
     -- elimination so the statements it introduces for `discard` are not
     -- dropped as dead. See Language.PureScript.Backend.IR.MagicDo.
     >>> magicDo
+    -- Flatten the remaining deeply-nested bind chains (issue #104). Runs after
+    -- magicDo (which consumes Effect/ST chains, leaving only non-Effect/ST
+    -- ones) and likewise consumes and preserves the unique naming. See
+    -- Language.PureScript.Backend.IR.FlattenDeepBinds.
+    >>> flattenDeepBinds
 
 mergeForeignsIntoBindings ∷ UberModule → UberModule
 mergeForeignsIntoBindings uberModule@UberModule {..} =
