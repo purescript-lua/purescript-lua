@@ -101,9 +101,10 @@ A few related shapes are **not** flattened yet and can still hit the limit at
 
 - **Applicative chains** built with `ado`/`apply` (`<*>`) or `bindFlipped`
   (`=<<`), rather than `do`/`bind`.
-- A `bind` chain whose continuations capture more than ~50 distinct
-  earlier-bound variables at once: the lambda-lifter **bails** (the helpers
-  would exceed Lua 5.1's 60-upvalue cap, see below) and leaves it nested.
+- A `bind` chain that forwards more than ~15 distinct earlier-bound variables
+  through a single cut: the lambda-lifter **bails** (a segment's helpers carry
+  those forwarded variables *plus* the segment's own binders as upvalues, which
+  would approach Lua 5.1's 60-upvalue cap, see below) and leaves it nested.
 - Deep nesting from non-`bind` constructs: a giant `case` tree, a long string
   `<>` concatenation, or a very wide array/record literal.
 

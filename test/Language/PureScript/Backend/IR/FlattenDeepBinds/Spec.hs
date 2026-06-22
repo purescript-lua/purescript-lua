@@ -24,8 +24,10 @@ import Language.PureScript.Backend.IR.Types
   , application
   , countFreeRefs
   , eq
+  , lets
   , literalInt
   , literalObject
+  , noAnn
   , objectProp
   , paramNamed
   , paramUnused
@@ -92,6 +94,19 @@ spec = describe "FlattenDeepBinds" do
         flat = chainExpr (flattenDeepBinds m)
     kontNames flat `shouldSatisfy` (not . null)
     countFreeRefs flat `shouldBe` countFreeRefs (chainExpr m)
+
+  -- The chain-head aliases may land in a RecursiveGroup rather than as
+  -- Standalone bindings; the resolver must still find them, or recognition
+  -- (and flattening) silently stops.
+  it "resolves bind/discard aliases defined in a RecursiveGroup" do
+    let flat = chainExpr (flattenDeepBinds (recursiveGroupModule 200))
+    kontNames flat `shouldSatisfy` (not . null)
+
+  -- The same for a local bind alias bound in a recursive @let@ group, as
+  -- polymorphic code (a bind specialised to a dictionary parameter) can produce.
+  it "resolves a local bind alias defined in a RecursiveGroup let" do
+    let flat = chainExpr (flattenDeepBinds (letRecursiveGroupModule 200))
+    kontNames flat `shouldSatisfy` (not . null)
 
   -- The invariants the lambda-lifting core must hold for ANY recognised chain —
   -- the property the whole pass rests on, since recognition only governs /which/
@@ -345,6 +360,55 @@ discardChainModule n =
         [ Standalone (bindQName, bindDef)
         , Standalone (discardQName, discardDef)
         , Standalone (QName testModule (Name "chain"), discardChainExpr n)
+        ]
+    , uberModuleForeigns = []
+    , uberModuleExports = []
+    }
+
+{- | The @bind@\/@discard@ aliases placed in a 'RecursiveGroup' rather than as
+'Standalone' bindings. The resolver must index group members too, otherwise the
+aliases do not resolve and the chain silently stops being flattened.
+-}
+recursiveGroupModule ∷ Int → UberModule
+recursiveGroupModule n =
+  UberModule
+    { uberModuleBindings =
+        [ RecursiveGroup ((bindQName, bindDef) :| [(discardQName, discardDef)])
+        , Standalone (QName testModule (Name "chain"), discardChainExpr n)
+        ]
+    , uberModuleForeigns = []
+    , uberModuleExports = []
+    }
+
+localBindName ∷ Name
+localBindName = Name "lbind"
+
+-- | An @n@-step bind chain whose head is a @let@-local alias (@lbind@).
+localChainExpr ∷ Int → Exp
+localChainExpr n = go 1
+ where
+  go ∷ Int → Exp
+  go i
+    | i > n = eq (refLocal0 (xName 1)) (literalInt 0)
+    | otherwise =
+        application
+          (application (refLocal0 localBindName) (literalInt (fromIntegral i)))
+          (abstraction (paramNamed (xName i)) (go (i + 1)))
+
+{- | The local @bind@ alias bound in a recursive @let@ group, with the chain in
+the @let@ body. 'letLocals' must index the group's members, or the local alias
+does not resolve and the chain stops being flattened.
+-}
+letRecursiveGroupModule ∷ Int → UberModule
+letRecursiveGroupModule n =
+  UberModule
+    { uberModuleBindings =
+        [ Standalone
+            ( QName testModule (Name "chain")
+            , lets
+                (RecursiveGroup ((noAnn, localBindName, bindDef) :| []) :| [])
+                (localChainExpr n)
+            )
         ]
     , uberModuleForeigns = []
     , uberModuleExports = []

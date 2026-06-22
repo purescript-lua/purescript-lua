@@ -65,6 +65,16 @@ spec = describe "NestingCheck" do
   it "measures a chain of field accesses as one level each" do
     maxChunkDepth (fieldChain 30) `shouldBe` 30
 
+  -- `1 + a `max` b` was flagged as able to undercount when the deeper operand
+  -- is on the right. It cannot: `max` (infixl 9) binds tighter than `+`
+  -- (infixl 6), so the metric is already `1 + max(left,right)`, symmetric. These
+  -- guard that symmetry (and the explicit parentheses now in the source) for the
+  -- binary positions — operator, index key, and if-else branch.
+  it "counts the deeper operand on the right, not only the left" do
+    maxChunkDepth (binOpChainRight 30) `shouldBe` 30
+    maxChunkDepth (indexChainRight 30) `shouldBe` 30
+    maxChunkDepth (ifLadderElse 30) `shouldBe` 30
+
 --------------------------------------------------------------------------------
 -- Builders --------------------------------------------------------------------
 
@@ -86,6 +96,31 @@ curriedCalls n =
 binOpChain ∷ Int → Chunk
 binOpChain n =
   [Lua.return (foldr (\_ e → Lua.binOp Lua.Add e Lua.Nil) Lua.Nil [1 .. n])]
+
+-- | @return (nil + (nil + (… + nil)))@, @n@ operators deep on the right.
+binOpChainRight ∷ Int → Chunk
+binOpChainRight n =
+  [Lua.return (foldr (\_ e → Lua.binOp Lua.Add Lua.Nil e) Lua.Nil [1 .. n])]
+
+-- | @return t[t[…[t]…]]@, @n@ index accesses deep in the key (right) position.
+indexChainRight ∷ Int → Chunk
+indexChainRight n =
+  [ Lua.return
+      ( foldr
+          (\_ e → Lua.varIndex (Lua.varName [name|t|]) e)
+          (Lua.varName [name|t|])
+          [1 .. n]
+      )
+  ]
+
+-- | @if nil then else if nil then else … end end@, @n@ deep in the else branch.
+ifLadderElse ∷ Int → Chunk
+ifLadderElse = go
+ where
+  go ∷ Int → Chunk
+  go k
+    | k <= 0 = []
+    | otherwise = [Lua.ifThenElse Lua.Nil [] (go (k - 1))]
 
 -- | @if nil then if nil then … end end@, @n@ statements deep.
 ifLadder ∷ Int → Chunk

@@ -66,9 +66,10 @@ statementDepth = \case
   ForeignSourceStat _ → 0
   IfThenElse c t e →
     1
-      + expDepth (unAnn c)
-        `max` blockDepth (unAnn <$> t)
-        `max` blockDepth (unAnn <$> e)
+      + ( expDepth (unAnn c)
+            `max` blockDepth (unAnn <$> t)
+            `max` blockDepth (unAnn <$> e)
+        )
 
 expDepth ∷ ExpF a → Int
 expDepth = \case
@@ -80,7 +81,7 @@ expDepth = \case
   ForeignSourceExp _ → 0
   Var v → varDepth (unAnn v)
   UnOp _op e → 1 + expDepth (unAnn e)
-  BinOp _op l r → 1 + expDepth (unAnn l) `max` expDepth (unAnn r)
+  BinOp _op l r → 1 + (expDepth (unAnn l) `max` expDepth (unAnn r))
   Function _params body → 1 + blockDepth (unAnn <$> body)
   TableCtor rows → 1 + foldl' (\acc r → acc `max` rowDepth (unAnn r)) 0 rows
   -- The callee spine of @f(a)(b)@ is parsed iteratively, so it does not add a
@@ -92,7 +93,7 @@ expDepth = \case
 varDepth ∷ VarF a → Int
 varDepth = \case
   VarName _ → 0
-  VarIndex e1 e2 → 1 + expDepth (unAnn e1) `max` expDepth (unAnn e2)
+  VarIndex e1 e2 → 1 + (expDepth (unAnn e1) `max` expDepth (unAnn e2))
   VarField e _ → 1 + expDepth (unAnn e)
 
 rowDepth ∷ TableRowF a → Int

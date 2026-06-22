@@ -133,9 +133,16 @@ flattenDeepBinds uber@UberModule {uberModuleBindings, uberModuleExports} =
 
   -- Top-level bindings, so a chain head specialised to a module-local alias
   -- (e.g. @Module.bind = dictBindMaybe.bind@) resolves back to its definition.
+  -- All group members are indexed, not just 'Standalone' ones: an alias that
+  -- lands in a 'RecursiveGroup' must still resolve, or its chain stops being
+  -- recognised and flattened.
   topLevel ∷ Map QName Exp
   topLevel =
-    Map.fromList [(qname, expr) | Standalone (qname, expr) ← uberModuleBindings]
+    Map.fromList
+      [ (qname, expr)
+      | grouping ← uberModuleBindings
+      , (qname, expr) ← toList grouping
+      ]
 
 {- | Resolve a chain-head reference to its definition.
 
@@ -151,13 +158,16 @@ mkResolve topLevel expr = \case
   Imported m n → Map.lookup (QName m n) topLevel
   Local n → Map.lookup n letLocals
  where
+  -- All let-binding group members, not only 'Standalone' ones, so a local alias
+  -- bound in a recursive @let@ group still resolves (see 'topLevel').
   letLocals ∷ Map Name Exp
   letLocals =
     Map.fromList
       [ (name, def)
       | sub ← universeOf subexpressions expr
       , Let _ binds _ ← [sub]
-      , Standalone (_ann, name, def) ← toList binds
+      , grouping ← toList binds
+      , (_ann, name, def) ← toList grouping
       ]
 
 --------------------------------------------------------------------------------
