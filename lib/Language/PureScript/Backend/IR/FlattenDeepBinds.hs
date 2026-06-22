@@ -1,25 +1,27 @@
-{- | Flatten deeply-nested @do@\/@>>=@ chains for arbitrary (non-Effect\/ST)
-monads, so they load under Lua 5.1's parser-nesting cap.
+{- | Flatten deeply-nested expression trees that would otherwise overflow Lua
+5.1's parser-nesting cap.
 
-A straight-line @do@ block desugars to a right-nested tree of continuation
-closures:
+Lua's recursive-descent parser refuses any chunk nested past ~200 levels
+(@chunk has too many syntax levels@, @LUAI_MAXCCALLS@) — a correctness failure
+unique to the Lua backend (issue #104): valid PureScript the compiler accepts
+but emits unloadable Lua for. 'Language.PureScript.Backend.IR.MagicDo' fixes one
+shape (the 'Effect'\/'ST' @do@-block, lowered to a flat statement sequence); this
+pass fixes the rest, monad-agnostically, by recognising deep nesting from its
+/structure/ rather than from any instance name.
+
+Two cooperating strategies are dispatched by /where the depth lives/:
+
+== Strategy A — continuation lambda-lifting
+
+A straight-line @do@ block of /any/ monad desugars to a right-nested tree of
+continuation closures, depth running through trailing lambdas:
 
 >   bind m1 (\x1 -> bind m2 (\x2 -> … bind mn (\xn -> final)))
 
-Past ~200 nesting levels Lua's parser refuses to load the chunk with
-@chunk has too many syntax levels@ (@LUAI_MAXCCALLS@) — a correctness failure
-unique to the Lua backend (issue #104). 'Language.PureScript.Backend.IR.MagicDo'
-already fixes this for 'Effect'\/'ST', whose computations are thunks and so can
-be lowered to a flat statement sequence. That lowering is impossible here:
-for an arbitrary monad @bind m k@ is an opaque call whose control flow lives
-/inside/ @bind@ (Maybe short-circuits, lists call @k@ 0..N times, State threads
-context), so the chain cannot become sequential statements.
-
-== The transform: lambda-lifting the continuation chain
-
-The only monad-agnostic fix is lambda-lifting (Johnsson): split the chain into
-segments of at most 'segmentSize' steps and turn each cut's tail into a named
-helper @$kontN@ whose free continuation variables are passed as explicit
+Any chain @f a1 (\x1 -> f a2 (\x2 -> …))@ of this shape — @>>=@, a non-@bind@
+CPS combinator, @bracket@\/@with@-style nesting — is split into segments of at
+most 'segmentSize' steps, each cut's tail lambda-lifted (Johnsson) into a named
+@$kontN@ helper whose free continuation variables are passed as explicit
 parameters. The original
 
 >   bind m1 (\x1 -> … bind mC (\xC -> <tail>) …)
@@ -33,33 +35,74 @@ ones — see Note [Sequential scoping of Let bindings]):
 >   in  bind m1 (\x1 -> … bind mC (\xC -> $kont2 live… xC) …)
 
 Each helper body and the @let@ body nest at most 'segmentSize' binds deep, so
-the whole expression stays flat regardless of the original chain length.
+the whole expression stays flat regardless of the original chain length. This
+relocates closures and forwards their environment but never reorders, drops, or
+duplicates a call, so it is semantics-preserving for /any/ monad — strict Lua
+included: the introduced @$kontN@ calls pass only variables (no evaluation
+reordering) and @let@-binding a helper does not run its body.
 
-This relocates closures and forwards their environment but never reorders,
-drops, or duplicates a @bind@\/@k@ call, so it is semantics-preserving for
-/any/ monad — strict Lua included: the introduced @$kontN@ calls pass only
-variables (no evaluation reordering) and @let@-binding a helper does not run its
-body. Recognition precision therefore only governs /which/ expressions are
-restructured, not correctness.
+== Strategy B — application-spine sequentialisation
+
+Applicative and flipped-bind chains carry their depth in a /value-argument/
+position instead of a trailing lambda — there is no binder to cross:
+
+>   apply (apply (apply (map f a) b) c) …      -- ado / <*>
+>   bindFlipped k1 (bindFlipped k2 (bindFlipped k3 …))   -- =<<
+
+At the IR level (which has no @BinOp@) these — and deep left-associated @<>@ or
+ordinary nested call spines — are all contiguous 'App' trees. Such a tree is
+A-normalised: every nested 'App' is bound to a fresh @$tmpN@ local in evaluation
+order, so each binding's right-hand side is a single flat application of atoms
+and the @let@ body is an atom:
+
+>   let $tmp0 = map f a
+>       $tmp1 = apply $tmp0 b
+>       $tmp2 = apply $tmp1 c
+>       …
+>   in  $tmpN
+
+A 'Let' of 'Standalone' bindings lowers to a flat sequence of Lua @local@
+statements, parsed iteratively rather than recursively, so this genuinely
+removes parse nesting. Lua is strict, so every 'App' callee and argument is
+evaluated regardless of use; A-normalisation in evaluation order (callee before
+argument, both before the call) preserves evaluation order and divergence
+exactly. The descent stops at every non-'App' node: 'Abs' bodies and branch
+positions are deferred and left to Strategy A or to a separate descent (a
+@$tmp@'s right-hand side that still nests inside an 'ObjectProp', 'Eq', … is
+revisited by the top-down rewrite), never hoisted across — so laziness and
+short-circuiting are untouched.
+
+== Dispatch and termination
+
+At each node the top-down rewrite tries Strategy A first (a recognised chain
+longer than 'threshold'); a bind chain hides its depth under lambdas, so its
+application-spine depth is tiny and Strategy B never fires on it. Strategy B
+then fires on any remaining contiguous 'App' spine deeper than 'threshold'.
+Both emit segments shallower than 'threshold', and B's output binds every 'App'
+to a depth-1 right-hand side, so the 'Recurse' rewrite cannot re-fire on its own
+output.
 
 == De Bruijn safety: no shifting
 
 The pass runs after 'renameShadowedNames'
 (see Note [Locals are uniquely named after renameShadowedNames]), so every local
-is uniquely named. A helper reuses the chain's own binder names as its
+is uniquely named. A Strategy-A helper reuses the chain's own binder names as its
 parameters: moving a sub-expression under a fresh binder of the /same/ name
-leaves every @Ref … 0@ pointing at the same value (there is no other binder of
-that name in between), and the call site references the live variables by name
-at index 0 because they are still in scope there. Helper names are minted as
-@$kontN@ — the @$@ prefix cannot collide with a PureScript identifier or with
-'renameShadowedNames'' digit-suffix scheme — so no 'shift'\/'unshift' is needed.
+leaves every @Ref … 0@ pointing at the same value, and the call site references
+the live variables by name at index 0 because they are still in scope there.
+Strategy B introduces only freshly-named @$tmpN@ binders; since references count
+same-name binders (all index 0 after renaming) a uniquely-named binder shifts no
+existing reference. Helper\/temp names are minted as @$kontN@\/@$tmpN@ — the @$@
+prefix cannot collide with a PureScript identifier or with
+'renameShadowedNames'' digit-suffix scheme — so no 'Language.PureScript.Backend.IR.Types.shift'\/'Language.PureScript.Backend.IR.Types.unshift'
+is needed.
 
 == Why it must run after 'magicDo'
 
-This pass does /not/ check whether the monad is 'Effect'\/'ST': 'magicDo' runs
+Strategy A does /not/ check whether the monad is 'Effect'\/'ST': 'magicDo' runs
 first (the previous step of 'optimizedUberModule') and rewrites every
-'Effect'\/'ST' bind chain into a 'Let' thunk, so the only bind chains that
-reach this pass are non-'Effect'\/'ST'. Were the order reversed this pass would
+'Effect'\/'ST' bind chain into a 'Let' thunk, so the only bind chains that reach
+this pass are non-'Effect'\/'ST'. Were the order reversed this pass would
 lambda-lift those chains too — still correct, but redundant and worse code than
 the magic-do statement sequence.
 
@@ -68,27 +111,25 @@ the magic-do statement sequence.
 Lambda-lifting bounds /nesting/ but the innermost closure of a segment captures
 the segment's own binders plus the forwarded live set as upvalues, and Lua 5.1
 caps a function at 60 upvalues (@LUAI_MAXUPVALUES@, see @docs\/QUIRKS.md@). When
-the live set at a cut is too large the pass bails (returns 'NoChange', leaving
+the live set at a cut is too large Strategy A bails (returns 'NoChange', leaving
 the chain nested): the program then overflows exactly as it does today, now
 caught by the post-codegen nesting detector
-('Language.PureScript.Backend.Lua.NestingCheck'). Packing the environment into a
+('Language.PureScript.Backend.Lua.NestingCheck'). Strategy B introduces only
+plain locals (no upvalues) and never bails. Packing the environment into a
 single table to cut the upvalue cost to one is a future upgrade.
 -}
 module Language.PureScript.Backend.IR.FlattenDeepBinds
   ( flattenDeepBinds
   ) where
 
-import Control.Lens (universeOf)
 import Data.List qualified as List
 import Data.Map.Strict qualified as Map
 import Data.Set qualified as Set
 import Language.PureScript.Backend.IR.Linker (UberModule (..))
 import Language.PureScript.Backend.IR.Names
-  ( ModuleName (..)
-  , Name (..)
-  , PropName (..)
-  , QName (..)
-  , Qualified (..)
+  ( Name (..)
+  , QName
+  , Qualified (Local)
   )
 import Language.PureScript.Backend.IR.Types
   ( Ann
@@ -103,14 +144,11 @@ import Language.PureScript.Backend.IR.Types
   , countFreeRefs
   , noAnn
   , rewriteExpTopDownM
-  , subexpressions
-  , substitute
-  , unshift
   )
 
-{- | Flatten deeply-nested non-Effect\/ST bind chains in every binding and
-export of the module. A single @$kontN@ counter is threaded across the whole
-module so the minted helper names are globally unique.
+{- | Flatten deeply-nested expression trees in every binding and export of the
+module. A single counter is threaded across the whole module so the minted
+@$kontN@\/@$tmpN@ names are globally unique.
 -}
 flattenDeepBinds ∷ UberModule → UberModule
 flattenDeepBinds uber@UberModule {uberModuleBindings, uberModuleExports} =
@@ -128,93 +166,55 @@ flattenDeepBinds uber@UberModule {uberModuleBindings, uberModuleExports} =
       <*> traverse (traverse rewrite) uberModuleExports
 
   rewrite ∷ Exp → State Int Exp
-  rewrite expr =
-    rewriteExpTopDownM (flattenRule (mkResolve topLevel expr)) expr
-
-  -- Top-level bindings, so a chain head specialised to a module-local alias
-  -- (e.g. @Module.bind = dictBindMaybe.bind@) resolves back to its definition.
-  -- All group members are indexed, not just 'Standalone' ones: an alias that
-  -- lands in a 'RecursiveGroup' must still resolve, or its chain stops being
-  -- recognised and flattened.
-  topLevel ∷ Map QName Exp
-  topLevel =
-    Map.fromList
-      [ (qname, expr)
-      | grouping ← uberModuleBindings
-      , (qname, expr) ← toList grouping
-      ]
-
-{- | Resolve a chain-head reference to its definition.
-
-  * 'Imported' names resolve through the module's top-level bindings.
-
-  * 'Local' names resolve through the @let@ bindings of the expression being
-    rewritten (a @bind@ specialised to a dictionary parameter, as in
-    polymorphic code, stays a @let@-local). Names are unique within one
-    expression after 'renameShadowedNames', so a flat scan is unambiguous.
--}
-mkResolve ∷ Map QName Exp → Exp → Qualified Name → Maybe Exp
-mkResolve topLevel expr = \case
-  Imported m n → Map.lookup (QName m n) topLevel
-  Local n → Map.lookup n letLocals
- where
-  -- All let-binding group members, not only 'Standalone' ones, so a local alias
-  -- bound in a recursive @let@ group still resolves (see 'topLevel').
-  letLocals ∷ Map Name Exp
-  letLocals =
-    Map.fromList
-      [ (name, def)
-      | sub ← universeOf subexpressions expr
-      , Let _ binds _ ← [sub]
-      , grouping ← toList binds
-      , (_ann, name, def) ← toList grouping
-      ]
+  rewrite = rewriteExpTopDownM flattenRule
 
 --------------------------------------------------------------------------------
 -- Rewrite rule ----------------------------------------------------------------
 
-flattenRule ∷ (Qualified Name → Maybe Exp) → RewriteRuleM (State Int) Ann
-flattenRule resolve expr =
-  case peelChain resolve expr of
-    (steps, finalAction)
-      | length steps > threshold →
-          maybe NoChange (Rewritten Recurse)
-            <$> lambdaLift steps finalAction
-    _ → pure NoChange
+{- | Dispatch the two strategies. Strategy A handles a recognised continuation
+chain longer than 'threshold' (depth under trailing lambdas); a bind chain's
+application-spine depth is tiny, so Strategy B only ever sees the remaining deep
+'App' spines. Either may leave the expression unchanged ('NoChange'), in which
+case 'Language.PureScript.Backend.Lua.NestingCheck' remains the backstop.
+-}
+flattenRule ∷ RewriteRuleM (State Int) Ann
+flattenRule expr
+  | (steps, finalAction) ← peelChain expr
+  , length steps > threshold =
+      maybe NoChange (Rewritten Recurse) <$> lambdaLift steps finalAction
+  | spineDepth expr > threshold =
+      maybe NoChange (Rewritten Recurse) <$> sequentialiseSpine expr
+  | otherwise = pure NoChange
 
-{- | One recognised step of a bind chain: @bind action (\param -> …)@. Fields:
-the bind head, the continuation parameter, and the action — all kept verbatim
-(only the continuation /structure/ is rewritten).
+--------------------------------------------------------------------------------
+-- Strategy A: continuation lambda-lifting -------------------------------------
+
+{- | One step of a continuation chain: @f action (\param -> …)@. Fields: the
+head, the continuation parameter, and the action — all kept verbatim (only the
+continuation /structure/ is rewritten).
 -}
 data Step = Step Exp (Parameter Ann) Exp
 
-{- | Peel a maximal prefix of recognised bind steps, returning them together
-with the first expression that is not a step (the chain's final action). An
-empty step list means @expr@ is not a chain head and is left untouched.
+{- | Peel a maximal prefix of @f action (\param -> rest)@ steps, returning them
+together with the first expression that is not such a step (the chain's final
+action). An empty step list means @expr@ is not a chain head and is left
+untouched. Recognition is purely structural: any head whose two-argument
+application ends in a lambda is a step, regardless of the monad or combinator.
 -}
-peelChain ∷ (Qualified Name → Maybe Exp) → Exp → ([Step], Exp)
-peelChain resolve = go
+peelChain ∷ Exp → ([Step], Exp)
+peelChain = go
  where
-  go expr = case asStep resolve expr of
+  go expr = case asStep expr of
     Just (step, rest) → first (step :) (go rest)
     Nothing → ([], expr)
 
-{- | Recognise @bind action (\param -> rest)@ as a step plus its continuation
-body, when @bind@ resolves to a (non-Effect\/ST) monadic bind. A statement-only
-@do@ line is a @discard action (\_ -> rest)@ with the same shape; it is
-recognised too (see 'isBindHead'), so an interleaved statement does not break a
-chain into sub-threshold fragments.
--}
-asStep ∷ (Qualified Name → Maybe Exp) → Exp → Maybe (Step, Exp)
-asStep resolve expr = case spine expr of
+-- | Recognise @f action (\param -> rest)@ as a step plus its continuation body.
+asStep ∷ Exp → Maybe (Step, Exp)
+asStep expr = case spine expr of
   (hd, [action, k])
-    | isBindHead resolve hd
-    , Abs _ann param rest ← k →
+    | Abs _ann param rest ← k →
         Just (Step hd param action, rest)
   _ → Nothing
-
---------------------------------------------------------------------------------
--- Lambda-lifting --------------------------------------------------------------
 
 {- | Lambda-lift a recognised chain into a flat @let@ of @$kontN@ helpers.
 Returns 'Nothing' (bail, leave the chain nested) when the forwarded live set at
@@ -279,7 +279,7 @@ lambdaLift steps finalAction =
         body = buildSteps seg callTail
     pure (body, (length params, helper) : konts)
 
--- | Rebuild a segment's nested @bind action (\param -> …)@ wrapping a tail.
+-- | Rebuild a segment's nested @f action (\param -> …)@ wrapping a tail.
 buildSteps ∷ [Step] → Exp → Exp
 buildSteps steps tailExp =
   foldr step tailExp steps
@@ -297,128 +297,83 @@ curryAbs params body =
 applyToVars ∷ Exp → [Name] → Exp
 applyToVars = foldl' \f p → App noAnn f (refLocal0 p)
 
-letHelpers ∷ [Grouping (Ann, Name, Exp)] → Exp → Exp
-letHelpers [] body = body
-letHelpers (h : hs) body = Let noAnn (h :| hs) body
-
 --------------------------------------------------------------------------------
--- Recognising a bind head -----------------------------------------------------
+-- Strategy B: application-spine sequentialisation -----------------------------
 
-{- | Does this chain-head expression denote a monadic @bind@ (or a @bind@-shaped
-@discard@)? Two recognisers, because the optimizer leaves bind heads in two very
-different shapes:
-
-  * A plain instance (e.g. @Maybe@): the head is @dict.bind@ where @dict@ is a
-    'Control.Bind.Bind' dictionary literal, carrying a @bind@ method and its
-    @Apply0@ superclass field. We inspect the dictionary's fields directly, via
-    'peelAlias' + 'isBindDict' — /without/ reducing into the @bind@ method.
-
-  * A polymorphic or monad-transformer bind: the head reduces — through aliases,
-    a literal-dictionary field projection, and beta — to @Control.Bind.bind
-    <dict>@. A statement-only @do@ line (@discard@) reduces here too: the
-    @Discard Unit@ instance defines @discard = bind@, and the optimizer leaves
-    the head as @(dict.discard) dictInner@. Recognising it is what stops a
-    statement from splitting a chain into sub-'threshold' fragments (e.g. a
-    @State@ block of @get@\/@put@, where every other step is a @put@).
-    'headReducesToBind' does this, stopping at the @Control.Bind@ /names/ rather
-    than resolving through them — after linking they are themselves top-level
-    bindings, so resolving would step into @\\dict -> dict.bind@ and lose track.
-
-Effect\/ST are not excluded here: 'magicDo' has already consumed their chains
-(see the module header).
+{- | Length of the longest contiguous chain of strict 'App' nodes reachable from
+this expression — the parse nesting Strategy B can flatten. Counts both the
+callee and the argument side of each 'App' (Lua nests both @f(…)@ and its
+argument) and stops at every non-'App' node: 'Abs' bodies and branch positions
+are deferred (and handled by Strategy A or a later descent), and other
+constructs carry their own depth that 'sequentialiseSpine' leaves in place.
 -}
-isBindHead ∷ (Qualified Name → Maybe Exp) → Exp → Bool
-isBindHead resolve hd =
-  bindDictHead || headReducesToBind resolve hd
- where
-  bindDictHead = case peelAlias resolve hd of
-    ObjectProp _ann obj (PropName "bind") → isBindDict resolve obj
-    _ → False
+spineDepth ∷ RawExp ann → Int
+spineDepth = \case
+  App _ann f a → 1 + max (spineDepth f) (spineDepth a)
+  _ → 0
 
-{- | Reduce an application spine just far enough to decide whether its head is
-@Control.Bind.bind@ (or a @Control.Bind.discard@ of the @Discard Unit@ instance,
-which /is/ @bind@). Each reduction step — resolve a 'Ref' alias, project a field
-out of a literal dictionary, beta-reduce a redex — is tried only /after/ checking
-the head against the known @Control.Bind@ names, so those names act as stops even
-though linking makes them resolvable. Bounded by 'maxHops'.
+{- | One 'App' node on a spine's deepest path, holding the off-path operand
+verbatim. 'rebuildFrame' reattaches it to the deep child.
 -}
-headReducesToBind ∷ (Qualified Name → Maybe Exp) → Exp → Bool
-headReducesToBind resolve = go maxHops . spine
- where
-  go ∷ Int → (Exp, [Exp]) → Bool
-  go fuel (h, args)
-    | fuel <= 0 = False
-    | otherwise = case (h, args) of
-        -- @bind <dict> …@: any monad's bind.
-        (Ref _ann (Imported m n) _, _dict : _)
-          | (m, n) == controlBindBind → True
-        -- @discard discardUnit <dict> …@: a not-yet-collapsed statement line.
-        (Ref _ann (Imported m n) _, dictD : _)
-          | (m, n) == controlBindDiscard
-          , denotes resolve controlBindDiscardUnit dictD →
-              True
-        -- Otherwise reduce the head one step and retry.
-        (Ref _ann qname _, _)
-          | Just def ← resolve qname → go (fuel - 1) (reSpine def args)
-        (ObjectProp _ann (LiteralObject _ann' fields) prop, _)
-          | Just value ← List.lookup prop fields →
-              go (fuel - 1) (reSpine value args)
-        (Abs _ann (ParamNamed _ p) body, arg : rest') →
-          go (fuel - 1) $
-            reSpine (unshift p 0 (substitute (Local p) 0 arg body)) rest'
-        (Abs _ann (ParamUnused _) body, _ : rest') →
-          go (fuel - 1) (reSpine body rest')
-        _ → False
+data Frame
+  = -- | @App deep sibling@ — the deep child is the callee.
+    OnCallee Ann Exp
+  | -- | @App sibling deep@ — the deep child is the argument.
+    OnArg Ann Exp
 
-  -- Re-attach trailing arguments after reducing the head.
-  reSpine ∷ Exp → [Exp] → (Exp, [Exp])
-  reSpine e extra = let (h, a) = spine e in (h, a <> extra)
+rebuildFrame ∷ Frame → Exp → Exp
+rebuildFrame (OnCallee ann sibling) deep = App ann deep sibling
+rebuildFrame (OnArg ann sibling) deep = App ann sibling deep
 
-{- | Does the expression ultimately refer to the given imported name, possibly
-through module-local aliases? The name is checked /before/ resolving, so a name
-that is itself a top-level binding still matches. Bounded by 'maxHops'.
+{- | Peel the deepest contiguous application path, outermost frame first, down
+to the innermost non-'App' base. Following the deeper child at each node makes
+@length (fst (decompose e)) == 'spineDepth' e@.
 -}
-denotes ∷ (Qualified Name → Maybe Exp) → (ModuleName, Name) → Exp → Bool
-denotes resolve (tm, tn) = go maxHops
- where
-  go ∷ Int → Exp → Bool
-  go fuel = \case
-    Ref _ann q@(Imported m n) _
-      | m == tm, n == tn → True
-      | fuel > 0, Just def ← resolve q → go (fuel - 1) def
-    Ref _ann q@(Local _) _
-      | fuel > 0, Just def ← resolve q → go (fuel - 1) def
-    _ → False
+decompose ∷ Exp → ([Frame], Exp)
+decompose = \case
+  App ann f a
+    | spineDepth f >= spineDepth a → first (OnCallee ann a :) (decompose f)
+    | otherwise → first (OnArg ann f :) (decompose a)
+  base → ([], base)
 
--- | A 'Control.Bind.Bind' dictionary literal: a record with @bind@ and @Apply0@.
-isBindDict ∷ (Qualified Name → Maybe Exp) → Exp → Bool
-isBindDict resolve obj = case peelAlias resolve obj of
-  LiteralObject _ann fields →
-    hasField (PropName "bind") fields && hasField (PropName "Apply0") fields
-  _ → False
- where
-  hasField ∷ PropName → [(PropName, Exp)] → Bool
-  hasField p = any ((== p) . fst)
-
-controlBindBind, controlBindDiscard, controlBindDiscardUnit ∷ (ModuleName, Name)
-controlBindBind = (ModuleName "Control.Bind", Name "bind")
-controlBindDiscard = (ModuleName "Control.Bind", Name "discard")
-controlBindDiscardUnit = (ModuleName "Control.Bind", Name "discardUnit")
-
-{- | Follow @Ref → definition@ aliases (bounded, to stay terminating on
-recursive bindings) to the underlying expression.
+{- | Sequentialise a deep strict-application spine: rebuild its deepest path
+bottom-up (innermost first, Lua's evaluation order for these spines), sealing
+the accumulator into a fresh @$tmpN@ local every 'segmentSize' frames. Each
+segment then nests at most ~'segmentSize' deep and the number of locals is about
+@depth \/ segmentSize@ — staying under both of Lua 5.1's per-function limits
+(~200 parser-nesting levels and 200 locals). The off-path operands are kept
+verbatim; deep ones are flattened in turn by the top-down rewrite's descent.
+Returns 'Nothing' when the path is too short to need sealing.
 -}
-peelAlias ∷ (Qualified Name → Maybe Exp) → Exp → Exp
-peelAlias resolve = go maxHops
+sequentialiseSpine ∷ Exp → State Int (Maybe Exp)
+sequentialiseSpine expr =
+  case decompose expr of
+    (frames, base)
+      | length frames <= segmentSize → pure Nothing
+      | otherwise → do
+          (binds, body) ← foldlM seal ([], base) (zip [1 ..] (reverse frames))
+          pure (Just (letHelpers (reverse binds) body))
  where
-  go ∷ Int → Exp → Exp
-  go fuel = \case
-    Ref _ann qname _idx
-      | fuel > 0, Just def ← resolve qname → go (fuel - 1) def
-    other → other
+  -- Fold frames innermost-first, cutting a segment whenever 'segmentSize' of
+  -- them have accumulated (@i@ counts frames consumed so far).
+  seal
+    ∷ ([Grouping (Ann, Name, Exp)], Exp)
+    → (Int, Frame)
+    → State Int ([Grouping (Ann, Name, Exp)], Exp)
+  seal (binds, acc) (i, frame) = do
+    let acc' = rebuildFrame frame acc
+    if i `mod` segmentSize == 0
+      then do
+        name ← freshTmpName
+        pure (Standalone (noAnn, name, acc') : binds, refLocal0 name)
+      else pure (binds, acc')
 
 --------------------------------------------------------------------------------
 -- Helpers ---------------------------------------------------------------------
+
+letHelpers ∷ [Grouping (Ann, Name, Exp)] → Exp → Exp
+letHelpers [] body = body
+letHelpers (h : hs) body = Let noAnn (h :| hs) body
 
 -- | Unwind an application into its head and arguments (left to right).
 spine ∷ Exp → (Exp, [Exp])
@@ -434,6 +389,9 @@ refLocal0 name = Ref noAnn (Local name) (Index 0)
 freshKontName ∷ State Int Name
 freshKontName = state \n → (Name ("$kont" <> show n), n + 1)
 
+freshTmpName ∷ State Int Name
+freshTmpName = state \n → (Name ("$tmp" <> show n), n + 1)
+
 chunksOf ∷ Int → [a] → [[a]]
 chunksOf _ [] = []
 chunksOf n xs = let (h, t) = splitAt n xs in h : chunksOf n t
@@ -441,28 +399,26 @@ chunksOf n xs = let (h, t) = splitAt n xs in h : chunksOf n t
 --------------------------------------------------------------------------------
 -- Tunables --------------------------------------------------------------------
 
-{- | Only fire on chains longer than this. Short chains are below Lua's nesting
-cap and are left untouched, so existing goldens do not churn. Must exceed
-'segmentSize' so the helper\/body segments produced by a fire never re-fire
-(which guarantees termination of the 'Recurse' rewrite).
+{- | Only fire on chains\/spines deeper than this. Shorter ones are below Lua's
+nesting cap and are left untouched, so existing goldens do not churn. Must exceed
+'segmentSize' so the helper\/body segments Strategy A produces never re-fire
+(which guarantees termination of the 'Recurse' rewrite); Strategy B's output
+binds every 'App' to a depth-1 right-hand side and so cannot re-fire either.
 -}
 threshold ∷ Int
 threshold = 50
 
-{- | Steps per segment. Each step is a few Lua nesting levels, so this caps a
-helper body's nesting well under @LUAI_MAXCCALLS@ (~200). Kept below 'threshold'
-(see above). Calibrated against the generated golden's measured nesting.
+{- | Steps per Strategy-A segment. Each step is a few Lua nesting levels, so this
+caps a helper body's nesting well under @LUAI_MAXCCALLS@ (~200). Kept below
+'threshold' (see above). Calibrated against the generated golden's measured
+nesting.
 -}
 segmentSize ∷ Int
 segmentSize = 40
 
-{- | Bail when a helper's forwarded live set exceeds this. The innermost closure
-of a segment captures roughly @segmentSize + liveSet@ upvalues, and Lua 5.1 caps
-a function at 60 upvalues (@LUAI_MAXUPVALUES@).
+{- | Bail when a Strategy-A helper's forwarded live set exceeds this. The
+innermost closure of a segment captures roughly @segmentSize + liveSet@ upvalues,
+and Lua 5.1 caps a function at 60 upvalues (@LUAI_MAXUPVALUES@).
 -}
 maxLiveSet ∷ Int
 maxLiveSet = 15
-
--- | Bound on alias resolution, matching 'Language.PureScript.Backend.IR.MagicDo'.
-maxHops ∷ Int
-maxHops = 64

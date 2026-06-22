@@ -11,7 +11,6 @@ import Language.PureScript.Backend.IR.Linker (UberModule (..))
 import Language.PureScript.Backend.IR.Names
   ( ModuleName (..)
   , Name (..)
-  , PropName (..)
   , QName (..)
   , Qualified (..)
   , moduleNameFromString
@@ -24,11 +23,7 @@ import Language.PureScript.Backend.IR.Types
   , application
   , countFreeRefs
   , eq
-  , lets
   , literalInt
-  , literalObject
-  , noAnn
-  , objectProp
   , paramNamed
   , paramUnused
   , refImported
@@ -40,124 +35,244 @@ import Test.Hspec.Hedgehog.Extended (hedgehog, modifyMaxSuccess)
 
 {- | A Hedgehog property run over many examples. The project's
 'Test.Hspec.Hedgehog.Extended.test' caps @maxSuccess@ at 1; these invariants are
-the correctness insurance for the lambda-lifting core and cheap to check, so they
-earn real coverage.
+the correctness insurance for the lambda-lifting and A-normalisation cores and
+cheap to check, so they earn real coverage.
 -}
 prop ∷ String → PropertyT IO () → Spec
 prop title = modifyMaxSuccess (const 200) . it title . hedgehog
 
 spec ∷ Spec
 spec = describe "FlattenDeepBinds" do
-  it "leaves short chains untouched (below threshold)" do
-    let m = chainModule 10
-    flattenDeepBinds m `shouldBe` m
+  describe "Strategy A: continuation lambda-lifting" do
+    it "leaves short chains untouched (below threshold)" do
+      let m = chainModule 10
+      flattenDeepBinds m `shouldBe` m
 
-  it "fires on a long chain: introduces $kont helpers" do
-    let flat = chainExpr (flattenDeepBinds (chainModule 200))
-    kontNames flat `shouldSatisfy` (not . null)
+    it "fires on a long chain: introduces $kont helpers" do
+      let flat = chainExpr (flattenDeepBinds (chainModule 200))
+      kontNames flat `shouldSatisfy` (not . null)
 
-  it "preserves free references (no variable captured or dropped)" do
-    let m = chainModule 200
-    countFreeRefs (chainExpr (flattenDeepBinds m))
-      `shouldBe` countFreeRefs (chainExpr m)
+    it "preserves free references (no variable captured or dropped)" do
+      let m = chainModule 200
+      countFreeRefs (chainExpr (flattenDeepBinds m))
+        `shouldBe` countFreeRefs (chainExpr m)
 
-  it "preserves the number of bind applications" do
-    let m = chainModule 200
-    countBinds (chainExpr (flattenDeepBinds m))
-      `shouldBe` countBinds (chainExpr m)
+    it "preserves the number of bind applications" do
+      let m = chainModule 200
+      countBinds (chainExpr (flattenDeepBinds m))
+        `shouldBe` countBinds (chainExpr m)
 
-  it "bounds output nesting independently of chain length" do
-    -- Two very different chain lengths flatten to the same maximum nesting
-    -- depth: the per-segment depth, which does not grow with the chain.
-    maxAbsDepth (chainExpr (flattenDeepBinds (chainModule 120)))
-      `shouldBe` maxAbsDepth (chainExpr (flattenDeepBinds (chainModule 240)))
+    it "bounds output nesting independently of chain length" do
+      -- Two very different chain lengths flatten to the same maximum nesting
+      -- depth: the per-segment depth, which does not grow with the chain.
+      maxAbsDepth (chainExpr (flattenDeepBinds (chainModule 120)))
+        `shouldBe` maxAbsDepth (chainExpr (flattenDeepBinds (chainModule 240)))
 
-  it "drastically reduces nesting depth" do
-    let m = chainModule 200
-        before = maxAbsDepth (chainExpr m)
-        after = maxAbsDepth (chainExpr (flattenDeepBinds m))
-    after `shouldSatisfy` (< before)
+    it "drastically reduces nesting depth" do
+      let m = chainModule 200
+          before = maxAbsDepth (chainExpr m)
+          after = maxAbsDepth (chainExpr (flattenDeepBinds m))
+      after `shouldSatisfy` (< before)
 
-  it "is idempotent" do
-    let once = flattenDeepBinds (chainModule 200)
-    flattenDeepBinds once `shouldBe` once
+    it "is idempotent" do
+      let once = flattenDeepBinds (chainModule 200)
+      flattenDeepBinds once `shouldBe` once
 
-  -- A real `do` block interleaves statement-only lines, which desugar to a
-  -- `discard`. For a non-Effect monad the optimizer leaves the discard head as
-  -- the `Discard Unit` instance alias `(dict.discard) dictInner` (see
-  -- 'discardDef'), NOT collapsed to `bind`. The pass must recognise it, or every
-  -- statement splits the chain into one-step fragments that never reach the
-  -- threshold. With the discard steps recognised, the whole chain flattens;
-  -- without them, no `$kont` helper is introduced.
-  it "flattens a chain whose statement lines are discard aliases" do
-    let m = discardChainModule 200
-        flat = chainExpr (flattenDeepBinds m)
-    kontNames flat `shouldSatisfy` (not . null)
-    countFreeRefs flat `shouldBe` countFreeRefs (chainExpr m)
+    -- Recognition is purely structural: ANY head whose two-argument application
+    -- ends in a lambda is a step, no @Control.Bind@ name or dictionary shape
+    -- required. A chain headed by an arbitrary combinator (a @with@/@bracket@
+    -- style CPS, here) must therefore flatten just like a @bind@ chain.
+    it "flattens a chain whose head is not a bind (structural recognition)" do
+      let e = chainExprWith opaqueHead 200
+          flat = chainExpr (flattenDeepBinds (chainModuleOf e))
+      kontNames flat `shouldSatisfy` (not . null)
+      countFreeRefs flat `shouldBe` countFreeRefs e
 
-  -- The chain-head aliases may land in a RecursiveGroup rather than as
-  -- Standalone bindings; the resolver must still find them, or recognition
-  -- (and flattening) silently stops.
-  it "resolves bind/discard aliases defined in a RecursiveGroup" do
-    let flat = chainExpr (flattenDeepBinds (recursiveGroupModule 200))
-    kontNames flat `shouldSatisfy` (not . null)
+    -- A real `do` block interleaves statement-only lines (a `discard`, here a
+    -- second head). The chain must flatten as one, not split into sub-threshold
+    -- fragments at each interleaved head.
+    it "flattens a chain interleaving a second head (statement lines)" do
+      let m = discardChainModule 200
+          flat = chainExpr (flattenDeepBinds m)
+      kontNames flat `shouldSatisfy` (not . null)
+      countFreeRefs flat `shouldBe` countFreeRefs (chainExpr m)
 
-  -- The same for a local bind alias bound in a recursive @let@ group, as
-  -- polymorphic code (a bind specialised to a dictionary parameter) can produce.
-  it "resolves a local bind alias defined in a RecursiveGroup let" do
-    let flat = chainExpr (flattenDeepBinds (letRecursiveGroupModule 200))
-    kontNames flat `shouldSatisfy` (not . null)
+    -- The invariants the lambda-lifting core must hold for ANY recognised chain.
+    -- Generated chains mix two heads, below and above the threshold, with
+    -- actions and a final action that reference arbitrary earlier binders
+    -- (stressing live-set forwarding).
+    describe "properties (generated chains)" do
+      prop "preserves free references" do
+        e ← forAll genChainExpr
+        let flat = chainExpr (flattenDeepBinds (chainModuleOf e))
+        countFreeRefs flat === countFreeRefs e
 
-  -- The invariants the lambda-lifting core must hold for ANY recognised chain —
-  -- the property the whole pass rests on, since recognition only governs /which/
-  -- chains are restructured, never correctness. Generated chains mix @bind@ and
-  -- @discard@ steps, below and above the threshold, with actions and a final
-  -- action that reference arbitrary earlier binders (stressing live-set
-  -- forwarding).
-  describe "properties (generated chains)" do
-    prop "preserves free references" do
-      e ← forAll genChainExpr
-      let flat = chainExpr (flattenDeepBinds (chainModuleOf e))
-      countFreeRefs flat === countFreeRefs e
+      prop "preserves the number of steps" do
+        e ← forAll genChainExpr
+        let flat = chainExpr (flattenDeepBinds (chainModuleOf e))
+        countSteps flat === countSteps e
 
-    prop "preserves the number of bind/discard steps" do
-      e ← forAll genChainExpr
-      let flat = chainExpr (flattenDeepBinds (chainModuleOf e))
-      countSteps flat === countSteps e
+      prop "is idempotent" do
+        e ← forAll genChainExpr
+        let once = flattenDeepBinds (chainModuleOf e)
+        flattenDeepBinds once === once
 
-    prop "is idempotent" do
-      e ← forAll genChainExpr
-      let once = flattenDeepBinds (chainModuleOf e)
-      flattenDeepBinds once === once
+      prop "flattens long chains and reduces nesting" do
+        e ← forAll genLongChainExpr
+        let flat = chainExpr (flattenDeepBinds (chainModuleOf e))
+        annotate ("kont helpers: " <> show (length (kontNames flat)))
+        assert (not (null (kontNames flat)))
+        diff (maxAbsDepth flat) (<) (maxAbsDepth e)
 
-    prop "flattens long chains and reduces nesting" do
-      e ← forAll genLongChainExpr
-      let flat = chainExpr (flattenDeepBinds (chainModuleOf e))
-      annotate ("kont helpers: " <> show (length (kontNames flat)))
-      assert (not (null (kontNames flat)))
-      diff (maxAbsDepth flat) (<) (maxAbsDepth e)
+  describe "Strategy B: application-spine sequentialisation" do
+    it "sequentialises a deep left-nested (apply/ado) spine" do
+      let e = applyChainExpr 200
+          flat = chainExpr (flattenDeepBinds (chainModuleOf e))
+      tmpNames flat `shouldSatisfy` (not . null)
+      countFreeRefs flat `shouldBe` countFreeRefs e
+      maxSpineDepth flat `shouldSatisfy` (< maxSpineDepth e)
+
+    it "sequentialises a deep right-nested (=<<) spine" do
+      let e = bindFlippedChainExpr 200
+          flat = chainExpr (flattenDeepBinds (chainModuleOf e))
+      tmpNames flat `shouldSatisfy` (not . null)
+      countFreeRefs flat `shouldBe` countFreeRefs e
+      maxSpineDepth flat `shouldSatisfy` (< maxSpineDepth e)
+
+    it "leaves a shallow spine untouched (below threshold)" do
+      let m = chainModuleOf (applyChainExpr 10)
+      flattenDeepBinds m `shouldBe` m
+
+    it "is idempotent on a deep spine" do
+      let once = flattenDeepBinds (chainModuleOf (applyChainExpr 200))
+      flattenDeepBinds once `shouldBe` once
+
+    it "bounds output spine depth independently of length" do
+      -- A-normalisation binds every application to a $tmp, so each right-hand
+      -- side is a single application of atoms (spine depth 1) regardless of how
+      -- deep the original spine was.
+      maxSpineDepth
+        (chainExpr (flattenDeepBinds (chainModuleOf (applyChainExpr 120))))
+        `shouldBe` maxSpineDepth
+          (chainExpr (flattenDeepBinds (chainModuleOf (applyChainExpr 240))))
+
+    describe "properties (generated spines)" do
+      prop "preserves free references" do
+        e ← forAll genSpineExpr
+        let flat = chainExpr (flattenDeepBinds (chainModuleOf e))
+        countFreeRefs flat === countFreeRefs e
+
+      prop "is idempotent" do
+        e ← forAll genSpineExpr
+        let once = flattenDeepBinds (chainModuleOf e)
+        flattenDeepBinds once === once
+
+      prop "flattens deep spines and reduces nesting" do
+        e ← forAll genDeepSpineExpr
+        let flat = chainExpr (flattenDeepBinds (chainModuleOf e))
+        annotate ("tmp locals: " <> show (length (tmpNames flat)))
+        assert (not (null (tmpNames flat)))
+        diff (maxSpineDepth flat) (<) (maxSpineDepth e)
 
 --------------------------------------------------------------------------------
--- Generated chains ------------------------------------------------------------
+-- Module fixtures -------------------------------------------------------------
 
--- | A module wrapping @chain@ plus the @bind@ and @discard@ heads it references.
+testModule ∷ ModuleName
+testModule = moduleNameFromString "Test.Mod"
+
+-- | Wrap an arbitrary expression as the module's single @chain@ binding.
 chainModuleOf ∷ Exp → UberModule
 chainModuleOf e =
   UberModule
-    { uberModuleBindings =
-        [ Standalone (bindQName, bindDef)
-        , Standalone (discardQName, discardDef)
-        , Standalone (QName testModule (Name "chain"), e)
-        ]
+    { uberModuleBindings = [Standalone (QName testModule (Name "chain"), e)]
     , uberModuleForeigns = []
     , uberModuleExports = []
     }
+
+-- | Extract the @chain@ binding's expression from a (possibly flattened) module.
+chainExpr ∷ UberModule → Exp
+chainExpr UberModule {uberModuleBindings} =
+  fromMaybe (error "chain binding missing") $
+    listToMaybe
+      [ e
+      | Standalone (QName _ (Name "chain"), e) ← uberModuleBindings
+      ]
+
+--------------------------------------------------------------------------------
+-- Strategy A: continuation chains ---------------------------------------------
+
+xName ∷ Int → Name
+xName i = Name ("x" <> Text.pack (show i))
+
+-- | A chain head: an arbitrary reference. Recognition does not look at it.
+bindHead ∷ Exp
+bindHead = refImported testModule (Name "bind") 0
+
+discardHead ∷ Exp
+discardHead = refImported testModule (Name "discard") 0
+
+-- | A non-@bind@ combinator head, to prove recognition is name-agnostic.
+opaqueHead ∷ Exp
+opaqueHead = refImported testModule (Name "withResource") 0
+
+{- | An @n@-step chain headed by @hd@:
+
+> hd a1 (\x1 -> hd a2 (\x2 -> … hd an (\xn -> x1 == xn)))
+
+where @a1 = 0@ and @a_i = x_{i-1} == i@ for @i > 1@ (so each step's action uses
+the previous binder), and the final action references @x1@ — forcing the first
+binder to be forwarded transitively through every lifted helper.
+-}
+chainExprWith ∷ Exp → Int → Exp
+chainExprWith hd n = go 1
+ where
+  go ∷ Int → Exp
+  go i
+    | i > n = eq (refLocal0 (xName 1)) (refLocal0 (xName n))
+    | otherwise =
+        application
+          (application hd (action i))
+          (abstraction (paramNamed (xName i)) (go (i + 1)))
+
+  action ∷ Int → Exp
+  action i
+    | i <= 1 = literalInt 0
+    | otherwise = eq (refLocal0 (xName (i - 1))) (literalInt (fromIntegral i))
+
+chainExpr' ∷ Int → Exp
+chainExpr' = chainExprWith bindHead
+
+chainModule ∷ Int → UberModule
+chainModule = chainModuleOf . chainExpr'
+
+{- | An @n@-step chain alternating two heads: a @bind@ (odd steps, binding @xi@)
+with a @discard@ statement line (even steps, unused binder), as a @do@ block of
+@get@\/@put@ does. The interleaved head must not split the chain into sub-threshold
+fragments. The final action reads @x1@, forcing it through every lifted helper.
+-}
+discardChainExpr ∷ Int → Exp
+discardChainExpr n = go 1
+ where
+  go ∷ Int → Exp
+  go i
+    | i > n = eq (refLocal0 (xName 1)) (literalInt 0)
+    | even i =
+        application
+          (application discardHead (literalInt (fromIntegral i)))
+          (abstraction paramUnused (go (i + 1)))
+    | otherwise =
+        application
+          (application bindHead (literalInt (fromIntegral i)))
+          (abstraction (paramNamed (xName i)) (go (i + 1)))
+
+discardChainModule ∷ Int → UberModule
+discardChainModule = chainModuleOf . discardChainExpr
 
 {- | A random recognisable chain: each step is a @bind@ (binding @xi@) or a
 @discard@ statement line, its action a constant or a reference to an earlier
 binder, and the final action compares two earlier binders. Length spans both
 sides of the threshold, so both the firing and the left-untouched paths are
-exercised. A too-large live set is fine here — the pass then bails, and the
+exercised. A too-large live set is fine — the pass then bails, and the
 preservation invariants still hold of the (unchanged) result.
 -}
 genChainExpr ∷ Gen Exp
@@ -227,201 +342,55 @@ genLongChainExpr =
                 (application discardHead (literalInt (fromIntegral i)))
                 (abstraction paramUnused rest)
 
--- | Total @bind@ + @discard@ step heads referenced in an expression.
-countSteps ∷ Exp → Natural
-countSteps e =
-  Map.findWithDefault 0 (Imported testModule (Name "bind")) refs
-    + Map.findWithDefault 0 (Imported testModule (Name "discard")) refs
- where
-  refs = countFreeRefs e
-
 --------------------------------------------------------------------------------
--- A hand-built recognisable bind chain ----------------------------------------
+-- Strategy B: application spines ----------------------------------------------
 
-testModule ∷ ModuleName
-testModule = moduleNameFromString "Test.Mod"
+applyHead ∷ Exp
+applyHead = refImported testModule (Name "apply") 0
 
-bindQName ∷ QName
-bindQName = QName testModule (Name "bind")
+bindFlippedHead ∷ Exp
+bindFlippedHead = refImported testModule (Name "bindFlipped") 0
 
-{- | The chain head: a reference to a top-level @bind@ that resolves to a
-'Control.Bind.Bind' dictionary's projected method (recognised by its @bind@
-and @Apply0@ fields).
+{- | A deep left-nested (applicative / @ado@) spine, depth in the callee-argument
+position:
+
+> apply (apply (… apply x1 2 …) (n-1)) n
 -}
-bindHead ∷ Exp
-bindHead = refImported testModule (Name "bind") 0
+applyChainExpr ∷ Int → Exp
+applyChainExpr n = foldl' step (refLocal0 (xName 1)) [2 .. n]
+ where
+  step ∷ Exp → Int → Exp
+  step acc i = application (application applyHead acc) (literalInt (fromIntegral i))
 
-bindDef ∷ Exp
-bindDef =
-  objectProp
-    ( literalObject
-        [ (PropName "bind", literalInt 0)
-        , (PropName "Apply0", literalInt 0)
-        ]
-    )
-    (PropName "bind")
+{- | A deep right-nested (flipped-bind / @=<<@) spine, depth in the
+final-argument position:
 
-xName ∷ Int → Name
-xName i = Name ("x" <> Text.pack (show i))
-
-{- | An @n@-step chain:
-
-> bind a1 (\x1 -> bind a2 (\x2 -> … bind an (\xn -> x1 == xn)))
-
-where @a1 = 0@ and @a_i = x_{i-1} == i@ for @i > 1@ (so each step's action uses
-the previous binder), and the final action references @x1@ — forcing the first
-binder to be forwarded transitively through every lifted helper.
+> bindFlipped 1 (bindFlipped 2 (… bindFlipped n x1 …))
 -}
-chainExpr' ∷ Int → Exp
-chainExpr' n = go 1
+bindFlippedChainExpr ∷ Int → Exp
+bindFlippedChainExpr n = go 1
  where
   go ∷ Int → Exp
   go i
-    | i > n = eq (refLocal0 (xName 1)) (refLocal0 (xName n))
+    | i > n = refLocal0 (xName 1)
     | otherwise =
         application
-          (application bindHead (action i))
-          (abstraction (paramNamed (xName i)) (go (i + 1)))
+          (application bindFlippedHead (literalInt (fromIntegral i)))
+          (go (i + 1))
 
-  action ∷ Int → Exp
-  action i
-    | i <= 1 = literalInt 0
-    | otherwise = eq (refLocal0 (xName (i - 1))) (literalInt (fromIntegral i))
+-- | A deep spine, randomly left- or right-nested, always above the threshold.
+genDeepSpineExpr ∷ Gen Exp
+genDeepSpineExpr = do
+  n ← Gen.int (Range.linear 60 250)
+  leftNested ← Gen.bool
+  pure (if leftNested then applyChainExpr n else bindFlippedChainExpr n)
 
-chainModule ∷ Int → UberModule
-chainModule n =
-  UberModule
-    { uberModuleBindings =
-        [ Standalone (bindQName, bindDef)
-        , Standalone (QName testModule (Name "chain"), chainExpr' n)
-        ]
-    , uberModuleForeigns = []
-    , uberModuleExports = []
-    }
-
-discardQName ∷ QName
-discardQName = QName testModule (Name "discard")
-
-discardHead ∷ Exp
-discardHead = refImported testModule (Name "discard") 0
-
-{- | A statement line's @discard@ as the optimizer actually leaves it for a
-non-Effect monad: @(dict.discard) dictInner@, where the @Discard Unit@ instance
-method is @\dictBind -> Control.Bind.bind dictBind@. Only a full reduction —
-field projection then beta — exposes the underlying @Control.Bind.bind@; the
-shallow dictionary check cannot, which is exactly what 'headReducesToBind' adds.
--}
-discardDef ∷ Exp
-discardDef =
-  application
-    ( objectProp
-        ( literalObject
-            [
-              ( PropName "discard"
-              , abstraction
-                  (paramNamed (Name "dictBind"))
-                  ( application
-                      (refImported (moduleNameFromString "Control.Bind") (Name "bind") 0)
-                      (refLocal0 (Name "dictBind"))
-                  )
-              )
-            ]
-        )
-        (PropName "discard")
-    )
-    (literalInt 0)
-
-{- | An @n@-step chain alternating a @bind@ (odd steps, binding @xi@) with a
-@discard@ statement line (even steps, unused binder), as a @State@-style @do@
-block of @get@\/@put@ does. The discard head is the alias in 'discardDef', so the
-chain flattens only if @discard@ is recognised — otherwise each statement splits
-it into one-step fragments below the threshold. The final action reads @x1@,
-forcing the first binder through every lifted helper.
--}
-discardChainExpr ∷ Int → Exp
-discardChainExpr n = go 1
- where
-  go ∷ Int → Exp
-  go i
-    | i > n = eq (refLocal0 (xName 1)) (literalInt 0)
-    | even i =
-        application
-          (application discardHead (literalInt (fromIntegral i)))
-          (abstraction paramUnused (go (i + 1)))
-    | otherwise =
-        application
-          (application bindHead (literalInt (fromIntegral i)))
-          (abstraction (paramNamed (xName i)) (go (i + 1)))
-
-discardChainModule ∷ Int → UberModule
-discardChainModule n =
-  UberModule
-    { uberModuleBindings =
-        [ Standalone (bindQName, bindDef)
-        , Standalone (discardQName, discardDef)
-        , Standalone (QName testModule (Name "chain"), discardChainExpr n)
-        ]
-    , uberModuleForeigns = []
-    , uberModuleExports = []
-    }
-
-{- | The @bind@\/@discard@ aliases placed in a 'RecursiveGroup' rather than as
-'Standalone' bindings. The resolver must index group members too, otherwise the
-aliases do not resolve and the chain silently stops being flattened.
--}
-recursiveGroupModule ∷ Int → UberModule
-recursiveGroupModule n =
-  UberModule
-    { uberModuleBindings =
-        [ RecursiveGroup ((bindQName, bindDef) :| [(discardQName, discardDef)])
-        , Standalone (QName testModule (Name "chain"), discardChainExpr n)
-        ]
-    , uberModuleForeigns = []
-    , uberModuleExports = []
-    }
-
-localBindName ∷ Name
-localBindName = Name "lbind"
-
--- | An @n@-step bind chain whose head is a @let@-local alias (@lbind@).
-localChainExpr ∷ Int → Exp
-localChainExpr n = go 1
- where
-  go ∷ Int → Exp
-  go i
-    | i > n = eq (refLocal0 (xName 1)) (literalInt 0)
-    | otherwise =
-        application
-          (application (refLocal0 localBindName) (literalInt (fromIntegral i)))
-          (abstraction (paramNamed (xName i)) (go (i + 1)))
-
-{- | The local @bind@ alias bound in a recursive @let@ group, with the chain in
-the @let@ body. 'letLocals' must index the group's members, or the local alias
-does not resolve and the chain stops being flattened.
--}
-letRecursiveGroupModule ∷ Int → UberModule
-letRecursiveGroupModule n =
-  UberModule
-    { uberModuleBindings =
-        [ Standalone
-            ( QName testModule (Name "chain")
-            , lets
-                (RecursiveGroup ((noAnn, localBindName, bindDef) :| []) :| [])
-                (localChainExpr n)
-            )
-        ]
-    , uberModuleForeigns = []
-    , uberModuleExports = []
-    }
-
--- | Extract the @chain@ binding's expression from a (possibly flattened) module.
-chainExpr ∷ UberModule → Exp
-chainExpr UberModule {uberModuleBindings} =
-  fromMaybe (error "chain binding missing") $
-    listToMaybe
-      [ e
-      | Standalone (QName _ (Name "chain"), e) ← uberModuleBindings
-      ]
+-- | A spine spanning both sides of the threshold (firing and untouched paths).
+genSpineExpr ∷ Gen Exp
+genSpineExpr = do
+  n ← Gen.int (Range.linear 1 250)
+  leftNested ← Gen.bool
+  pure (if leftNested then applyChainExpr n else bindFlippedChainExpr n)
 
 --------------------------------------------------------------------------------
 -- Measures --------------------------------------------------------------------
@@ -432,16 +401,43 @@ maxAbsDepth e = here + foldl' max 0 (maxAbsDepth <$> toListOf subexpressions e)
  where
   here = case e of Abs {} → 1; _ → 0
 
--- | Occurrences of the bind head reference.
+{- | The deepest contiguous chain of 'App' nodes anywhere in the expression —
+the parse nesting Strategy B flattens (mirrors the pass's own @spineDepth@).
+-}
+maxSpineDepth ∷ Exp → Int
+maxSpineDepth e =
+  foldl' max 0 (spineDepthAt <$> universeOf subexpressions e)
+ where
+  spineDepthAt ∷ Exp → Int
+  spineDepthAt = \case
+    App _ann f a → 1 + max (spineDepthAt f) (spineDepthAt a)
+    _ → 0
+
+-- | Occurrences of the @bind@ head reference.
 countBinds ∷ Exp → Natural
 countBinds = Map.findWithDefault 0 (Imported testModule (Name "bind")) . countFreeRefs
 
+-- | Total @bind@ + @discard@ step heads referenced in an expression.
+countSteps ∷ Exp → Natural
+countSteps e =
+  Map.findWithDefault 0 (Imported testModule (Name "bind")) refs
+    + Map.findWithDefault 0 (Imported testModule (Name "discard")) refs
+ where
+  refs = countFreeRefs e
+
 -- | Names of @$kont@ helper bindings introduced anywhere in the expression.
 kontNames ∷ Exp → [Name]
-kontNames e =
+kontNames = bindingNamesWithPrefix "$kont"
+
+-- | Names of @$tmp@ locals introduced anywhere in the expression.
+tmpNames ∷ Exp → [Name]
+tmpNames = bindingNamesWithPrefix "$tmp"
+
+bindingNamesWithPrefix ∷ Text → Exp → [Name]
+bindingNamesWithPrefix prefix e =
   [ name
   | sub ← universeOf subexpressions e
   , Let _ binds _ ← [sub]
   , Standalone (_ann, name@(Name t), _def) ← toList binds
-  , "$kont" `Text.isPrefixOf` t
+  , prefix `Text.isPrefixOf` t
   ]
