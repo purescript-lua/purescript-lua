@@ -281,6 +281,13 @@ To add a new golden test:
 4. Rename `actual.*` to `golden.*` if correct
 5. Commit the golden files
 
+For a **runnable** module (one with `main`) whose execution output you want
+checked, also create `eval/golden.txt` with the expected output (plus
+`eval/.gitignore` containing `actual.txt`) **before** running. The presence of
+`eval/golden.txt` is what makes the harness link the module `AsApplication` and
+run it through `lua`; without it the module is linked `AsModule` and only the
+`.ir`/`.lua` goldens are generated (no execution check).
+
 ### Property-Based Tests
 
 The project uses Hedgehog for property-based testing:
@@ -288,6 +295,12 @@ The project uses Hedgehog for property-based testing:
 - Tests in `test/Language/PureScript/Backend/IR/Spec.hs` and similar
 
 ## Development Workflow
+
+For a **bug fix**, work test-first (TDD): write a test that reproduces the bug
+and confirm it is **red** *before* touching the fix, then apply the fix and
+confirm it goes **green**. A fix written before its test cannot prove it
+actually catches the bug. Size the coverage to the bug (one focused case is
+often enough; add more when the bug spans several code paths).
 
 1. Make code changes in `lib/` or `exe/`
 2. Format code: `fourmolu -i lib/ exe/ test/`
