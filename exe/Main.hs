@@ -118,3 +118,12 @@ handleLuaError =
           <> runModuleName modname
           <> "."
           <> runIdent ident
+    Lua.NestingTooDeep depth →
+      die . toString . unlines $
+        [ "Expression nests too deeply for Lua 5.1 ("
+            <> show depth
+            <> " syntax levels; the parser caps at ~200)."
+        , "A very long do/>>= chain in a non-Effect/ST monad can hit this;"
+        , "split the block into smaller named pieces. See"
+        , "https://github.com/purescript-lua/purescript-lua/issues/104"
+        ]

@@ -53,6 +53,11 @@ data Error
   = UnexpectedRefBound ModuleName IR.Exp
   | LinkerErrorForeign Foreign.Error
   | AppEntryPointNotFound ModuleName PS.Ident
+  | {- | The generated chunk nests more deeply than Lua 5.1's parser allows
+    (~200 syntax levels), so it would fail to load. Carries the measured
+    depth. See 'Language.PureScript.Backend.Lua.NestingCheck' and issue #104.
+    -}
+    NestingTooDeep Int
   deriving stock (Show)
 
 fromUberModule

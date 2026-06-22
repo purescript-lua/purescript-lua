@@ -1,6 +1,7 @@
 module Main where
 
 import Language.PureScript.Backend.IR.DCE.Spec qualified as IrDce
+import Language.PureScript.Backend.IR.FlattenDeepBinds.Spec qualified as FlattenDeepBinds
 import Language.PureScript.Backend.IR.Inliner.Spec qualified as Inliner
 import Language.PureScript.Backend.IR.Linker.Spec qualified as IRLinker
 import Language.PureScript.Backend.IR.Optimizer.Spec qualified as IROptimizer
@@ -9,6 +10,7 @@ import Language.PureScript.Backend.IR.Types.Spec qualified as Types
 import Language.PureScript.Backend.Lua.DCE.Spec qualified as LuaDce
 import Language.PureScript.Backend.Lua.Golden.Spec qualified as Golden
 import Language.PureScript.Backend.Lua.Linker.Foreign.Spec qualified as LuaLinkerForeign
+import Language.PureScript.Backend.Lua.NestingCheck.Spec qualified as NestingCheck
 import Language.PureScript.Backend.Lua.Optimizer.Spec qualified as LuaOptimizer
 import Language.PureScript.Backend.Lua.Printer.Spec qualified as Printer
 import Language.PureScript.Backend.Output.Spec qualified as Output
@@ -27,4 +29,6 @@ main = hspec do
   LuaOptimizer.spec
   Printer.spec
   LuaLinkerForeign.spec
+  NestingCheck.spec
+  FlattenDeepBinds.spec
   Output.spec

@@ -41,7 +41,9 @@ single pipeline definition.
 
 Only 'Effect' and 'ST' are flattened — their value is a thunk, so @bind m k@
 means "run @m@, then run @k@ of the result". Other monads keep their @bind@
-calls; the generic deeply-nested case is issue #104.
+calls; the generic deeply-nested case (issue #104) is handled by the
+'Language.PureScript.Backend.IR.FlattenDeepBinds' pass, which runs right after
+this one and lambda-lifts whatever bind chains remain.
 -}
 module Language.PureScript.Backend.IR.MagicDo (magicDo) where
 
