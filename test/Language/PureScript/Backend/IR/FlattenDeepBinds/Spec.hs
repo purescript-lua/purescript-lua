@@ -14,8 +14,10 @@ import Language.PureScript.Backend.IR.Names
   , moduleNameFromString
   )
 import Language.PureScript.Backend.IR.Types
-  ( Exp
+  ( Ann
+  , Exp
   , Grouping (..)
+  , Parameter
   , RawExp (..)
   , abstraction
   , application
@@ -25,6 +27,7 @@ import Language.PureScript.Backend.IR.Types
   , literalObject
   , objectProp
   , paramNamed
+  , paramUnused
   , refImported
   , refLocal0
   , subexpressions
@@ -66,6 +69,18 @@ spec = describe "FlattenDeepBinds" do
   it "is idempotent" do
     let once = flattenDeepBinds (chainModule 200)
     flattenDeepBinds once `shouldBe` once
+
+  -- A real `do` block interleaves statement-only lines, which desugar to a
+  -- `discard` whose continuation binder is unused. Once the optimizer collapses
+  -- `discardUnit.discard = bind`, those steps keep the chain's `bind` head and
+  -- only differ by an unused binder — so the pass must still flatten them
+  -- without dropping or duplicating a bind.
+  it "flattens a chain interleaved with discard (unused-binder) steps" do
+    let m = discardChainModule 200
+        flat = chainExpr (flattenDeepBinds m)
+    kontNames flat `shouldSatisfy` (not . null)
+    countBinds flat `shouldBe` countBinds (chainExpr m)
+    countFreeRefs flat `shouldBe` countFreeRefs (chainExpr m)
 
 --------------------------------------------------------------------------------
 -- A hand-built recognisable bind chain ----------------------------------------
@@ -126,6 +141,38 @@ chainModule n =
     { uberModuleBindings =
         [ Standalone (bindQName, bindDef)
         , Standalone (QName testModule (Name "chain"), chainExpr' n)
+        ]
+    , uberModuleForeigns = []
+    , uberModuleExports = []
+    }
+
+{- | An @n@-step chain where every even step is a @discard@ (an unused binder),
+modelling statement-only @do@ lines. Actions are constant so a discarded binder
+is never referenced; the final action reads @x1@, forcing the first binder
+through every lifted helper.
+-}
+discardChainExpr ∷ Int → Exp
+discardChainExpr n = go 1
+ where
+  go ∷ Int → Exp
+  go i
+    | i > n = eq (refLocal0 (xName 1)) (literalInt 0)
+    | otherwise =
+        application
+          (application bindHead (literalInt (fromIntegral i)))
+          (abstraction (param i) (go (i + 1)))
+
+  param ∷ Int → Parameter Ann
+  param i
+    | even i = paramUnused
+    | otherwise = paramNamed (xName i)
+
+discardChainModule ∷ Int → UberModule
+discardChainModule n =
+  UberModule
+    { uberModuleBindings =
+        [ Standalone (bindQName, bindDef)
+        , Standalone (QName testModule (Name "chain"), discardChainExpr n)
         ]
     , uberModuleForeigns = []
     , uberModuleExports = []

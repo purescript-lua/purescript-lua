@@ -36,6 +36,35 @@ spec = describe "NestingCheck" do
     maxChunkDepth (curriedCalls 250) `shouldSatisfy` (<= 2)
     exceedsNestingLimit (curriedCalls 250) `shouldBe` Nothing
 
+  -- The constructs below are not flattened by FlattenDeepBinds, so the detector
+  -- is their only safety net: it must count each as one level and flag a deep
+  -- enough chain. (These were previously unexercised — only call arguments and
+  -- the curried spine had tests.)
+
+  it "measures a nested operator chain as one level each" do
+    maxChunkDepth (binOpChain 30) `shouldBe` 30
+
+  it "flags an operator chain that nests beyond the limit" do
+    let depth = nestingLimit + 30
+    exceedsNestingLimit (binOpChain depth) `shouldSatisfy` \case
+      Just d → d >= depth
+      Nothing → False
+
+  it "measures a ladder of nested if-statements as one level each" do
+    maxChunkDepth (ifLadder 30) `shouldBe` 30
+
+  it "flags an if-ladder that nests beyond the limit" do
+    let depth = nestingLimit + 30
+    exceedsNestingLimit (ifLadder depth) `shouldSatisfy` \case
+      Just d → d >= depth
+      Nothing → False
+
+  it "measures nested table constructors as one level each" do
+    maxChunkDepth (tableNest 30) `shouldBe` 30
+
+  it "measures a chain of field accesses as one level each" do
+    maxChunkDepth (fieldChain 30) `shouldBe` 30
+
 --------------------------------------------------------------------------------
 -- Builders --------------------------------------------------------------------
 
@@ -51,4 +80,32 @@ curriedCalls ∷ Int → Chunk
 curriedCalls n =
   [ Lua.return
       (foldl' (\acc _ → Lua.functionCall acc []) (Lua.varName [name|f|]) [1 .. n])
+  ]
+
+-- | @return (…((nil + nil) + nil) … + nil)@, @n@ operators deep on the left.
+binOpChain ∷ Int → Chunk
+binOpChain n =
+  [Lua.return (foldr (\_ e → Lua.binOp Lua.Add e Lua.Nil) Lua.Nil [1 .. n])]
+
+-- | @if nil then if nil then … end end@, @n@ statements deep.
+ifLadder ∷ Int → Chunk
+ifLadder = go
+ where
+  go ∷ Int → Chunk
+  go k
+    | k <= 0 = []
+    | otherwise = [Lua.ifThenElse Lua.Nil (go (k - 1)) []]
+
+-- | @return { [nil] = { [nil] = … } }@, @n@ table constructors deep.
+tableNest ∷ Int → Chunk
+tableNest n =
+  [ Lua.return
+      (foldr (\_ e → Lua.table [Lua.tableRowKV Lua.Nil e]) Lua.Nil [1 .. n])
+  ]
+
+-- | @return t.f.f.….f@, @n@ field accesses deep.
+fieldChain ∷ Int → Chunk
+fieldChain n =
+  [ Lua.return
+      (foldr (\_ e → Lua.varField e [name|f|]) (Lua.varName [name|t|]) [1 .. n])
   ]
