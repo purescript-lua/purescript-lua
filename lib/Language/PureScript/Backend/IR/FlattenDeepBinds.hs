@@ -104,6 +104,8 @@ import Language.PureScript.Backend.IR.Types
   , noAnn
   , rewriteExpTopDownM
   , subexpressions
+  , substitute
+  , unshift
   )
 
 {- | Flatten deeply-nested non-Effect\/ST bind chains in every binding and
@@ -188,7 +190,10 @@ peelChain resolve = go
     Nothing → ([], expr)
 
 {- | Recognise @bind action (\param -> rest)@ as a step plus its continuation
-body, when @bind@ resolves to a (non-Effect\/ST) monadic bind.
+body, when @bind@ resolves to a (non-Effect\/ST) monadic bind. A statement-only
+@do@ line is a @discard action (\_ -> rest)@ with the same shape; it is
+recognised too (see 'isBindHead'), so an interleaved statement does not break a
+chain into sub-threshold fragments.
 -}
 asStep ∷ (Qualified Name → Maybe Exp) → Exp → Maybe (Step, Exp)
 asStep resolve expr = case spine expr of
@@ -289,25 +294,91 @@ letHelpers (h : hs) body = Let noAnn (h :| hs) body
 --------------------------------------------------------------------------------
 -- Recognising a bind head -----------------------------------------------------
 
-{- | Does this chain-head expression denote a monadic @bind@?
+{- | Does this chain-head expression denote a monadic @bind@ (or a @bind@-shaped
+@discard@)? Two recognisers, because the optimizer leaves bind heads in two very
+different shapes:
 
-Recognised shapes (after resolving aliases through 'peelAlias'):
+  * A plain instance (e.g. @Maybe@): the head is @dict.bind@ where @dict@ is a
+    'Control.Bind.Bind' dictionary literal, carrying a @bind@ method and its
+    @Apply0@ superclass field. We inspect the dictionary's fields directly, via
+    'peelAlias' + 'isBindDict' — /without/ reducing into the @bind@ method.
 
-  * @dict.bind@ where @dict@ is a 'Control.Bind.Bind' dictionary literal — it
-    carries both a @bind@ method and its @Apply0@ superclass field. This is the
-    common case: the optimizer specialises and projects the instance method.
-
-  * @Control.Bind.bind <dict>@ — @bind@ partially applied to a dictionary, as
-    left by polymorphic code where the dictionary is a parameter.
+  * A polymorphic or monad-transformer bind: the head reduces — through aliases,
+    a literal-dictionary field projection, and beta — to @Control.Bind.bind
+    <dict>@. A statement-only @do@ line (@discard@) reduces here too: the
+    @Discard Unit@ instance defines @discard = bind@, and the optimizer leaves
+    the head as @(dict.discard) dictInner@. Recognising it is what stops a
+    statement from splitting a chain into sub-'threshold' fragments (e.g. a
+    @State@ block of @get@\/@put@, where every other step is a @put@).
+    'headReducesToBind' does this, stopping at the @Control.Bind@ /names/ rather
+    than resolving through them — after linking they are themselves top-level
+    bindings, so resolving would step into @\\dict -> dict.bind@ and lose track.
 
 Effect\/ST are not excluded here: 'magicDo' has already consumed their chains
 (see the module header).
 -}
 isBindHead ∷ (Qualified Name → Maybe Exp) → Exp → Bool
-isBindHead resolve hd = case peelAlias resolve hd of
-  ObjectProp _ann obj (PropName "bind") → isBindDict resolve obj
-  App _ann h _dict → isControlBindBind resolve h
-  _ → False
+isBindHead resolve hd =
+  bindDictHead || headReducesToBind resolve hd
+ where
+  bindDictHead = case peelAlias resolve hd of
+    ObjectProp _ann obj (PropName "bind") → isBindDict resolve obj
+    _ → False
+
+{- | Reduce an application spine just far enough to decide whether its head is
+@Control.Bind.bind@ (or a @Control.Bind.discard@ of the @Discard Unit@ instance,
+which /is/ @bind@). Each reduction step — resolve a 'Ref' alias, project a field
+out of a literal dictionary, beta-reduce a redex — is tried only /after/ checking
+the head against the known @Control.Bind@ names, so those names act as stops even
+though linking makes them resolvable. Bounded by 'maxHops'.
+-}
+headReducesToBind ∷ (Qualified Name → Maybe Exp) → Exp → Bool
+headReducesToBind resolve = go maxHops . spine
+ where
+  go ∷ Int → (Exp, [Exp]) → Bool
+  go fuel (h, args)
+    | fuel <= 0 = False
+    | otherwise = case (h, args) of
+        -- @bind <dict> …@: any monad's bind.
+        (Ref _ann (Imported m n) _, _dict : _)
+          | (m, n) == controlBindBind → True
+        -- @discard discardUnit <dict> …@: a not-yet-collapsed statement line.
+        (Ref _ann (Imported m n) _, dictD : _)
+          | (m, n) == controlBindDiscard
+          , denotes resolve controlBindDiscardUnit dictD →
+              True
+        -- Otherwise reduce the head one step and retry.
+        (Ref _ann qname _, _)
+          | Just def ← resolve qname → go (fuel - 1) (reSpine def args)
+        (ObjectProp _ann (LiteralObject _ann' fields) prop, _)
+          | Just value ← List.lookup prop fields →
+              go (fuel - 1) (reSpine value args)
+        (Abs _ann (ParamNamed _ p) body, arg : rest') →
+          go (fuel - 1) $
+            reSpine (unshift p 0 (substitute (Local p) 0 arg body)) rest'
+        (Abs _ann (ParamUnused _) body, _ : rest') →
+          go (fuel - 1) (reSpine body rest')
+        _ → False
+
+  -- Re-attach trailing arguments after reducing the head.
+  reSpine ∷ Exp → [Exp] → (Exp, [Exp])
+  reSpine e extra = let (h, a) = spine e in (h, a <> extra)
+
+{- | Does the expression ultimately refer to the given imported name, possibly
+through module-local aliases? The name is checked /before/ resolving, so a name
+that is itself a top-level binding still matches. Bounded by 'maxHops'.
+-}
+denotes ∷ (Qualified Name → Maybe Exp) → (ModuleName, Name) → Exp → Bool
+denotes resolve (tm, tn) = go maxHops
+ where
+  go ∷ Int → Exp → Bool
+  go fuel = \case
+    Ref _ann q@(Imported m n) _
+      | m == tm, n == tn → True
+      | fuel > 0, Just def ← resolve q → go (fuel - 1) def
+    Ref _ann q@(Local _) _
+      | fuel > 0, Just def ← resolve q → go (fuel - 1) def
+    _ → False
 
 -- | A 'Control.Bind.Bind' dictionary literal: a record with @bind@ and @Apply0@.
 isBindDict ∷ (Qualified Name → Maybe Exp) → Exp → Bool
@@ -319,10 +390,10 @@ isBindDict resolve obj = case peelAlias resolve obj of
   hasField ∷ PropName → [(PropName, Exp)] → Bool
   hasField p = any ((== p) . fst)
 
-isControlBindBind ∷ (Qualified Name → Maybe Exp) → Exp → Bool
-isControlBindBind resolve h = case peelAlias resolve h of
-  Ref _ann (Imported m n) _ → m == ModuleName "Control.Bind" && n == Name "bind"
-  _ → False
+controlBindBind, controlBindDiscard, controlBindDiscardUnit ∷ (ModuleName, Name)
+controlBindBind = (ModuleName "Control.Bind", Name "bind")
+controlBindDiscard = (ModuleName "Control.Bind", Name "discard")
+controlBindDiscardUnit = (ModuleName "Control.Bind", Name "discardUnit")
 
 {- | Follow @Ref → definition@ aliases (bounded, to stay terminating on
 recursive bindings) to the underlying expression.

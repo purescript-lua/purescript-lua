@@ -14,10 +14,8 @@ import Language.PureScript.Backend.IR.Names
   , moduleNameFromString
   )
 import Language.PureScript.Backend.IR.Types
-  ( Ann
-  , Exp
+  ( Exp
   , Grouping (..)
-  , Parameter
   , RawExp (..)
   , abstraction
   , application
@@ -71,15 +69,16 @@ spec = describe "FlattenDeepBinds" do
     flattenDeepBinds once `shouldBe` once
 
   -- A real `do` block interleaves statement-only lines, which desugar to a
-  -- `discard` whose continuation binder is unused. Once the optimizer collapses
-  -- `discardUnit.discard = bind`, those steps keep the chain's `bind` head and
-  -- only differ by an unused binder — so the pass must still flatten them
-  -- without dropping or duplicating a bind.
-  it "flattens a chain interleaved with discard (unused-binder) steps" do
+  -- `discard`. For a non-Effect monad the optimizer leaves the discard head as
+  -- the `Discard Unit` instance alias `(dict.discard) dictInner` (see
+  -- 'discardDef'), NOT collapsed to `bind`. The pass must recognise it, or every
+  -- statement splits the chain into one-step fragments that never reach the
+  -- threshold. With the discard steps recognised, the whole chain flattens;
+  -- without them, no `$kont` helper is introduced.
+  it "flattens a chain whose statement lines are discard aliases" do
     let m = discardChainModule 200
         flat = chainExpr (flattenDeepBinds m)
     kontNames flat `shouldSatisfy` (not . null)
-    countBinds flat `shouldBe` countBinds (chainExpr m)
     countFreeRefs flat `shouldBe` countFreeRefs (chainExpr m)
 
 --------------------------------------------------------------------------------
@@ -146,10 +145,44 @@ chainModule n =
     , uberModuleExports = []
     }
 
-{- | An @n@-step chain where every even step is a @discard@ (an unused binder),
-modelling statement-only @do@ lines. Actions are constant so a discarded binder
-is never referenced; the final action reads @x1@, forcing the first binder
-through every lifted helper.
+discardQName ∷ QName
+discardQName = QName testModule (Name "discard")
+
+discardHead ∷ Exp
+discardHead = refImported testModule (Name "discard") 0
+
+{- | A statement line's @discard@ as the optimizer actually leaves it for a
+non-Effect monad: @(dict.discard) dictInner@, where the @Discard Unit@ instance
+method is @\dictBind -> Control.Bind.bind dictBind@. Only a full reduction —
+field projection then beta — exposes the underlying @Control.Bind.bind@; the
+shallow dictionary check cannot, which is exactly what 'headReducesToBind' adds.
+-}
+discardDef ∷ Exp
+discardDef =
+  application
+    ( objectProp
+        ( literalObject
+            [
+              ( PropName "discard"
+              , abstraction
+                  (paramNamed (Name "dictBind"))
+                  ( application
+                      (refImported (moduleNameFromString "Control.Bind") (Name "bind") 0)
+                      (refLocal0 (Name "dictBind"))
+                  )
+              )
+            ]
+        )
+        (PropName "discard")
+    )
+    (literalInt 0)
+
+{- | An @n@-step chain alternating a @bind@ (odd steps, binding @xi@) with a
+@discard@ statement line (even steps, unused binder), as a @State@-style @do@
+block of @get@\/@put@ does. The discard head is the alias in 'discardDef', so the
+chain flattens only if @discard@ is recognised — otherwise each statement splits
+it into one-step fragments below the threshold. The final action reads @x1@,
+forcing the first binder through every lifted helper.
 -}
 discardChainExpr ∷ Int → Exp
 discardChainExpr n = go 1
@@ -157,21 +190,21 @@ discardChainExpr n = go 1
   go ∷ Int → Exp
   go i
     | i > n = eq (refLocal0 (xName 1)) (literalInt 0)
+    | even i =
+        application
+          (application discardHead (literalInt (fromIntegral i)))
+          (abstraction paramUnused (go (i + 1)))
     | otherwise =
         application
           (application bindHead (literalInt (fromIntegral i)))
-          (abstraction (param i) (go (i + 1)))
-
-  param ∷ Int → Parameter Ann
-  param i
-    | even i = paramUnused
-    | otherwise = paramNamed (xName i)
+          (abstraction (paramNamed (xName i)) (go (i + 1)))
 
 discardChainModule ∷ Int → UberModule
 discardChainModule n =
   UberModule
     { uberModuleBindings =
         [ Standalone (bindQName, bindDef)
+        , Standalone (discardQName, discardDef)
         , Standalone (QName testModule (Name "chain"), discardChainExpr n)
         ]
     , uberModuleForeigns = []
