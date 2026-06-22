@@ -13,6 +13,7 @@
   , "strings"
   , "tailrec"
   , "transformers"
+  , "tuples"
   ]
 , packages = ./packages.dhall
 , sources = [ "golden/**/*.purs" ]

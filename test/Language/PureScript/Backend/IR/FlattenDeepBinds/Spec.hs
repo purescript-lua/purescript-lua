@@ -3,6 +3,9 @@ module Language.PureScript.Backend.IR.FlattenDeepBinds.Spec where
 import Control.Lens (toListOf, universeOf)
 import Data.Map qualified as Map
 import Data.Text qualified as Text
+import Hedgehog (Gen, PropertyT, annotate, assert, diff, forAll, (===))
+import Hedgehog.Gen qualified as Gen
+import Hedgehog.Range qualified as Range
 import Language.PureScript.Backend.IR.FlattenDeepBinds (flattenDeepBinds)
 import Language.PureScript.Backend.IR.Linker (UberModule (..))
 import Language.PureScript.Backend.IR.Names
@@ -31,6 +34,15 @@ import Language.PureScript.Backend.IR.Types
   , subexpressions
   )
 import Test.Hspec (Spec, describe, it, shouldBe, shouldSatisfy)
+import Test.Hspec.Hedgehog.Extended (hedgehog, modifyMaxSuccess)
+
+{- | A Hedgehog property run over many examples. The project's
+'Test.Hspec.Hedgehog.Extended.test' caps @maxSuccess@ at 1; these invariants are
+the correctness insurance for the lambda-lifting core and cheap to check, so they
+earn real coverage.
+-}
+prop ∷ String → PropertyT IO () → Spec
+prop title = modifyMaxSuccess (const 200) . it title . hedgehog
 
 spec ∷ Spec
 spec = describe "FlattenDeepBinds" do
@@ -80,6 +92,133 @@ spec = describe "FlattenDeepBinds" do
         flat = chainExpr (flattenDeepBinds m)
     kontNames flat `shouldSatisfy` (not . null)
     countFreeRefs flat `shouldBe` countFreeRefs (chainExpr m)
+
+  -- The invariants the lambda-lifting core must hold for ANY recognised chain —
+  -- the property the whole pass rests on, since recognition only governs /which/
+  -- chains are restructured, never correctness. Generated chains mix @bind@ and
+  -- @discard@ steps, below and above the threshold, with actions and a final
+  -- action that reference arbitrary earlier binders (stressing live-set
+  -- forwarding).
+  describe "properties (generated chains)" do
+    prop "preserves free references" do
+      e ← forAll genChainExpr
+      let flat = chainExpr (flattenDeepBinds (chainModuleOf e))
+      countFreeRefs flat === countFreeRefs e
+
+    prop "preserves the number of bind/discard steps" do
+      e ← forAll genChainExpr
+      let flat = chainExpr (flattenDeepBinds (chainModuleOf e))
+      countSteps flat === countSteps e
+
+    prop "is idempotent" do
+      e ← forAll genChainExpr
+      let once = flattenDeepBinds (chainModuleOf e)
+      flattenDeepBinds once === once
+
+    prop "flattens long chains and reduces nesting" do
+      e ← forAll genLongChainExpr
+      let flat = chainExpr (flattenDeepBinds (chainModuleOf e))
+      annotate ("kont helpers: " <> show (length (kontNames flat)))
+      assert (not (null (kontNames flat)))
+      diff (maxAbsDepth flat) (<) (maxAbsDepth e)
+
+--------------------------------------------------------------------------------
+-- Generated chains ------------------------------------------------------------
+
+-- | A module wrapping @chain@ plus the @bind@ and @discard@ heads it references.
+chainModuleOf ∷ Exp → UberModule
+chainModuleOf e =
+  UberModule
+    { uberModuleBindings =
+        [ Standalone (bindQName, bindDef)
+        , Standalone (discardQName, discardDef)
+        , Standalone (QName testModule (Name "chain"), e)
+        ]
+    , uberModuleForeigns = []
+    , uberModuleExports = []
+    }
+
+{- | A random recognisable chain: each step is a @bind@ (binding @xi@) or a
+@discard@ statement line, its action a constant or a reference to an earlier
+binder, and the final action compares two earlier binders. Length spans both
+sides of the threshold, so both the firing and the left-untouched paths are
+exercised. A too-large live set is fine here — the pass then bails, and the
+preservation invariants still hold of the (unchanged) result.
+-}
+genChainExpr ∷ Gen Exp
+genChainExpr = Gen.int (Range.linear 1 120) >>= \n → go 1 n []
+ where
+  go ∷ Int → Int → [Name] → Gen Exp
+  go i n inScope
+    | i > n = genFinal inScope
+    | otherwise = do
+        action ← genAction inScope i
+        bindStep ← Gen.bool
+        if bindStep
+          then do
+            let nm = xName i
+            rest ← go (i + 1) n (nm : inScope)
+            pure
+              (application (application bindHead action) (abstraction (paramNamed nm) rest))
+          else do
+            rest ← go (i + 1) n inScope
+            pure
+              (application (application discardHead action) (abstraction paramUnused rest))
+
+  genAction ∷ [Name] → Int → Gen Exp
+  genAction inScope i = case inScope of
+    [] → pure (literalInt (fromIntegral i))
+    _ →
+      Gen.choice
+        [ pure (literalInt (fromIntegral i))
+        , refLocal0 <$> Gen.element inScope
+        ]
+
+  genFinal ∷ [Name] → Gen Exp
+  genFinal inScope = case inScope of
+    [] → pure (literalInt 0)
+    _ →
+      eq . refLocal0 <$> Gen.element inScope <*> (refLocal0 <$> Gen.element inScope)
+
+{- | A long chain (always above the threshold) with a deliberately small live
+set — the first step binds @x1@, every other step is a random @bind@\/@discard@
+with a constant action, and the final action reads @x1@. This always fires and
+never bails on the upvalue budget, so the firing path can be asserted.
+-}
+genLongChainExpr ∷ Gen Exp
+genLongChainExpr =
+  Gen.int (Range.linear 60 250) >>= \n → do
+    rest ← go 2 n
+    pure
+      ( application
+          (application bindHead (literalInt 1))
+          (abstraction (paramNamed (xName 1)) rest)
+      )
+ where
+  go ∷ Int → Int → Gen Exp
+  go i n
+    | i > n = pure (refLocal0 (xName 1))
+    | otherwise = do
+        rest ← go (i + 1) n
+        bindStep ← Gen.bool
+        pure $
+          if bindStep
+            then
+              application
+                (application bindHead (literalInt (fromIntegral i)))
+                (abstraction (paramNamed (xName i)) rest)
+            else
+              application
+                (application discardHead (literalInt (fromIntegral i)))
+                (abstraction paramUnused rest)
+
+-- | Total @bind@ + @discard@ step heads referenced in an expression.
+countSteps ∷ Exp → Natural
+countSteps e =
+  Map.findWithDefault 0 (Imported testModule (Name "bind")) refs
+    + Map.findWithDefault 0 (Imported testModule (Name "discard")) refs
+ where
+  refs = countFreeRefs e
 
 --------------------------------------------------------------------------------
 -- A hand-built recognisable bind chain ----------------------------------------
