@@ -52,10 +52,12 @@ optimizedUberModule =
     -- elimination so the statements it introduces for `discard` are not
     -- dropped as dead. See Language.PureScript.Backend.IR.MagicDo.
     >>> magicDo
-    -- Flatten the remaining deeply-nested bind chains (issue #104). Runs after
-    -- magicDo (which consumes Effect/ST chains, leaving only non-Effect/ST
-    -- ones) and likewise consumes and preserves the unique naming. See
-    -- Language.PureScript.Backend.IR.FlattenDeepBinds.
+    -- Flatten the remaining deeply-nested expression trees (issues #104, #108):
+    -- continuation/bind chains of any monad (lambda-lifted into $kont helpers)
+    -- and applicative/flipped-bind application spines (A-normalised into $tmp
+    -- locals). Runs after magicDo (which consumes Effect/ST chains, leaving only
+    -- non-Effect/ST ones) and likewise consumes and preserves the unique naming.
+    -- See Language.PureScript.Backend.IR.FlattenDeepBinds.
     >>> flattenDeepBinds
 
 mergeForeignsIntoBindings ∷ UberModule → UberModule

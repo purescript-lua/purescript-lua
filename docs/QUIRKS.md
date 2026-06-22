@@ -91,22 +91,29 @@ The compiler now flattens these so they have no practical length limit:
 - **`Effect` and `ST`** blocks are lowered to a plain statement sequence
   (magic-do).
 - **Any other monad** — `Maybe`, `Either`, `State`, a custom parser/decoder —
-  has its `bind`/`>>=` chain **lambda-lifted**: long chains are split into
-  segments and each segment's continuation becomes a small named helper, so the
-  generated nesting stays flat regardless of chain length
-  ([#104](https://github.com/purescript-lua/purescript-lua/issues/104)).
+  has its continuation chain **lambda-lifted**: long chains of any
+  `f action (\x -> …)` shape (`bind`/`>>=`, non-`bind` CPS, `bracket`/`with`
+  combinators) are split into segments and each segment's continuation becomes a
+  small named helper, so the generated nesting stays flat regardless of chain
+  length ([#104](https://github.com/purescript-lua/purescript-lua/issues/104)).
+- **Applicative / flipped-bind chains** whose depth lives in a value-argument
+  position — `ado`/`apply` (`<*>`), `bindFlipped` (`=<<`), deep left-associated
+  `<>`, or any other nested call spine — are **sequentialised**: the deepest
+  application path is rebuilt into a flat sequence of `local` statements, sealing
+  a `$tmp` every ~40 applications (segmented, so each `local` stays shallow *and*
+  the local count stays well under Lua's 200-per-function cap)
+  ([#108](https://github.com/purescript-lua/purescript-lua/issues/108)).
 
 A few related shapes are **not** flattened yet and can still hit the limit at
 ~200+ levels in a single expression:
 
-- **Applicative chains** built with `ado`/`apply` (`<*>`) or `bindFlipped`
-  (`=<<`), rather than `do`/`bind`.
 - A `bind` chain that forwards more than ~15 distinct earlier-bound variables
   through a single cut: the lambda-lifter **bails** (a segment's helpers carry
   those forwarded variables *plus* the segment's own binders as upvalues, which
   would approach Lua 5.1's 60-upvalue cap, see below) and leaves it nested.
-- Deep nesting from non-`bind` constructs: a giant `case` tree, a long string
-  `<>` concatenation, or a very wide array/record literal.
+- Deep nesting from branch constructs: a giant `case` tree (nested
+  `if`/`then`/`else`), whose hoisting must stay branch- and laziness-aware, or a
+  very wide array/record literal.
 
 When one of these would overflow, the compiler now **rejects it with a clear
 error** (`Expression nests too deeply for Lua 5.1 …`) instead of emitting a Lua
