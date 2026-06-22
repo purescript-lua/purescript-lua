@@ -148,9 +148,9 @@ spec = describe "FlattenDeepBinds" do
       flattenDeepBinds once `shouldBe` once
 
     it "bounds output spine depth independently of length" do
-      -- A-normalisation binds every application to a $tmp, so each right-hand
-      -- side is a single application of atoms (spine depth 1) regardless of how
-      -- deep the original spine was.
+      -- Segmented A-normalisation seals a $tmp every `segmentSize` frames, so
+      -- the deepest segment nests at most ~`segmentSize` regardless of how deep
+      -- the original spine was — bounded, not length-dependent.
       maxSpineDepth
         (chainExpr (flattenDeepBinds (chainModuleOf (applyChainExpr 120))))
         `shouldBe` maxSpineDepth

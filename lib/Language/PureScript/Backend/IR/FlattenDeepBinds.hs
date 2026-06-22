@@ -50,27 +50,40 @@ position instead of a trailing lambda — there is no binder to cross:
 >   bindFlipped k1 (bindFlipped k2 (bindFlipped k3 …))   -- =<<
 
 At the IR level (which has no @BinOp@) these — and deep left-associated @<>@ or
-ordinary nested call spines — are all contiguous 'App' trees. Such a tree is
-A-normalised: every nested 'App' is bound to a fresh @$tmpN@ local in evaluation
-order, so each binding's right-hand side is a single flat application of atoms
-and the @let@ body is an atom:
+ordinary nested call spines — are all contiguous 'App' trees. The deepest
+application path is rebuilt bottom-up, /sealing the accumulator into a fresh
+@$tmpN@ local every 'segmentSize' frames/ (segmented A-normalisation, not a
+@$tmp@ per 'App'):
 
->   let $tmp0 = map f a
->       $tmp1 = apply $tmp0 b
->       $tmp2 = apply $tmp1 c
+>   let $tmp0 = apply (apply … (map f a) …) m40   -- ≤ segmentSize frames
+>       $tmp1 = apply (apply … $tmp0 …)      m80
 >       …
->   in  $tmpN
+>   in  apply (apply … $tmpN …) mlast
 
-A 'Let' of 'Standalone' bindings lowers to a flat sequence of Lua @local@
-statements, parsed iteratively rather than recursively, so this genuinely
-removes parse nesting. Lua is strict, so every 'App' callee and argument is
-evaluated regardless of use; A-normalisation in evaluation order (callee before
-argument, both before the call) preserves evaluation order and divergence
-exactly. The descent stops at every non-'App' node: 'Abs' bodies and branch
-positions are deferred and left to Strategy A or to a separate descent (a
-@$tmp@'s right-hand side that still nests inside an 'ObjectProp', 'Eq', … is
-revisited by the top-down rewrite), never hoisted across — so laziness and
-short-circuiting are untouched.
+Each segment then nests at most ~'segmentSize' deep and the count of locals is
+about @depth \/ segmentSize@. Both bounds matter: a 'Let' of 'Standalone'
+bindings lowers to a flat sequence of Lua @local@ statements (parsed
+iteratively, not recursively, so parse nesting is removed), but Lua 5.1 /also/
+caps a function at 200 locals — a naive @$tmp@-per-'App' overflows that cap on a
+long spine, hence the segmentation.
+
+Soundness. The rewrite preserves /data flow/ exactly: it never changes which
+call receives which argument (only the sequential @let@s relocate intermediate
+results), so the computed value is unchanged — the property tests and runnable
+goldens confirm this. What it can change is the temporal order in which the
+spine's independent operands are /evaluated/: for a spine whose depth lives in
+the argument position (@bindFlipped@\/@=<<@), a deep argument segment is
+evaluated before the outer callee operand. This is sound for the spines Strategy
+B targets, because Lua evaluates the entire strict spine regardless of use — so
+divergence is order-independent (any diverging operand diverges the whole
+expression either way) — and the off-spine operands of a non-Effect\/ST monadic
+spine are pure, total values whose evaluation has no observable effect. The only
+behaviour reordering could affect is /which/ exception surfaces first when two
+operands both crash, which the targeted pure spines do not exhibit. The descent
+stops at every non-'App' node: 'Abs' bodies and branch positions are deferred
+and never hoisted across (a deep off-spine operand is instead re-flattened in
+place by the top-down rewrite's later descent), so laziness and short-circuiting
+are untouched.
 
 == Dispatch and termination
 
@@ -337,13 +350,14 @@ decompose = \case
   base → ([], base)
 
 {- | Sequentialise a deep strict-application spine: rebuild its deepest path
-bottom-up (innermost first, Lua's evaluation order for these spines), sealing
-the accumulator into a fresh @$tmpN@ local every 'segmentSize' frames. Each
-segment then nests at most ~'segmentSize' deep and the number of locals is about
-@depth \/ segmentSize@ — staying under both of Lua 5.1's per-function limits
-(~200 parser-nesting levels and 200 locals). The off-path operands are kept
-verbatim; deep ones are flattened in turn by the top-down rewrite's descent.
-Returns 'Nothing' when the path is too short to need sealing.
+bottom-up (innermost first), sealing the accumulator into a fresh @$tmpN@ local
+every 'segmentSize' frames. Each segment then nests at most ~'segmentSize' deep
+and the number of locals is about @depth \/ segmentSize@ — staying under both of
+Lua 5.1's per-function limits (~200 parser-nesting levels and 200 locals). Data
+flow is preserved exactly; operand evaluation order may shift but only for pure,
+total operands (see the module header's soundness note). The off-path operands
+are kept verbatim; deep ones are flattened in turn by the top-down rewrite's
+descent. Returns 'Nothing' when the path is too short to need sealing.
 -}
 sequentialiseSpine ∷ Exp → State Int (Maybe Exp)
 sequentialiseSpine expr =

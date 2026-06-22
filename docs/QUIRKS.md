@@ -98,9 +98,10 @@ The compiler now flattens these so they have no practical length limit:
   length ([#104](https://github.com/purescript-lua/purescript-lua/issues/104)).
 - **Applicative / flipped-bind chains** whose depth lives in a value-argument
   position — `ado`/`apply` (`<*>`), `bindFlipped` (`=<<`), deep left-associated
-  `<>`, or any other nested call spine — are **A-normalised**: every nested
-  application is bound to a small `$tmp` local, turning the deep expression into
-  a flat sequence of `local` statements
+  `<>`, or any other nested call spine — are **sequentialised**: the deepest
+  application path is rebuilt into a flat sequence of `local` statements, sealing
+  a `$tmp` every ~40 applications (segmented, so each `local` stays shallow *and*
+  the local count stays well under Lua's 200-per-function cap)
   ([#108](https://github.com/purescript-lua/purescript-lua/issues/108)).
 
 A few related shapes are **not** flattened yet and can still hit the limit at

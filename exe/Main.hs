@@ -124,8 +124,10 @@ handleLuaError =
             <> show depth
             <> " syntax levels; the parser caps at ~200)."
         , "Deep do/>>=, ado/apply and =<< chains are flattened automatically;"
-        , "the usual remaining causes are large case trees and very wide"
-        , "literals. Split the expression into smaller named pieces. See"
+        , "the remaining causes are large case trees, very wide literals, or a"
+        , "single bind chain forwarding too many variables (which makes the"
+        , "lambda-lifter bail on Lua's upvalue cap). Split the expression into"
+        , "smaller named pieces. See"
         , "https://github.com/purescript-lua/purescript-lua/issues/104 and"
         , "https://github.com/purescript-lua/purescript-lua/issues/108"
         ]
