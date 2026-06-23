@@ -3,7 +3,8 @@
     haskellNix.url = "github:input-output-hk/haskell.nix";
     nixpkgs.follows = "haskellNix/nixpkgs-unstable";
     flake-utils.url = "github:numtide/flake-utils";
-    easy-purescript-nix.url = "github:justinwoo/easy-purescript-nix";
+    purescript-overlay.url = "github:thomashoneyman/purescript-overlay";
+    purescript-overlay.inputs.nixpkgs.follows = "nixpkgs";
     treefmt-nix.url = "github:numtide/treefmt-nix";
     treefmt-nix.inputs.nixpkgs.follows = "nixpkgs";
   };
@@ -13,7 +14,7 @@
       nixpkgs,
       flake-utils,
       haskellNix,
-      easy-purescript-nix,
+      purescript-overlay,
       treefmt-nix,
     }:
     let
@@ -22,13 +23,13 @@
     flake-utils.lib.eachSystem supportedSystems (
       system:
       let
-        easy-ps = easy-purescript-nix.packages.${system};
         pkgs = import nixpkgs {
           inherit system overlays;
           inherit (haskellNix) config;
         };
         overlays = [
           haskellNix.overlay
+          purescript-overlay.overlays.default
           (final: prev: {
             psluaProject = final.haskell-nix.project' {
               src = ./.;
@@ -58,8 +59,8 @@
                 };
                 buildInputs = with pkgs; [
                   cachix
-                  easy-ps.purs-0_15_16-0
-                  easy-ps.spago
+                  purs-bin.purs-0_15_16
+                  spago-bin.spago-0_21_0
                   lua51Packages.lua
                   lua51Packages.luacheck
                   nil
