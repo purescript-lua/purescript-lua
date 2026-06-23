@@ -20,10 +20,13 @@ locally:
 - **PureScript**: `purs` 0.15.16, from [purescript-overlay] pinned as
   `purs-bin.purs-0_15_16` (explicit pin so `nix flake update` never silently
   bumps the compiler and churns goldens)
-- **Spago**: 0.21.x — the *legacy* Haskell spago driven by `spago.dhall` /
-  `packages.dhall` (not the newer `spago.yaml`-based one), pinned as
-  `spago-bin.spago-0_21_0`. NB: the overlay's plain `spago` attr now resolves
-  to the new PureScript spago (1.x), hence the explicit legacy pin.
+- **Spago**: 1.0.x — the new PureScript spago, driven by `spago.yaml` +
+  `spago.lock` and the PureScript Registry (it dropped Dhall support), pinned
+  as `spago-bin.spago-1_0_4`. The test project (`test/ps`) uses a `registry`
+  package-set baseline plus `extraPackages` git overrides for the Lua FFI
+  forks (see "Toolchain / package set" under Testing). The overlay's plain
+  `spago` attr also resolves to 1.x; the explicit pin keeps the version
+  changed only by a deliberate flake edit.
 
 [purescript-overlay]: https://github.com/thomashoneyman/purescript-overlay
 
@@ -63,7 +66,7 @@ ghcid --command="cabal repl test:spec" --test=":main"
 
 The test suite includes:
 - **Unit tests**: Property-based testing with Hedgehog
-- **Golden tests**: Compiles PureScript test modules from `test/ps/golden/Golden/*/Test.purs` to Lua and compares against golden files
+- **Golden tests**: Compiles PureScript test modules from `test/ps/src/Golden/*/Test.purs` to Lua and compares against golden files
 - **Evaluation tests**: Runs generated Lua code and verifies output
 - **Luacheck tests**: Validates generated Lua code syntax
 
@@ -74,18 +77,38 @@ Golden tests require compiling PureScript sources first:
 ```bash
 # Compile PureScript test sources (from test/ps directory)
 cd test/ps
-spago build -u '-g corefn'
+spago build
 cd ../..
 ```
 
-### Resetting Golden Files
+The new spago manages codegen itself and rejects `--codegen` in `--purs-args`.
+CoreFn is emitted because `test/ps/spago.yaml` declares a no-op `backend`
+(`cmd: "true"`): with a backend configured spago compiles with `--codegen
+corefn` and the harness reads the resulting `output/**/corefn.json`. The
+golden sources live under `test/ps/src/` (new spago only globs `src/` and
+`test/`), with `.lua` FFI files co-located next to each `.purs`.
+
+### Regenerating Golden Files
+
+When a deliberate codegen/optimizer change legitimately moves the output, accept
+the new structural goldens in place:
 
 ```bash
-# Remove all golden files and regenerate them
-./scripts/golden_reset
+# Rewrites mismatching golden.ir / golden.lua with the actual output and passes
+PSLUA_GOLDEN_ACCEPT=1 cabal test all --test-show-details=direct
 ```
 
-This finds all files named `golden.*` in `test/ps/output` and deletes them, then runs `cabal test` to regenerate them.
+Only the *structural* goldens (`golden.ir`, `golden.lua`) are auto-accepted. The
+hand-verified `eval/golden.txt` oracle is **never** auto-accepted — if a change
+alters runtime output, those tests still fail, which is the semantic safety net.
+Review the resulting `git diff`, then run `cabal test` once more (no env var) to
+confirm the accepted state is stable.
+
+NB: `./scripts/golden_reset` deletes **all** `golden.*` files — including
+`eval/golden.txt` — and lets the harness recreate them from current output. That
+silently overwrites the hand-verified oracle with whatever the code emits now
+(even if buggy), so prefer `PSLUA_GOLDEN_ACCEPT` and do not run `golden_reset`
+unless you intend to discard the oracles.
 
 ### Code Formatting & Linting
 
@@ -265,8 +288,10 @@ Both lines should be exactly 80 characters. Helper functions go at the bottom af
 
 Golden tests are the primary integration testing mechanism:
 
-1. PureScript test files in `test/ps/golden/Golden/*/Test.purs`
-2. Compiled to CoreFn with `spago build -u '-g corefn'`
+1. PureScript test files in `test/ps/src/Golden/*/Test.purs`
+2. Compiled to CoreFn with `spago build` (the no-op `backend` in
+   `test/ps/spago.yaml` is what makes spago emit CoreFn — see "Testing
+   PureScript Code")
 3. Test suite reads CoreFn, compiles to IR, generates Lua
 4. Compares against golden files:
    - `golden.ir` - Intermediate representation
@@ -281,7 +306,7 @@ Golden tests are the primary integration testing mechanism:
 bypass it.
 
 To add a new golden test:
-1. Create `test/ps/golden/Golden/NewTest/Test.purs`
+1. Create `test/ps/src/Golden/NewTest/Test.purs`
 2. Run `cabal test` - it will fail and create `actual.*` files
 3. Review the actual files
 4. Rename `actual.*` to `golden.*` if correct
@@ -322,18 +347,27 @@ often enough; add more when the bug spans several code paths).
    spago, edit `compiler-nix-name` / `purs-bin.*` / `spago-bin.*` in
    `flake.nix` (the toolchain attrs are explicitly version-pinned, so a flake
    update alone never changes them).
-2. PureScript package sets live in `test/ps/packages.dhall` as
-   `upstream-ps // upstream-lua`. The right operand wins: `upstream-lua`
-   (releases of `purescript-lua/purescript-lua-package-sets`) overrides core
-   packages with Lua forks that ship `.lua` FFI files.
-3. After changing package sets or `purs`: `cd test/ps && spago build -u
-   '-g corefn'`, then `cabal test all`. Drop the `sha256:` annotations
-   when changing package set URLs — spago re-freezes them on first build.
+2. PureScript dependencies live in `test/ps/spago.yaml`. The baseline is a
+   `workspace.packageSet.registry: <ver>` package set (pure, no-FFI packages),
+   and every FFI-bearing core package is overridden by its Lua fork
+   (`purescript-lua/purescript-lua-*`, which ships `.lua` FFI) via an
+   `extraPackages` git entry pinned to a tag. This replaces the old
+   `upstream-ps // upstream-lua` Dhall set, where the Lua forks won. The fork
+   list / tags / dependency lists are mirrored from the Lua package set's
+   `packages.dhall` (the source of truth); `spago.lock` pins the resolved
+   commits and is committed. Keep `purs` at 0.15.16: no registry set is built
+   for 0.15.16, so use the latest 0.15.15 set (a proven-compatible pairing).
+3. After changing the package set or `purs`: `cd test/ps && spago build`, then
+   `cabal test all`. Delete `spago.lock` first if you want spago to re-resolve
+   the git overrides.
 4. Expected churn after updates:
-   - `test/ps/output/*/corefn.json` are committed; their `"builtWith"`
-     stamp changes with the `purs` version.
-   - `golden.ir` files embed `.spago/<pkg>/<version>/...` source paths,
-     so package version bumps legitimately change goldens.
+   - `test/ps/output/Golden*/corefn.json` are committed; their `"builtWith"`
+     stamp changes with the `purs` version, and `modulePath` reflects the
+     `src/` source location.
+   - `golden.ir` files embed `.spago/p/<pkg>/<commit-hash>/...` source paths
+     (the new spago content-addressed layout), so a fork-tag bump that resolves
+     to a new commit legitimately changes goldens. `golden.lua` is path-free,
+     so it only moves when codegen genuinely changes.
 
 ### Known Pitfalls
 

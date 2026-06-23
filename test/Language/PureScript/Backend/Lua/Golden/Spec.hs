@@ -83,7 +83,10 @@ spec = do
           putText "Compiling PureScript sources"
           exitCode ←
             runProcess . setWorkingDir "test/ps" . shell $
-              String.unwords ["spago", "build", "-u", "'-g corefn'"]
+              -- Spago >= 0.93 manages codegen itself and rejects `--codegen`
+              -- in --purs-args; the `backend` in test/ps/spago.yaml is what
+              -- makes it emit CoreFn (see that file for the rationale).
+              String.unwords ["spago", "build"]
           exitCode `shouldBe` ExitSuccess
         psOutputPath = $(mkRelDir "test/ps/output/")
 

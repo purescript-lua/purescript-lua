@@ -60,7 +60,7 @@
                 buildInputs = with pkgs; [
                   cachix
                   purs-bin.purs-0_15_16
-                  spago-bin.spago-0_21_0
+                  spago-bin.spago-1_0_4
                   lua51Packages.lua
                   lua51Packages.luacheck
                   nil

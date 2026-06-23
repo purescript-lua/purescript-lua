@@ -4,7 +4,7 @@ UberModule
       ( QName
         { qnameModuleName = ModuleName "Data.Semiring", qnameName = Name "foreign"
         }, ForeignImport Nothing
-        ( ModuleName "Data.Semiring" ) ".spago/prelude/v7.3.0/src/Data/Semiring.purs"
+        ( ModuleName "Data.Semiring" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Semiring.purs"
         [ ( Nothing, Name "intAdd" ), ( Nothing, Name "intMul" ) ]
       ), Standalone
       ( QName
@@ -552,7 +552,7 @@ UberModule
                 ( Ref Nothing ( Imported ( ModuleName "Data.Tuple" ) ( Name "Tuple" ) ) 0 )
                 ( ObjectProp ( Just Always )
                   ( ForeignImport Nothing
-                    ( ModuleName "Data.Unit" ) ".spago/prelude/v7.3.0/src/Data/Unit.purs"
+                    ( ModuleName "Data.Unit" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Unit.purs"
                     [ ( Just Always, Name "unit" ) ]
                   )
                   ( PropName "unit" )
@@ -8994,7 +8994,7 @@ UberModule
       ( Name "main", App Nothing
         ( ObjectProp ( Just Always )
           ( ForeignImport Nothing
-            ( ModuleName "Effect.Console" ) ".spago/console/v6.1.1/src/Effect/Console.purs"
+            ( ModuleName "Effect.Console" ) ".spago/p/console/f82835a0b873aafe6bd7b14dd30cc150553d4ab9/src/Effect/Console.purs"
             [ ( Nothing, Name "log" ) ]
           )
           ( PropName "log" )
@@ -9005,7 +9005,7 @@ UberModule
               [
                 ( PropName "show", ObjectProp ( Just Always )
                   ( ForeignImport Nothing
-                    ( ModuleName "Data.Show" ) ".spago/prelude/v7.3.0/src/Data/Show.purs"
+                    ( ModuleName "Data.Show" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Show.purs"
                     [ ( Nothing, Name "showIntImpl" ) ]
                   )
                   ( PropName "showIntImpl" )

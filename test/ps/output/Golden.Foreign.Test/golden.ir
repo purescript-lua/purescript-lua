@@ -4,7 +4,7 @@ UberModule
       ( QName
         { qnameModuleName = ModuleName "Golden.Foreign.Test", qnameName = Name "foreign"
         }, ForeignImport Nothing
-        ( ModuleName "Golden.Foreign.Test" ) "golden/Golden/Foreign/Test.purs"
+        ( ModuleName "Golden.Foreign.Test" ) "src/Golden/Foreign/Test.purs"
         [ ( Nothing, Name "foo" ), ( Nothing, Name "boo" ) ]
       )
     ], uberModuleForeigns = [], uberModuleExports =
@@ -18,7 +18,7 @@ UberModule
           ( Ref Nothing ( Imported ( ModuleName "Golden.Foreign.Test" ) ( Name "foreign" ) ) 0 )
           ( PropName "boo" ), ObjectProp ( Just Always )
           ( ForeignImport Nothing
-            ( ModuleName "Golden.Foreign.Lib" ) "golden/Golden/Foreign/Lib.purs"
+            ( ModuleName "Golden.Foreign.Lib" ) "src/Golden/Foreign/Lib.purs"
             [ ( Nothing, Name "alive" ) ]
           )
           ( PropName "alive" )

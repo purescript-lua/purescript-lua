@@ -152,7 +152,7 @@ shift/substitute/countFreeRefs implementing the opposite convention
 sibling-bound reference past its binder, DCE deleted the "unused"
 binder, and codegen rendered the dangling 'Ref (Local Bind1) 1' as an
 undefined Lua variable 'Bind11'. The golden test
-test/ps/golden/Golden/Issue37/Test.purs and the "Let sequential (let*)
+test/ps/src/Golden/Issue37/Test.purs and the "Let sequential (let*)
 scoping" tests pin the convention.
 -}
 
