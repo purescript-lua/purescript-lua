@@ -12,14 +12,20 @@ The project uses **Nix with flakes** for reproducible builds and **Cabal** for H
 
 ### Toolchain
 
-Versions are pinned by the flake (`compiler-nix-name` and `easy-ps.purs-*`
-in `flake.nix`); update them there, not locally:
+Versions are pinned by the flake (`compiler-nix-name` and the
+`purs-bin.*` / `spago-bin.*` attrs in `flake.nix`); update them there, not
+locally:
 
 - **GHC**: 9.8.x (haskell.nix `ghc98`)
-- **PureScript**: `purs` 0.15.16 (from easy-purescript-nix; note that attr
-  names may carry an upstream release suffix, e.g. `purs-0_15_16-0`)
+- **PureScript**: `purs` 0.15.16, from [purescript-overlay] pinned as
+  `purs-bin.purs-0_15_16` (explicit pin so `nix flake update` never silently
+  bumps the compiler and churns goldens)
 - **Spago**: 0.21.x — the *legacy* Haskell spago driven by `spago.dhall` /
-  `packages.dhall` (not the newer `spago.yaml`-based one)
+  `packages.dhall` (not the newer `spago.yaml`-based one), pinned as
+  `spago-bin.spago-0_21_0`. NB: the overlay's plain `spago` attr now resolves
+  to the new PureScript spago (1.x), hence the explicit legacy pin.
+
+[purescript-overlay]: https://github.com/thomashoneyman/purescript-overlay
 
 ### Development Environment
 
@@ -312,8 +318,10 @@ often enough; add more when the bug spans several code paths).
 ## Updating Dependencies
 
 1. `nix flake update` — refreshes haskell.nix (and with it the Hackage
-   index pin), nixpkgs, and easy-purescript-nix. To bump GHC or `purs`,
-   edit `compiler-nix-name` / `easy-ps.purs-*` in `flake.nix`.
+   index pin), nixpkgs, and purescript-overlay. To bump GHC, `purs`, or
+   spago, edit `compiler-nix-name` / `purs-bin.*` / `spago-bin.*` in
+   `flake.nix` (the toolchain attrs are explicitly version-pinned, so a flake
+   update alone never changes them).
 2. PureScript package sets live in `test/ps/packages.dhall` as
    `upstream-ps // upstream-lua`. The right operand wins: `upstream-lua`
    (releases of `purescript-lua/purescript-lua-package-sets`) overrides core
