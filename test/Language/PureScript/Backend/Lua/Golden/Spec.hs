@@ -10,6 +10,7 @@ import Data.String qualified as String
 import Data.Tagged (Tagged (..))
 import Data.Text qualified as Text
 import Language.PureScript.Backend.IR qualified as IR
+import Language.PureScript.Backend.IR.FlattenDeepBinds (flattenDeepBinds)
 import Language.PureScript.Backend.IR.Linker (LinkMode (..))
 import Language.PureScript.Backend.IR.Linker qualified as IR
 import Language.PureScript.Backend.IR.Linker qualified as Linker
@@ -62,6 +63,7 @@ import Test.Hspec
   , runIO
   , shouldBe
   , shouldNotBe
+  , shouldSatisfy
   )
 import Test.Hspec.Extra (annotatingWith)
 import Test.Hspec.Golden (acceptableGolden, defaultGolden)
@@ -181,6 +183,71 @@ spec = do
                   & unlines
                   & toString
           exitCode `shouldBe` ExitSuccess `annotatingWith` niceOut
+
+  -- The bug #108 fixes, reproduced at the generated-Lua level. A deep
+  -- applicative spine (`apply (apply (apply m a) b) c …`) keeps its depth in
+  -- the first-argument position, so it codegens to a deeply *nested* Lua
+  -- expression. Compiled WITHOUT the deep-nesting pass it must fail to load
+  -- with Lua's parser-nesting error; WITH `flattenDeepBinds` it must load.
+  -- This is the red-before-green check the goldens alone don't give (the golden
+  -- harness always runs the full optimizer, so it only ever shows the fixed
+  -- output).
+  describe "deep apply spine vs Lua's parser-nesting cap (#108)" do
+    it
+      "crashes Lua's parser by nesting (not the 200-local cap), and Strategy B fixes it"
+      do
+        let psModname = PS.ModuleName "Golden.ApplySpine.Test"
+            uber = applySpineUberModule 300
+        nested ← compileIr (AsModule psModname) uber
+        flat ← compileIr (AsModule psModname) (flattenDeepBinds uber)
+
+        -- The unflattened spine is a single nested expression whose ONLY `local`
+        -- is the module table, so a load failure here cannot be Lua's
+        -- 200-locals-per-function cap — it can only be parser nesting.
+        Text.count "local " nested `shouldBe` 1
+
+        (nestedExit, nestedOut) ← luacParse "pslua-applyspine-nested" nested
+        (flatExit, _flatOut) ← luacParse "pslua-applyspine-flat" flat
+
+        nestedExit `shouldSatisfy` (/= ExitSuccess)
+        nestedOut `shouldSatisfy` ("too many syntax levels" `Text.isInfixOf`)
+        -- The fix segments the spine into a handful of `$tmp` locals, so the same
+        -- expression now parses (and uses more than the single module `local`).
+        flatExit `shouldBe` ExitSuccess
+        Text.count "local " flat `shouldSatisfy` (> 1)
+
+{- | A deep applicative spine @apply (apply (apply 0 1) 2) … n@ as a single
+module binding @compute@ — depth in the callee-argument position, so it
+generates deeply nested Lua. Used to reproduce the parser-nesting crash.
+-}
+applySpineUberModule ∷ Int → Linker.UberModule
+applySpineUberModule n =
+  IR.UberModule
+    { IR.uberModuleBindings =
+        [IR.Standalone (IR.QName modname (IR.Name "compute"), spine)]
+    , IR.uberModuleForeigns = []
+    , IR.uberModuleExports = []
+    }
+ where
+  modname = IR.moduleNameFromString "Golden.ApplySpine.Test"
+  applyHead = IR.Ref IR.noAnn (IR.Imported modname (IR.Name "apply")) (IR.Index 0)
+  spine = foldl' step (IR.LiteralInt IR.noAnn 0) [1 .. n]
+  step ∷ IR.Exp → Int → IR.Exp
+  step acc i =
+    IR.App
+      IR.noAnn
+      (IR.App IR.noAnn applyHead acc)
+      (IR.LiteralInt IR.noAnn (fromIntegral i))
+
+{- | Parse-check (no execution) a Lua source with @luac -p@; returns the exit
+code and combined output.
+-}
+luacParse ∷ MonadIO m ⇒ String → Text → m (ExitCode, Text)
+luacParse name src = liftIO do
+  let file = "/tmp/" <> name <> ".lua"
+  writeFileText file src
+  (code, out) ← readProcessInterleaved (shell ("luac -p " <> file))
+  pure (code, decodeUtf8 out)
 
 collectGoldenCorefns ∷ MonadIO m ⇒ Path Rel Dir → m [Path Abs File]
 collectGoldenCorefns = walkDirAccum
