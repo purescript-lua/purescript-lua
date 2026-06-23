@@ -9,6 +9,7 @@ import Data.List qualified as List
 import Data.String qualified as String
 import Data.Tagged (Tagged (..))
 import Data.Text qualified as Text
+import Data.Text.IO qualified as Text.IO
 import Language.PureScript.Backend.IR qualified as IR
 import Language.PureScript.Backend.IR.FlattenDeepBinds (flattenDeepBinds)
 import Language.PureScript.Backend.IR.Linker (LinkMode (..))
@@ -49,7 +50,6 @@ import Path.Posix (mkRelFile)
 import Prettyprinter (defaultLayoutOptions, layoutPretty)
 import Prettyprinter.Render.Text (renderStrict)
 import System.FilePath qualified as FilePath
-import System.IO (hClose)
 import System.Process.Typed
   ( ExitCode (..)
   , proc
@@ -254,8 +254,10 @@ paths with spaces or concurrent runs.
 luacParse ∷ Text → IO (ExitCode, Text)
 luacParse src =
   withSystemTempFile "pslua-nesting.lua" \file handle → do
-    hClose handle
-    writeFileText (toFilePath file) src
+    -- Write through the handle the bracket owns and flush (so the separate
+    -- `luac` process sees the bytes); the bracket closes it on cleanup.
+    Text.IO.hPutStr handle src
+    hFlush handle
     (code, out) ← readProcessInterleaved (proc "luac" ["-p", toFilePath file])
     pure (code, decodeUtf8 out)
 
