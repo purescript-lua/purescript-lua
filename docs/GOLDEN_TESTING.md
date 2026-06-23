@@ -8,9 +8,9 @@ shows up as a diff in these files.
 
 - Harness: `test/Language/PureScript/Backend/Lua/Golden/Spec.hs`
 - Golden primitive (vendored, customised): `test/Test/Hspec/Golden.hs`
-- Test modules: `test/ps/golden/Golden/<Name>/Test.purs`
+- Test modules: `test/ps/src/Golden/<Name>/Test.purs`
 - Generated artifacts: `test/ps/output/Golden.<Name>.Test/`
-- Reset script: `scripts/golden_reset`
+- Regenerate (accept structural goldens): `PSLUA_GOLDEN_ACCEPT=1 cabal test`
 
 ## The artifacts
 
@@ -19,7 +19,7 @@ Each test module `Golden.<Name>.Test` maps to a directory
 
 | File | Committed? | What it is |
 |---|---|---|
-| `corefn.json` | yes | CoreFn emitted by `purs` (`spago build -g corefn`). Its `builtWith` stamp tracks the `purs` version. |
+| `corefn.json` | yes | CoreFn emitted by `purs`, driven by `spago build` via the no-op `backend` in `spago.yaml`. Its `builtWith` stamp tracks the `purs` version. |
 | `golden.ir` | yes | Pretty-printed IR `UberModule` — **structural**, a pure function of the code. |
 | `golden.lua` | yes | Generated Lua — **structural**. |
 | `eval/golden.txt` | yes | Program stdout, normalised. The **semantic oracle** — hand-verified. Present only for runnable modules. |
@@ -34,8 +34,9 @@ the eval file's presence controls, beyond enabling the eval check.
 
 `cabal test spec` (matched by `-m Goldens`) runs four groups, in order:
 
-1. **compile** (`beforeAll_ compilePs`) — `spago build -u '-g corefn'` in
-   `test/ps`, producing `corefn.json` for every module.
+1. **compile** (`beforeAll_ compilePs`) — `spago build` in `test/ps`, producing
+   `corefn.json` for every module (the `backend` in `spago.yaml` makes spago
+   emit CoreFn).
 2. **`compiles corefn files to lua`** — for each module:
    - `compileCorefn` reads CoreFn → builds the IR `UberModule` → compares the
      pretty-printed IR against `golden.ir`.
@@ -124,9 +125,9 @@ other half of keeping failures affordable.
 
 ## Adding a new golden test
 
-1. Create `test/ps/golden/Golden/<Name>/Test.purs` (module
+1. Create `test/ps/src/Golden/<Name>/Test.purs` (module
    `Golden.<Name>.Test`). For a runnable test, give it `main :: Effect Unit`.
-2. `cd test/ps && spago build -u '-g corefn' && cd ../..` to emit `corefn.json`.
+2. `cd test/ps && spago build && cd ../..` to emit `corefn.json`.
 3. For a runnable test, create the oracle by hand:
    `test/ps/output/Golden.<Name>.Test/eval/golden.txt` with the expected stdout,
    plus `eval/.gitignore` containing `actual.txt`.

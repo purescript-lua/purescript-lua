@@ -1,0 +1,202 @@
+# PureScript Lua compiler — golden test project.
+#
+# Migrated from spago.dhall/packages.dhall to the new Spago (>= 0.93) format.
+# Baseline is a registry package set (pure, no-FFI packages); every FFI-bearing
+# core package is overridden by its Lua fork (which ships .lua FFI) via an
+# `extraPackages` git entry. This mirrors the old `upstream-ps // upstream-lua`
+# Dhall set, where the Lua forks won.
+#
+# Fork dependency lists are inlined here because the fork repos do not yet carry
+# their own spago.yaml (tracked separately as a follow-up). Every override is
+# pinned to a tag; spago.lock records the resolved commit. purs stays at
+# 0.15.16; the set is built with 0.15.15 (a proven-compatible pairing in this
+# repo, same as the old Dhall set).
+package:
+  name: test-project
+  dependencies:
+    - console
+    - effect
+    - either
+    - enums
+    - foldable-traversable
+    - maybe
+    - newtype
+    - partial
+    - prelude
+    - profunctor
+    - strings
+    - tailrec
+    - transformers
+    - tuples
+workspace:
+  # Spago >= 0.93 dropped `purs --codegen corefn` from `--purs-args` (it manages
+  # codegen itself). The supported way to get CoreFn out is to declare a custom
+  # backend: with a backend set, Spago compiles with `--codegen corefn` (not js)
+  # and then runs the backend command. The golden harness only needs the
+  # emitted `corefn.json`, so the backend is a no-op (`true`); this also
+  # sidesteps the corefn-staleness bug (purescript/spago#643), which only bit
+  # when switching between codegen targets.
+  backend:
+    cmd: "true"
+  packageSet:
+    registry: 77.8.0
+  extraPackages:
+    assert:
+      git: https://github.com/purescript-lua/purescript-lua-assert.git
+      ref: v6.1.1
+      dependencies:
+        - console
+        - effect
+        - prelude
+    arrays:
+      git: https://github.com/purescript-lua/purescript-lua-arrays.git
+      ref: v7.4.1
+      dependencies:
+        - foldable-traversable
+        - functions
+        - nonempty
+        - partial
+        - prelude
+        - st
+        - unfoldable
+        - unsafe-coerce
+    console:
+      git: https://github.com/purescript-lua/purescript-lua-console.git
+      ref: v6.1.1
+      dependencies:
+        - effect
+        - prelude
+    control:
+      git: https://github.com/purescript-lua/purescript-lua-control.git
+      ref: v6.0.1
+      dependencies:
+        - newtype
+        - prelude
+    effect:
+      git: https://github.com/purescript-lua/purescript-lua-effect.git
+      ref: v4.1.3
+      dependencies:
+        - prelude
+    enums:
+      git: https://github.com/purescript-lua/purescript-lua-enums.git
+      ref: v6.1.2
+      dependencies:
+        - control
+        - either
+        - gen
+        - maybe
+        - newtype
+        - nonempty
+        - partial
+        - prelude
+        - tuples
+        - unfoldable
+    exceptions:
+      git: https://github.com/purescript-lua/purescript-lua-exceptions.git
+      ref: v6.1.1
+      dependencies:
+        - effect
+        - either
+        - maybe
+        - prelude
+    functions:
+      git: https://github.com/purescript-lua/purescript-lua-functions.git
+      ref: v6.1.0
+      dependencies:
+        - prelude
+    lazy:
+      git: https://github.com/purescript-lua/purescript-lua-lazy.git
+      ref: v7.0.0
+      dependencies:
+        - control
+        - foldable-traversable
+        - invariant
+        - prelude
+    integers:
+      git: https://github.com/purescript-lua/purescript-lua-integers.git
+      ref: v6.1.2
+      dependencies:
+        - maybe
+        - numbers
+        - prelude
+    numbers:
+      git: https://github.com/purescript-lua/purescript-lua-numbers.git
+      ref: v9.1.3
+      dependencies:
+        - functions
+        - maybe
+        - prelude
+    partial:
+      git: https://github.com/purescript-lua/purescript-lua-partial.git
+      ref: v4.1.0
+      dependencies: []
+    prelude:
+      git: https://github.com/purescript-lua/purescript-lua-prelude.git
+      ref: v7.3.0
+      dependencies: []
+    refs:
+      git: https://github.com/purescript-lua/purescript-lua-refs.git
+      ref: v6.1.0
+      dependencies:
+        - effect
+        - prelude
+    safe-coerce:
+      git: https://github.com/purescript-lua/purescript-lua-safe-coerce.git
+      ref: v2.0.1
+      dependencies:
+        - unsafe-coerce
+    st:
+      git: https://github.com/purescript-lua/purescript-lua-st.git
+      ref: v6.4.0
+      dependencies:
+        - effect
+        - partial
+        - prelude
+        - tailrec
+        - unsafe-coerce
+    strings:
+      git: https://github.com/purescript-lua/purescript-lua-strings.git
+      ref: v6.2.0
+      dependencies:
+        - arrays
+        - enums
+        - foldable-traversable
+        - gen
+        - integers
+        - maybe
+        - newtype
+        - nonempty
+        - partial
+        - prelude
+        - tailrec
+        - tuples
+        - unfoldable
+        - unsafe-coerce
+    unfoldable:
+      git: https://github.com/purescript-lua/purescript-lua-unfoldable.git
+      ref: v6.1.0
+      dependencies:
+        - foldable-traversable
+        - maybe
+        - partial
+        - prelude
+        - tuples
+    unsafe-coerce:
+      git: https://github.com/purescript-lua/purescript-lua-unsafe-coerce.git
+      ref: v6.1.0
+      dependencies: []
+    foldable-traversable:
+      git: https://github.com/purescript-lua/purescript-lua-foldable-traversable.git
+      ref: v6.1.1
+      dependencies:
+        - bifunctors
+        - const
+        - control
+        - either
+        - functors
+        - identity
+        - maybe
+        - newtype
+        - orders
+        - prelude
+        - tuples

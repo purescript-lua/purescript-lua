@@ -4,13 +4,13 @@ UberModule
       ( QName
         { qnameModuleName = ModuleName "Effect", qnameName = Name "foreign"
         }, ForeignImport Nothing
-        ( ModuleName "Effect" ) ".spago/effect/v4.1.3/src/Effect.purs"
+        ( ModuleName "Effect" ) ".spago/p/effect/82bac3dff904fa34534c4f5b9deeb5da359471c8/src/Effect.purs"
         [ ( Nothing, Name "pureE" ), ( Nothing, Name "bindE" ) ]
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "foreign"
         }, ForeignImport Nothing
-        ( ModuleName "Effect.Console" ) ".spago/console/v6.1.1/src/Effect/Console.purs"
+        ( ModuleName "Effect.Console" ) ".spago/p/console/f82835a0b873aafe6bd7b14dd30cc150553d4ab9/src/Effect/Console.purs"
         [ ( Nothing, Name "log" ) ]
       ), Standalone
       ( QName
@@ -19,7 +19,7 @@ UberModule
         [
           ( PropName "eq", ObjectProp ( Just Always )
             ( ForeignImport Nothing
-              ( ModuleName "Data.Eq" ) ".spago/prelude/v7.3.0/src/Data/Eq.purs"
+              ( ModuleName "Data.Eq" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Eq.purs"
               [ ( Nothing, Name "eqCharImpl" ) ]
             )
             ( PropName "eqCharImpl" )
@@ -266,7 +266,7 @@ UberModule
           [
             ( PropName "show", ObjectProp ( Just Always )
               ( ForeignImport Nothing
-                ( ModuleName "Data.Show" ) ".spago/prelude/v7.3.0/src/Data/Show.purs"
+                ( ModuleName "Data.Show" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Show.purs"
                 [ ( Nothing, Name "showCharImpl" ) ]
               )
               ( PropName "showCharImpl" )
@@ -455,7 +455,7 @@ UberModule
                                     ( App Nothing
                                       ( ObjectProp ( Just Always )
                                         ( ForeignImport Nothing
-                                          ( ModuleName "Data.Ord" ) ".spago/prelude/v7.3.0/src/Data/Ord.purs"
+                                          ( ModuleName "Data.Ord" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Ord.purs"
                                           [ ( Nothing, Name "ordCharImpl" ) ]
                                         )
                                         ( PropName "ordCharImpl" )
