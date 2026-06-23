@@ -43,13 +43,16 @@ import Path.IO
   , makeAbsolute
   , walkDirAccum
   , withCurrentDir
+  , withSystemTempFile
   )
 import Path.Posix (mkRelFile)
 import Prettyprinter (defaultLayoutOptions, layoutPretty)
 import Prettyprinter.Render.Text (renderStrict)
 import System.FilePath qualified as FilePath
+import System.IO (hClose)
 import System.Process.Typed
   ( ExitCode (..)
+  , proc
   , readProcessInterleaved
   , runProcess
   , setWorkingDir
@@ -201,13 +204,17 @@ spec = do
         nested ← compileIr (AsModule psModname) uber
         flat ← compileIr (AsModule psModname) (flattenDeepBinds uber)
 
-        -- The unflattened spine is a single nested expression whose ONLY `local`
-        -- is the module table, so a load failure here cannot be Lua's
-        -- 200-locals-per-function cap — it can only be parser nesting.
-        Text.count "local " nested `shouldBe` 1
+        -- The error message below is the real discriminator: `luac` reports
+        -- "too many syntax levels" (nesting), a distinct message from its locals
+        -- error ("too many local variables"). As corroboration, the unflattened
+        -- spine is a single nested expression that introduces almost no locals,
+        -- so it sits far below Lua's 200-locals-per-function cap — that cap
+        -- cannot be why it fails to load. (A loose bound, not == 1, to stay
+        -- robust to unrelated module/runtime-setup locals the emitter may add.)
+        Text.count "local " nested `shouldSatisfy` (< 50)
 
-        (nestedExit, nestedOut) ← luacParse "pslua-applyspine-nested" nested
-        (flatExit, _flatOut) ← luacParse "pslua-applyspine-flat" flat
+        (nestedExit, nestedOut) ← luacParse nested
+        (flatExit, _flatOut) ← luacParse flat
 
         nestedExit `shouldSatisfy` (/= ExitSuccess)
         nestedOut `shouldSatisfy` ("too many syntax levels" `Text.isInfixOf`)
@@ -240,14 +247,17 @@ applySpineUberModule n =
       (IR.LiteralInt IR.noAnn (fromIntegral i))
 
 {- | Parse-check (no execution) a Lua source with @luac -p@; returns the exit
-code and combined output.
+code and combined output. Writes to a unique auto-cleaned temp file and invokes
+@luac@ via 'proc' (an argv list, no shell), so it is portable and safe against
+paths with spaces or concurrent runs.
 -}
-luacParse ∷ MonadIO m ⇒ String → Text → m (ExitCode, Text)
-luacParse name src = liftIO do
-  let file = "/tmp/" <> name <> ".lua"
-  writeFileText file src
-  (code, out) ← readProcessInterleaved (shell ("luac -p " <> file))
-  pure (code, decodeUtf8 out)
+luacParse ∷ Text → IO (ExitCode, Text)
+luacParse src =
+  withSystemTempFile "pslua-nesting.lua" \file handle → do
+    hClose handle
+    writeFileText (toFilePath file) src
+    (code, out) ← readProcessInterleaved (proc "luac" ["-p", toFilePath file])
+    pure (code, decodeUtf8 out)
 
 collectGoldenCorefns ∷ MonadIO m ⇒ Path Rel Dir → m [Path Abs File]
 collectGoldenCorefns = walkDirAccum
