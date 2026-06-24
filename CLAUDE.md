@@ -22,9 +22,9 @@ locally:
   bumps the compiler and churns goldens)
 - **Spago**: 1.0.x — the new PureScript spago, driven by `spago.yaml` +
   `spago.lock` and the PureScript Registry (it dropped Dhall support), pinned
-  as `spago-bin.spago-1_0_4`. The test project (`test/ps`) uses a `registry`
-  package-set baseline plus `extraPackages` git overrides for the Lua FFI
-  forks (see "Toolchain / package set" under Testing). The overlay's plain
+  as `spago-bin.spago-1_0_4`. The test project (`test/ps`) consumes the
+  published purescript-lua package set via `workspace.packageSet.url` (see
+  "Toolchain / package set" under Testing). The overlay's plain
   `spago` attr also resolves to 1.x; the explicit pin keeps the version
   changed only by a deliberate flake edit.
 
@@ -347,19 +347,20 @@ often enough; add more when the bug spans several code paths).
    spago, edit `compiler-nix-name` / `purs-bin.*` / `spago-bin.*` in
    `flake.nix` (the toolchain attrs are explicitly version-pinned, so a flake
    update alone never changes them).
-2. PureScript dependencies live in `test/ps/spago.yaml`. The baseline is a
-   `workspace.packageSet.registry: <ver>` package set (pure, no-FFI packages),
-   and every FFI-bearing core package is overridden by its Lua fork
-   (`purescript-lua/purescript-lua-*`, which ships `.lua` FFI) via an
-   `extraPackages` git entry pinned to a tag. This replaces the old
-   `upstream-ps // upstream-lua` Dhall set, where the Lua forks won. The fork
-   list / tags / dependency lists are mirrored from the Lua package set's
-   `packages.dhall` (the source of truth); `spago.lock` pins the resolved
-   commits and is committed. Keep `purs` at 0.15.16: no registry set is built
-   for 0.15.16, so use the latest 0.15.15 set (a proven-compatible pairing).
-3. After changing the package set or `purs`: `cd test/ps && spago build`, then
-   `cabal test all`. Delete `spago.lock` first if you want spago to re-resolve
-   the git overrides.
+2. PureScript dependencies live in `test/ps/spago.yaml`, which consumes the
+   published Lua package set via `workspace.packageSet.url` (a
+   `purescript-lua/purescript-lua-package-sets` `psc-*` release). That set is
+   the upstream registry baseline with the Lua forks (`purescript-lua-*`, which
+   ship `.lua` FFI) overlaid as git entries, so it overrides the
+   JavaScript-targeting upstreams — no inlined `extraPackages`. To move the
+   whole set, bump the `packageSet.url` tag (the fork versions / dependency
+   lists are carried centrally in the set, sourced from the set repo's
+   `src/packages.json`); `spago.lock` pins the resolved set hash + fork commits
+   and is committed. Keep `purs` at 0.15.16: no registry set is built for
+   0.15.16, so the set is built with 0.15.15 (a proven-compatible pairing).
+3. After changing the `packageSet.url` tag or `purs`: `cd test/ps && spago
+   build`, then `cabal test all`. Delete `spago.lock` first if you want spago to
+   re-resolve the set.
 4. Expected churn after updates:
    - `test/ps/output/Golden*/corefn.json` are committed; their `"builtWith"`
      stamp changes with the `purs` version, and `modulePath` reflects the
