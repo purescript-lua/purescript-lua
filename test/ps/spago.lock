@@ -28,7 +28,7 @@
     },
     "package_set": {
       "address": {
-        "registry": "77.8.0"
+        "url": "https://github.com/purescript-lua/purescript-lua-package-sets/releases/download/psc-0.15.15-20260624/packages.json"
       },
       "compiler": ">=0.15.15 <0.16.0",
       "content": {
@@ -58,11 +58,32 @@
         "arraybuffer": "13.2.0",
         "arraybuffer-builder": "3.1.0",
         "arraybuffer-types": "3.0.2",
-        "arrays": "7.3.0",
+        "arrays": {
+          "git": "https://github.com/purescript-lua/purescript-lua-arrays.git",
+          "ref": "v7.4.1",
+          "dependencies": [
+            "foldable-traversable",
+            "functions",
+            "nonempty",
+            "partial",
+            "prelude",
+            "st",
+            "unfoldable",
+            "unsafe-coerce"
+          ]
+        },
         "arrays-extra": "0.6.1",
         "arrays-zipper": "2.0.1",
         "ask": "1.0.0",
-        "assert": "6.0.0",
+        "assert": {
+          "git": "https://github.com/purescript-lua/purescript-lua-assert.git",
+          "ref": "v6.1.1",
+          "dependencies": [
+            "console",
+            "effect",
+            "prelude"
+          ]
+        },
         "assert-multiple": "0.4.0",
         "avar": "5.0.1",
         "axon": "0.0.3",
@@ -105,10 +126,24 @@
         "concur-core": "0.5.0",
         "concur-react": "0.5.0",
         "concurrent-queues": "3.0.0",
-        "console": "6.1.0",
+        "console": {
+          "git": "https://github.com/purescript-lua/purescript-lua-console.git",
+          "ref": "v6.1.1",
+          "dependencies": [
+            "effect",
+            "prelude"
+          ]
+        },
         "const": "6.0.0",
         "contravariant": "6.0.0",
-        "control": "6.0.0",
+        "control": {
+          "git": "https://github.com/purescript-lua/purescript-lua-control.git",
+          "ref": "v6.0.1",
+          "dependencies": [
+            "newtype",
+            "prelude"
+          ]
+        },
         "convertable-options": "1.0.0",
         "coroutines": "7.0.0",
         "css": "6.0.0",
@@ -137,7 +172,13 @@
         "dual-numbers": "1.0.3",
         "dynamic-buffer": "3.0.1",
         "echarts-simple": "0.0.1",
-        "effect": "4.0.0",
+        "effect": {
+          "git": "https://github.com/purescript-lua/purescript-lua-effect.git",
+          "ref": "v4.1.3",
+          "dependencies": [
+            "prelude"
+          ]
+        },
         "either": "6.1.0",
         "elmish": "0.13.0",
         "elmish-enzyme": "0.1.1",
@@ -147,12 +188,36 @@
         "elmish-time-machine": "0.4.2",
         "email-validate": "7.0.0",
         "encoding": "0.0.10",
-        "enums": "6.0.1",
+        "enums": {
+          "git": "https://github.com/purescript-lua/purescript-lua-enums.git",
+          "ref": "v6.1.2",
+          "dependencies": [
+            "control",
+            "either",
+            "gen",
+            "maybe",
+            "newtype",
+            "nonempty",
+            "partial",
+            "prelude",
+            "tuples",
+            "unfoldable"
+          ]
+        },
         "env-names": "0.4.0",
         "environment": "2.0.0",
         "error": "2.0.0",
         "eta-conversion": "0.3.2",
-        "exceptions": "6.1.0",
+        "exceptions": {
+          "git": "https://github.com/purescript-lua/purescript-lua-exceptions.git",
+          "ref": "v6.1.1",
+          "dependencies": [
+            "effect",
+            "either",
+            "maybe",
+            "prelude"
+          ]
+        },
         "exists": "6.0.0",
         "exitcodes": "4.0.0",
         "expect-inferred": "3.0.0",
@@ -177,7 +242,23 @@
         "flame": "1.6.0",
         "float32": "2.0.0",
         "fmt": "0.2.1",
-        "foldable-traversable": "6.0.0",
+        "foldable-traversable": {
+          "git": "https://github.com/purescript-lua/purescript-lua-foldable-traversable.git",
+          "ref": "v6.1.1",
+          "dependencies": [
+            "bifunctors",
+            "const",
+            "control",
+            "either",
+            "functors",
+            "identity",
+            "maybe",
+            "newtype",
+            "orders",
+            "prelude",
+            "tuples"
+          ]
+        },
         "foldable-traversable-extra": "0.0.6",
         "foreign": "7.0.0",
         "foreign-object": "4.1.0",
@@ -191,7 +272,13 @@
         "freeap": "7.0.0",
         "freer-free": "0.0.1",
         "freet": "7.0.0",
-        "functions": "6.0.0",
+        "functions": {
+          "git": "https://github.com/purescript-lua/purescript-lua-functions.git",
+          "ref": "v6.1.0",
+          "dependencies": [
+            "prelude"
+          ]
+        },
         "functor1": "3.0.0",
         "functors": "5.0.0",
         "fuzzy": "0.4.0",
@@ -258,7 +345,15 @@
         "indexed-monad": "3.0.0",
         "ink": "0.0.1",
         "int64": "3.0.0",
-        "integers": "6.0.0",
+        "integers": {
+          "git": "https://github.com/purescript-lua/purescript-lua-integers.git",
+          "ref": "v6.1.2",
+          "dependencies": [
+            "maybe",
+            "numbers",
+            "prelude"
+          ]
+        },
         "interpolate": "5.0.2",
         "intersection-observer": "1.0.1",
         "invariant": "6.0.0",
@@ -288,7 +383,16 @@
         "jwt": "0.0.9",
         "labeled-data": "0.2.0",
         "language-cst-parser": "0.14.1",
-        "lazy": "6.0.0",
+        "lazy": {
+          "git": "https://github.com/purescript-lua/purescript-lua-lazy.git",
+          "ref": "v7.0.0",
+          "dependencies": [
+            "control",
+            "foldable-traversable",
+            "invariant",
+            "prelude"
+          ]
+        },
         "lazy-joe": "1.0.0",
         "lcg": "4.0.0",
         "leibniz": "5.0.0",
@@ -300,6 +404,14 @@
         "literals": "1.0.2",
         "logging": "3.0.0",
         "logging-journald": "0.4.0",
+        "lua-ngx": {
+          "git": "https://github.com/purescript-lua/purescript-lua-ngx.git",
+          "ref": "v0.2.0",
+          "dependencies": [
+            "effect",
+            "prelude"
+          ]
+        },
         "lumi-components": "18.0.0",
         "machines": "7.0.0",
         "maps-eager": "0.5.0",
@@ -366,7 +478,15 @@
         "nqueens": "0.1.4",
         "nullable": "6.0.0",
         "numberfield": "0.2.2",
-        "numbers": "9.0.1",
+        "numbers": {
+          "git": "https://github.com/purescript-lua/purescript-lua-numbers.git",
+          "ref": "v9.1.3",
+          "dependencies": [
+            "functions",
+            "maybe",
+            "prelude"
+          ]
+        },
         "oak": "3.1.1",
         "oak-debug": "1.2.2",
         "object-maps": "0.3.0",
@@ -391,7 +511,11 @@
         "parallel": "7.0.0",
         "parsing": "11.0.0",
         "parsing-dataview": "3.2.4",
-        "partial": "4.0.0",
+        "partial": {
+          "git": "https://github.com/purescript-lua/purescript-lua-partial.git",
+          "ref": "v4.1.0",
+          "dependencies": []
+        },
         "pathy": "9.0.0",
         "pha": "0.13.0",
         "phaser": "0.7.0",
@@ -407,7 +531,11 @@
         "postgresql": "2.0.21",
         "precise": "6.0.0",
         "precise-datetime": "7.0.0",
-        "prelude": "6.0.2",
+        "prelude": {
+          "git": "https://github.com/purescript-lua/purescript-lua-prelude.git",
+          "ref": "v7.3.0",
+          "dependencies": []
+        },
         "prettier-printer": "3.0.0",
         "printf": "0.1.0",
         "priority-queue": "0.1.2",
@@ -455,7 +583,14 @@
         "record-ptional-fields": "0.1.2",
         "record-studio": "1.0.4",
         "ref-lifted": "0.0.2",
-        "refs": "6.0.0",
+        "refs": {
+          "git": "https://github.com/purescript-lua/purescript-lua-refs.git",
+          "ref": "v6.1.0",
+          "dependencies": [
+            "effect",
+            "prelude"
+          ]
+        },
         "remotedata": "5.0.1",
         "repr": "0.5.0",
         "resize-arrays": "0.0.1",
@@ -471,7 +606,13 @@
         "routing": "11.0.0",
         "routing-duplex": "0.7.0",
         "run": "5.0.0",
-        "safe-coerce": "2.0.0",
+        "safe-coerce": {
+          "git": "https://github.com/purescript-lua/purescript-lua-safe-coerce.git",
+          "ref": "v2.0.1",
+          "dependencies": [
+            "unsafe-coerce"
+          ]
+        },
         "safely": "4.0.1",
         "school-of-music": "1.3.0",
         "selection-foldable": "0.2.0",
@@ -501,11 +642,40 @@
         "spec-reporter-xunit": "0.7.1",
         "splitmix": "2.1.0",
         "ssrs": "1.0.0",
-        "st": "6.2.0",
+        "st": {
+          "git": "https://github.com/purescript-lua/purescript-lua-st.git",
+          "ref": "v6.4.0",
+          "dependencies": [
+            "effect",
+            "partial",
+            "prelude",
+            "tailrec",
+            "unsafe-coerce"
+          ]
+        },
         "statistics": "0.3.2",
         "strictlypositiveint": "1.0.1",
         "string-parsers": "8.0.0",
-        "strings": "6.0.1",
+        "strings": {
+          "git": "https://github.com/purescript-lua/purescript-lua-strings.git",
+          "ref": "v6.2.0",
+          "dependencies": [
+            "arrays",
+            "enums",
+            "foldable-traversable",
+            "gen",
+            "integers",
+            "maybe",
+            "newtype",
+            "nonempty",
+            "partial",
+            "prelude",
+            "tailrec",
+            "tuples",
+            "unfoldable",
+            "unsafe-coerce"
+          ]
+        },
         "strings-extra": "4.0.0",
         "stringutils": "0.0.13",
         "structured-logging": "1.0.0",
@@ -552,12 +722,26 @@
         "uncurried-transformers": "1.1.0",
         "undefined": "2.0.0",
         "undefined-is-not-a-problem": "1.1.0",
-        "unfoldable": "6.0.0",
+        "unfoldable": {
+          "git": "https://github.com/purescript-lua/purescript-lua-unfoldable.git",
+          "ref": "v6.1.0",
+          "dependencies": [
+            "foldable-traversable",
+            "maybe",
+            "partial",
+            "prelude",
+            "tuples"
+          ]
+        },
         "unicode": "6.0.0",
         "unique": "0.6.1",
         "unlift": "1.0.1",
         "unordered-collections": "3.1.0",
-        "unsafe-coerce": "6.0.0",
+        "unsafe-coerce": {
+          "git": "https://github.com/purescript-lua/purescript-lua-unsafe-coerce.git",
+          "ref": "v6.1.0",
+          "dependencies": []
+        },
         "unsafe-reference": "5.0.0",
         "untagged-to-tagged": "0.1.4",
         "untagged-union": "1.0.0",
@@ -673,204 +857,7 @@
         "zipperarray": "2.0.0"
       }
     },
-    "extra_packages": {
-      "arrays": {
-        "git": "https://github.com/purescript-lua/purescript-lua-arrays.git",
-        "ref": "v7.4.1",
-        "dependencies": [
-          "foldable-traversable",
-          "functions",
-          "nonempty",
-          "partial",
-          "prelude",
-          "st",
-          "unfoldable",
-          "unsafe-coerce"
-        ]
-      },
-      "assert": {
-        "git": "https://github.com/purescript-lua/purescript-lua-assert.git",
-        "ref": "v6.1.1",
-        "dependencies": [
-          "console",
-          "effect",
-          "prelude"
-        ]
-      },
-      "console": {
-        "git": "https://github.com/purescript-lua/purescript-lua-console.git",
-        "ref": "v6.1.1",
-        "dependencies": [
-          "effect",
-          "prelude"
-        ]
-      },
-      "control": {
-        "git": "https://github.com/purescript-lua/purescript-lua-control.git",
-        "ref": "v6.0.1",
-        "dependencies": [
-          "newtype",
-          "prelude"
-        ]
-      },
-      "effect": {
-        "git": "https://github.com/purescript-lua/purescript-lua-effect.git",
-        "ref": "v4.1.3",
-        "dependencies": [
-          "prelude"
-        ]
-      },
-      "enums": {
-        "git": "https://github.com/purescript-lua/purescript-lua-enums.git",
-        "ref": "v6.1.2",
-        "dependencies": [
-          "control",
-          "either",
-          "gen",
-          "maybe",
-          "newtype",
-          "nonempty",
-          "partial",
-          "prelude",
-          "tuples",
-          "unfoldable"
-        ]
-      },
-      "exceptions": {
-        "git": "https://github.com/purescript-lua/purescript-lua-exceptions.git",
-        "ref": "v6.1.1",
-        "dependencies": [
-          "effect",
-          "either",
-          "maybe",
-          "prelude"
-        ]
-      },
-      "foldable-traversable": {
-        "git": "https://github.com/purescript-lua/purescript-lua-foldable-traversable.git",
-        "ref": "v6.1.1",
-        "dependencies": [
-          "bifunctors",
-          "const",
-          "control",
-          "either",
-          "functors",
-          "identity",
-          "maybe",
-          "newtype",
-          "orders",
-          "prelude",
-          "tuples"
-        ]
-      },
-      "functions": {
-        "git": "https://github.com/purescript-lua/purescript-lua-functions.git",
-        "ref": "v6.1.0",
-        "dependencies": [
-          "prelude"
-        ]
-      },
-      "integers": {
-        "git": "https://github.com/purescript-lua/purescript-lua-integers.git",
-        "ref": "v6.1.2",
-        "dependencies": [
-          "maybe",
-          "numbers",
-          "prelude"
-        ]
-      },
-      "lazy": {
-        "git": "https://github.com/purescript-lua/purescript-lua-lazy.git",
-        "ref": "v7.0.0",
-        "dependencies": [
-          "control",
-          "foldable-traversable",
-          "invariant",
-          "prelude"
-        ]
-      },
-      "numbers": {
-        "git": "https://github.com/purescript-lua/purescript-lua-numbers.git",
-        "ref": "v9.1.3",
-        "dependencies": [
-          "functions",
-          "maybe",
-          "prelude"
-        ]
-      },
-      "partial": {
-        "git": "https://github.com/purescript-lua/purescript-lua-partial.git",
-        "ref": "v4.1.0",
-        "dependencies": []
-      },
-      "prelude": {
-        "git": "https://github.com/purescript-lua/purescript-lua-prelude.git",
-        "ref": "v7.3.0",
-        "dependencies": []
-      },
-      "refs": {
-        "git": "https://github.com/purescript-lua/purescript-lua-refs.git",
-        "ref": "v6.1.0",
-        "dependencies": [
-          "effect",
-          "prelude"
-        ]
-      },
-      "safe-coerce": {
-        "git": "https://github.com/purescript-lua/purescript-lua-safe-coerce.git",
-        "ref": "v2.0.1",
-        "dependencies": [
-          "unsafe-coerce"
-        ]
-      },
-      "st": {
-        "git": "https://github.com/purescript-lua/purescript-lua-st.git",
-        "ref": "v6.4.0",
-        "dependencies": [
-          "effect",
-          "partial",
-          "prelude",
-          "tailrec",
-          "unsafe-coerce"
-        ]
-      },
-      "strings": {
-        "git": "https://github.com/purescript-lua/purescript-lua-strings.git",
-        "ref": "v6.2.0",
-        "dependencies": [
-          "arrays",
-          "enums",
-          "foldable-traversable",
-          "gen",
-          "integers",
-          "maybe",
-          "newtype",
-          "nonempty",
-          "partial",
-          "prelude",
-          "tailrec",
-          "tuples",
-          "unfoldable",
-          "unsafe-coerce"
-        ]
-      },
-      "unfoldable": {
-        "git": "https://github.com/purescript-lua/purescript-lua-unfoldable.git",
-        "ref": "v6.1.0",
-        "dependencies": [
-          "foldable-traversable",
-          "maybe",
-          "partial",
-          "prelude",
-          "tuples"
-        ]
-      },
-      "unsafe-coerce": {
-        "git": "https://github.com/purescript-lua/purescript-lua-unsafe-coerce.git",
-        "ref": "v6.1.0",
-        "dependencies": []
-      }
-    }
+    "extra_packages": {}
   },
   "packages": {
     "arrays": {
