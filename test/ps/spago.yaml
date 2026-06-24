@@ -4,9 +4,9 @@
 # (workspace.packageSet.url): the set is the upstream registry baseline with the
 # Lua forks overlaid (they ship .lua FFI and override their JavaScript-targeting
 # upstreams). No inlined extraPackages — the set carries the fork versions and
-# dependency lists centrally. spago.lock records the resolved set hash and fork
-# commits. purs stays at 0.15.16; the set is built with 0.15.15 (a proven-
-# compatible pairing in this repo).
+# dependency lists centrally. spago.lock records the set URL, an inlined
+# snapshot of it, and the resolved fork commits. purs stays at 0.15.16; the set
+# is built with 0.15.15 (a proven-compatible pairing in this repo).
 package:
   name: test-project
   dependencies:

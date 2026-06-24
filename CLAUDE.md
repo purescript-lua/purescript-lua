@@ -355,8 +355,9 @@ often enough; add more when the bug spans several code paths).
    JavaScript-targeting upstreams — no inlined `extraPackages`. To move the
    whole set, bump the `packageSet.url` tag (the fork versions / dependency
    lists are carried centrally in the set, sourced from the set repo's
-   `src/packages.json`); `spago.lock` pins the resolved set hash + fork commits
-   and is committed. Keep `purs` at 0.15.16: no registry set is built for
+   `src/packages.json`); `spago.lock` pins the resolved set (its URL plus an
+   inlined snapshot) and the fork commits, and is committed. Keep `purs` at
+   0.15.16: no registry set is built for
    0.15.16, so the set is built with 0.15.15 (a proven-compatible pairing).
 3. After changing the `packageSet.url` tag or `purs`: `cd test/ps && spago
    build`, then `cabal test all`. Delete `spago.lock` first if you want spago to
