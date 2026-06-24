@@ -50,14 +50,14 @@ workspace:
       - --ps-output
       - output
       - --lua-output-file
-      - dist/Acme_Main.lua
+      - dist/main.lua
       - --entry
-      - Acme.Main
+      - Main.main
 ```
 
 </details>
 
-With a backend configured, Spago compiles the project to CoreFn and then runs the backend command, so `spago build` links the result into `dist/Acme_Main.lua`. `spago run` additionally executes the entry point: Spago invokes `pslua --run Acme.Main`, which compiles and runs it with `lua`, forwarding lua's exit code.
+With a backend configured, Spago compiles the project to CoreFn and then runs the backend command, so `spago build` links the result into `dist/main.lua`. `spago run` additionally executes the entry point: Spago invokes `pslua --run Main.main`, which compiles and runs it with `lua`, forwarding lua's exit code. (`--run` needs an application entry point `<Module>.<binding>`.)
 
 ### Using nix with flakes
 

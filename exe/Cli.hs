@@ -127,7 +127,7 @@ options = do
             ]
       ]
   runEntry ←
-    optional . option (eitherReader parseAppOrModule) . fold $
+    optional . option (eitherReader parseRunEntry) . fold $
       [ metavar "ENTRY"
       , long "run"
       , helpDoc . Just $
@@ -142,6 +142,19 @@ options = do
             ]
       ]
   pure Args {..}
+
+{- | `--run` must name an application entry point (`<Module>.<binding>`): there
+is nothing to execute without a binding, so a bare module name is rejected.
+-}
+parseRunEntry ∷ String → Either String AppOrModule
+parseRunEntry s =
+  parseAppOrModule s >>= \case
+    app@AsApplication {} → pure app
+    AsModule _ →
+      Left $
+        "--run requires an application entry point <Module>.<binding> "
+          <> "(e.g. Main.main), not a bare module name: "
+          <> s
 
 parseAppOrModule ∷ String → Either String AppOrModule
 parseAppOrModule s = case splitOn "." (toText s) of
