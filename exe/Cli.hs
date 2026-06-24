@@ -47,6 +47,7 @@ data Args = Args
   , outputIR ∷ Maybe ExtraOutput
   , outputLuaAst ∷ Maybe ExtraOutput
   , appOrModule ∷ AppOrModule
+  , runEntry ∷ Maybe AppOrModule
   }
   deriving stock (Show)
 
@@ -125,7 +126,35 @@ options = do
             , bold "Default: Main.main"
             ]
       ]
+  runEntry ←
+    optional . option (eitherReader parseRunEntry) . fold $
+      [ metavar "ENTRY"
+      , long "run"
+      , helpDoc . Just $
+          vsep
+            [ "Compile the given application entry point and run it with"
+                <> softbreak
+                <> magenta "lua"
+                <> ", forwarding lua's exit code."
+            , "This is what" <+> magenta "spago run" <+> "invokes."
+            , "Format:" <+> magenta "<Module>.<binding>"
+            , green $ indent 2 "Example: Acme.App.main"
+            ]
+      ]
   pure Args {..}
+
+{- | `--run` must name an application entry point (`<Module>.<binding>`): there
+is nothing to execute without a binding, so a bare module name is rejected.
+-}
+parseRunEntry ∷ String → Either String AppOrModule
+parseRunEntry s =
+  parseAppOrModule s >>= \case
+    app@AsApplication {} → pure app
+    AsModule _ →
+      Left $
+        "--run requires an application entry point <Module>.<binding> "
+          <> "(e.g. Main.main), not a bare module name: "
+          <> s
 
 parseAppOrModule ∷ String → Either String AppOrModule
 parseAppOrModule s = case splitOn "." (toText s) of

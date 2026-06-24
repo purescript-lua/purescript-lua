@@ -29,29 +29,35 @@ You can use this [template repository](https://github.com/purescript-lua/purescr
 
 Here is an another [example](https://github.com/purescript-lua/purescript-lua-example) project: Nginx server running Lua code using [OpenResty](https://openresty.org/).
 
-If you use [Spago](https://github.com/purescript/spago) to build your PureScript project, then you can configure `pslua` as a custom backend like this:
+If you use [Spago](https://github.com/purescript/spago) to build your PureScript project, configure `pslua` as a custom backend in `spago.yaml`. The package set is the published [Lua package set](https://github.com/purescript-lua/purescript-lua-package-sets) (the registry baseline with the Lua FFI forks overlaid), consumed via `workspace.packageSet.url`. Assuming `pslua` is on your PATH:
 
-<details> <summary>spago.dhall</summary>
+<details> <summary>spago.yaml</summary>
 
-Assuming that `pslua` executable is already available on your PATH
-
-```dhall
-{ name = "acme-project"
-, dependencies = [ "effect", "prelude" ]
-, packages = ./packages.dhall
-, sources = [ "src/**/*.purs" ]
-, backend =
-    ''
-    pslua \
-    --foreign-path . \
-    --ps-output output \
-    --lua-output-file dist/Acme_Main.lua \
-    --entry Acme.Main
-    ''
-}
+```yaml
+package:
+  name: acme-project
+  dependencies:
+    - effect
+    - prelude
+workspace:
+  packageSet:
+    url: https://github.com/purescript-lua/purescript-lua-package-sets/releases/download/psc-0.15.15-20260624/packages.json
+  backend:
+    cmd: pslua
+    args:
+      - --foreign-path
+      - .
+      - --ps-output
+      - output
+      - --lua-output-file
+      - dist/main.lua
+      - --entry
+      - Main.main
 ```
 
 </details>
+
+With a backend configured, Spago compiles the project to CoreFn and then runs the backend command, so `spago build` links the result into `dist/main.lua`. `spago run` additionally executes the entry point: Spago invokes `pslua --run Main.main`, which compiles and runs it with `lua`, forwarding lua's exit code. (`--run` needs an application entry point `<Module>.<binding>`.)
 
 ### Using nix with flakes
 

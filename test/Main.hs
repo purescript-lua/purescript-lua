@@ -13,6 +13,7 @@ import Language.PureScript.Backend.Lua.Linker.Foreign.Spec qualified as LuaLinke
 import Language.PureScript.Backend.Lua.NestingCheck.Spec qualified as NestingCheck
 import Language.PureScript.Backend.Lua.Optimizer.Spec qualified as LuaOptimizer
 import Language.PureScript.Backend.Lua.Printer.Spec qualified as Printer
+import Language.PureScript.Backend.Lua.Run.Spec qualified as Run
 import Language.PureScript.Backend.Output.Spec qualified as Output
 import Test.Hspec (hspec)
 
@@ -28,6 +29,7 @@ main = hspec do
   IROptimizer.spec
   LuaOptimizer.spec
   Printer.spec
+  Run.spec
   LuaLinkerForeign.spec
   NestingCheck.spec
   FlattenDeepBinds.spec

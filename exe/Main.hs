@@ -9,6 +9,7 @@ import Language.PureScript.Backend qualified as Backend
 import Language.PureScript.Backend.IR qualified as IR
 import Language.PureScript.Backend.Lua qualified as Lua
 import Language.PureScript.Backend.Lua.Printer qualified as Printer
+import Language.PureScript.Backend.Lua.Run qualified as Run
 import Language.PureScript.Backend.Output (withOutputFile)
 import Language.PureScript.CoreFn.Reader qualified as CoreFn
 import Language.PureScript.Names (runIdent, runModuleName)
@@ -28,6 +29,7 @@ main = Utf8.withUtf8 do
     , outputLuaAst
     , psOutputPath
     , appOrModule
+    , runEntry
     } ←
     Cli.parseArguments
 
@@ -37,38 +39,50 @@ main = Utf8.withUtf8 do
         Path.Abs a → pure a
         Path.Rel r → Path.makeAbsolute r
 
-  luaOutput ←
-    case unTagged luaOutputFile of
-      Path.Abs a → pure a
-      Path.Rel r → Path.makeAbsolute r
+  -- `--run` overrides `--entry`: Spago's run phase invokes the backend a second
+  -- time as `pslua --run <Entry>` (without the build-phase args), so the entry
+  -- to compile comes from `--run` when present.
+  let entry = fromMaybe appOrModule runEntry
 
   let extraOutputs = catMaybes [outputLuaAst, outputIR]
 
   CompilationResult {lua, ir} ← do
-    putTextLn "PS Lua: compiling ..."
-    Backend.compileModules psOutputPath foreignDir appOrModule
+    -- Stay silent in run mode so the program's own stdout isn't polluted (the
+    -- output may be piped); Spago already logs the run/build phases itself.
+    when (isNothing runEntry) $ putTextLn "PS Lua: compiling ..."
+    Backend.compileModules psOutputPath foreignDir entry
       & handleModuleNotFoundError
       & handleModuleDecodingError
       & handleCoreFnError
       & handleLuaError
       & Oops.runOops
 
-  let outputFile = toFilePath luaOutput
-  withOutputFile luaOutput \h →
-    renderIO h . layoutPretty defaultLayoutOptions $
-      Printer.printLuaChunk lua
+  case runEntry of
+    Just _ →
+      -- Compile-and-run: execute the linked chunk and exit with lua's code.
+      Run.runChunk lua >>= exitWith
+    Nothing → do
+      luaOutput ←
+        case unTagged luaOutputFile of
+          Path.Abs a → pure a
+          Path.Rel r → Path.makeAbsolute r
 
-  when (OutputIR `elem` extraOutputs) do
-    irOutputPath ← replaceExtension ".ir" luaOutput
-    withOutputFile irOutputPath (`pHPrint` ir)
-    putTextLn $ "Wrote IR to " <> toText (toFilePath irOutputPath)
+      let outputFile = toFilePath luaOutput
+      withOutputFile luaOutput \h →
+        renderIO h . layoutPretty defaultLayoutOptions $
+          Printer.printLuaChunk lua
 
-  when (OutputLuaAst `elem` extraOutputs) do
-    luaAstOutputPath ← replaceExtension ".lua-ast" luaOutput
-    withOutputFile luaAstOutputPath (`pHPrint` lua)
-    putTextLn $ "Wrote Lua AST to " <> toText (toFilePath luaAstOutputPath)
+      when (OutputIR `elem` extraOutputs) do
+        irOutputPath ← replaceExtension ".ir" luaOutput
+        withOutputFile irOutputPath (`pHPrint` ir)
+        putTextLn $ "Wrote IR to " <> toText (toFilePath irOutputPath)
 
-  putTextLn $ "Wrote linked modules to " <> toText outputFile
+      when (OutputLuaAst `elem` extraOutputs) do
+        luaAstOutputPath ← replaceExtension ".lua-ast" luaOutput
+        withOutputFile luaAstOutputPath (`pHPrint` lua)
+        putTextLn $ "Wrote Lua AST to " <> toText (toFilePath luaAstOutputPath)
+
+      putTextLn $ "Wrote linked modules to " <> toText outputFile
 
 --------------------------------------------------------------------------------
 -- Error handlers --------------------------------------------------------------
