@@ -148,6 +148,17 @@ pslua \
   --entry Main.main
 ```
 
+`pslua` is also a first-class Spago backend (`workspace.backend.cmd: pslua` in
+`spago.yaml`). Spago compiles to CoreFn and then runs the backend command, so
+`spago build` links the project to Lua via the configured `--entry` /
+`--lua-output-file`. For `spago run`, Spago invokes the backend a second time
+as `pslua --run <Module>.<entry>` (without the build-phase args); `--run`
+compiles that entry point, writes it to a temp file, executes it with `lua`,
+and forwards lua's exit code (`Language.PureScript.Backend.Lua.Run.runChunk`).
+Foreign `.lua` files are resolved next to each module's source (recorded in the
+CoreFn `modulePath`), so dependency FFI in `.spago/**` is found automatically;
+`--foreign-path` is only a secondary fallback.
+
 ## Code Architecture
 
 ### Compilation Pipeline
