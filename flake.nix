@@ -64,6 +64,7 @@
                   lua51Packages.lua
                   lua51Packages.luacheck
                   nil
+                  scriv
                   upx
                   yamlfmt
                 ];

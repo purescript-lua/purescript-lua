@@ -351,6 +351,19 @@ often enough; add more when the bug spans several code paths).
 5. If golden tests fail, inspect `actual.*` files in `test/ps/output/`
 6. Update golden files if changes are correct
 
+## Versioning and Releases
+
+`pslua` follows the **Package Versioning Policy (PVP)**, not SemVer: versions
+are four components `A.B.C.D` where `A.B` is the major version. The same string
+is used everywhere — the `version:` field in `pslua.cabal`, the git tag (no `v`
+prefix, e.g. `0.3.0.0`), the GitHub release, and the `CHANGELOG.md` section
+header — and they must agree. A three-component version anywhere is a mistake to
+fix, not a second convention. The changelog is managed with `scriv` (fragments
+in `changelog.d/`, assembled by `scriv collect --version <A.B.C.D>` on release).
+
+See `docs/VERSIONING.md` for the full policy, the meaning of each component, and
+the release checklist.
+
 ## Updating Dependencies
 
 1. `nix flake update` — refreshes haskell.nix (and with it the Hackage
