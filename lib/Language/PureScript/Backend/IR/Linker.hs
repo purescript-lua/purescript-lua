@@ -62,8 +62,8 @@ that downstream passes pattern-match by structure, so the producer here and the
 consumers must agree.
 
   * One 'ForeignImport' per module that has any foreigns, bound to the special
-    name @foreign@ (@QName moduleName "foreign"@). It carries the module name,
-    the source path, and the list of foreign names.
+    name @foreign@ (@QName moduleName (Name "foreign")@). It carries the module
+    name, the source path, and the list of foreign names.
   * One 'ObjectProp' per foreign name, bound to @QName moduleName name@, that
     reads that name as a field off the @foreign@ import and is marked
     'Inline.Always'.

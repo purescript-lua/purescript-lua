@@ -356,8 +356,9 @@ Data:
 
   * 'Match' is one pattern test against a sub-value of a scrutinee: the
     scrutinee expression ('matchExp'), the path of 'Step's into it
-    ('stepsToFocus', e.g. take field "value0" then array index 2), the
-    'Pattern' to test, the names this binder introduces ('matchBinds'), and the
+    ('stepsToFocus', e.g. take field "value0" then take the 0-based array
+    index 2; the Lua codegen shifts indices to 1-based), the 'Pattern' to
+    test, the names this binder introduces ('matchBinds'), and the
     'nestedMatches' for a constructor's or literal's fields.
   * 'CaseClause' is one source alternative: its outstanding 'Match'es, its
     result (or guarded results), and the bindings accumulated as matches pass.
@@ -372,7 +373,9 @@ Pipeline:
      emitting no test of its own.
   2. 'prepareBindings' binds each non-trivial scrutinee to a fresh name once,
      so the tree refers to it instead of duplicating (and re-evaluating) it.
-     Literals and refs are left inline. See the scrutinee paragraph.
+     Primitive literals (int, float, char, bool) and refs are left inline;
+     string, array, and object scrutinees are bound. See the scrutinee
+     paragraph.
   3. 'mkCaseClauses' / 'mkClause' build the tree clause by clause.
      'matchChosenByHeuristic' picks which 'Match' of the current clause to test
      next; on success the clause's remaining matches are tried ('nextMatch'),
@@ -381,9 +384,10 @@ Pipeline:
      and 'usedClauseBinds' are let-bound around it).
 
 Binding scrutinees once ('prepareBindings'): a scrutinee that is not already a
-literal or a 'Ref' is bound to a fresh name, because the decision tree may test
-and project it many times. Without the shared binding each use would re-emit
-(and the codegen re-evaluate) the whole expression.
+primitive literal (int, float, char, bool) or a 'Ref' is bound to a fresh
+name, because the decision tree may test and project it many times. Without
+the shared binding each use would re-emit (and the codegen re-evaluate) the
+whole expression. String, array, and object scrutinees are bound too.
 
 Column-selection heuristic ('matchChosenByHeuristic'): when a clause has
 several outstanding matches, pick the one shared by the most other clauses
