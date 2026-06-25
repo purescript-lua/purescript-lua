@@ -346,6 +346,63 @@ mkLet ann binds expr = do
 -- The algorithm is based on this document: ------------------------------------
 -- https://julesjacobs.com/notes/patternmatching/patternmatching.pdf -----------
 
+{- Note [Compiling case expressions to decision trees]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+A CoreFn @case@ is compiled to a decision tree of nested if/else expressions,
+following Jules Jacobs' algorithm (linked above). 'mkCase' drives it; the
+types and helpers in this section implement the pieces.
+
+Data:
+
+  * 'Match' is one pattern test against a sub-value of a scrutinee: the
+    scrutinee expression ('matchExp'), the path of 'Step's into it
+    ('stepsToFocus', e.g. take field "value0" then take the 0-based array
+    index 2; the Lua codegen shifts indices to 1-based), the 'Pattern' to
+    test, the names this binder introduces ('matchBinds'), and the
+    'nestedMatches' for a constructor's or literal's fields.
+  * 'CaseClause' is one source alternative: its outstanding 'Match'es, its
+    result (or guarded results), and the bindings accumulated as matches pass.
+  * 'MatchHistory' records, per scrutinee expression, which constructor was
+    tested and whether the test succeeded; see the pruning paragraph.
+
+Pipeline:
+
+  1. 'mkBinder' turns each CoreFn 'Binder' into a 'Match', recording the
+     'stepsToFocus' that reach the matched sub-value. A newtype constructor
+     binder is erased here: it recurses straight into its single inner binder,
+     emitting no test of its own.
+  2. 'prepareBindings' binds each non-trivial scrutinee to a fresh name once,
+     so the tree refers to it instead of duplicating (and re-evaluating) it.
+     Primitive literals (int, float, char, bool) and refs are left inline;
+     string, array, and object scrutinees are bound. See the scrutinee
+     paragraph.
+  3. 'mkCaseClauses' / 'mkClause' build the tree clause by clause.
+     'matchChosenByHeuristic' picks which 'Match' of the current clause to test
+     next; on success the clause's remaining matches are tried ('nextMatch'),
+     on failure the next clause is tried ('nextClause'). When a clause has no
+     matches left its result is emitted (guards become a final nested if/else,
+     and 'usedClauseBinds' are let-bound around it).
+
+Binding scrutinees once ('prepareBindings'): a scrutinee that is not already a
+primitive literal (int, float, char, bool) or a 'Ref' is bound to a fresh
+name, because the decision tree may test and project it many times. Without
+the shared binding each use would re-emit (and the codegen re-evaluate) the
+whole expression. String, array, and object scrutinees are bound too.
+
+Column-selection heuristic ('matchChosenByHeuristic'): when a clause has
+several outstanding matches, pick the one shared by the most other clauses
+('countAffectedClauses'). Testing a shared sub-value first lets one test serve
+many clauses, which keeps the tree small.
+
+Match-history pruning ('MatchHistory'): a constructor test on a given scrutinee
+is remembered as positive or negative. A later match on the same scrutinee is
+then pruned: a constructor already known to match proceeds without re-testing;
+one ruled out (a sibling matched positively, or this one matched negatively)
+falls straight through to the next clause. A 'ProductType' has one constructor,
+so it needs no tag test at all; a 'SumType' emits the @reflectCtor == ctorId@
+test.
+-}
+
 mkCase ∷ Ann → [CfnExp] → NonEmpty (Cfn.CaseAlternative Cfn.Ann) → RepM Exp
 mkCase ann cfnExpressions alternatives = do
   expressions ← traverse makeExpr cfnExpressions
@@ -490,6 +547,7 @@ mkCaseClauses = mkClauses Map.empty
 usedClauseBinds ∷ CaseClause → [Binding]
 usedClauseBinds CaseClause {clauseBindings} = clauseBindings
 
+-- See Note [Compiling case expressions to decision trees] (column heuristic)
 matchChosenByHeuristic
   ∷ CaseClause → [CaseClause] → Maybe (Match, CaseClause)
 matchChosenByHeuristic thisClause otherClauses =
@@ -663,6 +721,7 @@ mkBinder matchExp = go mempty
         , nestedMatches = mempty
         }
 
+-- See Note [Compiling case expressions to decision trees] (history pruning)
 type MatchHistory = Map Exp (CtorName, Bool)
 
 alternativeToClauses

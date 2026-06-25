@@ -55,6 +55,24 @@ makeUberModule linkMode (topoSorted → modules) =
             ]
     }
 
+{- Note [Foreign bindings structure emitted by the Linker]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+'foreignBindings' lowers a module's FFI into a fixed pair of expression shapes
+that downstream passes pattern-match by structure, so the producer here and the
+consumers must agree.
+
+  * One 'ForeignImport' per module that has any foreigns, bound to the special
+    name @foreign@ (@QName moduleName (Name "foreign")@). It carries the module
+    name, the source path, and the list of foreign names.
+  * One 'ObjectProp' per foreign name, bound to @QName moduleName name@, that
+    reads that name as a field off the @foreign@ import and is marked
+    'Inline.Always'.
+
+'Language.PureScript.Backend.IR.DCE' depends on exactly these shapes: it splits
+the foreigns into 'ForeignImport's and 'ObjectProp's by pattern, and when it
+keeps a 'ForeignImport' it prunes the carried name list to the reachable names.
+Change either shape here and the DCE patterns silently stop matching.
+-}
 foreignBindings ∷ Module → [(QName, Exp)]
 foreignBindings Module {moduleName, modulePath, moduleForeigns} =
   foreignModuleBinding <> foreignNamesBindings
