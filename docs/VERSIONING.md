@@ -50,4 +50,18 @@ the tags that actually exist.
 5. Tag `main` with `<A.B.C.D>` (annotated) and create the GitHub release, using
    the new changelog section as the release notes.
 
+## Changelog fragments
+
+Every user-facing change adds a fragment under `changelog.d/`: run `scriv create`
+in the dev shell (which provides `scriv`), pick the right category
+(Added/Changed/Fixed/Removed), and commit the fragment alongside the change. The
+pull request template carries this as a checklist item. A change that ships
+nothing releasable (CI, docs, an internal refactor) needs no fragment. On
+release, `scriv collect` (step 3 above) folds the pending fragments into a new
+`CHANGELOG.md` section.
+
+This mirrors the rest of the ecosystem: the set forks and the package set keep
+scriv changelogs too, with the shared reasoning recorded in the package set's
+[ADR 0009](https://github.com/purescript-lua/purescript-lua-package-sets/blob/master/docs/adr/0009-changelogs-via-scriv.md).
+
 [pvp]: https://pvp.haskell.org/
