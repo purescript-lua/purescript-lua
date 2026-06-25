@@ -111,6 +111,7 @@ fromUberModule foreigns needsRuntimeLazy appOrModule uber = (`evalStateT` 0) do
       )
 
   pure . mconcat $
+    -- See Note [The PSLUA_runtime_lazy coupling] in Language.PureScript.Names
     [ [Fixture.runtimeLazy | untag needsRuntimeLazy && usesRuntimeLazy uber]
     , [Fixture.objectUpdate | UsesObjectUpdate ← [usesObjectUpdate]]
     , [Lua.local1 Fixture.moduleName (Lua.table []) | not (null bindings)]
@@ -154,6 +155,7 @@ fromIR foreigns topLevelNames modname ir = case ir of
   IR.LiteralString _ann s →
     pure . Right $ Lua.String s
   IR.LiteralChar _ann c →
+    -- See Note [PSString is UTF-16 code units, not text]
     pure (Right (Lua.String (decodeStringEscaping (mkString (Text.singleton c)))))
   IR.LiteralBool _ann b →
     pure . Right $ Lua.Boolean b

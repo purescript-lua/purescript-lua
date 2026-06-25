@@ -22,6 +22,7 @@ psluaName = Name.join2 [name|PSLUA|]
 moduleName ∷ Name.Name
 moduleName = [name|M|]
 
+-- See Note [The PSLUA_runtime_lazy coupling] in Language.PureScript.Names
 runtimeLazyName ∷ Name
 runtimeLazyName = psluaName [name|runtime_lazy|]
 

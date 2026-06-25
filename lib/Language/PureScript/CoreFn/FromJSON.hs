@@ -194,6 +194,7 @@ recordFromJSON ∷ (Value → Parser a) → Value → Parser [(PSString, a)]
 recordFromJSON p = listParser parsePair
  where
   parsePair v = do
+    -- See Note [PSString is UTF-16 code units, not text]
     (l, v') ← parseJSON v ∷ Parser (PSString, Value)
     a ← p v'
     return (l, a)

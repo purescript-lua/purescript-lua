@@ -29,6 +29,7 @@ usesRuntimeLazy UberModule {uberModuleBindings, uberModuleExports} =
       uberModuleBindings
       <> foldMap (Any . findRuntimeLazyInExpr . snd) uberModuleExports
 
+-- See Note [The PSLUA_runtime_lazy coupling] in Language.PureScript.Names
 findRuntimeLazyInExpr ∷ Exp → Bool
 findRuntimeLazyInExpr expr =
   countFreeRef (Local (Name runtimeLazyName)) expr > 0

@@ -246,6 +246,7 @@ mkLiteral ann = \case
   Cfn.NumericLiteral (Right d) →
     pure $ LiteralFloat ann d
   Cfn.StringLiteral s →
+    -- See Note [PSString is UTF-16 code units, not text]
     pure $ LiteralString ann $ decodeStringEscaping s
   Cfn.CharLiteral c →
     pure $ LiteralChar ann c
@@ -614,6 +615,7 @@ mkBinder matchExp = go mempty
         Cfn.NumericLiteral (Right d) →
           pure $ matchWhole $ PatFloating d
         Cfn.StringLiteral s →
+          -- See Note [PSString is UTF-16 code units, not text]
           pure $ matchWhole $ PatString (decodeStringEscaping s)
         Cfn.CharLiteral c →
           pure $ matchWhole $ PatChar c

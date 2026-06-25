@@ -42,6 +42,7 @@ compileModules outputDir foreignDir appOrModule = do
   let uberModule =
         Linker.makeUberModule (linkerMode appOrModule) irModules
           & optimizedUberModule
+  -- See Note [The PSLUA_runtime_lazy coupling] in Language.PureScript.Names
   let needsRuntimeLazy = Tagged (any untag needsRuntimeLazys)
   chunk ← Lua.fromUberModule foreignDir needsRuntimeLazy appOrModule uberModule
   let optimizedChunk = optimizeChunk chunk
