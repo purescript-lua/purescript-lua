@@ -15,6 +15,7 @@ import Data.Aeson.Types qualified as A
 import Data.Bits (shiftR)
 import Data.ByteString qualified as BS
 import Data.Char qualified as Char
+import Data.IntCast (intCast)
 import Data.Scientific (toBoundedInteger)
 import Data.Text qualified as T
 import Data.Text.Encoding (decodeUtf16BE)
@@ -54,7 +55,7 @@ REPLACEMENT CHARACTER. Because this function requires care to use correctly,
 we do not export it.
 -}
 codePoints ∷ PSString → String
-codePoints = map (either (Char.chr . fromIntegral) id) . decodeStringEither
+codePoints = map (either (Char.chr . intCast) id) . decodeStringEither
 
 {- |
 Decode a PSString as UTF-16 text. Lone surrogates will be replaced with
@@ -96,9 +97,13 @@ decodeString =
  where
   unpair w = [highByte w, lowByte w]
 
+  -- Deliberate narrowing: fromIntegral keeps the low 8 bits, which is exactly
+  -- the low byte we want. intCast would (correctly) reject Word16 → Word8.
   lowByte ∷ Word16 → Word8
   lowByte = fromIntegral
 
+  -- The shiftR 8 leaves a value in 0..255, so the narrowing to Word8 is always
+  -- exact; intCast cannot see that bound statically, so keep fromIntegral.
   highByte ∷ Word16 → Word8
   highByte = fromIntegral . (`shiftR` 8)
 
@@ -194,6 +199,7 @@ decodeStringEscaping s = foldMap encodeChar (decodeStringEither s)
              , Char.ModifierSymbol
              , Char.OtherSymbol
              ]
+
 {- |
 Pretty print a PSString, using JavaScript escape sequences. Intended for
 use in compiled JS output.
@@ -229,13 +235,15 @@ isSurrogate ∷ Word16 → Bool
 isSurrogate c = isLead c || isTrail c
 
 toChar ∷ Word16 → Char
-toChar = toEnum . fromIntegral
+toChar = toEnum . intCast
 
+-- Deliberate narrowing: callers (surrogate encoding in 'fromString') guarantee
+-- the Int is already in Word16 range, so the truncation never loses data.
 toWord ∷ Int → Word16
 toWord = fromIntegral
 
 toInt ∷ Word16 → Int
-toInt = fromIntegral
+toInt = intCast
 
 mkString ∷ Text → PSString
 mkString = fromString . T.unpack
