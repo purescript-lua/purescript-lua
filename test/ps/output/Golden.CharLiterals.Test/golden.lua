@@ -1,8 +1,8 @@
 local function PSLUA_runtime_lazy(name)
   return function(init)
+    local state = 0
+    local val = nil
     return function()
-      local state = 0
-      local val = nil
       if state == 2 then
         return val
       else

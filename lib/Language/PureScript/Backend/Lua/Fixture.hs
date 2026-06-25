@@ -32,9 +32,9 @@ runtimeLazy =
     [__i|
     local function #{Name.toText runtimeLazyName}(name)
       return function(init)
+        local state = 0
+        local val = nil
         return function()
-          local state = 0
-          local val = nil
           if state == 2 then
             return val
           else
