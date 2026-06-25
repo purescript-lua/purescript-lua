@@ -699,8 +699,7 @@ substitute name idx replacement = substitute' idx
               boundNames = bindingNames grouping
               i' =
                 i
-                  + fromIntegral
-                    (length (filter ((name ==) . Local) boundNames))
+                  + genericLength (filter ((name ==) . Local) boundNames)
               repl' = foldr (\n r → shift 1 n 0 r) repl boundNames
       App ann argument function →
         App ann (go argument) (go function)
@@ -787,8 +786,7 @@ overFreeIndex adjust namespace = go
              where
               minIdx' =
                 minIdx
-                  + fromIntegral
-                    (length (filter (== namespace) (bindingNames grouping)))
+                  + genericLength (filter (== namespace) (bindingNames grouping))
       App ann argument function →
         App ann (go minIndex argument) (go minIndex function)
       LiteralArray ann as →
@@ -818,8 +816,8 @@ overFreeIndex adjust namespace = go
 e.g. when substituting a term under a λ that shadows the name.
 -}
 shift
-  ∷ Int
-  -- ^ The amount to shift by
+  ∷ Natural
+  -- ^ The amount to shift by (a non-negative count, hence 'Natural')
   → Name
   -- ^ The variable name to match (a.k.a. the namespace)
   → Index
@@ -829,7 +827,7 @@ shift
   → RawExp ann
 shift offset =
   overFreeIndex \minIndex index →
-    if minIndex <= index then index + fromIntegral offset else index
+    if minIndex <= index then index + Index offset else index
 
 {- | Decrease by one the index of references to the given name bound strictly
 above @minIndex@: the inverse of @shift 1@, to be applied after a binder for

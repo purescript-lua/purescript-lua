@@ -6,6 +6,7 @@ module Language.PureScript.Backend.IR
 
 import Control.Monad.Error.Class (MonadError (throwError))
 import Control.Monad.Writer.Class (MonadWriter (..))
+import Data.IntCast (intCast)
 import Data.List qualified as List
 import Data.List.NonEmpty ((<|))
 import Data.List.NonEmpty qualified as NE
@@ -432,7 +433,7 @@ mkCaseClauses = mkClauses Map.empty
          in case matchPat of
               PatAny →
                 nextMatch history clause'
-              PatArrayLength (fromIntegral → len) →
+              PatArrayLength (intCast → len) →
                 ifThenElse (literalInt len `eq` arrayLength expr)
                   <$> nextMatch history clause'
                   <*> nextClause history

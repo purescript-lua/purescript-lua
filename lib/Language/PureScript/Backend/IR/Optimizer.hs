@@ -155,7 +155,11 @@ renameShadowedNamesInExpr scope = go
       case qname of
         Local lname
           | Just renames ← Map.lookup lname scope
-          , Just rename ← renames !!? fromIntegral (unIndex index) →
+          , -- Index by the De Bruijn 'Natural' directly. 'genericDrop' takes it
+            -- with no narrowing 'Int' conversion, and an index past the end
+            -- yields '[]', so 'viaNonEmpty head' gives 'Nothing' (no rename).
+            Just rename ←
+              viaNonEmpty head (genericDrop (unIndex index) renames) →
               Ref ann (Local rename) 0
         _ → Ref ann qname index
     Let ann binds body →
