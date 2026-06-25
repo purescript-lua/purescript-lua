@@ -26,6 +26,34 @@ moduleName = [name|M|]
 runtimeLazyName ∷ Name
 runtimeLazyName = psluaName [name|runtime_lazy|]
 
+{- Note [The runtimeLazy calling convention]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+'runtimeLazy' is the hand-written Lua fixture that the laziness transform
+('Language.PureScript.CoreFn.Laziness') calls to build a memoized,
+cycle-checked initializer for a recursive binding. The generated code and the
+fixture share a fixed curried calling convention:
+
+  PSLUA_runtime_lazy(name)(init)(line)
+
+  * @name@ (string): the identifier being initialized, used only in the
+    "<name> was needed before it finished initializing" message.
+  * @init@ (thunk): a nullary function holding the binding's initializer.
+  * The result is the forcing thunk, bound to the lazy name. Each force passes
+    a @line@ number (the source line of the reference); the fixture ignores it.
+
+'state' and 'val' live in the @function(init)@ closure, not in the forcing
+thunk, so they persist across forces: 'state' moves 0 (unforced) -> 1
+(forcing) -> 2 (done), and a force that re-enters while 'state' is 1 raises the
+cycle error. Declaring them inside the thunk instead resets them on every
+force, silently defeating both memoization and cycle detection.
+
+The transform builds the partial applications in 'fromRGI'
+(@runtimeLazy(name)(thunk)@) and the force calls in 'makeForceCall'
+(@lazyName(line)@). Keep this fixture's curried arity and the scope of
+'state'/'val' in step with those sites. Adapted from the PureScript JS
+backend's @$runtime_lazy@, a single 3-argument @(name, moduleName, init)@
+function; the Lua port is curried and omits @moduleName@.
+-}
 runtimeLazy ∷ Statement
 runtimeLazy =
   ForeignSourceStat

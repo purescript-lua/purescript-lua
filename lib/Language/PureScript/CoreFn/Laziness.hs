@@ -33,6 +33,18 @@ import Language.PureScript.PSString (mkString)
 import Prelude hiding (force)
 import qualified Data.List.NonEmpty as NE
 
+{- Note [Laziness transform for recursive binding groups]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+'applyLazinessTransform' takes a recursive binding group and reorders it into a
+valid initialization order where one can be found statically, otherwise
+rewriting the offending bindings to lazy, run-time-checked initializers (see
+Note [The runtimeLazy calling convention] in
+Language.PureScript.Backend.Lua.Fixture). The analysis rests on the delay and
+force attributes and the USE-INIT / USE-USE / USE-IMMEDIATE ordering rules, both
+explained in the comments below. This anchor exists so the rest of the compiler
+can cite the transform by name.
+-}
+
 -- This module is responsible for ensuring that the bindings in recursive
 -- binding groups are initialized in a valid order, introducing run-time
 -- laziness and initialization checks as necessary.
@@ -644,10 +656,10 @@ applyLazinessTransform mn rawItems =
 
   makeForceCall ∷ Ann → Ident → Expr Ann
   makeForceCall _ ident =
-    -- We expect the functions produced by `runtimeLazy` to accept one
-    -- argument: the line number on which this reference is made. The runtime
-    -- code uses this number to generate a message that identifies where the
-    -- evaluation looped.
+    -- See Note [The runtimeLazy calling convention] in
+    -- Language.PureScript.Backend.Lua.Fixture. The force call is applied to one
+    -- argument, the line number of this reference. (The current Lua fixture
+    -- ignores it; the JS backend uses it in the loop error message.)
     App nullAnn (Var nullAnn . Qualified ByNullSourcePos $ lazifyIdent ident)
       . Literal nullAnn
       . NumericLiteral
@@ -657,9 +669,10 @@ applyLazinessTransform mn rawItems =
   fromRGI i = \case
     EagerBinding a e → ((a, i), e)
     LazyBinding a → ((a, i), makeForceCall a i)
-    -- We expect the `runtimeLazy` factory to accept three arguments: the
-    -- identifier being initialized, the name of the module, and of course a
-    -- thunk that actually contains the initialization code.
+    -- See Note [The runtimeLazy calling convention] in
+    -- Language.PureScript.Backend.Lua.Fixture. The factory is applied to two
+    -- arguments here: the identifier being initialized and the init thunk.
+    -- (The JS backend also threads the module name; the Lua fixture omits it.)
     LazyDefinition e →
       ( (nullAnn, lazifyIdent i)
       , app (app runtimeLazy (strLit (runIdent i))) (thunk e)
