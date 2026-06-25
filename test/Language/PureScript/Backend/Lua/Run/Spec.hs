@@ -33,7 +33,7 @@ spec = describe "Lua.Run.runChunk (powers `spago run`)" do
             [ "local count = 0"
             , "local lazy = "
                 <> Lua.toText Fixture.runtimeLazyName
-                <> "(\"x\")(function() count = count + 1 return {} end)"
+                <> "(\"x\")(function() count = count + 1; return {} end)"
             , "lazy(1)"
             , "lazy(2)"
             , "os.exit(count == 1 and 0 or 1)"
