@@ -76,15 +76,26 @@ unboundLocals = go Map.empty
        in errs <> go bodyScope body
     other → foldMap (go scope) (toListOf subexpressions other)
    where
+    bindName ∷ Maybe Name → Map Name Natural → Map Name Natural
     bindName Nothing sc = sc
     bindName (Just nm) sc = Map.insertWith (+) nm 1 sc
+
+    letGrouping
+      ∷ (Map Name Natural, [(Name, Index)])
+      → Grouping (a, Name, Exp)
+      → (Map Name Natural, [(Name, Index)])
     letGrouping (sc, errs) = \case
       Standalone (_ann, nm, e) →
-        (Map.insertWith (+) nm 1 sc, errs <> go sc e)
+        ( Map.insertWith (+) nm 1 sc
+        , errs <> go sc e
+        )
       RecursiveGroup recBinds →
-        let names = (\(_ann, nm, _e) → nm) <$> toList recBinds
-            sc' = foldr (\nm → Map.insertWith (+) nm 1) sc names
-         in (sc', errs <> foldMap (\(_ann, _nm, e) → go sc' e) recBinds)
+        ( sc'
+        , errs <> foldMap (\(_ann, _nm, e) → go sc' e) recBinds
+        )
+       where
+        sc' = foldr (\nm → Map.insertWith (+) nm 1) sc names
+        names = (\(_ann, nm, _e) → nm) <$> toList recBinds
 
 spec ∷ Spec
 spec = describe "IR Optimizer" do
