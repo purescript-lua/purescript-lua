@@ -84,7 +84,39 @@ runIdent = \case
       RuntimeLazyFactory → runtimeLazyName
       Lazy t → "Lazy_" <> t
 
-runtimeLazyName :: Text
+{- Note [The PSLUA_runtime_lazy coupling]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Lazy (self-recursive) bindings are compiled to a reference to a runtime
+helper, the "runtime lazy factory", carried by the bare name 'runtimeLazyName'
+below. That one string, "PSLUA_runtime_lazy", silently couples four sites;
+they must stay in agreement.
+
+  * Here ('runtimeLazyName'): the ident the laziness transform emits.
+    'Language.PureScript.CoreFn.Laziness' rewrites a lazy binding into a
+    reference to @InternalIdent RuntimeLazyFactory@, whose 'runIdent' is
+    exactly this string, so it surfaces in the IR as
+    @Local (Name "PSLUA_runtime_lazy")@.
+
+  * 'Language.PureScript.Backend.Lua.Fixture.runtimeLazyName': the name of
+    the hand-written Lua fixture @local function PSLUA_runtime_lazy(...)@.
+    It is rebuilt independently as @psluaName [name|runtime_lazy|]@ and must
+    mangle to the same string, or the emitted call targets a Lua local that
+    does not exist.
+
+  * 'Language.PureScript.Backend.IR.Query.usesRuntimeLazy': scans the linked
+    UberModule for a free @Local (Name runtimeLazyName)@ to decide whether
+    the fixture is actually referenced.
+
+  * 'Language.PureScript.Backend' and the emitter in
+    'Language.PureScript.Backend.Lua.fromUberModule': emit the fixture iff it
+    is both needed (the laziness transform ran) and used (the scan finds a
+    reference).
+
+Rename either side of the string and the halves stop matching: the fixture is
+judged unused and dropped, or the generated code calls a binding that was
+never emitted. Either way laziness silently miscompiles.
+-}
+runtimeLazyName ∷ Text
 runtimeLazyName = "PSLUA_runtime_lazy"
 
 unusedIdent ∷ Text

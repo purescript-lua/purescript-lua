@@ -25,6 +25,41 @@ data DceMode = PreserveTopLevel | PreserveReturned
 type Label = Text
 type Key = Int
 
+{- Note [Graph-based dead code elimination for Lua]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+'eliminateDeadCode' drops the Lua bindings and assignments that the chosen
+entry points cannot reach. It runs in four steps; the helpers below cooperate
+to implement them.
+
+1. Key and scope every node. 'makeNodesStatement' annotates each AST node with
+   a unique integer 'Key' ('assignKeys') and the lexical chain of 'Scope's in
+   force at that node ('assignScopes'). A 'Scope' maps an in-scope 'Name' to
+   the 'Key' of the 'Local' that binds it, so a use can be linked back to its
+   definition.
+
+2. Build a dependency graph. 'adjacencyList' (with the per-construct
+   '*AdjacencyList' helpers) emits one @(Label, Key, [Key])@ entry per node:
+   the keys that node depends on. A 'Local' depends on its later
+   re-'Assign'ments (and its initialiser); a 'VarName' use depends on the
+   binding key found through the scope chain; structural nodes depend on their
+   children and on the 'Return's reachable inside them.
+
+3. Compute reachability. 'graphFromEdges' turns the entries into a 'Graph';
+   'reachableVertices' is everything 'reachable' from 'dceEntryVertices'. The
+   entry set depends on 'DceMode': 'PreserveTopLevel' roots every top-level
+   statement (module output), 'PreserveReturned' roots only the final 'Return'
+   and its value (application output).
+
+4. Prune. 'dceStatement' / 'dceExpression' rebuild the chunk, keeping only
+   nodes whose vertex is reachable. An unreachable 'Local' is dropped; an
+   unreachable function parameter is demoted to 'ParamUnused' rather than
+   removed, so the function keeps its arity.
+
+Keys must be unique across the whole chunk for the graph to be well formed;
+'assignKeys' guarantees that with a single monotonic counter.
+-}
+
+-- See Note [Graph-based dead code elimination for Lua]
 eliminateDeadCode ∷ DceMode → Lua.Chunk → Lua.Chunk
 eliminateDeadCode dceMode chunk = do
   unNodesStatement <$> dceChunk statementWithNodes

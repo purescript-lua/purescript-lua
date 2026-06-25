@@ -25,24 +25,41 @@ import System.IO.Unsafe (unsafePerformIO)
 import Text.Show (Show (..))
 import Prelude hiding (show)
 
-{- |
-Strings in PureScript are sequences of UTF-16 code units, which do not
-necessarily represent UTF-16 encoded text. For example, it is permissible
-for a string to contain *lone surrogates,* i.e. characters in the range
-U+D800 to U+DFFF which do not appear as a part of a surrogate pair.
+{- Note [PSString is UTF-16 code units, not text]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+A PSString is a sequence of UTF-16 code units that does not necessarily
+represent well-formed UTF-16 text. It may contain lone surrogates: code
+units in U+D800..U+DFFF that are not part of a surrogate pair. This is
+faithful to PureScript, where a string literal can hold any code-unit
+sequence.
 
-The Show instance for PSString produces a string literal which would
-represent the same data were it inserted into a PureScript source file.
+Two consequences are load-bearing across the compiler.
 
-Because JSON parsers vary wildly in terms of how they deal with lone
-surrogates in JSON strings, the ToJSON instance for PSString produces JSON
-strings where that would be safe (i.e. when there are no lone surrogates),
-and arrays of UTF-16 code units (integers) otherwise.
+Dual JSON encoding. Because JSON parsers disagree on lone surrogates inside
+JSON strings, the 'A.ToJSON' instance emits a plain JSON string only when
+that is lossless (no lone surrogates) and otherwise falls back to an array
+of UTF-16 code units (integers). The 'A.FromJSON' instance therefore accepts
+both shapes. CoreFn reading relies on this for record labels and string
+literals (see 'Language.PureScript.CoreFn.FromJSON').
+
+Decode-or-escape into Lua. A lone surrogate has no corresponding 'Char', so
+code generation never decodes literal data with 'decodeString'. It uses
+'decodeStringEscaping', which renders decodable code points directly and
+emits a lone surrogate as a \xNNNNNN escape. The IR string and char literal
+sites and the Lua backend rely on this to avoid failing on otherwise-legal
+PureScript strings.
+-}
+
+{- | A sequence of UTF-16 code units, not necessarily well-formed UTF-16
+text. See Note [PSString is UTF-16 code units, not text].
 -}
 newtype PSString = PSString {toUTF16CodeUnits ∷ [Word16]}
   deriving stock (Eq, Ord, Generic)
   deriving newtype (Semigroup, Monoid)
 
+{- | Produces a string literal that would represent the same data if
+inserted into a PureScript source file.
+-}
 instance Show PSString where
   show = show . codePoints
 
