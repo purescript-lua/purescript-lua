@@ -658,8 +658,9 @@ applyLazinessTransform mn rawItems =
   makeForceCall _ ident =
     -- See Note [The runtimeLazy calling convention] in
     -- Language.PureScript.Backend.Lua.Fixture. The force call is applied to one
-    -- argument, the line number of this reference. (The current Lua fixture
-    -- ignores it; the JS backend uses it in the loop error message.)
+    -- argument, which this port hardcodes to 0 (the Ann is ignored) and the
+    -- fixture ignores too. In the JS backend it is the reference's line number,
+    -- used in the loop error message.
     App nullAnn (Var nullAnn . Qualified ByNullSourcePos $ lazifyIdent ident)
       . Literal nullAnn
       . NumericLiteral

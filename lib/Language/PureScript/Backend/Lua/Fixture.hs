@@ -38,8 +38,10 @@ fixture share a fixed curried calling convention:
   * @name@ (string): the identifier being initialized, used only in the
     "<name> was needed before it finished initializing" message.
   * @init@ (thunk): a nullary function holding the binding's initializer.
-  * The result is the forcing thunk, bound to the lazy name. Each force passes
-    a @line@ number (the source line of the reference); the fixture ignores it.
+  * The result is the forcing thunk, bound to the lazy name. Each force is
+    applied to one argument that the fixture ignores; the transform currently
+    hardcodes it to 0 (see 'makeForceCall'). In the JS backend this argument is
+    the reference's line number, used in the loop error message.
 
 'state' and 'val' live in the @function(init)@ closure, not in the forcing
 thunk, so they persist across forces: 'state' moves 0 (unforced) -> 1
