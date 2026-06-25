@@ -86,6 +86,7 @@ foreignBindings Module {moduleName, modulePath, moduleForeigns} =
     | not (null moduleForeigns)
     ]
 
+  -- See Note [Inline annotations and inlining heuristics]
   foreignNamesBindings ∷ [(QName, Exp)] =
     moduleForeigns <&> \(_ann, name) →
       ( QName moduleName name
