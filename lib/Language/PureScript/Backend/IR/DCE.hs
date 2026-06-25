@@ -65,6 +65,7 @@ eliminateDeadCode uber@UberModule {..} =
   --           { outputOptionsCompact = True
   --           }
 
+  -- See Note [Foreign bindings structure emitted by the Linker]
   preservedForeigns ∷ [(QName, Exp)]
   preservedForeigns = do
     (name, expr) ← annotatedForeigns
@@ -111,6 +112,7 @@ eliminateDeadCode uber@UberModule {..} =
         (traverse (traverse (traverse assignUniqueIds)) uberModuleBindings)
         (traverse (traverse assignUniqueIds) uberModuleExports)
 
+  -- See Note [Foreign bindings structure emitted by the Linker]
   annotatedForeignImports ∷ [(QName, AExp)] =
     [i | i@(_qname, ForeignImport {}) ← annotatedForeigns]
 
