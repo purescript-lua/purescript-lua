@@ -251,7 +251,8 @@ which collapses `Array Unit` to an empty table.
 **Lua 5.1 limits** to keep in mind:
 - Max ~200 local variables per function
 - Max ~60 upvalues per closure
-- Parser nesting depth limit ~200 levels (`NestingTooDeep` error)
+- Parser nesting depth limit ~200 levels in Lua; `pslua` rejects
+  conservatively at depth 180 with the `NestingTooDeep` error
 
 ---
 
