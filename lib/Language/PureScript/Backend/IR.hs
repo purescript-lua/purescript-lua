@@ -65,6 +65,19 @@ instance MonadWriter Any RepM where
     (a, f) ← repM
     a <$ modify' \ctx → ctx {needsRuntimeLazy = f (needsRuntimeLazy ctx)}
 
+{- Note [Inliner annotations must all be consumed]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The @Map Name Annotation@ in the translation 'Context' is a linear resource.
+'parseAnnotations' fills it from the module's @\@inline@ pragmas, keyed by the
+binding name each pragma names; 'useAnnotation' removes an entry as it attaches
+the annotation to that binding; 'runRepM' then checks the map is empty and
+errors with 'UnusedAnnotations' if anything is left over.
+
+The leftover check is how a misspelled or misplaced pragma is reported: an
+@\@inline@ whose name matches no top-level binding is never drained, so it
+surfaces as an error instead of being silently ignored. See also
+Note [Inline annotations and inlining heuristics].
+-}
 runRepM
   ∷ Context
   → RepM a
@@ -108,6 +121,7 @@ mkModule cfnModule contextDataTypes = do
           , moduleForeigns
           }
 
+-- See Note [Inliner annotations must all be consumed]
 parseAnnotations ∷ Cfn.Module Cfn.Ann → Either CoreFnError (Map Name Annotation)
 parseAnnotations currentModule =
   Cfn.moduleComments currentModule
@@ -123,6 +137,7 @@ parseAnnotations currentModule =
       & first
         (CoreFnError (Cfn.moduleName currentModule) . AnnotationParsingError)
 
+-- See Note [Inliner annotations must all be consumed]
 useAnnotation ∷ Name → RepM (Maybe Annotation)
 useAnnotation name = do
   ctx ← get
@@ -268,6 +283,7 @@ mkConstructor cfnAnn ann properTyName properCtorName fields = do
   let tyName = mkTyName properTyName
   contextModuleName ← gets (Cfn.moduleName . contextModule)
   algTy ← algebraicTy contextModuleName tyName
+  -- See Note [Newtype constructors are erased]
   pure
     if isNewtype cfnAnn
       then identity
@@ -315,6 +331,7 @@ mkAbstraction ann i e = Abs ann param <$> makeExpr e
       "$__unused" → paramUnused
       n → paramNamed (Name n)
 
+-- See Note [Newtype constructors are erased]
 mkApplication ∷ CfnExp → CfnExp → RepM Exp
 mkApplication e1 e2 =
   if isNewtype (Cfn.extractAnn e1)
@@ -636,6 +653,7 @@ mkBinder matchExp = go mempty
           , nestedMatches = mempty
           }
     Cfn.ConstructorBinder ann qTypeName qCtorName binders →
+      -- See Note [Newtype constructors are erased]
       if isNewtype ann
         then case binders of
           [binder] → go stepsToFocus binder
@@ -761,6 +779,23 @@ generateName prefix =
     put $ ctx {lastGeneratedNameIndex = lastGeneratedNameIndex + 1}
     pure $ prefix <> toText (show lastGeneratedNameIndex)
 
+{- Note [Newtype constructors are erased]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+A newtype constructor has no runtime representation: wrapping is the identity.
+Three sites implement that single convention and must stay consistent, all
+keyed off 'isNewtype':
+
+  * Construction is identity: 'mkConstructor' returns 'identity' instead of a
+    'Ctor' for a newtype, so @N x@ builds just @x@.
+  * Application unwraps: 'mkApplication' on a newtype constructor emits only
+    the argument, discarding the constructor application.
+  * Matching skips the constructor: 'mkBinder' on a newtype
+    'ConstructorBinder' recurses straight into the single inner binder, with no
+    tag test.
+
+If these drift apart (say construction erases but matching still tests a tag),
+the generated code matches against a value that was never wrapped.
+-}
 isNewtype ∷ Cfn.Ann → Bool
 isNewtype = \case
   Just Cfn.IsNewtype → True

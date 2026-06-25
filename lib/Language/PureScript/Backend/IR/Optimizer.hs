@@ -421,6 +421,7 @@ inlineLocalBinding grouping body =
         then substitute name 0 inlinee body
         else body
 
+-- See Note [Inline annotations and inlining heuristics]
 isInlinableExpr ∷ Exp → Bool
 isInlinableExpr expr =
   hasInlineAnnotation expr || isRef expr || isNonRecursiveLiteral expr

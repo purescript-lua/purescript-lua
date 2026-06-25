@@ -64,6 +64,7 @@ instance Monoid Info where
 data AlgebraicType = SumType | ProductType
   deriving stock (Generic, Eq, Ord, Show, Enum, Bounded)
 
+-- See Note [Sequential scoping of Let bindings] for what this index selects
 newtype Index = Index {unIndex ∷ Natural}
   deriving newtype (Show, Eq, Ord, Num, Enum, Real, Integral)
 
