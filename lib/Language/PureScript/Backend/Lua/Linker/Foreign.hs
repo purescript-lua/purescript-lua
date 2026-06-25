@@ -33,7 +33,7 @@ data Source = Source {header ∷ Maybe Text, exports ∷ NonEmpty (Key, Text)}
 {- Note [Foreign module source format]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 The FFI file contract (see the Haddock on 'parseForeignSource' below) has two
-constraints that are easy to miss and each load-bearing:
+constraints that are easy to miss and each is load-bearing:
 
   * Every export value is wrapped in parentheses: @name = (<value>)@. The
     parens delimit the value so 'valueParser' can extract a balanced Lua

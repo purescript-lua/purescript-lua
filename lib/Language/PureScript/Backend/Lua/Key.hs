@@ -22,8 +22,10 @@ keyword read from @["..."]@ syntax.
 
 The round-trip spans three modules, which must agree on the keyword set:
 
-  * 'Language.PureScript.Backend.Lua.Name.reserved' is the authoritative set of
-    Lua keywords, and 'Name.makeSafe' mangles one (e.g. @if@ becomes @_if_@).
+  * 'Language.PureScript.Backend.Lua.Name.reserved' is the reserved-word set the
+    backend escapes against -- the Lua keywords, kept conservative (it also
+    lists later additions like @goto@, harmless on the Lua 5.1 target) -- and
+    'Name.makeSafe' mangles one (e.g. @if@ becomes @_if_@).
   * 'parser' below reads a bracketed-quoted key as 'KeyReserved' by matching
     against that set, and a bare identifier as 'KeyName'.
   * 'toSafeName' maps a 'Key' back to a safe 'Name': 'KeyName' passes through,
