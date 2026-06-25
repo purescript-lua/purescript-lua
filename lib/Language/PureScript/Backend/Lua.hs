@@ -139,6 +139,17 @@ fromModuleName = Name.makeSafe . runModuleName
 fromPropName ∷ IR.PropName → Lua.Name
 fromPropName (IR.PropName name) = Name.makeSafe name
 
+{- Note [Nullary functions and Prim.undefined]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+'ParamUnused' compiles to a zero-parameter Lua function and a 'Prim.undefined'
+argument compiles to a zero-argument call. These two arity-changing encodings
+are halves of one convention and must stay in sync. PureScript emits a thunk as
+@(\_unused -> body) Prim.undefined@, which 'fromIR' lowers to
+@(function() body end)()@: zero parameters, called with zero arguments. If only
+one side elided, the generated function and its call sites would disagree on
+arity. The Lua printer likewise drops 'ParamUnused' from the parameter list
+(Language.PureScript.Backend.Lua.Printer).
+-}
 fromIR
   ∷ ∀ e
    . e `CouldBe` Error
@@ -197,6 +208,7 @@ fromIR foreigns topLevelNames modname ir = case ir of
         Lua.tableRowNV (fromPropName propName) <$> goExp e
     pure . Right $
       Lua.functionCall (Lua.varName Fixture.objectUpdateName) [obj, vals]
+  -- See Note [Nullary functions and Prim.undefined]
   IR.Abs _ann param expr → do
     e ← goExp expr
     let luaParams = case param of
@@ -206,7 +218,8 @@ fromIR foreigns topLevelNames modname ir = case ir of
   IR.App _ann expr arg → do
     e ← goExp expr
     Right . Lua.functionCall e <$> case arg of
-      -- PS sometimes inserts syntetic unused argument "Prim.undefined"
+      -- See Note [Nullary functions and Prim.undefined]. PS sometimes inserts
+      -- a synthetic unused argument "Prim.undefined", which is elided here.
       IR.Ref _ann (IR.Imported (IR.ModuleName "Prim") (IR.Name "undefined")) _ →
         pure []
       _ → (: []) <$> goExp arg
@@ -267,6 +280,7 @@ fromIR foreigns topLevelNames modname ir = case ir of
     pure . Right $ Lua.error msg
   IR.ForeignImport _ann _moduleName path annotatedNames → do
     let foreignNames = fromName <<$>> annotatedNames
+    -- See Note [Foreign module source format] in ...Lua.Linker.Foreign
     Foreign.Source {header, exports} ←
       Oops.hoistEither =<< liftIO do
         left LinkerErrorForeign
@@ -275,8 +289,9 @@ fromIR foreigns topLevelNames modname ir = case ir of
           Lua.table
             [ Lua.tableRowNV name (Lua.ForeignSourceExp src)
             | (key, src) ← toList exports
-            , -- Export tables can contain Lua-reserved words as keys
-            -- for example: `{ ["for"] = 42 }`
+            , -- See Note [Lua reserved words as foreign export keys]
+            -- Export tables can contain Lua-reserved words as keys, for
+            -- example `{ ["for"] = 42 }`; toSafeName mangles them.
             let name = Key.toSafeName key
             , name `elem` fmap snd foreignNames
             ]

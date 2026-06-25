@@ -94,6 +94,7 @@ specialNameType = Name "$type"
 specialNameCtor ∷ Name
 specialNameCtor = Name "$ctor"
 
+-- See Note [Lua reserved words as foreign export keys] in ...Backend.Lua.Key
 reserved ∷ Set Text
 reserved =
   Set.fromList

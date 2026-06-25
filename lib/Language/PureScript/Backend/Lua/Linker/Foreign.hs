@@ -30,6 +30,25 @@ import Prelude hiding (show)
 data Source = Source {header ∷ Maybe Text, exports ∷ NonEmpty (Key, Text)}
   deriving stock (Eq, Show)
 
+{- Note [Foreign module source format]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The FFI file contract (see the Haddock on 'parseForeignSource' below) has two
+constraints that are easy to miss and each load-bearing:
+
+  * Every export value is wrapped in parentheses: @name = (<value>)@. The
+    parens delimit the value so 'valueParser' can extract a balanced Lua
+    expression by counting nested @()@; without them it cannot tell where one
+    export ends and the next begins.
+  * The optional header must contain no @return@. 'parseForeignSource' splits
+    the file at the first line beginning with @return@ ('break isReturn'),
+    taking everything before it as the shared header and the rest as the export
+    table; a @return@ in the header would truncate it.
+
+The result is a two-part 'Source' (optional 'header', non-empty 'exports'),
+which 'Language.PureScript.Backend.Lua' consumes: the header becomes a
+'ForeignSourceStat' and each export a table row keyed by 'Key.toSafeName'.
+-}
+
 {- | Parse a foreign source file which has to be in the following format:
 @@
   <header>
@@ -49,6 +68,7 @@ parseForeignSource ∷ Path Abs Dir → FilePath → IO (Either Error Source)
 parseForeignSource foreigns path = runExceptT do
   filePath ← toFilePath <$> resolveForModule path foreigns
   src ← Text.strip . decodeUtf8 <$> liftIO (readFileBS filePath)
+  -- See Note [Foreign module source format] (header must contain no return)
   let (headerLines, returnStat) = break isReturn (Text.lines src)
   case Megaparsec.parse moduleParser filePath (unlines returnStat) of
     Left err → throwE $ ForeignErrorParse filePath err
@@ -94,11 +114,13 @@ moduleParser = do
 
 foreignExport ∷ Parser (Key, Text)
 foreignExport = do
+  -- See Note [Lua reserved words as foreign export keys] in ...Backend.Lua.Key
   exportKey ← Key.parser
   char '='
   exportValue ← valueParser
   pure (exportKey, toText exportValue)
 
+-- See Note [Foreign module source format] (values are paren-wrapped)
 valueParser ∷ Parser String
 valueParser = char '(' *> go 0 DL.empty <* MP.space
  where

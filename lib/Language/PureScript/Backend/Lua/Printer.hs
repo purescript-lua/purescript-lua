@@ -81,6 +81,7 @@ printExp = \case
 printUnaryOp ∷ Lua.UnaryOp → PADoc → PADoc
 printUnaryOp op (_, a) = (prec op, pretty (sym op) <> parens a)
 
+-- See Note [Lua operator precedence] in ...Backend.Lua.Types
 printBinaryOp ∷ Lua.BinaryOp → PADoc → PADoc → PADoc
 printBinaryOp op l r =
   (prec op, wrapPrec op l <+> pretty (sym op) <+> wrapPrec op r)

@@ -118,7 +118,11 @@ data BinaryOp
   | Exp
   deriving stock (Show, Eq, Ord, Enum, Bounded)
 
-{- 1   or
+{- Note [Lua operator precedence]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Lua's operators bind at these levels (1 loosest, 12 tightest):
+
+   1   or
    2   and
    3   <     >     <=    >=    ~=    ==
    4   |
@@ -130,6 +134,12 @@ data BinaryOp
    10  *     /     //    %
    11  unary operators (not   #     -     ~)
    12  ^
+
+The 'HasPrecedence' instances for 'BinaryOp' and 'UnaryOp' transcribe this
+table into 'PrecOperation' levels. 'Language.PureScript.Backend.Lua.Printer'
+parenthesises an operand only when its precedence is looser than the enclosing
+operator's ('wrapPrec'). Keep the instances and this table in step, or the
+printer emits wrongly-associated or over-bracketed expressions.
 -}
 
 instance HasPrecedence BinaryOp where
