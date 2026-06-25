@@ -300,13 +300,22 @@ optimizedExpression =
       `thenRewrite` removeIfWithEqualBranches
       `thenRewrite` inlineLocalBindings
 
+{- Note [IR is assumed well-typed]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The optimizer assumes its input IR is well-typed -- it has already passed the
+PureScript type checker -- and several rewrites rely on that rather than
+re-checking. 'constantFolding' rewrites @Eq True b@ to @b@ on the grounds that
+@b@ must then be a 'Bool', and 'betaReduce' substitutes an argument for a
+parameter without checking their types match. A rewrite must not introduce an
+assumption the type checker would not already guarantee.
+-}
 constantFolding ∷ RewriteRule Ann
 constantFolding =
   pure . \case
     Eq _ (LiteralBool _ a) (LiteralBool _ b) →
       Rewritten Stop $ literalBool $ a == b
     Eq _ (LiteralBool _ True) b →
-      -- 'b' must be of type Bool
+      -- 'b' must be of type Bool; see Note [IR is assumed well-typed]
       Rewritten Stop b
     Eq _ (LiteralInt _ a) (LiteralInt _ b) →
       Rewritten Stop $ literalBool $ a == b
@@ -319,6 +328,7 @@ constantFolding =
     _ → NoChange
 
 -- (λx. M) N ===> M[x := N]
+-- See Note [IR is assumed well-typed]
 betaReduce ∷ RewriteRule Ann
 betaReduce =
   pure . \case
