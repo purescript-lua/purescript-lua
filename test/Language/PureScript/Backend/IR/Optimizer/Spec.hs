@@ -5,6 +5,7 @@ import Data.Map qualified as Map
 import Hedgehog (PropertyT, annotateShow, forAll, (===))
 import Hedgehog.Gen qualified as Gen
 import Language.PureScript.Backend.IR.Gen qualified as Gen
+import Language.PureScript.Backend.IR.Inliner (Annotation (Never))
 import Language.PureScript.Backend.IR.Linker (LinkMode (..))
 import Language.PureScript.Backend.IR.Linker qualified as Linker
 import Language.PureScript.Backend.IR.Names
@@ -164,6 +165,29 @@ spec = describe "IR Optimizer" do
               application (refLocal0 name) (refLocal0 name)
       annotateShow original
       optimizedExpression original === original
+
+  describe "respects @inline never (issue #131)" do
+    test "keeps a never-annotated top-level binding instead of inlining it" do
+      let mainModule = moduleNameFromString "Main"
+          -- foo = 42, annotated `@inline never`: a literal used once, which the
+          -- optimizer would otherwise inline and drop.
+          fooExp = LiteralInt (Just Never) 42
+          original =
+            Linker.UberModule
+              { uberModuleForeigns = []
+              , uberModuleBindings =
+                  [Standalone (QName mainModule (Name "foo"), fooExp)]
+              , uberModuleExports =
+                  [(Name "main", refImported mainModule (Name "foo") 0)]
+              }
+          optimized = optimizedUberModule original
+          fooKept =
+            [ qn
+            | Standalone (qn, _) ← Linker.uberModuleBindings optimized
+            , qn == QName mainModule (Name "foo")
+            ]
+      annotateShow optimized
+      fooKept === [QName mainModule (Name "foo")]
 
   describe "inliner unlocks more optimizations" do
     test "constant folding after inlining" do

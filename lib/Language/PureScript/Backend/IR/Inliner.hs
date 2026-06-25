@@ -19,11 +19,11 @@ travels to the optimizer's inlining decision through several stages:
      moves each into the annotated binding's 'Ann' as the binding is
      translated (see Note [Inliner annotations must all be consumed]).
   3. From there the 'Annotation' rides along as the expression's @ann@.
-  4. 'Language.PureScript.Backend.IR.Optimizer.isInlinableExpr' reads it back
-     with 'getAnn': @Just Always@ forces inlining. @Just Never@ and @Nothing@
-     are treated alike -- both leave the heuristic (a ref, a small literal, or
-     a single-use binding) to decide. So @never@ currently only withholds the
-     forced case; it does not veto heuristic inlining.
+  4. The optimizer reads it back with 'getAnn': @Just Always@ (via
+     'Language.PureScript.Backend.IR.Optimizer.isInlinableExpr') forces
+     inlining, and @Just Never@ (via 'inlineForbidden') vetoes it outright,
+     overriding the ref / small-literal / single-use heuristic. @Nothing@
+     leaves that heuristic to decide.
 
 The linker also synthesises @Just Always@ directly: each foreign name is bound
 to an 'ObjectProp' marked 'Inline.Always' so the wrapper around the FFI object

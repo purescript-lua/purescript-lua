@@ -249,7 +249,8 @@ optimizeModule UberModule {..} =
   withBinding binding (bindings, exports) =
     case binding of
       Standalone (qname, optimizedExpression → expr) →
-        if isInlinableExpr expr || isUsedOnce qname
+        if not (inlineForbidden expr)
+          && (isInlinableExpr expr || isUsedOnce qname)
           then
             ( substituteInBindings qname expr bindings
             , substituteInExports qname expr exports
@@ -427,9 +428,17 @@ inlineLocalBinding grouping body =
   case grouping of
     RecursiveGroup _grp → body -- Not going to inline recursive bindings
     Standalone (_ann, Local → name, inlinee) →
-      if isInlinableExpr inlinee || countFreeRef name body == 1
+      if not (inlineForbidden inlinee)
+        && (isInlinableExpr inlinee || countFreeRef name body == 1)
         then substitute name 0 inlinee body
         else body
+
+{- | @inline never@ vetoes inlining outright, overriding both the
+'isInlinableExpr' heuristic and the single-use rule. See
+Note [Inline annotations and inlining heuristics].
+-}
+inlineForbidden ∷ Exp → Bool
+inlineForbidden expr = getAnn expr == Just Never
 
 -- See Note [Inline annotations and inlining heuristics]
 isInlinableExpr ∷ Exp → Bool
