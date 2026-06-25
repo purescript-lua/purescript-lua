@@ -2,7 +2,7 @@
 
 [![Purescript Lua CI](https://github.com/purescript-lua/purescript-lua/actions/workflows/ci.yaml/badge.svg)](https://github.com/purescript-lua/purescript-lua/actions/workflows/ci.yaml)
 
-🔋 Status: (2024-04-20) the project is in the "_ready to be experimented with_" state (read: it likely contains bugs but is already usable). 
+🔋 Status: (2026-06-25) usable as a [Spago](https://github.com/purescript/spago) backend against the published [Lua package set](https://github.com/purescript-lua/purescript-lua-package-sets). Still pre-1.0: it likely contains bugs, but `spago build`/`run`/`test` already target Lua out of the box. See the [changelog](./CHANGELOG.md) for what changed in each release.
 
 💡 If you have an idea on how to use Purescript to Lua compilation please contribute it here:
 https://github.com/purescript-lua/purescript-lua/discussions/categories/ideas
@@ -15,6 +15,7 @@ https://github.com/purescript-lua/purescript-lua/discussions/categories/ideas
 - [x] Code inlining.
 - [x] [Package Set](https://github.com/purescript-lua/purescript-lua-package-sets) for PureScript/Lua libs.
 - [x] All core libs added to the package set.
+- [x] First-class [Spago](https://github.com/purescript/spago) backend: `spago build`, `spago run`, and `spago test` target Lua via `pslua`.
 
 ## Quick Start
 
@@ -104,10 +105,10 @@ Completed    newtype-0.2.2.0 (lib)
 
 .... elided ....
 
-Starting     pslua-0.1.0.0 (exe:pslua)
-Building     pslua-0.1.0.0 (exe:pslua)
-Installing   pslua-0.1.0.0 (exe:pslua)
-Completed    pslua-0.1.0.0 (exe:pslua)
+Starting     pslua-0.3.0.0 (exe:pslua)
+Building     pslua-0.3.0.0 (exe:pslua)
+Installing   pslua-0.3.0.0 (exe:pslua)
+Completed    pslua-0.3.0.0 (exe:pslua)
 Copying 'pslua.exe' to 'C:\cabal\bin\pslua.exe'
 ```
 
