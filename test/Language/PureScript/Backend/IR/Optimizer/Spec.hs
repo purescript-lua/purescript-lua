@@ -169,9 +169,10 @@ spec = describe "IR Optimizer" do
   describe "respects @inline never (issue #131)" do
     test "keeps a never-annotated top-level binding instead of inlining it" do
       let mainModule = moduleNameFromString "Main"
-          -- foo = 42, annotated `@inline never`: a literal used once, which the
-          -- optimizer would otherwise inline and drop.
-          fooExp = LiteralInt (Just Never) 42
+          -- foo = (1 == 1) with `@inline never`. Constant folding rewrites the
+          -- root to `true` (dropping the annotation) and foo is used once, so
+          -- without a name-based veto it would be inlined away.
+          fooExp = Eq (Just Never) (literalInt 1) (literalInt 1)
           original =
             Linker.UberModule
               { uberModuleForeigns = []

@@ -19,11 +19,12 @@ travels to the optimizer's inlining decision through several stages:
      moves each into the annotated binding's 'Ann' as the binding is
      translated (see Note [Inliner annotations must all be consumed]).
   3. From there the 'Annotation' rides along as the expression's @ann@.
-  4. The optimizer reads it back with 'getAnn': @Just Always@ (via
+  4. The optimizer reads it back: @Just Always@ (via
      'Language.PureScript.Backend.IR.Optimizer.isInlinableExpr') forces
-     inlining, and @Just Never@ (via 'inlineForbidden') vetoes it outright,
-     overriding the ref / small-literal / single-use heuristic. @Nothing@
-     leaves that heuristic to decide.
+     inlining. For @Just Never@, 'optimizedUberModule' collects the annotated
+     binding names once up front (so the veto survives later rewrites that drop
+     the annotation off a binding's root) and refuses to inline them. @Nothing@
+     leaves the ref / small-literal / single-use heuristic to decide.
 
 The linker also synthesises @Just Always@ directly: each foreign name is bound
 to an 'ObjectProp' marked 'Inline.Always' so the wrapper around the FFI object
