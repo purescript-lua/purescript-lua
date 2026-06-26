@@ -38,27 +38,33 @@ import Language.PureScript.Backend.IR.Types
   )
 
 optimizedUberModule ∷ UberModule → UberModule
-optimizedUberModule =
-  idempotently (eliminateDeadCode . optimizeModule)
+optimizedUberModule uber =
+  uber
+    & idempotently (eliminateDeadCode . optimizeModule neverNames)
     -- by merging foreign bindings into the main bindings, we can
     -- unblock even more optimizations, e.g. inline foreign bindings.
-    >>> mergeForeignsIntoBindings
-    >>> idempotently (eliminateDeadCode . optimizeModule)
+    & mergeForeignsIntoBindings
+    & idempotently (eliminateDeadCode . optimizeModule neverNames)
     -- Must run last among the index-sensitive passes:
     -- see Note [Locals are uniquely named after renameShadowedNames]
-    >>> renameShadowedNames
+    & renameShadowedNames
     -- Magic-do is the final lowering (issue #46): it relies on the unique
     -- naming established above and preserves it, and must run after dead-code
     -- elimination so the statements it introduces for `discard` are not
     -- dropped as dead. See Language.PureScript.Backend.IR.MagicDo.
-    >>> magicDo
+    & magicDo
     -- Flatten the remaining deeply-nested expression trees (issues #104, #108):
     -- continuation/bind chains of any monad (lambda-lifted into $kont helpers)
     -- and applicative/flipped-bind application spines (A-normalised into $tmp
     -- locals). Runs after magicDo (which consumes Effect/ST chains, leaving only
     -- non-Effect/ST ones) and likewise consumes and preserves the unique naming.
     -- See Language.PureScript.Backend.IR.FlattenDeepBinds.
-    >>> flattenDeepBinds
+    & flattenDeepBinds
+ where
+  -- Collect @inline never bindings once from the pristine module: later
+  -- rewrites may strip the annotation off a binding's root, so the veto keys
+  -- off the name (see Note [Inline annotations and inlining heuristics]).
+  neverNames = neverInlineNames uber
 
 mergeForeignsIntoBindings ∷ UberModule → UberModule
 mergeForeignsIntoBindings uberModule@UberModule {..} =
@@ -230,8 +236,22 @@ idempotently = fix $ \i f a →
 --   tr ∷ Show x ⇒ String → x → y → y
 --   tr l x y = trace ("\n\n" <> l <> "\n" <> (toString . pShow) x <> "\n") y
 
-optimizeModule ∷ UberModule → UberModule
-optimizeModule UberModule {..} =
+{- | The top-level bindings annotated @inline never@, collected once from the
+pristine module. Later rewrites can drop the annotation off a binding's root
+expression (e.g. constant folding replaces it with a fresh node), so the veto
+must key off the name rather than re-reading the annotation after optimization.
+See Note [Inline annotations and inlining heuristics].
+-}
+neverInlineNames ∷ UberModule → Set QName
+neverInlineNames UberModule {uberModuleBindings} =
+  Set.fromList
+    [ qname
+    | Standalone (qname, expr) ← uberModuleBindings
+    , getAnn expr == Just Never
+    ]
+
+optimizeModule ∷ Set QName → UberModule → UberModule
+optimizeModule neverNames UberModule {..} =
   UberModule
     { uberModuleForeigns
     , uberModuleBindings = uberModuleBindings'
@@ -249,7 +269,9 @@ optimizeModule UberModule {..} =
   withBinding binding (bindings, exports) =
     case binding of
       Standalone (qname, optimizedExpression → expr) →
-        if isInlinableExpr expr || isUsedOnce qname
+        -- See Note [Inline annotations and inlining heuristics]
+        if qname `Set.notMember` neverNames
+          && (isInlinableExpr expr || isUsedOnce qname)
           then
             ( substituteInBindings qname expr bindings
             , substituteInExports qname expr exports
