@@ -26,9 +26,11 @@ travels to the optimizer's inlining decision through several stages:
      the annotation off a binding's root) and refuses to inline them. @Nothing@
      leaves the ref / small-literal / single-use heuristic to decide.
 
-The linker also synthesises @Just Always@ directly: each foreign name is bound
-to an 'ObjectProp' marked 'Inline.Always' so the wrapper around the FFI object
-is always inlined away (see
+Pragmas reach this map only for non-foreign top-level bindings (the ones
+'useAnnotation' drains as it translates them). The linker synthesises
+@Just Always@ separately and independently of any pragma: each foreign name is
+bound to an 'ObjectProp' marked 'Inline.Always' so the wrapper around the FFI
+object is always inlined away (see
 Note [Foreign bindings structure emitted by the Linker]).
 -}
 data Annotation = Always | Never
