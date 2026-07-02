@@ -23,10 +23,12 @@ import Language.PureScript.Backend.IR.Types
   , countFreeRefs
   , exception
   , lets
+  , literalInt
   , noAnn
   , paramNamed
   , paramUnused
   , refImported
+  , refLocal
   , refLocal0
   )
 import Test.Hspec (Spec, describe, it)
@@ -125,6 +127,84 @@ spec = describe "IR Dead Code Elimination" do
         expected = refLocal0 c
     annotate . toString $ pShow expr
     expected === dceExpression expr
+
+  -- See Note [Sequential scoping of Let bindings]: the body's index 0
+  -- picks the *last* binding of a name, like let*.
+  it "resolves the body scope innermost-first (let*)" $ hedgehog do
+    let x = Name "x"
+        expr =
+          lets
+            ( Standalone (noAnn, x, literalInt 1)
+                :| [Standalone (noAnn, x, literalInt 2)]
+            )
+            (refLocal x 0)
+        expected =
+          lets (Standalone (noAnn, x, literalInt 2) :| []) (refLocal x 0)
+    dceExpression expr === expected
+
+  -- Dropping a dead binder removes a slot from that name's De Bruijn
+  -- namespace, so references that skipped over it must be lowered,
+  -- mirroring the Abs case (issue #56).
+  it "unshifts the body after dropping a dead shadowing binder" $ hedgehog do
+    let x = Name "x"
+        expr =
+          lets
+            (Standalone (noAnn, x, literalInt 1) :| [])
+            ( lets
+                (Standalone (noAnn, x, exception "dead") :| [])
+                (refLocal x 1)
+            )
+        expected =
+          lets (Standalone (noAnn, x, literalInt 1) :| []) (refLocal x 0)
+    dceExpression expr === expected
+
+  it "unshifts later sibling RHSs after dropping a dead binder" $ hedgehog do
+    let x = Name "x"
+        y = Name "y"
+        expr =
+          lets
+            (Standalone (noAnn, x, literalInt 1) :| [])
+            ( lets
+                ( Standalone (noAnn, x, exception "dead")
+                    :| [Standalone (noAnn, y, refLocal x 1)]
+                )
+                (refLocal y 0)
+            )
+        expected =
+          lets
+            (Standalone (noAnn, x, literalInt 1) :| [])
+            ( lets
+                (Standalone (noAnn, y, refLocal x 0) :| [])
+                (refLocal y 0)
+            )
+    dceExpression expr === expected
+
+  it "unshifts after dropping a dead recursive-group member" $ hedgehog do
+    let x = Name "x"
+        y = Name "y"
+        expr =
+          lets
+            (Standalone (noAnn, x, literalInt 1) :| [])
+            ( lets
+                ( RecursiveGroup
+                    ( (noAnn, x, exception "dead")
+                        :| [(noAnn, y, abstraction paramUnused (refLocal y 0))]
+                    )
+                    :| []
+                )
+                (application (refLocal y 0) (refLocal x 1))
+            )
+        expected =
+          lets
+            (Standalone (noAnn, x, literalInt 1) :| [])
+            ( lets
+                ( RecursiveGroup
+                    ((noAnn, y, abstraction paramUnused (refLocal y 0)) :| [])
+                    :| []
+                )
+                (application (refLocal y 0) (refLocal x 0))
+            )
+    dceExpression expr === expected
 
 --------------------------------------------------------------------------------
 -- Helpers ---------------------------------------------------------------------
