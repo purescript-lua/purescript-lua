@@ -57,6 +57,36 @@ to implement them.
 
 Keys must be unique across the whole chunk for the graph to be well formed;
 'assignKeys' guarantees that with a single monotonic counter.
+
+Known defects (backend audit, 2026-07-02) to address before wiring this pass
+back into the pipeline (it was unplugged from 'compileModules' in 189173d,
+Jul 2023, when the IR-level DCE over the UberModule took over):
+
+  * 'PreserveReturned' eliminates every top-level binding under the current
+    codegen shape: bindings are emitted as field assignments
+    (@M.Main_foo = ...@, an 'Assign' with a 'VarField' LHS), but incoming
+    edges for assignments are only created by 'findAssignments', which
+    matches @Assign (VarName ...)@ exclusively. Demonstrated:
+    [local M = {}; M.Main_foo = 42; return M.Main_foo()] loses the
+    assignment and calls nil at runtime.
+
+  * The 'MonadScopes' bookkeeping is shape-dependent: 'beforeStat' pushes
+    two scopes for 'IfThenElse' while scopes are popped on 'Return'
+    statements ('afterStat'), so balance relies on every branch and every
+    function body ending in a return.
+
+  * A 'Local' is annotated with a scope that already contains the name it
+    binds, so @local x = x@ resolves the RHS to itself instead of the outer
+    binder (Lua evaluates the initializer in the scope without the new
+    local).
+
+  * 'findAssignments' searches subsequent statements by name only, across
+    nested chunks, without consulting scopes: assignments to a shadowing
+    inner local are attributed to the outer one (over-retention).
+
+All of the above is currently masked by the unique-naming invariant that
+'renameShadowedNames' establishes at the IR level, and none of it is
+exercised by the pipeline.
 -}
 
 -- See Note [Graph-based dead code elimination for Lua]
