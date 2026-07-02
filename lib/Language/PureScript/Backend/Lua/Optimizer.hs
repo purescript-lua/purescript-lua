@@ -54,8 +54,11 @@ optimizeExpression = foldr (>>>) identity rewriteRulesInOrder
 
 rewriteRulesInOrder ∷ [RewriteRule]
 rewriteRulesInOrder =
-  [ pushDeclarationsDownTheInnerScope
-  , removeScopeWhenInsideEmptyFunction
+  -- 'pushDeclarationsDownTheInnerScope' is deliberately not applied: it moved
+  -- let-bound work from partial application into every call of the returned
+  -- function, losing sharing and delaying errors. It is to be superseded by
+  -- an IR-level float-in pass (issue #136).
+  [ removeScopeWhenInsideEmptyFunction
   , reduceTableDefinitionAccessor
   ]
 

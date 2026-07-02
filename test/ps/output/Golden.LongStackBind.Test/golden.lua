@@ -56,8 +56,8 @@ M.Data_Functor_map = function(dict) return dict.map end
 M.Control_Applicative_pure = function(dict) return dict.pure end
 M.Control_Bind_bind = function(dict) return dict.bind end
 M.Control_Monad_ap = function(dictMonad)
+  local bind = M.Control_Bind_bind(dictMonad.Bind1())
   return function(f)
-    local bind = M.Control_Bind_bind(dictMonad.Bind1())
     return function(a)
       return bind(f)(function(fPrime)
         return bind(a)(function(aPrime)
