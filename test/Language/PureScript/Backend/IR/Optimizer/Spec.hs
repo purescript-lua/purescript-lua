@@ -29,6 +29,7 @@ import Language.PureScript.Backend.IR.Types
   , abstraction
   , application
   , eq
+  , exception
   , ifThenElse
   , isLiteral
   , lets
@@ -473,6 +474,68 @@ spec = describe "IR Optimizer" do
                       (application (refLocal nameB1 0) (refLocal nameB 0))
                   )
               )
+      renameShadowedNamesInExpr mempty original === renamed
+
+    -- Member order of a recursive group is the initialization order
+    -- computed by the laziness transform; renaming must not disturb it.
+    test "preserves member order of local recursive groups" do
+      let x = Name "x"
+          y = Name "y"
+          original =
+            lets
+              ( RecursiveGroup
+                  ( (noAnn, x, abstraction paramUnused (refLocal y 0))
+                      :| [(noAnn, y, literalObject [(PropName "foo", refLocal x 0)])]
+                  )
+                  :| []
+              )
+              (refLocal y 0)
+      renameShadowedNamesInExpr mempty original === original
+
+    -- See Note [Sequential scoping of Let bindings]: a recursive group
+    -- member's RHS sees every member of its own group, itself included,
+    -- so renaming the binder must rename those references too.
+    test "renames self-references inside a shadowing recursive group" do
+      let x = Name "x"
+          x1 = Name "x1"
+          original =
+            abstraction (paramNamed x) $
+              lets
+                ( RecursiveGroup
+                    ((noAnn, x, application (exception "f") (refLocal x 0)) :| [])
+                    :| []
+                )
+                (refLocal x 0)
+          renamed =
+            abstraction (paramNamed x) $
+              lets
+                ( RecursiveGroup
+                    ((noAnn, x1, application (exception "f") (refLocal x1 0)) :| [])
+                    :| []
+                )
+                (refLocal x1 0)
+      renameShadowedNamesInExpr mempty original === renamed
+
+    test "renames forward references inside a shadowing recursive group" do
+      let x = Name "x"
+          y = Name "y"
+          x1 = Name "x1"
+          original =
+            abstraction (paramNamed x) $
+              lets
+                ( RecursiveGroup
+                    ((noAnn, y, refLocal x 0) :| [(noAnn, x, literalInt 1)])
+                    :| []
+                )
+                (application (refLocal y 0) (refLocal x 1))
+          renamed =
+            abstraction (paramNamed x) $
+              lets
+                ( RecursiveGroup
+                    ((noAnn, y, refLocal x1 0) :| [(noAnn, x1, literalInt 1)])
+                    :| []
+                )
+                (application (refLocal y 0) (refLocal x 0))
       renameShadowedNamesInExpr mempty original === renamed
 
 --------------------------------------------------------------------------------

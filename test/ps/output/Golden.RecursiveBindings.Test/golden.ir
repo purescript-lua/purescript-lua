@@ -4,38 +4,38 @@ UberModule
       ( Name "letRec", Let Nothing
         ( RecursiveGroup
           (
-            ( Nothing, Name "no", Abs Nothing
+            ( Nothing, Name "yes", Abs Nothing
               ( ParamNamed Nothing ( Name "v" ) )
               ( IfThenElse Nothing
                 ( Ref Nothing ( Local ( Name "v" ) ) 0 )
                 ( App Nothing
-                  ( Ref Nothing ( Local ( Name "yes" ) ) 0 ) ( LiteralBool Nothing False )
+                  ( Ref Nothing ( Local ( Name "no" ) ) 0 ) ( LiteralBool Nothing False )
                 )
                 ( IfThenElse Nothing
                   ( Eq Nothing ( LiteralBool Nothing False )
                     ( Ref Nothing ( Local ( Name "v" ) ) 0 )
                   )
                   ( App Nothing
-                    ( Ref Nothing ( Local ( Name "yes" ) ) 0 ) ( LiteralBool Nothing True )
+                    ( Ref Nothing ( Local ( Name "no" ) ) 0 ) ( LiteralBool Nothing True )
                   )
                   ( Exception Nothing "No patterns matched" )
                 )
               )
             ) :|
             [
-              ( Nothing, Name "yes", Abs Nothing
+              ( Nothing, Name "no", Abs Nothing
                 ( ParamNamed Nothing ( Name "v" ) )
                 ( IfThenElse Nothing
                   ( Ref Nothing ( Local ( Name "v" ) ) 0 )
                   ( App Nothing
-                    ( Ref Nothing ( Local ( Name "no" ) ) 0 ) ( LiteralBool Nothing False )
+                    ( Ref Nothing ( Local ( Name "yes" ) ) 0 ) ( LiteralBool Nothing False )
                   )
                   ( IfThenElse Nothing
                     ( Eq Nothing ( LiteralBool Nothing False )
                       ( Ref Nothing ( Local ( Name "v" ) ) 0 )
                     )
                     ( App Nothing
-                      ( Ref Nothing ( Local ( Name "no" ) ) 0 ) ( LiteralBool Nothing True )
+                      ( Ref Nothing ( Local ( Name "yes" ) ) 0 ) ( LiteralBool Nothing True )
                     )
                     ( Exception Nothing "No patterns matched" )
                   )
@@ -49,38 +49,38 @@ UberModule
       ( Name "whereRec", Let Nothing
         ( RecursiveGroup
           (
-            ( Nothing, Name "no", Abs Nothing
+            ( Nothing, Name "yes", Abs Nothing
               ( ParamNamed Nothing ( Name "v" ) )
               ( IfThenElse Nothing
                 ( Ref Nothing ( Local ( Name "v" ) ) 0 )
                 ( App Nothing
-                  ( Ref Nothing ( Local ( Name "yes" ) ) 0 ) ( LiteralBool Nothing False )
+                  ( Ref Nothing ( Local ( Name "no" ) ) 0 ) ( LiteralBool Nothing False )
                 )
                 ( IfThenElse Nothing
                   ( Eq Nothing ( LiteralBool Nothing False )
                     ( Ref Nothing ( Local ( Name "v" ) ) 0 )
                   )
                   ( App Nothing
-                    ( Ref Nothing ( Local ( Name "yes" ) ) 0 ) ( LiteralBool Nothing True )
+                    ( Ref Nothing ( Local ( Name "no" ) ) 0 ) ( LiteralBool Nothing True )
                   )
                   ( Exception Nothing "No patterns matched" )
                 )
               )
             ) :|
             [
-              ( Nothing, Name "yes", Abs Nothing
+              ( Nothing, Name "no", Abs Nothing
                 ( ParamNamed Nothing ( Name "v" ) )
                 ( IfThenElse Nothing
                   ( Ref Nothing ( Local ( Name "v" ) ) 0 )
                   ( App Nothing
-                    ( Ref Nothing ( Local ( Name "no" ) ) 0 ) ( LiteralBool Nothing False )
+                    ( Ref Nothing ( Local ( Name "yes" ) ) 0 ) ( LiteralBool Nothing False )
                   )
                   ( IfThenElse Nothing
                     ( Eq Nothing ( LiteralBool Nothing False )
                       ( Ref Nothing ( Local ( Name "v" ) ) 0 )
                     )
                     ( App Nothing
-                      ( Ref Nothing ( Local ( Name "no" ) ) 0 ) ( LiteralBool Nothing True )
+                      ( Ref Nothing ( Local ( Name "yes" ) ) 0 ) ( LiteralBool Nothing True )
                     )
                     ( Exception Nothing "No patterns matched" )
                   )
@@ -96,16 +96,16 @@ UberModule
           ( Nothing, Name "z", LiteralInt Nothing 1 ) :|
           [ RecursiveGroup
             (
-              ( Nothing, Name "a", Abs Nothing ( ParamUnused Nothing )
+              ( Nothing, Name "b", Abs Nothing ( ParamUnused Nothing )
                 ( App Nothing
-                  ( Ref Nothing ( Local ( Name "b" ) ) 0 )
+                  ( Ref Nothing ( Local ( Name "a" ) ) 0 )
                   ( Ref Nothing ( Local ( Name "z" ) ) 0 )
                 )
               ) :|
               [
-                ( Nothing, Name "b", Abs Nothing ( ParamUnused Nothing )
+                ( Nothing, Name "a", Abs Nothing ( ParamUnused Nothing )
                   ( App Nothing
-                    ( Ref Nothing ( Local ( Name "a" ) ) 0 )
+                    ( Ref Nothing ( Local ( Name "b" ) ) 0 )
                     ( Ref Nothing ( Local ( Name "z" ) ) 0 )
                   )
                 )

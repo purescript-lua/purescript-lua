@@ -184,16 +184,29 @@ renameShadowedNamesInExpr scope = go
             let expr' = renameShadowedNamesInExpr sc expr
              in (sc', Standalone (ann', name', expr') : bs)
         RecursiveGroup (toList → recGroup) →
-          (: bs) . RecursiveGroup . NE.fromList <$> foldl' g (sc, []) recGroup
+          -- Every member's RHS sees every member of its own group, itself
+          -- included (see Note [Sequential scoping of Let bindings]), so
+          -- first bring all the members into scope, then rename the RHSs.
+          -- Member order is preserved: it is the initialization order
+          -- computed by the laziness transform.
+          (groupScope, RecursiveGroup (NE.fromList recGroup') : bs)
          where
-          g
-            ∷ (RenamesInScope, [(Ann, Name, Exp)])
-            → (Ann, Name, Exp)
-            → (RenamesInScope, [(Ann, Name, Exp)])
-          g (sc', recBinds) (ann', name, expr) =
-            withScopedName expr sc' name & \(name', sc'') →
-              let expr' = renameShadowedNamesInExpr sc' expr
-               in (sc'', (ann', name', expr') : recBinds)
+          boundNames ∷ Set Name
+          boundNames =
+            foldMap (\(_ann, _name, expr) → collectBoundNames expr) recGroup
+          groupScope ∷ RenamesInScope
+          names' ∷ [Name]
+          (groupScope, reverse → names') = foldl' g (sc, []) recGroup
+          g (sc', names) (_ann, name, _expr) =
+            withScopedNameAvoiding boundNames sc' name & \(name', sc'') →
+              (sc'', name' : names)
+          recGroup' =
+            zipWith
+              ( \name' (ann', _name, expr) →
+                  (ann', name', renameShadowedNamesInExpr groupScope expr)
+              )
+              names'
+              recGroup
       body' = renameShadowedNamesInExpr scope' body
     IfThenElse ann i t e →
       IfThenElse ann (go i) (go t) (go e)
@@ -205,7 +218,11 @@ renameShadowedNamesInExpr scope = go
       ForeignImport ann m p ns
    where
     withScopedName ∷ Exp → Map Name [Name] → Name → (Name, Map Name [Name])
-    withScopedName e sc name =
+    withScopedName e = withScopedNameAvoiding (collectBoundNames e)
+
+    withScopedNameAvoiding
+      ∷ Set Name → Map Name [Name] → Name → (Name, Map Name [Name])
+    withScopedNameAvoiding boundNames sc name =
       case Map.lookup name sc of
         Nothing → (name, Map.insert name [name] sc)
         Just renames →
@@ -214,7 +231,7 @@ renameShadowedNamesInExpr scope = go
           )
          where
           nextIndex = length renames
-          usedNames = Map.keysSet sc <> collectBoundNames e
+          usedNames = Map.keysSet sc <> boundNames
           rename = uniqueName usedNames name nextIndex
 
     uniqueName ∷ Set Name → Name → Int → Name
