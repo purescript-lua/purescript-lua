@@ -45,6 +45,11 @@ compileModules outputDir foreignDir appOrModule = do
   -- See Note [The PSLUA_runtime_lazy coupling] in Language.PureScript.Names
   let needsRuntimeLazy = Tagged (any untag needsRuntimeLazys)
   chunk ← Lua.fromUberModule foreignDir needsRuntimeLazy appOrModule uberModule
+  -- A Lua-level DCE pass used to run here, between codegen and 'optimizeChunk'
+  -- (unplugged in 189173d when the IR-level DCE inside 'optimizedUberModule'
+  -- took over). The unfinished module is parked on the 'lua-dce-wip' branch;
+  -- its known defects are documented there in
+  -- Note [Graph-based dead code elimination for Lua].
   let optimizedChunk = optimizeChunk chunk
   -- Safety net: reject a chunk that nests too deeply for Lua 5.1's parser
   -- rather than emit Lua that cannot be loaded (issue #104). Catches whatever

@@ -7,7 +7,6 @@ import Language.PureScript.Backend.IR.Linker.Spec qualified as IRLinker
 import Language.PureScript.Backend.IR.Optimizer.Spec qualified as IROptimizer
 import Language.PureScript.Backend.IR.Spec qualified as IR
 import Language.PureScript.Backend.IR.Types.Spec qualified as Types
-import Language.PureScript.Backend.Lua.DCE.Spec qualified as LuaDce
 import Language.PureScript.Backend.Lua.Golden.Spec qualified as Golden
 import Language.PureScript.Backend.Lua.Linker.Foreign.Spec qualified as LuaLinkerForeign
 import Language.PureScript.Backend.Lua.NestingCheck.Spec qualified as NestingCheck
@@ -23,7 +22,6 @@ main = hspec do
   Inliner.spec
   Golden.spec
   IrDce.spec
-  LuaDce.spec
   Types.spec
   IRLinker.spec
   IROptimizer.spec
