@@ -1,0 +1,35 @@
+local function PSLUA_runtime_lazy(name)
+  return function(init)
+    local state = 0
+    local val = nil
+    return function()
+      if state == 2 then
+        return val
+      else
+        if state == 1 then
+          return error(name .. " was needed before it finished initializing")
+        else
+          state = 1
+          val = init()
+          state = 2
+          return val
+        end
+      end
+    end
+  end
+end
+local M = {}
+M.Golden_RecGroupOrder_Test_store = function(f)
+  return { run = f, tag = "ok!" }
+end
+return (function()
+  local Lazy_record
+  local record
+  Lazy_record = PSLUA_runtime_lazy("record")(function()
+    return M.Golden_RecGroupOrder_Test_store(function()
+      return (Lazy_record(0)).tag
+    end)
+  end)
+  record = Lazy_record(0)
+  return (function(s) return function() print(s) end end)(record.run({}))
+end)()()
