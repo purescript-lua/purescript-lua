@@ -97,8 +97,8 @@ M.Data_Eq_Generic_genericEqConstructor = function(dictGenericEq)
   }
 end
 M.Data_Eq_Generic_genericEq = function(dictGeneric)
+  local from = dictGeneric.from
   return function(dictGenericEq)
-    local from = dictGeneric.from
     return function(x)
       return function(y)
         return M.Data_Eq_Generic_genericEqPrime(dictGenericEq)(from(x))(from(y))
@@ -130,8 +130,8 @@ end)
 M.Effect_Lazy_applyEffect = PSLUA_runtime_lazy("applyEffect")(function()
   return {
     apply = (function()
+      local bind = M.Control_Bind_bind(M.Effect_monadEffect.Bind1())
       return function(f)
-        local bind = M.Control_Bind_bind(M.Effect_monadEffect.Bind1())
         return function(a)
           return bind(f)(function(fPrime)
             return bind(a)(function(aPrime)

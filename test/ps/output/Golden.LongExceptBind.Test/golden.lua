@@ -118,8 +118,8 @@ end
 M.Control_Monad_Except_Trans_applyExceptT = function(dictMonad)
   return {
     apply = (function()
+      local bind = M.Control_Bind_bind((M.Control_Monad_Except_Trans_monadExceptT(dictMonad)).Bind1())
       return function(f)
-        local bind = M.Control_Bind_bind((M.Control_Monad_Except_Trans_monadExceptT(dictMonad)).Bind1())
         return function(a)
           return bind(f)(function(fPrime)
             return bind(a)(function(aPrime)

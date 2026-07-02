@@ -64,8 +64,8 @@ end
 M.Control_Monad_State_Trans_applyStateT = function(dictMonad)
   return {
     apply = (function()
+      local bind = M.Control_Bind_bind((M.Control_Monad_State_Trans_monadStateT(dictMonad)).Bind1())
       return function(f)
-        local bind = M.Control_Bind_bind((M.Control_Monad_State_Trans_monadStateT(dictMonad)).Bind1())
         return function(a)
           return bind(f)(function(fPrime)
             return bind(a)(function(aPrime)

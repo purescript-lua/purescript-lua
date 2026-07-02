@@ -102,8 +102,8 @@ end)
 M.Effect_Lazy_applyEffect = PSLUA_runtime_lazy("applyEffect")(function()
   return {
     apply = (function()
+      local bind = M.Control_Bind_bind(M.Effect_monadEffect.Bind1())
       return function(f)
-        local bind = M.Control_Bind_bind(M.Effect_monadEffect.Bind1())
         return function(a)
           return bind(f)(function(fPrime)
             return bind(a)(function(aPrime)
@@ -122,12 +122,12 @@ M.Effect_Console_logShow = function(dictShow)
   end
 end
 return (function()
+  local arr = {
+    [1] = M.Data_Unit_foreign.unit,
+    [2] = M.Data_Unit_foreign.unit,
+    [3] = M.Data_Unit_foreign.unit
+  }
   return function()
-    local arr = {
-      [1] = M.Data_Unit_foreign.unit,
-      [2] = M.Data_Unit_foreign.unit,
-      [3] = M.Data_Unit_foreign.unit
-    }
     local _ = M.Data_Foldable_foldr(M.Data_Foldable_foldableArray)(M.Control_Semigroupoid_semigroupoidFn.compose(function( a )
       return function(b)
         return M.Control_Apply_apply(M.Effect_applicativeEffect.Apply0())(((M.Effect_applicativeEffect.Apply0()).Functor0()).map(function(  )
