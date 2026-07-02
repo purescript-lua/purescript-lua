@@ -139,25 +139,62 @@ eliminateDeadCode uber@UberModule {..} =
               ParamUnused pann → (ParamUnused pann, b)
               ParamNamed pann name → (ParamUnused pann, unshift name 0 b)
         Let ann binds body →
-          Rewritten Recurse case NE.nonEmpty preservedBinds of
-            Nothing → body
-            Just bs → Let ann bs body
+          Rewritten Recurse case preserveLetBinds (toList binds) body of
+            ([], body') → body'
+            (b : bs, body') → Let ann (b :| bs) body'
          where
-          preservedBinds ∷ [Grouping ((Id, Ann), Name, AExp)]
-          preservedBinds =
-            toList binds >>= \case
-              b@(Standalone ((expId, _ann), _name, _expr)) →
-                [b | expId `member` reachableIds]
-              RecursiveGroup recBinds →
-                case NE.nonEmpty preservedRecBinds of
-                  Nothing → []
-                  Just pb → [RecursiveGroup pb]
+          -- Dropping a dead binder removes a slot from that name's De Bruijn
+          -- namespace, so references in the rest of the Let (later grouping
+          -- RHSs and the body) that skipped over it must be lowered, just as
+          -- in the Abs case above (issue #56). 'unshiftTail' reuses the
+          -- 'unshift' traversal by wrapping the rest back into a Let, so the
+          -- scope threading follows Note [Sequential scoping of Let bindings]
+          -- instead of being re-implemented here.
+          preserveLetBinds
+            ∷ [Grouping ((Id, Ann), Name, AExp)]
+            → AExp
+            → ([Grouping ((Id, Ann), Name, AExp)], AExp)
+          preserveLetBinds groupings body' = case groupings of
+            [] → ([], body')
+            g : gs → case g of
+              Standalone ((expId, _ann), name, _expr)
+                | not (expId `member` reachableIds) →
+                    uncurry preserveLetBinds (unshiftTail name gs body')
+              RecursiveGroup recBinds
+                | not (null droppedNames) →
+                    uncurry preserveLetBinds $
+                      foldl'
+                        (\(tailGs, tailBody) n → unshiftTail n tailGs tailBody)
+                        (remainingGs, body')
+                        droppedNames
                where
-                preservedRecBinds =
+                droppedNames =
+                  [ name
+                  | ((nameId, _ann), name, _) ← toList recBinds
+                  , not (nameId `member` reachableIds)
+                  ]
+                keptBinds =
                   [ b
-                  | b@((nameId, _ann), _, _) ← toList recBinds
+                  | b@((nameId, _), _, _) ← toList recBinds
                   , nameId `member` reachableIds
                   ]
+                remainingGs =
+                  case NE.nonEmpty keptBinds of
+                    Nothing → gs
+                    Just kept → RecursiveGroup kept : gs
+              _keep → first (g :) (preserveLetBinds gs body')
+
+          unshiftTail
+            ∷ Name
+            → [Grouping ((Id, Ann), Name, AExp)]
+            → AExp
+            → ([Grouping ((Id, Ann), Name, AExp)], AExp)
+          unshiftTail name gs body' = case NE.nonEmpty gs of
+            Nothing → ([], unshift name 0 body')
+            Just neGs → case unshift name 0 (Let (getAnn body') neGs body') of
+              Let _ann gs' body'' → (toList gs', body'')
+              -- 'unshift' ('overFreeIndex') preserves expression structure.
+              other → (toList neGs, other)
         _ → NoChange
 
   reachableIds ∷ Set Id =
@@ -307,13 +344,13 @@ eliminateDeadCode uber@UberModule {..} =
                 (mkNode paramId [])
                 (adjacencyListForExpr (addLocalToScope paramId name 0 scope) b)
         Let _ann groupings body →
-          adjacencyListForExpr scope' body
-            <> snd (foldl' adjacencyListForGrouping (scope, mempty) groupings)
+          adjacencyListForExpr bodyScope body <> groupingsAdjacency
          where
-          scope' = foldr addToScope scope (listGrouping =<< toList groupings)
-          addToScope ∷ ((Id, ann), Name, expr) → Scope → Scope
-          addToScope ((nameId, _ann), name, _expr) =
-            addLocalToScope nameId name 0
+          -- The body resolves references against the scope threaded through
+          -- the groupings left to right, so its index 0 picks the *last*
+          -- binding of a name (see Note [Sequential scoping of Let bindings]).
+          (bodyScope, groupingsAdjacency) =
+            foldl' adjacencyListForGrouping (scope, mempty) groupings
    where
     -- See Note [Sequential scoping of Let bindings]
     adjacencyListForGrouping
