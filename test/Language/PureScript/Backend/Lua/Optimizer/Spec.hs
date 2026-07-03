@@ -4,8 +4,7 @@ module Language.PureScript.Backend.Lua.Optimizer.Spec where
 
 import Language.PureScript.Backend.Lua.Name (name)
 import Language.PureScript.Backend.Lua.Optimizer
-  ( pushDeclarationsDownTheInnerScope
-  , removeScopeWhenInsideEmptyFunction
+  ( removeScopeWhenInsideEmptyFunction
   , rewriteExpWithRule
   )
 import Language.PureScript.Backend.Lua.Types (ParamF (..))
@@ -38,30 +37,3 @@ spec = describe "Lua AST Optimizer" do
               ]
       assertEqual (toString $ pShow original) expected $
         rewriteExpWithRule removeScopeWhenInsideEmptyFunction original
-
-    it "pushes declarations down into an inner scope" do
-      let original ∷ Lua.Exp =
-            Lua.functionDef
-              [ParamNamed [name|a|], ParamNamed [name|b|]]
-              [ Lua.local1 [name|i|] (Lua.Integer 42)
-              , Lua.local1 [name|j|] (Lua.Integer 43)
-              , Lua.return
-                  ( Lua.functionDef
-                      [ParamNamed [name|d|]]
-                      [Lua.return (Lua.varName [name|c|])]
-                  )
-              ]
-          expected ∷ Lua.Exp =
-            Lua.functionDef
-              [ParamNamed [name|a|], ParamNamed [name|b|]]
-              [ Lua.return
-                  ( Lua.functionDef
-                      [ParamNamed [name|d|]]
-                      [ Lua.local1 [name|i|] (Lua.Integer 42)
-                      , Lua.local1 [name|j|] (Lua.Integer 43)
-                      , Lua.return (Lua.varName [name|c|])
-                      ]
-                  )
-              ]
-      assertEqual (toString $ pShow @Lua.Exp original) expected $
-        rewriteExpWithRule pushDeclarationsDownTheInnerScope original

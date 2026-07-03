@@ -1,7 +1,6 @@
 module Language.PureScript.Backend.Lua.Optimizer where
 
 import Control.Monad.Trans.Accum (Accum, add, execAccum)
-import Data.List qualified as List
 import Data.Map qualified as Map
 import Language.PureScript.Backend.Lua.Name qualified as Lua
 import Language.PureScript.Backend.Lua.Traversal
@@ -15,16 +14,12 @@ import Language.PureScript.Backend.Lua.Types
   , Exp
   , ExpF (..)
   , Statement
-  , StatementF (Local, Return)
+  , StatementF (Return)
   , TableRowF (..)
   , VarF (..)
-  , functionDef
-  , return
-  , unAnn
   , pattern Ann
   )
 import Language.PureScript.Backend.Lua.Types qualified as Lua
-import Prelude hiding (return)
 
 optimizeChunk ∷ Chunk → Chunk
 optimizeChunk = fmap optimizeStatement
@@ -54,10 +49,6 @@ optimizeExpression = foldr (>>>) identity rewriteRulesInOrder
 
 rewriteRulesInOrder ∷ [RewriteRule]
 rewriteRulesInOrder =
-  -- 'pushDeclarationsDownTheInnerScope' is deliberately not applied: it moved
-  -- let-bound work from partial application into every call of the returned
-  -- function, losing sharing and delaying errors. It is to be superseded by
-  -- an IR-level float-in pass (issue #136).
   [ removeScopeWhenInsideEmptyFunction
   , reduceTableDefinitionAccessor
   ]
@@ -69,28 +60,6 @@ rewriteExpWithRule rule = everywhereExp rule identity
 
 --------------------------------------------------------------------------------
 -- Rewrite rules for expressions -----------------------------------------------
-
-pushDeclarationsDownTheInnerScope ∷ RewriteRule
-pushDeclarationsDownTheInnerScope = \case
-  Function outerArgs outerBody
-    | Just lastStatement ← viaNonEmpty last outerBody
-    , Ann (Return (Ann (Function innerArgs innerBody))) ← lastStatement
-    , declarations ← unAnn <$> List.init outerBody
-    , not (null declarations)
-    , all isDeclaration declarations →
-        functionDef
-          (fmap unAnn outerArgs)
-          [ return $
-              functionDef
-                (fmap unAnn innerArgs)
-                (declarations <> fmap unAnn innerBody)
-          ]
-  e → e
- where
-  isDeclaration ∷ Statement → Bool
-  isDeclaration = \case
-    Local _ _ → True
-    _ → False
 
 removeScopeWhenInsideEmptyFunction ∷ RewriteRule
 removeScopeWhenInsideEmptyFunction = \case
