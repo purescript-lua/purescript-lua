@@ -1,8 +1,8 @@
 {- | Float a 'Let'-bound value down into the single 'IfThenElse' branch that
 uses it (issue #136).
 
-The Lua-AST rule this pass replaces,
-@Language.PureScript.Backend.Lua.Optimizer.pushDeclarationsDownTheInnerScope@,
+The Lua-AST rule this pass replaces (formerly called
+@pushDeclarationsDownTheInnerScope@),
 sank a declaration into the body of the /returned/ lambda: every call
 re-evaluated the moved-in work, losing sharing, and a value whose evaluation
 used to be unconditional started throwing only when the function was
