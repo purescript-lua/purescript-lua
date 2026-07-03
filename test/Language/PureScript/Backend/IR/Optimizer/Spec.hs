@@ -8,7 +8,12 @@ import Language.PureScript.Backend.IR.Gen qualified as Gen
 import Language.PureScript.Backend.IR.Inliner (Annotation (Never))
 import Language.PureScript.Backend.IR.Linker (LinkMode (..))
 import Language.PureScript.Backend.IR.Linker qualified as Linker
-import Language.PureScript.Backend.IR.Linter (lintWellScoped, unboundLocals)
+import Language.PureScript.Backend.IR.Linter
+  ( lintIndicesZero
+  , lintUniqueBinders
+  , lintWellScoped
+  , unboundLocals
+  )
 import Language.PureScript.Backend.IR.Names
   ( Name (..)
   , PropName (..)
@@ -356,6 +361,9 @@ spec = describe "IR Optimizer" do
                 , Linker.uberModuleExports = [(Name "root", e)]
                 }
       lintWellScoped optimized === []
+      -- The full pipeline ends GUC-clean, not merely well-scoped:
+      lintUniqueBinders optimized === []
+      lintIndicesZero optimized === []
 
 --------------------------------------------------------------------------------
 -- Helpers ---------------------------------------------------------------------

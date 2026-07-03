@@ -8,6 +8,7 @@ import Language.PureScript.Backend.IR.Names
   , Name (..)
   , Qualified (Imported, Local)
   )
+import Language.PureScript.Backend.IR.Supply (freshName, runSupply)
 import Language.PureScript.Backend.IR.Types
   ( Exp
   , Grouping (..)
@@ -16,6 +17,7 @@ import Language.PureScript.Backend.IR.Types
   , application
   , countFreeRef
   , countFreeRefs
+  , freshenBinders
   , lets
   , literalInt
   , noAnn
@@ -23,8 +25,11 @@ import Language.PureScript.Backend.IR.Types
   , paramUnused
   , refImported
   , refLocal
+  , substituteCopyM
+  , substituteMoveM
   )
-import Test.Hspec (Spec, SpecWith, describe, it)
+import Language.PureScript.Backend.IR.Uniquify (uniquifyNamesInExpr)
+import Test.Hspec (Spec, SpecWith, describe, it, shouldBe)
 import Test.Hspec.Hedgehog (hedgehog, modifyMaxShrinks, modifyMaxSuccess)
 import Test.Hspec.Hedgehog.Extended (test)
 
@@ -134,6 +139,64 @@ spec = describe "Types" do
             (literalInt 1)
         )
         === True
+
+  describe "freshenBinders" do
+    let x = Name "x"
+        y = Name "y"
+
+    it "renames binders and their references, not free references" do
+      -- λx. x y: the binder x is freshened, the free y is untouched.
+      runSupply
+        ( freshenBinders
+            ( abstraction
+                (paramNamed x)
+                (application (refLocal x 0) (refLocal y 0))
+            )
+        )
+        `shouldBe` abstraction
+          (paramNamed (Name "x$0"))
+          (application (refLocal (Name "x$0") 0) (refLocal y 0))
+
+    prop "is an alpha-renaming of GUC-shaped input" do
+      e ← forAll Gen.scopedExp
+      let guc = uniquifyNamesInExpr e
+          freshened = runSupply (freshenBinders guc)
+      annotateShow freshened
+      alphaEq guc freshened === True
+
+  describe "substituteCopyM / substituteMoveM" do
+    let x = Name "x"
+        y = Name "y"
+        identityY = abstraction (paramNamed y) (refLocal y 0)
+        twice = application (refLocal x 0) (refLocal x 0)
+
+    it "copy: freshens every inserted occurrence" do
+      runSupply (substituteCopyM (Local x) identityY twice)
+        `shouldBe` application
+          (abstraction (paramNamed (Name "y$0")) (refLocal (Name "y$0") 0))
+          (abstraction (paramNamed (Name "y$1")) (refLocal (Name "y$1") 0))
+
+    it "move: keeps the first occurrence verbatim, freshens the rest" do
+      runSupply (substituteMoveM (Local x) identityY twice)
+        `shouldBe` application
+          identityY
+          (abstraction (paramNamed (Name "y$0")) (refLocal (Name "y$0") 0))
+
+    it "replaces occurrences without descending into insertions" do
+      -- x := y x — the replacement's own reference to x must survive
+      -- (a self-referential top-level inlinee is the practical case).
+      let replacement = application (refLocal y 0) (refLocal x 0)
+      runSupply (substituteMoveM (Local x) replacement (refLocal x 0))
+        `shouldBe` replacement
+
+    it "draws no supply names when nothing matches" do
+      -- The optimize fixpoint converges and golden numbering stays
+      -- stable only because a zero-match substitution is a supply
+      -- no-op: see the haddock of 'substituteCopyM'.
+      let target = abstraction (paramNamed y) (refLocal y 0)
+      runSupply
+        ((,) <$> substituteCopyM (Local x) identityY target <*> freshName "k")
+        `shouldBe` (target, Name "k0")
 
 expr ∷ Exp
 expr =
