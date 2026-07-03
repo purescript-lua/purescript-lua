@@ -245,7 +245,7 @@ var = Var . ann
 assign ∷ Var → Exp → Statement
 assign v e = Assign (ann v) (ann e)
 
-assignVar :: Name -> Exp -> Statement
+assignVar ∷ Name → Exp → Statement
 assignVar name = assign (VarName name)
 
 local ∷ Name → Maybe Exp → Statement

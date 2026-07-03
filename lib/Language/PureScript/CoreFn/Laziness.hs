@@ -9,6 +9,7 @@ import Data.Graph (SCC (..), stronglyConnComp)
 import Data.IntMap.Monoidal qualified as IM
 import Data.IntSet qualified as IS
 import Data.List (foldl, (!!))
+import Data.List.NonEmpty qualified as NE
 import Data.Map.Monoidal qualified as M
 import Data.Semigroup (Max (..))
 import Data.Set qualified as S
@@ -31,7 +32,6 @@ import Language.PureScript.Names
   )
 import Language.PureScript.PSString (mkString)
 import Prelude hiding (force)
-import qualified Data.List.NonEmpty as NE
 
 {- Note [Laziness transform for recursive binding groups]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -432,9 +432,9 @@ searchReachable maxIdx lookupEdges = mrtFlatten . head <$> mem
     A.listArray
       (0, maxIdx)
       [ NE.fromList
-        [ cutLoops <*> fmap (IM.mapWithKey memoizedNode) . lookupEdges $ (i, f)
-        | f ← [toEnum 0 ..]
-        ]
+          [ cutLoops <*> fmap (IM.mapWithKey memoizedNode) . lookupEdges $ (i, f)
+          | f ← [toEnum 0 ..]
+          ]
       | i ← [0 .. maxIdx]
       ]
 
