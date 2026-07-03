@@ -135,6 +135,14 @@ entry pass — must implement this convention, and they must all agree:
 
   * 'countFreeRefs' threads the scope through the groupings left to right;
 
+  * 'alphaEq' resolves (name, index) pairs to binder positions the same
+    way, so it stays correct on shadowed input;
+
+  * the well-scopedness lint
+    ('Language.PureScript.Backend.IR.Linter.unboundLocals' — the
+    requires-contract of 'uniquifyNames' itself, so it must accept
+    exactly the pre-GUC shapes) counts binders per name the same way;
+
   * 'qualifyTopRefs' (Linker, ahead of the optimizer pipeline) decides
     whether a local reference escapes to a top-level binding by
     threading per-name depths the same way;
