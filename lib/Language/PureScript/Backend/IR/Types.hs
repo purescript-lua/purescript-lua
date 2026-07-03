@@ -12,12 +12,13 @@ import Language.PureScript.Backend.IR.Names
   ( CtorName (renderCtorName)
   , FieldName
   , ModuleName
-  , Name (Name)
+  , Name (Name, nameToText)
   , PropName
   , Qualified (..)
   , TyName (renderTyName)
   , runModuleName
   )
+import Language.PureScript.Backend.IR.Supply (SupplyM, freshName)
 import Prelude hiding (show)
 
 type Ann = Maybe Inliner.Annotation
@@ -127,34 +128,38 @@ For example (indices in brackets):
       a = g a[0] b[0]   -- a[0] is the FIRST binding, not itself
   in h a[0] a[1] b[0]   -- a[0] is the second binding, a[1] the first
 
-Every traversal that walks under Let binders must implement this
-convention, and they must all agree:
+Every traversal that walks under Let binders while indices can still be
+non-zero — i.e. anything at or upstream of
+'Language.PureScript.Backend.IR.Uniquify.uniquifyNames', the pipeline's
+entry pass — must implement this convention, and they must all agree:
 
-  * 'countFreeRefs', 'substitute' and 'shift' thread the scope through
-    the groupings left to right;
+  * 'countFreeRefs' threads the scope through the groupings left to right;
 
-  * 'qualifyTopRefs' decides whether a local reference escapes to a
-    top-level binding by threading per-name depths the same way;
+  * 'qualifyTopRefs' (Linker, ahead of the optimizer pipeline) decides
+    whether a local reference escapes to a top-level binding by
+    threading per-name depths the same way;
 
-  * 'renameShadowedNamesInExpr' resolves (name, index) pairs to fresh
-    unique names the same way (see also
-    Note [Locals are uniquely named after renameShadowedNames]);
+  * 'Language.PureScript.Backend.IR.Uniquify.uniquifyNamesInExpr'
+    resolves (name, index) pairs to fresh, site-wide unique names the
+    same way, establishing the global-uniqueness condition (GUC =
+    @UniqueBinders@ + @IndicesZero@, issue #139) that every later pass
+    requires and preserves.
 
-  * dead code elimination resolves references against the same
-    sequential scope ('adjacencyListForGrouping');
-
-  * the Lua code generator emits Standalone bindings of a Let as a
-    sequence of 'local' statements, which is exactly let* scoping on
-    the Lua side (the Let case of 'fromIR').
+Once GUC holds, a local reference resolves to its binder by name alone
+and every index is 0, so the convention above can no longer produce an
+ambiguous resolution — but 'uniquifyNames' itself, and everything
+upstream of it, must still get it right. The Lua code generator emits
+Standalone bindings of a Let as a sequence of 'local' statements, which
+is exactly let* scoping on the Lua side (the Let case of 'fromIR').
 
 Getting one of the walkers wrong miscompiles. Issue #37 was caused by
-shift/substitute/countFreeRefs implementing the opposite convention
-(own name bound in its own RHS, siblings ignored): inlining shifted a
-sibling-bound reference past its binder, DCE deleted the "unused"
-binder, and codegen rendered the dangling 'Ref (Local Bind1) 1' as an
-undefined Lua variable 'Bind11'. The golden test
-test/ps/src/Golden/Issue37/Test.purs and the "Let sequential (let*)
-scoping" tests pin the convention.
+the pre-GUC 'substitute'\/'shift' (since removed, issue #139)
+implementing the opposite convention (own name bound in its own RHS,
+siblings ignored): inlining shifted a sibling-bound reference past its
+binder, DCE deleted the "unused" binder, and codegen rendered the
+dangling 'Ref (Local Bind1) 1' as an undefined Lua variable 'Bind11'.
+The golden test test/ps/src/Golden/Issue37/Test.purs and the "Let
+sequential (let*) scoping" tests pin the convention.
 -}
 
 deriving stock instance Show ann ⇒ Show (RawExp ann)
@@ -799,220 +804,166 @@ alphaEq = go 0 Map.empty Map.empty
   freeIndex scope name (Index i) =
     i - fromIntegral (length (Map.findWithDefault [] name scope))
 
--- | Substitute the given variable name and index with an expression
-substitute
+{- | Rename every binder bound /within/ the expression to a fresh
+supply-minted name (@\<original\>$\<n\>@ — the @$@ cannot occur in a
+source identifier, so a mint can never collide with one), rewriting the
+references each binder binds. Free references — bound outside the
+expression — are untouched.
+
+Correct only under the GUC discipline (@UniqueBinders@ +
+@IndicesZero@): binders within the expression are unique and every
+local reference has index 0, so a reference belongs to a binder iff
+the names match, and the sequential scoping subtleties of
+Note [Sequential scoping of Let bindings] cannot be observed.
+'ParamUnused' binds nothing, and the name list of a 'ForeignImport'
+holds the export keys of the foreign source file, not binders —
+neither is renamed.
+-}
+freshenBinders ∷ ∀ ann. RawExp ann → SupplyM (RawExp ann)
+freshenBinders = go Map.empty
+ where
+  go ∷ Map Name Name → RawExp ann → SupplyM (RawExp ann)
+  go renames = \case
+    r@(Ref ann qname index)
+      | Local name ← qname
+      , Just renamed ← Map.lookup name renames →
+          pure (Ref ann (Local renamed) index)
+      | otherwise → pure r
+    Abs ann param body →
+      case param of
+        ParamUnused _paramAnn → Abs ann param <$> go renames body
+        ParamNamed paramAnn name → do
+          name' ← freshNameFor name
+          Abs ann (ParamNamed paramAnn name')
+            <$> go (Map.insert name name' renames) body
+    Let ann binds body → do
+      -- Under unique binders no Let name can be referenced before it is
+      -- bound, so all the groupings can enter the rename map up front.
+      renames' ←
+        foldlM
+          ( \rs name → do
+              name' ← freshNameFor name
+              pure (Map.insert name name' rs)
+          )
+          renames
+          (bindingNames =<< toList binds)
+      let renameBound (bindAnn, name, expr) =
+            (bindAnn,Map.findWithDefault name name renames',)
+              <$> go renames' expr
+      Let ann <$> traverse (traverse renameBound) binds <*> go renames' body
+    LiteralArray ann as →
+      LiteralArray ann <$> traverse (go renames) as
+    LiteralObject ann props →
+      LiteralObject ann <$> traverse (traverse (go renames)) props
+    ReflectCtor ann a →
+      ReflectCtor ann <$> go renames a
+    DataArgumentByIndex ann idx a →
+      DataArgumentByIndex ann idx <$> go renames a
+    Eq ann a b →
+      Eq ann <$> go renames a <*> go renames b
+    ArrayLength ann a →
+      ArrayLength ann <$> go renames a
+    ArrayIndex ann a idx →
+      ArrayIndex ann <$> go renames a <*> pure idx
+    ObjectProp ann a prop →
+      ObjectProp ann <$> go renames a <*> pure prop
+    ObjectUpdate ann a patches →
+      ObjectUpdate ann <$> go renames a <*> traverse (traverse (go renames)) patches
+    App ann a b →
+      App ann <$> go renames a <*> go renames b
+    IfThenElse ann p th el →
+      IfThenElse ann <$> go renames p <*> go renames th <*> go renames el
+    -- Terminals:
+    terminal → pure terminal
+
+  freshNameFor ∷ Name → SupplyM Name
+  freshNameFor name = freshName (nameToText name <> "$")
+
+{- | Substitution under the GUC discipline: replace every occurrence of
+the variable (necessarily at index 0) with the replacement. There is no
+scope threading and no index arithmetic: under unique binders the
+substituted name cannot be rebound inside the target, and the
+replacement's free references cannot be captured at any insertion
+point. Matched occurrences are replaced, never descended into, so a
+replacement referring to the substituted name itself is safe.
+
+Both variants keep 'UniqueBinders' intact when the replacement contains
+binders; they differ in what they assume about the /source/ of the
+replacement:
+
+  * 'substituteCopyM' — the source binding survives the rewrite (e.g. a
+    Let binding inlined into its body and removed only later, by DCE),
+    so every inserted copy is freshened with 'freshenBinders';
+
+  * 'substituteMoveM' — the source binder is consumed by the same
+    rewrite (e.g. the λ of a beta redex), so the first occurrence
+    receives the replacement verbatim and only further occurrences are
+    freshened.
+
+Zero matching occurrences ⇒ the target is returned unchanged and no
+supply names are drawn (freshening is per-occurrence, never eager):
+the optimize fixpoint relies on this to converge, and golden name
+numbering relies on it for stability.
+-}
+substituteCopyM
+  ∷ Qualified Name → RawExp ann → RawExp ann → SupplyM (RawExp ann)
+substituteCopyM = substituteFreshening True
+
+-- | See 'substituteCopyM'.
+substituteMoveM
+  ∷ Qualified Name → RawExp ann → RawExp ann → SupplyM (RawExp ann)
+substituteMoveM = substituteFreshening False
+
+substituteFreshening
   ∷ ∀ ann
-   . Qualified Name
-  -- ^ The name of the variable to replace
-  → Index
-  -- ^ The index of the variable to replace
+   . Bool
+  -- ^ Whether to freshen the first inserted occurrence too
+  → Qualified Name
   → RawExp ann
-  -- ^ The expression to substitute in place of the given variable
   → RawExp ann
-  -- ^ The expression to substitute into
-  → RawExp ann
-substitute name idx replacement = substitute' idx
+  → SupplyM (RawExp ann)
+substituteFreshening freshenFirst name replacement target =
+  evalStateT (go target) freshenFirst
  where
-  substitute' ∷ Index → RawExp ann → RawExp ann
-  substitute' index subExpression =
-    case subExpression of
-      Ref ann name' index'
-        | name == name' && index == index' →
-            {-
-            trace
-              ( "Substituting "
-                  <> show name
-                  <> "\n\tfor "
-                  <> show replacement
-                  <> "\n\tin "
-                  <> show expression
-              )
-            -}
-            replacement
-        | otherwise → Ref ann name' index'
-      Abs ann param body →
-        Abs ann param case param of
-          ParamUnused _paramAnn → go body
-          ParamNamed _paramAnn pName → substitute name index' replacement' body
-           where
-            index' = if name == Local pName then index + 1 else index
-            replacement' = shift 1 pName 0 replacement
-      -- See Note [Sequential scoping of Let bindings]
-      Let ann binds body → Let ann binds' body'
-       where
-        ((bodyIndex, bodyReplacement), binds') =
-          mapAccumL withGrouping (index, replacement) binds
-        body' = substitute name bodyIndex bodyReplacement body
-        withGrouping
-          ∷ (Index, RawExp ann)
-          → Grouping (ann, Name, RawExp ann)
-          → ((Index, RawExp ann), Grouping (ann, Name, RawExp ann))
-        withGrouping (i, repl) grouping =
-          case grouping of
-            Standalone (nameAnn, boundName, expr) →
-              (
-                ( if name == Local boundName then i + 1 else i
-                , shift 1 boundName 0 repl
-                )
-              , Standalone (nameAnn, boundName, substitute name i repl expr)
-              )
-            RecursiveGroup recBinds →
-              ( (i', repl')
-              , RecursiveGroup $ substitute name i' repl' <<$>> recBinds
-              )
-             where
-              boundNames = bindingNames grouping
-              i' =
-                i
-                  + genericLength (filter ((name ==) . Local) boundNames)
-              repl' = foldr (\n r → shift 1 n 0 r) repl boundNames
-      App ann argument function →
-        App ann (go argument) (go function)
-      LiteralArray ann as →
-        LiteralArray ann (go <$> as)
-      LiteralObject ann props →
-        LiteralObject ann (go <<$>> props)
-      ReflectCtor ann a →
-        ReflectCtor ann (go a)
-      DataArgumentByIndex ann i a →
-        DataArgumentByIndex ann i (go a)
-      Eq ann a b →
-        Eq ann (go a) (go b)
-      ArrayLength ann a →
-        ArrayLength ann (go a)
-      ArrayIndex ann a indx →
-        ArrayIndex ann (go a) indx
-      ObjectProp ann a prop →
-        ObjectProp ann (go a) prop
-      ObjectUpdate ann a patches →
-        ObjectUpdate ann (go a) (go <<$>> patches)
-      IfThenElse ann p th el →
-        IfThenElse ann (go p) (go th) (go el)
-      -- Terminals:
-      LiteralInt {} → subExpression
-      LiteralBool {} → subExpression
-      LiteralFloat {} → subExpression
-      LiteralString {} → subExpression
-      LiteralChar {} → subExpression
-      Ctor {} → subExpression
-      Exception {} → subExpression
-      ForeignImport {} → subExpression
-   where
-    go = substitute' index
-
-{- | Rewrite the De Bruijn index of every reference to @namespace@ that is free
-with respect to @minIndex@, using @adjust minIndex index@. Binders for other
-names are transparent; a binder for @namespace@ raises @minIndex@ by one (see
-Note [Sequential scoping of Let bindings] for the @Let@ case). This is the
-shared traversal behind 'shift' (which makes room for a new binder) and
-'unshift' (which closes the gap left by a removed one); keeping both on one
-traversal stops them from drifting apart.
--}
-overFreeIndex
-  ∷ (Index → Index → Index)
-  -- ^ Given the current @minIndex@ and a reference's index, the new index
-  → Name
-  -- ^ The variable name to match (a.k.a. the namespace)
-  → Index
-  -- ^ The minimum bound at or above which references are considered free
-  → RawExp ann
-  → RawExp ann
-overFreeIndex adjust namespace = go
- where
-  go minIndex expression =
-    case expression of
-      Ref ann (Local name) index
-        | name == namespace →
-            Ref ann (Local name) (adjust minIndex index)
-      Abs ann argument body →
-        Abs ann argument (go minIndex' body)
-       where
-        minIndex'
-          | paramName argument == Just namespace = minIndex + 1
-          | otherwise = minIndex
-      -- See Note [Sequential scoping of Let bindings]
-      Let ann binds body →
-        Let ann binds' body'
-       where
-        (bodyMinIndex, binds') = mapAccumL withGrouping minIndex binds
-        body' = go bodyMinIndex body
-        withGrouping minIdx grouping =
-          case grouping of
-            Standalone (annotation, boundName, expr) →
-              ( if boundName == namespace then minIdx + 1 else minIdx
-              , Standalone (annotation, boundName, go minIdx expr)
-              )
-            RecursiveGroup recBinds →
-              ( minIdx'
-              , RecursiveGroup $
-                  recBinds <&> \(nameAnn, boundName, expr) →
-                    (nameAnn, boundName, go minIdx' expr)
-              )
-             where
-              minIdx' =
-                minIdx
-                  + genericLength (filter (== namespace) (bindingNames grouping))
-      App ann argument function →
-        App ann (go minIndex argument) (go minIndex function)
-      LiteralArray ann as →
-        LiteralArray ann (go minIndex <$> as)
-      LiteralObject ann props →
-        LiteralObject ann (go minIndex <<$>> props)
-      ReflectCtor ann a →
-        ReflectCtor ann (go minIndex a)
-      DataArgumentByIndex ann idx a →
-        DataArgumentByIndex ann idx (go minIndex a)
-      Eq ann a b →
-        Eq ann (go minIndex a) (go minIndex b)
-      ArrayLength ann a →
-        ArrayLength ann (go minIndex a)
-      ArrayIndex ann a indx →
-        ArrayIndex ann (go minIndex a) indx
-      ObjectProp ann a prop →
-        ObjectProp ann (go minIndex a) prop
-      ObjectUpdate ann a patches →
-        ObjectUpdate ann (go minIndex a) (go minIndex <<$>> patches)
-      IfThenElse ann p th el →
-        IfThenElse ann (go minIndex p) (go minIndex th) (go minIndex el)
-      _ → expression
-
-{- | Increase the index of all references to the given name bound at or above
-@minIndex@. Used to make room when a new binder for that name is introduced,
-e.g. when substituting a term under a λ that shadows the name.
--}
-shift
-  ∷ Natural
-  -- ^ The amount to shift by (a non-negative count, hence 'Natural')
-  → Name
-  -- ^ The variable name to match (a.k.a. the namespace)
-  → Index
-  -- ^ The minimum bound for which indices to shift
-  → RawExp ann
-  -- ^ The expression to shift
-  → RawExp ann
-shift offset =
-  overFreeIndex \minIndex index →
-    if minIndex <= index then index + Index offset else index
-
-{- | Decrease by one the index of references to the given name bound strictly
-above @minIndex@: the inverse of @shift 1@, to be applied after a binder for
-the name is removed (e.g. by beta reduction) so that references which pointed
-past that binder are lowered back into place. References at exactly @minIndex@
-are the removed binder itself and have already been consumed by the
-accompanying substitution, so the strict @minIndex < index@ guard both leaves
-genuine inner references untouched and keeps the 'Natural' index from
-underflowing.
--}
-unshift
-  ∷ Name
-  -- ^ The variable name to match (a.k.a. the namespace)
-  → Index
-  -- ^ References bound strictly above this bound are lowered
-  → RawExp ann
-  → RawExp ann
-unshift =
-  overFreeIndex \minIndex index →
-    if minIndex < index then index - 1 else index
+  -- The state is whether the next inserted occurrence must be freshened.
+  go ∷ RawExp ann → StateT Bool SupplyM (RawExp ann)
+  go = \case
+    r@(Ref _ann name' _index)
+      | name' == name → do
+          freshen ← get
+          put True
+          if freshen then lift (freshenBinders replacement) else pure replacement
+      | otherwise → pure r
+    Abs ann param body →
+      Abs ann param <$> go body
+    Let ann binds body →
+      Let ann
+        <$> traverse (traverse \(a, n, expr) → (a,n,) <$> go expr) binds
+        <*> go body
+    LiteralArray ann as →
+      LiteralArray ann <$> traverse go as
+    LiteralObject ann props →
+      LiteralObject ann <$> traverse (traverse go) props
+    ReflectCtor ann a →
+      ReflectCtor ann <$> go a
+    DataArgumentByIndex ann idx a →
+      DataArgumentByIndex ann idx <$> go a
+    Eq ann a b →
+      Eq ann <$> go a <*> go b
+    ArrayLength ann a →
+      ArrayLength ann <$> go a
+    ArrayIndex ann a idx →
+      ArrayIndex ann <$> go a <*> pure idx
+    ObjectProp ann a prop →
+      ObjectProp ann <$> go a <*> pure prop
+    ObjectUpdate ann a patches →
+      ObjectUpdate ann <$> go a <*> traverse (traverse go) patches
+    App ann a b →
+      App ann <$> go a <*> go b
+    IfThenElse ann p th el →
+      IfThenElse ann <$> go p <*> go th <*> go el
+    -- Terminals:
+    terminal → pure terminal
 
 $(makePrisms ''AlgebraicType)
 $(makePrisms ''Parameter)

@@ -19,7 +19,6 @@ import Language.PureScript.Backend.IR.Names
 import Language.PureScript.Backend.IR.Optimizer
   ( optimizedExpression
   , optimizedUberModule
-  , renameShadowedNamesInExpr
   )
 import Language.PureScript.Backend.IR.Types
   ( Exp
@@ -29,7 +28,6 @@ import Language.PureScript.Backend.IR.Types
   , abstraction
   , application
   , eq
-  , exception
   , ifThenElse
   , isLiteral
   , lets
@@ -358,154 +356,6 @@ spec = describe "IR Optimizer" do
                 , Linker.uberModuleExports = [(Name "root", e)]
                 }
       lintWellScoped optimized === []
-
-  describe "renames shadowed names" do
-    test "nested λ-abstractions" do
-      name ← forAll Gen.name
-      let
-        name1 = Name $ nameToText name <> "1"
-        name2 = Name $ nameToText name <> "2"
-        name3 = Name $ nameToText name <> "3"
-
-      let original =
-            abstraction
-              (paramNamed name)
-              ( abstraction
-                  (paramNamed name)
-                  ( application
-                      (refLocal name 0)
-                      ( abstraction
-                          (paramNamed name)
-                          ( abstraction
-                              (paramNamed name1)
-                              ( application
-                                  (refLocal name 0)
-                                  (refLocal name 2)
-                              )
-                          )
-                      )
-                  )
-              )
-
-          renamed =
-            abstraction
-              (paramNamed name)
-              ( abstraction
-                  (paramNamed name2)
-                  ( application
-                      (refLocal name2 0)
-                      ( abstraction
-                          (paramNamed name3)
-                          ( abstraction
-                              (paramNamed name1)
-                              ( application
-                                  (refLocal name3 0)
-                                  (refLocal name 0)
-                              )
-                          )
-                      )
-                  )
-              )
-      renameShadowedNamesInExpr mempty original === renamed
-
-    test "nested let-bindings" do
-      nameA ← forAll Gen.name
-      nameB ← forAll $ mfilter (/= nameA) Gen.name
-      valueA ← forAll Gen.literalNonRecursiveExp
-      valueB ← forAll Gen.literalNonRecursiveExp
-      let original =
-            lets
-              (Standalone (noAnn, nameA, valueA) :| [Standalone (noAnn, nameB, valueB)])
-              ( lets
-                  ( Standalone (noAnn, nameA, refLocal nameA 0)
-                      :| [Standalone (noAnn, nameB, refLocal nameB 0)]
-                  )
-                  ( application
-                      (application (refLocal nameA 0) (refLocal nameA 1))
-                      (application (refLocal nameB 0) (refLocal nameB 1))
-                  )
-              )
-
-          nameA1 = Name $ nameToText nameA <> "1"
-          nameB1 = Name $ nameToText nameB <> "1"
-
-          renamed =
-            lets
-              ( Standalone (noAnn, nameA, valueA)
-                  :| [Standalone (noAnn, nameB, valueB)]
-              )
-              ( lets
-                  ( Standalone (noAnn, nameA1, refLocal nameA 0)
-                      :| [Standalone (noAnn, nameB1, refLocal nameB 0)]
-                  )
-                  ( application
-                      (application (refLocal nameA1 0) (refLocal nameA 0))
-                      (application (refLocal nameB1 0) (refLocal nameB 0))
-                  )
-              )
-      renameShadowedNamesInExpr mempty original === renamed
-
-    -- Member order of a recursive group is the initialization order
-    -- computed by the laziness transform; renaming must not disturb it.
-    test "preserves member order of local recursive groups" do
-      let x = Name "x"
-          y = Name "y"
-          original =
-            lets
-              ( RecursiveGroup
-                  ( (noAnn, x, abstraction paramUnused (refLocal y 0))
-                      :| [(noAnn, y, literalObject [(PropName "foo", refLocal x 0)])]
-                  )
-                  :| []
-              )
-              (refLocal y 0)
-      renameShadowedNamesInExpr mempty original === original
-
-    -- See Note [Sequential scoping of Let bindings]: a recursive group
-    -- member's RHS sees every member of its own group, itself included,
-    -- so renaming the binder must rename those references too.
-    test "renames self-references inside a shadowing recursive group" do
-      let x = Name "x"
-          x1 = Name "x1"
-          original =
-            abstraction (paramNamed x) $
-              lets
-                ( RecursiveGroup
-                    ((noAnn, x, application (exception "f") (refLocal x 0)) :| [])
-                    :| []
-                )
-                (refLocal x 0)
-          renamed =
-            abstraction (paramNamed x) $
-              lets
-                ( RecursiveGroup
-                    ((noAnn, x1, application (exception "f") (refLocal x1 0)) :| [])
-                    :| []
-                )
-                (refLocal x1 0)
-      renameShadowedNamesInExpr mempty original === renamed
-
-    test "renames forward references inside a shadowing recursive group" do
-      let x = Name "x"
-          y = Name "y"
-          x1 = Name "x1"
-          original =
-            abstraction (paramNamed x) $
-              lets
-                ( RecursiveGroup
-                    ((noAnn, y, refLocal x 0) :| [(noAnn, x, literalInt 1)])
-                    :| []
-                )
-                (application (refLocal y 0) (refLocal x 1))
-          renamed =
-            abstraction (paramNamed x) $
-              lets
-                ( RecursiveGroup
-                    ((noAnn, y, refLocal x1 0) :| [(noAnn, x1, literalInt 1)])
-                    :| []
-                )
-                (application (refLocal y 0) (refLocal x 0))
-      renameShadowedNamesInExpr mempty original === renamed
 
 --------------------------------------------------------------------------------
 -- Helpers ---------------------------------------------------------------------

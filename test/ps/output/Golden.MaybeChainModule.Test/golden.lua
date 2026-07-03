@@ -18,21 +18,21 @@ M.Data_Maybe_maybe = function(v)
     end
   end
 end
-M.Golden_MaybeChainModule_Test_identity = function(x) return x end
-M.Golden_MaybeChainModule_Test_map = function(v)
-  return function(v1)
-    if "Data.Maybe∷Maybe.Just" == v1["$ctor"] then
-      return M.Data_Maybe_Just(v(v1.value0))
+M.Golden_MaybeChainModule_Test_identity = function(x_S_1535) return x_S_1535 end
+M.Golden_MaybeChainModule_Test_map = function(v_S_1532)
+  return function(v1_S_1533)
+    if "Data.Maybe∷Maybe.Just" == v1_S_1533["$ctor"] then
+      return M.Data_Maybe_Just(v_S_1532(v1_S_1533.value0))
     else
       return M.Data_Maybe_Nothing
     end
   end
 end
 return {
-  chainedNothing = M.Data_Maybe_maybe(0)(M.Golden_MaybeChainModule_Test_identity)(M.Data_Maybe_maybe(M.Data_Maybe_Nothing)(M.Data_Maybe_Just)(M.Golden_MaybeChainModule_Test_map(function( x )
-    return x
+  chainedNothing = M.Data_Maybe_maybe(0)(M.Golden_MaybeChainModule_Test_identity)(M.Data_Maybe_maybe(M.Data_Maybe_Nothing)(M.Data_Maybe_Just)(M.Golden_MaybeChainModule_Test_map(function( x_S_1 )
+    return x_S_1
   end)(M.Data_Maybe_Nothing))),
-  chainedJust = M.Data_Maybe_maybe(0)(M.Golden_MaybeChainModule_Test_identity)(M.Data_Maybe_maybe(M.Data_Maybe_Nothing)(M.Data_Maybe_Just)(M.Golden_MaybeChainModule_Test_map(function( x )
-    return x
+  chainedJust = M.Data_Maybe_maybe(0)(M.Golden_MaybeChainModule_Test_identity)(M.Data_Maybe_maybe(M.Data_Maybe_Nothing)(M.Data_Maybe_Just)(M.Golden_MaybeChainModule_Test_map(function( x_S_0 )
+    return x_S_0
   end)(M.Data_Maybe_Just(42))))
 }

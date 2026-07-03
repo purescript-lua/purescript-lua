@@ -36,26 +36,26 @@ return {
       }
     end
   end,
-  pat = function(e)
-    if "Golden.PatternMatching.Test2∷N.Add" == e["$ctor"] then
-      if "Golden.PatternMatching.Test2∷N.Zero" == e.value1["$ctor"] then
-        if "Golden.PatternMatching.Test2∷N.Add" == e.value0["$ctor"] then
+  pat = function(e_S_0)
+    if "Golden.PatternMatching.Test2∷N.Add" == e_S_0["$ctor"] then
+      if "Golden.PatternMatching.Test2∷N.Zero" == e_S_0.value1["$ctor"] then
+        if "Golden.PatternMatching.Test2∷N.Add" == e_S_0.value0["$ctor"] then
           return 1
         else
-          if "Golden.PatternMatching.Test2∷N.Mul" == e.value0["$ctor"] then
+          if "Golden.PatternMatching.Test2∷N.Mul" == e_S_0.value0["$ctor"] then
             return 2
           else
             return 5
           end
         end
       else
-        if "Golden.PatternMatching.Test2∷N.Mul" == e.value1["$ctor"] then
+        if "Golden.PatternMatching.Test2∷N.Mul" == e_S_0.value1["$ctor"] then
           return 3
         else
-          if "Golden.PatternMatching.Test2∷N.Add" == e.value1["$ctor"] then
+          if "Golden.PatternMatching.Test2∷N.Add" == e_S_0.value1["$ctor"] then
             return 4
           else
-            if "Golden.PatternMatching.Test2∷N.Zero" == e.value1["$ctor"] then
+            if "Golden.PatternMatching.Test2∷N.Zero" == e_S_0.value1["$ctor"] then
               return 5
             else
               return 6

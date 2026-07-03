@@ -58,9 +58,9 @@ M.Effect_applicativeEffect = {
 }
 M.Effect_Lazy_functorEffect = PSLUA_runtime_lazy("functorEffect")(function()
   return {
-    map = function(f)
-      return function(a)
-        return (M.Effect_applicativeEffect.Apply0()).apply(M.Control_Applicative_pure(M.Effect_applicativeEffect)(f))(a)
+    map = function(f_S_230)
+      return function(a_S_231)
+        return (M.Effect_applicativeEffect.Apply0()).apply(M.Control_Applicative_pure(M.Effect_applicativeEffect)(f_S_230))(a_S_231)
       end
     end
   }
@@ -68,12 +68,12 @@ end)
 M.Effect_Lazy_applyEffect = PSLUA_runtime_lazy("applyEffect")(function()
   return {
     apply = (function()
-      local bind = M.Control_Bind_bind(M.Effect_monadEffect.Bind1())
-      return function(f)
-        return function(a)
-          return bind(f)(function(fPrime)
-            return bind(a)(function(aPrime)
-              return M.Control_Applicative_pure(M.Effect_monadEffect.Applicative0())(fPrime(aPrime))
+      local bind_S_211 = M.Control_Bind_bind(M.Effect_monadEffect.Bind1())
+      return function(f_S_213)
+        return function(a_S_214)
+          return bind_S_211(f_S_213)(function(fPrime_S_215)
+            return bind_S_211(a_S_214)(function(aPrime_S_216)
+              return M.Control_Applicative_pure(M.Effect_monadEffect.Applicative0())(fPrime_S_215(aPrime_S_216))
             end)
           end)
         end
@@ -82,24 +82,24 @@ M.Effect_Lazy_applyEffect = PSLUA_runtime_lazy("applyEffect")(function()
     Functor0 = function() return M.Effect_Lazy_functorEffect(0) end
   }
 end)
-M.Golden_MaybeChain_Test_logShow = function(a)
-  return (function(s) return function() print(s) end end)((function(n) return tostring(n) end)(a))
+M.Golden_MaybeChain_Test_logShow = function(a_S_4)
+  return (function(s) return function() print(s) end end)((function(n) return tostring(n) end)(a_S_4))
 end
-M.Golden_MaybeChain_Test_identity = function(x) return x end
-M.Golden_MaybeChain_Test_map = function(v)
-  return function(v1)
-    if "Data.Maybe∷Maybe.Just" == v1["$ctor"] then
-      return M.Data_Maybe_Just(v(v1.value0))
+M.Golden_MaybeChain_Test_identity = function(x_S_1568) return x_S_1568 end
+M.Golden_MaybeChain_Test_map = function(v_S_1561)
+  return function(v1_S_1562)
+    if "Data.Maybe∷Maybe.Just" == v1_S_1562["$ctor"] then
+      return M.Data_Maybe_Just(v_S_1561(v1_S_1562.value0))
     else
       return M.Data_Maybe_Nothing
     end
   end
 end
 return (function()
-  local _ = M.Golden_MaybeChain_Test_logShow(M.Data_Maybe_maybe(0)(M.Golden_MaybeChain_Test_identity)(M.Data_Maybe_maybe(M.Data_Maybe_Nothing)(M.Data_Maybe_Just)(M.Golden_MaybeChain_Test_map(function( x )
-    return x
+  local _ = M.Golden_MaybeChain_Test_logShow(M.Data_Maybe_maybe(0)(M.Golden_MaybeChain_Test_identity)(M.Data_Maybe_maybe(M.Data_Maybe_Nothing)(M.Data_Maybe_Just)(M.Golden_MaybeChain_Test_map(function( x_S_0 )
+    return x_S_0
   end)(M.Data_Maybe_Nothing))))()
-  return M.Golden_MaybeChain_Test_logShow(M.Data_Maybe_maybe(0)(M.Golden_MaybeChain_Test_identity)(M.Data_Maybe_maybe(M.Data_Maybe_Nothing)(M.Data_Maybe_Just)(M.Golden_MaybeChain_Test_map(function( x )
-    return x
+  return M.Golden_MaybeChain_Test_logShow(M.Data_Maybe_maybe(0)(M.Golden_MaybeChain_Test_identity)(M.Data_Maybe_maybe(M.Data_Maybe_Nothing)(M.Data_Maybe_Just)(M.Golden_MaybeChain_Test_map(function( x0_S_1 )
+    return x0_S_1
   end)(M.Data_Maybe_Just(42)))))()
 end)()

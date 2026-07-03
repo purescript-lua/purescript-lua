@@ -8,7 +8,7 @@ import Data.DList qualified as DL
 import Data.Graph (Graph, Vertex, graphFromEdges, reachable)
 import Data.List.NonEmpty qualified as NE
 import Data.Map qualified as Map
-import Data.Set (member)
+import Data.Set (member, notMember)
 import Data.Set qualified as Set
 import Language.PureScript.Backend.IR.Linker (UberModule (..))
 import Language.PureScript.Backend.IR.Names
@@ -21,7 +21,6 @@ import Language.PureScript.Backend.IR.Types
   ( Ann
   , Exp
   , Grouping (..)
-  , Index
   , Parameter (..)
   , RawExp (..)
   , RewriteMod (..)
@@ -30,13 +29,15 @@ import Language.PureScript.Backend.IR.Types
   , getAnn
   , listGrouping
   , rewriteExpTopDown
-  , unshift
   )
 
 data EntryPoint = EntryPoint ModuleName [Name]
   deriving stock (Show)
 
-type Scope = Map (Qualified Name, Index) Id
+{- | Under GUC (@UniqueBinders@ + @IndicesZero@) a local reference
+resolves to its binder by name alone, so the scope needs no index.
+-}
+type Scope = Map (Qualified Name) Id
 
 type Node = ((), Id, [Id])
 
@@ -125,19 +126,19 @@ eliminateDeadCode uber@UberModule {..} =
       pure . \case
         Abs ann param b
           | not (paramId `member` reachableIds) →
-              Rewritten Recurse (Abs ann param' b')
+              Rewritten Recurse (Abs ann param' b)
          where
           paramId ∷ Id =
             case param of
               ParamUnused (pid, _) → pid
               ParamNamed (pid, _) _name → pid
-          -- Blanking an unused named binder drops a slot from that name's
-          -- De Bruijn namespace, so references in the body that skipped over it
-          -- (index ≥ 1) must be lowered, just as in beta reduction (issue #56).
-          (param', b') =
+          -- Under GUC a dead binder is unreferenced by definition, so
+          -- blanking its name touches no reference elsewhere (unlike the
+          -- pre-GUC De Bruijn scheme, issue #56).
+          param' =
             case param of
-              ParamUnused pann → (ParamUnused pann, b)
-              ParamNamed pann name → (ParamUnused pann, unshift name 0 b)
+              ParamUnused pann → ParamUnused pann
+              ParamNamed pann _name → ParamUnused pann
         Let ann binds body →
           Rewritten Recurse (rebuild ann (preserveLetBinds (toList binds) body))
          where
@@ -154,13 +155,11 @@ eliminateDeadCode uber@UberModule {..} =
             ([], body') → body'
             (b : bs, body') → Let ann' (b :| bs) body'
 
-          -- Dropping a dead binder removes a slot from that name's De Bruijn
-          -- namespace, so references in the rest of the Let (later grouping
-          -- RHSs and the body) that skipped over it must be lowered, just as
-          -- in the Abs case above (issue #56). 'unshiftTail' reuses the
-          -- 'unshift' traversal by wrapping the rest back into a Let, so the
-          -- scope threading follows Note [Sequential scoping of Let bindings]
-          -- instead of being re-implemented here.
+          -- Under GUC dropping a dead binder touches no reference
+          -- elsewhere in the Let (later grouping RHSs or the body): a
+          -- dropped binder is unreferenced by definition, same as the
+          -- Abs case above (pre-GUC this required 'unshift'ing the
+          -- tail, issue #56).
           preserveLetBinds
             ∷ [Grouping ((Id, Ann), Name, AExp)]
             → AExp
@@ -168,22 +167,15 @@ eliminateDeadCode uber@UberModule {..} =
           preserveLetBinds groupings body' = case groupings of
             [] → ([], body')
             g : gs → case g of
-              Standalone ((expId, _ann), name, _expr)
+              Standalone ((expId, _ann), _name, _expr)
                 | not (expId `member` reachableIds) →
-                    uncurry preserveLetBinds (unshiftTail name gs body')
+                    preserveLetBinds gs body'
               RecursiveGroup recBinds
-                | not (null droppedNames) →
-                    uncurry preserveLetBinds $
-                      foldl'
-                        (\(tailGs, tailBody) n → unshiftTail n tailGs tailBody)
-                        (remainingGs, body')
-                        droppedNames
+                | any
+                    (\((nameId, _ann), _, _) → nameId `notMember` reachableIds)
+                    (toList recBinds) →
+                    preserveLetBinds remainingGs body'
                where
-                droppedNames =
-                  [ name
-                  | ((nameId, _ann), name, _) ← toList recBinds
-                  , not (nameId `member` reachableIds)
-                  ]
                 keptBinds =
                   [ b
                   | b@((nameId, _), _, _) ← toList recBinds
@@ -194,18 +186,6 @@ eliminateDeadCode uber@UberModule {..} =
                     Nothing → gs
                     Just kept → RecursiveGroup kept : gs
               _keep → first (g :) (preserveLetBinds gs body')
-
-          unshiftTail
-            ∷ Name
-            → [Grouping ((Id, Ann), Name, AExp)]
-            → AExp
-            → ([Grouping ((Id, Ann), Name, AExp)], AExp)
-          unshiftTail name gs body' = case NE.nonEmpty gs of
-            Nothing → ([], unshift name 0 body')
-            Just neGs → case unshift name 0 (Let (getAnn body') neGs body') of
-              Let _ann gs' body'' → (toList gs', body'')
-              -- 'unshift' ('overFreeIndex') preserves expression structure.
-              other → (toList neGs, other)
         _ → NoChange
 
   reachableIds ∷ Set Id =
@@ -304,11 +284,11 @@ eliminateDeadCode uber@UberModule {..} =
    where
     foreignsInScope = do
       (QName modname name, expr) ← annotatedForeigns
-      pure ((Imported modname name, 0), nodeId expr)
+      pure (Imported modname name, nodeId expr)
 
     bindingsInScope = do
       (QName modname name, expr) ← listGrouping =<< annotatedBindings
-      pure ((Imported modname name, 0), nodeId expr)
+      pure (Imported modname name, nodeId expr)
 
   adjacencyListForExpr ∷ Scope → AExp → DList Node
   adjacencyListForExpr scope expr =
@@ -353,7 +333,7 @@ eliminateDeadCode uber@UberModule {..} =
             ParamNamed (paramId, _ann) name →
               DL.cons
                 (mkNode paramId [])
-                (adjacencyListForExpr (addLocalToScope paramId name 0 scope) b)
+                (adjacencyListForExpr (addLocalToScope paramId name scope) b)
         Let _ann groupings body →
           adjacencyListForExpr bodyScope body <> groupingsAdjacency
          where
@@ -386,7 +366,7 @@ eliminateDeadCode uber@UberModule {..} =
         scope' = foldr updateScope groupingScope (toList recBinds)
      where
       updateScope ∷ ((Id, Ann), Name, AExp) → Scope → Scope
-      updateScope ((nameId, _ann), name, _expr) = addLocalToScope nameId name 0
+      updateScope ((nameId, _ann), name, _expr) = addLocalToScope nameId name
 
 expressionDependsOnIds ∷ Scope → AExp → [Id]
 expressionDependsOnIds exprScope = \case
@@ -410,18 +390,15 @@ expressionDependsOnIds exprScope = \case
   Abs _ann _ b → [nodeId b]
   App _ann a b → [nodeId a, nodeId b]
   IfThenElse _ann i t e → [nodeId i, nodeId t, nodeId e]
-  Ref _ann qname idx → maybeToList $ Map.lookup (qname, idx) exprScope
+  Ref _ann qname _idx → maybeToList $ Map.lookup qname exprScope
   Let _ann _groupings body → [nodeId body]
 
-addLocalToScope ∷ Id → Name → Index → Scope → Scope
-addLocalToScope nid name index s =
-  case Map.lookup (lname, index) s of
-    Nothing → Map.insert (lname, index) nid s
-    Just nid' →
-      Map.insert (lname, index) nid $
-        addLocalToScope nid' name (succ index) s
- where
-  lname = Local name
+{- | Under GUC (@UniqueBinders@) no two live binders at one site share a
+name, so a fresh local binder can never collide with one already in
+scope: a plain insert suffices.
+-}
+addLocalToScope ∷ Id → Name → Scope → Scope
+addLocalToScope nid name = Map.insert (Local name) nid
 
 --------------------------------------------------------------------------------
 -- Annotating expressions with IDs ---------------------------------------------

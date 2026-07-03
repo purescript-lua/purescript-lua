@@ -231,7 +231,9 @@ fromIR foreigns topLevelNames modname ir = case ir of
             pure . Right $
               Lua.varField (Lua.varName Fixture.moduleName) topLevelName
       IR.Local name
-        -- See Note [Locals are uniquely named after renameShadowedNames]
+        -- Every local reference has index 0 under GUC, established by
+        -- 'Language.PureScript.Backend.IR.Uniquify.uniquifyNames' at the
+        -- front of the pipeline.
         | index == 0 → pure . Right $ Lua.varName (fromName name)
         | otherwise → Oops.throw $ UnexpectedRefBound modname ir
       IR.Imported modname' name →

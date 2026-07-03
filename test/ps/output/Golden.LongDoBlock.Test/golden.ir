@@ -85,9 +85,9 @@ UberModule
               ( LiteralObject Nothing
                 [
                   ( PropName "map", Abs Nothing
-                    ( ParamNamed Nothing ( Name "f" ) )
+                    ( ParamNamed Nothing ( Name "f$37" ) )
                     ( Abs Nothing
-                      ( ParamNamed Nothing ( Name "a" ) )
+                      ( ParamNamed Nothing ( Name "a$38" ) )
                       ( App Nothing
                         ( App Nothing
                           ( ObjectProp Nothing
@@ -116,10 +116,10 @@ UberModule
                                 ( Imported ( ModuleName "Effect" ) ( Name "applicativeEffect" ) ) 0
                               )
                             )
-                            ( Ref Nothing ( Local ( Name "f" ) ) 0 )
+                            ( Ref Nothing ( Local ( Name "f$37" ) ) 0 )
                           )
                         )
-                        ( Ref Nothing ( Local ( Name "a" ) ) 0 )
+                        ( Ref Nothing ( Local ( Name "a$38" ) ) 0 )
                       )
                     )
                   )
@@ -139,7 +139,7 @@ UberModule
                 [
                   ( PropName "apply", Let Nothing
                     ( Standalone
-                      ( Nothing, Name "bind", App Nothing
+                      ( Nothing, Name "bind$14", App Nothing
                         ( Ref Nothing
                           ( Imported ( ModuleName "Control.Bind" ) ( Name "bind" ) ) 0
                         )
@@ -155,23 +155,23 @@ UberModule
                       ) :| []
                     )
                     ( Abs Nothing
-                      ( ParamNamed Nothing ( Name "f" ) )
+                      ( ParamNamed Nothing ( Name "f$16" ) )
                       ( Abs Nothing
-                        ( ParamNamed Nothing ( Name "a" ) )
+                        ( ParamNamed Nothing ( Name "a$17" ) )
                         ( App Nothing
                           ( App Nothing
-                            ( Ref Nothing ( Local ( Name "bind" ) ) 0 )
-                            ( Ref Nothing ( Local ( Name "f" ) ) 0 )
+                            ( Ref Nothing ( Local ( Name "bind$14" ) ) 0 )
+                            ( Ref Nothing ( Local ( Name "f$16" ) ) 0 )
                           )
                           ( Abs Nothing
-                            ( ParamNamed Nothing ( Name "f'" ) )
+                            ( ParamNamed Nothing ( Name "f'$18" ) )
                             ( App Nothing
                               ( App Nothing
-                                ( Ref Nothing ( Local ( Name "bind" ) ) 0 )
-                                ( Ref Nothing ( Local ( Name "a" ) ) 0 )
+                                ( Ref Nothing ( Local ( Name "bind$14" ) ) 0 )
+                                ( Ref Nothing ( Local ( Name "a$17" ) ) 0 )
                               )
                               ( Abs Nothing
-                                ( ParamNamed Nothing ( Name "a'" ) )
+                                ( ParamNamed Nothing ( Name "a'$19" ) )
                                 ( App Nothing
                                   ( App Nothing
                                     ( Ref Nothing
@@ -196,8 +196,8 @@ UberModule
                                     )
                                   )
                                   ( App Nothing
-                                    ( Ref Nothing ( Local ( Name "f'" ) ) 0 )
-                                    ( Ref Nothing ( Local ( Name "a'" ) ) 0 )
+                                    ( Ref Nothing ( Local ( Name "f'$18" ) ) 0 )
+                                    ( Ref Nothing ( Local ( Name "a'$19" ) ) 0 )
                                   )
                                 )
                               )
@@ -228,10 +228,10 @@ UberModule
           ( LiteralObject Nothing
             [
               ( PropName "discard", Abs Nothing
-                ( ParamNamed Nothing ( Name "dictBind" ) )
+                ( ParamNamed Nothing ( Name "dictBind$20$1364" ) )
                 ( App Nothing
                   ( Ref Nothing ( Imported ( ModuleName "Control.Bind" ) ( Name "bind" ) ) 0 )
-                  ( Ref Nothing ( Local ( Name "dictBind" ) ) 0 )
+                  ( Ref Nothing ( Local ( Name "dictBind$20$1364" ) ) 0 )
                 )
               )
             ]

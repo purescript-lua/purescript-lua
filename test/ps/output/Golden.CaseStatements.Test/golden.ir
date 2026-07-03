@@ -11,7 +11,9 @@ UberModule
       ( Name "b", LiteralChar Nothing 'b' ),
       ( Name "c", Let Nothing
         ( Standalone
-          ( Nothing, Name "v", Abs Nothing ( ParamUnused Nothing ) ( LiteralInt Nothing 0 ) ) :| []
+          ( Nothing, Name "v$6", Abs Nothing ( ParamUnused Nothing )
+            ( LiteralInt Nothing 0 )
+          ) :| []
         )
         ( IfThenElse Nothing
           ( App Nothing
@@ -24,9 +26,9 @@ UberModule
               ( LiteralInt Nothing 1 )
             )
             ( LiteralInt Nothing 42 )
-            ( App Nothing ( Ref Nothing ( Local ( Name "v" ) ) 0 ) ( LiteralBool Nothing True ) )
+            ( App Nothing ( Ref Nothing ( Local ( Name "v$6" ) ) 0 ) ( LiteralBool Nothing True ) )
           )
-          ( App Nothing ( Ref Nothing ( Local ( Name "v" ) ) 0 ) ( LiteralBool Nothing True ) )
+          ( App Nothing ( Ref Nothing ( Local ( Name "v$6" ) ) 0 ) ( LiteralBool Nothing True ) )
         )
       ),
       ( Name "J", Ctor Nothing SumType
@@ -41,18 +43,18 @@ UberModule
         ( CtorName "N" ) []
       ),
       ( Name "d", Abs Nothing
-        ( ParamNamed Nothing ( Name "m" ) )
+        ( ParamNamed Nothing ( Name "m$34" ) )
         ( Abs Nothing
-          ( ParamNamed Nothing ( Name "n" ) )
+          ( ParamNamed Nothing ( Name "n$35" ) )
           ( Abs Nothing
-            ( ParamNamed Nothing ( Name "x" ) )
+            ( ParamNamed Nothing ( Name "x$36" ) )
             ( Let Nothing
               ( Standalone
-                ( Nothing, Name "v", Abs Nothing ( ParamUnused Nothing )
+                ( Nothing, Name "v$37", Abs Nothing ( ParamUnused Nothing )
                   ( IfThenElse Nothing
                     ( Eq Nothing
                       ( LiteralChar Nothing 'y' )
-                      ( Ref Nothing ( Local ( Name "x" ) ) 0 )
+                      ( Ref Nothing ( Local ( Name "x$36" ) ) 0 )
                     )
                     ( LiteralInt Nothing 0 )
                     ( LiteralInt Nothing 1 )
@@ -60,31 +62,34 @@ UberModule
                 ) :| []
               )
               ( IfThenElse Nothing
-                ( Eq Nothing ( LiteralChar Nothing 'x' ) ( Ref Nothing ( Local ( Name "x" ) ) 0 ) )
+                ( Eq Nothing
+                  ( LiteralChar Nothing 'x' )
+                  ( Ref Nothing ( Local ( Name "x$36" ) ) 0 )
+                )
                 ( IfThenElse Nothing
                   ( Eq Nothing
                     ( LiteralString Nothing "Golden.CaseStatements.Test∷M.J" )
-                    ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "m" ) ) 0 ) )
+                    ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "m$34" ) ) 0 ) )
                   )
                   ( IfThenElse Nothing
                     ( Eq Nothing
                       ( LiteralString Nothing "Golden.CaseStatements.Test∷M.N" )
-                      ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "n" ) ) 0 ) )
+                      ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "n$35" ) ) 0 ) )
                     )
                     ( ObjectProp Nothing
-                      ( Ref Nothing ( Local ( Name "m" ) ) 0 )
+                      ( Ref Nothing ( Local ( Name "m$34" ) ) 0 )
                       ( PropName "value0" )
                     )
                     ( App Nothing
-                      ( Ref Nothing ( Local ( Name "v" ) ) 0 ) ( LiteralBool Nothing True )
+                      ( Ref Nothing ( Local ( Name "v$37" ) ) 0 ) ( LiteralBool Nothing True )
                     )
                   )
                   ( App Nothing
-                    ( Ref Nothing ( Local ( Name "v" ) ) 0 ) ( LiteralBool Nothing True )
+                    ( Ref Nothing ( Local ( Name "v$37" ) ) 0 ) ( LiteralBool Nothing True )
                   )
                 )
                 ( App Nothing
-                  ( Ref Nothing ( Local ( Name "v" ) ) 0 ) ( LiteralBool Nothing True )
+                  ( Ref Nothing ( Local ( Name "v$37" ) ) 0 ) ( LiteralBool Nothing True )
                 )
               )
             )

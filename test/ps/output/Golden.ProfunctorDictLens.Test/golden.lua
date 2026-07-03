@@ -39,11 +39,13 @@ M.Control_Bind_bind = function(dict) return dict.bind end
 M.Data_Newtype_unwrap = function()
   return M.Unsafe_Coerce_foreign.unsafeCoerce
 end
-M.Data_Profunctor_composeFlipped = function(f)
-  return function(g)
-    return (function(f1)
-      return function(g1) return function(x) return f1(g1(x)) end end
-    end)(g)(f)
+M.Data_Profunctor_composeFlipped = function(f_S_1530)
+  return function(g_S_1531)
+    return (function(f_S_1536)
+      return function(g_S_1537)
+        return function(x_S_1538) return f_S_1536(g_S_1537(x_S_1538)) end
+      end
+    end)(g_S_1531)(f_S_1530)
   end
 end
 M.Data_Profunctor_profunctorFn = {
@@ -70,9 +72,9 @@ M.Effect_applicativeEffect = {
 }
 M.Effect_Lazy_functorEffect = PSLUA_runtime_lazy("functorEffect")(function()
   return {
-    map = function(f)
-      return function(a)
-        return (M.Effect_applicativeEffect.Apply0()).apply(M.Control_Applicative_pure(M.Effect_applicativeEffect)(f))(a)
+    map = function(f_S_201)
+      return function(a_S_202)
+        return (M.Effect_applicativeEffect.Apply0()).apply(M.Control_Applicative_pure(M.Effect_applicativeEffect)(f_S_201))(a_S_202)
       end
     end
   }
@@ -80,12 +82,12 @@ end)
 M.Effect_Lazy_applyEffect = PSLUA_runtime_lazy("applyEffect")(function()
   return {
     apply = (function()
-      local bind = M.Control_Bind_bind(M.Effect_monadEffect.Bind1())
-      return function(f)
-        return function(a)
-          return bind(f)(function(fPrime)
-            return bind(a)(function(aPrime)
-              return M.Control_Applicative_pure(M.Effect_monadEffect.Applicative0())(fPrime(aPrime))
+      local bind_S_178 = M.Control_Bind_bind(M.Effect_monadEffect.Bind1())
+      return function(f_S_180)
+        return function(a_S_181)
+          return bind_S_178(f_S_180)(function(fPrime_S_182)
+            return bind_S_178(a_S_181)(function(aPrime_S_183)
+              return M.Control_Applicative_pure(M.Effect_monadEffect.Applicative0())(fPrime_S_182(aPrime_S_183))
             end)
           end)
         end
@@ -95,11 +97,11 @@ M.Effect_Lazy_applyEffect = PSLUA_runtime_lazy("applyEffect")(function()
   }
 end)
 M.Golden_ProfunctorDictLens_Test_unwrap = M.Data_Newtype_unwrap()
-M.Golden_ProfunctorDictLens_Test_discard = (function(dictBind)
-  return M.Control_Bind_bind(dictBind)
+M.Golden_ProfunctorDictLens_Test_discard = (function(dictBind_S_184_S_1532)
+  return M.Control_Bind_bind(dictBind_S_184_S_1532)
 end)(M.Effect_bindEffect)
-M.Golden_ProfunctorDictLens_Test_logShow = function(a)
-  return (function(s) return function() print(s) end end)((function(n) return tostring(n) end)(a))
+M.Golden_ProfunctorDictLens_Test_logShow = function(a_S_5)
+  return (function(s) return function() print(s) end end)((function(n) return tostring(n) end)(a_S_5))
 end
 M.Golden_ProfunctorDictLens_Test_Wrapped = function(x) return x end
 M.Golden_ProfunctorDictLens_Test__Wrapped = function(dictProfunctor)
@@ -107,13 +109,13 @@ M.Golden_ProfunctorDictLens_Test__Wrapped = function(dictProfunctor)
 end
 M.Golden_ProfunctorDictLens_Test__Wrapped1 = M.Golden_ProfunctorDictLens_Test__Wrapped(M.Data_Profunctor_profunctorFn)
 return (function()
-  local _ = M.Golden_ProfunctorDictLens_Test_logShow(M.Golden_ProfunctorDictLens_Test_unwrap(M.Golden_ProfunctorDictLens_Test__Wrapped1(function( v )
-    return M.Data_Semiring_semiringInt.add(v)(1)
+  local _ = M.Golden_ProfunctorDictLens_Test_logShow(M.Golden_ProfunctorDictLens_Test_unwrap(M.Golden_ProfunctorDictLens_Test__Wrapped1(function( v_S_0 )
+    return M.Data_Semiring_semiringInt.add(v_S_0)(1)
   end)(10)))()
-  local _ = M.Golden_ProfunctorDictLens_Test_logShow(M.Golden_ProfunctorDictLens_Test_unwrap(M.Golden_ProfunctorDictLens_Test__Wrapped1(function( v )
-    return M.Data_Semiring_semiringInt.mul(v)(2)
+  local _ = M.Golden_ProfunctorDictLens_Test_logShow(M.Golden_ProfunctorDictLens_Test_unwrap(M.Golden_ProfunctorDictLens_Test__Wrapped1(function( v0_S_1 )
+    return M.Data_Semiring_semiringInt.mul(v0_S_1)(2)
   end)(10)))()
-  return M.Golden_ProfunctorDictLens_Test_logShow(M.Golden_ProfunctorDictLens_Test_unwrap(M.Data_Profunctor_dimap(M.Data_Profunctor_profunctorFn)(M.Data_Newtype_unwrap())(M.Unsafe_Coerce_foreign.unsafeCoerce)(function( v )
-    return (function(x) return function(y) return x - y end end)(v)(5)
+  return M.Golden_ProfunctorDictLens_Test_logShow(M.Golden_ProfunctorDictLens_Test_unwrap(M.Data_Profunctor_dimap(M.Data_Profunctor_profunctorFn)(M.Data_Newtype_unwrap())(M.Unsafe_Coerce_foreign.unsafeCoerce)(function( v1_S_2 )
+    return (function(x) return function(y) return x - y end end)(v1_S_2)(5)
   end)(10)))()
 end)()

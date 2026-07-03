@@ -142,43 +142,6 @@ spec = describe "IR Dead Code Elimination" do
           lets (Standalone (noAnn, x, literalInt 2) :| []) (refLocal x 0)
     dceExpression expr === expected
 
-  -- Dropping a dead binder removes a slot from that name's De Bruijn
-  -- namespace, so references that skipped over it must be lowered,
-  -- mirroring the Abs case (issue #56).
-  it "unshifts the body after dropping a dead shadowing binder" $ hedgehog do
-    let x = Name "x"
-        expr =
-          lets
-            (Standalone (noAnn, x, literalInt 1) :| [])
-            ( lets
-                (Standalone (noAnn, x, exception "dead") :| [])
-                (refLocal x 1)
-            )
-        expected =
-          lets (Standalone (noAnn, x, literalInt 1) :| []) (refLocal x 0)
-    dceExpression expr === expected
-
-  it "unshifts later sibling RHSs after dropping a dead binder" $ hedgehog do
-    let x = Name "x"
-        y = Name "y"
-        expr =
-          lets
-            (Standalone (noAnn, x, literalInt 1) :| [])
-            ( lets
-                ( Standalone (noAnn, x, exception "dead")
-                    :| [Standalone (noAnn, y, refLocal x 1)]
-                )
-                (refLocal y 0)
-            )
-        expected =
-          lets
-            (Standalone (noAnn, x, literalInt 1) :| [])
-            ( lets
-                (Standalone (noAnn, y, refLocal x 0) :| [])
-                (refLocal y 0)
-            )
-    dceExpression expr === expected
-
   -- 'Rewritten Recurse' descends into the result's children without
   -- re-applying the rule to the result itself. When a Let whose bindings
   -- are all dead collapses to its body, and the body is itself a Let,
@@ -200,33 +163,6 @@ spec = describe "IR Dead Code Elimination" do
                 (literalInt 3)
             )
     dceExpression expr === literalInt 3
-
-  it "unshifts after dropping a dead recursive-group member" $ hedgehog do
-    let x = Name "x"
-        y = Name "y"
-        expr =
-          lets
-            (Standalone (noAnn, x, literalInt 1) :| [])
-            ( lets
-                ( RecursiveGroup
-                    ( (noAnn, x, exception "dead")
-                        :| [(noAnn, y, abstraction paramUnused (refLocal y 0))]
-                    )
-                    :| []
-                )
-                (application (refLocal y 0) (refLocal x 1))
-            )
-        expected =
-          lets
-            (Standalone (noAnn, x, literalInt 1) :| [])
-            ( lets
-                ( RecursiveGroup
-                    ((noAnn, y, abstraction paramUnused (refLocal y 0)) :| [])
-                    :| []
-                )
-                (application (refLocal y 0) (refLocal x 0))
-            )
-    dceExpression expr === expected
 
 --------------------------------------------------------------------------------
 -- Helpers ---------------------------------------------------------------------

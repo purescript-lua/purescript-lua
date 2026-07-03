@@ -1,66 +1,68 @@
 return {
   letRec = (function()
-    local yes
-    local no
-    yes = function(v)
-      if v then
-        return no(false)
+    local yes_S_0
+    local no_S_1
+    yes_S_0 = function(v_S_2)
+      if v_S_2 then
+        return no_S_1(false)
       else
-        if false == v then
-          return no(true)
+        if false == v_S_2 then
+          return no_S_1(true)
         else
           return error("No patterns matched")
         end
       end
     end
-    no = function(v)
-      if v then
-        return yes(false)
+    no_S_1 = function(v0_S_3)
+      if v0_S_3 then
+        return yes_S_0(false)
       else
-        if false == v then
-          return yes(true)
+        if false == v0_S_3 then
+          return yes_S_0(true)
         else
           return error("No patterns matched")
         end
       end
     end
-    return no(false)
+    return no_S_1(false)
   end)(),
   whereRec = (function()
-    local yes
-    local no
-    yes = function(v)
-      if v then
-        return no(false)
+    local yes_S_14
+    local no_S_15
+    yes_S_14 = function(v_S_16)
+      if v_S_16 then
+        return no_S_15(false)
       else
-        if false == v then
-          return no(true)
+        if false == v_S_16 then
+          return no_S_15(true)
         else
           return error("No patterns matched")
         end
       end
     end
-    no = function(v)
-      if v then
-        return yes(false)
+    no_S_15 = function(v0_S_17)
+      if v0_S_17 then
+        return yes_S_14(false)
       else
-        if false == v then
-          return yes(true)
+        if false == v0_S_17 then
+          return yes_S_14(true)
         else
           return error("No patterns matched")
         end
       end
     end
-    return no(false)
+    return no_S_15(false)
   end)(),
   letRecMixed = (function()
-    local z = 1
-    local b
-    local a
-    b = function() return a(z) end
-    a = function() return b(z) end
-    local f = function() return function(k) return a(k) end end
-    local y = f(z)(z)
-    return f(f(y)(y))(f(y)(0))
+    local z_S_4 = 1
+    local b_S_5
+    local a_S_6
+    b_S_5 = function() return a_S_6(z_S_4) end
+    a_S_6 = function() return b_S_5(z_S_4) end
+    local f_S_7 = function()
+      return function(k_S_13) return a_S_6(k_S_13) end
+    end
+    local y_S_8 = f_S_7(z_S_4)(z_S_4)
+    return f_S_7(f_S_7(y_S_8)(y_S_8))(f_S_7(y_S_8)(0))
   end)()
 }

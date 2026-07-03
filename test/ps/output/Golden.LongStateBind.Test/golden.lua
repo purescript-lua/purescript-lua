@@ -17,19 +17,25 @@ end
 M.Data_Identity_applyIdentity = {
   apply = function(v) return function(v1) return v(v1) end end,
   Functor0 = function()
-    return { map = function(f) return function(m) return f(m) end end }
+    return {
+      map = function(f_S_2346)
+        return function(m_S_2347) return f_S_2346(m_S_2347) end
+      end
+    }
   end
 }
 M.Data_Identity_monadIdentity = {
   Applicative0 = function()
     return {
-      pure = function(x) return x end,
+      pure = function(x_S_2348) return x_S_2348 end,
       Apply0 = function() return M.Data_Identity_applyIdentity end
     }
   end,
   Bind1 = function()
     return {
-      bind = function(v) return function(f) return f(v) end end,
+      bind = function(v_S_308)
+        return function(f_S_309) return f_S_309(v_S_308) end
+      end,
       Apply0 = function() return M.Data_Identity_applyIdentity end
     }
   end
@@ -64,12 +70,12 @@ end
 M.Control_Monad_State_Trans_applyStateT = function(dictMonad)
   return {
     apply = (function()
-      local bind = M.Control_Bind_bind((M.Control_Monad_State_Trans_monadStateT(dictMonad)).Bind1())
-      return function(f)
-        return function(a)
-          return bind(f)(function(fPrime)
-            return bind(a)(function(aPrime)
-              return M.Control_Applicative_pure((M.Control_Monad_State_Trans_monadStateT(dictMonad)).Applicative0())(fPrime(aPrime))
+      local bind_S_2350 = M.Control_Bind_bind((M.Control_Monad_State_Trans_monadStateT(dictMonad)).Bind1())
+      return function(f_S_2351)
+        return function(a_S_2352)
+          return bind_S_2350(f_S_2351)(function(fPrime_S_2353)
+            return bind_S_2350(a_S_2352)(function(aPrime_S_2354)
+              return M.Control_Applicative_pure((M.Control_Monad_State_Trans_monadStateT(dictMonad)).Applicative0())(fPrime_S_2353(aPrime_S_2354))
             end)
           end)
         end
@@ -77,12 +83,12 @@ M.Control_Monad_State_Trans_applyStateT = function(dictMonad)
     end)(),
     Functor0 = function()
       return {
-        map = function(f)
-          return function(v)
-            return function(s)
-              return (((dictMonad.Bind1()).Apply0()).Functor0()).map(function( v1 )
-                return M.Data_Tuple_Tuple(f(v1.value0))(v1.value1)
-              end)(v(s))
+        map = function(f_S_2342)
+          return function(v_S_2343)
+            return function(s_S_2344)
+              return (((dictMonad.Bind1()).Apply0()).Functor0()).map(function( v1_S_2345 )
+                return M.Data_Tuple_Tuple(f_S_2342(v1_S_2345.value0))(v1_S_2345.value1)
+              end)(v_S_2343(s_S_2344))
             end
           end
         end
@@ -105,30 +111,32 @@ end
 M.Golden_LongStateBind_Test_bindStateT = M.Control_Monad_State_Trans_bindStateT(M.Data_Identity_monadIdentity)
 M.Golden_LongStateBind_Test_bind = M.Control_Bind_bind(M.Golden_LongStateBind_Test_bindStateT)
 M.Golden_LongStateBind_Test_monadStateStateT = {
-  state = function(f)
-    return (function(f1)
-      return function(g) return function(x) return f1(g(x)) end end
-    end)(M.Control_Applicative_pure(M.Data_Identity_monadIdentity.Applicative0()))(f)
+  state = function(f_S_237)
+    return (function(f_S_2360)
+      return function(g_S_2361)
+        return function(x_S_2362) return f_S_2360(g_S_2361(x_S_2362)) end
+      end
+    end)(M.Control_Applicative_pure(M.Data_Identity_monadIdentity.Applicative0()))(f_S_237)
   end,
   Monad0 = function()
     return M.Control_Monad_State_Trans_monadStateT(M.Data_Identity_monadIdentity)
   end
 }
-M.Golden_LongStateBind_Test_get = M.Control_Monad_State_Class_state(M.Golden_LongStateBind_Test_monadStateStateT)(function( s )
-  return M.Data_Tuple_Tuple(s)(s)
+M.Golden_LongStateBind_Test_get = M.Control_Monad_State_Class_state(M.Golden_LongStateBind_Test_monadStateStateT)(function( s_S_282 )
+  return M.Data_Tuple_Tuple(s_S_282)(s_S_282)
 end)
-M.Golden_LongStateBind_Test_discard = (function(dictBind)
-  return M.Control_Bind_bind(dictBind)
+M.Golden_LongStateBind_Test_discard = (function(dictBind_S_2355)
+  return M.Control_Bind_bind(dictBind_S_2355)
 end)(M.Golden_LongStateBind_Test_bindStateT)
-M.Golden_LongStateBind_Test_put = function(s)
+M.Golden_LongStateBind_Test_put = function(s_S_285)
   return M.Control_Monad_State_Class_state(M.Golden_LongStateBind_Test_monadStateStateT)(function(  )
-    return M.Data_Tuple_Tuple({})(s)
+    return M.Data_Tuple_Tuple({})(s_S_285)
   end)
 end
 M.Golden_LongStateBind_Test_add = M.Data_Semiring_foreign.intAdd
 M.Golden_LongStateBind_Test_go = (function()
-  local _S_kont0 = function(x1)
-    return function(x100)
+  local _S_kont2364 = function(x1_S_2365)
+    return function(x100_S_2366)
       return M.Golden_LongStateBind_Test_bind(M.Golden_LongStateBind_Test_get)(function( x141 )
         return M.Golden_LongStateBind_Test_discard(M.Golden_LongStateBind_Test_put(M.Golden_LongStateBind_Test_add(x141)(1)))(function(  )
           return M.Golden_LongStateBind_Test_bind(M.Golden_LongStateBind_Test_get)(function( x142 )
@@ -150,7 +158,7 @@ M.Golden_LongStateBind_Test_go = (function()
                                           return M.Golden_LongStateBind_Test_bind(M.Golden_LongStateBind_Test_get)(function( x150 )
                                             return M.Golden_LongStateBind_Test_discard(M.Golden_LongStateBind_Test_put(M.Golden_LongStateBind_Test_add(x150)(1)))(function(  )
                                               return M.Golden_LongStateBind_Test_bind(M.Golden_LongStateBind_Test_get)(function( final )
-                                                return M.Control_Applicative_pure(M.Control_Monad_State_Trans_applicativeStateT(M.Data_Identity_monadIdentity))(M.Golden_LongStateBind_Test_add(M.Golden_LongStateBind_Test_add(x1)(x100))(final))
+                                                return M.Control_Applicative_pure(M.Control_Monad_State_Trans_applicativeStateT(M.Data_Identity_monadIdentity))(M.Golden_LongStateBind_Test_add(M.Golden_LongStateBind_Test_add(x1_S_2365)(x100_S_2366))(final))
                                               end)
                                             end)
                                           end)
@@ -174,8 +182,8 @@ M.Golden_LongStateBind_Test_go = (function()
       end)
     end
   end
-  local _S_kont1 = function(x1)
-    return function(x100)
+  local _S_kont2367 = function(x1_S_2368)
+    return function(x100_S_2369)
       return M.Golden_LongStateBind_Test_bind(M.Golden_LongStateBind_Test_get)(function( x121 )
         return M.Golden_LongStateBind_Test_discard(M.Golden_LongStateBind_Test_put(M.Golden_LongStateBind_Test_add(x121)(1)))(function(  )
           return M.Golden_LongStateBind_Test_bind(M.Golden_LongStateBind_Test_get)(function( x122 )
@@ -216,7 +224,7 @@ M.Golden_LongStateBind_Test_go = (function()
                                                                                 return M.Golden_LongStateBind_Test_discard(M.Golden_LongStateBind_Test_put(M.Golden_LongStateBind_Test_add(x139)(1)))(function(  )
                                                                                   return M.Golden_LongStateBind_Test_bind(M.Golden_LongStateBind_Test_get)(function( x140 )
                                                                                     return M.Golden_LongStateBind_Test_discard(M.Golden_LongStateBind_Test_put(M.Golden_LongStateBind_Test_add(x140)(1)))(function(  )
-                                                                                      return _S_kont0(x1)(x100)
+                                                                                      return _S_kont2364(x1_S_2368)(x100_S_2369)
                                                                                     end)
                                                                                   end)
                                                                                 end)
@@ -259,8 +267,8 @@ M.Golden_LongStateBind_Test_go = (function()
       end)
     end
   end
-  local _S_kont2 = function(x1)
-    return function(x100)
+  local _S_kont2370 = function(x1_S_2371)
+    return function(x100_S_2372)
       return M.Golden_LongStateBind_Test_bind(M.Golden_LongStateBind_Test_get)(function( x101 )
         return M.Golden_LongStateBind_Test_discard(M.Golden_LongStateBind_Test_put(M.Golden_LongStateBind_Test_add(x101)(1)))(function(  )
           return M.Golden_LongStateBind_Test_bind(M.Golden_LongStateBind_Test_get)(function( x102 )
@@ -301,7 +309,7 @@ M.Golden_LongStateBind_Test_go = (function()
                                                                                 return M.Golden_LongStateBind_Test_discard(M.Golden_LongStateBind_Test_put(M.Golden_LongStateBind_Test_add(x119)(1)))(function(  )
                                                                                   return M.Golden_LongStateBind_Test_bind(M.Golden_LongStateBind_Test_get)(function( x120 )
                                                                                     return M.Golden_LongStateBind_Test_discard(M.Golden_LongStateBind_Test_put(M.Golden_LongStateBind_Test_add(x120)(1)))(function(  )
-                                                                                      return _S_kont1(x1)(x100)
+                                                                                      return _S_kont2367(x1_S_2371)(x100_S_2372)
                                                                                     end)
                                                                                   end)
                                                                                 end)
@@ -344,7 +352,7 @@ M.Golden_LongStateBind_Test_go = (function()
       end)
     end
   end
-  local _S_kont3 = function(x1)
+  local _S_kont2373 = function(x1_S_2374)
     return M.Golden_LongStateBind_Test_bind(M.Golden_LongStateBind_Test_get)(function( x81 )
       return M.Golden_LongStateBind_Test_discard(M.Golden_LongStateBind_Test_put(M.Golden_LongStateBind_Test_add(x81)(1)))(function(  )
         return M.Golden_LongStateBind_Test_bind(M.Golden_LongStateBind_Test_get)(function( x82 )
@@ -385,7 +393,7 @@ M.Golden_LongStateBind_Test_go = (function()
                                                                               return M.Golden_LongStateBind_Test_discard(M.Golden_LongStateBind_Test_put(M.Golden_LongStateBind_Test_add(x99)(1)))(function(  )
                                                                                 return M.Golden_LongStateBind_Test_bind(M.Golden_LongStateBind_Test_get)(function( x100 )
                                                                                   return M.Golden_LongStateBind_Test_discard(M.Golden_LongStateBind_Test_put(M.Golden_LongStateBind_Test_add(x100)(1)))(function(  )
-                                                                                    return _S_kont2(x1)(x100)
+                                                                                    return _S_kont2370(x1_S_2374)(x100)
                                                                                   end)
                                                                                 end)
                                                                               end)
@@ -427,7 +435,7 @@ M.Golden_LongStateBind_Test_go = (function()
       end)
     end)
   end
-  local _S_kont4 = function(x1)
+  local _S_kont2375 = function(x1_S_2376)
     return M.Golden_LongStateBind_Test_bind(M.Golden_LongStateBind_Test_get)(function( x61 )
       return M.Golden_LongStateBind_Test_discard(M.Golden_LongStateBind_Test_put(M.Golden_LongStateBind_Test_add(x61)(1)))(function(  )
         return M.Golden_LongStateBind_Test_bind(M.Golden_LongStateBind_Test_get)(function( x62 )
@@ -468,7 +476,7 @@ M.Golden_LongStateBind_Test_go = (function()
                                                                               return M.Golden_LongStateBind_Test_discard(M.Golden_LongStateBind_Test_put(M.Golden_LongStateBind_Test_add(x79)(1)))(function(  )
                                                                                 return M.Golden_LongStateBind_Test_bind(M.Golden_LongStateBind_Test_get)(function( x80 )
                                                                                   return M.Golden_LongStateBind_Test_discard(M.Golden_LongStateBind_Test_put(M.Golden_LongStateBind_Test_add(x80)(1)))(function(  )
-                                                                                    return _S_kont3(x1)
+                                                                                    return _S_kont2373(x1_S_2376)
                                                                                   end)
                                                                                 end)
                                                                               end)
@@ -510,7 +518,7 @@ M.Golden_LongStateBind_Test_go = (function()
       end)
     end)
   end
-  local _S_kont5 = function(x1)
+  local _S_kont2377 = function(x1_S_2378)
     return M.Golden_LongStateBind_Test_bind(M.Golden_LongStateBind_Test_get)(function( x41 )
       return M.Golden_LongStateBind_Test_discard(M.Golden_LongStateBind_Test_put(M.Golden_LongStateBind_Test_add(x41)(1)))(function(  )
         return M.Golden_LongStateBind_Test_bind(M.Golden_LongStateBind_Test_get)(function( x42 )
@@ -551,7 +559,7 @@ M.Golden_LongStateBind_Test_go = (function()
                                                                               return M.Golden_LongStateBind_Test_discard(M.Golden_LongStateBind_Test_put(M.Golden_LongStateBind_Test_add(x59)(1)))(function(  )
                                                                                 return M.Golden_LongStateBind_Test_bind(M.Golden_LongStateBind_Test_get)(function( x60 )
                                                                                   return M.Golden_LongStateBind_Test_discard(M.Golden_LongStateBind_Test_put(M.Golden_LongStateBind_Test_add(x60)(1)))(function(  )
-                                                                                    return _S_kont4(x1)
+                                                                                    return _S_kont2375(x1_S_2378)
                                                                                   end)
                                                                                 end)
                                                                               end)
@@ -593,7 +601,7 @@ M.Golden_LongStateBind_Test_go = (function()
       end)
     end)
   end
-  local _S_kont6 = function(x1)
+  local _S_kont2379 = function(x1_S_2380)
     return M.Golden_LongStateBind_Test_bind(M.Golden_LongStateBind_Test_get)(function( x21 )
       return M.Golden_LongStateBind_Test_discard(M.Golden_LongStateBind_Test_put(M.Golden_LongStateBind_Test_add(x21)(1)))(function(  )
         return M.Golden_LongStateBind_Test_bind(M.Golden_LongStateBind_Test_get)(function( x22 )
@@ -634,7 +642,7 @@ M.Golden_LongStateBind_Test_go = (function()
                                                                               return M.Golden_LongStateBind_Test_discard(M.Golden_LongStateBind_Test_put(M.Golden_LongStateBind_Test_add(x39)(1)))(function(  )
                                                                                 return M.Golden_LongStateBind_Test_bind(M.Golden_LongStateBind_Test_get)(function( x40 )
                                                                                   return M.Golden_LongStateBind_Test_discard(M.Golden_LongStateBind_Test_put(M.Golden_LongStateBind_Test_add(x40)(1)))(function(  )
-                                                                                    return _S_kont5(x1)
+                                                                                    return _S_kont2377(x1_S_2380)
                                                                                   end)
                                                                                 end)
                                                                               end)
@@ -716,7 +724,7 @@ M.Golden_LongStateBind_Test_go = (function()
                                                                             return M.Golden_LongStateBind_Test_discard(M.Golden_LongStateBind_Test_put(M.Golden_LongStateBind_Test_add(x19)(1)))(function(  )
                                                                               return M.Golden_LongStateBind_Test_bind(M.Golden_LongStateBind_Test_get)(function( x20 )
                                                                                 return M.Golden_LongStateBind_Test_discard(M.Golden_LongStateBind_Test_put(M.Golden_LongStateBind_Test_add(x20)(1)))(function(  )
-                                                                                  return _S_kont6(x1)
+                                                                                  return _S_kont2379(x1)
                                                                                 end)
                                                                               end)
                                                                             end)

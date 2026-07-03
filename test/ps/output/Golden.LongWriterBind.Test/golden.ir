@@ -99,12 +99,12 @@ UberModule
             ( LiteralObject Nothing
               [
                 ( PropName "map", Abs Nothing
-                  ( ParamNamed Nothing ( Name "f" ) )
+                  ( ParamNamed Nothing ( Name "f$2261" ) )
                   ( Abs Nothing
-                    ( ParamNamed Nothing ( Name "m" ) )
+                    ( ParamNamed Nothing ( Name "m$2262" ) )
                     ( App Nothing
-                      ( Ref Nothing ( Local ( Name "f" ) ) 0 )
-                      ( Ref Nothing ( Local ( Name "m" ) ) 0 )
+                      ( Ref Nothing ( Local ( Name "f$2261" ) ) 0 )
+                      ( Ref Nothing ( Local ( Name "m$2262" ) ) 0 )
                     )
                   )
                 )
@@ -137,8 +137,8 @@ UberModule
         }, LiteralObject Nothing
         [
           ( PropName "pure", Abs Nothing
-            ( ParamNamed Nothing ( Name "x" ) )
-            ( Ref Nothing ( Local ( Name "x" ) ) 0 )
+            ( ParamNamed Nothing ( Name "x$2263" ) )
+            ( Ref Nothing ( Local ( Name "x$2263" ) ) 0 )
           ),
           ( PropName "Apply0", Abs Nothing ( ParamUnused Nothing )
             ( Ref Nothing ( Imported ( ModuleName "Data.Identity" ) ( Name "applyIdentity" ) ) 0 )
@@ -190,9 +190,9 @@ UberModule
                               ( Ref Nothing ( Local ( Name "Functor0" ) ) 0 )
                             )
                             ( Abs Nothing
-                              ( ParamNamed Nothing ( Name "v3" ) )
+                              ( ParamNamed Nothing ( Name "v3$184" ) )
                               ( Abs Nothing
-                                ( ParamNamed Nothing ( Name "v4" ) )
+                                ( ParamNamed Nothing ( Name "v4$185" ) )
                                 ( App Nothing
                                   ( App Nothing
                                     ( Ref Nothing
@@ -200,11 +200,11 @@ UberModule
                                     )
                                     ( App Nothing
                                       ( ObjectProp Nothing
-                                        ( Ref Nothing ( Local ( Name "v3" ) ) 0 )
+                                        ( Ref Nothing ( Local ( Name "v3$184" ) ) 0 )
                                         ( PropName "value0" )
                                       )
                                       ( ObjectProp Nothing
-                                        ( Ref Nothing ( Local ( Name "v4" ) ) 0 )
+                                        ( Ref Nothing ( Local ( Name "v4$185" ) ) 0 )
                                         ( PropName "value0" )
                                       )
                                     )
@@ -221,12 +221,12 @@ UberModule
                                         ( Ref Nothing ( Local ( Name "dictSemigroup" ) ) 0 )
                                       )
                                       ( ObjectProp Nothing
-                                        ( Ref Nothing ( Local ( Name "v3" ) ) 0 )
+                                        ( Ref Nothing ( Local ( Name "v3$184" ) ) 0 )
                                         ( PropName "value1" )
                                       )
                                     )
                                     ( ObjectProp Nothing
-                                      ( Ref Nothing ( Local ( Name "v4" ) ) 0 )
+                                      ( Ref Nothing ( Local ( Name "v4$185" ) ) 0 )
                                       ( PropName "value1" )
                                     )
                                   )
@@ -245,9 +245,9 @@ UberModule
                   ( LiteralObject Nothing
                     [
                       ( PropName "map", Abs Nothing
-                        ( ParamNamed Nothing ( Name "f" ) )
+                        ( ParamNamed Nothing ( Name "f$2256" ) )
                         ( Abs Nothing
-                          ( ParamNamed Nothing ( Name "v" ) )
+                          ( ParamNamed Nothing ( Name "v$2259" ) )
                           ( App Nothing
                             ( App Nothing
                               ( App Nothing
@@ -257,28 +257,28 @@ UberModule
                                 ( Ref Nothing ( Local ( Name "Functor0" ) ) 0 )
                               )
                               ( Abs Nothing
-                                ( ParamNamed Nothing ( Name "v1" ) )
+                                ( ParamNamed Nothing ( Name "v$2257" ) )
                                 ( App Nothing
                                   ( App Nothing
                                     ( Ref Nothing
                                       ( Imported ( ModuleName "Data.Tuple" ) ( Name "Tuple" ) ) 0
                                     )
                                     ( App Nothing
-                                      ( Ref Nothing ( Local ( Name "f" ) ) 0 )
+                                      ( Ref Nothing ( Local ( Name "f$2256" ) ) 0 )
                                       ( ObjectProp Nothing
-                                        ( Ref Nothing ( Local ( Name "v1" ) ) 0 )
+                                        ( Ref Nothing ( Local ( Name "v$2257" ) ) 0 )
                                         ( PropName "value0" )
                                       )
                                     )
                                   )
                                   ( ObjectProp Nothing
-                                    ( Ref Nothing ( Local ( Name "v1" ) ) 0 )
+                                    ( Ref Nothing ( Local ( Name "v$2257" ) ) 0 )
                                     ( PropName "value1" )
                                   )
                                 )
                               )
                             )
-                            ( Ref Nothing ( Local ( Name "v" ) ) 0 )
+                            ( Ref Nothing ( Local ( Name "v$2259" ) ) 0 )
                           )
                         )
                       )
@@ -473,10 +473,10 @@ UberModule
           ( LiteralObject Nothing
             [
               ( PropName "discard", Abs Nothing
-                ( ParamNamed Nothing ( Name "dictBind" ) )
+                ( ParamNamed Nothing ( Name "dictBind$2266" ) )
                 ( App Nothing
                   ( Ref Nothing ( Imported ( ModuleName "Control.Bind" ) ( Name "bind" ) ) 0 )
-                  ( Ref Nothing ( Local ( Name "dictBind" ) ) 0 )
+                  ( Ref Nothing ( Local ( Name "dictBind$2266" ) ) 0 )
                 )
               )
             ]
@@ -504,8 +504,8 @@ UberModule
                   ( Imported ( ModuleName "Control.Monad.Writer.Trans" ) ( Name "compose" ) ) 0
                 )
                 ( Abs Nothing
-                  ( ParamNamed Nothing ( Name "x" ) )
-                  ( Ref Nothing ( Local ( Name "x" ) ) 0 )
+                  ( ParamNamed Nothing ( Name "x$2260" ) )
+                  ( Ref Nothing ( Local ( Name "x$2260" ) ) 0 )
                 )
               )
               ( App Nothing
@@ -670,7 +670,7 @@ UberModule
         { qnameModuleName = ModuleName "Golden.LongWriterBind.Test", qnameName = Name "go"
         }, Let Nothing
         ( Standalone
-          ( Nothing, Name "$kont0", App Nothing
+          ( Nothing, Name "$kont2270", App Nothing
             ( App Nothing
               ( Ref Nothing
                 ( Imported ( ModuleName "Golden.LongWriterBind.Test" ) ( Name "discard" ) ) 0
@@ -1591,7 +1591,7 @@ UberModule
             )
           ) :|
           [ Standalone
-            ( Nothing, Name "$kont1", App Nothing
+            ( Nothing, Name "$kont2271", App Nothing
               ( App Nothing
                 ( Ref Nothing
                   ( Imported ( ModuleName "Golden.LongWriterBind.Test" ) ( Name "discard" ) ) 0
@@ -2405,7 +2405,7 @@ UberModule
                                                                                                                                                                           ( Abs Nothing ( ParamUnused Nothing )
                                                                                                                                                                             ( Ref Nothing
                                                                                                                                                                               ( Local
-                                                                                                                                                                                ( Name "$kont0" )
+                                                                                                                                                                                ( Name "$kont2270" )
                                                                                                                                                                               ) 0
                                                                                                                                                                             )
                                                                                                                                                                           )
@@ -2488,7 +2488,7 @@ UberModule
                 )
               )
             ), Standalone
-            ( Nothing, Name "$kont2", App Nothing
+            ( Nothing, Name "$kont2272", App Nothing
               ( App Nothing
                 ( Ref Nothing
                   ( Imported ( ModuleName "Golden.LongWriterBind.Test" ) ( Name "discard" ) ) 0
@@ -3300,7 +3300,7 @@ UberModule
                                                                                                                                                                           ( Abs Nothing ( ParamUnused Nothing )
                                                                                                                                                                             ( Ref Nothing
                                                                                                                                                                               ( Local
-                                                                                                                                                                                ( Name "$kont1" )
+                                                                                                                                                                                ( Name "$kont2271" )
                                                                                                                                                                               ) 0
                                                                                                                                                                             )
                                                                                                                                                                           )
@@ -3383,7 +3383,7 @@ UberModule
                 )
               )
             ), Standalone
-            ( Nothing, Name "$kont3", App Nothing
+            ( Nothing, Name "$kont2273", App Nothing
               ( App Nothing
                 ( Ref Nothing
                   ( Imported ( ModuleName "Golden.LongWriterBind.Test" ) ( Name "discard" ) ) 0
@@ -4195,7 +4195,7 @@ UberModule
                                                                                                                                                                           ( Abs Nothing ( ParamUnused Nothing )
                                                                                                                                                                             ( Ref Nothing
                                                                                                                                                                               ( Local
-                                                                                                                                                                                ( Name "$kont2" )
+                                                                                                                                                                                ( Name "$kont2272" )
                                                                                                                                                                               ) 0
                                                                                                                                                                             )
                                                                                                                                                                           )
@@ -5084,7 +5084,7 @@ UberModule
                                                                                                                                                                       ( Abs Nothing ( ParamUnused Nothing )
                                                                                                                                                                         ( Ref Nothing
                                                                                                                                                                           ( Local
-                                                                                                                                                                            ( Name "$kont3" )
+                                                                                                                                                                            ( Name "$kont2273" )
                                                                                                                                                                           ) 0
                                                                                                                                                                         )
                                                                                                                                                                       )
@@ -5191,8 +5191,8 @@ UberModule
               )
             )
             ( Abs Nothing
-              ( ParamNamed Nothing ( Name "v" ) )
-              ( Ref Nothing ( Local ( Name "v" ) ) 0 )
+              ( ParamNamed Nothing ( Name "v$190$2250" ) )
+              ( Ref Nothing ( Local ( Name "v$190$2250" ) ) 0 )
             )
           )
           ( Ref Nothing ( Imported ( ModuleName "Golden.LongWriterBind.Test" ) ( Name "go" ) ) 0 )

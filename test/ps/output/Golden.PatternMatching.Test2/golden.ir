@@ -57,18 +57,18 @@ UberModule
         [ FieldName "value0", FieldName "value1" ]
       ),
       ( Name "pat", Abs Nothing
-        ( ParamNamed Nothing ( Name "e" ) )
+        ( ParamNamed Nothing ( Name "e$0" ) )
         ( IfThenElse Nothing
           ( Eq Nothing
             ( LiteralString Nothing "Golden.PatternMatching.Test2∷N.Add" )
-            ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "e" ) ) 0 ) )
+            ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "e$0" ) ) 0 ) )
           )
           ( IfThenElse Nothing
             ( Eq Nothing
               ( LiteralString Nothing "Golden.PatternMatching.Test2∷N.Zero" )
               ( ReflectCtor Nothing
                 ( ObjectProp Nothing
-                  ( Ref Nothing ( Local ( Name "e" ) ) 0 )
+                  ( Ref Nothing ( Local ( Name "e$0" ) ) 0 )
                   ( PropName "value1" )
                 )
               )
@@ -78,7 +78,7 @@ UberModule
                 ( LiteralString Nothing "Golden.PatternMatching.Test2∷N.Add" )
                 ( ReflectCtor Nothing
                   ( ObjectProp Nothing
-                    ( Ref Nothing ( Local ( Name "e" ) ) 0 )
+                    ( Ref Nothing ( Local ( Name "e$0" ) ) 0 )
                     ( PropName "value0" )
                   )
                 )
@@ -89,7 +89,7 @@ UberModule
                   ( LiteralString Nothing "Golden.PatternMatching.Test2∷N.Mul" )
                   ( ReflectCtor Nothing
                     ( ObjectProp Nothing
-                      ( Ref Nothing ( Local ( Name "e" ) ) 0 )
+                      ( Ref Nothing ( Local ( Name "e$0" ) ) 0 )
                       ( PropName "value0" )
                     )
                   )
@@ -103,7 +103,7 @@ UberModule
                 ( LiteralString Nothing "Golden.PatternMatching.Test2∷N.Mul" )
                 ( ReflectCtor Nothing
                   ( ObjectProp Nothing
-                    ( Ref Nothing ( Local ( Name "e" ) ) 0 )
+                    ( Ref Nothing ( Local ( Name "e$0" ) ) 0 )
                     ( PropName "value1" )
                   )
                 )
@@ -114,7 +114,7 @@ UberModule
                   ( LiteralString Nothing "Golden.PatternMatching.Test2∷N.Add" )
                   ( ReflectCtor Nothing
                     ( ObjectProp Nothing
-                      ( Ref Nothing ( Local ( Name "e" ) ) 0 )
+                      ( Ref Nothing ( Local ( Name "e$0" ) ) 0 )
                       ( PropName "value1" )
                     )
                   )
@@ -125,7 +125,7 @@ UberModule
                     ( LiteralString Nothing "Golden.PatternMatching.Test2∷N.Zero" )
                     ( ReflectCtor Nothing
                       ( ObjectProp Nothing
-                        ( Ref Nothing ( Local ( Name "e" ) ) 0 )
+                        ( Ref Nothing ( Local ( Name "e$0" ) ) 0 )
                         ( PropName "value1" )
                       )
                     )

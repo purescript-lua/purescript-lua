@@ -385,11 +385,11 @@ M.Data_Maybe_showMaybe = function(dictShow)
     end
   }
 end
-M.Data_Maybe_isNothing = function(v2)
-  if "Data.Maybe∷Maybe.Nothing" == v2["$ctor"] then
+M.Data_Maybe_isNothing = function(v2_S_3977)
+  if "Data.Maybe∷Maybe.Nothing" == v2_S_3977["$ctor"] then
     return true
   else
-    if "Data.Maybe∷Maybe.Just" == v2["$ctor"] then
+    if "Data.Maybe∷Maybe.Just" == v2_S_3977["$ctor"] then
       return false
     else
       return error("No patterns matched")
@@ -432,9 +432,9 @@ M.Effect_applicativeEffect = {
 }
 M.Effect_Lazy_functorEffect = PSLUA_runtime_lazy("functorEffect")(function()
   return {
-    map = function(f)
-      return function(a)
-        return (M.Effect_applicativeEffect.Apply0()).apply(M.Control_Applicative_pure(M.Effect_applicativeEffect)(f))(a)
+    map = function(f_S_2450)
+      return function(a_S_2451)
+        return (M.Effect_applicativeEffect.Apply0()).apply(M.Control_Applicative_pure(M.Effect_applicativeEffect)(f_S_2450))(a_S_2451)
       end
     end
   }
@@ -442,12 +442,12 @@ end)
 M.Effect_Lazy_applyEffect = PSLUA_runtime_lazy("applyEffect")(function()
   return {
     apply = (function()
-      local bind = M.Control_Bind_bind(M.Effect_monadEffect.Bind1())
-      return function(f)
-        return function(a)
-          return bind(f)(function(fPrime)
-            return bind(a)(function(aPrime)
-              return M.Control_Applicative_pure(M.Effect_monadEffect.Applicative0())(fPrime(aPrime))
+      local bind_S_3981 = M.Control_Bind_bind(M.Effect_monadEffect.Bind1())
+      return function(f_S_3982)
+        return function(a_S_3983)
+          return bind_S_3981(f_S_3982)(function(fPrime_S_3984)
+            return bind_S_3981(a_S_3983)(function(aPrime_S_3985)
+              return M.Control_Applicative_pure(M.Effect_monadEffect.Applicative0())(fPrime_S_3984(aPrime_S_3985))
             end)
           end)
         end
@@ -504,42 +504,42 @@ M.Data_String_CodePoints_fromEnum = M.Data_Enum_fromEnum(M.Data_Enum_boundedEnum
 M.Data_String_CodePoints_compose = M.Control_Semigroupoid_compose(M.Control_Semigroupoid_semigroupoidFn)
 M.Data_String_CodePoints_eq = M.Data_Eq_eq(M.Data_Eq_eqInt)
 M.Data_String_CodePoints_lessThan = M.Data_Ord_lessThan(M.Data_Ord_ordInt)
-M.Data_String_CodePoints_unsafeCodePointAt0 = M.Data_String_CodePoints_foreign._unsafeCodePointAt0(function( s )
-  local cu0 = M.Data_String_CodePoints_fromEnum((function(i)
+M.Data_String_CodePoints_unsafeCodePointAt0 = M.Data_String_CodePoints_foreign._unsafeCodePointAt0(function( s_S_27 )
+  local cu0_S_28 = M.Data_String_CodePoints_fromEnum((function(i)
       return function(s)
         if i >= 0 and i < #s then return s:sub(i + 1, i + 1) end
         error("Data.String.Unsafe.charAt: Invalid index.")
       end
-    end)(0)(s))
-  if M.Data_String_CodePoints_conj(M.Data_String_CodePoints_conj(M.Data_String_CodePoints_lessThanOrEq(55296)(cu0))(M.Data_String_CodePoints_lessThanOrEq(cu0)(56319)))((function(  )
-    if "Data.Ordering∷Ordering.GT" == (M.Data_Ord_compare(M.Data_Ord_ordInt)(M.Data_String_CodeUnits_foreign.length(s))(1))["$ctor"] then
+    end)(0)(s_S_27))
+  if M.Data_String_CodePoints_conj(M.Data_String_CodePoints_conj(M.Data_String_CodePoints_lessThanOrEq(55296)(cu0_S_28))(M.Data_String_CodePoints_lessThanOrEq(cu0_S_28)(56319)))((function(  )
+    if "Data.Ordering∷Ordering.GT" == (M.Data_Ord_compare(M.Data_Ord_ordInt)(M.Data_String_CodeUnits_foreign.length(s_S_27))(1))["$ctor"] then
       return true
     else
       return false
     end
   end)()) then
-    local cu1 = M.Data_String_CodePoints_fromEnum((function(i)
+    local cu1_S_30 = M.Data_String_CodePoints_fromEnum((function(i)
         return function(s)
           if i >= 0 and i < #s then return s:sub(i + 1, i + 1) end
           error("Data.String.Unsafe.charAt: Invalid index.")
         end
-      end)(1)(s))
-    if M.Data_String_CodePoints_conj(M.Data_String_CodePoints_lessThanOrEq(56320)(cu1))(M.Data_String_CodePoints_lessThanOrEq(cu1)(57343)) then
-      return M.Data_String_CodePoints_add(M.Data_String_CodePoints_add(M.Data_Semiring_semiringInt.mul(M.Data_String_CodePoints_sub(cu0)(55296))(1024))(M.Data_String_CodePoints_sub(cu1)(56320)))(65536)
+      end)(1)(s_S_27))
+    if M.Data_String_CodePoints_conj(M.Data_String_CodePoints_lessThanOrEq(56320)(cu1_S_30))(M.Data_String_CodePoints_lessThanOrEq(cu1_S_30)(57343)) then
+      return M.Data_String_CodePoints_add(M.Data_String_CodePoints_add(M.Data_Semiring_semiringInt.mul(M.Data_String_CodePoints_sub(cu0_S_28)(55296))(1024))(M.Data_String_CodePoints_sub(cu1_S_30)(56320)))(65536)
     else
-      return cu0
+      return cu0_S_28
     end
   else
-    return cu0
+    return cu0_S_28
   end
 end)
-M.Data_String_CodePoints_fromCharCode = M.Data_String_CodePoints_compose(M.Data_String_CodeUnits_foreign.singleton)(function( x )
-  local v = M.Data_Enum_toEnum(M.Data_Enum_boundedEnumChar)(x)
-  if "Data.Maybe∷Maybe.Just" == v["$ctor"] then
-    return v.value0
+M.Data_String_CodePoints_fromCharCode = M.Data_String_CodePoints_compose(M.Data_String_CodeUnits_foreign.singleton)(function( x_S_68 )
+  local v_S_69 = M.Data_Enum_toEnum(M.Data_Enum_boundedEnumChar)(x_S_68)
+  if "Data.Maybe∷Maybe.Just" == v_S_69["$ctor"] then
+    return v_S_69.value0
   else
-    if "Data.Maybe∷Maybe.Nothing" == v["$ctor"] then
-      if M.Data_Ord_lessThan(M.Data_Ord_ordInt)(x)(M.Data_Enum_fromEnum(M.Data_Enum_boundedEnumChar)(M.Data_Bounded_bottom(M.Data_Enum_boundedEnumChar.Bounded0()))) then
+    if "Data.Maybe∷Maybe.Nothing" == v_S_69["$ctor"] then
+      if M.Data_Ord_lessThan(M.Data_Ord_ordInt)(x_S_68)(M.Data_Enum_fromEnum(M.Data_Enum_boundedEnumChar)(M.Data_Bounded_bottom(M.Data_Enum_boundedEnumChar.Bounded0()))) then
         return M.Data_Bounded_bottom(M.Data_Bounded_boundedChar)
       else
         return M.Data_Bounded_top(M.Data_Bounded_boundedChar)
@@ -563,8 +563,10 @@ M.Data_String_CodePoints_ordCodePoint = {
   end,
   Eq0 = function()
     return {
-      eq = function(x)
-        return function(y) return M.Data_String_CodePoints_eq(x)(y) end
+      eq = function(x_S_20)
+        return function(y_S_21)
+          return M.Data_String_CodePoints_eq(x_S_20)(y_S_21)
+        end
       end
     }
   end
@@ -584,9 +586,9 @@ M.Data_String_CodePoints_takeFallback = function(v)
     if M.Data_String_CodePoints_lessThan(v)(1) then
       return ""
     else
-      local v2 = M.Data_String_CodePoints_uncons(v1)
-      if "Data.Maybe∷Maybe.Just" == v2["$ctor"] then
-        return M.Data_String_CodePoints_append(M.Data_String_CodePoints_singleton(v2.value0.head))(M.Data_String_CodePoints_takeFallback(M.Data_String_CodePoints_sub(v)(1))(v2.value0.tail))
+      local v2_S_17 = M.Data_String_CodePoints_uncons(v1)
+      if "Data.Maybe∷Maybe.Just" == v2_S_17["$ctor"] then
+        return M.Data_String_CodePoints_append(M.Data_String_CodePoints_singleton(v2_S_17.value0.head))(M.Data_String_CodePoints_takeFallback(M.Data_String_CodePoints_sub(v)(1))(v2_S_17.value0.tail))
       else
         return v1
       end
@@ -603,7 +605,7 @@ M.Data_String_CodePoints_drop = function(n)
     return M.Data_String_CodeUnits_foreign.drop(M.Data_String_CodeUnits_foreign.length(M.Data_String_CodePoints_take(n)(s)))(s)
   end
 end
-M.Data_String_CodePoints_toCodePointArray = M.Data_String_CodePoints_foreign._toCodePointArray(function( s )
+M.Data_String_CodePoints_toCodePointArray = M.Data_String_CodePoints_foreign._toCodePointArray(function( s_S_10 )
   return (function(isNothing)
       return function(fromJust)
         return function(fst)
@@ -628,8 +630,8 @@ M.Data_String_CodePoints_toCodePointArray = M.Data_String_CodePoints_foreign._to
       end
     end)(M.Data_Maybe_isNothing)((function(f) return f(); end)(function()
     return M.Data_Maybe_fromJust()
-  end))(M.Data_Tuple_fst)(M.Data_Tuple_snd)(function(s1)
-    return M.Data_Functor_map(M.Data_Maybe_functorMaybe)(function(v)
+  end))(M.Data_Tuple_fst)(M.Data_Tuple_snd)(function(s_S_11)
+    return M.Data_Functor_map(M.Data_Maybe_functorMaybe)(function(v_S_12)
       return (function(value0)
         return function(value1)
           return {
@@ -638,9 +640,9 @@ M.Data_String_CodePoints_toCodePointArray = M.Data_String_CodePoints_foreign._to
             value1 = value1
           }
         end
-      end)(v.head)(v.tail)
-    end)(M.Data_String_CodePoints_uncons(s1))
-  end)(s)
+      end)(v_S_12.head)(v_S_12.tail)
+    end)(M.Data_String_CodePoints_uncons(s_S_11))
+  end)(s_S_10)
 end)(M.Data_String_CodePoints_unsafeCodePointAt0)
 M.Data_String_CodePoints_codePointAtFallback = function(n)
   return function(s)
@@ -684,9 +686,9 @@ end
 M.Data_String_CodePoints_boundedEnumCodePoint = {
   cardinality = M.Data_String_CodePoints_add(1114111)(1),
   fromEnum = function(v) return v end,
-  toEnum = function(n)
-    if M.Data_String_CodePoints_conj(M.Data_Ord_greaterThanOrEq(M.Data_Ord_ordInt)(n)(0))(M.Data_String_CodePoints_lessThanOrEq(n)(1114111)) then
-      return M.Data_Maybe_Just(n)
+  toEnum = function(n0)
+    if M.Data_String_CodePoints_conj(M.Data_Ord_greaterThanOrEq(M.Data_Ord_ordInt)(n0)(0))(M.Data_String_CodePoints_lessThanOrEq(n0)(1114111)) then
+      return M.Data_Maybe_Just(n0)
     else
       return M.Data_Maybe_Nothing
     end
@@ -714,8 +716,8 @@ M.Effect_Console_logShow = function(dictShow)
 end
 M.Golden_StringCodePoints_Test_compose = M.Control_Semigroupoid_compose(M.Control_Semigroupoid_semigroupoidFn)
 M.Golden_StringCodePoints_Test_fromEnum = M.Data_Enum_fromEnum(M.Data_String_CodePoints_boundedEnumCodePoint)
-M.Golden_StringCodePoints_Test_discard = (function(dictBind)
-  return M.Control_Bind_bind(dictBind)
+M.Golden_StringCodePoints_Test_discard = (function(dictBind_S_3986)
+  return M.Control_Bind_bind(dictBind_S_3986)
 end)(M.Effect_bindEffect)
 M.Golden_StringCodePoints_Test_showArray = {
   show = M.Data_Show_foreign.showArrayImpl(M.Data_Show_show(M.Data_Show_showInt))
@@ -746,18 +748,18 @@ return (function()
   local _ = M.Golden_StringCodePoints_Test_logShow2(M.Golden_StringCodePoints_Test_map(M.Golden_StringCodePoints_Test_fromEnum)(M.Data_String_CodePoints_codePointAt(0)("aéЯ𝐀z")))()
   local _ = M.Golden_StringCodePoints_Test_logShow2(M.Golden_StringCodePoints_Test_map(M.Golden_StringCodePoints_Test_fromEnum)(M.Data_String_CodePoints_codePointAt(3)("aéЯ𝐀z")))()
   local _ = M.Golden_StringCodePoints_Test_logShow2(M.Golden_StringCodePoints_Test_map(M.Golden_StringCodePoints_Test_fromEnum)(M.Data_String_CodePoints_codePointAt(5)("aéЯ𝐀z")))()
-  local _ = M.Golden_StringCodePoints_Test_logShow2(M.Golden_StringCodePoints_Test_map(M.Golden_StringCodePoints_Test_compose(M.Golden_StringCodePoints_Test_fromEnum)(function( v )
-    return v.head
+  local _ = M.Golden_StringCodePoints_Test_logShow2(M.Golden_StringCodePoints_Test_map(M.Golden_StringCodePoints_Test_compose(M.Golden_StringCodePoints_Test_fromEnum)(function( v_S_0 )
+    return v_S_0.head
   end))(M.Data_String_CodePoints_uncons("aéЯ𝐀z")))()
-  local _ = M.Effect_Console_logShow(M.Data_Maybe_showMaybe(M.Golden_StringCodePoints_Test_showArray))(M.Golden_StringCodePoints_Test_map(M.Golden_StringCodePoints_Test_compose(M.Golden_StringCodePoints_Test_codes)(function( v )
-    return v.tail
+  local _ = M.Effect_Console_logShow(M.Data_Maybe_showMaybe(M.Golden_StringCodePoints_Test_showArray))(M.Golden_StringCodePoints_Test_map(M.Golden_StringCodePoints_Test_compose(M.Golden_StringCodePoints_Test_codes)(function( v0_S_1 )
+    return v0_S_1.tail
   end))(M.Data_String_CodePoints_uncons("aéЯ𝐀z")))()
   local _ = M.Effect_Console_logShow({
-    show = function(v)
-      if v then
+    show = function(v_S_3461_S_3973)
+      if v_S_3461_S_3973 then
         return "true"
       else
-        if false == v then
+        if false == v_S_3461_S_3973 then
           return "false"
         else
           return error("No patterns matched")

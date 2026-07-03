@@ -88,9 +88,9 @@ M.Effect_applicativeEffect = {
 }
 M.Effect_Lazy_functorEffect = PSLUA_runtime_lazy("functorEffect")(function()
   return {
-    map = function(f)
-      return function(a)
-        return (M.Effect_applicativeEffect.Apply0()).apply(M.Control_Applicative_pure(M.Effect_applicativeEffect)(f))(a)
+    map = function(f_S_66)
+      return function(a_S_67)
+        return (M.Effect_applicativeEffect.Apply0()).apply(M.Control_Applicative_pure(M.Effect_applicativeEffect)(f_S_66))(a_S_67)
       end
     end
   }
@@ -98,12 +98,12 @@ end)
 M.Effect_Lazy_applyEffect = PSLUA_runtime_lazy("applyEffect")(function()
   return {
     apply = (function()
-      local bind = M.Control_Bind_bind(M.Effect_monadEffect.Bind1())
-      return function(f)
-        return function(a)
-          return bind(f)(function(fPrime)
-            return bind(a)(function(aPrime)
-              return M.Control_Applicative_pure(M.Effect_monadEffect.Applicative0())(fPrime(aPrime))
+      local bind_S_43 = M.Control_Bind_bind(M.Effect_monadEffect.Bind1())
+      return function(f_S_45)
+        return function(a_S_46)
+          return bind_S_43(f_S_45)(function(fPrime_S_47)
+            return bind_S_43(a_S_46)(function(aPrime_S_48)
+              return M.Control_Applicative_pure(M.Effect_monadEffect.Applicative0())(fPrime_S_47(aPrime_S_48))
             end)
           end)
         end
@@ -112,21 +112,21 @@ M.Effect_Lazy_applyEffect = PSLUA_runtime_lazy("applyEffect")(function()
     Functor0 = function() return M.Effect_Lazy_functorEffect(0) end
   }
 end)
-M.Golden_BugListGenericEq_Test_discard = (function(dictBind)
-  return M.Control_Bind_bind(dictBind)
+M.Golden_BugListGenericEq_Test_discard = (function(dictBind_S_49_S_1291)
+  return M.Control_Bind_bind(dictBind_S_49_S_1291)
 end)(M.Effect_bindEffect)
-M.Golden_BugListGenericEq_Test_logShow = function(a)
-  return (function(s) return function() print(s) end end)((function(v)
-    if v then
+M.Golden_BugListGenericEq_Test_logShow = function(a_S_2)
+  return (function(s) return function() print(s) end end)((function( v_S_928_S_1292 )
+    if v_S_928_S_1292 then
       return "true"
     else
-      if false == v then
+      if false == v_S_928_S_1292 then
         return "false"
       else
         return error("No patterns matched")
       end
     end
-  end)(a))
+  end)(a_S_2))
 end
 M.Golden_BugListGenericEq_Test_Nil = {
   ["$ctor"] = "Golden.BugListGenericEq.Test∷List.Nil"
@@ -149,16 +149,16 @@ M.Golden_BugListGenericEq_Test_genericList = {
       end
     end
   end,
-  from = function(x)
-    if "Golden.BugListGenericEq.Test∷List.Nil" == x["$ctor"] then
+  from = function(x0)
+    if "Golden.BugListGenericEq.Test∷List.Nil" == x0["$ctor"] then
       return (function(value0)
         return { ["$ctor"] = "Data.Generic.Rep∷Sum.Inl", value0 = value0 }
       end)({ ["$ctor"] = "Data.Generic.Rep∷NoArguments.NoArguments" })
     else
-      if "Golden.BugListGenericEq.Test∷List.Cons" == x["$ctor"] then
+      if "Golden.BugListGenericEq.Test∷List.Cons" == x0["$ctor"] then
         return (function(value0)
           return { ["$ctor"] = "Data.Generic.Rep∷Sum.Inr", value0 = value0 }
-        end)(x.value0)
+        end)(x0.value0)
       else
         return error("No patterns matched")
       end
@@ -170,33 +170,33 @@ M.Golden_BugListGenericEq_Test_eqList = function(dictEq)
     eq = function(x)
       return function(y)
         return (function()
-          local from = M.Golden_BugListGenericEq_Test_genericList.from
-          return function(dictGenericEq)
-            return function(x1)
-              return function(y1)
-                return M.Data_Eq_Generic_genericEqPrime(dictGenericEq)(from(x1))(from(y1))
+          local from_S_6 = M.Golden_BugListGenericEq_Test_genericList.from
+          return function(dictGenericEq_S_7)
+            return function(x_S_9)
+              return function(y_S_10)
+                return M.Data_Eq_Generic_genericEqPrime(dictGenericEq_S_7)(from_S_6(x_S_9))(from_S_6(y_S_10))
               end
             end
           end
         end)()({
-          genericEqPrime = function(v)
-            return function(v1)
-              if "Data.Generic.Rep∷Sum.Inl" == v["$ctor"] then
-                if "Data.Generic.Rep∷Sum.Inl" == v1["$ctor"] then
+          genericEqPrime = function(v_S_15)
+            return function(v1_S_16)
+              if "Data.Generic.Rep∷Sum.Inl" == v_S_15["$ctor"] then
+                if "Data.Generic.Rep∷Sum.Inl" == v1_S_16["$ctor"] then
                   return M.Data_Eq_Generic_genericEqPrime(M.Data_Eq_Generic_genericEqConstructor({
                     genericEqPrime = function()
                       return function() return true end
                     end
-                  }))(v.value0)(v1.value0)
+                  }))(v_S_15.value0)(v1_S_16.value0)
                 else
                   return false
                 end
               else
-                if "Data.Generic.Rep∷Sum.Inr" == v["$ctor"] then
-                  if "Data.Generic.Rep∷Sum.Inr" == v1["$ctor"] then
+                if "Data.Generic.Rep∷Sum.Inr" == v_S_15["$ctor"] then
+                  if "Data.Generic.Rep∷Sum.Inr" == v1_S_16["$ctor"] then
                     return M.Data_Eq_Generic_genericEqPrime(M.Data_Eq_Generic_genericEqConstructor({
-                      genericEqPrime = function(v2)
-                        return function(v11)
+                      genericEqPrime = function(v_S_23)
+                        return function(v1_S_24)
                           return M.Data_Eq_eq({
                             eq = M.Data_Eq_eqRecord(M.Data_Eq_eqRowCons(M.Data_Eq_eqRowCons({
                               eqRecord = function()
@@ -209,10 +209,10 @@ M.Golden_BugListGenericEq_Test_eqList = function(dictEq)
                             })(M.Golden_BugListGenericEq_Test_eqList(dictEq)))()({
                               reflectSymbol = function() return "head" end
                             })(dictEq))(M.Type_Proxy_Proxy)
-                          })(v2)(v11)
+                          })(v_S_23)(v1_S_24)
                         end
                       end
-                    }))(v.value0)(v1.value0)
+                    }))(v_S_15.value0)(v1_S_16.value0)
                   else
                     return false
                   end

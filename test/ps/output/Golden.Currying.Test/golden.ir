@@ -2,12 +2,12 @@ UberModule
   { uberModuleBindings = [], uberModuleForeigns = [], uberModuleExports =
     [
       ( Name "apply", Abs Nothing
-        ( ParamNamed Nothing ( Name "f1" ) )
+        ( ParamNamed Nothing ( Name "f1$0" ) )
         ( Abs Nothing
-          ( ParamNamed Nothing ( Name "x" ) )
+          ( ParamNamed Nothing ( Name "x$1" ) )
           ( App Nothing
-            ( Ref Nothing ( Local ( Name "f1" ) ) 0 )
-            ( Ref Nothing ( Local ( Name "x" ) ) 0 )
+            ( Ref Nothing ( Local ( Name "f1$0" ) ) 0 )
+            ( Ref Nothing ( Local ( Name "x$1" ) ) 0 )
           )
         )
       ),

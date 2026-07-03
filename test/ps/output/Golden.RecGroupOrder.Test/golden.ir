@@ -20,7 +20,7 @@ UberModule
       ( Name "main", Let Nothing
         ( RecursiveGroup
           (
-            ( Nothing, Name "Lazy_record", App Nothing
+            ( Nothing, Name "Lazy_record$0", App Nothing
               ( App Nothing
                 ( Ref Nothing ( Local ( Name "PSLUA_runtime_lazy" ) ) 0 )
                 ( LiteralString Nothing "record" )
@@ -33,7 +33,7 @@ UberModule
                   ( Abs Nothing ( ParamUnused Nothing )
                     ( ObjectProp Nothing
                       ( App Nothing
-                        ( Ref Nothing ( Local ( Name "Lazy_record" ) ) 0 )
+                        ( Ref Nothing ( Local ( Name "Lazy_record$0" ) ) 0 )
                         ( LiteralInt Nothing 0 )
                       )
                       ( PropName "tag" )
@@ -43,8 +43,8 @@ UberModule
               )
             ) :|
             [
-              ( Nothing, Name "record", App Nothing
-                ( Ref Nothing ( Local ( Name "Lazy_record" ) ) 0 )
+              ( Nothing, Name "record$1", App Nothing
+                ( Ref Nothing ( Local ( Name "Lazy_record$0" ) ) 0 )
                 ( LiteralInt Nothing 0 )
               )
             ]
@@ -59,7 +59,10 @@ UberModule
             ( PropName "log" )
           )
           ( App Nothing
-            ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "record" ) ) 0 ) ( PropName "run" ) )
+            ( ObjectProp Nothing
+              ( Ref Nothing ( Local ( Name "record$1" ) ) 0 )
+              ( PropName "run" )
+            )
             ( ObjectProp ( Just Always )
               ( ForeignImport Nothing
                 ( ModuleName "Data.Unit" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Unit.purs"

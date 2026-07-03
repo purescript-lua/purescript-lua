@@ -106,10 +106,9 @@ overSites atSite UberModule {..} =
     <> foldMap (\(name, e) → atSite (InExport name) e) uberModuleExports
 
 {- | Local references whose De Bruijn index points past every enclosing binder
-of that name: unbound locals, which the Lua backend rejects (see
-Note [Locals are uniquely named after renameShadowedNames]). An empty result
-means the expression is well-scoped. The binder bookkeeping mirrors
-'shift'/'unshift'; see Note [Sequential scoping of Let bindings] for 'Let'.
+of that name: unbound locals, which the Lua backend rejects. An empty result
+means the expression is well-scoped. See Note [Sequential scoping of Let
+bindings] for the 'Let' binder bookkeeping.
 
 The runtime lazy factory is the one deliberately free local reference:
 the laziness transform emits @Local (Name runtimeLazyName)@ refs whose
