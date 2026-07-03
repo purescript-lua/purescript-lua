@@ -77,10 +77,14 @@ optimizerPipeline neverNames =
   , RunFixpoint "optimize+dce-post-merge" (optimizePass :| [dcePass])
   , -- Float a Let-bound value down into the single IfThenElse branch that
     -- uses it (issue #136). Runs after DCE (a dead binding is simply gone,
-    -- never worth sinking), outside any fixpoint (it never changes a
-    -- free-reference count, so it cannot re-open an optimize/dce
-    -- opportunity), and before magicDo/flattenDeepBinds (which see the
-    -- final placement of every Let). See
+    -- never worth sinking) and outside any fixpoint: it preserves every
+    -- free-reference count, so the count-driven inline/DCE decisions stay
+    -- settled. A structural rule could still fire on the moved Let — e.g.
+    -- a sink can leave both branches of an IfThenElse alpha-equivalent
+    -- for removeIfWithEqualBranches — but chasing such second-order
+    -- opportunities is deliberately traded away against re-running the
+    -- whole fixpoint after the pass. Runs before magicDo/flattenDeepBinds
+    -- (which see the final placement of every Let). See
     -- Language.PureScript.Backend.IR.FloatIn.
     RunPass floatInPass
   , -- Magic-do is the final lowering (issue #46): it relies on the unique

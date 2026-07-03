@@ -1,12 +1,20 @@
 module Language.PureScript.Backend.IR.FloatIn.Spec where
 
-import Hedgehog (PropertyT, forAll, (===))
+import Hedgehog (forAll, (===))
 import Language.PureScript.Backend.IR.FloatIn (floatIn)
 import Language.PureScript.Backend.IR.Gen qualified as Gen
 import Language.PureScript.Backend.IR.Linker (UberModule (..))
 import Language.PureScript.Backend.IR.Linter (lintUniqueBinders, lintWellScoped)
-import Language.PureScript.Backend.IR.Names (Name (Name))
+import Language.PureScript.Backend.IR.Names
+  ( Name (Name)
+  , QName (QName)
+  , moduleNameFromString
+  )
 import Language.PureScript.Backend.IR.Query (collectBoundNames)
+import Language.PureScript.Backend.IR.SpecUtils
+  ( applyPassToExpression
+  , emptyUberModule
+  )
 import Language.PureScript.Backend.IR.Types
   ( Exp
   , Grouping (..)
@@ -23,15 +31,7 @@ import Language.PureScript.Backend.IR.Types
   )
 import Language.PureScript.Backend.IR.Uniquify (uniquifyNamesInExpr)
 import Test.Hspec (Spec, describe, it, shouldBe)
-import Test.Hspec.Hedgehog.Extended (hedgehog, modifyMaxSuccess)
-
-{- | A Hedgehog property run over many examples, mirroring
-'Language.PureScript.Backend.IR.FlattenDeepBinds.Spec.prop': the project's
-'Test.Hspec.Hedgehog.Extended.test' caps @maxSuccess@ at 1, which is too
-weak for these pipeline-contract invariants.
--}
-prop ∷ String → PropertyT IO () → Spec
-prop title = modifyMaxSuccess (const 200) . it title . hedgehog
+import Test.Hspec.Hedgehog.Extended (prop)
 
 spec ∷ Spec
 spec = describe "FloatIn" do
@@ -57,9 +57,14 @@ spec = describe "FloatIn" do
     floatInExpression expr `shouldBe` expected
 
   it "doesn't sink: the name is used in the condition" do
+    -- The name is used in the condition AND in exactly one branch: were
+    -- the condition not checked, the branch confinement alone would let
+    -- this binding sink (ill-scoping the condition's reference).
     let bindA = Standalone (noAnn, a, literalInt 1)
         expr =
-          lets (pure bindA) (ifThenElse (refLocal a) (literalInt 1) (literalInt 0))
+          lets
+            (pure bindA)
+            (ifThenElse (refLocal a) (refLocal a) (literalInt 0))
     floatInExpression expr `shouldBe` expr
 
   it "doesn't sink: the name is used in both branches" do
@@ -69,8 +74,22 @@ spec = describe "FloatIn" do
 
   it "doesn't sink across a lambda (the core of #136)" do
     let bindA = Standalone (noAnn, a, literalInt 1)
-        expr = lets (pure bindA) (abstraction (paramNamed (Name "x")) (refLocal a))
+        expr =
+          lets
+            (pure bindA)
+            (abstraction (paramNamed (Name "x")) (refLocal a))
     floatInExpression expr `shouldBe` expr
+
+  it
+    "sinks to the branch root but never into a lambda inside the branch \
+    \(the #136 bug shape)"
+    do
+      let bindA = Standalone (noAnn, a, literalInt 1)
+          lam = abstraction (paramNamed (Name "x")) (refLocal a)
+          expr = lets (pure bindA) (ifThenElse cond lam (literalInt 0))
+          expected =
+            ifThenElse cond (lets (pure bindA) lam) (literalInt 0)
+      floatInExpression expr `shouldBe` expected
 
   it "doesn't sink: the name is used in a later sibling's right-hand side" do
     let bindA = Standalone (noAnn, a, literalInt 1)
@@ -83,15 +102,22 @@ spec = describe "FloatIn" do
     "doesn't sink: a RecursiveGroup member's RHS uses the name (and the \
     \RecursiveGroup itself never sinks)"
     do
+      -- The name is used in exactly one branch and not in the condition:
+      -- only the recursive group's right-hand side blocks the sink.
       let bindA = Standalone (noAnn, a, literalInt 1)
           r1 = Name "r1"
           r2 = Name "r2"
           recGroup =
-            RecursiveGroup ((noAnn, r1, refLocal a) :| [(noAnn, r2, refLocal r1)])
+            RecursiveGroup
+              ((noAnn, r1, refLocal a) :| [(noAnn, r2, refLocal r1)])
           expr =
             lets
               (bindA :| [recGroup])
-              (ifThenElse cond (application (refLocal r1) (refLocal r2)) (literalInt 0))
+              ( ifThenElse
+                  cond
+                  (application (refLocal r1) (refLocal a))
+                  (literalInt 0)
+              )
       floatInExpression expr `shouldBe` expr
 
   it
@@ -100,7 +126,10 @@ spec = describe "FloatIn" do
     do
       let bindA = Standalone (noAnn, a, literalInt 1)
           bindB = Standalone (noAnn, b, literalInt 2)
-          expr = lets (pure bindA) (lets (pure bindB) (application (refLocal b) (refLocal a)))
+          expr =
+            lets
+              (pure bindA)
+              (lets (pure bindB) (application (refLocal b) (refLocal a)))
       floatInExpression expr `shouldBe` expr
 
   it "sinks through nested IfThenElse" do
@@ -110,7 +139,11 @@ spec = describe "FloatIn" do
         expr =
           lets
             (pure bindA)
-            (ifThenElse cond1 (ifThenElse cond2 (refLocal a) (literalInt 0)) (literalInt 99))
+            ( ifThenElse
+                cond1
+                (ifThenElse cond2 (refLocal a) (literalInt 0))
+                (literalInt 99)
+            )
         expected =
           ifThenElse
             cond1
@@ -155,17 +188,25 @@ spec = describe "FloatIn" do
           expr =
             lets
               (bindA :| [bindB])
-              (ifThenElse cond (application (refLocal a) (refLocal b)) (literalInt 0))
+              ( ifThenElse
+                  cond
+                  (application (refLocal a) (refLocal b))
+                  (literalInt 0)
+              )
           expected =
             ifThenElse
               cond
-              (lets (pure bindA) (lets (pure bindB) (application (refLocal a) (refLocal b))))
+              ( lets
+                  (pure bindA)
+                  (lets (pure bindB) (application (refLocal a) (refLocal b)))
+              )
               (literalInt 0)
       floatInExpression expr `shouldBe` expected
 
   it
-    "a collapsing Let exposes an inner Let, which also sinks (regression: \
-    \'Rewritten Recurse' does not re-apply to its own result's root)"
+    "a collapsing Let exposes an inner Let, which also sinks, preserving \
+    \declaration order (regression: a collapsed Let's body must not \
+    \escape the rewrite)"
     do
       let bindK = Standalone (noAnn, k, literalInt 1)
           bindM = Standalone (noAnn, m, literalInt 2)
@@ -174,14 +215,43 @@ spec = describe "FloatIn" do
               (pure bindK)
               ( lets
                   (pure bindM)
-                  (ifThenElse cond (application (refLocal k) (refLocal m)) (literalInt 0))
+                  ( ifThenElse
+                      cond
+                      (application (refLocal k) (refLocal m))
+                      (literalInt 0)
+                  )
               )
           expected =
             ifThenElse
               cond
-              (lets (pure bindM) (lets (pure bindK) (application (refLocal k) (refLocal m))))
+              ( lets
+                  (pure bindK)
+                  (lets (pure bindM) (application (refLocal k) (refLocal m)))
+              )
               (literalInt 0)
       floatInExpression expr `shouldBe` expected
+
+  it
+    "an inner sink unblocks the enclosing Let in the same run (regression: \
+    \a top-down driver decides an outer Let before its children are \
+    \rewritten, breaking idempotence)"
+    do
+      let bindA = Standalone (noAnn, a, literalInt 1)
+          bindZ = Standalone (noAnn, z, refLocal a)
+          expr =
+            lets
+              (pure bindA)
+              ( lets
+                  (pure bindZ)
+                  (ifThenElse cond (refLocal z) (literalInt 0))
+              )
+          expected =
+            ifThenElse
+              cond
+              (lets (pure bindA) (lets (pure bindZ) (refLocal z)))
+              (literalInt 0)
+      floatInExpression expr `shouldBe` expected
+      floatInExpression expected `shouldBe` expected
 
   it
     "preserves dependency order between two bindings sunk into the same \
@@ -190,7 +260,9 @@ spec = describe "FloatIn" do
       let bindA = Standalone (noAnn, a, literalInt 1)
           bindB = Standalone (noAnn, b, refLocal a)
           expr =
-            lets (bindA :| [bindB]) (ifThenElse cond (refLocal b) (literalInt 0))
+            lets
+              (bindA :| [bindB])
+              (ifThenElse cond (refLocal b) (literalInt 0))
           expected =
             ifThenElse
               cond
@@ -205,11 +277,17 @@ spec = describe "FloatIn" do
       let bindA = Standalone (noAnn, a, literalInt 1)
           bindB = Standalone (noAnn, b, refLocal a)
           expr =
-            lets (bindA :| [bindB]) (ifThenElse (refLocal a) (refLocal b) (literalInt 0))
+            lets
+              (bindA :| [bindB])
+              (ifThenElse (refLocal a) (refLocal b) (literalInt 0))
           expected =
             lets
               (pure bindA)
-              (ifThenElse (refLocal a) (lets (pure bindB) (refLocal b)) (literalInt 0))
+              ( ifThenElse
+                  (refLocal a)
+                  (lets (pure bindB) (refLocal b))
+                  (literalInt 0)
+              )
       floatInExpression expr `shouldBe` expected
 
   it
@@ -228,23 +306,35 @@ spec = describe "FloatIn" do
           lets (pure bindA) (ifThenElse cond (literalInt 5) (literalInt 0))
     floatInExpression expr `shouldBe` expr
 
+  it "rewrites uberModuleBindings, not only exports" do
+    let bindA = Standalone (noAnn, a, literalInt 1)
+        expr = lets (pure bindA) (ifThenElse cond (refLocal a) (literalInt 0))
+        expected =
+          ifThenElse cond (lets (pure bindA) (refLocal a)) (literalInt 0)
+        qname = QName (moduleNameFromString "Main") (Name "top")
+        uber =
+          floatIn
+            emptyUberModule {uberModuleBindings = [Standalone (qname, expr)]}
+    uberModuleBindings uber `shouldBe` [Standalone (qname, expected)]
+
   describe "properties (generated expressions)" do
-    prop "preserves the GUC invariants" do
+    prop 200 "preserves the GUC invariants" do
       e ← forAll (uniquifyNamesInExpr <$> Gen.scopedExp)
-      let optimized = floatIn emptyModule {uberModuleExports = [(Name "main", e)]}
+      let optimized =
+            floatIn emptyUberModule {uberModuleExports = [(Name "main", e)]}
       lintWellScoped optimized === []
       lintUniqueBinders optimized === []
 
-    prop "preserves free references" do
+    prop 200 "preserves free references" do
       e ← forAll (uniquifyNamesInExpr <$> Gen.scopedExp)
       countFreeRefs (floatInExpression e) === countFreeRefs e
 
-    prop "is idempotent" do
+    prop 200 "is idempotent" do
       e ← forAll (uniquifyNamesInExpr <$> Gen.scopedExp)
       let once = floatInExpression e
       floatInExpression once === once
 
-    prop "preserves the set of bound names" do
+    prop 200 "preserves the set of bound names" do
       e ← forAll (uniquifyNamesInExpr <$> Gen.scopedExp)
       collectBoundNames (floatInExpression e) === collectBoundNames e
 
@@ -252,18 +342,4 @@ spec = describe "FloatIn" do
 -- Helpers ---------------------------------------------------------------------
 
 floatInExpression ∷ HasCallStack ⇒ Exp → Exp
-floatInExpression e =
-  let res =
-        uberModuleExports $
-          floatIn emptyModule {uberModuleExports = [(Name "main", e)]}
-   in case res of
-        [(Name "main", e')] → e'
-        _ → error $ "floatInExpression: unexpected result: " <> show res
-
-emptyModule ∷ UberModule
-emptyModule =
-  UberModule
-    { uberModuleForeigns = []
-    , uberModuleBindings = []
-    , uberModuleExports = []
-    }
+floatInExpression = applyPassToExpression "floatInExpression" floatIn
