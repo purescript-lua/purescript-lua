@@ -2,6 +2,7 @@ module Main where
 
 import Language.PureScript.Backend.IR.DCE.Spec qualified as IrDce
 import Language.PureScript.Backend.IR.FlattenDeepBinds.Spec qualified as FlattenDeepBinds
+import Language.PureScript.Backend.IR.FloatIn.Spec qualified as FloatIn
 import Language.PureScript.Backend.IR.Inliner.Spec qualified as Inliner
 import Language.PureScript.Backend.IR.Linker.Spec qualified as IRLinker
 import Language.PureScript.Backend.IR.Linter.Spec qualified as IRLinter
@@ -37,4 +38,5 @@ main = hspec do
   LuaLinkerForeign.spec
   NestingCheck.spec
   FlattenDeepBinds.spec
+  FloatIn.spec
   Output.spec

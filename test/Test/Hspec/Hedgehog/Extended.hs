@@ -1,5 +1,6 @@
 module Test.Hspec.Hedgehog.Extended
   ( module H
+  , prop
   , test
   , xtest
   ) where
@@ -15,6 +16,14 @@ test title =
     . modifyMaxSuccess (const 1)
     . it title
     . hedgehog
+
+{- | Like 'test', but runs the property over the given number of generated
+inputs: 'test' pins @maxSuccess@ at 1, which is fine for example-based
+checks but too weak for pass\/pipeline contract invariants.
+-}
+prop ∷ Int → String → PropertyT IO () → SpecWith ()
+prop maxSuccess title =
+  modifyMaxSuccess (const maxSuccess) . it title . hedgehog
 
 xtest ∷ String → PropertyT IO () → SpecWith ()
 xtest title = xit title . hedgehog

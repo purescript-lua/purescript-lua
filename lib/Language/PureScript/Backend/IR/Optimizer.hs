@@ -5,6 +5,7 @@ import Data.Map qualified as Map
 import Data.Set qualified as Set
 import Language.PureScript.Backend.IR.DCE (eliminateDeadCode)
 import Language.PureScript.Backend.IR.FlattenDeepBinds (flattenDeepBindsM)
+import Language.PureScript.Backend.IR.FloatIn (floatIn)
 import Language.PureScript.Backend.IR.Inliner (Annotation (..))
 import Language.PureScript.Backend.IR.Linker (UberModule (..))
 import Language.PureScript.Backend.IR.MagicDo (magicDo)
@@ -74,6 +75,18 @@ optimizerPipeline neverNames =
     -- unblock even more optimizations, e.g. inline foreign bindings.
     RunPass mergeForeignsPass
   , RunFixpoint "optimize+dce-post-merge" (optimizePass :| [dcePass])
+  , -- Float a Let-bound value down into the single IfThenElse branch that
+    -- uses it (issue #136). Runs after DCE (a dead binding is simply gone,
+    -- never worth sinking) and outside any fixpoint: it preserves every
+    -- free-reference count, so the count-driven inline/DCE decisions stay
+    -- settled. A structural rule could still fire on the moved Let — e.g.
+    -- a sink can leave both branches of an IfThenElse alpha-equivalent
+    -- for removeIfWithEqualBranches — but chasing such second-order
+    -- opportunities is deliberately traded away against re-running the
+    -- whole fixpoint after the pass. Runs before magicDo/flattenDeepBinds
+    -- (which see the final placement of every Let). See
+    -- Language.PureScript.Backend.IR.FloatIn.
+    RunPass floatInPass
   , -- Magic-do is the final lowering (issue #46): it relies on the unique
     -- naming established by 'uniquifyNames' and preserves it, and must run
     -- after dead-code elimination so the statements it introduces for
@@ -106,6 +119,7 @@ optimizerPipeline neverNames =
       }
   dcePass = gucPass "dce" eliminateDeadCode
   mergeForeignsPass = gucPass "mergeForeigns" mergeForeignsIntoBindings
+  floatInPass = gucPass "float-in" floatIn
   magicDoPass =
     Pass
       { passName = "magicDo"

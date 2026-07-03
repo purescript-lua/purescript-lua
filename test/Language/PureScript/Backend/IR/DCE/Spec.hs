@@ -2,7 +2,7 @@ module Language.PureScript.Backend.IR.DCE.Spec where
 
 import Data.Map qualified as Map
 import Data.Set qualified as Set
-import Hedgehog (Gen, PropertyT, annotate, annotateShow, forAll, (===))
+import Hedgehog (Gen, annotate, annotateShow, forAll, (===))
 import Hedgehog.Gen qualified as Gen
 import Hedgehog.Range qualified as Range
 import Language.PureScript.Backend.IR.DCE (EntryPoint (..), eliminateDeadCode)
@@ -20,6 +20,10 @@ import Language.PureScript.Backend.IR.Names
   , moduleNameFromString
   )
 import Language.PureScript.Backend.IR.Query (collectBoundNames)
+import Language.PureScript.Backend.IR.SpecUtils
+  ( applyPassToExpression
+  , emptyUberModule
+  )
 import Language.PureScript.Backend.IR.Types
   ( Ann
   , Exp
@@ -37,17 +41,9 @@ import Language.PureScript.Backend.IR.Types
   , refLocal
   )
 import Language.PureScript.Backend.IR.Uniquify (uniquifyNamesInExpr)
-import Test.Hspec (Spec, SpecWith, describe, it)
-import Test.Hspec.Hedgehog (modifyMaxSuccess)
-import Test.Hspec.Hedgehog.Extended (hedgehog, test)
+import Test.Hspec (Spec, describe, it)
+import Test.Hspec.Hedgehog.Extended (hedgehog, prop, test)
 import Text.Pretty.Simple (pShow)
-
-{- | Like 'test', but runs the property over many generated inputs. The
-bare 'test' helper pins maxSuccess to 1, which is fine for example-based
-checks but too weak for the pipeline contract below.
--}
-prop ∷ String → PropertyT IO () → SpecWith ()
-prop title = modifyMaxSuccess (const 100) . it title . hedgehog
 
 spec ∷ Spec
 spec = describe "IR Dead Code Elimination" do
@@ -57,7 +53,7 @@ spec = describe "IR Dead Code Elimination" do
         moduleName ← Gen.moduleName
         expr ← Gen.nonRecursiveExp
         pure
-          emptyModule
+          emptyUberModule
             { uberModuleBindings = [Standalone (QName moduleName name, expr)]
             , uberModuleExports = [(name, refImported moduleName name)]
             }
@@ -78,10 +74,10 @@ spec = describe "IR Dead Code Elimination" do
   -- The unit-level twin of the 'dcePass' ensures-contract: on GUC input
   -- (which the pipeline guarantees via the uniquify entry pass), DCE
   -- must keep the invariants intact while dropping dead binders.
-  prop "preserves the GUC invariants" do
+  prop 100 "preserves the GUC invariants" do
     e ← forAll Gen.scopedExp
     let uber =
-          emptyModule
+          emptyUberModule
             { uberModuleExports = [(Name "main", uniquifyNamesInExpr e)]
             }
         optimized = eliminateDeadCode uber
@@ -197,13 +193,7 @@ spec = describe "IR Dead Code Elimination" do
 -- Helpers ---------------------------------------------------------------------
 
 dceExpression ∷ HasCallStack ⇒ Exp → Exp
-dceExpression e =
-  let res =
-        uberModuleExports $
-          eliminateDeadCode emptyModule {uberModuleExports = [(Name "main", e)]}
-   in case res of
-        [(Name "main", e')] → e'
-        _ → error $ "dceExpression: unexpected result: " <> show res
+dceExpression = applyPassToExpression "dceExpression" eliminateDeadCode
 
 --------------------------------------------------------------------------------
 -- Fixture ---------------------------------------------------------------------
@@ -213,14 +203,6 @@ mainModuleName = moduleNameFromString "Main"
 
 mainEntryPoint ∷ EntryPoint
 mainEntryPoint = EntryPoint mainModuleName [Name "main"]
-
-emptyModule ∷ UberModule
-emptyModule =
-  UberModule
-    { uberModuleForeigns = []
-    , uberModuleBindings = []
-    , uberModuleExports = []
-    }
 
 binding_ ∷ Text → Grouping (Ann, Name, Exp)
 binding_ n = Standalone (noAnn, Name n, exception n)
