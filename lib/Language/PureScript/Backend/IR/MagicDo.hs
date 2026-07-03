@@ -56,6 +56,7 @@ import Language.PureScript.Backend.IR.Names
   , Name (..)
   , QName (..)
   , Qualified (..)
+  , discardName
   )
 import Language.PureScript.Backend.IR.Types
   ( Ann
@@ -250,12 +251,6 @@ the Lua code generator, so this emits @m()@.
 -}
 runEffect ∷ Exp → Exp
 runEffect m = App noAnn m (Ref noAnn (Imported (ModuleName "Prim") (Name "undefined")) 0)
-
-{- | Name for the (unused) result of a 'discard'd action. @_@ is the
-conventional Lua throwaway and is exempt from luacheck's unused-local check.
--}
-discardName ∷ Name
-discardName = Name "_"
 
 {- | Bound on alias/instance resolution to stay terminating on recursive
 bindings.

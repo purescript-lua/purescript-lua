@@ -21,7 +21,9 @@ import Language.PureScript.Backend.IR.Supply (runSupply)
 import Language.PureScript.Backend.IR.Types
   ( Exp
   , RawExp (..)
+  , abstraction
   , literalInt
+  , paramNamed
   , refLocal
   )
 import Test.Hspec (Spec, SpecWith, describe, it, shouldBe)
@@ -75,6 +77,41 @@ spec = describe "IR Pass runner" do
           { failedPassName = "step"
           , failedPhase = After
           , failedViolations = pure (UnboundLocal (InExport main) y 0)
+          }
+
+  it "checked runner lints exactly the declared invariants" do
+    -- λx. λx. x@1 is well-scoped, but breaks UniqueBinders (shadowing)
+    -- and IndicesZero (the nonzero index).
+    let x = Name "x"
+        shadowing =
+          abstraction
+            (paramNamed x)
+            (abstraction (paramNamed x) (refLocal x 1))
+        produce invariants =
+          Pass
+            { passName = "produce"
+            , passRun = pure . constExports shadowing
+            , passRequires = Set.singleton WellScoped
+            , passEnsures = invariants
+            }
+        run invariants =
+          runSupply
+            ( runStepsChecked
+                [RunPass (produce invariants)]
+                (exporting (literalInt 0))
+            )
+    -- A pass that only promises well-scopedness passes the check…
+    run (Set.singleton WellScoped)
+      `shouldBe` Right (exporting shadowing)
+    -- …while promising the GUC invariants dispatches their linters.
+    run (Set.fromList [WellScoped, UniqueBinders, IndicesZero])
+      `shouldBe` Left
+        PassCheckFailure
+          { failedPassName = "produce"
+          , failedPhase = After
+          , failedViolations =
+              DuplicateBinder (InExport main) x
+                :| [NonZeroIndex (InExport main) x 1]
           }
 
   prop "fixpoint has 'idempotently' semantics" do

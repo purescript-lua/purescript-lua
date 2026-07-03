@@ -1,6 +1,7 @@
 module Language.PureScript.Backend.IR.Names
   ( module Reexport
   , Name (..)
+  , discardName
   , nameParser
   , QName (..)
   , printQName
@@ -29,6 +30,18 @@ newtype Name = Name {nameToText ∷ Text}
 
 nameParser ∷ Megaparsec.Parsec Void Text Name
 nameParser = Name <$> Megaparsec.takeWhile1P (Just "name char") isAlphaNum
+
+{- | The binder for the (unused) result of a discarded action, minted by
+the magic-do transform: @_@ is the conventional Lua throwaway, exempt
+from luacheck's unused-local check. Many such binders may coexist in one
+top-level binding, so the @UniqueBinders@ lint exempts this name — sound
+only while nothing ever references it, which the same lint checks.
+PureScript sources cannot produce a binder of this name: @_@ is not a
+valid PS identifier, and compiler-generated unused idents arrive as
+@$__unused@ and become 'ParamUnused' parameters.
+-}
+discardName ∷ Name
+discardName = Name "_"
 
 data QName = QName {qnameModuleName ∷ ModuleName, qnameName ∷ Name}
   deriving stock (Eq, Ord, Show)

@@ -13,23 +13,28 @@ part of the globally-unique-names redesign, issue #139).
 module Language.PureScript.Backend.IR.Linter
   ( Violation (..)
   , Site (..)
-  , lintUberModule
+  , lintWellScoped
+  , lintUniqueBinders
+  , lintIndicesZero
   , unboundLocals
   ) where
 
-import Control.Lens (toListOf)
+import Control.Lens (cosmosOf, toListOf)
 import Data.Map qualified as Map
 import Language.PureScript.Backend.IR.Linker (UberModule (..))
 import Language.PureScript.Backend.IR.Names
   ( Name (..)
   , QName
   , Qualified (Local)
+  , discardName
   )
 import Language.PureScript.Backend.IR.Types
   ( Exp
   , Grouping (..)
   , Index
   , RawExp (..)
+  , bindingNames
+  , listGrouping
   , paramName
   , subexpressions
   , unIndex
@@ -40,7 +45,18 @@ import Language.PureScript.Names (runtimeLazyName)
 -- Violations ------------------------------------------------------------------
 
 -- | A broken IR invariant, located at a top-level site of the module.
-data Violation = UnboundLocal Site Name Index
+data Violation
+  = -- | A local reference with no matching binder ('WellScoped').
+    UnboundLocal Site Name Index
+  | -- | A local binder name bound more than once ('UniqueBinders').
+    DuplicateBinder Site Name
+  | -- | A local reference with a nonzero De Bruijn index ('IndicesZero').
+    NonZeroIndex Site Name Index
+  | {- | A reference to the discard binder @_@, which the 'UniqueBinders'
+    check exempts on the assumption that it is never referenced
+    (see 'discardName').
+    -}
+    RefToDiscard Site
   deriving stock (Eq, Show)
 
 -- | The top-level entry of the module a violation was found in.
@@ -53,24 +69,41 @@ data Site
 --------------------------------------------------------------------------------
 -- Linting ---------------------------------------------------------------------
 
-{- | Check every top-level binding, foreign binding, and export of the
-module. An empty result means the module holds the linted invariants.
+{- | Check the @WellScoped@ invariant: no local reference points past
+every enclosing binder of its name. An empty result means the module
+holds the invariant.
 -}
-lintUberModule ∷ UberModule → [Violation]
-lintUberModule UberModule {..} =
+lintWellScoped ∷ UberModule → [Violation]
+lintWellScoped =
+  overSites \site e → uncurry (UnboundLocal site) <$> unboundLocals e
+
+{- | Check the @UniqueBinders@ invariant: within one top-level site no
+local binder name is bound twice. The discard binder @_@ is exempt
+(see 'discardName'), which is sound only while nothing references it —
+so any reference to it is reported here too.
+-}
+lintUniqueBinders ∷ UberModule → [Violation]
+lintUniqueBinders = overSites \site e →
+  (DuplicateBinder site <$> duplicateBinders e)
+    <> (RefToDiscard site <$ refsToDiscard e)
+
+{- | Check the @IndicesZero@ invariant: every local reference has De
+Bruijn index 0 (under @UniqueBinders@ a nonzero index cannot resolve).
+-}
+lintIndicesZero ∷ UberModule → [Violation]
+lintIndicesZero =
+  overSites \site e → uncurry (NonZeroIndex site) <$> nonZeroIndices e
+
+{- | Run a per-site check over every top-level binding, foreign binding,
+and export of the module.
+-}
+overSites ∷ (Site → Exp → [Violation]) → UberModule → [Violation]
+overSites atSite UberModule {..} =
   foldMap
     (\(qname, e) → atSite (InBinding qname) e)
     (listGrouping =<< uberModuleBindings)
     <> foldMap (\(qname, e) → atSite (InForeign qname) e) uberModuleForeigns
     <> foldMap (\(name, e) → atSite (InExport name) e) uberModuleExports
- where
-  atSite ∷ Site → Exp → [Violation]
-  atSite site e = uncurry (UnboundLocal site) <$> unboundLocals e
-
-  listGrouping ∷ Grouping a → [a]
-  listGrouping = \case
-    Standalone a → [a]
-    RecursiveGroup as → toList as
 
 {- | Local references whose De Bruijn index points past every enclosing binder
 of that name: unbound locals, which the Lua backend rejects (see
@@ -118,3 +151,39 @@ unboundLocals = go (Map.singleton (Name runtimeLazyName) 1)
        where
         sc' = foldr (\nm → Map.insertWith (+) nm 1) sc names
         names = (\(_ann, nm, _e) → nm) <$> toList recBinds
+
+{- | Local binder names bound more than once in the expression, in any
+combination of positions (shadowing or parallel), 'discardName' exempt.
+-}
+duplicateBinders ∷ Exp → [Name]
+duplicateBinders e =
+  Map.keys . Map.filter (> (1 ∷ Natural)) $
+    Map.fromListWith
+      (+)
+      [ (nm, 1)
+      | node ← toListOf (cosmosOf subexpressions) e
+      , nm ← binders node
+      , nm /= discardName
+      ]
+ where
+  binders ∷ Exp → [Name]
+  binders = \case
+    Abs _ param _ → maybeToList (paramName param)
+    Let _ binds _ → bindingNames =<< toList binds
+    _ → []
+
+-- | References to the discard binder @_@ (one entry per occurrence).
+refsToDiscard ∷ Exp → [()]
+refsToDiscard e =
+  [ ()
+  | Ref _ (Local nm) _ ← toListOf (cosmosOf subexpressions) e
+  , nm == discardName
+  ]
+
+-- | Local references with a nonzero De Bruijn index.
+nonZeroIndices ∷ Exp → [(Name, Index)]
+nonZeroIndices e =
+  [ (nm, index)
+  | Ref _ (Local nm) index ← toListOf (cosmosOf subexpressions) e
+  , index /= 0
+  ]

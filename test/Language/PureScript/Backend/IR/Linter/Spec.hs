@@ -6,17 +6,22 @@ import Language.PureScript.Backend.IR.Linker (UberModule (..))
 import Language.PureScript.Backend.IR.Linter
   ( Site (..)
   , Violation (..)
-  , lintUberModule
+  , lintIndicesZero
+  , lintUniqueBinders
+  , lintWellScoped
   , unboundLocals
   )
 import Language.PureScript.Backend.IR.Names
   ( Name (..)
   , QName (..)
+  , discardName
   , moduleNameFromString
   )
 import Language.PureScript.Backend.IR.Types
-  ( Grouping (..)
+  ( Exp
+  , Grouping (..)
   , abstraction
+  , application
   , lets
   , literalInt
   , noAnn
@@ -26,6 +31,20 @@ import Language.PureScript.Backend.IR.Types
 import Language.PureScript.Names (runtimeLazyName)
 import Test.Hspec (Spec, describe, it, shouldBe)
 import Test.Hspec.Hedgehog.Extended (test)
+
+--------------------------------------------------------------------------------
+-- Fixture ---------------------------------------------------------------------
+
+itQName ∷ QName
+itQName = QName (moduleNameFromString "Main") (Name "it")
+
+inBinding ∷ Exp → UberModule
+inBinding e =
+  UberModule
+    { uberModuleBindings = [Standalone (itQName, e)]
+    , uberModuleForeigns = []
+    , uberModuleExports = []
+    }
 
 spec ∷ Spec
 spec = describe "IR Linter" do
@@ -37,7 +56,7 @@ spec = describe "IR Linter" do
     let y = Name "y"
         unbound = refLocal y 0
         qname = QName (moduleNameFromString "Main") (Name "it")
-    lintUberModule
+    lintWellScoped
       UberModule
         { uberModuleBindings = [Standalone (qname, unbound)]
         , uberModuleForeigns = [(qname, unbound)]
@@ -88,3 +107,54 @@ spec = describe "IR Linter" do
           (literalInt 1)
       )
       `shouldBe` []
+
+  describe "UniqueBinders" do
+    let x = Name "x"
+        identityAbs = abstraction (paramNamed x) (refLocal x 0)
+
+    it "flags a shadowing duplicate binder" do
+      lintUniqueBinders (inBinding (abstraction (paramNamed x) identityAbs))
+        `shouldBe` [DuplicateBinder (InBinding itQName) x]
+
+    it "flags a parallel duplicate binder" do
+      lintUniqueBinders (inBinding (application identityAbs identityAbs))
+        `shouldBe` [DuplicateBinder (InBinding itQName) x]
+
+    it "does not conflate same-named binders across sites" do
+      -- Uniqueness is per top-level entry: two sites may both bind x.
+      lintUniqueBinders
+        UberModule
+          { uberModuleBindings = [Standalone (itQName, identityAbs)]
+          , uberModuleForeigns = []
+          , uberModuleExports = [(Name "it", identityAbs)]
+          }
+        `shouldBe` []
+
+    it "exempts the discard binder but flags references to it" do
+      let twoDiscards =
+            lets
+              ( Standalone (noAnn, discardName, literalInt 1)
+                  :| [Standalone (noAnn, discardName, literalInt 2)]
+              )
+              (literalInt 3)
+      lintUniqueBinders (inBinding twoDiscards) `shouldBe` []
+      lintUniqueBinders (inBinding (refLocal discardName 0))
+        `shouldBe` [RefToDiscard (InBinding itQName)]
+
+  describe "IndicesZero" do
+    let x = Name "x"
+
+    it "flags a local reference with a nonzero index" do
+      -- Well-scoped, yet nonzero: λx. λx. x@1.
+      lintIndicesZero
+        ( inBinding
+            ( abstraction
+                (paramNamed x)
+                (abstraction (paramNamed x) (refLocal x 1))
+            )
+        )
+        `shouldBe` [NonZeroIndex (InBinding itQName) x 1]
+
+    it "accepts index-0 references (even unbound ones)" do
+      -- Scoping is WellScoped's business, not this check's.
+      lintIndicesZero (inBinding (refLocal x 0)) `shouldBe` []

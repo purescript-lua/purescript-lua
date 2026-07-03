@@ -8,7 +8,7 @@ import Language.PureScript.Backend.IR.Gen qualified as Gen
 import Language.PureScript.Backend.IR.Inliner (Annotation (Never))
 import Language.PureScript.Backend.IR.Linker (LinkMode (..))
 import Language.PureScript.Backend.IR.Linker qualified as Linker
-import Language.PureScript.Backend.IR.Linter (lintUberModule, unboundLocals)
+import Language.PureScript.Backend.IR.Linter (lintWellScoped, unboundLocals)
 import Language.PureScript.Backend.IR.Names
   ( Name (..)
   , PropName (..)
@@ -357,7 +357,7 @@ spec = describe "IR Optimizer" do
                 , Linker.uberModuleBindings = []
                 , Linker.uberModuleExports = [(Name "root", e)]
                 }
-      lintUberModule optimized === []
+      lintWellScoped optimized === []
 
   describe "renames shadowed names" do
     test "nested λ-abstractions" do
