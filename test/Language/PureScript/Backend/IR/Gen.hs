@@ -1,5 +1,6 @@
 module Language.PureScript.Backend.IR.Gen where
 
+import Data.List.NonEmpty qualified as NE
 import Data.Map.Strict qualified as Map
 import Data.Text qualified as Text
 import Hedgehog (MonadGen)
@@ -65,12 +66,13 @@ to a binder (a valid De Bruijn index for that name).
 type Scope = Map IR.Name Natural
 
 {- | Generate a closed, well-scoped expression: every local reference has an
-index below the number of enclosing binders of that name. Restricted to
-λ / application / if / object / reference / scalar, which is enough to
-exercise beta reduction and name shadowing (the surface of issues #37 and
-#56) while keeping well-scopedness easy to guarantee by construction. 'Let'
-is intentionally left out; its sequential scoping is covered by the
-hand-written specs.
+index below the number of enclosing binders of that name. Covers
+λ / application / if / object / reference / scalar / 'Let' — every
+binding form, so the properties riding on this generator (uniquify,
+freshening, the full optimizer pipeline) see the sequential Let scoping
+of Note [Sequential scoping of Let bindings], not just λ-binders.
+Well-scopedness stays guaranteed by construction: each case threads the
+'Scope' exactly the way the walkers resolve it.
 -}
 scopedExp ∷ ∀ m. MonadGen m ⇒ m IR.Exp
 scopedExp =
@@ -94,6 +96,7 @@ scopedExpIn scope =
       )
     , (5, genAbs)
     , (4, genRedex)
+    , (4, genLet)
     ,
       ( 2
       , IR.literalObject
@@ -126,6 +129,45 @@ scopedExpIn scope =
           IR.ParamUnused _ → scope
     body ← scopedExpIn scope'
     pure (param, body)
+  -- A Let with 1–3 groupings. The scope threads sequentially, following
+  -- Note [Sequential scoping of Let bindings]. Names come from the same
+  -- small pool as everywhere else, so shadowing and parallel duplicates
+  -- arise naturally.
+  genLet ∷ m IR.Exp
+  genLet = do
+    (grouping, scope') ← genGrouping scope
+    rest ← Gen.int (Range.linear 0 2)
+    (groupings, scope'') ← genGroupings rest scope'
+    body ← scopedExpIn scope''
+    pure (IR.lets (grouping :| groupings) body)
+  genGroupings ∷ Int → Scope → m ([IR.Binding], Scope)
+  genGroupings n sc
+    | n <= 0 = pure ([], sc)
+    | otherwise = do
+        (grouping, sc') ← genGrouping sc
+        (groupings, sc'') ← genGroupings (n - 1) sc'
+        pure (grouping : groupings, sc'')
+  genGrouping ∷ Scope → m (IR.Binding, Scope)
+  genGrouping sc = Gen.frequency [(7, genStandalone sc), (3, genRecGroup sc)]
+  -- A Standalone RHS does not see its own binder: it is generated under
+  -- the incoming scope, and the name is bound only afterwards.
+  genStandalone ∷ Scope → m (IR.Binding, Scope)
+  genStandalone sc = do
+    nm ← name
+    rhs ← scopedExpIn sc
+    pure (IR.Standalone (noAnn, nm, rhs), bindName nm sc)
+  -- Every member of a recursive group is in scope in every member's RHS.
+  -- Names within one group are distinct ('Gen.set'): same-named members
+  -- of a single group are meaningless and CoreFn never produces them.
+  genRecGroup ∷ Scope → m (IR.Binding, Scope)
+  genRecGroup sc = do
+    names ← Gen.set (Range.linear 1 3) name
+    let sc' = foldr bindName sc names
+    members ← forM (toList names) \nm → (noAnn,nm,) <$> scopedExpIn sc'
+    -- NE.fromList is safe: 'names' has at least one element.
+    pure (IR.RecursiveGroup (NE.fromList members), sc')
+  bindName ∷ IR.Name → Scope → Scope
+  bindName nm = Map.insertWith (+) nm 1
 
 binding ∷ MonadGen m ⇒ m IR.Binding
 binding = Gen.frequency [(8, standaloneBinding), (2, recursiveBinding)]
