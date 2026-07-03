@@ -1,12 +1,18 @@
 module Language.PureScript.Backend.IR.DCE.Spec where
 
 import Data.Map qualified as Map
-import Hedgehog (Gen, annotate, forAll, (===))
+import Data.Set qualified as Set
+import Hedgehog (Gen, PropertyT, annotate, annotateShow, forAll, (===))
 import Hedgehog.Gen qualified as Gen
 import Hedgehog.Range qualified as Range
 import Language.PureScript.Backend.IR.DCE (EntryPoint (..), eliminateDeadCode)
 import Language.PureScript.Backend.IR.Gen qualified as Gen
 import Language.PureScript.Backend.IR.Linker (UberModule (..))
+import Language.PureScript.Backend.IR.Linter
+  ( lintIndicesZero
+  , lintUniqueBinders
+  , lintWellScoped
+  )
 import Language.PureScript.Backend.IR.Names
   ( ModuleName
   , Name (Name)
@@ -14,6 +20,7 @@ import Language.PureScript.Backend.IR.Names
   , Qualified (Local)
   , moduleNameFromString
   )
+import Language.PureScript.Backend.IR.Query (collectBoundNames)
 import Language.PureScript.Backend.IR.Types
   ( Ann
   , Exp
@@ -31,9 +38,18 @@ import Language.PureScript.Backend.IR.Types
   , refLocal
   , refLocal0
   )
-import Test.Hspec (Spec, describe, it)
+import Language.PureScript.Backend.IR.Uniquify (uniquifyNamesInExpr)
+import Test.Hspec (Spec, SpecWith, describe, it)
+import Test.Hspec.Hedgehog (modifyMaxSuccess)
 import Test.Hspec.Hedgehog.Extended (hedgehog, test)
 import Text.Pretty.Simple (pShow)
+
+{- | Like 'test', but runs the property over many generated inputs. The
+bare 'test' helper pins maxSuccess to 1, which is fine for example-based
+checks but too weak for the pipeline contract below.
+-}
+prop ∷ String → PropertyT IO () → SpecWith ()
+prop title = modifyMaxSuccess (const 100) . it title . hedgehog
 
 spec ∷ Spec
 spec = describe "IR Dead Code Elimination" do
@@ -61,10 +77,35 @@ spec = describe "IR Dead Code Elimination" do
     annotate . toString $ pShow unoptimized
     eliminateDeadCode unoptimized === expected
 
+  -- The unit-level twin of the 'dcePass' ensures-contract: on GUC input
+  -- (which the pipeline guarantees via the uniquify entry pass), DCE
+  -- must keep all three invariants intact while dropping dead binders.
+  prop "preserves the GUC invariants" do
+    e ← forAll Gen.scopedExp
+    let uber =
+          emptyModule
+            { uberModuleExports = [(Name "main", uniquifyNamesInExpr e)]
+            }
+        optimized = eliminateDeadCode uber
+    annotateShow optimized
+    lintWellScoped optimized === []
+    lintUniqueBinders optimized === []
+    lintIndicesZero optimized === []
+
   test "detects named parameter unused by an abs-bindings" do
-    body ← forAll Gen.exp
-    let names = [name | Local name ← Map.keys (countFreeRefs body)]
-    name ← forAll $ mfilter (`notElem` names) Gen.name
+    -- DCE requires GUC input, so establish it before wrapping in a λ
+    -- (unbound references from 'Gen.exp' survive uniquify as-is; DCE
+    -- treats them as free).
+    body ← uniquifyNamesInExpr <$> forAll Gen.exp
+    let freeNames = [name | Local name ← Map.keys (countFreeRefs body)]
+        boundNames = collectBoundNames body
+    -- The new λ-binder must uphold the GUC precondition itself: it may
+    -- neither capture a free reference nor duplicate a bound name.
+    name ←
+      forAll $
+        mfilter
+          (\n → n `notElem` freeNames && n `Set.notMember` boundNames)
+          Gen.name
     dceExpression (abstraction (paramNamed name) body)
       === abstraction paramUnused body
 
@@ -128,19 +169,11 @@ spec = describe "IR Dead Code Elimination" do
     annotate . toString $ pShow expr
     expected === dceExpression expr
 
-  -- See Note [Sequential scoping of Let bindings]: the body's index 0
-  -- picks the *last* binding of a name, like let*.
-  it "resolves the body scope innermost-first (let*)" $ hedgehog do
-    let x = Name "x"
-        expr =
-          lets
-            ( Standalone (noAnn, x, literalInt 1)
-                :| [Standalone (noAnn, x, literalInt 2)]
-            )
-            (refLocal x 0)
-        expected =
-          lets (Standalone (noAnn, x, literalInt 2) :| []) (refLocal x 0)
-    dceExpression expr === expected
+  -- There is deliberately no test here for two same-named Let siblings:
+  -- the uniquify entry pass makes that input unreachable for DCE, and
+  -- the sequential (let*) resolution it used to exercise is covered by
+  -- Uniquify.Spec ("renames a shadowing Let binder, resolving RHS
+  -- pre-binding").
 
   -- 'Rewritten Recurse' descends into the result's children without
   -- re-applying the rule to the result itself. When a Let whose bindings
