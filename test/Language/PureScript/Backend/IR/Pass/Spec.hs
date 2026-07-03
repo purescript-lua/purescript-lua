@@ -14,6 +14,7 @@ import Language.PureScript.Backend.IR.Pass
   , Phase (..)
   , Step (..)
   , idempotently
+  , renderPassCheckFailure
   , runSteps
   , runStepsChecked
   )
@@ -113,6 +114,22 @@ spec = describe "IR Pass runner" do
               DuplicateBinder (InExport main) x
                 :| [NonZeroIndex (InExport main) x 1]
           }
+
+  it "renders a check failure for the CLI (--lint-ir)" do
+    -- The exact wording is user-facing: the CLI dies with this text.
+    renderPassCheckFailure
+      PassCheckFailure
+        { failedPassName = "break-scope"
+        , failedPhase = After
+        , failedViolations =
+            UnboundLocal (InExport main) y 0
+              :| [DuplicateBinder (InExport main) y]
+        }
+      `shouldBe` unlines
+        [ "IR invariants violated After optimizer pass break-scope:"
+        , "UnboundLocal (InExport (Name \"main\")) (Name \"y\") 0"
+        , "DuplicateBinder (InExport (Name \"main\")) (Name \"y\")"
+        ]
 
   prop "fixpoint has 'idempotently' semantics" do
     limit ← forAll $ Gen.integral (Range.linear 0 20)

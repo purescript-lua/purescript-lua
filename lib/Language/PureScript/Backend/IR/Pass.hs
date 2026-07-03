@@ -23,6 +23,7 @@ module Language.PureScript.Backend.IR.Pass
   , Step (..)
   , Phase (..)
   , PassCheckFailure (..)
+  , renderPassCheckFailure
   , runSteps
   , runStepsChecked
   , runStepsTraced
@@ -83,6 +84,22 @@ data PassCheckFailure = PassCheckFailure
   , failedViolations ∷ NonEmpty Violation
   }
   deriving stock (Eq, Show)
+
+{- | The user-facing rendering of a contract violation (used by the CLI
+behind @--lint-ir@): a headline naming the offending pass and phase,
+then one line per violation.
+-}
+renderPassCheckFailure ∷ PassCheckFailure → Text
+renderPassCheckFailure
+  PassCheckFailure {failedPassName, failedPhase, failedViolations} =
+    unlines $
+      [ "IR invariants violated "
+          <> show failedPhase
+          <> " optimizer pass "
+          <> failedPassName
+          <> ":"
+      ]
+        <> (show <$> toList failedViolations)
 
 --------------------------------------------------------------------------------
 -- Runners ---------------------------------------------------------------------
