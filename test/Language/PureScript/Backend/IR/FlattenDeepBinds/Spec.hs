@@ -3,7 +3,7 @@ module Language.PureScript.Backend.IR.FlattenDeepBinds.Spec where
 import Control.Lens (toListOf, universeOf)
 import Data.Map qualified as Map
 import Data.Text qualified as Text
-import Hedgehog (Gen, PropertyT, annotate, assert, diff, forAll, (===))
+import Hedgehog (Gen, annotate, assert, diff, forAll, (===))
 import Hedgehog.Gen qualified as Gen
 import Hedgehog.Range qualified as Range
 import Language.PureScript.Backend.IR.FlattenDeepBinds (flattenDeepBinds)
@@ -31,15 +31,7 @@ import Language.PureScript.Backend.IR.Types
   , subexpressions
   )
 import Test.Hspec (Spec, describe, it, shouldBe, shouldSatisfy)
-import Test.Hspec.Hedgehog.Extended (hedgehog, modifyMaxSuccess)
-
-{- | A Hedgehog property run over many examples. The project's
-'Test.Hspec.Hedgehog.Extended.test' caps @maxSuccess@ at 1; these invariants are
-the correctness insurance for the lambda-lifting and A-normalisation cores and
-cheap to check, so they earn real coverage.
--}
-prop ∷ String → PropertyT IO () → Spec
-prop title = modifyMaxSuccess (const 200) . it title . hedgehog
+import Test.Hspec.Hedgehog.Extended (prop)
 
 spec ∷ Spec
 spec = describe "FlattenDeepBinds" do
@@ -102,22 +94,22 @@ spec = describe "FlattenDeepBinds" do
     -- actions and a final action that reference arbitrary earlier binders
     -- (stressing live-set forwarding).
     describe "properties (generated chains)" do
-      prop "preserves free references" do
+      prop 200 "preserves free references" do
         e ← forAll genChainExpr
         let flat = chainExpr (flattenDeepBinds (chainModuleOf e))
         countFreeRefs flat === countFreeRefs e
 
-      prop "preserves the number of steps" do
+      prop 200 "preserves the number of steps" do
         e ← forAll genChainExpr
         let flat = chainExpr (flattenDeepBinds (chainModuleOf e))
         countSteps flat === countSteps e
 
-      prop "is idempotent" do
+      prop 200 "is idempotent" do
         e ← forAll genChainExpr
         let once = flattenDeepBinds (chainModuleOf e)
         flattenDeepBinds once === once
 
-      prop "flattens long chains and reduces nesting" do
+      prop 200 "flattens long chains and reduces nesting" do
         e ← forAll genLongChainExpr
         let flat = chainExpr (flattenDeepBinds (chainModuleOf e))
         annotate ("kont helpers: " <> show (length (kontNames flat)))
@@ -157,17 +149,17 @@ spec = describe "FlattenDeepBinds" do
           (chainExpr (flattenDeepBinds (chainModuleOf (applyChainExpr 240))))
 
     describe "properties (generated spines)" do
-      prop "preserves free references" do
+      prop 200 "preserves free references" do
         e ← forAll genSpineExpr
         let flat = chainExpr (flattenDeepBinds (chainModuleOf e))
         countFreeRefs flat === countFreeRefs e
 
-      prop "is idempotent" do
+      prop 200 "is idempotent" do
         e ← forAll genSpineExpr
         let once = flattenDeepBinds (chainModuleOf e)
         flattenDeepBinds once === once
 
-      prop "flattens deep spines and reduces nesting" do
+      prop 200 "flattens deep spines and reduces nesting" do
         e ← forAll genDeepSpineExpr
         let flat = chainExpr (flattenDeepBinds (chainModuleOf e))
         annotate ("tmp locals: " <> show (length (tmpNames flat)))
