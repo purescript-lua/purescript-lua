@@ -69,7 +69,7 @@ optimizerPipeline neverNames =
   , -- by merging foreign bindings into the main bindings, we can
     -- unblock even more optimizations, e.g. inline foreign bindings.
     RunPass mergeForeignsPass
-  , RunFixpoint "optimize+dce" (optimizePass :| [dcePass])
+  , RunFixpoint "optimize+dce-post-merge" (optimizePass :| [dcePass])
   , -- Must run last among the index-sensitive passes:
     -- see Note [Locals are uniquely named after renameShadowedNames]
     RunPass renameShadowedNamesPass
