@@ -635,6 +635,170 @@ countFreeRefs = fmap getSum . MMap.toMap . countFreeRefs' mempty
 countFreeRef ∷ Qualified Name → RawExp ann → Natural
 countFreeRef name = Map.findWithDefault 0 name . countFreeRefs
 
+{- | Structural equality modulo the names of locally-bound binders.
+
+Two expressions are alpha-equivalent when they differ at most in the
+names chosen for the binders they introduce ('Abs' parameters and 'Let'
+bindings). Local references are compared by the binder they resolve to,
+not by name: bound references must resolve to corresponding binder
+positions (binders are numbered in lockstep on both sides), while free
+references must agree on the name and on the index remaining after the
+locally-bound binders of that name are discounted, because both sides
+live in the same enclosing scope. Resolution follows
+Note [Sequential scoping of Let bindings].
+
+Everything else — annotations, imported references, foreign import
+name lists — is compared exactly as the derived 'Eq' would, so
+'alphaEq' is strictly weaker than '(==)'.
+-}
+alphaEq ∷ Eq ann ⇒ RawExp ann → RawExp ann → Bool
+alphaEq = go 0 Map.empty Map.empty
+ where
+  go
+    ∷ Eq ann
+    ⇒ Natural
+    → Map Name [Natural]
+    → Map Name [Natural]
+    → RawExp ann
+    → RawExp ann
+    → Bool
+  go lvl scopeL scopeR exprL exprR = case (exprL, exprR) of
+    (Ref annL (Local nameL) idxL, Ref annR (Local nameR) idxR) →
+      annL == annR
+        && case (resolve scopeL nameL idxL, resolve scopeR nameR idxR) of
+          (Just levelL, Just levelR) → levelL == levelR
+          (Nothing, Nothing) →
+            nameL == nameR
+              && freeIndex scopeL nameL idxL == freeIndex scopeR nameR idxR
+          _ → False
+    (Abs annL paramL bodyL, Abs annR paramR bodyR) →
+      annL == annR && case (paramL, paramR) of
+        (ParamUnused paL, ParamUnused paR) →
+          paL == paR && go lvl scopeL scopeR bodyL bodyR
+        (ParamNamed paL nameL, ParamNamed paR nameR) →
+          paL == paR
+            && go
+              (lvl + 1)
+              (bindLevel nameL lvl scopeL)
+              (bindLevel nameR lvl scopeR)
+              bodyL
+              bodyR
+        _ → False
+    (Let annL bindsL bodyL, Let annR bindsR bodyR) →
+      annL == annR
+        && goLet lvl scopeL scopeR (toList bindsL) (toList bindsR) bodyL bodyR
+    (App annL fL aL, App annR fR aR) →
+      annL == annR && go lvl scopeL scopeR fL fR && go lvl scopeL scopeR aL aR
+    (LiteralArray annL asL, LiteralArray annR asR) →
+      annL == annR
+        && length asL == length asR
+        && and (zipWith (go lvl scopeL scopeR) asL asR)
+    (LiteralObject annL propsL, LiteralObject annR propsR) →
+      annL == annR && goProps lvl scopeL scopeR propsL propsR
+    (ObjectUpdate annL aL patchesL, ObjectUpdate annR aR patchesR) →
+      annL == annR
+        && go lvl scopeL scopeR aL aR
+        && goProps lvl scopeL scopeR (toList patchesL) (toList patchesR)
+    (ReflectCtor annL aL, ReflectCtor annR aR) →
+      annL == annR && go lvl scopeL scopeR aL aR
+    (Eq annL aL bL, Eq annR aR bR) →
+      annL == annR && go lvl scopeL scopeR aL aR && go lvl scopeL scopeR bL bR
+    (DataArgumentByIndex annL iL aL, DataArgumentByIndex annR iR aR) →
+      annL == annR && iL == iR && go lvl scopeL scopeR aL aR
+    (ArrayLength annL aL, ArrayLength annR aR) →
+      annL == annR && go lvl scopeL scopeR aL aR
+    (ArrayIndex annL aL iL, ArrayIndex annR aR iR) →
+      annL == annR && iL == iR && go lvl scopeL scopeR aL aR
+    (ObjectProp annL aL pL, ObjectProp annR aR pR) →
+      annL == annR && pL == pR && go lvl scopeL scopeR aL aR
+    (IfThenElse annL pL tL eL, IfThenElse annR pR tR eR) →
+      annL == annR
+        && go lvl scopeL scopeR pL pR
+        && go lvl scopeL scopeR tL tR
+        && go lvl scopeL scopeR eL eR
+    -- Imported/mismatched-qualifier refs, terminals and pairs of
+    -- different constructors:
+    _ → exprL == exprR
+
+  goLet
+    ∷ Eq ann
+    ⇒ Natural
+    → Map Name [Natural]
+    → Map Name [Natural]
+    → [Grouping (ann, Name, RawExp ann)]
+    → [Grouping (ann, Name, RawExp ann)]
+    → RawExp ann
+    → RawExp ann
+    → Bool
+  goLet lvl scopeL scopeR groupingsL groupingsR bodyL bodyR =
+    case (groupingsL, groupingsR) of
+      ([], []) → go lvl scopeL scopeR bodyL bodyR
+      (Standalone (aL, nL, eL) : gsL, Standalone (aR, nR, eR) : gsR) →
+        aL == aR
+          -- The RHS of a Standalone binding does not see its own binder:
+          && go lvl scopeL scopeR eL eR
+          && goLet
+            (lvl + 1)
+            (bindLevel nL lvl scopeL)
+            (bindLevel nR lvl scopeR)
+            gsL
+            gsR
+            bodyL
+            bodyR
+      (RecursiveGroup recL : gsL, RecursiveGroup recR : gsR) →
+        let membersL = toList recL
+            membersR = toList recR
+            bindMembers members scope =
+              foldl'
+                (\sc ((_a, n, _e), l) → bindLevel n l sc)
+                scope
+                (zip members [lvl ..])
+            scopeL' = bindMembers membersL scopeL
+            scopeR' = bindMembers membersR scopeR
+            lvl' = lvl + fromIntegral (length membersL)
+         in length membersL == length membersR
+              && and
+                ( zipWith
+                    ( \(aL, _nL, eL) (aR, _nR, eR) →
+                        aL == aR && go lvl' scopeL' scopeR' eL eR
+                    )
+                    membersL
+                    membersR
+                )
+              && goLet lvl' scopeL' scopeR' gsL gsR bodyL bodyR
+      _ → False
+
+  goProps
+    ∷ Eq ann
+    ⇒ Natural
+    → Map Name [Natural]
+    → Map Name [Natural]
+    → [(PropName, RawExp ann)]
+    → [(PropName, RawExp ann)]
+    → Bool
+  goProps lvl scopeL scopeR propsL propsR =
+    length propsL == length propsR
+      && and
+        ( zipWith
+            (\(pL, eL) (pR, eR) → pL == pR && go lvl scopeL scopeR eL eR)
+            propsL
+            propsR
+        )
+
+  -- The stack of binder levels for a name, innermost first.
+  bindLevel ∷ Name → Natural → Map Name [Natural] → Map Name [Natural]
+  bindLevel name lvl = Map.insertWith (<>) name [lvl]
+
+  resolve ∷ Map Name [Natural] → Name → Index → Maybe Natural
+  resolve scope name (Index i) =
+    Map.findWithDefault [] name scope !!? fromIntegral i
+
+  -- Only defined when 'resolve' failed, so the subtraction can't
+  -- underflow: the index is at least the number of local binders.
+  freeIndex ∷ Map Name [Natural] → Name → Index → Natural
+  freeIndex scope name (Index i) =
+    i - fromIntegral (length (Map.findWithDefault [] name scope))
+
 -- | Substitute the given variable name and index with an expression
 substitute
   ∷ ∀ ann

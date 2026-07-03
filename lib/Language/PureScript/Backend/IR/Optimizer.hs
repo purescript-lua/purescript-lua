@@ -33,6 +33,7 @@ import Language.PureScript.Backend.IR.Types
   , RewriteMod (..)
   , RewriteRule
   , Rewritten (..)
+  , alphaEq
   , bindingExprs
   , countFreeRef
   , countFreeRefs
@@ -468,7 +469,10 @@ removeIfWithEqualBranches ∷ RewriteRule Ann
 removeIfWithEqualBranches e =
   pure case e of
     IfThenElse _ann _cond thenBranch elseBranch
-      | thenBranch == elseBranch →
+      -- Alpha-equivalence, not (==): binder names in the branches may
+      -- differ (e.g. after freshening) while the branches still compute
+      -- the same value.
+      | thenBranch `alphaEq` elseBranch →
           Rewritten Recurse thenBranch
     _ → NoChange
 

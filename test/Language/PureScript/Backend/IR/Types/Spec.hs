@@ -15,6 +15,7 @@ import Language.PureScript.Backend.IR.Types
   , Grouping (..)
   , Index
   , abstraction
+  , alphaEq
   , application
   , countFreeRef
   , countFreeRefs
@@ -201,6 +202,68 @@ spec = describe "Types" do
         (refLocal y 0)
         (abstraction (paramNamed x) (refLocal x 1))
         === abstraction (paramNamed x) (refLocal y 0)
+
+  describe "alphaEq" do
+    let x = Name "x"
+        y = Name "y"
+
+    -- alphaEq is strictly weaker than (==): structural equality must
+    -- always imply alpha-equivalence.
+    prop "is reflexive" do
+      e ← forAll Gen.exp
+      annotateShow e
+      alphaEq e e === True
+
+    test "identifies λ-terms differing only in binder names" do
+      alphaEq
+        (abstraction (paramNamed x) (refLocal x 0))
+        (abstraction (paramNamed y) (refLocal y 0))
+        === True
+
+    test "distinguishes references to different binders" do
+      -- λx. λy. y  vs  λa. λb. a
+      alphaEq
+        (abstraction (paramNamed x) (abstraction (paramNamed y) (refLocal y 0)))
+        (abstraction (paramNamed x) (abstraction (paramNamed y) (refLocal x 0)))
+        === False
+
+    test "distinguishes a bound reference from a free one" do
+      -- λx. x  vs  λy. x: the left reference is bound, the right is free.
+      alphaEq
+        (abstraction (paramNamed x) (refLocal x 0))
+        (abstraction (paramNamed y) (refLocal x 0))
+        === False
+
+    test "identifies free references past differently-named binders" do
+      -- λx. x@1  and  λy. x@0  both refer to the same enclosing x.
+      alphaEq
+        (abstraction (paramNamed x) (refLocal x 1))
+        (abstraction (paramNamed y) (refLocal x 0))
+        === True
+
+    test "distinguishes free references by name" do
+      alphaEq (refLocal x 0) (refLocal y 0) === False
+
+    -- See Note [Sequential scoping of Let bindings]: a Standalone RHS
+    -- does not see its own binder, so both references below are free
+    -- occurrences of the same enclosing x.
+    test "resolves Standalone RHSs against the outer scope" do
+      alphaEq
+        (lets (Standalone (noAnn, x, refLocal x 0) :| []) (literalInt 1))
+        (lets (Standalone (noAnn, y, refLocal x 0) :| []) (literalInt 1))
+        === True
+
+    test "identifies self-references of recursive-group members" do
+      alphaEq
+        ( lets
+            (RecursiveGroup ((noAnn, x, refLocal x 0) :| []) :| [])
+            (literalInt 1)
+        )
+        ( lets
+            (RecursiveGroup ((noAnn, y, refLocal y 0) :| []) :| [])
+            (literalInt 1)
+        )
+        === True
 
 expr ∷ Exp
 expr =

@@ -73,6 +73,18 @@ spec = describe "IR Optimizer" do
       annotateShow ifThenElseStatement
       elseBranch === optimizedExpression ifThenElseStatement
 
+    test "removes if with alpha-equal branches" do
+      -- The branches differ only in binder names, so the condition
+      -- cannot influence the result.
+      cond ← forAll Gen.name
+      let branch param = abstraction (paramNamed param) (refLocal0 param)
+          original =
+            ifThenElse
+              (refLocal0 cond)
+              (branch (Name "x"))
+              (branch (Name "y"))
+      optimizedExpression original === branch (Name "x")
+
     test "eliminates argument if corresponding parameter is unused" do
       body ← forAll Gen.nonRecursiveExp
       arg ← forAll Gen.exp
