@@ -140,6 +140,13 @@ spec = describe "IR Linter" do
       lintUniqueBinders (inBinding twoDiscards) `shouldBe` []
       lintUniqueBinders (inBinding (refLocal discardName 0))
         `shouldBe` [RefToDiscard (InBinding itQName)]
+      -- Occurrences are indistinguishable (no location in the
+      -- violation), so several collapse into a single entry per site.
+      lintUniqueBinders
+        ( inBinding
+            (application (refLocal discardName 0) (refLocal discardName 0))
+        )
+        `shouldBe` [RefToDiscard (InBinding itQName)]
 
   describe "IndicesZero" do
     let x = Name "x"

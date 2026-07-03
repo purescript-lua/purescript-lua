@@ -85,7 +85,7 @@ so any reference to it is reported here too.
 lintUniqueBinders ∷ UberModule → [Violation]
 lintUniqueBinders = overSites \site e →
   (DuplicateBinder site <$> duplicateBinders e)
-    <> (RefToDiscard site <$ refsToDiscard e)
+    <> [RefToDiscard site | hasRefToDiscard e]
 
 {- | Check the @IndicesZero@ invariant: every local reference has De
 Bruijn index 0 (under @UniqueBinders@ a nonzero index cannot resolve).
@@ -171,13 +171,16 @@ duplicateBinders e =
     Let _ binds _ → bindingNames =<< toList binds
     _ → []
 
--- | References to the discard binder @_@ (one entry per occurrence).
-refsToDiscard ∷ Exp → [()]
-refsToDiscard e =
-  [ ()
-  | Ref _ (Local nm) _ ← toListOf (cosmosOf subexpressions) e
-  , nm == discardName
-  ]
+{- | Whether the expression references the discard binder @_@. Reported
+as a single violation per site: the occurrences are indistinguishable
+('RefToDiscard' carries no location), so one entry says everything.
+-}
+hasRefToDiscard ∷ Exp → Bool
+hasRefToDiscard e =
+  or
+    [ nm == discardName
+    | Ref _ (Local nm) _ ← toListOf (cosmosOf subexpressions) e
+    ]
 
 -- | Local references with a nonzero De Bruijn index.
 nonZeroIndices ∷ Exp → [(Name, Index)]
