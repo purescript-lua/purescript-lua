@@ -14,6 +14,12 @@ UberModule
         [ ( Nothing, Name "pureE" ), ( Nothing, Name "bindE" ) ]
       ), Standalone
       ( QName
+        { qnameModuleName = ModuleName "Golden.FloatIn.Test", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Golden.FloatIn.Test" ) "src/Golden/FloatIn/Test.purs"
+        [ ( Nothing, Name "tick" ) ]
+      ), Standalone
+      ( QName
         { qnameModuleName = ModuleName "Data.Semiring", qnameName = Name "semiringInt"
         }, LiteralObject Nothing
         [
@@ -97,9 +103,9 @@ UberModule
               ( LiteralObject Nothing
                 [
                   ( PropName "map", Abs Nothing
-                    ( ParamNamed Nothing ( Name "f$37" ) )
+                    ( ParamNamed Nothing ( Name "f$40" ) )
                     ( Abs Nothing
-                      ( ParamNamed Nothing ( Name "a$38" ) )
+                      ( ParamNamed Nothing ( Name "a$41" ) )
                       ( App Nothing
                         ( App Nothing
                           ( ObjectProp Nothing
@@ -125,10 +131,10 @@ UberModule
                                 ( Imported ( ModuleName "Effect" ) ( Name "applicativeEffect" ) )
                               )
                             )
-                            ( Ref Nothing ( Local ( Name "f$37" ) ) )
+                            ( Ref Nothing ( Local ( Name "f$40" ) ) )
                           )
                         )
-                        ( Ref Nothing ( Local ( Name "a$38" ) ) )
+                        ( Ref Nothing ( Local ( Name "a$41" ) ) )
                       )
                     )
                   )
@@ -235,6 +241,25 @@ UberModule
         ( PropName "add" )
       ), Standalone
       ( QName
+        { qnameModuleName = ModuleName "Golden.FloatIn.Test", qnameName = Name "discard"
+        }, App Nothing
+        ( ObjectProp Nothing
+          ( LiteralObject Nothing
+            [
+              ( PropName "discard", Abs Nothing
+                ( ParamNamed Nothing ( Name "dictBind$23$1367" ) )
+                ( App Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Control.Bind" ) ( Name "bind" ) ) )
+                  ( Ref Nothing ( Local ( Name "dictBind$23$1367" ) ) )
+                )
+              )
+            ]
+          )
+          ( PropName "discard" )
+        )
+        ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "bindEffect" ) ) )
+      ), Standalone
+      ( QName
         { qnameModuleName = ModuleName "Golden.FloatIn.Test", qnameName = Name "logShow"
         }, Abs Nothing
         ( ParamNamed Nothing ( Name "a$2" ) )
@@ -262,6 +287,73 @@ UberModule
               ( PropName "show" )
             )
             ( Ref Nothing ( Local ( Name "a$2" ) ) )
+          )
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.FloatIn.Test", qnameName = Name "pickShared"
+        }, Abs Nothing
+        ( ParamNamed Nothing ( Name "useIt" ) )
+        ( Abs Nothing
+          ( ParamNamed Nothing ( Name "n" ) )
+          ( IfThenElse Nothing
+            ( Ref Nothing ( Local ( Name "useIt" ) ) )
+            ( Let Nothing
+              ( Standalone
+                ( Nothing, Name "shared", App Nothing
+                  ( ObjectProp ( Just Always )
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Golden.FloatIn.Test" ) ( Name "foreign" ) )
+                    )
+                    ( PropName "tick" )
+                  )
+                  ( Ref Nothing ( Local ( Name "n" ) ) )
+                ) :| []
+              )
+              ( Let Nothing
+                ( Standalone
+                  ( Nothing, Name "f", Abs Nothing ( ParamUnused Nothing )
+                    ( App Nothing
+                      ( App Nothing
+                        ( Ref Nothing
+                          ( Imported ( ModuleName "Golden.FloatIn.Test" ) ( Name "add" ) )
+                        )
+                        ( Ref Nothing ( Local ( Name "shared" ) ) )
+                      )
+                      ( Ref Nothing ( Local ( Name "shared" ) ) )
+                    )
+                  ) :| []
+                )
+                ( App Nothing
+                  ( App Nothing
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Golden.FloatIn.Test" ) ( Name "add" ) )
+                    )
+                    ( App Nothing
+                      ( Ref Nothing ( Local ( Name "f" ) ) )
+                      ( ObjectProp ( Just Always )
+                        ( ForeignImport Nothing
+                          ( ModuleName "Data.Unit" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Unit.purs"
+                          [ ( Just Always, Name "unit" ) ]
+                        )
+                        ( PropName "unit" )
+                      )
+                    )
+                  )
+                  ( App Nothing
+                    ( Ref Nothing ( Local ( Name "f" ) ) )
+                    ( ObjectProp ( Just Always )
+                      ( ForeignImport Nothing
+                        ( ModuleName "Data.Unit" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Unit.purs"
+                        [ ( Just Always, Name "unit" ) ]
+                      )
+                      ( PropName "unit" )
+                    )
+                  )
+                )
+              )
+            )
+            ( LiteralInt Nothing 0 )
           )
         )
       ), Standalone
@@ -319,11 +411,18 @@ UberModule
       )
     ], uberModuleForeigns = [], uberModuleExports =
     [
+      ( Name "tick", ObjectProp ( Just Always )
+        ( Ref Nothing ( Imported ( ModuleName "Golden.FloatIn.Test" ) ( Name "foreign" ) ) )
+        ( PropName "tick" )
+      ),
       ( Name "expensive", Ref Nothing
         ( Imported ( ModuleName "Golden.FloatIn.Test" ) ( Name "expensive" ) )
       ),
       ( Name "pick", Ref Nothing
         ( Imported ( ModuleName "Golden.FloatIn.Test" ) ( Name "pick" ) )
+      ),
+      ( Name "pickShared", Ref Nothing
+        ( Imported ( ModuleName "Golden.FloatIn.Test" ) ( Name "pickShared" ) )
       ),
       ( Name "main", Abs Nothing ( ParamUnused Nothing )
         ( Let Nothing
@@ -343,7 +442,41 @@ UberModule
                 )
               )
               ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) )
-            ) :| []
+            ) :|
+            [ Standalone
+              ( Nothing, Name "_", App Nothing
+                ( App Nothing
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Golden.FloatIn.Test" ) ( Name "logShow" ) )
+                  )
+                  ( App Nothing
+                    ( App Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Golden.FloatIn.Test" ) ( Name "pick" ) )
+                      ) ( LiteralBool Nothing False )
+                    )
+                    ( LiteralInt Nothing 3 )
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) )
+              ), Standalone
+              ( Nothing, Name "_", App Nothing
+                ( App Nothing
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Golden.FloatIn.Test" ) ( Name "logShow" ) )
+                  )
+                  ( App Nothing
+                    ( App Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Golden.FloatIn.Test" ) ( Name "pickShared" ) )
+                      ) ( LiteralBool Nothing True )
+                    )
+                    ( LiteralInt Nothing 3 )
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) )
+              )
+            ]
           )
           ( App Nothing
             ( App Nothing
@@ -351,7 +484,7 @@ UberModule
               ( App Nothing
                 ( App Nothing
                   ( Ref Nothing
-                    ( Imported ( ModuleName "Golden.FloatIn.Test" ) ( Name "pick" ) )
+                    ( Imported ( ModuleName "Golden.FloatIn.Test" ) ( Name "pickShared" ) )
                   ) ( LiteralBool Nothing False )
                 )
                 ( LiteralInt Nothing 3 )

@@ -27,6 +27,12 @@ M.Effect_foreign = {
   pureE = function(a) return function() return a end end,
   bindE = function(a) return function(f) return function() return f(a())() end end end
 }
+M.Golden_FloatIn_Test_foreign = {
+  tick = function(n)
+      print("tick")
+      return n + n
+    end
+}
 M.Data_Semiring_semiringInt = {
   add = M.Data_Semiring_foreign.intAdd,
   zero = 0,
@@ -49,9 +55,9 @@ M.Effect_applicativeEffect = {
 }
 M.Effect_Lazy_functorEffect = PSLUA_runtime_lazy("functorEffect")(function()
   return {
-    map = function(f_S_37)
-      return function(a_S_38)
-        return (M.Effect_applicativeEffect.Apply0()).apply(M.Control_Applicative_pure(M.Effect_applicativeEffect)(f_S_37))(a_S_38)
+    map = function(f_S_40)
+      return function(a_S_41)
+        return (M.Effect_applicativeEffect.Apply0()).apply(M.Control_Applicative_pure(M.Effect_applicativeEffect)(f_S_40))(a_S_41)
       end
     end
   }
@@ -74,8 +80,22 @@ M.Effect_Lazy_applyEffect = PSLUA_runtime_lazy("applyEffect")(function()
   }
 end)
 M.Golden_FloatIn_Test_add = M.Data_Semiring_semiringInt.add
+M.Golden_FloatIn_Test_discard = (function(dictBind_S_23_S_1367)
+  return M.Control_Bind_bind(dictBind_S_23_S_1367)
+end)(M.Effect_bindEffect)
 M.Golden_FloatIn_Test_logShow = function(a_S_2)
   return (function(s) return function() print(s) end end)((function(n) return tostring(n) end)(a_S_2))
+end
+M.Golden_FloatIn_Test_pickShared = function(useIt)
+  return function(n)
+    if useIt then
+      local shared = M.Golden_FloatIn_Test_foreign.tick(n)
+      local f = function() return M.Golden_FloatIn_Test_add(shared)(shared) end
+      return M.Golden_FloatIn_Test_add(f({}))(f({}))
+    else
+      return 0
+    end
+  end
 end
 M.Golden_FloatIn_Test_expensive = function(x)
   return M.Golden_FloatIn_Test_add(M.Data_Semiring_semiringInt.mul(x)(x))(1)
@@ -92,5 +112,7 @@ M.Golden_FloatIn_Test_pick = function(useIt)
 end
 return (function()
   local _ = M.Golden_FloatIn_Test_logShow(M.Golden_FloatIn_Test_pick(true)(3))()
-  return M.Golden_FloatIn_Test_logShow(M.Golden_FloatIn_Test_pick(false)(3))()
+  local _ = M.Golden_FloatIn_Test_logShow(M.Golden_FloatIn_Test_pick(false)(3))()
+  local _ = M.Golden_FloatIn_Test_logShow(M.Golden_FloatIn_Test_pickShared(true)(3))()
+  return M.Golden_FloatIn_Test_logShow(M.Golden_FloatIn_Test_pickShared(false)(3))()
 end)()
