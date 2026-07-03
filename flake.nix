@@ -7,6 +7,7 @@
     purescript-overlay.inputs.nixpkgs.follows = "nixpkgs";
     treefmt-nix.url = "github:numtide/treefmt-nix";
     treefmt-nix.inputs.nixpkgs.follows = "nixpkgs";
+    tricorder.url = "github:atelier-hub/tricorder";
   };
   outputs =
     {
@@ -16,6 +17,7 @@
       haskellNix,
       purescript-overlay,
       treefmt-nix,
+      tricorder,
     }:
     let
       supportedSystems = [ "x86_64-linux" ];
@@ -67,6 +69,7 @@
                   scriv
                   upx
                   yamlfmt
+                  tricorder.packages.${system}.tricorder
                 ];
                 # `nix fmt` runs treefmt (treefmt.nix). Robust pre-commit hook:
                 # point git at the tracked .githooks/ dir (works in worktrees/
@@ -99,10 +102,12 @@
     extra-substituters = [
       "https://cache.iog.io"
       "https://purescript-lua.cachix.org"
+      "https://atelier.cachix.org"
     ];
     extra-trusted-public-keys = [
       "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ="
       "purescript-lua.cachix.org-1:yLs4ei2HtnuPtzLekOrW3xdfm95+Etw15gwgyIGTayA="
+      "atelier.cachix.org-1:rEyd/Z4TiXZbBVuU/lDnKZ/7WtnFTwJ17OKHGcahVUo="
     ];
     allow-import-from-derivation = "true";
   };

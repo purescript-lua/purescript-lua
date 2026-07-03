@@ -95,20 +95,19 @@ Both emit segments shallower than 'threshold', and B's output binds every 'App'
 to a depth-1 right-hand side, so the 'Recurse' rewrite cannot re-fire on its own
 output.
 
-== De Bruijn safety: no shifting
+== GUC safety: no shifting, fresh helper parameters
 
-The pass runs after 'renameShadowedNames'
-(see Note [Locals are uniquely named after renameShadowedNames]), so every local
-is uniquely named. A Strategy-A helper reuses the chain's own binder names as its
-parameters: moving a sub-expression under a fresh binder of the /same/ name
-leaves every @Ref … 0@ pointing at the same value, and the call site references
-the live variables by name at index 0 because they are still in scope there.
-Strategy B introduces only freshly-named @$tmpN@ binders; since references count
-same-name binders (all index 0 after renaming) a uniquely-named binder shifts no
-existing reference. Helper\/temp names are minted as @$kontN@\/@$tmpN@ — the @$@
-prefix cannot collide with a PureScript identifier or with
-'renameShadowedNames'' digit-suffix scheme — so no 'Language.PureScript.Backend.IR.Types.shift'\/'Language.PureScript.Backend.IR.Types.unshift'
-is needed.
+The pass runs under GUC (every local uniquely named, established by
+'Language.PureScript.Backend.IR.Uniquify.uniquifyNames' at the front of the
+pipeline and preserved throughout), so a reference resolves to its binder by
+name alone. A Strategy-A helper's
+parameters are new binders for the chain's already-bound live variables, so
+they cannot reuse the outer binders' names under 'UniqueBinders': each is
+minted fresh and the helper body's free references are repointed to it (see
+'freshenParams'); the call site still passes the live variables by their
+original name, which remains in scope there. Strategy B's @$tmpN@ binders are
+freshly minted from the start, and the @$@ prefix cannot collide with a
+PureScript identifier or a uniquify digit-suffix mint.
 
 == Why it must run after 'magicDo'
 
@@ -149,7 +148,6 @@ import Language.PureScript.Backend.IR.Types
   ( Ann
   , Exp
   , Grouping (..)
-  , Index (..)
   , Parameter (..)
   , RawExp (..)
   , RewriteMod (..)
@@ -157,7 +155,9 @@ import Language.PureScript.Backend.IR.Types
   , Rewritten (..)
   , countFreeRefs
   , noAnn
+  , refLocal
   , rewriteExpTopDownM
+  , substituteCopyM
   )
 
 -- | 'flattenDeepBindsM' with a private supply, for standalone use.
@@ -282,11 +282,26 @@ lambdaLift steps finalAction =
   cut (deepBody, konts) seg = do
     kname ← freshKontName
     let params = liveVars deepBody
-        helperDef = curryAbs params deepBody
+    (freshParams, deepBody') ← freshenParams params deepBody
+    let helperDef = curryAbs freshParams deepBody'
         helper = Standalone (noAnn, kname, helperDef)
-        callTail = applyToVars (refLocal0 kname) params
+        callTail = applyToVars (refLocal kname) params
         body = buildSteps seg callTail
     pure (body, (length params, helper) : konts)
+
+  -- The helper's parameters are new binders for the (already-bound) live
+  -- chain variables, so under GUC ('UniqueBinders') they cannot reuse the
+  -- outer binders' names: mint a fresh name per parameter and repoint the
+  -- body's free references to it. The outer binders survive unchanged —
+  -- the call site (built by 'cut' from the un-substituted 'params') still
+  -- passes them by their original name.
+  freshenParams ∷ [Name] → Exp → SupplyM ([Name], Exp)
+  freshenParams params body = foldlM step ([], body) params
+   where
+    step (freshNames, b) name = do
+      name' ← freshName (nameToText name <> "$")
+      b' ← substituteCopyM (Local name) (refLocal name') b
+      pure (freshNames <> [name'], b')
 
 -- | Rebuild a segment's nested @f action (\param -> …)@ wrapping a tail.
 buildSteps ∷ [Step] → Exp → Exp
@@ -304,7 +319,7 @@ curryAbs params body =
 
 -- | @f p1 p2 …@, applying the variables in the same order as 'curryAbs'.
 applyToVars ∷ Exp → [Name] → Exp
-applyToVars = foldl' \f p → App noAnn f (refLocal0 p)
+applyToVars = foldl' \f p → App noAnn f (refLocal p)
 
 --------------------------------------------------------------------------------
 -- Strategy B: application-spine sequentialisation -----------------------------
@@ -375,7 +390,7 @@ sequentialiseSpine expr =
     if i `mod` segmentSize == 0
       then do
         name ← freshTmpName
-        pure (Standalone (noAnn, name, acc') : binds, refLocal0 name)
+        pure (Standalone (noAnn, name, acc') : binds, refLocal name)
       else pure (binds, acc')
 
 --------------------------------------------------------------------------------
@@ -392,9 +407,6 @@ spine = go []
   go ∷ [Exp] → Exp → (Exp, [Exp])
   go acc (App _ann f a) = go (a : acc) f
   go acc h = (h, acc)
-
-refLocal0 ∷ Name → Exp
-refLocal0 name = Ref noAnn (Local name) (Index 0)
 
 freshKontName ∷ SupplyM Name
 freshKontName = freshName "$kont"

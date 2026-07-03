@@ -10,7 +10,7 @@ UberModule
     ], uberModuleForeigns = [], uberModuleExports =
     [
       ( Name "inlineIntoMe", Abs Nothing
-        ( ParamNamed Nothing ( Name "i" ) )
+        ( ParamNamed Nothing ( Name "i$0" ) )
         ( IfThenElse Nothing
           ( Eq Nothing
             ( LiteralInt Nothing 1 )
@@ -18,16 +18,16 @@ UberModule
               ( Eq Nothing
                 ( LiteralInt Nothing 1 )
                 ( IfThenElse Nothing
-                  ( Eq Nothing ( LiteralInt Nothing 1 ) ( Ref Nothing ( Local ( Name "i" ) ) 0 ) )
+                  ( Eq Nothing ( LiteralInt Nothing 1 ) ( Ref Nothing ( Local ( Name "i$0" ) ) ) )
                   ( LiteralInt Nothing 2 )
-                  ( Ref Nothing ( Local ( Name "i" ) ) 0 )
+                  ( Ref Nothing ( Local ( Name "i$0" ) ) )
                 )
               )
               ( LiteralInt Nothing 2 )
               ( IfThenElse Nothing
-                ( Eq Nothing ( LiteralInt Nothing 1 ) ( Ref Nothing ( Local ( Name "i" ) ) 0 ) )
+                ( Eq Nothing ( LiteralInt Nothing 1 ) ( Ref Nothing ( Local ( Name "i$0" ) ) ) )
                 ( LiteralInt Nothing 2 )
-                ( Ref Nothing ( Local ( Name "i" ) ) 0 )
+                ( Ref Nothing ( Local ( Name "i$0" ) ) )
               )
             )
           )
@@ -36,36 +36,34 @@ UberModule
             ( Eq Nothing
               ( LiteralInt Nothing 1 )
               ( IfThenElse Nothing
-                ( Eq Nothing ( LiteralInt Nothing 1 ) ( Ref Nothing ( Local ( Name "i" ) ) 0 ) )
+                ( Eq Nothing ( LiteralInt Nothing 1 ) ( Ref Nothing ( Local ( Name "i$0" ) ) ) )
                 ( LiteralInt Nothing 2 )
-                ( Ref Nothing ( Local ( Name "i" ) ) 0 )
+                ( Ref Nothing ( Local ( Name "i$0" ) ) )
               )
             )
             ( LiteralInt Nothing 2 )
             ( IfThenElse Nothing
-              ( Eq Nothing ( LiteralInt Nothing 1 ) ( Ref Nothing ( Local ( Name "i" ) ) 0 ) )
+              ( Eq Nothing ( LiteralInt Nothing 1 ) ( Ref Nothing ( Local ( Name "i$0" ) ) ) )
               ( LiteralInt Nothing 2 )
-              ( Ref Nothing ( Local ( Name "i" ) ) 0 )
+              ( Ref Nothing ( Local ( Name "i$0" ) ) )
             )
           )
         )
       ),
       ( Name "inlineIntoMe2", App Nothing
         ( ObjectProp ( Just Always )
-          ( Ref Nothing ( Imported ( ModuleName "Golden.Annotations.M1" ) ( Name "foreign" ) ) 0 )
+          ( Ref Nothing ( Imported ( ModuleName "Golden.Annotations.M1" ) ( Name "foreign" ) ) )
           ( PropName "dontInlineClosure" )
         )
         ( App Nothing
           ( ObjectProp ( Just Always )
-            ( Ref Nothing
-              ( Imported ( ModuleName "Golden.Annotations.M1" ) ( Name "foreign" ) ) 0
-            )
+            ( Ref Nothing ( Imported ( ModuleName "Golden.Annotations.M1" ) ( Name "foreign" ) ) )
             ( PropName "inlineMeLambda" )
           )
           ( App Nothing
             ( ObjectProp ( Just Always )
               ( Ref Nothing
-                ( Imported ( ModuleName "Golden.Annotations.M1" ) ( Name "foreign" ) ) 0
+                ( Imported ( ModuleName "Golden.Annotations.M1" ) ( Name "foreign" ) )
               )
               ( PropName "inlineMeLambda" )
             )

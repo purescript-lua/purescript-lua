@@ -12,22 +12,22 @@ return {
   Not = function(value0)
     return { ["$ctor"] = "Golden.PatternMatching.Test1∷E.Not", value0 = value0 }
   end,
-  pat = function(e)
-    if "Golden.PatternMatching.Test1∷E.Not" == e["$ctor"] then
-      if "Golden.PatternMatching.Test1∷E.Num" == e.value0["$ctor"] then
-        if "Golden.PatternMatching.Test1∷N.Succ" == e.value0.value0["$ctor"] then
+  pat = function(e_S_2)
+    if "Golden.PatternMatching.Test1∷E.Not" == e_S_2["$ctor"] then
+      if "Golden.PatternMatching.Test1∷E.Num" == e_S_2.value0["$ctor"] then
+        if "Golden.PatternMatching.Test1∷N.Succ" == e_S_2.value0.value0["$ctor"] then
           return 1
         else
-          if "Golden.PatternMatching.Test1∷N.Zero" == e.value0.value0["$ctor"] then
+          if "Golden.PatternMatching.Test1∷N.Zero" == e_S_2.value0.value0["$ctor"] then
             return 2
           else
             return 6
           end
         end
       else
-        if "Golden.PatternMatching.Test1∷E.Not" == e.value0["$ctor"] then
-          if "Golden.PatternMatching.Test1∷E.Num" == e.value0.value0["$ctor"] then
-            if "Golden.PatternMatching.Test1∷N.Succ" == e.value0.value0.value0["$ctor"] then
+        if "Golden.PatternMatching.Test1∷E.Not" == e_S_2.value0["$ctor"] then
+          if "Golden.PatternMatching.Test1∷E.Num" == e_S_2.value0.value0["$ctor"] then
+            if "Golden.PatternMatching.Test1∷N.Succ" == e_S_2.value0.value0.value0["$ctor"] then
               return 3
             else
               return 6
@@ -40,8 +40,8 @@ return {
         end
       end
     else
-      if "Golden.PatternMatching.Test1∷E.Num" == e["$ctor"] then
-        if "Golden.PatternMatching.Test1∷N.Succ" == e.value0["$ctor"] then
+      if "Golden.PatternMatching.Test1∷E.Num" == e_S_2["$ctor"] then
+        if "Golden.PatternMatching.Test1∷N.Succ" == e_S_2.value0["$ctor"] then
           return 4
         else
           return 5
@@ -60,6 +60,6 @@ return {
       }
     end
   end,
-  fst = function(v) return v.value0 end,
-  snd = function(v) return v.value1 end
+  fst = function(v_S_0) return v_S_0.value0 end,
+  snd = function(v_S_3) return v_S_3.value1 end
 }

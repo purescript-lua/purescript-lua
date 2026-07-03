@@ -4,38 +4,38 @@ UberModule
       ( Name "letRec", Let Nothing
         ( RecursiveGroup
           (
-            ( Nothing, Name "yes", Abs Nothing
-              ( ParamNamed Nothing ( Name "v" ) )
+            ( Nothing, Name "yes$0", Abs Nothing
+              ( ParamNamed Nothing ( Name "v$2" ) )
               ( IfThenElse Nothing
-                ( Ref Nothing ( Local ( Name "v" ) ) 0 )
+                ( Ref Nothing ( Local ( Name "v$2" ) ) )
                 ( App Nothing
-                  ( Ref Nothing ( Local ( Name "no" ) ) 0 ) ( LiteralBool Nothing False )
+                  ( Ref Nothing ( Local ( Name "no$1" ) ) ) ( LiteralBool Nothing False )
                 )
                 ( IfThenElse Nothing
                   ( Eq Nothing ( LiteralBool Nothing False )
-                    ( Ref Nothing ( Local ( Name "v" ) ) 0 )
+                    ( Ref Nothing ( Local ( Name "v$2" ) ) )
                   )
                   ( App Nothing
-                    ( Ref Nothing ( Local ( Name "no" ) ) 0 ) ( LiteralBool Nothing True )
+                    ( Ref Nothing ( Local ( Name "no$1" ) ) ) ( LiteralBool Nothing True )
                   )
                   ( Exception Nothing "No patterns matched" )
                 )
               )
             ) :|
             [
-              ( Nothing, Name "no", Abs Nothing
-                ( ParamNamed Nothing ( Name "v" ) )
+              ( Nothing, Name "no$1", Abs Nothing
+                ( ParamNamed Nothing ( Name "v0$3" ) )
                 ( IfThenElse Nothing
-                  ( Ref Nothing ( Local ( Name "v" ) ) 0 )
+                  ( Ref Nothing ( Local ( Name "v0$3" ) ) )
                   ( App Nothing
-                    ( Ref Nothing ( Local ( Name "yes" ) ) 0 ) ( LiteralBool Nothing False )
+                    ( Ref Nothing ( Local ( Name "yes$0" ) ) ) ( LiteralBool Nothing False )
                   )
                   ( IfThenElse Nothing
                     ( Eq Nothing ( LiteralBool Nothing False )
-                      ( Ref Nothing ( Local ( Name "v" ) ) 0 )
+                      ( Ref Nothing ( Local ( Name "v0$3" ) ) )
                     )
                     ( App Nothing
-                      ( Ref Nothing ( Local ( Name "yes" ) ) 0 ) ( LiteralBool Nothing True )
+                      ( Ref Nothing ( Local ( Name "yes$0" ) ) ) ( LiteralBool Nothing True )
                     )
                     ( Exception Nothing "No patterns matched" )
                   )
@@ -44,43 +44,43 @@ UberModule
             ]
           ) :| []
         )
-        ( App Nothing ( Ref Nothing ( Local ( Name "no" ) ) 0 ) ( LiteralBool Nothing False ) )
+        ( App Nothing ( Ref Nothing ( Local ( Name "no$1" ) ) ) ( LiteralBool Nothing False ) )
       ),
       ( Name "whereRec", Let Nothing
         ( RecursiveGroup
           (
-            ( Nothing, Name "yes", Abs Nothing
-              ( ParamNamed Nothing ( Name "v" ) )
+            ( Nothing, Name "yes$14", Abs Nothing
+              ( ParamNamed Nothing ( Name "v$16" ) )
               ( IfThenElse Nothing
-                ( Ref Nothing ( Local ( Name "v" ) ) 0 )
+                ( Ref Nothing ( Local ( Name "v$16" ) ) )
                 ( App Nothing
-                  ( Ref Nothing ( Local ( Name "no" ) ) 0 ) ( LiteralBool Nothing False )
+                  ( Ref Nothing ( Local ( Name "no$15" ) ) ) ( LiteralBool Nothing False )
                 )
                 ( IfThenElse Nothing
                   ( Eq Nothing ( LiteralBool Nothing False )
-                    ( Ref Nothing ( Local ( Name "v" ) ) 0 )
+                    ( Ref Nothing ( Local ( Name "v$16" ) ) )
                   )
                   ( App Nothing
-                    ( Ref Nothing ( Local ( Name "no" ) ) 0 ) ( LiteralBool Nothing True )
+                    ( Ref Nothing ( Local ( Name "no$15" ) ) ) ( LiteralBool Nothing True )
                   )
                   ( Exception Nothing "No patterns matched" )
                 )
               )
             ) :|
             [
-              ( Nothing, Name "no", Abs Nothing
-                ( ParamNamed Nothing ( Name "v" ) )
+              ( Nothing, Name "no$15", Abs Nothing
+                ( ParamNamed Nothing ( Name "v0$17" ) )
                 ( IfThenElse Nothing
-                  ( Ref Nothing ( Local ( Name "v" ) ) 0 )
+                  ( Ref Nothing ( Local ( Name "v0$17" ) ) )
                   ( App Nothing
-                    ( Ref Nothing ( Local ( Name "yes" ) ) 0 ) ( LiteralBool Nothing False )
+                    ( Ref Nothing ( Local ( Name "yes$14" ) ) ) ( LiteralBool Nothing False )
                   )
                   ( IfThenElse Nothing
                     ( Eq Nothing ( LiteralBool Nothing False )
-                      ( Ref Nothing ( Local ( Name "v" ) ) 0 )
+                      ( Ref Nothing ( Local ( Name "v0$17" ) ) )
                     )
                     ( App Nothing
-                      ( Ref Nothing ( Local ( Name "yes" ) ) 0 ) ( LiteralBool Nothing True )
+                      ( Ref Nothing ( Local ( Name "yes$14" ) ) ) ( LiteralBool Nothing True )
                     )
                     ( Exception Nothing "No patterns matched" )
                   )
@@ -89,61 +89,61 @@ UberModule
             ]
           ) :| []
         )
-        ( App Nothing ( Ref Nothing ( Local ( Name "no" ) ) 0 ) ( LiteralBool Nothing False ) )
+        ( App Nothing ( Ref Nothing ( Local ( Name "no$15" ) ) ) ( LiteralBool Nothing False ) )
       ),
       ( Name "letRecMixed", Let Nothing
         ( Standalone
-          ( Nothing, Name "z", LiteralInt Nothing 1 ) :|
+          ( Nothing, Name "z$4", LiteralInt Nothing 1 ) :|
           [ RecursiveGroup
             (
-              ( Nothing, Name "b", Abs Nothing ( ParamUnused Nothing )
+              ( Nothing, Name "b$5", Abs Nothing ( ParamUnused Nothing )
                 ( App Nothing
-                  ( Ref Nothing ( Local ( Name "a" ) ) 0 )
-                  ( Ref Nothing ( Local ( Name "z" ) ) 0 )
+                  ( Ref Nothing ( Local ( Name "a$6" ) ) )
+                  ( Ref Nothing ( Local ( Name "z$4" ) ) )
                 )
               ) :|
               [
-                ( Nothing, Name "a", Abs Nothing ( ParamUnused Nothing )
+                ( Nothing, Name "a$6", Abs Nothing ( ParamUnused Nothing )
                   ( App Nothing
-                    ( Ref Nothing ( Local ( Name "b" ) ) 0 )
-                    ( Ref Nothing ( Local ( Name "z" ) ) 0 )
+                    ( Ref Nothing ( Local ( Name "b$5" ) ) )
+                    ( Ref Nothing ( Local ( Name "z$4" ) ) )
                   )
                 )
               ]
             ), Standalone
-            ( Nothing, Name "f", Abs Nothing ( ParamUnused Nothing )
+            ( Nothing, Name "f$7", Abs Nothing ( ParamUnused Nothing )
               ( Abs Nothing
-                ( ParamNamed Nothing ( Name "k" ) )
+                ( ParamNamed Nothing ( Name "k$13" ) )
                 ( App Nothing
-                  ( Ref Nothing ( Local ( Name "a" ) ) 0 )
-                  ( Ref Nothing ( Local ( Name "k" ) ) 0 )
+                  ( Ref Nothing ( Local ( Name "a$6" ) ) )
+                  ( Ref Nothing ( Local ( Name "k$13" ) ) )
                 )
               )
             ), Standalone
-            ( Nothing, Name "y", App Nothing
+            ( Nothing, Name "y$8", App Nothing
               ( App Nothing
-                ( Ref Nothing ( Local ( Name "f" ) ) 0 )
-                ( Ref Nothing ( Local ( Name "z" ) ) 0 )
+                ( Ref Nothing ( Local ( Name "f$7" ) ) )
+                ( Ref Nothing ( Local ( Name "z$4" ) ) )
               )
-              ( Ref Nothing ( Local ( Name "z" ) ) 0 )
+              ( Ref Nothing ( Local ( Name "z$4" ) ) )
             )
           ]
         )
         ( App Nothing
           ( App Nothing
-            ( Ref Nothing ( Local ( Name "f" ) ) 0 )
+            ( Ref Nothing ( Local ( Name "f$7" ) ) )
             ( App Nothing
               ( App Nothing
-                ( Ref Nothing ( Local ( Name "f" ) ) 0 )
-                ( Ref Nothing ( Local ( Name "y" ) ) 0 )
+                ( Ref Nothing ( Local ( Name "f$7" ) ) )
+                ( Ref Nothing ( Local ( Name "y$8" ) ) )
               )
-              ( Ref Nothing ( Local ( Name "y" ) ) 0 )
+              ( Ref Nothing ( Local ( Name "y$8" ) ) )
             )
           )
           ( App Nothing
             ( App Nothing
-              ( Ref Nothing ( Local ( Name "f" ) ) 0 )
-              ( Ref Nothing ( Local ( Name "y" ) ) 0 )
+              ( Ref Nothing ( Local ( Name "f$7" ) ) )
+              ( Ref Nothing ( Local ( Name "y$8" ) ) )
             )
             ( LiteralInt Nothing 0 )
           )

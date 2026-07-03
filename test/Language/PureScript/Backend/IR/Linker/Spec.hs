@@ -1,6 +1,6 @@
 module Language.PureScript.Backend.IR.Linker.Spec where
 
-import Data.Map qualified as Map
+import Data.Set qualified as Set
 import Hedgehog ((===))
 import Language.PureScript.Backend.IR.Linker (qualifyTopRefs)
 import Language.PureScript.Backend.IR.Names
@@ -25,36 +25,36 @@ spec = describe "IR Linker" do
     let modname = ModuleName "Main"
         x = Name "x"
         y = Name "y"
-        topX = Map.fromList [(x, 0)]
+        topX = Set.fromList [x]
         qualify = qualifyTopRefs modname topX
 
     test "ref bound by an earlier sibling is not qualified" do
       let e =
             lets
               ( Standalone (noAnn, x, literalInt 1)
-                  :| [Standalone (noAnn, y, refLocal x 0)]
+                  :| [Standalone (noAnn, y, refLocal x)]
               )
               (literalInt 0)
       qualify e === e
 
     test "ref to a top-level name in own RHS is qualified" do
       let original =
-            lets (Standalone (noAnn, x, refLocal x 0) :| []) (literalInt 0)
+            lets (Standalone (noAnn, x, refLocal x) :| []) (literalInt 0)
           expected =
             lets
-              (Standalone (noAnn, x, refImported modname x 0) :| [])
+              (Standalone (noAnn, x, refImported modname x) :| [])
               (literalInt 0)
       qualify original === expected
 
-    test "ref in the body pointing past the binder is qualified" do
+    test "ref in the body not shadowed by the let is qualified" do
       let original =
-            lets (Standalone (noAnn, x, literalInt 1) :| []) (refLocal x 1)
+            lets (Standalone (noAnn, y, literalInt 1) :| []) (refLocal x)
           expected =
             lets
-              (Standalone (noAnn, x, literalInt 1) :| [])
-              (refImported modname x 1)
+              (Standalone (noAnn, y, literalInt 1) :| [])
+              (refImported modname x)
       qualify original === expected
 
     test "ref in the body bound by the let is not qualified" do
-      let e = lets (Standalone (noAnn, x, literalInt 1) :| []) (refLocal x 0)
+      let e = lets (Standalone (noAnn, x, literalInt 1) :| []) (refLocal x)
       qualify e === e

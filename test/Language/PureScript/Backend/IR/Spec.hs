@@ -80,7 +80,7 @@ spec = describe "IR representation" do
               )
 
       it "array literal binder" do
-        let x = refLocal (Name "x") 0
+        let x = refLocal (Name "x")
             expectedResult =
               ifThenElse
                 (literalInt 3 `eq` arrayLength x)
@@ -161,7 +161,7 @@ spec = describe "IR representation" do
           , defaultAlternative
           ]
           >>= ( `shouldBe`
-                  let x = refLocal (Name "x") 0
+                  let x = refLocal (Name "x")
                    in ifThenElse
                         (literalChar 'a' `eq` objectProp x (PropName "foo"))
                         ( ifThenElse
@@ -250,7 +250,7 @@ spec = describe "IR representation" do
                     (Name "e0")
                     (literalArray [])
                     ( ifThenElse
-                        (literalBool False `eq` refLocal (Name "e0") 0)
+                        (literalBool False `eq` refLocal (Name "e0"))
                         (literalInt 1)
                         (exception "No patterns matched")
                     )
@@ -277,7 +277,7 @@ spec = describe "IR representation" do
                     ( ifThenElse
                         ( literalInt 2
                             `eq` objectProp
-                              (refLocal (Name "e0") 0)
+                              (refLocal (Name "e0"))
                               (PropName "a")
                         )
                         (literalInt 1)
@@ -295,7 +295,7 @@ spec = describe "IR representation" do
           ]
           >>= ( `shouldBe`
                   ifThenElse
-                    (literalBool False `eq` refLocal (Name "r") 0)
+                    (literalBool False `eq` refLocal (Name "r"))
                     (literalInt 1)
                     (exception "No patterns matched")
               )
@@ -383,10 +383,10 @@ spec = describe "IR representation" do
           >>= ( `shouldBe`
                   ifThenElse
                     (literalChar 'a' `eq` literalChar 'z')
-                    (let1 (Name "x") (literalChar 't') (refLocal (Name "x") 0))
+                    (let1 (Name "x") (literalChar 't') (refLocal (Name "x")))
                     ( ifThenElse
                         (literalChar 'b' `eq` literalChar 't')
-                        (let1 (Name "y") (literalChar 'z') (refLocal (Name "y") 0))
+                        (let1 (Name "y") (literalChar 'z') (refLocal (Name "y")))
                         (literalInt 3)
                     )
               )
@@ -407,7 +407,7 @@ spec = describe "IR representation" do
                     ( Standalone (noAnn, Name "z", literalChar 'y')
                         :| [Standalone (noAnn, Name "v", literalChar 'x')]
                     )
-                    (refLocal (Name "z") 0)
+                    (refLocal (Name "z"))
               )
 
       it "named binders compile to a let bindings" do
@@ -440,8 +440,8 @@ spec = describe "IR representation" do
                                 :| [Standalone (noAnn, Name "a", literalChar 'x')]
                             )
                             ( application
-                                (refLocal (Name "a") 0)
-                                (refLocal (Name "b") 0)
+                                (refLocal (Name "a"))
+                                (refLocal (Name "b"))
                             )
                         )
                         ( lets
@@ -449,8 +449,8 @@ spec = describe "IR representation" do
                                 :| [Standalone (noAnn, Name "o1", literalChar 'x')]
                             )
                             ( application
-                                (refLocal (Name "o2") 0)
-                                (refLocal (Name "o1") 0)
+                                (refLocal (Name "o2"))
+                                (refLocal (Name "o1"))
                             )
                         )
                     )
@@ -459,8 +459,8 @@ spec = describe "IR representation" do
                             :| [Standalone (noAnn, Name "o1", literalChar 'x')]
                         )
                         ( application
-                            (refLocal (Name "o2") 0)
-                            (refLocal (Name "o1") 0)
+                            (refLocal (Name "o2"))
+                            (refLocal (Name "o1"))
                         )
                     )
               )

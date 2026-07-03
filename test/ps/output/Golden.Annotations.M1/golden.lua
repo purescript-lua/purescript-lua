@@ -11,7 +11,9 @@ M.Golden_Annotations_M1_foreign = (function()
   }
 end)()
 return {
-  inlineMe = function(v) if 1 == v then return 2 else return v end end,
+  inlineMe = function(v_S_0)
+    if 1 == v_S_0 then return 2 else return v_S_0 end
+  end,
   dontInlineClosure = M.Golden_Annotations_M1_foreign.dontInlineClosure,
   inlineMeLambda = M.Golden_Annotations_M1_foreign.inlineMeLambda
 }

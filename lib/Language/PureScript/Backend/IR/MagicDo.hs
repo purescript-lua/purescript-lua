@@ -21,9 +21,8 @@ upstream JS backend and @purs-backend-es@.
 The flattened shape reuses 'Let' (whose code generator already emits a flat
 sequence of @local@ statements, see Note [Sequential scoping of Let bindings])
 wrapped in a nullary 'Abs' (the thunk). Adding a dedicated effect node would
-ripple through every traversal over 'RawExp' — including the De Bruijn
-machinery ('shift'\/'unshift'\/'substitute') that caused issues #37 and #56 —
-for no benefit here, since the goal is purely to flatten.
+ripple through every traversal over 'RawExp' for no benefit here, since the
+goal is purely to flatten.
 
 == Why this runs last (the final step of 'optimizedUberModule')
 
@@ -31,9 +30,10 @@ for no benefit here, since the goal is purely to flatten.
     introduced for 'discard': their names are unreferenced, so DCE sees them as
     dead and would silently drop the effect.
 
-  * After 'renameShadowedNames' every local is uniquely named, so moving a
-    binder out of a lambda and into a 'Let' preserves De Bruijn indices with no
-    shifting (Note [Sequential scoping of Let bindings]).
+  * Every local is uniquely named under GUC (established by 'uniquifyNames'
+    at the front of the pipeline and preserved throughout), so moving a
+    binder out of a lambda and into a 'Let' needs no accompanying
+    substitution — only the name travels.
 
 Running it as the last step of 'optimizedUberModule' (rather than at each call
 site) means both the compiler and the golden-test harness pick it up from the
@@ -56,7 +56,9 @@ import Language.PureScript.Backend.IR.Names
   , Name (..)
   , QName (..)
   , Qualified (..)
+  , discardName
   )
+import Language.PureScript.Backend.IR.Supply (SupplyM)
 import Language.PureScript.Backend.IR.Types
   ( Ann
   , Binding
@@ -65,24 +67,27 @@ import Language.PureScript.Backend.IR.Types
   , Parameter (..)
   , RawExp (..)
   , RewriteMod (..)
-  , RewriteRule
+  , RewriteRuleM
   , Rewritten (..)
   , noAnn
-  , rewriteExpTopDown
-  , substitute
-  , unshift
+  , rewriteExpTopDownM
+  , substituteMoveM
   )
 
 -- | Flatten Effect/ST @do@ blocks in every binding and export of the module.
-magicDo ∷ UberModule → UberModule
-magicDo uber@UberModule {uberModuleBindings, uberModuleExports} =
-  uber
-    { uberModuleBindings = fmap (fmap (fmap rewrite)) uberModuleBindings
-    , uberModuleExports = fmap (fmap rewrite) uberModuleExports
-    }
+magicDo ∷ UberModule → SupplyM UberModule
+magicDo uber@UberModule {uberModuleBindings, uberModuleExports} = do
+  uberModuleBindings' ←
+    traverse (traverse (traverse rewrite)) uberModuleBindings
+  uberModuleExports' ← traverse (traverse rewrite) uberModuleExports
+  pure
+    uber
+      { uberModuleBindings = uberModuleBindings'
+      , uberModuleExports = uberModuleExports'
+      }
  where
-  rewrite ∷ Exp → Exp
-  rewrite = rewriteExpTopDown (magicDoRule resolve)
+  rewrite ∷ Exp → SupplyM Exp
+  rewrite = rewriteExpTopDownM (magicDoRule resolve)
 
   -- Top-level bindings, so that a @bind@/@discard@ floated into a module-local
   -- alias (e.g. @Module.discard = discard discardUnit bindEffect@) can be
@@ -97,13 +102,12 @@ magicDo uber@UberModule {uberModuleBindings, uberModuleExports} =
 --------------------------------------------------------------------------------
 -- Rewrite rule ----------------------------------------------------------------
 
-magicDoRule ∷ (QName → Maybe Exp) → RewriteRule Ann
-magicDoRule resolve =
-  pure . \expr →
-    case peelChain resolve expr of
-      ([], _) → NoChange
-      (statements, finalAction) →
-        Rewritten Recurse (buildThunk statements finalAction)
+magicDoRule ∷ (QName → Maybe Exp) → RewriteRuleM SupplyM Ann
+magicDoRule resolve expr = do
+  (statements, finalAction) ← peelChain resolve expr
+  pure case statements of
+    [] → NoChange
+    _ → Rewritten Recurse (buildThunk statements finalAction)
 
 {- | Wrap the flattened statements and final action into an Effect/ST thunk.
 
@@ -141,16 +145,17 @@ statements plus the final action (the first expression that is not such a
 node). Returns no statements when the expression is not a recognised chain head,
 which leaves it untouched.
 -}
-peelChain ∷ (QName → Maybe Exp) → Exp → ([Binding], Exp)
+peelChain ∷ (QName → Maybe Exp) → Exp → SupplyM ([Binding], Exp)
 peelChain resolve = go
  where
-  go expr = case classify resolve expr of
-    Just (BindNode name action rest) →
-      first (statement name action :) (go rest)
-    Just (DiscardNode action rest) →
-      first (statement discardName action :) (go rest)
-    Nothing →
-      ([], expr)
+  go expr =
+    classify resolve expr >>= \case
+      Just (BindNode name action rest) →
+        first (statement name action :) <$> go rest
+      Just (DiscardNode action rest) →
+        first (statement discardName action :) <$> go rest
+      Nothing →
+        pure ([], expr)
 
   statement ∷ Name → Exp → Binding
   statement name action = Standalone (noAnn, name, runEffect action)
@@ -175,42 +180,47 @@ therefore normalise the application head one reduction at a time — resolving
 aliases, projecting fields out of literal dictionaries, and beta-reducing — and
 match once it is exposed as @bind dict action continuation@.
 -}
-classify ∷ (QName → Maybe Exp) → Exp → Maybe Node
+classify ∷ (QName → Maybe Exp) → Exp → SupplyM (Maybe Node)
 classify resolve = go maxHops . spine
  where
-  go ∷ Int → (Exp, [Exp]) → Maybe Node
+  go ∷ Int → (Exp, [Exp]) → SupplyM (Maybe Node)
   go fuel (hd, args)
-    | fuel <= 0 = Nothing
+    | fuel <= 0 = pure Nothing
     | otherwise = case (hd, args) of
         -- Normalised form: bind dict action (\param -> rest). A 'discard' has
         -- already collapsed to this because `discardUnit.discard = bind`.
-        (Ref _ (Imported m n) _, [dict, action, k])
+        (Ref _ (Imported m n), [dict, action, k])
           | (m, n) == bindName
           , isBindDict resolve dict →
-              case k of
+              pure case k of
                 Abs _ (ParamNamed _ name) rest → Just (BindNode name action rest)
                 Abs _ (ParamUnused _) rest → Just (DiscardNode action rest)
                 _ → Nothing
         -- Discard not yet inlined to its instance method.
-        (Ref _ (Imported m n) _, [dictD, dictB, action, k])
+        (Ref _ (Imported m n), [dictD, dictB, action, k])
           | (m, n) == discardName'
           , denotes resolve discardUnit dictD
           , isBindDict resolve dictB
           , Abs _ (ParamUnused _) rest ← k →
-              Just (DiscardNode action rest)
+              pure (Just (DiscardNode action rest))
         -- Otherwise reduce the head one step and retry.
-        (Ref _ (Imported m n) _, _)
+        (Ref _ (Imported m n), _)
           | Just def ← resolve (QName m n) →
               go (fuel - 1) (reSpine def args)
         (ObjectProp _ (LiteralObject _ fields) prop, _)
           | Just value ← List.lookup prop fields →
               go (fuel - 1) (reSpine value args)
-        (Abs _ (ParamNamed _ p) body, arg : rest') →
-          go (fuel - 1) $
-            reSpine (unshift p 0 (substitute (Local p) 0 arg body)) rest'
+        (Abs _ (ParamNamed _ p) body, arg : rest') → do
+          -- Speculative beta while classifying: the λ is consumed here and
+          -- never re-emitted on failure, so the first occurrence may keep
+          -- its binder names ('substituteMoveM'). A failed match still
+          -- burns supply names on the discarded reduction — deterministic,
+          -- and accepted (see the module haddock).
+          reduced ← substituteMoveM (Local p) arg body
+          go (fuel - 1) (reSpine reduced rest')
         (Abs _ (ParamUnused _) body, _ : rest') →
           go (fuel - 1) (reSpine body rest')
-        _ → Nothing
+        _ → pure Nothing
 
   -- Re-attach trailing arguments after a head reduction.
   reSpine ∷ Exp → [Exp] → (Exp, [Exp])
@@ -224,7 +234,7 @@ denotes resolve target = go maxHops
  where
   go ∷ Int → Exp → Bool
   go fuel = \case
-    Ref _ (Imported m n) _
+    Ref _ (Imported m n)
       | (m, n) == target → True
       | fuel > 0, Just def ← resolve (QName m n) → go (fuel - 1) def
     _ → False
@@ -249,13 +259,8 @@ synthetic @Prim.undefined@ argument is erased to an empty argument list by
 the Lua code generator, so this emits @m()@.
 -}
 runEffect ∷ Exp → Exp
-runEffect m = App noAnn m (Ref noAnn (Imported (ModuleName "Prim") (Name "undefined")) 0)
-
-{- | Name for the (unused) result of a 'discard'd action. @_@ is the
-conventional Lua throwaway and is exempt from luacheck's unused-local check.
--}
-discardName ∷ Name
-discardName = Name "_"
+runEffect m =
+  App noAnn m (Ref noAnn (Imported (ModuleName "Prim") (Name "undefined")))
 
 {- | Bound on alias/instance resolution to stay terminating on recursive
 bindings.

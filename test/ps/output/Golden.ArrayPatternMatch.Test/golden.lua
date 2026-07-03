@@ -33,6 +33,10 @@ M.Data_Semiring_semiringInt = {
   mul = M.Data_Semiring_foreign.intMul,
   one = 1
 }
+M.Data_Ring_ringInt = {
+  sub = function(x) return function(y) return x - y end end,
+  Semiring0 = function() return M.Data_Semiring_semiringInt end
+}
 M.Control_Applicative_pure = function(dict) return dict.pure end
 M.Control_Bind_bind = function(dict) return dict.bind end
 M.Effect_monadEffect = {
@@ -49,9 +53,9 @@ M.Effect_applicativeEffect = {
 }
 M.Effect_Lazy_functorEffect = PSLUA_runtime_lazy("functorEffect")(function()
   return {
-    map = function(f)
-      return function(a)
-        return (M.Effect_applicativeEffect.Apply0()).apply(M.Control_Applicative_pure(M.Effect_applicativeEffect)(f))(a)
+    map = function(f_S_40)
+      return function(a_S_41)
+        return (M.Effect_applicativeEffect.Apply0()).apply(M.Control_Applicative_pure(M.Effect_applicativeEffect)(f_S_40))(a_S_41)
       end
     end
   }
@@ -59,12 +63,12 @@ end)
 M.Effect_Lazy_applyEffect = PSLUA_runtime_lazy("applyEffect")(function()
   return {
     apply = (function()
-      local bind = M.Control_Bind_bind(M.Effect_monadEffect.Bind1())
-      return function(f)
-        return function(a)
-          return bind(f)(function(fPrime)
-            return bind(a)(function(aPrime)
-              return M.Control_Applicative_pure(M.Effect_monadEffect.Applicative0())(fPrime(aPrime))
+      local bind_S_17 = M.Control_Bind_bind(M.Effect_monadEffect.Bind1())
+      return function(f_S_19)
+        return function(a_S_20)
+          return bind_S_17(f_S_19)(function(fPrime_S_21)
+            return bind_S_17(a_S_20)(function(aPrime_S_22)
+              return M.Control_Applicative_pure(M.Effect_monadEffect.Applicative0())(fPrime_S_21(aPrime_S_22))
             end)
           end)
         end
@@ -73,16 +77,14 @@ M.Effect_Lazy_applyEffect = PSLUA_runtime_lazy("applyEffect")(function()
     Functor0 = function() return M.Effect_Lazy_functorEffect(0) end
   }
 end)
-M.Golden_ArrayPatternMatch_Test_negate = function(a)
-  return (function(x) return function(y) return x - y end end)(((function()
-    return M.Data_Semiring_semiringInt
-  end)()).zero)(a)
+M.Golden_ArrayPatternMatch_Test_negate = function(a_S_165)
+  return M.Data_Ring_ringInt.sub((M.Data_Ring_ringInt.Semiring0()).zero)(a_S_165)
 end
-M.Golden_ArrayPatternMatch_Test_discard = (function(dictBind)
-  return M.Control_Bind_bind(dictBind)
+M.Golden_ArrayPatternMatch_Test_discard = (function(dictBind_S_23_S_1371)
+  return M.Control_Bind_bind(dictBind_S_23_S_1371)
 end)(M.Effect_bindEffect)
-M.Golden_ArrayPatternMatch_Test_logShow = function(a)
-  return (function(s) return function() print(s) end end)((function(n) return tostring(n) end)(a))
+M.Golden_ArrayPatternMatch_Test_logShow = function(a_S_2)
+  return (function(s) return function() print(s) end end)((function(n) return tostring(n) end)(a_S_2))
 end
 M.Golden_ArrayPatternMatch_Test_lastOfThree = function(v)
   if 3 == #(v) then

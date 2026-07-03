@@ -14,6 +14,7 @@ import Language.PureScript.Backend.IR.Pass
   , Phase (..)
   , Step (..)
   , idempotently
+  , renderPassCheckFailure
   , runSteps
   , runStepsChecked
   )
@@ -21,7 +22,9 @@ import Language.PureScript.Backend.IR.Supply (runSupply)
 import Language.PureScript.Backend.IR.Types
   ( Exp
   , RawExp (..)
+  , abstraction
   , literalInt
+  , paramNamed
   , refLocal
   )
 import Test.Hspec (Spec, SpecWith, describe, it, shouldBe)
@@ -42,7 +45,7 @@ spec = describe "IR Pass runner" do
         PassCheckFailure
           { failedPassName = "break-scope"
           , failedPhase = After
-          , failedViolations = pure (UnboundLocal (InExport main) y 0)
+          , failedViolations = pure (UnboundLocal (InExport main) y)
           }
 
   it "checked runner reports a violated precondition" do
@@ -52,7 +55,7 @@ spec = describe "IR Pass runner" do
         PassCheckFailure
           { failedPassName = "keep"
           , failedPhase = Before
-          , failedViolations = pure (UnboundLocal (InExport main) y 0)
+          , failedViolations = pure (UnboundLocal (InExport main) y)
           }
 
   it "checked runner sees intermediate fixpoint iterations" do
@@ -74,8 +77,56 @@ spec = describe "IR Pass runner" do
         PassCheckFailure
           { failedPassName = "step"
           , failedPhase = After
-          , failedViolations = pure (UnboundLocal (InExport main) y 0)
+          , failedViolations = pure (UnboundLocal (InExport main) y)
           }
+
+  it "checked runner lints exactly the declared invariants" do
+    -- λx. λx. x is well-scoped, but breaks UniqueBinders (shadowing).
+    let x = Name "x"
+        shadowing =
+          abstraction
+            (paramNamed x)
+            (abstraction (paramNamed x) (refLocal x))
+        produce invariants =
+          Pass
+            { passName = "produce"
+            , passRun = pure . constExports shadowing
+            , passRequires = Set.singleton WellScoped
+            , passEnsures = invariants
+            }
+        run invariants =
+          runSupply
+            ( runStepsChecked
+                [RunPass (produce invariants)]
+                (exporting (literalInt 0))
+            )
+    -- A pass that only promises well-scopedness passes the check…
+    run (Set.singleton WellScoped)
+      `shouldBe` Right (exporting shadowing)
+    -- …while promising the GUC invariant dispatches its linter.
+    run (Set.fromList [WellScoped, UniqueBinders])
+      `shouldBe` Left
+        PassCheckFailure
+          { failedPassName = "produce"
+          , failedPhase = After
+          , failedViolations = pure (DuplicateBinder (InExport main) x)
+          }
+
+  it "renders a check failure for the CLI (--lint-ir)" do
+    -- The exact wording is user-facing: the CLI dies with this text.
+    renderPassCheckFailure
+      PassCheckFailure
+        { failedPassName = "break-scope"
+        , failedPhase = After
+        , failedViolations =
+            UnboundLocal (InExport main) y
+              :| [DuplicateBinder (InExport main) y]
+        }
+      `shouldBe` unlines
+        [ "IR invariants violated After optimizer pass break-scope:"
+        , "UnboundLocal (InExport (Name \"main\")) (Name \"y\")"
+        , "DuplicateBinder (InExport (Name \"main\")) (Name \"y\")"
+        ]
 
   prop "fixpoint has 'idempotently' semantics" do
     limit ← forAll $ Gen.integral (Range.linear 0 20)
@@ -101,7 +152,7 @@ y ∷ Name
 y = Name "y"
 
 unboundRef ∷ Exp
-unboundRef = refLocal y 0
+unboundRef = refLocal y
 
 exporting ∷ Exp → UberModule
 exporting e =

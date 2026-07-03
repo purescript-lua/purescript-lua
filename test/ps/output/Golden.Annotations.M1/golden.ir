@@ -10,19 +10,19 @@ UberModule
     ], uberModuleForeigns = [], uberModuleExports =
     [
       ( Name "inlineMe", Abs ( Just Always )
-        ( ParamNamed Nothing ( Name "v" ) )
+        ( ParamNamed Nothing ( Name "v$0" ) )
         ( IfThenElse Nothing
-          ( Eq Nothing ( LiteralInt Nothing 1 ) ( Ref Nothing ( Local ( Name "v" ) ) 0 ) )
+          ( Eq Nothing ( LiteralInt Nothing 1 ) ( Ref Nothing ( Local ( Name "v$0" ) ) ) )
           ( LiteralInt Nothing 2 )
-          ( Ref Nothing ( Local ( Name "v" ) ) 0 )
+          ( Ref Nothing ( Local ( Name "v$0" ) ) )
         )
       ),
       ( Name "dontInlineClosure", ObjectProp ( Just Always )
-        ( Ref Nothing ( Imported ( ModuleName "Golden.Annotations.M1" ) ( Name "foreign" ) ) 0 )
+        ( Ref Nothing ( Imported ( ModuleName "Golden.Annotations.M1" ) ( Name "foreign" ) ) )
         ( PropName "dontInlineClosure" )
       ),
       ( Name "inlineMeLambda", ObjectProp ( Just Always )
-        ( Ref Nothing ( Imported ( ModuleName "Golden.Annotations.M1" ) ( Name "foreign" ) ) 0 )
+        ( Ref Nothing ( Imported ( ModuleName "Golden.Annotations.M1" ) ( Name "foreign" ) ) )
         ( PropName "inlineMeLambda" )
       )
     ]

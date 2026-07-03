@@ -11,20 +11,24 @@ M.Golden_Annotations_M1_foreign = (function()
   }
 end)()
 return {
-  inlineIntoMe = function(i)
+  inlineIntoMe = function(i_S_0)
     if 1 == (function()
-      if 1 == (function() if 1 == i then return 2 else return i end end)() then
+      if 1 == (function()
+        if 1 == i_S_0 then return 2 else return i_S_0 end
+      end)() then
         return 2
       else
-        if 1 == i then return 2 else return i end
+        if 1 == i_S_0 then return 2 else return i_S_0 end
       end
     end)() then
       return 2
     else
-      if 1 == (function() if 1 == i then return 2 else return i end end)() then
+      if 1 == (function()
+        if 1 == i_S_0 then return 2 else return i_S_0 end
+      end)() then
         return 2
       else
-        if 1 == i then return 2 else return i end
+        if 1 == i_S_0 then return 2 else return i_S_0 end
       end
     end
   end,

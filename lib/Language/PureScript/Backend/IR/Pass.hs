@@ -23,6 +23,7 @@ module Language.PureScript.Backend.IR.Pass
   , Step (..)
   , Phase (..)
   , PassCheckFailure (..)
+  , renderPassCheckFailure
   , runSteps
   , runStepsChecked
   , runStepsTraced
@@ -32,16 +33,26 @@ module Language.PureScript.Backend.IR.Pass
 import Control.Monad.Error.Class (MonadError (throwError))
 import Data.Set qualified as Set
 import Language.PureScript.Backend.IR.Linker (UberModule)
-import Language.PureScript.Backend.IR.Linter (Violation, lintUberModule)
+import Language.PureScript.Backend.IR.Linter
+  ( Violation
+  , lintUniqueBinders
+  , lintWellScoped
+  )
 import Language.PureScript.Backend.IR.Supply (SupplyM)
 
 --------------------------------------------------------------------------------
 -- Passes and their contracts --------------------------------------------------
 
-{- | A mechanically checkable property of the IR. Extended by the
-globally-unique-names redesign (issue #139).
+{- | A mechanically checkable property of the IR (issue #139):
+
+  * 'WellScoped' — every local reference resolves to an enclosing binder;
+  * 'UniqueBinders' — within one top-level site no local binder name is
+    bound twice (the discard binder @_@ exempt).
+
+'UniqueBinders' is the global-uniqueness condition (GUC): a local
+reference resolves to its binder unambiguously by name.
 -}
-data Invariant = WellScoped
+data Invariant = WellScoped | UniqueBinders
   deriving stock (Eq, Ord, Show)
 
 data Pass = Pass
@@ -71,6 +82,22 @@ data PassCheckFailure = PassCheckFailure
   , failedViolations ∷ NonEmpty Violation
   }
   deriving stock (Eq, Show)
+
+{- | The user-facing rendering of a contract violation (used by the CLI
+behind @--lint-ir@): a headline naming the offending pass and phase,
+then one line per violation.
+-}
+renderPassCheckFailure ∷ PassCheckFailure → Text
+renderPassCheckFailure
+  PassCheckFailure {failedPassName, failedPhase, failedViolations} =
+    unlines $
+      [ "IR invariants violated "
+          <> show failedPhase
+          <> " optimizer pass "
+          <> failedPassName
+          <> ":"
+      ]
+        <> (show <$> toList failedViolations)
 
 --------------------------------------------------------------------------------
 -- Runners ---------------------------------------------------------------------
@@ -112,9 +139,13 @@ runStepsChecked steps uber0 = runExceptT (foldlM (flip runStep) uber0 steps)
         (throwError . PassCheckFailure passName phase)
 
   violations ∷ Set Invariant → UberModule → [Violation]
-  violations invariants u
-    | WellScoped `Set.member` invariants = lintUberModule u
-    | otherwise = []
+  violations invariants u =
+    foldMap
+      ( \case
+          WellScoped → lintWellScoped u
+          UniqueBinders → lintUniqueBinders u
+      )
+      (Set.toList invariants)
 
 {- | Like 'runSteps', but also record the module after each pass. Passes
 run by a fixpoint are recorded per iteration as @fixpointName#N/passName@.

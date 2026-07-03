@@ -7,7 +7,10 @@ import Data.Tagged (Tagged (..))
 import Language.PureScript.Backend (CompilationResult (..))
 import Language.PureScript.Backend qualified as Backend
 import Language.PureScript.Backend.IR qualified as IR
-import Language.PureScript.Backend.IR.Pass (PassCheckFailure (..))
+import Language.PureScript.Backend.IR.Pass
+  ( PassCheckFailure
+  , renderPassCheckFailure
+  )
 import Language.PureScript.Backend.Lua qualified as Lua
 import Language.PureScript.Backend.Lua.Printer qualified as Printer
 import Language.PureScript.Backend.Lua.Run qualified as Run
@@ -119,28 +122,13 @@ handlePassCheckFailure
   ∷ ExceptT (Oops.Variant (PassCheckFailure ': e)) IO a
   → ExceptT (Oops.Variant e) IO a
 handlePassCheckFailure =
-  Oops.catch \PassCheckFailure {failedPassName, failedPhase, failedViolations} →
-    die . toString . unlines $
-      [ "IR invariants violated "
-          <> show failedPhase
-          <> " optimizer pass "
-          <> failedPassName
-          <> ":"
-      ]
-        <> (show <$> toList failedViolations)
+  Oops.catch (die . toString . renderPassCheckFailure)
 
 handleLuaError
   ∷ ExceptT (Oops.Variant (Lua.Error ': e)) IO a
   → ExceptT (Oops.Variant e) IO a
 handleLuaError =
   Oops.catch \case
-    Lua.UnexpectedRefBound modname expr →
-      die . toString . unwords $
-        [ "Unexpected bound reference:"
-        , show expr
-        , "in module"
-        , runModuleName modname
-        ]
     Lua.LinkerErrorForeign e →
       die $ "Linker error:\n" <> show e
     Lua.AppEntryPointNotFound modname ident →

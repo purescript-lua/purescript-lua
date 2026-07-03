@@ -120,9 +120,9 @@ M.Effect_applicativeEffect = {
 }
 M.Effect_Lazy_functorEffect = PSLUA_runtime_lazy("functorEffect")(function()
   return {
-    map = function(f)
-      return function(a)
-        return (M.Effect_applicativeEffect.Apply0()).apply(M.Control_Applicative_pure(M.Effect_applicativeEffect)(f))(a)
+    map = function(f_S_54)
+      return function(a_S_55)
+        return (M.Effect_applicativeEffect.Apply0()).apply(M.Control_Applicative_pure(M.Effect_applicativeEffect)(f_S_54))(a_S_55)
       end
     end
   }
@@ -130,12 +130,12 @@ end)
 M.Effect_Lazy_applyEffect = PSLUA_runtime_lazy("applyEffect")(function()
   return {
     apply = (function()
-      local bind = M.Control_Bind_bind(M.Effect_monadEffect.Bind1())
-      return function(f)
-        return function(a)
-          return bind(f)(function(fPrime)
-            return bind(a)(function(aPrime)
-              return M.Control_Applicative_pure(M.Effect_monadEffect.Applicative0())(fPrime(aPrime))
+      local bind_S_31 = M.Control_Bind_bind(M.Effect_monadEffect.Bind1())
+      return function(f_S_33)
+        return function(a_S_34)
+          return bind_S_31(f_S_33)(function(fPrime_S_35)
+            return bind_S_31(a_S_34)(function(aPrime_S_36)
+              return M.Control_Applicative_pure(M.Effect_monadEffect.Applicative0())(fPrime_S_35(aPrime_S_36))
             end)
           end)
         end
@@ -144,22 +144,22 @@ M.Effect_Lazy_applyEffect = PSLUA_runtime_lazy("applyEffect")(function()
     Functor0 = function() return M.Effect_Lazy_functorEffect(0) end
   }
 end)
-M.Golden_GenericEqTwoTypes_Test_genericEqSum = function(dictGenericEq1)
+M.Golden_GenericEqTwoTypes_Test_genericEqSum = function(dictGenericEq1_S_7)
   return {
-    genericEqPrime = function(v)
-      return function(v1)
-        if "Data.Generic.Rep∷Sum.Inl" == v["$ctor"] then
-          if "Data.Generic.Rep∷Sum.Inl" == v1["$ctor"] then
+    genericEqPrime = function(v_S_9)
+      return function(v1_S_10)
+        if "Data.Generic.Rep∷Sum.Inl" == v_S_9["$ctor"] then
+          if "Data.Generic.Rep∷Sum.Inl" == v1_S_10["$ctor"] then
             return M.Data_Eq_Generic_genericEqPrime(M.Data_Eq_Generic_genericEqConstructor({
               genericEqPrime = function() return function() return true end end
-            }))(v.value0)(v1.value0)
+            }))(v_S_9.value0)(v1_S_10.value0)
           else
             return false
           end
         else
-          if "Data.Generic.Rep∷Sum.Inr" == v["$ctor"] then
-            if "Data.Generic.Rep∷Sum.Inr" == v1["$ctor"] then
-              return M.Data_Eq_Generic_genericEqPrime(dictGenericEq1)(v.value0)(v1.value0)
+          if "Data.Generic.Rep∷Sum.Inr" == v_S_9["$ctor"] then
+            if "Data.Generic.Rep∷Sum.Inr" == v1_S_10["$ctor"] then
+              return M.Data_Eq_Generic_genericEqPrime(dictGenericEq1_S_7)(v_S_9.value0)(v1_S_10.value0)
             else
               return false
             end
@@ -171,29 +171,29 @@ M.Golden_GenericEqTwoTypes_Test_genericEqSum = function(dictGenericEq1)
     end
   }
 end
-M.Golden_GenericEqTwoTypes_Test_eqRec = function(dictEqRecord)
-  return { eq = M.Data_Eq_eqRecord(dictEqRecord)(M.Type_Proxy_Proxy) }
+M.Golden_GenericEqTwoTypes_Test_eqRec = function(dictEqRecord_S_1285)
+  return { eq = M.Data_Eq_eqRecord(dictEqRecord_S_1285)(M.Type_Proxy_Proxy) }
 end
 M.Golden_GenericEqTwoTypes_Test_eqRowCons = M.Data_Eq_eqRowCons({
   eqRecord = function()
     return function() return function() return true end end
   end
 })()
-M.Golden_GenericEqTwoTypes_Test_discard = (function(dictBind)
-  return M.Control_Bind_bind(dictBind)
+M.Golden_GenericEqTwoTypes_Test_discard = (function(dictBind_S_37_S_1281)
+  return M.Control_Bind_bind(dictBind_S_37_S_1281)
 end)(M.Effect_bindEffect)
-M.Golden_GenericEqTwoTypes_Test_logShow = function(a)
-  return (function(s) return function() print(s) end end)((function(v)
-    if v then
+M.Golden_GenericEqTwoTypes_Test_logShow = function(a_S_2)
+  return (function(s) return function() print(s) end end)((function( v_S_916_S_1282 )
+    if v_S_916_S_1282 then
       return "true"
     else
-      if false == v then
+      if false == v_S_916_S_1282 then
         return "false"
       else
         return error("No patterns matched")
       end
     end
-  end)(a))
+  end)(a_S_2))
 end
 M.Golden_GenericEqTwoTypes_Test_Leaf = {
   ["$ctor"] = "Golden.GenericEqTwoTypes.Test∷Tree.Leaf"
@@ -236,12 +236,12 @@ M.Golden_GenericEqTwoTypes_Test_genericTree = {
       end
     end
   end,
-  from = function(x)
-    if "Golden.GenericEqTwoTypes.Test∷Tree.Leaf" == x["$ctor"] then
+  from = function(x0)
+    if "Golden.GenericEqTwoTypes.Test∷Tree.Leaf" == x0["$ctor"] then
       return M.Data_Generic_Rep_Inl(M.Data_Generic_Rep_NoArguments)
     else
-      if "Golden.GenericEqTwoTypes.Test∷Tree.Node" == x["$ctor"] then
-        return M.Data_Generic_Rep_Inr(x.value0)
+      if "Golden.GenericEqTwoTypes.Test∷Tree.Node" == x0["$ctor"] then
+        return M.Data_Generic_Rep_Inr(x0.value0)
       else
         return error("No patterns matched")
       end
@@ -260,12 +260,12 @@ M.Golden_GenericEqTwoTypes_Test_genericList = {
       end
     end
   end,
-  from = function(x)
-    if "Golden.GenericEqTwoTypes.Test∷List.Nil" == x["$ctor"] then
+  from = function(x0)
+    if "Golden.GenericEqTwoTypes.Test∷List.Nil" == x0["$ctor"] then
       return M.Data_Generic_Rep_Inl(M.Data_Generic_Rep_NoArguments)
     else
-      if "Golden.GenericEqTwoTypes.Test∷List.Cons" == x["$ctor"] then
-        return M.Data_Generic_Rep_Inr(x.value0)
+      if "Golden.GenericEqTwoTypes.Test∷List.Cons" == x0["$ctor"] then
+        return M.Data_Generic_Rep_Inr(x0.value0)
       else
         return error("No patterns matched")
       end

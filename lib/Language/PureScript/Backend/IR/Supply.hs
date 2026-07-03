@@ -6,12 +6,15 @@ verbatim in generated Lua (and thus in golden files), where any
 non-determinism would show up as spurious churn.
 
 Only passes that mint names appearing in the /output/ may draw from the
-shared supply ('Language.PureScript.Backend.IR.FlattenDeepBinds' is the
-only one today). Counters that are internal to a pass — the node-ID
-counter of 'Language.PureScript.Backend.IR.DCE', the collision-retry
-renaming of 'Language.PureScript.Backend.IR.Optimizer.renameShadowedNames'
-— must stay internal: routing them through the shared supply would shift
-the numbering of every name minted downstream.
+shared supply — 'Language.PureScript.Backend.IR.FlattenDeepBinds'
+('$kontN'\/'$tmpN' helpers) and the freshening primitives of
+'Language.PureScript.Backend.IR.Types' ('freshenBinders',
+'substituteCopyM', 'substituteMoveM') used by the optimizer and magic-do.
+Counters that are internal to a pass — the node-ID counter of
+'Language.PureScript.Backend.IR.DCE', the digit-suffix renaming of
+'Language.PureScript.Backend.IR.Uniquify.uniquifyNames' — must stay
+internal: routing them through the shared supply would shift the
+numbering of every name minted downstream.
 -}
 module Language.PureScript.Backend.IR.Supply
   ( SupplyM

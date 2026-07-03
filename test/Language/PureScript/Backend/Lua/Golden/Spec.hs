@@ -240,7 +240,7 @@ applySpineUberModule n =
     }
  where
   modname = IR.moduleNameFromString "Golden.ApplySpine.Test"
-  applyHead = IR.Ref IR.noAnn (IR.Imported modname (IR.Name "apply")) (IR.Index 0)
+  applyHead = IR.Ref IR.noAnn (IR.Imported modname (IR.Name "apply"))
   spine = foldl' step (IR.LiteralInt IR.noAnn 0) [1 .. n]
   step ∷ IR.Exp → Int → IR.Exp
   step acc i =

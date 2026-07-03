@@ -1,6 +1,6 @@
 module Language.PureScript.Backend.IR.Optimizer where
 
-import Data.List.NonEmpty qualified as NE
+import Data.Foldable (foldrM)
 import Data.Map qualified as Map
 import Data.Set qualified as Set
 import Language.PureScript.Backend.IR.DCE (eliminateDeadCode)
@@ -22,8 +22,7 @@ import Language.PureScript.Backend.IR.Pass
   , runSteps
   , runStepsChecked
   )
-import Language.PureScript.Backend.IR.Query (collectBoundNames)
-import Language.PureScript.Backend.IR.Supply (runSupply)
+import Language.PureScript.Backend.IR.Supply (SupplyM, runSupply)
 import Language.PureScript.Backend.IR.Types
   ( Ann
   , Exp
@@ -31,20 +30,21 @@ import Language.PureScript.Backend.IR.Types
   , Parameter (..)
   , RawExp (..)
   , RewriteMod (..)
-  , RewriteRule
+  , RewriteRuleM
   , Rewritten (..)
+  , alphaEq
   , bindingExprs
   , countFreeRef
   , countFreeRefs
   , getAnn
   , isNonRecursiveLiteral
   , literalBool
-  , rewriteExpTopDown
-  , substitute
+  , rewriteExpTopDownM
+  , substituteCopyM
+  , substituteMoveM
   , thenRewrite
-  , unIndex
-  , unshift
   )
+import Language.PureScript.Backend.IR.Uniquify (uniquifyNames)
 
 optimizedUberModule ∷ UberModule → UberModule
 optimizedUberModule uber =
@@ -65,18 +65,20 @@ keys off the name (see Note [Inline annotations and inlining heuristics]).
 -}
 optimizerPipeline ∷ Set QName → [Step]
 optimizerPipeline neverNames =
-  [ RunFixpoint "optimize+dce" (optimizePass :| [dcePass])
+  [ -- The entry pass (issue #139): establishes the global-uniqueness
+    -- condition (GUC = 'UniqueBinders') that every
+    -- following pass requires and preserves.
+    RunPass uniquifyPass
+  , RunFixpoint "optimize+dce" (optimizePass :| [dcePass])
   , -- by merging foreign bindings into the main bindings, we can
     -- unblock even more optimizations, e.g. inline foreign bindings.
     RunPass mergeForeignsPass
   , RunFixpoint "optimize+dce-post-merge" (optimizePass :| [dcePass])
-  , -- Must run last among the index-sensitive passes:
-    -- see Note [Locals are uniquely named after renameShadowedNames]
-    RunPass renameShadowedNamesPass
   , -- Magic-do is the final lowering (issue #46): it relies on the unique
-    -- naming established above and preserves it, and must run after dead-code
-    -- elimination so the statements it introduces for `discard` are not
-    -- dropped as dead. See Language.PureScript.Backend.IR.MagicDo.
+    -- naming established by 'uniquifyNames' and preserves it, and must run
+    -- after dead-code elimination so the statements it introduces for
+    -- `discard` are not dropped as dead. See
+    -- Language.PureScript.Backend.IR.MagicDo.
     RunPass magicDoPass
   , -- Flatten the remaining deeply-nested expression trees (issues #104,
     -- #108): continuation/bind chains of any monad (lambda-lifted
@@ -88,30 +90,51 @@ optimizerPipeline neverNames =
     RunPass flattenDeepBindsPass
   ]
  where
-  optimizePass = purePass "optimize" (optimizeModule neverNames)
-  dcePass = purePass "dce" eliminateDeadCode
-  mergeForeignsPass = purePass "mergeForeigns" mergeForeignsIntoBindings
-  renameShadowedNamesPass = purePass "renameShadowedNames" renameShadowedNames
-  magicDoPass = purePass "magicDo" magicDo
+  uniquifyPass =
+    Pass
+      { passName = "uniquify"
+      , passRun = pure . uniquifyNames
+      , passRequires = wellScoped
+      , passEnsures = guc
+      }
+  optimizePass =
+    Pass
+      { passName = "optimize"
+      , passRun = optimizeModule neverNames
+      , passRequires = guc
+      , passEnsures = guc
+      }
+  dcePass = gucPass "dce" eliminateDeadCode
+  mergeForeignsPass = gucPass "mergeForeigns" mergeForeignsIntoBindings
+  magicDoPass =
+    Pass
+      { passName = "magicDo"
+      , passRun = magicDo
+      , passRequires = guc
+      , passEnsures = guc
+      }
   flattenDeepBindsPass =
     Pass
       { passName = "flattenDeepBinds"
       , passRun = flattenDeepBindsM
-      , passRequires = wellScoped
-      , passEnsures = wellScoped
+      , passRequires = guc
+      , passEnsures = guc
       }
 
-  purePass ∷ Text → (UberModule → UberModule) → Pass
-  purePass name run =
+  gucPass ∷ Text → (UberModule → UberModule) → Pass
+  gucPass name run =
     Pass
       { passName = name
       , passRun = pure . run
-      , passRequires = wellScoped
-      , passEnsures = wellScoped
+      , passRequires = guc
+      , passEnsures = guc
       }
 
   wellScoped ∷ Set Invariant
   wellScoped = Set.singleton WellScoped
+
+  guc ∷ Set Invariant
+  guc = Set.fromList [WellScoped, UniqueBinders]
 
 mergeForeignsIntoBindings ∷ UberModule → UberModule
 mergeForeignsIntoBindings uberModule@UberModule {..} =
@@ -120,173 +143,6 @@ mergeForeignsIntoBindings uberModule@UberModule {..} =
     , uberModuleBindings =
         map Standalone uberModuleForeigns <> uberModuleBindings
     }
-
-{- Note [Locals are uniquely named after renameShadowedNames]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-'renameShadowedNames' gives every shadowing local binder a fresh name
-and rewrites all references to it with index 0, so afterwards a local
-reference resolves to its binder by name alone. The Lua code generator
-relies on this: Lua has no notion of "the second enclosing local named
-x", so the Ref case of 'fromIR' emits a plain variable name and throws
-'UnexpectedRefBound' if it ever meets a local reference with a non-zero
-index. Such a reference is unbound: rendering it by name would silently
-capture a different binder, and inventing a name produces an undefined
-Lua variable (issue #37).
-
-Two consequences:
-
-  * this pass must run last among the index-sensitive passes of
-    'optimizedUberModule' — passes like inlining and DCE may introduce
-    or remove shadowing and rely on indices being meaningful, so running
-    such a pass after the renaming would invalidate it. (The 'magicDo'
-    lowering does run afterwards, but it only consumes the unique naming
-    and preserves it — its new binders are the unreferenced '_' of a
-    discarded result — so the invariant still holds.)
-
-  * (name, index) references must be resolved according to
-    Note [Sequential scoping of Let bindings], which this pass and the
-    rest of the pipeline implement.
--}
-
-renameShadowedNames ∷ UberModule → UberModule
-renameShadowedNames uberModule =
-  uberModule
-    { uberModuleBindings =
-        fmap (renameShadowedNamesInExpr mempty)
-          <<$>> uberModuleBindings uberModule
-    , uberModuleExports =
-        renameShadowedNamesInExpr mempty <<$>> uberModuleExports uberModule
-    }
-
-type RenamesInScope = Map Name [Name]
-
--- | See Note [Sequential scoping of Let bindings]
-renameShadowedNamesInExpr ∷ RenamesInScope → Exp → Exp
-renameShadowedNamesInExpr scope = go
- where
-  go ∷ Exp → Exp
-  go = \case
-    LiteralInt ann i →
-      LiteralInt ann i
-    LiteralFloat ann f →
-      LiteralFloat ann f
-    LiteralString ann s →
-      LiteralString ann s
-    LiteralChar ann c →
-      LiteralChar ann c
-    LiteralBool ann b →
-      LiteralBool ann b
-    LiteralArray ann as →
-      LiteralArray ann (go <$> as)
-    LiteralObject ann ps →
-      LiteralObject ann (go <<$>> ps)
-    ReflectCtor ann a →
-      ReflectCtor ann (go a)
-    Eq ann a b →
-      Eq ann (go a) (go b)
-    DataArgumentByIndex ann index a →
-      DataArgumentByIndex ann index (go a)
-    ArrayLength ann a →
-      ArrayLength ann (go a)
-    ArrayIndex ann a index →
-      ArrayIndex ann (go a) index
-    ObjectProp ann a prop →
-      ObjectProp ann (go a) prop
-    ObjectUpdate ann a ps →
-      ObjectUpdate ann (go a) (go <<$>> ps)
-    Abs ann param body →
-      Abs ann param' (renameShadowedNamesInExpr scope' body)
-     where
-      (param', scope') =
-        case param of
-          ParamUnused _ann → (param, scope)
-          ParamNamed paramAnn name →
-            first (ParamNamed paramAnn) (withScopedName body scope name)
-    App ann a b →
-      App ann (go a) (go b)
-    Ref ann qname index →
-      case qname of
-        Local lname
-          | Just renames ← Map.lookup lname scope
-          , -- Index by the De Bruijn 'Natural' directly. 'genericDrop' takes it
-            -- with no narrowing 'Int' conversion, and an index past the end
-            -- yields '[]', so 'viaNonEmpty head' gives 'Nothing' (no rename).
-            Just rename ←
-              viaNonEmpty head (genericDrop (unIndex index) renames) →
-              Ref ann (Local rename) 0
-        _ → Ref ann qname index
-    Let ann binds body →
-      Let ann (NE.fromList (reverse binds')) body'
-     where
-      scope' ∷ RenamesInScope
-      binds' ∷ [Grouping (Ann, Name, Exp)]
-      (scope', binds') = foldl' f (scope, []) (toList binds)
-      f
-        ∷ (RenamesInScope, [Grouping (Ann, Name, Exp)])
-        → Grouping (Ann, Name, Exp)
-        → (RenamesInScope, [Grouping (Ann, Name, Exp)])
-      f (sc, bs) = \case
-        Standalone (ann', name, expr) →
-          withScopedName expr sc name & \(name', sc') →
-            let expr' = renameShadowedNamesInExpr sc expr
-             in (sc', Standalone (ann', name', expr') : bs)
-        RecursiveGroup (toList → recGroup) →
-          -- Every member's RHS sees every member of its own group, itself
-          -- included (see Note [Sequential scoping of Let bindings]), so
-          -- first bring all the members into scope, then rename the RHSs.
-          -- Member order is preserved: it is the initialization order
-          -- computed by the laziness transform.
-          (groupScope, RecursiveGroup (NE.fromList recGroup') : bs)
-         where
-          boundNames ∷ Set Name
-          boundNames =
-            foldMap (\(_ann, _name, expr) → collectBoundNames expr) recGroup
-          groupScope ∷ RenamesInScope
-          names' ∷ [Name]
-          (groupScope, reverse → names') = foldl' g (sc, []) recGroup
-          g (sc', names) (_ann, name, _expr) =
-            withScopedNameAvoiding boundNames sc' name & \(name', sc'') →
-              (sc'', name' : names)
-          recGroup' =
-            zipWith
-              ( \name' (ann', _name, expr) →
-                  (ann', name', renameShadowedNamesInExpr groupScope expr)
-              )
-              names'
-              recGroup
-      body' = renameShadowedNamesInExpr scope' body
-    IfThenElse ann i t e →
-      IfThenElse ann (go i) (go t) (go e)
-    Ctor ann aty mn ty ctr fs →
-      Ctor ann aty mn ty ctr fs
-    Exception ann m →
-      Exception ann m
-    ForeignImport ann m p ns →
-      ForeignImport ann m p ns
-   where
-    withScopedName ∷ Exp → Map Name [Name] → Name → (Name, Map Name [Name])
-    withScopedName e = withScopedNameAvoiding (collectBoundNames e)
-
-    withScopedNameAvoiding
-      ∷ Set Name → Map Name [Name] → Name → (Name, Map Name [Name])
-    withScopedNameAvoiding boundNames sc name =
-      case Map.lookup name sc of
-        Nothing → (name, Map.insert name [name] sc)
-        Just renames →
-          ( rename
-          , Map.insert rename [] $ Map.insert name (rename : renames) sc
-          )
-         where
-          nextIndex = length renames
-          usedNames = Map.keysSet sc <> boundNames
-          rename = uniqueName usedNames name nextIndex
-
-    uniqueName ∷ Set Name → Name → Int → Name
-    uniqueName usedNames n i =
-      let nextName = Name (nameToText n <> show i)
-       in if Set.member nextName usedNames
-            then uniqueName usedNames n (i + 1)
-            else nextName
 
 {- | The top-level bindings annotated @inline never@, collected once from the
 pristine module. Later rewrites can drop the annotation off a binding's root
@@ -302,48 +158,52 @@ neverInlineNames UberModule {uberModuleBindings} =
     , getAnn expr == Just Never
     ]
 
-optimizeModule ∷ Set QName → UberModule → UberModule
-optimizeModule neverNames UberModule {..} =
-  UberModule
-    { uberModuleForeigns
-    , uberModuleBindings = uberModuleBindings'
-    , uberModuleExports = uberModuleExports'
-    }
+optimizeModule ∷ Set QName → UberModule → SupplyM UberModule
+optimizeModule neverNames UberModule {..} = do
+  (bindings, exports) ←
+    foldrM withBinding ([], uberModuleExports) uberModuleBindings
+  uberModuleBindings' ←
+    traverse (traverse (traverse optimizedExpressionM)) bindings
+  uberModuleExports' ← traverse (traverse optimizedExpressionM) exports
+  pure
+    UberModule
+      { uberModuleForeigns
+      , uberModuleBindings = uberModuleBindings'
+      , uberModuleExports = uberModuleExports'
+      }
  where
-  (uberModuleBindings', uberModuleExports') =
-    fmap optimizedExpression
-      <<$>> foldr withBinding ([], uberModuleExports) uberModuleBindings
-
   withBinding
     ∷ Grouping (QName, Exp)
     → ([Grouping (QName, Exp)], [(Name, Exp)])
-    → ([Grouping (QName, Exp)], [(Name, Exp)])
+    → SupplyM ([Grouping (QName, Exp)], [(Name, Exp)])
   withBinding binding (bindings, exports) =
     case binding of
-      Standalone (qname, optimizedExpression → expr) →
+      Standalone (qname, expr0) → do
+        expr ← optimizedExpressionM expr0
         -- See Note [Inline annotations and inlining heuristics]
+        let isUsedOnce name =
+              1 == Map.findWithDefault 0 (qualifiedQName name) uberModuleFreeRefs
+            uberModuleFreeRefs ∷ Map (Qualified Name) Natural =
+              foldr
+                (\e m → Map.unionWith (+) m (countFreeRefs e))
+                mempty
+                uberModuleExprs
+            uberModuleExprs =
+              (bindingExprs =<< uberModuleBindings) <> map snd exports
         if qname `Set.notMember` neverNames
           && (isInlinableExpr expr || isUsedOnce qname)
           then
-            ( substituteInBindings qname expr bindings
-            , substituteInExports qname expr exports
-            )
-          else (Standalone (qname, expr) : bindings, exports)
-       where
-        isUsedOnce name =
-          1 == Map.findWithDefault 0 (qualifiedQName name) uberModuleFreeRefs
-        uberModuleFreeRefs ∷ Map (Qualified Name) Natural =
-          foldr
-            (\e m → Map.unionWith (+) m (countFreeRefs e))
-            mempty
-            uberModuleExprs
-        uberModuleExprs =
-          (bindingExprs =<< uberModuleBindings) <> map snd exports
-      RecursiveGroup recGroup →
-        ( RecursiveGroup (optimizedExpression <<$>> recGroup) : bindings
-        , exports
-        )
+            (,)
+              <$> substituteInBindings qname expr bindings
+              <*> substituteInExports qname expr exports
+          else pure (Standalone (qname, expr) : bindings, exports)
+      RecursiveGroup recGroup → do
+        recGroup' ← traverse (traverse optimizedExpressionM) recGroup
+        pure (RecursiveGroup recGroup' : bindings, exports)
 
+-- Cross-entry substitution: the host entry's binders give no uniqueness
+-- guarantee against the inlinee's, so every copy is freshened
+-- ('substituteCopyM'), even when the inlinee's own entry is dropped.
 substituteInBindings
   ∷ QName
   -- ^ Substitute this qualified name
@@ -351,21 +211,33 @@ substituteInBindings
   -- ^ For this expression
   → [Grouping (QName, Exp)]
   -- ^ inside these bindings
-  → [Grouping (QName, Exp)]
-substituteInBindings qname inlinee = map \case
+  → SupplyM [Grouping (QName, Exp)]
+substituteInBindings qname inlinee = traverse \case
   Standalone (qname', expr') →
-    Standalone (qname', substitute (qualifiedQName qname) 0 inlinee expr')
+    Standalone . (qname',)
+      <$> substituteCopyM (qualifiedQName qname) inlinee expr'
   RecursiveGroup recGroup →
-    RecursiveGroup $ substitute (qualifiedQName qname) 0 inlinee <<$>> recGroup
+    RecursiveGroup
+      <$> traverse
+        (traverse (substituteCopyM (qualifiedQName qname) inlinee))
+        recGroup
 
-substituteInExports ∷ QName → Exp → [(Name, Exp)] → [(Name, Exp)]
-substituteInExports qname inlinee = map \case
-  (name, expr) → (name, substitute (qualifiedQName qname) 0 inlinee expr)
+substituteInExports ∷ QName → Exp → [(Name, Exp)] → SupplyM [(Name, Exp)]
+substituteInExports qname inlinee = traverse \case
+  (name, expr) →
+    (name,) <$> substituteCopyM (qualifiedQName qname) inlinee expr
 
+{- | Pure wrapper for tests and standalone use: runs the rewrite with
+its own supply. Production code uses 'optimizedExpressionM' so all
+passes share one supply.
+-}
 optimizedExpression ∷ Exp → Exp
-optimizedExpression =
+optimizedExpression = runSupply . optimizedExpressionM
+
+optimizedExpressionM ∷ Exp → SupplyM Exp
+optimizedExpressionM =
   -- See Note [Eta reduction is unsound]
-  rewriteExpTopDown $
+  rewriteExpTopDownM $
     constantFolding
       `thenRewrite` betaReduce
       `thenRewrite` betaReduceUnusedParams
@@ -383,7 +255,7 @@ re-checking. 'constantFolding' rewrites @Eq True b@ to @b@ on the grounds that
 parameter without checking their types match. A rewrite must not introduce an
 assumption the type checker would not already guarantee.
 -}
-constantFolding ∷ RewriteRule Ann
+constantFolding ∷ Applicative m ⇒ RewriteRuleM m Ann
 constantFolding =
   pure . \case
     Eq _ (LiteralBool _ a) (LiteralBool _ b) →
@@ -403,16 +275,13 @@ constantFolding =
 
 -- (λx. M) N ===> M[x := N]
 -- See Note [IR is assumed well-typed]
-betaReduce ∷ RewriteRule Ann
-betaReduce =
-  pure . \case
-    App _ (Abs _ (ParamNamed _ param) body) r →
-      -- Removing the λ closes a binder for 'param', so any reference to it
-      -- that the substitution shifted past the binder must be lowered back
-      -- with 'unshift'; otherwise it is left pointing one binder too far out
-      -- and reaches the Lua backend as an unbound local (issue #56).
-      Rewritten Recurse . unshift param 0 $ substitute (Local param) 0 r body
-    _ → NoChange
+betaReduce ∷ RewriteRuleM SupplyM Ann
+betaReduce = \case
+  App _ (Abs _ (ParamNamed _ param) body) r →
+    -- The λ is consumed by the rewrite, so the first inserted occurrence
+    -- of the argument may keep its binder names ('substituteMoveM').
+    Rewritten Recurse <$> substituteMoveM (Local param) r body
+  _ → pure NoChange
 
 {- Note [Eta reduction is unsound]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -457,29 +326,32 @@ Reducing only special cases of M does not help either:
 Hence no eta reduction is performed at all.
 -}
 
-betaReduceUnusedParams ∷ RewriteRule Ann
+betaReduceUnusedParams ∷ Applicative m ⇒ RewriteRuleM m Ann
 betaReduceUnusedParams =
   pure . \case
     App _ (Abs _ (ParamUnused _) body) _arg →
       Rewritten Recurse body
     _ → NoChange
 
-removeIfWithEqualBranches ∷ RewriteRule Ann
+removeIfWithEqualBranches ∷ Applicative m ⇒ RewriteRuleM m Ann
 removeIfWithEqualBranches e =
   pure case e of
     IfThenElse _ann _cond thenBranch elseBranch
-      | thenBranch == elseBranch →
+      -- Alpha-equivalence, not (==): binder names in the branches may
+      -- differ (e.g. after freshening) while the branches still compute
+      -- the same value.
+      | thenBranch `alphaEq` elseBranch →
           Rewritten Recurse thenBranch
     _ → NoChange
 
-removeUnreachableThenBranch ∷ RewriteRule Ann
+removeUnreachableThenBranch ∷ Applicative m ⇒ RewriteRuleM m Ann
 removeUnreachableThenBranch e =
   pure case e of
     IfThenElse _ann (LiteralBool _ False) _unreachable elseBranch →
       Rewritten Recurse elseBranch
     _ → NoChange
 
-removeUnreachableElseBranch ∷ RewriteRule Ann
+removeUnreachableElseBranch ∷ Applicative m ⇒ RewriteRuleM m Ann
 removeUnreachableElseBranch e = pure case e of
   IfThenElse _ann (LiteralBool _ True) thenBranch _unreachable →
     Rewritten Recurse thenBranch
@@ -488,22 +360,23 @@ removeUnreachableElseBranch e = pure case e of
 -- Inlining is a tricky business:
 -- https://www.microsoft.com/en-us/research/wp-content/uploads/2002/07/inline.pdf
 
-inlineLocalBindings ∷ RewriteRule Ann
-inlineLocalBindings =
-  pure . \case
-    Let ann groupings body →
-      Rewritten Recurse . Let ann groupings $
-        foldr inlineLocalBinding body groupings
-    _ → NoChange
+inlineLocalBindings ∷ RewriteRuleM SupplyM Ann
+inlineLocalBindings = \case
+  Let ann groupings body →
+    Rewritten Recurse . Let ann groupings
+      <$> foldrM inlineLocalBinding body groupings
+  _ → pure NoChange
 
-inlineLocalBinding ∷ Grouping (Ann, Name, Exp) → Exp → Exp
+inlineLocalBinding ∷ Grouping (Ann, Name, Exp) → Exp → SupplyM Exp
 inlineLocalBinding grouping body =
   case grouping of
-    RecursiveGroup _grp → body -- Not going to inline recursive bindings
+    RecursiveGroup _grp → pure body -- Not going to inline recursive bindings
     Standalone (_ann, Local → name, inlinee) →
       if isInlinableExpr inlinee || countFreeRef name body == 1
-        then substitute name 0 inlinee body
-        else body
+        -- The binding survives until DCE drops it, so the inserted copy
+        -- must not reuse its binder names ('substituteCopyM').
+        then substituteCopyM name inlinee body
+        else pure body
 
 -- See Note [Inline annotations and inlining heuristics]
 isInlinableExpr ∷ Exp → Bool
