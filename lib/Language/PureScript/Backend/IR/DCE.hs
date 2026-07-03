@@ -139,10 +139,21 @@ eliminateDeadCode uber@UberModule {..} =
               ParamUnused pann → (ParamUnused pann, b)
               ParamNamed pann name → (ParamUnused pann, unshift name 0 b)
         Let ann binds body →
-          Rewritten Recurse case preserveLetBinds (toList binds) body of
-            ([], body') → body'
-            (b : bs, body') → Let ann (b :| bs) body'
+          Rewritten Recurse (rebuild ann (preserveLetBinds (toList binds) body))
          where
+          -- 'Rewritten Recurse' descends into the result's children without
+          -- re-applying the rule to the result itself, so when every binding
+          -- of the Let is dropped and the node collapses to its body, a body
+          -- that is itself a Let would escape the rule: its dead bindings
+          -- would be kept, while the parameters of lambdas inside them get
+          -- blanked (their ids are unreachable), leaving unbound references
+          -- behind. Process such a body here; the collapse can cascade.
+          rebuild ann' = \case
+            ([], Let ann'' binds' body') →
+              rebuild ann'' (preserveLetBinds (toList binds') body')
+            ([], body') → body'
+            (b : bs, body') → Let ann' (b :| bs) body'
+
           -- Dropping a dead binder removes a slot from that name's De Bruijn
           -- namespace, so references in the rest of the Let (later grouping
           -- RHSs and the body) that skipped over it must be lowered, just as

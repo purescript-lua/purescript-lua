@@ -179,6 +179,28 @@ spec = describe "IR Dead Code Elimination" do
             )
     dceExpression expr === expected
 
+  -- 'Rewritten Recurse' descends into the result's children without
+  -- re-applying the rule to the result itself. When a Let whose bindings
+  -- are all dead collapses to its body, and the body is itself a Let,
+  -- that inner Let node must not escape dead-code elimination: its dead
+  -- bindings would be kept while the parameters of lambdas inside them
+  -- are blanked (their ids are unreachable), leaving unbound references.
+  it "eliminates dead bindings of a Let a collapsing Let exposes" $ hedgehog do
+    let x = Name "x"
+        k = Name "k"
+        a = Name "a"
+        expr =
+          lets
+            (Standalone (noAnn, a, literalInt 1) :| [])
+            ( lets
+                ( Standalone
+                    (noAnn, k, abstraction (paramNamed x) (refLocal x 0))
+                    :| []
+                )
+                (literalInt 3)
+            )
+    dceExpression expr === literalInt 3
+
   it "unshifts after dropping a dead recursive-group member" $ hedgehog do
     let x = Name "x"
         y = Name "y"
