@@ -6,7 +6,11 @@ import Data.Map qualified as Map
 import Data.Tagged (Tagged (..), untag)
 import Language.PureScript.Backend.IR qualified as IR
 import Language.PureScript.Backend.IR.Linker qualified as Linker
-import Language.PureScript.Backend.IR.Optimizer (optimizedUberModule)
+import Language.PureScript.Backend.IR.Optimizer
+  ( optimizedUberModule
+  , optimizedUberModuleChecked
+  )
+import Language.PureScript.Backend.IR.Pass (PassCheckFailure)
 import Language.PureScript.Backend.Lua qualified as Lua
 import Language.PureScript.Backend.Lua.NestingCheck (exceedsNestingLimit)
 import Language.PureScript.Backend.Lua.Optimizer (optimizeChunk)
@@ -26,22 +30,26 @@ compileModules
     `CouldBeAnyOf` '[ CoreFn.ModuleNotFound
                     , CoreFn.ModuleDecodingErr
                     , IR.CoreFnError
+                    , PassCheckFailure
                     , Lua.Error
                     ]
   ⇒ Tagged "output" (SomeBase Dir)
   → Tagged "foreign" (Path Abs Dir)
+  → Tagged "lint-ir" Bool
   → AppOrModule
   → ExceptT (Variant e) IO CompilationResult
-compileModules outputDir foreignDir appOrModule = do
+compileModules outputDir foreignDir lintIR appOrModule = do
   let entryModuleName = entryPointModule appOrModule
   cfnModules ← CoreFn.readModuleRecursively outputDir entryModuleName
   let dataDecls = IR.collectDataDeclarations cfnModules
   irResults ← forM (Map.toList cfnModules) \(_psModuleName, cfnModule) →
     Oops.hoistEither $ IR.mkModule cfnModule dataDecls
   let (needsRuntimeLazys, irModules) = unzip irResults
-  let uberModule =
-        Linker.makeUberModule (linkerMode appOrModule) irModules
-          & optimizedUberModule
+  let linkedModule = Linker.makeUberModule (linkerMode appOrModule) irModules
+  uberModule ←
+    if untag lintIR
+      then Oops.hoistEither (optimizedUberModuleChecked linkedModule)
+      else pure (optimizedUberModule linkedModule)
   -- See Note [The PSLUA_runtime_lazy coupling] in Language.PureScript.Names
   let needsRuntimeLazy = Tagged (any untag needsRuntimeLazys)
   chunk ← Lua.fromUberModule foreignDir needsRuntimeLazy appOrModule uberModule

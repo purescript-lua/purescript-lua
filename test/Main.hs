@@ -4,7 +4,9 @@ import Language.PureScript.Backend.IR.DCE.Spec qualified as IrDce
 import Language.PureScript.Backend.IR.FlattenDeepBinds.Spec qualified as FlattenDeepBinds
 import Language.PureScript.Backend.IR.Inliner.Spec qualified as Inliner
 import Language.PureScript.Backend.IR.Linker.Spec qualified as IRLinker
+import Language.PureScript.Backend.IR.Linter.Spec qualified as IRLinter
 import Language.PureScript.Backend.IR.Optimizer.Spec qualified as IROptimizer
+import Language.PureScript.Backend.IR.Pass.Spec qualified as IRPass
 import Language.PureScript.Backend.IR.Spec qualified as IR
 import Language.PureScript.Backend.IR.Types.Spec qualified as Types
 import Language.PureScript.Backend.Lua.Golden.Spec qualified as Golden
@@ -24,7 +26,9 @@ main = hspec do
   IrDce.spec
   Types.spec
   IRLinker.spec
+  IRLinter.spec
   IROptimizer.spec
+  IRPass.spec
   LuaOptimizer.spec
   Printer.spec
   Run.spec
