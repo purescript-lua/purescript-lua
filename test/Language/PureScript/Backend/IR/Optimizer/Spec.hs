@@ -1,6 +1,6 @@
 module Language.PureScript.Backend.IR.Optimizer.Spec where
 
-import Control.Lens (toListOf, universeOf)
+import Control.Lens (universeOf)
 import Data.Map qualified as Map
 import Hedgehog (PropertyT, annotateShow, forAll, (===))
 import Hedgehog.Gen qualified as Gen
@@ -8,6 +8,7 @@ import Language.PureScript.Backend.IR.Gen qualified as Gen
 import Language.PureScript.Backend.IR.Inliner (Annotation (Never))
 import Language.PureScript.Backend.IR.Linker (LinkMode (..))
 import Language.PureScript.Backend.IR.Linker qualified as Linker
+import Language.PureScript.Backend.IR.Linter (lintUberModule, unboundLocals)
 import Language.PureScript.Backend.IR.Names
   ( Name (..)
   , PropName (..)
@@ -23,7 +24,6 @@ import Language.PureScript.Backend.IR.Optimizer
 import Language.PureScript.Backend.IR.Types
   ( Exp
   , Grouping (..)
-  , Index
   , Module (..)
   , RawExp (..)
   , abstraction
@@ -37,14 +37,12 @@ import Language.PureScript.Backend.IR.Types
   , literalInt
   , literalObject
   , noAnn
-  , paramName
   , paramNamed
   , paramUnused
   , refImported
   , refLocal
   , refLocal0
   , subexpressions
-  , unIndex
   )
 import Test.Hspec (Spec, SpecWith, describe, it)
 import Test.Hspec.Hedgehog (hedgehog, modifyMaxShrinks, modifyMaxSuccess)
@@ -57,47 +55,6 @@ prop title =
     . modifyMaxSuccess (const 100)
     . it title
     . hedgehog
-
-{- | Local references whose De Bruijn index points past every enclosing binder
-of that name: unbound locals, which the Lua backend rejects (see
-Note [Locals are uniquely named after renameShadowedNames]). An empty result
-means the expression is well-scoped. The binder bookkeeping mirrors
-'shift'/'unshift'; see Note [Sequential scoping of Let bindings] for 'Let'.
--}
-unboundLocals ∷ Exp → [(Name, Index)]
-unboundLocals = go Map.empty
- where
-  go ∷ Map Name Natural → Exp → [(Name, Index)]
-  go scope = \case
-    Ref _ (Local nm) index
-      | unIndex index < Map.findWithDefault 0 nm scope → []
-      | otherwise → [(nm, index)]
-    Abs _ param body → go (bindName (paramName param) scope) body
-    Let _ binds body →
-      let (bodyScope, errs) = foldl' letGrouping (scope, []) (toList binds)
-       in errs <> go bodyScope body
-    other → foldMap (go scope) (toListOf subexpressions other)
-   where
-    bindName ∷ Maybe Name → Map Name Natural → Map Name Natural
-    bindName Nothing sc = sc
-    bindName (Just nm) sc = Map.insertWith (+) nm 1 sc
-
-    letGrouping
-      ∷ (Map Name Natural, [(Name, Index)])
-      → Grouping (a, Name, Exp)
-      → (Map Name Natural, [(Name, Index)])
-    letGrouping (sc, errs) = \case
-      Standalone (_ann, nm, e) →
-        ( Map.insertWith (+) nm 1 sc
-        , errs <> go sc e
-        )
-      RecursiveGroup recBinds →
-        ( sc'
-        , errs <> foldMap (\(_ann, _nm, e) → go sc' e) recBinds
-        )
-       where
-        sc' = foldr (\nm → Map.insertWith (+) nm 1) sc names
-        names = (\(_ann, nm, _e) → nm) <$> toList recBinds
 
 spec ∷ Spec
 spec = describe "IR Optimizer" do
@@ -388,7 +345,7 @@ spec = describe "IR Optimizer" do
                 , Linker.uberModuleBindings = []
                 , Linker.uberModuleExports = [(Name "root", e)]
                 }
-      foldMap (unboundLocals . snd) (Linker.uberModuleExports optimized) === []
+      lintUberModule optimized === []
 
   describe "renames shadowed names" do
     test "nested λ-abstractions" do

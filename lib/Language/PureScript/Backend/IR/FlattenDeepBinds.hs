@@ -133,6 +133,7 @@ single table to cut the upvalue cost to one is a future upgrade.
 -}
 module Language.PureScript.Backend.IR.FlattenDeepBinds
   ( flattenDeepBinds
+  , flattenDeepBindsM
   ) where
 
 import Data.List qualified as List
@@ -141,9 +142,9 @@ import Data.Set qualified as Set
 import Language.PureScript.Backend.IR.Linker (UberModule (..))
 import Language.PureScript.Backend.IR.Names
   ( Name (..)
-  , QName
   , Qualified (Local)
   )
+import Language.PureScript.Backend.IR.Supply (SupplyM, freshName, runSupply)
 import Language.PureScript.Backend.IR.Types
   ( Ann
   , Exp
@@ -159,26 +160,21 @@ import Language.PureScript.Backend.IR.Types
   , rewriteExpTopDownM
   )
 
+-- | 'flattenDeepBindsM' with a private supply, for standalone use.
+flattenDeepBinds ∷ UberModule → UberModule
+flattenDeepBinds = runSupply . flattenDeepBindsM
+
 {- | Flatten deeply-nested expression trees in every binding and export of the
-module. A single counter is threaded across the whole module so the minted
+module. The supply counter is threaded across the whole module so the minted
 @$kontN@\/@$tmpN@ names are globally unique.
 -}
-flattenDeepBinds ∷ UberModule → UberModule
-flattenDeepBinds uber@UberModule {uberModuleBindings, uberModuleExports} =
-  uber
-    { uberModuleBindings = bindings'
-    , uberModuleExports = exports'
-    }
+flattenDeepBindsM ∷ UberModule → SupplyM UberModule
+flattenDeepBindsM uber@UberModule {uberModuleBindings, uberModuleExports} = do
+  bindings' ← traverse (traverse (traverse rewrite)) uberModuleBindings
+  exports' ← traverse (traverse rewrite) uberModuleExports
+  pure uber {uberModuleBindings = bindings', uberModuleExports = exports'}
  where
-  (bindings', exports') = evalState action 0
-
-  action ∷ State Int ([Grouping (QName, Exp)], [(Name, Exp)])
-  action =
-    (,)
-      <$> traverse (traverse (traverse rewrite)) uberModuleBindings
-      <*> traverse (traverse rewrite) uberModuleExports
-
-  rewrite ∷ Exp → State Int Exp
+  rewrite ∷ Exp → SupplyM Exp
   rewrite = rewriteExpTopDownM flattenRule
 
 --------------------------------------------------------------------------------
@@ -190,7 +186,7 @@ application-spine depth is tiny, so Strategy B only ever sees the remaining deep
 'App' spines. Either may leave the expression unchanged ('NoChange'), in which
 case 'Language.PureScript.Backend.Lua.NestingCheck' remains the backstop.
 -}
-flattenRule ∷ RewriteRuleM (State Int) Ann
+flattenRule ∷ RewriteRuleM SupplyM Ann
 flattenRule expr
   | (steps, finalAction) ← peelChain expr
   , length steps > threshold =
@@ -233,7 +229,7 @@ asStep expr = case spine expr of
 Returns 'Nothing' (bail, leave the chain nested) when the forwarded live set at
 some cut exceeds the upvalue budget.
 -}
-lambdaLift ∷ [Step] → Exp → State Int (Maybe Exp)
+lambdaLift ∷ [Step] → Exp → SupplyM (Maybe Exp)
 lambdaLift steps finalAction =
   -- Build bottom-up: the deepest segment carries the final action; each
   -- shallower segment ends by calling the helper wrapping the one below it.
@@ -282,7 +278,7 @@ lambdaLift steps finalAction =
   cut
     ∷ (Exp, [(Int, Grouping (Ann, Name, Exp))])
     → [Step]
-    → State Int (Exp, [(Int, Grouping (Ann, Name, Exp))])
+    → SupplyM (Exp, [(Int, Grouping (Ann, Name, Exp))])
   cut (deepBody, konts) seg = do
     kname ← freshKontName
     let params = liveVars deepBody
@@ -359,7 +355,7 @@ total operands (see the module header's soundness note). The off-path operands
 are kept verbatim; deep ones are flattened in turn by the top-down rewrite's
 descent. Returns 'Nothing' when the path is too short to need sealing.
 -}
-sequentialiseSpine ∷ Exp → State Int (Maybe Exp)
+sequentialiseSpine ∷ Exp → SupplyM (Maybe Exp)
 sequentialiseSpine expr =
   case decompose expr of
     (frames, base)
@@ -373,7 +369,7 @@ sequentialiseSpine expr =
   seal
     ∷ ([Grouping (Ann, Name, Exp)], Exp)
     → (Int, Frame)
-    → State Int ([Grouping (Ann, Name, Exp)], Exp)
+    → SupplyM ([Grouping (Ann, Name, Exp)], Exp)
   seal (binds, acc) (i, frame) = do
     let acc' = rebuildFrame frame acc
     if i `mod` segmentSize == 0
@@ -400,11 +396,11 @@ spine = go []
 refLocal0 ∷ Name → Exp
 refLocal0 name = Ref noAnn (Local name) (Index 0)
 
-freshKontName ∷ State Int Name
-freshKontName = state \n → (Name ("$kont" <> show n), n + 1)
+freshKontName ∷ SupplyM Name
+freshKontName = freshName "$kont"
 
-freshTmpName ∷ State Int Name
-freshTmpName = state \n → (Name ("$tmp" <> show n), n + 1)
+freshTmpName ∷ SupplyM Name
+freshTmpName = freshName "$tmp"
 
 chunksOf ∷ Int → [a] → [[a]]
 chunksOf _ [] = []

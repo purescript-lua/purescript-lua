@@ -4,7 +4,7 @@ import Data.List.NonEmpty qualified as NE
 import Data.Map qualified as Map
 import Data.Set qualified as Set
 import Language.PureScript.Backend.IR.DCE (eliminateDeadCode)
-import Language.PureScript.Backend.IR.FlattenDeepBinds (flattenDeepBinds)
+import Language.PureScript.Backend.IR.FlattenDeepBinds (flattenDeepBindsM)
 import Language.PureScript.Backend.IR.Inliner (Annotation (..))
 import Language.PureScript.Backend.IR.Linker (UberModule (..))
 import Language.PureScript.Backend.IR.MagicDo (magicDo)
@@ -14,7 +14,16 @@ import Language.PureScript.Backend.IR.Names
   , Qualified (Local)
   , qualifiedQName
   )
+import Language.PureScript.Backend.IR.Pass
+  ( Invariant (..)
+  , Pass (..)
+  , PassCheckFailure
+  , Step (..)
+  , runSteps
+  , runStepsChecked
+  )
 import Language.PureScript.Backend.IR.Query (collectBoundNames)
+import Language.PureScript.Backend.IR.Supply (runSupply)
 import Language.PureScript.Backend.IR.Types
   ( Ann
   , Exp
@@ -39,32 +48,70 @@ import Language.PureScript.Backend.IR.Types
 
 optimizedUberModule ∷ UberModule → UberModule
 optimizedUberModule uber =
-  uber
-    & idempotently (eliminateDeadCode . optimizeModule neverNames)
-    -- by merging foreign bindings into the main bindings, we can
+  runSupply (runSteps (optimizerPipeline (neverInlineNames uber)) uber)
+
+{- | 'optimizedUberModule' with every pass's contract checked by the
+linter, failing with the name of the offending pass. Used by the test
+suite always, and by the CLI behind the @--lint-ir@ flag.
+-}
+optimizedUberModuleChecked ∷ UberModule → Either PassCheckFailure UberModule
+optimizedUberModuleChecked uber =
+  runSupply (runStepsChecked (optimizerPipeline (neverInlineNames uber)) uber)
+
+{- | The IR optimization pipeline. The argument is the set of @inline never@
+bindings, collected once from the pristine module before any pass runs:
+later rewrites may strip the annotation off a binding's root, so the veto
+keys off the name (see Note [Inline annotations and inlining heuristics]).
+-}
+optimizerPipeline ∷ Set QName → [Step]
+optimizerPipeline neverNames =
+  [ RunFixpoint "optimize+dce" (optimizePass :| [dcePass])
+  , -- by merging foreign bindings into the main bindings, we can
     -- unblock even more optimizations, e.g. inline foreign bindings.
-    & mergeForeignsIntoBindings
-    & idempotently (eliminateDeadCode . optimizeModule neverNames)
-    -- Must run last among the index-sensitive passes:
+    RunPass mergeForeignsPass
+  , RunFixpoint "optimize+dce" (optimizePass :| [dcePass])
+  , -- Must run last among the index-sensitive passes:
     -- see Note [Locals are uniquely named after renameShadowedNames]
-    & renameShadowedNames
-    -- Magic-do is the final lowering (issue #46): it relies on the unique
+    RunPass renameShadowedNamesPass
+  , -- Magic-do is the final lowering (issue #46): it relies on the unique
     -- naming established above and preserves it, and must run after dead-code
     -- elimination so the statements it introduces for `discard` are not
     -- dropped as dead. See Language.PureScript.Backend.IR.MagicDo.
-    & magicDo
-    -- Flatten the remaining deeply-nested expression trees (issues #104, #108):
-    -- continuation/bind chains of any monad (lambda-lifted into $kont helpers)
-    -- and applicative/flipped-bind application spines (A-normalised into $tmp
-    -- locals). Runs after magicDo (which consumes Effect/ST chains, leaving only
-    -- non-Effect/ST ones) and likewise consumes and preserves the unique naming.
+    RunPass magicDoPass
+  , -- Flatten the remaining deeply-nested expression trees (issues #104,
+    -- #108): continuation/bind chains of any monad (lambda-lifted
+    -- into $kont helpers) and applicative/flipped-bind application
+    -- spines (A-normalised into $tmp locals). Runs after magicDo (which
+    -- consumes Effect/ST chains, leaving only non-Effect/ST ones) and
+    -- likewise consumes and preserves the unique naming.
     -- See Language.PureScript.Backend.IR.FlattenDeepBinds.
-    & flattenDeepBinds
+    RunPass flattenDeepBindsPass
+  ]
  where
-  -- Collect @inline never bindings once from the pristine module: later
-  -- rewrites may strip the annotation off a binding's root, so the veto keys
-  -- off the name (see Note [Inline annotations and inlining heuristics]).
-  neverNames = neverInlineNames uber
+  optimizePass = purePass "optimize" (optimizeModule neverNames)
+  dcePass = purePass "dce" eliminateDeadCode
+  mergeForeignsPass = purePass "mergeForeigns" mergeForeignsIntoBindings
+  renameShadowedNamesPass = purePass "renameShadowedNames" renameShadowedNames
+  magicDoPass = purePass "magicDo" magicDo
+  flattenDeepBindsPass =
+    Pass
+      { passName = "flattenDeepBinds"
+      , passRun = flattenDeepBindsM
+      , passRequires = wellScoped
+      , passEnsures = wellScoped
+      }
+
+  purePass ∷ Text → (UberModule → UberModule) → Pass
+  purePass name run =
+    Pass
+      { passName = name
+      , passRun = pure . run
+      , passRequires = wellScoped
+      , passEnsures = wellScoped
+      }
+
+  wellScoped ∷ Set Invariant
+  wellScoped = Set.singleton WellScoped
 
 mergeForeignsIntoBindings ∷ UberModule → UberModule
 mergeForeignsIntoBindings uberModule@UberModule {..} =
@@ -240,18 +287,6 @@ renameShadowedNamesInExpr scope = go
        in if Set.member nextName usedNames
             then uniqueName usedNames n (i + 1)
             else nextName
-
-idempotently ∷ Eq a ⇒ (a → a) → a → a
-idempotently = fix $ \i f a →
-  let a' = f a
-   in if a' == a then a else i f a'
-
---         if a' == a
---           then tr "FIXPOINT" a a
---           else tr "RETRYING" a' (i f a')
---  where
---   tr ∷ Show x ⇒ String → x → y → y
---   tr l x y = trace ("\n\n" <> l <> "\n" <> (toString . pShow) x <> "\n") y
 
 {- | The top-level bindings annotated @inline never@, collected once from the
 pristine module. Later rewrites can drop the annotation off a binding's root

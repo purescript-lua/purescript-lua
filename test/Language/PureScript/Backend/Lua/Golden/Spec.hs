@@ -15,7 +15,7 @@ import Language.PureScript.Backend.IR.FlattenDeepBinds (flattenDeepBinds)
 import Language.PureScript.Backend.IR.Linker (LinkMode (..))
 import Language.PureScript.Backend.IR.Linker qualified as IR
 import Language.PureScript.Backend.IR.Linker qualified as Linker
-import Language.PureScript.Backend.IR.Optimizer (optimizedUberModule)
+import Language.PureScript.Backend.IR.Optimizer (optimizedUberModuleChecked)
 import Language.PureScript.Backend.Lua qualified as Lua
 import Language.PureScript.Backend.Lua.Optimizer (optimizeChunk)
 import Language.PureScript.Backend.Lua.Printer qualified as Printer
@@ -300,7 +300,10 @@ compileCorefn outputDir uberModuleName = do
     forM (toList cfnModules) $
       either (fail . show) (pure . snd) . (`IR.mkModule` dataDecls)
   let uberModule = Linker.makeUberModule (LinkAsModule uberModuleName) modules
-  pure $ optimizedUberModule uberModule
+  -- The checked runner lints every pass boundary (including every fixpoint
+  -- iteration), so each golden module doubles as a scope-invariant test of
+  -- the whole pipeline.
+  either (fail . show) pure (optimizedUberModuleChecked uberModule)
 
 compileIr ∷ (MonadIO m, MonadMask m) ⇒ AppOrModule → IR.UberModule → m Text
 compileIr appOrModule uberModule = withCurrentDir [reldir|test/ps|] do

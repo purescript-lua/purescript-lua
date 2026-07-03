@@ -59,17 +59,21 @@ data InternalIdentData
 
 -- | Names for value identifiers
 data Ident
-  = -- |
-    -- An alphanumeric identifier
+  = {- |
+    An alphanumeric identifier
+    -}
     Ident Text
-  | -- |
-    -- A generated name for an identifier
+  | {- |
+    A generated name for an identifier
+    -}
     GenIdent (Maybe Text) Integer
-  | -- |
-    -- A generated name used only for type-checking
+  | {- |
+    A generated name used only for type-checking
+    -}
     UnusedIdent
-  | -- |
-    -- A generated name used only for internal transformations
+  | {- |
+    A generated name used only for internal transformations
+    -}
     InternalIdent !InternalIdentData
   deriving stock (Show, Eq, Ord, Generic)
 
@@ -88,7 +92,7 @@ runIdent = \case
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Lazy (self-recursive) bindings are compiled to a reference to a runtime
 helper, the "runtime lazy factory", carried by the bare name 'runtimeLazyName'
-below. That one string, "PSLUA_runtime_lazy", silently couples four sites;
+below. That one string, "PSLUA_runtime_lazy", silently couples five sites;
 they must stay in agreement.
 
   * Here ('runtimeLazyName'): the ident the laziness transform emits.
@@ -111,6 +115,10 @@ they must stay in agreement.
     'Language.PureScript.Backend.Lua.fromUberModule': emit the fixture iff it
     is both needed (the laziness transform ran) and used (the scan finds a
     reference).
+
+  * 'Language.PureScript.Backend.IR.Linter.unboundLocals': treats a free
+    @Local (Name runtimeLazyName)@ as bound by the runtime — the one
+    deliberate exemption from the well-scopedness invariant.
 
 Rename either side of the string and the halves stop matching: the fixture is
 judged unused and dropped, or the generated code calls a binding that was
@@ -298,7 +306,7 @@ instance FromJSONKey ModuleName where
   fromJSONKey = fmap moduleNameFromString fromJSONKey
 
 $( deriveJSON
-    (defaultOptions {sumEncoding = ObjectWithSingleField})
-    ''InternalIdentData
+     (defaultOptions {sumEncoding = ObjectWithSingleField})
+     ''InternalIdentData
  )
 $(deriveJSON (defaultOptions {sumEncoding = ObjectWithSingleField}) ''Ident)

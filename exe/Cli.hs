@@ -46,6 +46,7 @@ data Args = Args
   , luaOutputFile ∷ Tagged "output-lua" (SomeBase File)
   , outputIR ∷ Maybe ExtraOutput
   , outputLuaAst ∷ Maybe ExtraOutput
+  , lintIR ∷ Tagged "lint-ir" Bool
   , appOrModule ∷ AppOrModule
   , runEntry ∷ Maybe AppOrModule
   }
@@ -105,6 +106,14 @@ options = do
       [ long "output-ir"
       , helpDoc . Just $
           "Output IR."
+            <> linebreak
+            <> bold "Default: false"
+      ]
+  lintIR ←
+    flag (Tagged False) (Tagged True) . fold $
+      [ long "lint-ir"
+      , helpDoc . Just $
+          "Check IR invariants after every optimizer pass (debug)."
             <> linebreak
             <> bold "Default: false"
       ]
