@@ -8,23 +8,23 @@ UberModule
         ( IfThenElse Nothing
           ( Eq Nothing
             ( LiteralInt Nothing 0 )
-            ( Ref Nothing ( Local ( Name "v" ) ) 0 )
+            ( Ref Nothing ( Local ( Name "v" ) ) )
           ) ( LiteralBool Nothing True ) ( LiteralBool Nothing False )
         )
       )
     ], uberModuleForeigns = [], uberModuleExports =
     [
       ( Name "isZero", Ref Nothing
-        ( Imported ( ModuleName "Golden.Nested.Test" ) ( Name "isZero" ) ) 0
+        ( Imported ( ModuleName "Golden.Nested.Test" ) ( Name "isZero" ) )
       ),
       ( Name "main", IfThenElse Nothing
         ( App Nothing
-          ( Ref Nothing ( Imported ( ModuleName "Golden.Nested.Test" ) ( Name "isZero" ) ) 0 )
+          ( Ref Nothing ( Imported ( ModuleName "Golden.Nested.Test" ) ( Name "isZero" ) ) )
           ( LiteralInt Nothing 1 )
         )
         ( IfThenElse Nothing
           ( App Nothing
-            ( Ref Nothing ( Imported ( ModuleName "Golden.Nested.Test" ) ( Name "isZero" ) ) 0 )
+            ( Ref Nothing ( Imported ( ModuleName "Golden.Nested.Test" ) ( Name "isZero" ) ) )
             ( LiteralInt Nothing 1 )
           )
           ( LiteralString Nothing "ok" )
@@ -32,7 +32,7 @@ UberModule
         )
         ( IfThenElse Nothing
           ( App Nothing
-            ( Ref Nothing ( Imported ( ModuleName "Golden.Nested.Test" ) ( Name "isZero" ) ) 0 )
+            ( Ref Nothing ( Imported ( ModuleName "Golden.Nested.Test" ) ( Name "isZero" ) ) )
             ( LiteralInt Nothing 0 )
           )
           ( LiteralString Nothing "ha" )

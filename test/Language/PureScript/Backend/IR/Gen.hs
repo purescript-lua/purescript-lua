@@ -1,7 +1,7 @@
 module Language.PureScript.Backend.IR.Gen where
 
 import Data.List.NonEmpty qualified as NE
-import Data.Map.Strict qualified as Map
+import Data.Set qualified as Set
 import Data.Text qualified as Text
 import Hedgehog (MonadGen)
 import Hedgehog.Corpus qualified as Corpus
@@ -59,14 +59,13 @@ exp =
       )
     ]
 
-{- | A generation-time scope: each local name in scope mapped to the number of
-enclosing binders for it. Lets 'scopedExp' emit only references that resolve
-to a binder (a valid De Bruijn index for that name).
+{- | A generation-time scope: the local names with an enclosing binder.
+Lets 'scopedExp' emit only references that resolve to a binder.
 -}
-type Scope = Map IR.Name Natural
+type Scope = Set IR.Name
 
-{- | Generate a closed, well-scoped expression: every local reference has an
-index below the number of enclosing binders of that name. Covers
+{- | Generate a closed, well-scoped expression: every local reference has
+an enclosing binder of its name. Covers
 λ / application / if / object / reference / scalar / 'Let' — every
 binding form, so the properties riding on this generator (uniquify,
 freshening, the full optimizer pipeline) see the sequential Let scoping
@@ -85,7 +84,7 @@ scopedExp =
 scopedExpIn ∷ ∀ m. MonadGen m ⇒ Scope → m IR.Exp
 scopedExpIn scope =
   Gen.recursiveFrequency
-    ((4, scalarExp) : [(5, scopedRef) | not (null inScope)])
+    ((4, scalarExp) : [(5, scopedRef) | not (Set.null scope)])
     [ (6, IR.application <$> scopedExpIn scope <*> scopedExpIn scope)
     ,
       ( 3
@@ -106,11 +105,7 @@ scopedExpIn scope =
       )
     ]
  where
-  inScope = [(nm, count) | (nm, count) ← Map.toList scope, count > 0]
-  scopedRef = do
-    (nm, count) ← Gen.element inScope
-    index ← Gen.integral (Range.linear 0 (fromIntegral count - 1))
-    pure (IR.refLocal nm index)
+  scopedRef = IR.refLocal <$> Gen.element (Set.toList scope)
   genAbs = do
     (param, body) ← genBinderBody
     pure (IR.abstraction param body)
@@ -125,7 +120,7 @@ scopedExpIn scope =
   genBinderBody = do
     param ← parameter
     let scope' = case param of
-          IR.ParamNamed _ nm → Map.insertWith (+) nm 1 scope
+          IR.ParamNamed _ nm → Set.insert nm scope
           IR.ParamUnused _ → scope
     body ← scopedExpIn scope'
     pure (param, body)
@@ -167,7 +162,7 @@ scopedExpIn scope =
     -- NE.fromList is safe: 'names' has at least one element.
     pure (IR.RecursiveGroup (NE.fromList members), sc')
   bindName ∷ IR.Name → Scope → Scope
-  bindName nm = Map.insertWith (+) nm 1
+  bindName = Set.insert
 
 binding ∷ MonadGen m ⇒ m IR.Binding
 binding = Gen.frequency [(8, standaloneBinding), (2, recursiveBinding)]
@@ -188,7 +183,7 @@ nonRecursiveExp =
     [ (5, literalNonRecursiveExp)
     , (1, exception)
     , (1, ctor)
-    , (3, IR.ref <$> qualified name <*> pure 0)
+    , (3, IR.ref <$> qualified name)
     ]
 
 exception ∷ MonadGen m ⇒ m IR.Exp
@@ -238,7 +233,7 @@ qualified q =
     ]
 
 refLocal ∷ MonadGen m ⇒ m IR.Exp
-refLocal = flip IR.refLocal 0 <$> name
+refLocal = IR.refLocal <$> name
 
 moduleName ∷ MonadGen m ⇒ m ModuleName
 moduleName = moduleNameFromString <$> Gen.element Corpus.colours

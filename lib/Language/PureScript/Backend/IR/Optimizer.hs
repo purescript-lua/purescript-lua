@@ -66,7 +66,7 @@ keys off the name (see Note [Inline annotations and inlining heuristics]).
 optimizerPipeline ∷ Set QName → [Step]
 optimizerPipeline neverNames =
   [ -- The entry pass (issue #139): establishes the global-uniqueness
-    -- condition (GUC = 'UniqueBinders' + 'IndicesZero') that every
+    -- condition (GUC = 'UniqueBinders') that every
     -- following pass requires and preserves.
     RunPass uniquifyPass
   , RunFixpoint "optimize+dce" (optimizePass :| [dcePass])
@@ -134,7 +134,7 @@ optimizerPipeline neverNames =
   wellScoped = Set.singleton WellScoped
 
   guc ∷ Set Invariant
-  guc = Set.fromList [WellScoped, UniqueBinders, IndicesZero]
+  guc = Set.fromList [WellScoped, UniqueBinders]
 
 mergeForeignsIntoBindings ∷ UberModule → UberModule
 mergeForeignsIntoBindings uberModule@UberModule {..} =

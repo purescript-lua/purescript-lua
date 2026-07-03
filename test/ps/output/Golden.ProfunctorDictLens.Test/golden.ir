@@ -24,12 +24,12 @@ UberModule
         }, LiteralObject Nothing
         [
           ( PropName "add", ObjectProp ( Just Always )
-            ( Ref Nothing ( Imported ( ModuleName "Data.Semiring" ) ( Name "foreign" ) ) 0 )
+            ( Ref Nothing ( Imported ( ModuleName "Data.Semiring" ) ( Name "foreign" ) ) )
             ( PropName "intAdd" )
           ),
           ( PropName "zero", LiteralInt Nothing 0 ),
           ( PropName "mul", ObjectProp ( Just Always )
-            ( Ref Nothing ( Imported ( ModuleName "Data.Semiring" ) ( Name "foreign" ) ) 0 )
+            ( Ref Nothing ( Imported ( ModuleName "Data.Semiring" ) ( Name "foreign" ) ) )
             ( PropName "intMul" )
           ),
           ( PropName "one", LiteralInt Nothing 1 )
@@ -39,18 +39,18 @@ UberModule
         { qnameModuleName = ModuleName "Control.Applicative", qnameName = Name "pure"
         }, Abs Nothing
         ( ParamNamed Nothing ( Name "dict" ) )
-        ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) 0 ) ( PropName "pure" ) )
+        ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) ) ( PropName "pure" ) )
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Control.Bind", qnameName = Name "bind" }, Abs Nothing
         ( ParamNamed Nothing ( Name "dict" ) )
-        ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) 0 ) ( PropName "bind" ) )
+        ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) ) ( PropName "bind" ) )
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Data.Newtype", qnameName = Name "unwrap"
         }, Abs Nothing ( ParamUnused Nothing )
         ( ObjectProp ( Just Always )
-          ( Ref Nothing ( Imported ( ModuleName "Unsafe.Coerce" ) ( Name "foreign" ) ) 0 )
+          ( Ref Nothing ( Imported ( ModuleName "Unsafe.Coerce" ) ( Name "foreign" ) ) )
           ( PropName "unsafeCoerce" )
         )
       ), Standalone
@@ -72,10 +72,10 @@ UberModule
                         ( Abs Nothing
                           ( ParamNamed Nothing ( Name "x$1538" ) )
                           ( App Nothing
-                            ( Ref Nothing ( Local ( Name "f$1536" ) ) 0 )
+                            ( Ref Nothing ( Local ( Name "f$1536" ) ) )
                             ( App Nothing
-                              ( Ref Nothing ( Local ( Name "g$1537" ) ) 0 )
-                              ( Ref Nothing ( Local ( Name "x$1538" ) ) 0 )
+                              ( Ref Nothing ( Local ( Name "g$1537" ) ) )
+                              ( Ref Nothing ( Local ( Name "x$1538" ) ) )
                             )
                           )
                         )
@@ -85,9 +85,9 @@ UberModule
                 )
                 ( PropName "compose" )
               )
-              ( Ref Nothing ( Local ( Name "g$1531" ) ) 0 )
+              ( Ref Nothing ( Local ( Name "g$1531" ) ) )
             )
-            ( Ref Nothing ( Local ( Name "f$1530" ) ) 0 )
+            ( Ref Nothing ( Local ( Name "f$1530" ) ) )
           )
         )
       ), Standalone
@@ -104,18 +104,18 @@ UberModule
                 ( App Nothing
                   ( App Nothing
                     ( Ref Nothing
-                      ( Imported ( ModuleName "Data.Profunctor" ) ( Name "composeFlipped" ) ) 0
+                      ( Imported ( ModuleName "Data.Profunctor" ) ( Name "composeFlipped" ) )
                     )
-                    ( Ref Nothing ( Local ( Name "a2b" ) ) 0 )
+                    ( Ref Nothing ( Local ( Name "a2b" ) ) )
                   )
                   ( App Nothing
                     ( App Nothing
                       ( Ref Nothing
-                        ( Imported ( ModuleName "Data.Profunctor" ) ( Name "composeFlipped" ) ) 0
+                        ( Imported ( ModuleName "Data.Profunctor" ) ( Name "composeFlipped" ) )
                       )
-                      ( Ref Nothing ( Local ( Name "b2c" ) ) 0 )
+                      ( Ref Nothing ( Local ( Name "b2c" ) ) )
                     )
-                    ( Ref Nothing ( Local ( Name "c2d" ) ) 0 )
+                    ( Ref Nothing ( Local ( Name "c2d" ) ) )
                   )
                 )
               )
@@ -126,7 +126,7 @@ UberModule
       ( QName
         { qnameModuleName = ModuleName "Data.Profunctor", qnameName = Name "dimap" }, Abs Nothing
         ( ParamNamed Nothing ( Name "dict" ) )
-        ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) 0 ) ( PropName "dimap" ) )
+        ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) ) ( PropName "dimap" ) )
       ), RecursiveGroup
       (
         ( QName
@@ -134,10 +134,10 @@ UberModule
           }, LiteralObject Nothing
           [
             ( PropName "Applicative0", Abs Nothing ( ParamUnused Nothing )
-              ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "applicativeEffect" ) ) 0 )
+              ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "applicativeEffect" ) ) )
             ),
             ( PropName "Bind1", Abs Nothing ( ParamUnused Nothing )
-              ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "bindEffect" ) ) 0 )
+              ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "bindEffect" ) ) )
             )
           ]
         ) :|
@@ -147,14 +147,12 @@ UberModule
             }, LiteralObject Nothing
             [
               ( PropName "bind", ObjectProp ( Just Always )
-                ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "foreign" ) ) 0 )
+                ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "foreign" ) ) )
                 ( PropName "bindE" )
               ),
               ( PropName "Apply0", Abs Nothing ( ParamUnused Nothing )
                 ( App Nothing
-                  ( Ref Nothing
-                    ( Imported ( ModuleName "Effect" ) ( Name "Lazy_applyEffect" ) ) 0
-                  )
+                  ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "Lazy_applyEffect" ) ) )
                   ( LiteralInt Nothing 0 )
                 )
               )
@@ -165,14 +163,12 @@ UberModule
             }, LiteralObject Nothing
             [
               ( PropName "pure", ObjectProp ( Just Always )
-                ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "foreign" ) ) 0 )
+                ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "foreign" ) ) )
                 ( PropName "pureE" )
               ),
               ( PropName "Apply0", Abs Nothing ( ParamUnused Nothing )
                 ( App Nothing
-                  ( Ref Nothing
-                    ( Imported ( ModuleName "Effect" ) ( Name "Lazy_applyEffect" ) ) 0
-                  )
+                  ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "Lazy_applyEffect" ) ) )
                   ( LiteralInt Nothing 0 )
                 )
               )
@@ -182,7 +178,7 @@ UberModule
             { qnameModuleName = ModuleName "Effect", qnameName = Name "Lazy_functorEffect"
             }, App Nothing
             ( App Nothing
-              ( Ref Nothing ( Local ( Name "PSLUA_runtime_lazy" ) ) 0 )
+              ( Ref Nothing ( Local ( Name "PSLUA_runtime_lazy" ) ) )
               ( LiteralString Nothing "functorEffect" )
             )
             ( Abs Nothing ( ParamUnused Nothing )
@@ -198,15 +194,12 @@ UberModule
                             ( App Nothing
                               ( ObjectProp Nothing
                                 ( Ref Nothing
-                                  ( Imported
-                                    ( ModuleName "Effect" )
-                                    ( Name "applicativeEffect" )
-                                  ) 0
+                                  ( Imported ( ModuleName "Effect" ) ( Name "applicativeEffect" ) )
                                 )
                                 ( PropName "Apply0" )
                               )
                               ( Ref Nothing
-                                ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) 0
+                                ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) )
                               )
                             )
                             ( PropName "apply" )
@@ -214,16 +207,16 @@ UberModule
                           ( App Nothing
                             ( App Nothing
                               ( Ref Nothing
-                                ( Imported ( ModuleName "Control.Applicative" ) ( Name "pure" ) ) 0
+                                ( Imported ( ModuleName "Control.Applicative" ) ( Name "pure" ) )
                               )
                               ( Ref Nothing
-                                ( Imported ( ModuleName "Effect" ) ( Name "applicativeEffect" ) ) 0
+                                ( Imported ( ModuleName "Effect" ) ( Name "applicativeEffect" ) )
                               )
                             )
-                            ( Ref Nothing ( Local ( Name "f$201" ) ) 0 )
+                            ( Ref Nothing ( Local ( Name "f$201" ) ) )
                           )
                         )
-                        ( Ref Nothing ( Local ( Name "a$202" ) ) 0 )
+                        ( Ref Nothing ( Local ( Name "a$202" ) ) )
                       )
                     )
                   )
@@ -235,7 +228,7 @@ UberModule
             { qnameModuleName = ModuleName "Effect", qnameName = Name "Lazy_applyEffect"
             }, App Nothing
             ( App Nothing
-              ( Ref Nothing ( Local ( Name "PSLUA_runtime_lazy" ) ) 0 )
+              ( Ref Nothing ( Local ( Name "PSLUA_runtime_lazy" ) ) )
               ( LiteralString Nothing "applyEffect" )
             )
             ( Abs Nothing ( ParamUnused Nothing )
@@ -244,17 +237,15 @@ UberModule
                   ( PropName "apply", Let Nothing
                     ( Standalone
                       ( Nothing, Name "bind$178", App Nothing
-                        ( Ref Nothing
-                          ( Imported ( ModuleName "Control.Bind" ) ( Name "bind" ) ) 0
-                        )
+                        ( Ref Nothing ( Imported ( ModuleName "Control.Bind" ) ( Name "bind" ) ) )
                         ( App Nothing
                           ( ObjectProp Nothing
                             ( Ref Nothing
-                              ( Imported ( ModuleName "Effect" ) ( Name "monadEffect" ) ) 0
+                              ( Imported ( ModuleName "Effect" ) ( Name "monadEffect" ) )
                             )
                             ( PropName "Bind1" )
                           )
-                          ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) 0 )
+                          ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) )
                         )
                       ) :| []
                     )
@@ -264,15 +255,15 @@ UberModule
                         ( ParamNamed Nothing ( Name "a$181" ) )
                         ( App Nothing
                           ( App Nothing
-                            ( Ref Nothing ( Local ( Name "bind$178" ) ) 0 )
-                            ( Ref Nothing ( Local ( Name "f$180" ) ) 0 )
+                            ( Ref Nothing ( Local ( Name "bind$178" ) ) )
+                            ( Ref Nothing ( Local ( Name "f$180" ) ) )
                           )
                           ( Abs Nothing
                             ( ParamNamed Nothing ( Name "f'$182" ) )
                             ( App Nothing
                               ( App Nothing
-                                ( Ref Nothing ( Local ( Name "bind$178" ) ) 0 )
-                                ( Ref Nothing ( Local ( Name "a$181" ) ) 0 )
+                                ( Ref Nothing ( Local ( Name "bind$178" ) ) )
+                                ( Ref Nothing ( Local ( Name "a$181" ) ) )
                               )
                               ( Abs Nothing
                                 ( ParamNamed Nothing ( Name "a'$183" ) )
@@ -282,7 +273,7 @@ UberModule
                                       ( Imported
                                         ( ModuleName "Control.Applicative" )
                                         ( Name "pure" )
-                                      ) 0
+                                      )
                                     )
                                     ( App Nothing
                                       ( ObjectProp Nothing
@@ -290,18 +281,18 @@ UberModule
                                           ( Imported
                                             ( ModuleName "Effect" )
                                             ( Name "monadEffect" )
-                                          ) 0
+                                          )
                                         )
                                         ( PropName "Applicative0" )
                                       )
                                       ( Ref Nothing
-                                        ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) 0
+                                        ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) )
                                       )
                                     )
                                   )
                                   ( App Nothing
-                                    ( Ref Nothing ( Local ( Name "f'$182" ) ) 0 )
-                                    ( Ref Nothing ( Local ( Name "a'$183" ) ) 0 )
+                                    ( Ref Nothing ( Local ( Name "f'$182" ) ) )
+                                    ( Ref Nothing ( Local ( Name "a'$183" ) ) )
                                   )
                                 )
                               )
@@ -314,7 +305,7 @@ UberModule
                   ( PropName "Functor0", Abs Nothing ( ParamUnused Nothing )
                     ( App Nothing
                       ( Ref Nothing
-                        ( Imported ( ModuleName "Effect" ) ( Name "Lazy_functorEffect" ) ) 0
+                        ( Imported ( ModuleName "Effect" ) ( Name "Lazy_functorEffect" ) )
                       )
                       ( LiteralInt Nothing 0 )
                     )
@@ -328,8 +319,8 @@ UberModule
       ( QName
         { qnameModuleName = ModuleName "Golden.ProfunctorDictLens.Test", qnameName = Name "unwrap"
         }, App Nothing
-        ( Ref Nothing ( Imported ( ModuleName "Data.Newtype" ) ( Name "unwrap" ) ) 0 )
-        ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) 0 )
+        ( Ref Nothing ( Imported ( ModuleName "Data.Newtype" ) ( Name "unwrap" ) ) )
+        ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) )
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.ProfunctorDictLens.Test", qnameName = Name "discard"
@@ -340,15 +331,15 @@ UberModule
               ( PropName "discard", Abs Nothing
                 ( ParamNamed Nothing ( Name "dictBind$184$1532" ) )
                 ( App Nothing
-                  ( Ref Nothing ( Imported ( ModuleName "Control.Bind" ) ( Name "bind" ) ) 0 )
-                  ( Ref Nothing ( Local ( Name "dictBind$184$1532" ) ) 0 )
+                  ( Ref Nothing ( Imported ( ModuleName "Control.Bind" ) ( Name "bind" ) ) )
+                  ( Ref Nothing ( Local ( Name "dictBind$184$1532" ) ) )
                 )
               )
             ]
           )
           ( PropName "discard" )
         )
-        ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "bindEffect" ) ) 0 )
+        ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "bindEffect" ) ) )
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.ProfunctorDictLens.Test", qnameName = Name "logShow"
@@ -377,7 +368,7 @@ UberModule
               )
               ( PropName "show" )
             )
-            ( Ref Nothing ( Local ( Name "a$5" ) ) 0 )
+            ( Ref Nothing ( Local ( Name "a$5" ) ) )
           )
         )
       ), Standalone
@@ -385,7 +376,7 @@ UberModule
         { qnameModuleName = ModuleName "Golden.ProfunctorDictLens.Test", qnameName = Name "Wrapped"
         }, Abs Nothing
         ( ParamNamed Nothing ( Name "x" ) )
-        ( Ref Nothing ( Local ( Name "x" ) ) 0 )
+        ( Ref Nothing ( Local ( Name "x" ) ) )
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.ProfunctorDictLens.Test", qnameName = Name "_Wrapped"
@@ -394,15 +385,15 @@ UberModule
         ( App Nothing
           ( App Nothing
             ( App Nothing
-              ( Ref Nothing ( Imported ( ModuleName "Data.Profunctor" ) ( Name "dimap" ) ) 0 )
-              ( Ref Nothing ( Local ( Name "dictProfunctor" ) ) 0 )
+              ( Ref Nothing ( Imported ( ModuleName "Data.Profunctor" ) ( Name "dimap" ) ) )
+              ( Ref Nothing ( Local ( Name "dictProfunctor" ) ) )
             )
             ( Ref Nothing
-              ( Imported ( ModuleName "Golden.ProfunctorDictLens.Test" ) ( Name "unwrap" ) ) 0
+              ( Imported ( ModuleName "Golden.ProfunctorDictLens.Test" ) ( Name "unwrap" ) )
             )
           )
           ( Ref Nothing
-            ( Imported ( ModuleName "Golden.ProfunctorDictLens.Test" ) ( Name "Wrapped" ) ) 0
+            ( Imported ( ModuleName "Golden.ProfunctorDictLens.Test" ) ( Name "Wrapped" ) )
           )
         )
       ), Standalone
@@ -410,17 +401,17 @@ UberModule
         { qnameModuleName = ModuleName "Golden.ProfunctorDictLens.Test", qnameName = Name "_Wrapped1"
         }, App Nothing
         ( Ref Nothing
-          ( Imported ( ModuleName "Golden.ProfunctorDictLens.Test" ) ( Name "_Wrapped" ) ) 0
+          ( Imported ( ModuleName "Golden.ProfunctorDictLens.Test" ) ( Name "_Wrapped" ) )
         )
-        ( Ref Nothing ( Imported ( ModuleName "Data.Profunctor" ) ( Name "profunctorFn" ) ) 0 )
+        ( Ref Nothing ( Imported ( ModuleName "Data.Profunctor" ) ( Name "profunctorFn" ) ) )
       )
     ], uberModuleForeigns = [], uberModuleExports =
     [
       ( Name "Wrapped", Ref Nothing
-        ( Imported ( ModuleName "Golden.ProfunctorDictLens.Test" ) ( Name "Wrapped" ) ) 0
+        ( Imported ( ModuleName "Golden.ProfunctorDictLens.Test" ) ( Name "Wrapped" ) )
       ),
       ( Name "_Wrapped", Ref Nothing
-        ( Imported ( ModuleName "Golden.ProfunctorDictLens.Test" ) ( Name "_Wrapped" ) ) 0
+        ( Imported ( ModuleName "Golden.ProfunctorDictLens.Test" ) ( Name "_Wrapped" ) )
       ),
       ( Name "main", Abs Nothing ( ParamUnused Nothing )
         ( Let Nothing
@@ -428,11 +419,11 @@ UberModule
             ( Nothing, Name "_", App Nothing
               ( App Nothing
                 ( Ref Nothing
-                  ( Imported ( ModuleName "Golden.ProfunctorDictLens.Test" ) ( Name "logShow" ) ) 0
+                  ( Imported ( ModuleName "Golden.ProfunctorDictLens.Test" ) ( Name "logShow" ) )
                 )
                 ( App Nothing
                   ( Ref Nothing
-                    ( Imported ( ModuleName "Golden.ProfunctorDictLens.Test" ) ( Name "unwrap" ) ) 0
+                    ( Imported ( ModuleName "Golden.ProfunctorDictLens.Test" ) ( Name "unwrap" ) )
                   )
                   ( App Nothing
                     ( App Nothing
@@ -440,7 +431,7 @@ UberModule
                         ( Imported
                           ( ModuleName "Golden.ProfunctorDictLens.Test" )
                           ( Name "_Wrapped1" )
-                        ) 0
+                        )
                       )
                       ( Abs Nothing
                         ( ParamNamed Nothing ( Name "v$0" ) )
@@ -448,11 +439,11 @@ UberModule
                           ( App Nothing
                             ( ObjectProp Nothing
                               ( Ref Nothing
-                                ( Imported ( ModuleName "Data.Semiring" ) ( Name "semiringInt" ) ) 0
+                                ( Imported ( ModuleName "Data.Semiring" ) ( Name "semiringInt" ) )
                               )
                               ( PropName "add" )
                             )
-                            ( Ref Nothing ( Local ( Name "v$0" ) ) 0 )
+                            ( Ref Nothing ( Local ( Name "v$0" ) ) )
                           )
                           ( LiteralInt Nothing 1 )
                         )
@@ -462,23 +453,17 @@ UberModule
                   )
                 )
               )
-              ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) 0 )
+              ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) )
             ) :|
             [ Standalone
               ( Nothing, Name "_", App Nothing
                 ( App Nothing
                   ( Ref Nothing
-                    ( Imported
-                      ( ModuleName "Golden.ProfunctorDictLens.Test" )
-                      ( Name "logShow" )
-                    ) 0
+                    ( Imported ( ModuleName "Golden.ProfunctorDictLens.Test" ) ( Name "logShow" ) )
                   )
                   ( App Nothing
                     ( Ref Nothing
-                      ( Imported
-                        ( ModuleName "Golden.ProfunctorDictLens.Test" )
-                        ( Name "unwrap" )
-                      ) 0
+                      ( Imported ( ModuleName "Golden.ProfunctorDictLens.Test" ) ( Name "unwrap" ) )
                     )
                     ( App Nothing
                       ( App Nothing
@@ -486,7 +471,7 @@ UberModule
                           ( Imported
                             ( ModuleName "Golden.ProfunctorDictLens.Test" )
                             ( Name "_Wrapped1" )
-                          ) 0
+                          )
                         )
                         ( Abs Nothing
                           ( ParamNamed Nothing ( Name "v0$1" ) )
@@ -494,14 +479,11 @@ UberModule
                             ( App Nothing
                               ( ObjectProp Nothing
                                 ( Ref Nothing
-                                  ( Imported
-                                    ( ModuleName "Data.Semiring" )
-                                    ( Name "semiringInt" )
-                                  ) 0
+                                  ( Imported ( ModuleName "Data.Semiring" ) ( Name "semiringInt" ) )
                                 )
                                 ( PropName "mul" )
                               )
-                              ( Ref Nothing ( Local ( Name "v0$1" ) ) 0 )
+                              ( Ref Nothing ( Local ( Name "v0$1" ) ) )
                             )
                             ( LiteralInt Nothing 2 )
                           )
@@ -511,18 +493,18 @@ UberModule
                     )
                   )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) 0 )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) )
               )
             ]
           )
           ( App Nothing
             ( App Nothing
               ( Ref Nothing
-                ( Imported ( ModuleName "Golden.ProfunctorDictLens.Test" ) ( Name "logShow" ) ) 0
+                ( Imported ( ModuleName "Golden.ProfunctorDictLens.Test" ) ( Name "logShow" ) )
               )
               ( App Nothing
                 ( Ref Nothing
-                  ( Imported ( ModuleName "Golden.ProfunctorDictLens.Test" ) ( Name "unwrap" ) ) 0
+                  ( Imported ( ModuleName "Golden.ProfunctorDictLens.Test" ) ( Name "unwrap" ) )
                 )
                 ( App Nothing
                   ( App Nothing
@@ -530,22 +512,22 @@ UberModule
                       ( App Nothing
                         ( App Nothing
                           ( Ref Nothing
-                            ( Imported ( ModuleName "Data.Profunctor" ) ( Name "dimap" ) ) 0
+                            ( Imported ( ModuleName "Data.Profunctor" ) ( Name "dimap" ) )
                           )
                           ( Ref Nothing
-                            ( Imported ( ModuleName "Data.Profunctor" ) ( Name "profunctorFn" ) ) 0
+                            ( Imported ( ModuleName "Data.Profunctor" ) ( Name "profunctorFn" ) )
                           )
                         )
                         ( App Nothing
                           ( Ref Nothing
-                            ( Imported ( ModuleName "Data.Newtype" ) ( Name "unwrap" ) ) 0
+                            ( Imported ( ModuleName "Data.Newtype" ) ( Name "unwrap" ) )
                           )
-                          ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) 0 )
+                          ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) )
                         )
                       )
                       ( ObjectProp ( Just Always )
                         ( Ref Nothing
-                          ( Imported ( ModuleName "Unsafe.Coerce" ) ( Name "foreign" ) ) 0
+                          ( Imported ( ModuleName "Unsafe.Coerce" ) ( Name "foreign" ) )
                         )
                         ( PropName "unsafeCoerce" )
                       )
@@ -569,14 +551,14 @@ UberModule
                                     ( Imported
                                       ( ModuleName "Data.Semiring" )
                                       ( Name "semiringInt" )
-                                    ) 0
+                                    )
                                   )
                                 )
                               ]
                             )
                             ( PropName "sub" )
                           )
-                          ( Ref Nothing ( Local ( Name "v1$2" ) ) 0 )
+                          ( Ref Nothing ( Local ( Name "v1$2" ) ) )
                         )
                         ( LiteralInt Nothing 5 )
                       )
@@ -586,14 +568,14 @@ UberModule
                 )
               )
             )
-            ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) 0 )
+            ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) )
           )
         )
       ),
       ( Name "newtypeWrapped", LiteralObject Nothing
         [
           ( PropName "Coercible0", Abs Nothing ( ParamUnused Nothing )
-            ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) 0 )
+            ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) )
           )
         ]
       )

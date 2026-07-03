@@ -45,7 +45,7 @@ spec = describe "IR Pass runner" do
         PassCheckFailure
           { failedPassName = "break-scope"
           , failedPhase = After
-          , failedViolations = pure (UnboundLocal (InExport main) y 0)
+          , failedViolations = pure (UnboundLocal (InExport main) y)
           }
 
   it "checked runner reports a violated precondition" do
@@ -55,7 +55,7 @@ spec = describe "IR Pass runner" do
         PassCheckFailure
           { failedPassName = "keep"
           , failedPhase = Before
-          , failedViolations = pure (UnboundLocal (InExport main) y 0)
+          , failedViolations = pure (UnboundLocal (InExport main) y)
           }
 
   it "checked runner sees intermediate fixpoint iterations" do
@@ -77,17 +77,16 @@ spec = describe "IR Pass runner" do
         PassCheckFailure
           { failedPassName = "step"
           , failedPhase = After
-          , failedViolations = pure (UnboundLocal (InExport main) y 0)
+          , failedViolations = pure (UnboundLocal (InExport main) y)
           }
 
   it "checked runner lints exactly the declared invariants" do
-    -- λx. λx. x@1 is well-scoped, but breaks UniqueBinders (shadowing)
-    -- and IndicesZero (the nonzero index).
+    -- λx. λx. x is well-scoped, but breaks UniqueBinders (shadowing).
     let x = Name "x"
         shadowing =
           abstraction
             (paramNamed x)
-            (abstraction (paramNamed x) (refLocal x 1))
+            (abstraction (paramNamed x) (refLocal x))
         produce invariants =
           Pass
             { passName = "produce"
@@ -104,15 +103,13 @@ spec = describe "IR Pass runner" do
     -- A pass that only promises well-scopedness passes the check…
     run (Set.singleton WellScoped)
       `shouldBe` Right (exporting shadowing)
-    -- …while promising the GUC invariants dispatches their linters.
-    run (Set.fromList [WellScoped, UniqueBinders, IndicesZero])
+    -- …while promising the GUC invariant dispatches its linter.
+    run (Set.fromList [WellScoped, UniqueBinders])
       `shouldBe` Left
         PassCheckFailure
           { failedPassName = "produce"
           , failedPhase = After
-          , failedViolations =
-              DuplicateBinder (InExport main) x
-                :| [NonZeroIndex (InExport main) x 1]
+          , failedViolations = pure (DuplicateBinder (InExport main) x)
           }
 
   it "renders a check failure for the CLI (--lint-ir)" do
@@ -122,12 +119,12 @@ spec = describe "IR Pass runner" do
         { failedPassName = "break-scope"
         , failedPhase = After
         , failedViolations =
-            UnboundLocal (InExport main) y 0
+            UnboundLocal (InExport main) y
               :| [DuplicateBinder (InExport main) y]
         }
       `shouldBe` unlines
         [ "IR invariants violated After optimizer pass break-scope:"
-        , "UnboundLocal (InExport (Name \"main\")) (Name \"y\") 0"
+        , "UnboundLocal (InExport (Name \"main\")) (Name \"y\")"
         , "DuplicateBinder (InExport (Name \"main\")) (Name \"y\")"
         ]
 
@@ -155,7 +152,7 @@ y ∷ Name
 y = Name "y"
 
 unboundRef ∷ Exp
-unboundRef = refLocal y 0
+unboundRef = refLocal y
 
 exporting ∷ Exp → UberModule
 exporting e =

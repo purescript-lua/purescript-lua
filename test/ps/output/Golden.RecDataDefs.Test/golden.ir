@@ -34,35 +34,27 @@ UberModule
       ( QName
         { qnameModuleName = ModuleName "Golden.RecDataDefs.Test", qnameName = Name "ab"
         }, App Nothing
-        ( Ref Nothing ( Imported ( ModuleName "Golden.RecDataDefs.Test" ) ( Name "AB" ) ) 0 )
-        ( Ref Nothing ( Imported ( ModuleName "Golden.RecDataDefs.Test" ) ( Name "B" ) ) 0 )
+        ( Ref Nothing ( Imported ( ModuleName "Golden.RecDataDefs.Test" ) ( Name "AB" ) ) )
+        ( Ref Nothing ( Imported ( ModuleName "Golden.RecDataDefs.Test" ) ( Name "B" ) ) )
       )
     ], uberModuleForeigns = [], uberModuleExports =
     [
-      ( Name "A", Ref Nothing
-        ( Imported ( ModuleName "Golden.RecDataDefs.Test" ) ( Name "A" ) ) 0
-      ),
+      ( Name "A", Ref Nothing ( Imported ( ModuleName "Golden.RecDataDefs.Test" ) ( Name "A" ) ) ),
       ( Name "AB", Ref Nothing
-        ( Imported ( ModuleName "Golden.RecDataDefs.Test" ) ( Name "AB" ) ) 0
+        ( Imported ( ModuleName "Golden.RecDataDefs.Test" ) ( Name "AB" ) )
       ),
-      ( Name "B", Ref Nothing
-        ( Imported ( ModuleName "Golden.RecDataDefs.Test" ) ( Name "B" ) ) 0
-      ),
+      ( Name "B", Ref Nothing ( Imported ( ModuleName "Golden.RecDataDefs.Test" ) ( Name "B" ) ) ),
       ( Name "BA", Ref Nothing
-        ( Imported ( ModuleName "Golden.RecDataDefs.Test" ) ( Name "BA" ) ) 0
+        ( Imported ( ModuleName "Golden.RecDataDefs.Test" ) ( Name "BA" ) )
       ),
-      ( Name "a", Ref Nothing
-        ( Imported ( ModuleName "Golden.RecDataDefs.Test" ) ( Name "A" ) ) 0
-      ),
-      ( Name "b", Ref Nothing
-        ( Imported ( ModuleName "Golden.RecDataDefs.Test" ) ( Name "B" ) ) 0
-      ),
+      ( Name "a", Ref Nothing ( Imported ( ModuleName "Golden.RecDataDefs.Test" ) ( Name "A" ) ) ),
+      ( Name "b", Ref Nothing ( Imported ( ModuleName "Golden.RecDataDefs.Test" ) ( Name "B" ) ) ),
       ( Name "ab", Ref Nothing
-        ( Imported ( ModuleName "Golden.RecDataDefs.Test" ) ( Name "ab" ) ) 0
+        ( Imported ( ModuleName "Golden.RecDataDefs.Test" ) ( Name "ab" ) )
       ),
       ( Name "ba", App Nothing
-        ( Ref Nothing ( Imported ( ModuleName "Golden.RecDataDefs.Test" ) ( Name "BA" ) ) 0 )
-        ( Ref Nothing ( Imported ( ModuleName "Golden.RecDataDefs.Test" ) ( Name "ab" ) ) 0 )
+        ( Ref Nothing ( Imported ( ModuleName "Golden.RecDataDefs.Test" ) ( Name "BA" ) ) )
+        ( Ref Nothing ( Imported ( ModuleName "Golden.RecDataDefs.Test" ) ( Name "ab" ) ) )
       )
     ]
   }

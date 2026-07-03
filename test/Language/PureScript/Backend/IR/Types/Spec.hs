@@ -68,14 +68,14 @@ spec = describe "Types" do
       let e =
             lets
               ( Standalone (noAnn, x, literalInt 1)
-                  :| [Standalone (noAnn, y, refLocal x 0)]
+                  :| [Standalone (noAnn, y, refLocal x)]
               )
               (literalInt 0)
       countFreeRef (Local x) e === 0
 
     test "countFreeRefs: ref to an outer name in own RHS is free" do
       let e =
-            lets (Standalone (noAnn, x, refLocal x 0) :| []) (literalInt 0)
+            lets (Standalone (noAnn, x, refLocal x) :| []) (literalInt 0)
       countFreeRef (Local x) e === 1
 
   describe "alphaEq" do
@@ -103,51 +103,44 @@ spec = describe "Types" do
 
     test "identifies λ-terms differing only in binder names" do
       alphaEq
-        (abstraction (paramNamed x) (refLocal x 0))
-        (abstraction (paramNamed y) (refLocal y 0))
+        (abstraction (paramNamed x) (refLocal x))
+        (abstraction (paramNamed y) (refLocal y))
         === True
 
     test "distinguishes references to different binders" do
       -- λx. λy. y  vs  λa. λb. a
       alphaEq
-        (abstraction (paramNamed x) (abstraction (paramNamed y) (refLocal y 0)))
-        (abstraction (paramNamed x) (abstraction (paramNamed y) (refLocal x 0)))
+        (abstraction (paramNamed x) (abstraction (paramNamed y) (refLocal y)))
+        (abstraction (paramNamed x) (abstraction (paramNamed y) (refLocal x)))
         === False
 
     test "distinguishes a bound reference from a free one" do
       -- λx. x  vs  λy. x: the left reference is bound, the right is free.
       alphaEq
-        (abstraction (paramNamed x) (refLocal x 0))
-        (abstraction (paramNamed y) (refLocal x 0))
+        (abstraction (paramNamed x) (refLocal x))
+        (abstraction (paramNamed y) (refLocal x))
         === False
 
-    test "identifies free references past differently-named binders" do
-      -- λx. x@1  and  λy. x@0  both refer to the same enclosing x.
-      alphaEq
-        (abstraction (paramNamed x) (refLocal x 1))
-        (abstraction (paramNamed y) (refLocal x 0))
-        === True
-
     test "distinguishes free references by name" do
-      alphaEq (refLocal x 0) (refLocal y 0) === False
+      alphaEq (refLocal x) (refLocal y) === False
 
     -- See Note [Sequential scoping of Let bindings]: a Standalone RHS
     -- does not see its own binder, so both references below are free
     -- occurrences of the same enclosing x.
     test "resolves Standalone RHSs against the outer scope" do
       alphaEq
-        (lets (Standalone (noAnn, x, refLocal x 0) :| []) (literalInt 1))
-        (lets (Standalone (noAnn, y, refLocal x 0) :| []) (literalInt 1))
+        (lets (Standalone (noAnn, x, refLocal x) :| []) (literalInt 1))
+        (lets (Standalone (noAnn, y, refLocal x) :| []) (literalInt 1))
         === True
 
     test "identifies self-references of recursive-group members" do
       alphaEq
         ( lets
-            (RecursiveGroup ((noAnn, x, refLocal x 0) :| []) :| [])
+            (RecursiveGroup ((noAnn, x, refLocal x) :| []) :| [])
             (literalInt 1)
         )
         ( lets
-            (RecursiveGroup ((noAnn, y, refLocal y 0) :| []) :| [])
+            (RecursiveGroup ((noAnn, y, refLocal y) :| []) :| [])
             (literalInt 1)
         )
         === True
@@ -162,12 +155,12 @@ spec = describe "Types" do
         ( freshenBinders
             ( abstraction
                 (paramNamed x)
-                (application (refLocal x 0) (refLocal y 0))
+                (application (refLocal x) (refLocal y))
             )
         )
         `shouldBe` abstraction
           (paramNamed (Name "x$0"))
-          (application (refLocal (Name "x$0") 0) (refLocal y 0))
+          (application (refLocal (Name "x$0")) (refLocal y))
 
     prop "is an alpha-renaming of GUC-shaped input" do
       e ← forAll Gen.scopedExp
@@ -179,33 +172,33 @@ spec = describe "Types" do
   describe "substituteCopyM / substituteMoveM" do
     let x = Name "x"
         y = Name "y"
-        identityY = abstraction (paramNamed y) (refLocal y 0)
-        twice = application (refLocal x 0) (refLocal x 0)
+        identityY = abstraction (paramNamed y) (refLocal y)
+        twice = application (refLocal x) (refLocal x)
 
     it "copy: freshens every inserted occurrence" do
       runSupply (substituteCopyM (Local x) identityY twice)
         `shouldBe` application
-          (abstraction (paramNamed (Name "y$0")) (refLocal (Name "y$0") 0))
-          (abstraction (paramNamed (Name "y$1")) (refLocal (Name "y$1") 0))
+          (abstraction (paramNamed (Name "y$0")) (refLocal (Name "y$0")))
+          (abstraction (paramNamed (Name "y$1")) (refLocal (Name "y$1")))
 
     it "move: keeps the first occurrence verbatim, freshens the rest" do
       runSupply (substituteMoveM (Local x) identityY twice)
         `shouldBe` application
           identityY
-          (abstraction (paramNamed (Name "y$0")) (refLocal (Name "y$0") 0))
+          (abstraction (paramNamed (Name "y$0")) (refLocal (Name "y$0")))
 
     it "replaces occurrences without descending into insertions" do
       -- x := y x — the replacement's own reference to x must survive
       -- (a self-referential top-level inlinee is the practical case).
-      let replacement = application (refLocal y 0) (refLocal x 0)
-      runSupply (substituteMoveM (Local x) replacement (refLocal x 0))
+      let replacement = application (refLocal y) (refLocal x)
+      runSupply (substituteMoveM (Local x) replacement (refLocal x))
         `shouldBe` replacement
 
     it "draws no supply names when nothing matches" do
       -- The optimize fixpoint converges and golden numbering stays
       -- stable only because a zero-match substitution is a supply
       -- no-op: see the haddock of 'substituteCopyM'.
-      let target = abstraction (paramNamed y) (refLocal y 0)
+      let target = abstraction (paramNamed y) (refLocal y)
       runSupply
         ((,) <$> substituteCopyM (Local x) identityY target <*> freshName "k")
         `shouldBe` (target, Name "k0")
@@ -225,15 +218,15 @@ expr =
                     , application
                         ( application
                             ( application
-                                (refImported (ModuleName "Data.Maybe") (Name "maybe") 0)
+                                (refImported (ModuleName "Data.Maybe") (Name "maybe"))
                                 (literalInt 0)
                             )
                             ( abstraction
                                 (paramNamed (Name "v"))
                                 ( application
                                     ( application
-                                        (refImported (ModuleName "Data.Array") (Name "add") 0)
-                                        (refLocal (Name "v") 0)
+                                        (refImported (ModuleName "Data.Array") (Name "add"))
+                                        (refLocal (Name "v"))
                                     )
                                     (literalInt 1)
                                 )
@@ -241,44 +234,44 @@ expr =
                         )
                         ( application
                             ( application
-                                (refImported (ModuleName "Data.Array") (Name "findLastIndex") 0)
+                                (refImported (ModuleName "Data.Array") (Name "findLastIndex"))
                                 ( abstraction
                                     (paramNamed (Name "y"))
                                     ( application
                                         ( application
-                                            (refImported (ModuleName "Data.Array") (Name "eq1") 0)
+                                            (refImported (ModuleName "Data.Array") (Name "eq1"))
                                             ( application
                                                 ( application
-                                                    (refLocal (Name "cmp") 0)
-                                                    (refLocal (Name "x") 0)
+                                                    (refLocal (Name "cmp"))
+                                                    (refLocal (Name "x"))
                                                 )
-                                                (refLocal (Name "y") 0)
+                                                (refLocal (Name "y"))
                                             )
                                         )
-                                        (refImported (ModuleName "Data.Ordering") (Name "GT") 0)
+                                        (refImported (ModuleName "Data.Ordering") (Name "GT"))
                                     )
                                 )
                             )
-                            (refLocal (Name "ys") 0)
+                            (refLocal (Name "ys"))
                         )
                     )
                     :| []
                 )
                 ( application
-                    (refImported (ModuleName "Partial.Unsafe") (Name "unsafePartial") 0)
+                    (refImported (ModuleName "Partial.Unsafe") (Name "unsafePartial"))
                     ( abstraction
                         paramUnused
                         ( application
-                            (refImported (ModuleName "Data.Array") (Name "fromJust") 0)
+                            (refImported (ModuleName "Data.Array") (Name "fromJust"))
                             ( application
                                 ( application
                                     ( application
-                                        (refImported (ModuleName "Data.Array") (Name "insertAt") 0)
-                                        (refLocal (Name "i") 0)
+                                        (refImported (ModuleName "Data.Array") (Name "insertAt"))
+                                        (refLocal (Name "i"))
                                     )
-                                    (refLocal (Name "x") 0)
+                                    (refLocal (Name "x"))
                                 )
-                                (refLocal (Name "ys") 0)
+                                (refLocal (Name "ys"))
                             )
                         )
                     )

@@ -3,7 +3,7 @@
 module Language.PureScript.Backend.IR.Linker where
 
 import Data.Graph (graphFromEdges', reverseTopSort)
-import Data.Map qualified as Map
+import Data.Set qualified as Set
 import Language.PureScript.Backend.IR.Inliner qualified as Inline
 import Language.PureScript.Backend.IR.Names
   ( ModuleName (..)
@@ -17,7 +17,6 @@ import Language.PureScript.Backend.IR.Types
   , Binding
   , Exp
   , Grouping (..)
-  , Index
   , Module (..)
   , Parameter (ParamNamed, ParamUnused)
   , RawExp (..)
@@ -46,9 +45,9 @@ makeUberModule linkMode (topoSorted → modules) =
     , uberModuleExports =
         case linkMode of
           LinkAsApplication moduleName name →
-            [(name, refImported moduleName name 0)]
+            [(name, refImported moduleName name)]
           LinkAsModule modname →
-            [ (exportedName, refImported moduleName exportedName 0)
+            [ (exportedName, refImported moduleName exportedName)
             | Module {moduleName, moduleExports} ← modules
             , moduleName == modname
             , exportedName ← moduleExports
@@ -92,7 +91,7 @@ foreignBindings Module {moduleName, modulePath, moduleForeigns} =
       ( QName moduleName name
       , ObjectProp
           (Just Inline.Always)
-          (refImported moduleName foreignName 0)
+          (refImported moduleName foreignName)
           (PropName (nameToText name))
       )
 
@@ -106,24 +105,31 @@ qualifiedModuleBindings Module {moduleName, moduleBindings, moduleForeigns} =
   qualifyBinding (_ann, name, expr) =
     (QName moduleName name, qualifyTopRefs moduleName topRefs expr)
    where
-    topRefs ∷ Map Name Index = Map.fromList do
-      (,0) <$> ((moduleBindings >>= bindingNames) <> fmap snd moduleForeigns)
+    topRefs ∷ Set Name =
+      Set.fromList $
+        (moduleBindings >>= bindingNames) <> fmap snd moduleForeigns
 
-qualifyTopRefs ∷ ModuleName → Map Name Index → Exp → Exp
+{- | Requalify references to the module's own top-level bindings from
+'Local' to 'Imported'. A local reference resolves to the innermost
+enclosing binder of its name (Note [Sequential scoping of Let
+bindings]), so a top-level name shadowed by a λ parameter or a Let
+binding leaves the visible set for the extent of that binder.
+-}
+qualifyTopRefs ∷ ModuleName → Set Name → Exp → Exp
 qualifyTopRefs moduleName = go
  where
-  go ∷ Map Name Index → Exp → Exp
+  go ∷ Set Name → Exp → Exp
   go topNames expression =
     case expression of
-      Ref ann (Local refName) refIndex
-        | isTopLevel refName refIndex →
-            Ref ann (Imported moduleName refName) refIndex
+      Ref ann (Local refName)
+        | isTopLevel refName →
+            Ref ann (Imported moduleName refName)
       Abs ann parameter body →
         Abs ann parameter (go topNames' body)
        where
-        topNames' ∷ Map Name Index =
+        topNames' ∷ Set Name =
           case parameter of
-            ParamNamed _ann argName → Map.adjust (+ 1) argName topNames
+            ParamNamed _ann argName → Set.delete argName topNames
             ParamUnused _ann → topNames
       -- See Note [Sequential scoping of Let bindings]
       Let ann groupings body →
@@ -131,11 +137,11 @@ qualifyTopRefs moduleName = go
        where
         (topNamesAfterBinds, groupings') =
           mapAccumL qualifyGrouping topNames groupings
-        qualifyGrouping ∷ Map Name Index → Binding → (Map Name Index, Binding)
+        qualifyGrouping ∷ Set Name → Binding → (Set Name, Binding)
         qualifyGrouping names grouping =
           case grouping of
             Standalone (a, name, expr) →
-              ( Map.adjust (+ 1) name names
+              ( Set.delete name names
               , Standalone (a, name, go names expr)
               )
             RecursiveGroup recBinds →
@@ -145,7 +151,7 @@ qualifyTopRefs moduleName = go
               )
              where
               names' =
-                foldr (Map.adjust (+ 1)) names (bindingNames grouping)
+                foldr Set.delete names (bindingNames grouping)
       App ann argument function →
         App ann (go' argument) (go' function)
       LiteralArray ann as →
@@ -170,7 +176,7 @@ qualifyTopRefs moduleName = go
         IfThenElse ann (go' p) (go' th) (go' el)
       _ → expression
    where
-    isTopLevel name i = Map.lookup name topNames == Just i
+    isTopLevel name = Set.member name topNames
     go' = go topNames
 
 --------------------------------------------------------------------------------

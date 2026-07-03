@@ -7,7 +7,7 @@ UberModule
         ( ParamNamed Nothing ( Name "f" ) )
         ( LiteralObject Nothing
           [
-            ( PropName "run", Ref Nothing ( Local ( Name "f" ) ) 0 ),
+            ( PropName "run", Ref Nothing ( Local ( Name "f" ) ) ),
             ( PropName "tag", LiteralString Nothing "ok!" )
           ]
         )
@@ -15,25 +15,25 @@ UberModule
     ], uberModuleForeigns = [], uberModuleExports =
     [
       ( Name "store", Ref Nothing
-        ( Imported ( ModuleName "Golden.RecGroupOrder.Test" ) ( Name "store" ) ) 0
+        ( Imported ( ModuleName "Golden.RecGroupOrder.Test" ) ( Name "store" ) )
       ),
       ( Name "main", Let Nothing
         ( RecursiveGroup
           (
             ( Nothing, Name "Lazy_record$0", App Nothing
               ( App Nothing
-                ( Ref Nothing ( Local ( Name "PSLUA_runtime_lazy" ) ) 0 )
+                ( Ref Nothing ( Local ( Name "PSLUA_runtime_lazy" ) ) )
                 ( LiteralString Nothing "record" )
               )
               ( Abs Nothing ( ParamUnused Nothing )
                 ( App Nothing
                   ( Ref Nothing
-                    ( Imported ( ModuleName "Golden.RecGroupOrder.Test" ) ( Name "store" ) ) 0
+                    ( Imported ( ModuleName "Golden.RecGroupOrder.Test" ) ( Name "store" ) )
                   )
                   ( Abs Nothing ( ParamUnused Nothing )
                     ( ObjectProp Nothing
                       ( App Nothing
-                        ( Ref Nothing ( Local ( Name "Lazy_record$0" ) ) 0 )
+                        ( Ref Nothing ( Local ( Name "Lazy_record$0" ) ) )
                         ( LiteralInt Nothing 0 )
                       )
                       ( PropName "tag" )
@@ -44,7 +44,7 @@ UberModule
             ) :|
             [
               ( Nothing, Name "record$1", App Nothing
-                ( Ref Nothing ( Local ( Name "Lazy_record$0" ) ) 0 )
+                ( Ref Nothing ( Local ( Name "Lazy_record$0" ) ) )
                 ( LiteralInt Nothing 0 )
               )
             ]
@@ -59,10 +59,7 @@ UberModule
             ( PropName "log" )
           )
           ( App Nothing
-            ( ObjectProp Nothing
-              ( Ref Nothing ( Local ( Name "record$1" ) ) 0 )
-              ( PropName "run" )
-            )
+            ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "record$1" ) ) ) ( PropName "run" ) )
             ( ObjectProp ( Just Always )
               ( ForeignImport Nothing
                 ( ModuleName "Data.Unit" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Unit.purs"

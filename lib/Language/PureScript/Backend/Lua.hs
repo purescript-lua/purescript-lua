@@ -51,8 +51,7 @@ instance Monoid UsesObjectUpdate where
   mempty = NoObjectUpdate
 
 data Error
-  = UnexpectedRefBound ModuleName IR.Exp
-  | LinkerErrorForeign Foreign.Error
+  = LinkerErrorForeign Foreign.Error
   | AppEntryPointNotFound ModuleName PS.Ident
   | {- | The generated chunk nests more deeply than Lua 5.1's parser allows
     (~200 syntax levels), so it would fail to load. Carries the measured
@@ -194,8 +193,8 @@ fromIR foreigns topLevelNames modname ir = case ir of
   IR.ArrayLength _ann e →
     Right . Lua.hash <$> goExp e
   IR.ArrayIndex _ann expr index →
-    -- IR array indices are 0-based (de Bruijn-style, like the source language),
-    -- but Lua tables are 1-based, so shift by one. This mirrors the arrays FFI
+    -- IR array indices are 0-based (like the source language), but Lua
+    -- tables are 1-based, so shift by one. This mirrors the arrays FFI
     -- `indexImpl`, which reads `xs[i + 1]`. See issue #49.
     Right . flip Lua.varIndex (Lua.Integer (intCast index + 1)) <$> goExp expr
   IR.ObjectProp _ann expr propName →
@@ -220,22 +219,20 @@ fromIR foreigns topLevelNames modname ir = case ir of
     Right . Lua.functionCall e <$> case arg of
       -- See Note [Nullary functions and Prim.undefined]. PS sometimes inserts
       -- a synthetic unused argument "Prim.undefined", which is elided here.
-      IR.Ref _ann (IR.Imported (IR.ModuleName "Prim") (IR.Name "undefined")) _ →
+      IR.Ref _ann (IR.Imported (IR.ModuleName "Prim") (IR.Name "undefined")) →
         pure []
       _ → (: []) <$> goExp arg
-  IR.Ref _ann qualifiedName index →
+  IR.Ref _ann qualifiedName →
     case qualifiedName of
       IR.Local name
         | topLevelName ← qualifyName modname (fromName name)
         , Set.member topLevelName topLevelNames →
             pure . Right $
               Lua.varField (Lua.varName Fixture.moduleName) topLevelName
-      IR.Local name
-        -- Every local reference has index 0 under GUC, established by
-        -- 'Language.PureScript.Backend.IR.Uniquify.uniquifyNames' at the
-        -- front of the pipeline.
-        | index == 0 → pure . Right $ Lua.varName (fromName name)
-        | otherwise → Oops.throw $ UnexpectedRefBound modname ir
+      -- A local name is unique within its top-level site (GUC,
+      -- established by 'Language.PureScript.Backend.IR.Uniquify'), so
+      -- it renders as a plain Lua variable.
+      IR.Local name → pure . Right $ Lua.varName (fromName name)
       IR.Imported modname' name →
         pure . Right $
           Lua.varField

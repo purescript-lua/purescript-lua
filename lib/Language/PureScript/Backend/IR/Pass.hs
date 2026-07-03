@@ -35,7 +35,6 @@ import Data.Set qualified as Set
 import Language.PureScript.Backend.IR.Linker (UberModule)
 import Language.PureScript.Backend.IR.Linter
   ( Violation
-  , lintIndicesZero
   , lintUniqueBinders
   , lintWellScoped
   )
@@ -48,13 +47,12 @@ import Language.PureScript.Backend.IR.Supply (SupplyM)
 
   * 'WellScoped' — every local reference resolves to an enclosing binder;
   * 'UniqueBinders' — within one top-level site no local binder name is
-    bound twice (the discard binder @_@ exempt);
-  * 'IndicesZero' — every local reference has De Bruijn index 0.
+    bound twice (the discard binder @_@ exempt).
 
-'UniqueBinders' + 'IndicesZero' together are the global-uniqueness
-condition (GUC): a local reference resolves to its binder by name alone.
+'UniqueBinders' is the global-uniqueness condition (GUC): a local
+reference resolves to its binder unambiguously by name.
 -}
-data Invariant = WellScoped | UniqueBinders | IndicesZero
+data Invariant = WellScoped | UniqueBinders
   deriving stock (Eq, Ord, Show)
 
 data Pass = Pass
@@ -146,7 +144,6 @@ runStepsChecked steps uber0 = runExceptT (foldlM (flip runStep) uber0 steps)
       ( \case
           WellScoped → lintWellScoped u
           UniqueBinders → lintUniqueBinders u
-          IndicesZero → lintIndicesZero u
       )
       (Set.toList invariants)
 

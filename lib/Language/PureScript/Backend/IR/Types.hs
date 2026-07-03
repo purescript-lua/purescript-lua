@@ -7,6 +7,7 @@ import Data.Deriving (deriveEq1, deriveOrd1)
 import Data.Map qualified as Map
 import Data.MonoidMap (MonoidMap)
 import Data.MonoidMap qualified as MMap
+import Data.Set qualified as Set
 import Language.PureScript.Backend.IR.Inliner qualified as Inliner
 import Language.PureScript.Backend.IR.Names
   ( CtorName (renderCtorName)
@@ -65,10 +66,6 @@ instance Monoid Info where
 data AlgebraicType = SumType | ProductType
   deriving stock (Generic, Eq, Ord, Show, Enum, Bounded)
 
--- See Note [Sequential scoping of Let bindings] for what this index selects
-newtype Index = Index {unIndex ∷ Natural}
-  deriving newtype (Show, Eq, Ord, Num, Enum, Real, Integral)
-
 data Parameter ann = ParamUnused ann | ParamNamed ann Name
   deriving stock (Show, Eq, Ord)
 
@@ -94,7 +91,7 @@ data RawExp ann
   | ObjectUpdate ann (RawExp ann) (NonEmpty (PropName, RawExp ann))
   | Abs ann (Parameter ann) (RawExp ann)
   | App ann (RawExp ann) (RawExp ann)
-  | Ref ann (Qualified Name) Index
+  | Ref ann (Qualified Name)
   | Let ann (NonEmpty (Grouping (ann, Name, RawExp ann))) (RawExp ann)
   | IfThenElse ann (RawExp ann) (RawExp ann) (RawExp ann)
   | Exception ann Text
@@ -102,14 +99,10 @@ data RawExp ann
 
 {- Note [Sequential scoping of Let bindings]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-A local variable is referenced by name plus a De Bruijn-style index
-('Ref _ (Local name) index'): the index selects among the binders of
-that same name that are in scope, counting from the innermost binder
-outwards, starting at 0. The index is per-name, so introducing a binder
-for one name does not disturb references to other names.
-
-Which binders of a 'Let' are in scope where? The convention is
-sequential, like Scheme's let*:
+A local variable is referenced by name ('Ref _ (Local name)') and
+resolves to the innermost enclosing binder of that name. Which binders
+of a 'Let' are in scope where? The convention is sequential, like
+Scheme's let*:
 
   * the RHS of a Standalone binding sees the *earlier* siblings of the
     same Let; the binding's own name is NOT in scope there, so a
@@ -121,53 +114,52 @@ sequential, like Scheme's let*:
 
   * the body sees all the bindings.
 
-For example (indices in brackets):
+For example:
 
-  let a = ...           -- sees only the enclosing scope
-      b = f a[0]        -- a[0] is the sibling directly above
-      a = g a[0] b[0]   -- a[0] is the FIRST binding, not itself
-  in h a[0] a[1] b[0]   -- a[0] is the second binding, a[1] the first
+  let a = ...       -- sees only the enclosing scope
+      b = f a       -- a is the sibling directly above
+      a = g a b     -- a is the FIRST binding, not itself
+  in h a b          -- a is the SECOND binding: it shadows the first
 
-Every traversal that walks under Let binders while indices can still be
-non-zero — i.e. anything at or upstream of
+Shadowing makes resolution position-dependent, so every traversal that
+walks under Let binders while duplicate names can still occur — i.e.
+anything at or upstream of
 'Language.PureScript.Backend.IR.Uniquify.uniquifyNames', the pipeline's
 entry pass — must implement this convention, and they must all agree:
 
   * 'countFreeRefs' threads the scope through the groupings left to right;
 
-  * 'alphaEq' resolves (name, index) pairs to binder positions the same
-    way, so it stays correct on shadowed input;
+  * 'alphaEq' resolves names to binder positions the same way, so it
+    stays correct on shadowed input;
 
   * the well-scopedness lint
     ('Language.PureScript.Backend.IR.Linter.unboundLocals' — the
     requires-contract of 'uniquifyNames' itself, so it must accept
-    exactly the pre-GUC shapes) counts binders per name the same way;
+    shadowed shapes) tracks bound names the same way;
 
   * 'qualifyTopRefs' (Linker, ahead of the optimizer pipeline) decides
     whether a local reference escapes to a top-level binding by
-    threading per-name depths the same way;
+    threading bound names the same way;
 
   * 'Language.PureScript.Backend.IR.Uniquify.uniquifyNamesInExpr'
-    resolves (name, index) pairs to fresh, site-wide unique names the
-    same way, establishing the global-uniqueness condition (GUC =
-    @UniqueBinders@ + @IndicesZero@, issue #139) that every later pass
-    requires and preserves.
+    resolves names to fresh, site-wide unique names the same way,
+    establishing the global-uniqueness condition (GUC =
+    @UniqueBinders@, issue #139) that every later pass requires and
+    preserves.
 
-Once GUC holds, a local reference resolves to its binder by name alone
-and every index is 0, so the convention above can no longer produce an
-ambiguous resolution — but 'uniquifyNames' itself, and everything
-upstream of it, must still get it right. The Lua code generator emits
-Standalone bindings of a Let as a sequence of 'local' statements, which
-is exactly let* scoping on the Lua side (the Let case of 'fromIR').
+Once GUC holds, at most one binder of any name is in scope, so the
+convention above can no longer produce an ambiguous resolution — but
+'uniquifyNames' itself, and everything upstream of it, must still get
+it right. The Lua code generator emits Standalone bindings of a Let as
+a sequence of 'local' statements, which is exactly let* scoping on the
+Lua side (the Let case of 'fromIR').
 
-Getting one of the walkers wrong miscompiles. Issue #37 was caused by
-the pre-GUC 'substitute'\/'shift' (since removed, issue #139)
-implementing the opposite convention (own name bound in its own RHS,
-siblings ignored): inlining shifted a sibling-bound reference past its
-binder, DCE deleted the "unused" binder, and codegen rendered the
-dangling 'Ref (Local Bind1) 1' as an undefined Lua variable 'Bind11'.
-The golden test test/ps/src/Golden/Issue37/Test.purs and the "Let
-sequential (let*) scoping" tests pin the convention.
+Getting one of the walkers wrong miscompiles: in issue #37 an optimizer
+traversal resolved a sibling-bound reference against the wrong binder,
+DCE then deleted the "unused" binder, and codegen rendered the dangling
+reference as an undefined Lua variable. The golden test
+test/ps/src/Golden/Issue37/Test.purs and the "Let sequential (let*)
+scoping" tests pin the convention.
 -}
 
 deriving stock instance Show ann ⇒ Show (RawExp ann)
@@ -193,7 +185,7 @@ getAnn = \case
   ObjectUpdate ann _ _ → ann
   Abs ann _ _ → ann
   App ann _ _ → ann
-  Ref ann _ _ → ann
+  Ref ann _ → ann
   Let ann _ _ → ann
   IfThenElse ann _ _ _ → ann
   Exception ann _ → ann
@@ -258,7 +250,7 @@ abstraction = Abs noAnn
 identity ∷ Exp
 identity =
   let name = Name "x"
-   in abstraction (paramNamed name) (refLocal name 0)
+   in abstraction (paramNamed name) (refLocal name)
 
 lets ∷ NonEmpty Binding → Exp → Exp
 lets = Let noAnn
@@ -272,19 +264,13 @@ paramNamed = ParamNamed noAnn
 paramUnused ∷ Parameter Ann
 paramUnused = ParamUnused noAnn
 
-ref ∷ Qualified Name → Index → Exp
-ref qname index =
-  case qname of
-    Local name → refLocal name index
-    Imported modname name → refImported modname name index
+ref ∷ Qualified Name → Exp
+ref = Ref noAnn
 
-refLocal ∷ Name → Index → Exp
+refLocal ∷ Name → Exp
 refLocal = Ref noAnn . Local
 
-refLocal0 ∷ Name → Exp
-refLocal0 name = refLocal name (Index 0)
-
-refImported ∷ ModuleName → Name → Index → Exp
+refImported ∷ ModuleName → Name → Exp
 refImported modname name = Ref noAnn (Imported modname name)
 
 ifThenElse ∷ Exp → Exp → Exp → Exp
@@ -414,7 +400,7 @@ annotateExpM around annotateExp annotateParam annotateName =
         a' ← mkAnn a
         b' ← mkAnn b
         pure $ App ann a' b'
-      Ref _ann qname index → pure $ Ref ann qname index
+      Ref _ann qname → pure $ Ref ann qname
       Let _ann binds body → do
         binds' ←
           forM binds $
@@ -565,51 +551,47 @@ countFreeRefs ∷ RawExp ann → Map (Qualified Name) Natural
 countFreeRefs = fmap getSum . MMap.toMap . countFreeRefs' mempty
  where
   countFreeRefs'
-    ∷ Map (Qualified Name) Index
+    ∷ Set Name
     → RawExp ann
     → MonoidMap (Qualified Name) (Sum Natural)
-  countFreeRefs' minIndexes = \case
-    Ref _ann qname index →
-      if Map.findWithDefault 0 qname minIndexes <= index
-        then MMap.singleton qname (Sum 1)
-        else mempty
+  countFreeRefs' bound = \case
+    Ref _ann qname →
+      case qname of
+        Local name
+          | Set.member name bound → mempty
+        _ → MMap.singleton qname (Sum 1)
     Abs _ann param body →
       case param of
-        ParamNamed _paramAnn name → countFreeRefs' minIndexes' body
-         where
-          minIndexes' = Map.insertWith (+) (Local name) 1 minIndexes
-        ParamUnused _paramAnn → countFreeRefs' minIndexes body
+        ParamNamed _paramAnn name →
+          countFreeRefs' (Set.insert name bound) body
+        ParamUnused _paramAnn → countFreeRefs' bound body
     -- See Note [Sequential scoping of Let bindings]
     Let _ann binds body → fold (countsInBody : countsInBinds)
      where
-      countsInBody = countFreeRefs' minIndexesAfterBinds body
-      (minIndexesAfterBinds, countsInBinds) =
-        foldl' withGrouping (minIndexes, []) (toList binds)
+      countsInBody = countFreeRefs' boundAfterBinds body
+      (boundAfterBinds, countsInBinds) =
+        foldl' withGrouping (bound, []) (toList binds)
       withGrouping
-        ∷ ( Map (Qualified Name) Index
-          , [MonoidMap (Qualified Name) (Sum Natural)]
-          )
+        ∷ (Set Name, [MonoidMap (Qualified Name) (Sum Natural)])
         → Grouping (ann, Name, RawExp ann)
-        → ( Map (Qualified Name) Index
-          , [MonoidMap (Qualified Name) (Sum Natural)]
-          )
-      withGrouping (mins, counts) = \case
+        → (Set Name, [MonoidMap (Qualified Name) (Sum Natural)])
+      withGrouping (names, counts) = \case
         Standalone (_nameAnn, boundName, expr) →
-          ( Map.insertWith (+) (Local boundName) 1 mins
-          , countFreeRefs' mins expr : counts
+          ( Set.insert boundName names
+          , countFreeRefs' names expr : counts
           )
         RecursiveGroup recBinds →
-          ( minsAfterGroup
+          ( namesAfterGroup
           , ( toList recBinds <&> \(_nameAnn, _boundName, expr) →
-                countFreeRefs' minsAfterGroup expr
+                countFreeRefs' namesAfterGroup expr
             )
               <> counts
           )
          where
-          minsAfterGroup =
+          namesAfterGroup =
             foldr
-              (\(_nameAnn, qName, _expr) → Map.insertWith (+) (Local qName) 1)
-              mins
+              (\(_nameAnn, boundName, _expr) → Set.insert boundName)
+              names
               recBinds
     App _ann argument function →
       go argument <> go function
@@ -643,7 +625,7 @@ countFreeRefs = fmap getSum . MMap.toMap . countFreeRefs' mempty
     Exception {} → mempty
     ForeignImport {} → mempty
    where
-    go = countFreeRefs' minIndexes
+    go = countFreeRefs' bound
 
 countFreeRef ∷ Qualified Name → RawExp ann → Natural
 countFreeRef name = Map.findWithDefault 0 name . countFreeRefs
@@ -655,10 +637,9 @@ names chosen for the binders they introduce ('Abs' parameters and 'Let'
 bindings). Local references are compared by the binder they resolve to,
 not by name: bound references must resolve to corresponding binder
 positions (binders are numbered in lockstep on both sides), while free
-references must agree on the name and on the index remaining after the
-locally-bound binders of that name are discounted, because both sides
-live in the same enclosing scope. Resolution follows
-Note [Sequential scoping of Let bindings].
+references must agree on the name, because both sides live in the same
+enclosing scope. Resolution — to the innermost enclosing binder of the
+name — follows Note [Sequential scoping of Let bindings].
 
 Everything else — annotations, imported references, foreign import
 name lists — is compared exactly as the derived 'Eq' would, so
@@ -670,19 +651,17 @@ alphaEq = go 0 Map.empty Map.empty
   go
     ∷ Eq ann
     ⇒ Natural
-    → Map Name [Natural]
-    → Map Name [Natural]
+    → Map Name Natural
+    → Map Name Natural
     → RawExp ann
     → RawExp ann
     → Bool
   go lvl scopeL scopeR exprL exprR = case (exprL, exprR) of
-    (Ref annL (Local nameL) idxL, Ref annR (Local nameR) idxR) →
+    (Ref annL (Local nameL), Ref annR (Local nameR)) →
       annL == annR
-        && case (resolve scopeL nameL idxL, resolve scopeR nameR idxR) of
+        && case (Map.lookup nameL scopeL, Map.lookup nameR scopeR) of
           (Just levelL, Just levelR) → levelL == levelR
-          (Nothing, Nothing) →
-            nameL == nameR
-              && freeIndex scopeL nameL idxL == freeIndex scopeR nameR idxR
+          (Nothing, Nothing) → nameL == nameR
           _ → False
     (Abs annL paramL bodyL, Abs annR paramR bodyR) →
       annL == annR && case (paramL, paramR) of
@@ -736,8 +715,8 @@ alphaEq = go 0 Map.empty Map.empty
   goLet
     ∷ Eq ann
     ⇒ Natural
-    → Map Name [Natural]
-    → Map Name [Natural]
+    → Map Name Natural
+    → Map Name Natural
     → [Grouping (ann, Name, RawExp ann)]
     → [Grouping (ann, Name, RawExp ann)]
     → RawExp ann
@@ -784,8 +763,8 @@ alphaEq = go 0 Map.empty Map.empty
   goProps
     ∷ Eq ann
     ⇒ Natural
-    → Map Name [Natural]
-    → Map Name [Natural]
+    → Map Name Natural
+    → Map Name Natural
     → [(PropName, RawExp ann)]
     → [(PropName, RawExp ann)]
     → Bool
@@ -798,19 +777,9 @@ alphaEq = go 0 Map.empty Map.empty
             propsR
         )
 
-  -- The stack of binder levels for a name, innermost first.
-  bindLevel ∷ Name → Natural → Map Name [Natural] → Map Name [Natural]
-  bindLevel name lvl = Map.insertWith (<>) name [lvl]
-
-  resolve ∷ Map Name [Natural] → Name → Index → Maybe Natural
-  resolve scope name (Index i) =
-    Map.findWithDefault [] name scope !!? fromIntegral i
-
-  -- Only defined when 'resolve' failed, so the subtraction can't
-  -- underflow: the index is at least the number of local binders.
-  freeIndex ∷ Map Name [Natural] → Name → Index → Natural
-  freeIndex scope name (Index i) =
-    i - fromIntegral (length (Map.findWithDefault [] name scope))
+  -- The innermost binder of a name shadows any outer one.
+  bindLevel ∷ Name → Natural → Map Name Natural → Map Name Natural
+  bindLevel = Map.insert
 
 {- | Rename every binder bound /within/ the expression to a fresh
 supply-minted name (@\<original\>$\<n\>@ — the @$@ cannot occur in a
@@ -818,10 +787,9 @@ source identifier, so a mint can never collide with one), rewriting the
 references each binder binds. Free references — bound outside the
 expression — are untouched.
 
-Correct only under the GUC discipline (@UniqueBinders@ +
-@IndicesZero@): binders within the expression are unique and every
-local reference has index 0, so a reference belongs to a binder iff
-the names match, and the sequential scoping subtleties of
+Correct only under the GUC discipline (@UniqueBinders@): binders
+within the expression are unique, so a reference belongs to a binder
+iff the names match, and the sequential scoping subtleties of
 Note [Sequential scoping of Let bindings] cannot be observed.
 'ParamUnused' binds nothing, and the name list of a 'ForeignImport'
 holds the export keys of the foreign source file, not binders —
@@ -832,10 +800,10 @@ freshenBinders = go Map.empty
  where
   go ∷ Map Name Name → RawExp ann → SupplyM (RawExp ann)
   go renames = \case
-    r@(Ref ann qname index)
+    r@(Ref ann qname)
       | Local name ← qname
       , Just renamed ← Map.lookup name renames →
-          pure (Ref ann (Local renamed) index)
+          pure (Ref ann (Local renamed))
       | otherwise → pure r
     Abs ann param body →
       case param of
@@ -888,12 +856,12 @@ freshenBinders = go Map.empty
   freshNameFor name = freshName (nameToText name <> "$")
 
 {- | Substitution under the GUC discipline: replace every occurrence of
-the variable (necessarily at index 0) with the replacement. There is no
-scope threading and no index arithmetic: under unique binders the
-substituted name cannot be rebound inside the target, and the
-replacement's free references cannot be captured at any insertion
-point. Matched occurrences are replaced, never descended into, so a
-replacement referring to the substituted name itself is safe.
+the variable with the replacement. There is no scope threading: under
+unique binders the substituted name cannot be rebound inside the
+target, and the replacement's free references cannot be captured at any
+insertion point. Matched occurrences are replaced, never descended
+into, so a replacement referring to the substituted name itself is
+safe.
 
 Both variants keep 'UniqueBinders' intact when the replacement contains
 binders; they differ in what they assume about the /source/ of the
@@ -936,7 +904,7 @@ substituteFreshening freshenFirst name replacement target =
   -- The state is whether the next inserted occurrence must be freshened.
   go ∷ RawExp ann → StateT Bool SupplyM (RawExp ann)
   go = \case
-    r@(Ref _ann name' _index)
+    r@(Ref _ann name')
       | name' == name → do
           freshen ← get
           put True

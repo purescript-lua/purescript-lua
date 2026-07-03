@@ -4,8 +4,7 @@ import Hedgehog (PropertyT, annotateShow, forAll, (===))
 import Language.PureScript.Backend.IR.Gen qualified as Gen
 import Language.PureScript.Backend.IR.Linker (UberModule (..))
 import Language.PureScript.Backend.IR.Linter
-  ( lintIndicesZero
-  , lintUniqueBinders
+  ( lintUniqueBinders
   , lintWellScoped
   )
 import Language.PureScript.Backend.IR.Names
@@ -50,13 +49,12 @@ spec = describe "IR Uniquify" do
       x1 = Name "x1"
       y = Name "y"
 
-  prop "output satisfies all three pipeline invariants" do
+  prop "output satisfies the pipeline invariants" do
     e ← forAll Gen.scopedExp
     let uniquified = uniquifyNames (inAllSites e)
     annotateShow uniquified
     lintWellScoped uniquified === []
     lintUniqueBinders uniquified === []
-    lintIndicesZero uniquified === []
 
   -- Uniquification only renames binders (and re-points their
   -- references), so the output must be alpha-equivalent to the input.
@@ -71,56 +69,54 @@ spec = describe "IR Uniquify" do
     let once = uniquifyNamesInExpr e
     uniquifyNamesInExpr once === once
 
-  it "renames shadowing binders innermost-out" do
-    -- λx. λx. x@0 x@1
+  it "renames a shadowing binder together with its references" do
+    -- λx. λx. x — the inner reference resolves to the inner binder.
     uniquifyNamesInExpr
       ( abstraction (paramNamed x) $
-          abstraction (paramNamed x) $
-            application (refLocal x 0) (refLocal x 1)
+          abstraction (paramNamed x) (refLocal x)
       )
       `shouldBe` abstraction
         (paramNamed x)
-        ( abstraction (paramNamed x1) $
-            application (refLocal x1 0) (refLocal x 0)
-        )
+        (abstraction (paramNamed x1) (refLocal x1))
 
   it "renames parallel duplicate binders" do
     -- (λx. x) (λx. x): the second λ is in a sibling scope, where no x
     -- is in scope, yet its binder must still be unique within the site.
-    let identityAbs = abstraction (paramNamed x) (refLocal x 0)
+    let identityAbs = abstraction (paramNamed x) (refLocal x)
     uniquifyNamesInExpr (application identityAbs identityAbs)
       `shouldBe` application
         identityAbs
-        (abstraction (paramNamed x0) (refLocal x0 0))
+        (abstraction (paramNamed x0) (refLocal x0))
 
   it "renames a shadowing Let binder, resolving RHS pre-binding" do
-    -- let x = 1 in let x = x@0 in x@0
+    -- let x = 1 in let x = x in x: the inner RHS's x resolves to the
+    -- outer binding (a Standalone RHS does not see its own binder).
     uniquifyNamesInExpr
       ( lets (Standalone (noAnn, x, literalInt 1) :| []) $
           lets
-            (Standalone (noAnn, x, refLocal x 0) :| [])
-            (refLocal x 0)
+            (Standalone (noAnn, x, refLocal x) :| [])
+            (refLocal x)
       )
       `shouldBe` lets
         (Standalone (noAnn, x, literalInt 1) :| [])
         ( lets
-            (Standalone (noAnn, x1, refLocal x 0) :| [])
-            (refLocal x1 0)
+            (Standalone (noAnn, x1, refLocal x) :| [])
+            (refLocal x1)
         )
 
   it "renames self-references inside a shadowing recursive group" do
-    -- λx. letrec x = x@0 in x@0: a member's RHS sees its own group.
+    -- λx. letrec x = x in x: a member's RHS sees its own group.
     uniquifyNamesInExpr
       ( abstraction (paramNamed x) $
           lets
-            (RecursiveGroup ((noAnn, x, refLocal x 0) :| []) :| [])
-            (refLocal x 0)
+            (RecursiveGroup ((noAnn, x, refLocal x) :| []) :| [])
+            (refLocal x)
       )
       `shouldBe` abstraction
         (paramNamed x)
         ( lets
-            (RecursiveGroup ((noAnn, x1, refLocal x1 0) :| []) :| [])
-            (refLocal x1 0)
+            (RecursiveGroup ((noAnn, x1, refLocal x1) :| []) :| [])
+            (refLocal x1)
         )
 
   it "preserves member order of recursive groups" do
@@ -128,11 +124,11 @@ spec = describe "IR Uniquify" do
     -- laziness transform (issue #133) — renaming must not disturb it.
     let recGroup =
           RecursiveGroup
-            ( (noAnn, x, refLocal y 0)
-                :| [(noAnn, y, refLocal x 0)]
+            ( (noAnn, x, refLocal y)
+                :| [(noAnn, y, refLocal x)]
             )
             :| []
-        e = lets recGroup (refLocal y 0)
+        e = lets recGroup (refLocal y)
     uniquifyNamesInExpr e `shouldBe` e
 
   it "never mints the runtime lazy factory name" do
@@ -141,14 +137,14 @@ spec = describe "IR Uniquify" do
     -- it cannot capture them.
     let factory = Name runtimeLazyName
         factory0 = Name (runtimeLazyName <> "0")
-    uniquifyNamesInExpr (refLocal factory 0)
-      `shouldBe` refLocal factory 0
-    uniquifyNamesInExpr (abstraction (paramNamed factory) (refLocal factory 0))
-      `shouldBe` abstraction (paramNamed factory0) (refLocal factory0 0)
+    uniquifyNamesInExpr (refLocal factory)
+      `shouldBe` refLocal factory
+    uniquifyNamesInExpr (abstraction (paramNamed factory) (refLocal factory))
+      `shouldBe` abstraction (paramNamed factory0) (refLocal factory0)
 
   it "uniquifies bindings, foreigns, and exports" do
     let shadowing =
-          abstraction (paramNamed x) (abstraction (paramNamed x) (refLocal x 0))
+          abstraction (paramNamed x) (abstraction (paramNamed x) (refLocal x))
     lintUniqueBinders (uniquifyNames (inAllSites shadowing)) `shouldBe` []
 
 --------------------------------------------------------------------------------

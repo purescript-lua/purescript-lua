@@ -9,8 +9,7 @@ import Language.PureScript.Backend.IR.DCE (EntryPoint (..), eliminateDeadCode)
 import Language.PureScript.Backend.IR.Gen qualified as Gen
 import Language.PureScript.Backend.IR.Linker (UberModule (..))
 import Language.PureScript.Backend.IR.Linter
-  ( lintIndicesZero
-  , lintUniqueBinders
+  ( lintUniqueBinders
   , lintWellScoped
   )
 import Language.PureScript.Backend.IR.Names
@@ -36,7 +35,6 @@ import Language.PureScript.Backend.IR.Types
   , paramUnused
   , refImported
   , refLocal
-  , refLocal0
   )
 import Language.PureScript.Backend.IR.Uniquify (uniquifyNamesInExpr)
 import Test.Hspec (Spec, SpecWith, describe, it)
@@ -61,7 +59,7 @@ spec = describe "IR Dead Code Elimination" do
         pure
           emptyModule
             { uberModuleBindings = [Standalone (QName moduleName name, expr)]
-            , uberModuleExports = [(name, refImported moduleName name 0)]
+            , uberModuleExports = [(name, refImported moduleName name)]
             }
 
   test "doesn't eliminate an exported entry point" do
@@ -79,7 +77,7 @@ spec = describe "IR Dead Code Elimination" do
 
   -- The unit-level twin of the 'dcePass' ensures-contract: on GUC input
   -- (which the pipeline guarantees via the uniquify entry pass), DCE
-  -- must keep all three invariants intact while dropping dead binders.
+  -- must keep the invariants intact while dropping dead binders.
   prop "preserves the GUC invariants" do
     e ← forAll Gen.scopedExp
     let uber =
@@ -90,7 +88,6 @@ spec = describe "IR Dead Code Elimination" do
     annotateShow optimized
     lintWellScoped optimized === []
     lintUniqueBinders optimized === []
-    lintIndicesZero optimized === []
 
   test "detects named parameter unused by an abs-bindings" do
     -- DCE requires GUC input, so establish it before wrapping in a λ
@@ -111,7 +108,7 @@ spec = describe "IR Dead Code Elimination" do
 
   it "doesn't eliminate named parameter used by an abs-bindings" $ hedgehog do
     name ← forAll Gen.name
-    let f = abstraction (paramNamed name) (refLocal0 name)
+    let f = abstraction (paramNamed name) (refLocal name)
     dceExpression f === f
 
   test "eliminates unused non-recursive let-bindings" do
@@ -133,20 +130,20 @@ spec = describe "IR Dead Code Elimination" do
     [a, b, c] ← forAll $ toList <$> Gen.set (Range.singleton 3) Gen.name
     bindA ← Standalone . (noAnn,a,) <$> forAll Gen.literalNonRecursiveExp
     bindB ← Standalone . (noAnn,b,) <$> forAll Gen.literalNonRecursiveExp
-    let bindC = Standalone (noAnn, c, refLocal0 b)
+    let bindC = Standalone (noAnn, c, refLocal b)
         expr =
           lets
             (binding_ "unusedOuter" :| [bindA, bindB])
             ( lets
                 (bindC :| [binding_ "unusedInner"])
-                (application (refLocal0 c) (refLocal0 a))
+                (application (refLocal c) (refLocal a))
             )
         expected =
           lets
             (bindA :| [bindB])
             ( lets
                 (pure bindC)
-                (application (refLocal0 c) (refLocal0 a))
+                (application (refLocal c) (refLocal a))
             )
     annotate . toString $ pShow expr
     expected === dceExpression expr
@@ -161,19 +158,18 @@ spec = describe "IR Dead Code Elimination" do
     let expr =
           lets
             ( RecursiveGroup
-                ((noAnn, a, refLocal0 b) :| [(noAnn, b, refLocal0 a)])
+                ((noAnn, a, refLocal b) :| [(noAnn, b, refLocal a)])
                 :| []
             )
-            (refLocal0 c)
-        expected = refLocal0 c
+            (refLocal c)
+        expected = refLocal c
     annotate . toString $ pShow expr
     expected === dceExpression expr
 
   -- There is deliberately no test here for two same-named Let siblings:
-  -- the uniquify entry pass makes that input unreachable for DCE, and
-  -- the sequential (let*) resolution it used to exercise is covered by
-  -- Uniquify.Spec ("renames a shadowing Let binder, resolving RHS
-  -- pre-binding").
+  -- the uniquify entry pass makes that input unreachable for DCE.
+  -- Sequential (let*) resolution is covered by Uniquify.Spec ("renames
+  -- a shadowing Let binder, resolving RHS pre-binding").
 
   -- 'Rewritten Recurse' descends into the result's children without
   -- re-applying the rule to the result itself. When a Let whose bindings
@@ -190,7 +186,7 @@ spec = describe "IR Dead Code Elimination" do
             (Standalone (noAnn, a, literalInt 1) :| [])
             ( lets
                 ( Standalone
-                    (noAnn, k, abstraction (paramNamed x) (refLocal x 0))
+                    (noAnn, k, abstraction (paramNamed x) (refLocal x))
                     :| []
                 )
                 (literalInt 3)

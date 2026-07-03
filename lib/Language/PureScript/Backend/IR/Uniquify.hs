@@ -1,10 +1,10 @@
 {- | The entry pass of the IR pipeline (issue #139): give every local
-binder a unique name within its top-level site and rewrite every local
-reference to index 0, establishing the global-uniqueness condition
-(GUC = @UniqueBinders@ + @IndicesZero@) that the rest of the pipeline
+binder a unique name within its top-level site and repoint every local
+reference at its renamed binder, establishing the global-uniqueness
+condition (GUC = @UniqueBinders@) that the rest of the pipeline
 requires and preserves.
 
-The traversal resolves (name, index) references according to
+The traversal resolves references according to
 Note [Sequential scoping of Let bindings] while threading an
 accumulator of every binder name used so far through the whole site
 (not just the enclosing scope), so both shadowing /and parallel/
@@ -38,7 +38,6 @@ import Language.PureScript.Backend.IR.Types
   , Grouping (..)
   , Parameter (..)
   , RawExp (..)
-  , unIndex
   )
 import Language.PureScript.Names (runtimeLazyName)
 
@@ -58,8 +57,10 @@ uniquifyNames uberModule =
     }
 
 {- | The stack of renames for each source name in scope, innermost
-first: a reference (name, index) resolves to the stack entry at the
-index's position.
+first: a reference resolves to the innermost entry. The stack depth
+feeds the suffix numbering in 'bindName' (a shadowing binder of @x@
+starts probing at @x<depth>@), which keeps the minted names compact
+and deterministic.
 -}
 type RenamesInScope = Map Name [Name]
 
@@ -97,18 +98,12 @@ uniquifyNamesInExpr e =
         ParamNamed paramAnn name → do
           (name', scope') ← bindName scope name
           Abs ann (ParamNamed paramAnn name') <$> go scope' body
-    Ref ann qname index →
+    Ref ann qname →
       pure case qname of
         Local lname
-          | Just renames ← Map.lookup lname scope
-          , -- Index by the De Bruijn 'Natural' directly. 'genericDrop'
-            -- takes it with no narrowing 'Int' conversion, and an index
-            -- past the end yields '[]', so 'viaNonEmpty head' gives
-            -- 'Nothing' (no rename: the reference is free).
-            Just rename ←
-              viaNonEmpty head (genericDrop (unIndex index) renames) →
-              Ref ann (Local rename) 0
-        _ → Ref ann qname index
+          | Just (rename : _) ← Map.lookup lname scope →
+              Ref ann (Local rename)
+        _ → Ref ann qname
     Let ann binds body → do
       (scope', binds') ← foldlM withGrouping (scope, []) (toList binds)
       Let ann (NE.fromList (reverse binds')) <$> go scope' body

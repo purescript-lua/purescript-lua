@@ -26,18 +26,18 @@ UberModule
             ( IfThenElse Nothing
               ( Eq Nothing
                 ( LiteralString Nothing "Data.Maybe∷Maybe.Nothing" )
-                ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v2" ) ) 0 ) )
+                ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v2" ) ) ) )
               )
-              ( Ref Nothing ( Local ( Name "v" ) ) 0 )
+              ( Ref Nothing ( Local ( Name "v" ) ) )
               ( IfThenElse Nothing
                 ( Eq Nothing
                   ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
-                  ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v2" ) ) 0 ) )
+                  ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v2" ) ) ) )
                 )
                 ( App Nothing
-                  ( Ref Nothing ( Local ( Name "v1" ) ) 0 )
+                  ( Ref Nothing ( Local ( Name "v1" ) ) )
                   ( ObjectProp Nothing
-                    ( Ref Nothing ( Local ( Name "v2" ) ) 0 )
+                    ( Ref Nothing ( Local ( Name "v2" ) ) )
                     ( PropName "value0" )
                   )
                 )
@@ -54,7 +54,7 @@ UberModule
           [
             ( PropName "identity", Abs Nothing
               ( ParamNamed Nothing ( Name "x$1535" ) )
-              ( Ref Nothing ( Local ( Name "x$1535" ) ) 0 )
+              ( Ref Nothing ( Local ( Name "x$1535" ) ) )
             ),
             ( PropName "Semigroupoid0", Abs Nothing ( ParamUnused Nothing )
               ( LiteralObject Nothing
@@ -66,10 +66,10 @@ UberModule
                       ( Abs Nothing
                         ( ParamNamed Nothing ( Name "x$1539" ) )
                         ( App Nothing
-                          ( Ref Nothing ( Local ( Name "f$1537" ) ) 0 )
+                          ( Ref Nothing ( Local ( Name "f$1537" ) ) )
                           ( App Nothing
-                            ( Ref Nothing ( Local ( Name "g$1538" ) ) 0 )
-                            ( Ref Nothing ( Local ( Name "x$1539" ) ) 0 )
+                            ( Ref Nothing ( Local ( Name "g$1538" ) ) )
+                            ( Ref Nothing ( Local ( Name "x$1539" ) ) )
                           )
                         )
                       )
@@ -94,19 +94,19 @@ UberModule
                 ( IfThenElse Nothing
                   ( Eq Nothing
                     ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
-                    ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v1$1533" ) ) 0 ) )
+                    ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v1$1533" ) ) ) )
                   )
                   ( App Nothing
-                    ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Just" ) ) 0 )
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Just" ) ) )
                     ( App Nothing
-                      ( Ref Nothing ( Local ( Name "v$1532" ) ) 0 )
+                      ( Ref Nothing ( Local ( Name "v$1532" ) ) )
                       ( ObjectProp Nothing
-                        ( Ref Nothing ( Local ( Name "v1$1533" ) ) 0 )
+                        ( Ref Nothing ( Local ( Name "v1$1533" ) ) )
                         ( PropName "value0" )
                       )
                     )
                   )
-                  ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) 0 )
+                  ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) )
                 )
               )
             )
@@ -119,65 +119,65 @@ UberModule
       ( Name "chainedNothing", App Nothing
         ( App Nothing
           ( App Nothing
-            ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "maybe" ) ) 0 )
+            ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "maybe" ) ) )
             ( LiteralInt Nothing 0 )
           )
           ( Ref Nothing
-            ( Imported ( ModuleName "Golden.MaybeChainModule.Test" ) ( Name "identity" ) ) 0
+            ( Imported ( ModuleName "Golden.MaybeChainModule.Test" ) ( Name "identity" ) )
           )
         )
         ( App Nothing
           ( App Nothing
             ( App Nothing
-              ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "maybe" ) ) 0 )
-              ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) 0 )
+              ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "maybe" ) ) )
+              ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) )
             )
-            ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Just" ) ) 0 )
+            ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Just" ) ) )
           )
           ( App Nothing
             ( App Nothing
               ( Ref Nothing
-                ( Imported ( ModuleName "Golden.MaybeChainModule.Test" ) ( Name "map" ) ) 0
+                ( Imported ( ModuleName "Golden.MaybeChainModule.Test" ) ( Name "map" ) )
               )
               ( Abs Nothing
                 ( ParamNamed Nothing ( Name "x$1" ) )
-                ( Ref Nothing ( Local ( Name "x$1" ) ) 0 )
+                ( Ref Nothing ( Local ( Name "x$1" ) ) )
               )
             )
-            ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) 0 )
+            ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) )
           )
         )
       ),
       ( Name "chainedJust", App Nothing
         ( App Nothing
           ( App Nothing
-            ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "maybe" ) ) 0 )
+            ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "maybe" ) ) )
             ( LiteralInt Nothing 0 )
           )
           ( Ref Nothing
-            ( Imported ( ModuleName "Golden.MaybeChainModule.Test" ) ( Name "identity" ) ) 0
+            ( Imported ( ModuleName "Golden.MaybeChainModule.Test" ) ( Name "identity" ) )
           )
         )
         ( App Nothing
           ( App Nothing
             ( App Nothing
-              ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "maybe" ) ) 0 )
-              ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) 0 )
+              ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "maybe" ) ) )
+              ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) )
             )
-            ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Just" ) ) 0 )
+            ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Just" ) ) )
           )
           ( App Nothing
             ( App Nothing
               ( Ref Nothing
-                ( Imported ( ModuleName "Golden.MaybeChainModule.Test" ) ( Name "map" ) ) 0
+                ( Imported ( ModuleName "Golden.MaybeChainModule.Test" ) ( Name "map" ) )
               )
               ( Abs Nothing
                 ( ParamNamed Nothing ( Name "x$0" ) )
-                ( Ref Nothing ( Local ( Name "x$0" ) ) 0 )
+                ( Ref Nothing ( Local ( Name "x$0" ) ) )
               )
             )
             ( App Nothing
-              ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Just" ) ) 0 )
+              ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Just" ) ) )
               ( LiteralInt Nothing 42 )
             )
           )

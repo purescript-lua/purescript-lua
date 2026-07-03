@@ -27,7 +27,7 @@ import Language.PureScript.Backend.IR.Types
   , paramNamed
   , paramUnused
   , refImported
-  , refLocal0
+  , refLocal
   , subexpressions
   )
 import Test.Hspec (Spec, describe, it, shouldBe, shouldSatisfy)
@@ -206,14 +206,14 @@ xName i = Name ("x" <> Text.pack (show i))
 
 -- | A chain head: an arbitrary reference. Recognition does not look at it.
 bindHead ∷ Exp
-bindHead = refImported testModule (Name "bind") 0
+bindHead = refImported testModule (Name "bind")
 
 discardHead ∷ Exp
-discardHead = refImported testModule (Name "discard") 0
+discardHead = refImported testModule (Name "discard")
 
 -- | A non-@bind@ combinator head, to prove recognition is name-agnostic.
 opaqueHead ∷ Exp
-opaqueHead = refImported testModule (Name "withResource") 0
+opaqueHead = refImported testModule (Name "withResource")
 
 {- | An @n@-step chain headed by @hd@:
 
@@ -228,7 +228,7 @@ chainExprWith hd n = go 1
  where
   go ∷ Int → Exp
   go i
-    | i > n = eq (refLocal0 (xName 1)) (refLocal0 (xName n))
+    | i > n = eq (refLocal (xName 1)) (refLocal (xName n))
     | otherwise =
         application
           (application hd (action i))
@@ -237,7 +237,7 @@ chainExprWith hd n = go 1
   action ∷ Int → Exp
   action i
     | i <= 1 = literalInt 0
-    | otherwise = eq (refLocal0 (xName (i - 1))) (literalInt (fromIntegral i))
+    | otherwise = eq (refLocal (xName (i - 1))) (literalInt (fromIntegral i))
 
 chainExpr' ∷ Int → Exp
 chainExpr' = chainExprWith bindHead
@@ -255,7 +255,7 @@ discardChainExpr n = go 1
  where
   go ∷ Int → Exp
   go i
-    | i > n = eq (refLocal0 (xName 1)) (literalInt 0)
+    | i > n = eq (refLocal (xName 1)) (literalInt 0)
     | even i =
         application
           (application discardHead (literalInt (fromIntegral i)))
@@ -301,14 +301,14 @@ genChainExpr = Gen.int (Range.linear 1 120) >>= \n → go 1 n []
     _ →
       Gen.choice
         [ pure (literalInt (fromIntegral i))
-        , refLocal0 <$> Gen.element inScope
+        , refLocal <$> Gen.element inScope
         ]
 
   genFinal ∷ [Name] → Gen Exp
   genFinal inScope = case inScope of
     [] → pure (literalInt 0)
     _ →
-      eq . refLocal0 <$> Gen.element inScope <*> (refLocal0 <$> Gen.element inScope)
+      eq . refLocal <$> Gen.element inScope <*> (refLocal <$> Gen.element inScope)
 
 {- | A long chain (always above the threshold) with a deliberately small live
 set — the first step binds @x1@, every other step is a random @bind@\/@discard@
@@ -327,7 +327,7 @@ genLongChainExpr =
  where
   go ∷ Int → Int → Gen Exp
   go i n
-    | i > n = pure (refLocal0 (xName 1))
+    | i > n = pure (refLocal (xName 1))
     | otherwise = do
         rest ← go (i + 1) n
         bindStep ← Gen.bool
@@ -346,10 +346,10 @@ genLongChainExpr =
 -- Strategy B: application spines ----------------------------------------------
 
 applyHead ∷ Exp
-applyHead = refImported testModule (Name "apply") 0
+applyHead = refImported testModule (Name "apply")
 
 bindFlippedHead ∷ Exp
-bindFlippedHead = refImported testModule (Name "bindFlipped") 0
+bindFlippedHead = refImported testModule (Name "bindFlipped")
 
 {- | A deep left-nested (applicative / @ado@) spine, depth in the callee-argument
 position:
@@ -357,7 +357,7 @@ position:
 > apply (apply (… apply x1 2 …) (n-1)) n
 -}
 applyChainExpr ∷ Int → Exp
-applyChainExpr n = foldl' step (refLocal0 (xName 1)) [2 .. n]
+applyChainExpr n = foldl' step (refLocal (xName 1)) [2 .. n]
  where
   step ∷ Exp → Int → Exp
   step acc i = application (application applyHead acc) (literalInt (fromIntegral i))
@@ -372,7 +372,7 @@ bindFlippedChainExpr n = go 1
  where
   go ∷ Int → Exp
   go i
-    | i > n = refLocal0 (xName 1)
+    | i > n = refLocal (xName 1)
     | otherwise =
         application
           (application bindFlippedHead (literalInt (fromIntegral i)))

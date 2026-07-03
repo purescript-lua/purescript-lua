@@ -189,7 +189,7 @@ classify resolve = go maxHops . spine
     | otherwise = case (hd, args) of
         -- Normalised form: bind dict action (\param -> rest). A 'discard' has
         -- already collapsed to this because `discardUnit.discard = bind`.
-        (Ref _ (Imported m n) _, [dict, action, k])
+        (Ref _ (Imported m n), [dict, action, k])
           | (m, n) == bindName
           , isBindDict resolve dict →
               pure case k of
@@ -197,14 +197,14 @@ classify resolve = go maxHops . spine
                 Abs _ (ParamUnused _) rest → Just (DiscardNode action rest)
                 _ → Nothing
         -- Discard not yet inlined to its instance method.
-        (Ref _ (Imported m n) _, [dictD, dictB, action, k])
+        (Ref _ (Imported m n), [dictD, dictB, action, k])
           | (m, n) == discardName'
           , denotes resolve discardUnit dictD
           , isBindDict resolve dictB
           , Abs _ (ParamUnused _) rest ← k →
               pure (Just (DiscardNode action rest))
         -- Otherwise reduce the head one step and retry.
-        (Ref _ (Imported m n) _, _)
+        (Ref _ (Imported m n), _)
           | Just def ← resolve (QName m n) →
               go (fuel - 1) (reSpine def args)
         (ObjectProp _ (LiteralObject _ fields) prop, _)
@@ -234,7 +234,7 @@ denotes resolve target = go maxHops
  where
   go ∷ Int → Exp → Bool
   go fuel = \case
-    Ref _ (Imported m n) _
+    Ref _ (Imported m n)
       | (m, n) == target → True
       | fuel > 0, Just def ← resolve (QName m n) → go (fuel - 1) def
     _ → False
@@ -259,7 +259,8 @@ synthetic @Prim.undefined@ argument is erased to an empty argument list by
 the Lua code generator, so this emits @m()@.
 -}
 runEffect ∷ Exp → Exp
-runEffect m = App noAnn m (Ref noAnn (Imported (ModuleName "Prim") (Name "undefined")) 0)
+runEffect m =
+  App noAnn m (Ref noAnn (Imported (ModuleName "Prim") (Name "undefined")))
 
 {- | Bound on alias/instance resolution to stay terminating on recursive
 bindings.

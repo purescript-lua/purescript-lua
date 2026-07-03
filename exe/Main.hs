@@ -129,13 +129,6 @@ handleLuaError
   → ExceptT (Oops.Variant e) IO a
 handleLuaError =
   Oops.catch \case
-    Lua.UnexpectedRefBound modname expr →
-      die . toString . unwords $
-        [ "Unexpected bound reference:"
-        , show expr
-        , "in module"
-        , runModuleName modname
-        ]
     Lua.LinkerErrorForeign e →
       die $ "Linker error:\n" <> show e
     Lua.AppEntryPointNotFound modname ident →

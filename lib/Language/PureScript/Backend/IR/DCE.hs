@@ -34,8 +34,8 @@ import Language.PureScript.Backend.IR.Types
 data EntryPoint = EntryPoint ModuleName [Name]
   deriving stock (Show)
 
-{- | Under GUC (@UniqueBinders@ + @IndicesZero@) a local reference
-resolves to its binder by name alone, so the scope needs no index.
+{- | Under GUC (@UniqueBinders@) a local reference resolves to its
+binder by name alone.
 -}
 type Scope = Map (Qualified Name) Id
 
@@ -133,8 +133,8 @@ eliminateDeadCode uber@UberModule {..} =
               ParamUnused (pid, _) → pid
               ParamNamed (pid, _) _name → pid
           -- Under GUC a dead binder is unreferenced by definition, so
-          -- blanking its name touches no reference elsewhere (unlike the
-          -- pre-GUC De Bruijn scheme, issue #56).
+          -- blanking its name touches no reference elsewhere (the
+          -- hazard behind issue #56).
           param' =
             case param of
               ParamUnused pann → ParamUnused pann
@@ -248,7 +248,7 @@ eliminateDeadCode uber@UberModule {..} =
   adjacencyListFromForeignBindings ∷ DList Node =
     annotatedForeignBindings & foldMap \case
       ( QName bindingModule bindingName
-        , ObjectProp (objPropId, _) (Ref (objRefId, _) _ 0) _prop
+        , ObjectProp (objPropId, _) (Ref (objRefId, _) _) _prop
         ) →
           DL.fromList do
             mkNode objPropId (objRefId : map fst foreignImportForBinding)
@@ -325,7 +325,7 @@ eliminateDeadCode uber@UberModule {..} =
             <> adjacencyListForExpr scope e
         App _ann a b →
           adjacencyListForExpr scope a <> adjacencyListForExpr scope b
-        Ref _ann _qname _idx →
+        Ref _ann _qname →
           mempty
         Abs _ann param b →
           case param of
@@ -338,8 +338,8 @@ eliminateDeadCode uber@UberModule {..} =
           adjacencyListForExpr bodyScope body <> groupingsAdjacency
          where
           -- The body resolves references against the scope threaded through
-          -- the groupings left to right, so its index 0 picks the *last*
-          -- binding of a name (see Note [Sequential scoping of Let bindings]).
+          -- the groupings left to right, so a name picks its *last*
+          -- binding (see Note [Sequential scoping of Let bindings]).
           (bodyScope, groupingsAdjacency) =
             foldl' adjacencyListForGrouping (scope, mempty) groupings
    where
@@ -390,7 +390,7 @@ expressionDependsOnIds exprScope = \case
   Abs _ann _ b → [nodeId b]
   App _ann a b → [nodeId a, nodeId b]
   IfThenElse _ann i t e → [nodeId i, nodeId t, nodeId e]
-  Ref _ann qname _idx → maybeToList $ Map.lookup qname exprScope
+  Ref _ann qname → maybeToList $ Map.lookup qname exprScope
   Let _ann _groupings body → [nodeId body]
 
 {- | Under GUC (@UniqueBinders@) no two live binders at one site share a

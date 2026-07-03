@@ -100,7 +100,7 @@ output.
 The pass runs under GUC (every local uniquely named, established by
 'Language.PureScript.Backend.IR.Uniquify.uniquifyNames' at the front of the
 pipeline and preserved throughout), so a reference resolves to its binder by
-name alone — no De Bruijn shifting is ever needed here. A Strategy-A helper's
+name alone. A Strategy-A helper's
 parameters are new binders for the chain's already-bound live variables, so
 they cannot reuse the outer binders' names under 'UniqueBinders': each is
 minted fresh and the helper body's free references are repointed to it (see
@@ -148,7 +148,6 @@ import Language.PureScript.Backend.IR.Types
   ( Ann
   , Exp
   , Grouping (..)
-  , Index (..)
   , Parameter (..)
   , RawExp (..)
   , RewriteMod (..)
@@ -156,6 +155,7 @@ import Language.PureScript.Backend.IR.Types
   , Rewritten (..)
   , countFreeRefs
   , noAnn
+  , refLocal
   , rewriteExpTopDownM
   , substituteCopyM
   )
@@ -285,7 +285,7 @@ lambdaLift steps finalAction =
     (freshParams, deepBody') ← freshenParams params deepBody
     let helperDef = curryAbs freshParams deepBody'
         helper = Standalone (noAnn, kname, helperDef)
-        callTail = applyToVars (refLocal0 kname) params
+        callTail = applyToVars (refLocal kname) params
         body = buildSteps seg callTail
     pure (body, (length params, helper) : konts)
 
@@ -300,7 +300,7 @@ lambdaLift steps finalAction =
    where
     step (freshNames, b) name = do
       name' ← freshName (nameToText name <> "$")
-      b' ← substituteCopyM (Local name) (refLocal0 name') b
+      b' ← substituteCopyM (Local name) (refLocal name') b
       pure (freshNames <> [name'], b')
 
 -- | Rebuild a segment's nested @f action (\param -> …)@ wrapping a tail.
@@ -319,7 +319,7 @@ curryAbs params body =
 
 -- | @f p1 p2 …@, applying the variables in the same order as 'curryAbs'.
 applyToVars ∷ Exp → [Name] → Exp
-applyToVars = foldl' \f p → App noAnn f (refLocal0 p)
+applyToVars = foldl' \f p → App noAnn f (refLocal p)
 
 --------------------------------------------------------------------------------
 -- Strategy B: application-spine sequentialisation -----------------------------
@@ -390,7 +390,7 @@ sequentialiseSpine expr =
     if i `mod` segmentSize == 0
       then do
         name ← freshTmpName
-        pure (Standalone (noAnn, name, acc') : binds, refLocal0 name)
+        pure (Standalone (noAnn, name, acc') : binds, refLocal name)
       else pure (binds, acc')
 
 --------------------------------------------------------------------------------
@@ -407,9 +407,6 @@ spine = go []
   go ∷ [Exp] → Exp → (Exp, [Exp])
   go acc (App _ann f a) = go (a : acc) f
   go acc h = (h, acc)
-
-refLocal0 ∷ Name → Exp
-refLocal0 name = Ref noAnn (Local name) (Index 0)
 
 freshKontName ∷ SupplyM Name
 freshKontName = freshName "$kont"

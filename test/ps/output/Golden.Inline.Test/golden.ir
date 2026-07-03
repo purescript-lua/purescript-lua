@@ -6,18 +6,16 @@ UberModule
         }, Abs Nothing
         ( ParamNamed Nothing ( Name "v" ) )
         ( App Nothing
-          ( Ref Nothing ( Local ( Name "v" ) ) 0 )
-          ( Ref Nothing ( Local ( Name "v" ) ) 0 )
+          ( Ref Nothing ( Local ( Name "v" ) ) )
+          ( Ref Nothing ( Local ( Name "v" ) ) )
         )
       )
     ], uberModuleForeigns = [], uberModuleExports =
     [
       ( Name "main", LiteralInt Nothing 1 ),
       ( Name "runMu", Ref Nothing
-        ( Imported ( ModuleName "Golden.Inline.Test" ) ( Name "runMu" ) ) 0
+        ( Imported ( ModuleName "Golden.Inline.Test" ) ( Name "runMu" ) )
       ),
-      ( Name "iMu", Ref Nothing
-        ( Imported ( ModuleName "Golden.Inline.Test" ) ( Name "runMu" ) ) 0
-      )
+      ( Name "iMu", Ref Nothing ( Imported ( ModuleName "Golden.Inline.Test" ) ( Name "runMu" ) ) )
     ]
   }

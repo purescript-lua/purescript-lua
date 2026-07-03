@@ -9,23 +9,23 @@ UberModule
     ], uberModuleForeigns = [], uberModuleExports =
     [
       ( Name "r", Ref Nothing
-        ( Imported ( ModuleName "Golden.RecordsAccess.Test" ) ( Name "r" ) ) 0
+        ( Imported ( ModuleName "Golden.RecordsAccess.Test" ) ( Name "r" ) )
       ),
       ( Name "test1", ObjectProp Nothing
-        ( Ref Nothing ( Imported ( ModuleName "Golden.RecordsAccess.Test" ) ( Name "r" ) ) 0 )
+        ( Ref Nothing ( Imported ( ModuleName "Golden.RecordsAccess.Test" ) ( Name "r" ) ) )
         ( PropName "x" )
       ),
       ( Name "test2", Abs Nothing
         ( ParamNamed Nothing ( Name "v$0" ) )
-        ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "v$0" ) ) 0 ) ( PropName "x" ) )
+        ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "v$0" ) ) ) ( PropName "x" ) )
       ),
       ( Name "test3", Abs Nothing
         ( ParamNamed Nothing ( Name "v$1" ) )
-        ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "v$1" ) ) 0 ) ( PropName "x" ) )
+        ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "v$1" ) ) ) ( PropName "x" ) )
       ),
       ( Name "test4", Abs Nothing
         ( ParamNamed Nothing ( Name "v$3" ) )
-        ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "v$3" ) ) 0 ) ( PropName "x" ) )
+        ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "v$3" ) ) ) ( PropName "x" ) )
       )
     ]
   }

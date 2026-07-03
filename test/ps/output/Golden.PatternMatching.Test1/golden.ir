@@ -29,14 +29,14 @@ UberModule
         ( IfThenElse Nothing
           ( Eq Nothing
             ( LiteralString Nothing "Golden.PatternMatching.Test1∷E.Not" )
-            ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "e$2" ) ) 0 ) )
+            ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "e$2" ) ) ) )
           )
           ( IfThenElse Nothing
             ( Eq Nothing
               ( LiteralString Nothing "Golden.PatternMatching.Test1∷E.Num" )
               ( ReflectCtor Nothing
                 ( ObjectProp Nothing
-                  ( Ref Nothing ( Local ( Name "e$2" ) ) 0 )
+                  ( Ref Nothing ( Local ( Name "e$2" ) ) )
                   ( PropName "value0" )
                 )
               )
@@ -47,7 +47,7 @@ UberModule
                 ( ReflectCtor Nothing
                   ( ObjectProp Nothing
                     ( ObjectProp Nothing
-                      ( Ref Nothing ( Local ( Name "e$2" ) ) 0 )
+                      ( Ref Nothing ( Local ( Name "e$2" ) ) )
                       ( PropName "value0" )
                     )
                     ( PropName "value0" )
@@ -61,7 +61,7 @@ UberModule
                   ( ReflectCtor Nothing
                     ( ObjectProp Nothing
                       ( ObjectProp Nothing
-                        ( Ref Nothing ( Local ( Name "e$2" ) ) 0 )
+                        ( Ref Nothing ( Local ( Name "e$2" ) ) )
                         ( PropName "value0" )
                       )
                       ( PropName "value0" )
@@ -77,7 +77,7 @@ UberModule
                 ( LiteralString Nothing "Golden.PatternMatching.Test1∷E.Not" )
                 ( ReflectCtor Nothing
                   ( ObjectProp Nothing
-                    ( Ref Nothing ( Local ( Name "e$2" ) ) 0 )
+                    ( Ref Nothing ( Local ( Name "e$2" ) ) )
                     ( PropName "value0" )
                   )
                 )
@@ -88,7 +88,7 @@ UberModule
                   ( ReflectCtor Nothing
                     ( ObjectProp Nothing
                       ( ObjectProp Nothing
-                        ( Ref Nothing ( Local ( Name "e$2" ) ) 0 )
+                        ( Ref Nothing ( Local ( Name "e$2" ) ) )
                         ( PropName "value0" )
                       )
                       ( PropName "value0" )
@@ -102,7 +102,7 @@ UberModule
                       ( ObjectProp Nothing
                         ( ObjectProp Nothing
                           ( ObjectProp Nothing
-                            ( Ref Nothing ( Local ( Name "e$2" ) ) 0 )
+                            ( Ref Nothing ( Local ( Name "e$2" ) ) )
                             ( PropName "value0" )
                           )
                           ( PropName "value0" )
@@ -122,14 +122,14 @@ UberModule
           ( IfThenElse Nothing
             ( Eq Nothing
               ( LiteralString Nothing "Golden.PatternMatching.Test1∷E.Num" )
-              ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "e$2" ) ) 0 ) )
+              ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "e$2" ) ) ) )
             )
             ( IfThenElse Nothing
               ( Eq Nothing
                 ( LiteralString Nothing "Golden.PatternMatching.Test1∷N.Succ" )
                 ( ReflectCtor Nothing
                   ( ObjectProp Nothing
-                    ( Ref Nothing ( Local ( Name "e$2" ) ) 0 )
+                    ( Ref Nothing ( Local ( Name "e$2" ) ) )
                     ( PropName "value0" )
                   )
                 )
@@ -149,11 +149,11 @@ UberModule
       ),
       ( Name "fst", Abs Nothing
         ( ParamNamed Nothing ( Name "v$0" ) )
-        ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "v$0" ) ) 0 ) ( PropName "value0" ) )
+        ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "v$0" ) ) ) ( PropName "value0" ) )
       ),
       ( Name "snd", Abs Nothing
         ( ParamNamed Nothing ( Name "v$3" ) )
-        ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "v$3" ) ) 0 ) ( PropName "value1" ) )
+        ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "v$3" ) ) ) ( PropName "value1" ) )
       )
     ]
   }

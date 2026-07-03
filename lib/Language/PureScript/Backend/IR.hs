@@ -349,7 +349,7 @@ mkQualifiedIdent (PS.Qualified by ident) =
           else Imported modName (identToName ident)
 
 mkRef ∷ PS.Qualified PS.Ident → RepM Exp
-mkRef = (\n → Ref noAnn n 0) <<$>> mkQualifiedIdent
+mkRef = Ref noAnn <<$>> mkQualifiedIdent
 
 mkLet ∷ Ann → [Cfn.Bind Cfn.Ann] → CfnExp → RepM Exp
 mkLet ann binds expr = do
@@ -454,7 +454,7 @@ prepareBindings expressions = do
   pure
     ( scrutinees <&> \case
         Inlinable expr → expr
-        Referrable ann name _expr → Ref ann (Local name) 0
+        Referrable ann name _expr → Ref ann (Local name)
     , [Standalone (ann, name, expr) | Referrable ann name expr ← scrutinees]
     )
 
@@ -495,7 +495,7 @@ mkCaseClauses = mkClauses Map.empty
               Right result → lets binds result
               Left guardedResults →
                 lets (Standalone (noAnn, n, next) <| binds) $
-                  foldr (uncurry ifThenElse) (refLocal n 0) guardedResults
+                  foldr (uncurry ifThenElse) (refLocal n) guardedResults
       Just (Match {..}, clause) →
         let expr = foldr applyStep matchExp stepsToFocus
             clause' =

@@ -17,18 +17,18 @@ UberModule
         )
         ( IfThenElse Nothing
           ( App Nothing
-            ( Ref Nothing ( Imported ( ModuleName "Golden.Values.Test" ) ( Name "f" ) ) 0 )
+            ( Ref Nothing ( Imported ( ModuleName "Golden.Values.Test" ) ( Name "f" ) ) )
             ( LiteralInt Nothing 2 )
           )
           ( IfThenElse Nothing
             ( App Nothing
-              ( Ref Nothing ( Imported ( ModuleName "Golden.Values.Test" ) ( Name "f" ) ) 0 )
+              ( Ref Nothing ( Imported ( ModuleName "Golden.Values.Test" ) ( Name "f" ) ) )
               ( LiteralInt Nothing 1 )
             )
             ( LiteralInt Nothing 42 )
-            ( App Nothing ( Ref Nothing ( Local ( Name "v$6" ) ) 0 ) ( LiteralBool Nothing True ) )
+            ( App Nothing ( Ref Nothing ( Local ( Name "v$6" ) ) ) ( LiteralBool Nothing True ) )
           )
-          ( App Nothing ( Ref Nothing ( Local ( Name "v$6" ) ) 0 ) ( LiteralBool Nothing True ) )
+          ( App Nothing ( Ref Nothing ( Local ( Name "v$6" ) ) ) ( LiteralBool Nothing True ) )
         )
       ),
       ( Name "J", Ctor Nothing SumType
@@ -54,7 +54,7 @@ UberModule
                   ( IfThenElse Nothing
                     ( Eq Nothing
                       ( LiteralChar Nothing 'y' )
-                      ( Ref Nothing ( Local ( Name "x$36" ) ) 0 )
+                      ( Ref Nothing ( Local ( Name "x$36" ) ) )
                     )
                     ( LiteralInt Nothing 0 )
                     ( LiteralInt Nothing 1 )
@@ -64,32 +64,32 @@ UberModule
               ( IfThenElse Nothing
                 ( Eq Nothing
                   ( LiteralChar Nothing 'x' )
-                  ( Ref Nothing ( Local ( Name "x$36" ) ) 0 )
+                  ( Ref Nothing ( Local ( Name "x$36" ) ) )
                 )
                 ( IfThenElse Nothing
                   ( Eq Nothing
                     ( LiteralString Nothing "Golden.CaseStatements.Test∷M.J" )
-                    ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "m$34" ) ) 0 ) )
+                    ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "m$34" ) ) ) )
                   )
                   ( IfThenElse Nothing
                     ( Eq Nothing
                       ( LiteralString Nothing "Golden.CaseStatements.Test∷M.N" )
-                      ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "n$35" ) ) 0 ) )
+                      ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "n$35" ) ) ) )
                     )
                     ( ObjectProp Nothing
-                      ( Ref Nothing ( Local ( Name "m$34" ) ) 0 )
+                      ( Ref Nothing ( Local ( Name "m$34" ) ) )
                       ( PropName "value0" )
                     )
                     ( App Nothing
-                      ( Ref Nothing ( Local ( Name "v$37" ) ) 0 ) ( LiteralBool Nothing True )
+                      ( Ref Nothing ( Local ( Name "v$37" ) ) ) ( LiteralBool Nothing True )
                     )
                   )
                   ( App Nothing
-                    ( Ref Nothing ( Local ( Name "v$37" ) ) 0 ) ( LiteralBool Nothing True )
+                    ( Ref Nothing ( Local ( Name "v$37" ) ) ) ( LiteralBool Nothing True )
                   )
                 )
                 ( App Nothing
-                  ( Ref Nothing ( Local ( Name "v$37" ) ) 0 ) ( LiteralBool Nothing True )
+                  ( Ref Nothing ( Local ( Name "v$37" ) ) ) ( LiteralBool Nothing True )
                 )
               )
             )
