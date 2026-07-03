@@ -89,6 +89,18 @@ spec = describe "Types" do
       annotateShow e
       alphaEq e e === True
 
+    prop "is symmetric" do
+      -- Independent pairs are almost always inequivalent, so this side
+      -- exercises the mismatch branches…
+      e1 ← forAll Gen.exp
+      e2 ← forAll Gen.exp
+      annotateShow (e1, e2)
+      alphaEq e1 e2 === alphaEq e2 e1
+      -- …while the flipped uniquify direction covers the equivalent
+      -- case (the Uniquify.Spec property only checks e ~ uniquify e).
+      e ← forAll Gen.scopedExp
+      alphaEq (uniquifyNamesInExpr e) e === True
+
     test "identifies λ-terms differing only in binder names" do
       alphaEq
         (abstraction (paramNamed x) (refLocal x 0))
