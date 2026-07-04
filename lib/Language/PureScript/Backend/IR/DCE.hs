@@ -3,6 +3,7 @@ module Language.PureScript.Backend.IR.DCE
   , eliminateDeadCode
   ) where
 
+import Control.Lens (foldMapOf, toListOf)
 import Data.DList (DList)
 import Data.DList qualified as DL
 import Data.Graph (Graph, Vertex, graphFromEdges, reachable)
@@ -25,10 +26,10 @@ import Language.PureScript.Backend.IR.Types
   , RawExp (..)
   , RewriteMod (..)
   , Rewritten (..)
-  , annotateExpM
   , getAnn
   , listGrouping
   , rewriteExpTopDown
+  , subexpressions
   )
 
 data EntryPoint = EntryPoint ModuleName [Name]
@@ -294,39 +295,6 @@ eliminateDeadCode uber@UberModule {..} =
   adjacencyListForExpr scope expr =
     mkNode (nodeId expr) (expressionDependsOnIds scope expr)
       `DL.cons` case expr of
-        LiteralInt {} → mempty
-        LiteralFloat {} → mempty
-        LiteralString {} → mempty
-        LiteralChar {} → mempty
-        LiteralBool {} → mempty
-        LiteralArray _ann as → foldMap (adjacencyListForExpr scope) as
-        LiteralObject _ann ps → foldMap (adjacencyListForExpr scope . snd) ps
-        Exception {} → mempty
-        ForeignImport {} → mempty
-        Ctor {} → mempty
-        ReflectCtor _ann a →
-          adjacencyListForExpr scope a
-        Eq _ann a b →
-          adjacencyListForExpr scope a <> adjacencyListForExpr scope b
-        DataArgumentByIndex _ann _index a →
-          adjacencyListForExpr scope a
-        ArrayLength _ann a →
-          adjacencyListForExpr scope a
-        ArrayIndex _ann a _index →
-          adjacencyListForExpr scope a
-        ObjectProp _ann a _prop →
-          adjacencyListForExpr scope a
-        ObjectUpdate _ann o patches →
-          adjacencyListForExpr scope o
-            <> foldMap (adjacencyListForExpr scope . snd) patches
-        IfThenElse _ann i t e →
-          adjacencyListForExpr scope i
-            <> adjacencyListForExpr scope t
-            <> adjacencyListForExpr scope e
-        App _ann a b →
-          adjacencyListForExpr scope a <> adjacencyListForExpr scope b
-        Ref _ann _qname →
-          mempty
         Abs _ann param b →
           case param of
             ParamUnused _ann' → adjacencyListForExpr scope b
@@ -342,6 +310,8 @@ eliminateDeadCode uber@UberModule {..} =
           -- binding (see Note [Sequential scoping of Let bindings]).
           (bodyScope, groupingsAdjacency) =
             foldl' adjacencyListForGrouping (scope, mempty) groupings
+        -- No other constructor binds names, so the scope passes through:
+        other → foldMapOf subexpressions (adjacencyListForExpr scope) other
    where
     -- See Note [Sequential scoping of Let bindings]
     adjacencyListForGrouping
@@ -370,28 +340,11 @@ eliminateDeadCode uber@UberModule {..} =
 
 expressionDependsOnIds ∷ Scope → AExp → [Id]
 expressionDependsOnIds exprScope = \case
-  LiteralArray _ann as → nodeId <$> as
-  LiteralObject _ann ps → nodeId . snd <$> ps
-  LiteralInt {} → []
-  LiteralFloat {} → []
-  LiteralString {} → []
-  LiteralChar {} → []
-  LiteralBool {} → []
-  Exception {} → []
-  ForeignImport {} → []
-  Ctor {} → []
-  ReflectCtor _ann a → [nodeId a]
-  Eq _ann a b → [nodeId a, nodeId b]
-  DataArgumentByIndex _ann _idx a → [nodeId a]
-  ArrayLength _ann as → [nodeId as]
-  ArrayIndex _ann a _idx → [nodeId a]
-  ObjectProp _ann a _prp → [nodeId a]
-  ObjectUpdate _ann o patches → nodeId o : toList (nodeId . snd <$> patches)
-  Abs _ann _ b → [nodeId b]
-  App _ann a b → [nodeId a, nodeId b]
-  IfThenElse _ann i t e → [nodeId i, nodeId t, nodeId e]
   Ref _ann qname → maybeToList $ Map.lookup qname exprScope
+  -- A Let node depends only on its body: the groupings are pulled in
+  -- via the per-binder nodes built by 'adjacencyListForGrouping'.
   Let _ann _groupings body → [nodeId body]
+  other → nodeId <$> toListOf subexpressions other
 
 {- | Under GUC (@UniqueBinders@) no two live binders at one site share a
 name, so a fresh local binder can never collide with one already in
@@ -419,36 +372,13 @@ nextId = AnnM (get >>= \i → i <$ put (i + 1))
 runAnnM ∷ AnnM a → a
 runAnnM = (`evalState` 0) . unAnnM
 
+{- | Pair every annotation position of the expression — node, parameter,
+Let-binding name, foreign-import name — with a fresh 'Id', via the
+derived 'Traversable' of 'RawExp'.
+-}
 assignUniqueIds ∷ Exp → AnnM AExp
-assignUniqueIds =
-  annotateExpM identity annotateExp annotateParam annotateName
- where
-  annotateExp ∷ RawExp Ann → AnnM (Id, Ann)
-  annotateExp e = (,getAnn e) <$> nextId
+assignUniqueIds = traverse \ann → (,ann) <$> nextId
 
-  annotateParam ∷ Parameter Ann → AnnM (Parameter (Id, Ann))
-  annotateParam = \case
-    ParamNamed ann name → do
-      id' ← nextId
-      pure $ ParamNamed (id', ann) name
-    ParamUnused ann → do
-      id' ← nextId
-      pure $ ParamUnused (id', ann)
-
-  annotateName ∷ Ann → Name → AnnM (Id, Ann)
-  annotateName a _name = (,a) <$> nextId
-
+-- | Strip the 'Id's back off, via the derived 'Functor' of 'RawExp'.
 deannotateExp ∷ AExp → Exp
-deannotateExp expr = runIdentity do
-  annotateExpM identity deannotateExp' deannotateParam deannotateName expr
- where
-  deannotateExp' ∷ Applicative f ⇒ RawExp (Id, Ann) → f Ann
-  deannotateExp' = pure . snd . getAnn
-
-  deannotateParam ∷ Applicative f ⇒ Parameter (Id, Ann) → f (Parameter Ann)
-  deannotateParam = \case
-    ParamNamed (_id, ann) name → pure $ ParamNamed ann name
-    ParamUnused (_id, ann) → pure $ ParamUnused ann
-
-  deannotateName ∷ Applicative f ⇒ (Id, Ann) → Name → f Ann
-  deannotateName (_id, ann) _name = pure ann
+deannotateExp = fmap snd

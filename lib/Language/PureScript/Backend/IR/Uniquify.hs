@@ -24,6 +24,7 @@ module Language.PureScript.Backend.IR.Uniquify
   , uniquifyNamesInExpr
   ) where
 
+import Control.Lens (traverseOf)
 import Data.List.NonEmpty qualified as NE
 import Data.Map qualified as Map
 import Data.Set qualified as Set
@@ -38,6 +39,7 @@ import Language.PureScript.Backend.IR.Types
   , Grouping (..)
   , Parameter (..)
   , RawExp (..)
+  , subexpressions
   )
 import Language.PureScript.Names (runtimeLazyName)
 
@@ -70,28 +72,6 @@ uniquifyNamesInExpr e =
  where
   go ∷ RenamesInScope → Exp → State (Set Name) Exp
   go scope = \case
-    LiteralArray ann as →
-      LiteralArray ann <$> traverse (go scope) as
-    LiteralObject ann ps →
-      LiteralObject ann <$> traverse (traverse (go scope)) ps
-    ReflectCtor ann a →
-      ReflectCtor ann <$> go scope a
-    Eq ann a b →
-      Eq ann <$> go scope a <*> go scope b
-    DataArgumentByIndex ann index a →
-      DataArgumentByIndex ann index <$> go scope a
-    ArrayLength ann a →
-      ArrayLength ann <$> go scope a
-    ArrayIndex ann a index →
-      ArrayIndex ann <$> go scope a <*> pure index
-    ObjectProp ann a prop →
-      ObjectProp ann <$> go scope a <*> pure prop
-    ObjectUpdate ann a ps →
-      ObjectUpdate ann <$> go scope a <*> traverse (traverse (go scope)) ps
-    App ann a b →
-      App ann <$> go scope a <*> go scope b
-    IfThenElse ann i t f →
-      IfThenElse ann <$> go scope i <*> go scope t <*> go scope f
     Abs ann param body →
       case param of
         ParamUnused _ann → Abs ann param <$> go scope body
@@ -107,17 +87,11 @@ uniquifyNamesInExpr e =
     Let ann binds body → do
       (scope', binds') ← foldlM withGrouping (scope, []) (toList binds)
       Let ann (NE.fromList (reverse binds')) <$> go scope' body
-    -- Terminals:
-    terminal@LiteralInt {} → pure terminal
-    terminal@LiteralFloat {} → pure terminal
-    terminal@LiteralString {} → pure terminal
-    terminal@LiteralChar {} → pure terminal
-    terminal@LiteralBool {} → pure terminal
-    terminal@Ctor {} → pure terminal
-    terminal@Exception {} → pure terminal
-    -- The names of a foreign import are the export keys of the foreign
-    -- source file, not binders — they must not be renamed.
-    terminal@ForeignImport {} → pure terminal
+    -- No other constructor binds or references names, so the scope
+    -- passes through ('ForeignImport' included: its name list holds the
+    -- export keys of the foreign source file, not binders — they must
+    -- not be renamed):
+    other → traverseOf subexpressions (go scope) other
 
   withGrouping
     ∷ (RenamesInScope, [Grouping (Ann, Name, Exp)])
