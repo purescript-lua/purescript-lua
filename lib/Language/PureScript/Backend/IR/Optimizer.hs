@@ -1,5 +1,6 @@
 module Language.PureScript.Backend.IR.Optimizer where
 
+import Control.Monad.Writer.CPS (WriterT, runWriterT, tell)
 import Data.Foldable (foldrM)
 import Data.Map qualified as Map
 import Data.Set qualified as Set
@@ -31,6 +32,7 @@ import Language.PureScript.Backend.IR.Types
   , Parameter (..)
   , RawExp (..)
   , RewriteRuleM
+  , WasRewritten (..)
   , alphaEq
   , bindingExprs
   , countFreeRef
@@ -104,7 +106,7 @@ optimizerPipeline neverNames =
   uniquifyPass =
     Pass
       { passName = "uniquify"
-      , passRun = pure . uniquifyNames
+      , passRun = conservatively . pure . uniquifyNames
       , passRequires = wellScoped
       , passEnsures = guc
       }
@@ -115,20 +117,26 @@ optimizerPipeline neverNames =
       , passRequires = guc
       , passEnsures = guc
       }
-  dcePass = gucPass "dce" eliminateDeadCode
+  dcePass =
+    Pass
+      { passName = "dce"
+      , passRun = pure . eliminateDeadCode
+      , passRequires = guc
+      , passEnsures = guc
+      }
   mergeForeignsPass = gucPass "mergeForeigns" mergeForeignsIntoBindings
   floatInPass = gucPass "float-in" floatIn
   magicDoPass =
     Pass
       { passName = "magicDo"
-      , passRun = magicDo
+      , passRun = conservatively . magicDo
       , passRequires = guc
       , passEnsures = guc
       }
   flattenDeepBindsPass =
     Pass
       { passName = "flattenDeepBinds"
-      , passRun = flattenDeepBindsM
+      , passRun = conservatively . flattenDeepBindsM
       , passRequires = guc
       , passEnsures = guc
       }
@@ -137,10 +145,15 @@ optimizerPipeline neverNames =
   gucPass name run =
     Pass
       { passName = name
-      , passRun = pure . run
+      , passRun = conservatively . pure . run
       , passRequires = guc
       , passEnsures = guc
       }
+
+  -- Run-once passes report a conservative 'Rewritten' — only fixpoint
+  -- members (optimize, dce) need a precise signal (see 'passRun').
+  conservatively ∷ SupplyM UberModule → SupplyM (UberModule, WasRewritten)
+  conservatively = fmap (,Rewritten)
 
   wellScoped ∷ Set Invariant
   wellScoped = Set.singleton WellScoped
@@ -170,13 +183,13 @@ neverInlineNames UberModule {uberModuleBindings} =
     , getAnn expr == Just Never
     ]
 
-optimizeModule ∷ Set QName → UberModule → SupplyM UberModule
-optimizeModule neverNames UberModule {..} = do
+optimizeModule ∷ Set QName → UberModule → SupplyM (UberModule, WasRewritten)
+optimizeModule neverNames UberModule {..} = runWriterT do
   (bindings, exports) ←
     foldrM withBinding ([], uberModuleExports) uberModuleBindings
   uberModuleBindings' ←
-    traverse (traverse (traverse optimizedExpressionM)) bindings
-  uberModuleExports' ← traverse (traverse optimizedExpressionM) exports
+    traverse (traverse (traverse optimizeExp)) bindings
+  uberModuleExports' ← traverse (traverse optimizeExp) exports
   pure
     UberModule
       { uberModuleForeigns
@@ -184,14 +197,22 @@ optimizeModule neverNames UberModule {..} = do
       , uberModuleExports = uberModuleExports'
       }
  where
+  -- Every expression rewrite and every top-level inlining reports into
+  -- the pass's 'WasRewritten' result; nothing else in this pass changes
+  -- the module, so a converged module reports 'Unmodified'.
+  optimizeExp ∷ Exp → WriterT WasRewritten SupplyM Exp
+  optimizeExp e = do
+    (e', rewritten) ← lift (optimizedExpressionM e)
+    e' <$ tell rewritten
+
   withBinding
     ∷ Grouping (QName, Exp)
     → ([Grouping (QName, Exp)], [(Name, Exp)])
-    → SupplyM ([Grouping (QName, Exp)], [(Name, Exp)])
+    → WriterT WasRewritten SupplyM ([Grouping (QName, Exp)], [(Name, Exp)])
   withBinding binding (bindings, exports) =
     case binding of
       Standalone (qname, expr0) → do
-        expr ← optimizedExpressionM expr0
+        expr ← optimizeExp expr0
         -- See Note [Inline annotations and inlining heuristics]
         let isUsedOnce name =
               1 == Map.findWithDefault 0 (qualifiedQName name) uberModuleFreeRefs
@@ -204,13 +225,18 @@ optimizeModule neverNames UberModule {..} = do
               (bindingExprs =<< uberModuleBindings) <> map snd exports
         if qname `Set.notMember` neverNames
           && (isInlinableExpr expr || isUsedOnce qname)
-          then
-            (,)
-              <$> substituteInBindings qname expr bindings
-              <*> substituteInExports qname expr exports
+          then do
+            -- The binding is dropped from the module in favor of the
+            -- substituted copies: a rewrite even when it had no
+            -- occurrences left to substitute.
+            tell Rewritten
+            lift $
+              (,)
+                <$> substituteInBindings qname expr bindings
+                <*> substituteInExports qname expr exports
           else pure (Standalone (qname, expr) : bindings, exports)
       RecursiveGroup recGroup → do
-        recGroup' ← traverse (traverse optimizedExpressionM) recGroup
+        recGroup' ← traverse (traverse optimizeExp) recGroup
         pure (RecursiveGroup recGroup' : bindings, exports)
 
 -- Cross-entry substitution: the host entry's binders give no uniqueness
@@ -244,21 +270,20 @@ its own supply. Production code uses 'optimizedExpressionM' so all
 passes share one supply.
 -}
 optimizedExpression ∷ Exp → Exp
-optimizedExpression = runSupply . optimizedExpressionM
+optimizedExpression = runSupply . fmap fst . optimizedExpressionM
 
-optimizedExpressionM ∷ Exp → SupplyM Exp
+optimizedExpressionM ∷ Exp → SupplyM (Exp, WasRewritten)
 optimizedExpressionM =
   -- See Note [Eta reduction is unsound]
-  fmap fst
-    . rewriteExpBottomUpM
-      ( constantFolding
-          `thenRewrite` betaReduce
-          `thenRewrite` betaReduceUnusedParams
-          `thenRewrite` removeUnreachableThenBranch
-          `thenRewrite` removeUnreachableElseBranch
-          `thenRewrite` removeIfWithEqualBranches
-          `thenRewrite` inlineLocalBindings
-      )
+  rewriteExpBottomUpM
+    ( constantFolding
+        `thenRewrite` betaReduce
+        `thenRewrite` betaReduceUnusedParams
+        `thenRewrite` removeUnreachableThenBranch
+        `thenRewrite` removeUnreachableElseBranch
+        `thenRewrite` removeIfWithEqualBranches
+        `thenRewrite` inlineLocalBindings
+    )
 
 {- Note [IR is assumed well-typed]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -377,14 +402,16 @@ removeUnreachableElseBranch e = pure case e of
 inlineLocalBindings ∷ RewriteRuleM SupplyM Ann
 inlineLocalBindings = \case
   Let ann groupings body → do
-    (body', Any inlined) ← foldrM inlineLocalBinding (body, Any False) groupings
-    pure $ if inlined then Just (Let ann groupings body') else Nothing
+    (body', inlined) ← foldrM inlineLocalBinding (body, Unmodified) groupings
+    pure case inlined of
+      Rewritten → Just (Let ann groupings body')
+      Unmodified → Nothing
   _ → pure Nothing
 
 {- | Inline one binding into the Let's body when the heuristic wants it
 /and/ the body actually references it — a zero-occurrence substitution
-is a no-op and must not report a change (the honesty contract of
-'RewriteRuleM'), or the optimize fixpoint would never converge.
+is a no-op and must not report a rewrite (the 'RewriteRule' contract),
+or the optimize fixpoint would never converge.
 
 The inlinee must not reference the binding's own name: substitution
 never descends into its insertions, so a self-reference would keep the
@@ -398,7 +425,10 @@ a same-named reference in the RHS would be a duplicate binder upstream
 — but 'optimizedExpression' is also exercised directly on non-GUC
 input, where the rule must decline rather than loop or capture.
 -}
-inlineLocalBinding ∷ Grouping (Ann, Name, Exp) → (Exp, Any) → SupplyM (Exp, Any)
+inlineLocalBinding
+  ∷ Grouping (Ann, Name, Exp)
+  → (Exp, WasRewritten)
+  → SupplyM (Exp, WasRewritten)
 inlineLocalBinding grouping (body, inlined) =
   case grouping of
     RecursiveGroup _grp → pure (body, inlined) -- Not inlining recursive bindings
@@ -408,7 +438,7 @@ inlineLocalBinding grouping (body, inlined) =
       , isInlinableExpr inlinee || occurrences == 1 →
           -- The binding survives until DCE drops it, so the inserted copy
           -- must not reuse its binder names ('substituteCopyM').
-          (,Any True) <$> substituteCopyM name inlinee body
+          (,Rewritten) <$> substituteCopyM name inlinee body
       | otherwise → pure (body, inlined)
      where
       occurrences ∷ Natural

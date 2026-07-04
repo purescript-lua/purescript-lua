@@ -15,6 +15,7 @@ import Language.PureScript.Backend.IR.Types
   , Grouping (..)
   , RawExp (..)
   , RewriteRule
+  , WasRewritten (..)
   , abstraction
   , alphaEq
   , application
@@ -166,17 +167,17 @@ spec = describe "Types" do
 
     describe "rewriteExpBottomUp" do
       it "reports no change when no rule fires" do
-        -- The honesty contract end-to-end: the flag must be False on an
-        -- expression the rule set cannot rewrite (issue #144 relies on
-        -- this to stop the optimize fixpoint).
+        -- The 'RewriteRule' contract end-to-end: the result must say
+        -- 'Unmodified' for an expression the rule set cannot rewrite
+        -- (the optimize fixpoint relies on this to stop).
         let e = abstraction (paramNamed x) (eq (refLocal x) (literalInt 1))
-        rewriteExpBottomUp foldEq e `shouldBe` (e, Any False)
+        rewriteExpBottomUp foldEq e `shouldBe` (e, Unmodified)
 
       it "folds children before their parent sees them" do
         -- The outer Eq only matches because the inner Eq was folded
         -- first: bottom-up order, one pass.
         let e = eq (eq (literalInt 1) (literalInt 1)) (refLocal x)
-        rewriteExpBottomUp foldEq e `shouldBe` (refLocal x, Any True)
+        rewriteExpBottomUp foldEq e `shouldBe` (refLocal x, Rewritten)
 
       it "one pass is complete: a second pass reports no change" do
         let e =
@@ -184,9 +185,9 @@ spec = describe "Types" do
                 eq
                   (eq (literalInt 1) (literalInt 2))
                   (eq (literalInt 3) (literalInt 3))
-            (once, Any changed) = rewriteExpBottomUp foldEq e
-        changed `shouldBe` True
-        rewriteExpBottomUp foldEq once `shouldBe` (once, Any False)
+            (once, rewritten) = rewriteExpBottomUp foldEq e
+        rewritten `shouldBe` Rewritten
+        rewriteExpBottomUp foldEq once `shouldBe` (once, Unmodified)
 
     describe "rewriteExpTopDownM" do
       let topDown ∷ RewriteRule Ann → Exp → Exp

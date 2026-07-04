@@ -24,9 +24,11 @@ import Language.PureScript.Backend.IR.Types
   , Grouping (..)
   , Parameter (..)
   , RawExp (..)
+  , WasRewritten (..)
   , getAnn
   , listGrouping
   , rewriteExpBottomUp
+  , rewrittenIf
   , subexpressions
   )
 
@@ -40,7 +42,13 @@ type Scope = Map (Qualified Name) Id
 
 type Node = ((), Id, [Id])
 
-eliminateDeadCode ∷ UberModule → UberModule
+{- | Drop the unreachable bindings of the module. The 'WasRewritten'
+result (see 'Language.PureScript.Backend.IR.Pass.passRun') reports
+precisely whether anything was dropped, blanked, or pruned — an
+expression rewrite fired ('dceAnnotatedExp'), a top-level binding or
+foreign was dropped, or a 'ForeignImport' name list was pruned.
+-}
+eliminateDeadCode ∷ UberModule → (UberModule, WasRewritten)
 eliminateDeadCode uber@UberModule {..} =
   -- traceIt "annotatedForeigns" annotatedForeigns $
   --   traceIt "annotatedBindings" annotatedBindings $
@@ -48,12 +56,24 @@ eliminateDeadCode uber@UberModule {..} =
   --       traceIt "topLevelScope" topLevelScope $
   --         traceIt "adjacencyList" adjacencyList $
   --           traceIt "reachableIds" reachableIds $
-  uber
-    { uberModuleForeigns = preservedForeigns
-    , uberModuleBindings = preservedBindings
-    , uberModuleExports = preservedExports
-    }
+  ( uber
+      { uberModuleForeigns = preservedForeigns
+      , uberModuleBindings = preservedBindings
+      , uberModuleExports = preservedExports
+      }
+  , mconcat
+      [ exprRewrites
+      , rewrittenIf (length preservedForeigns /= length annotatedForeigns)
+      , rewrittenIf
+          (groupingMembers preservedBindings /= groupingMembers annotatedBindings)
+      ]
+  )
  where
+  exprRewrites ∷ WasRewritten
+  exprRewrites = foreignExprRewrites <> bindingExprRewrites <> exportExprRewrites
+
+  groupingMembers ∷ [Grouping a] → Int
+  groupingMembers = length . (listGrouping =<<)
   -- traceIt ∷ ∀ a b. Show a ⇒ String → a → b → b
   -- traceIt label it =
   --   trace ("\n\n" <> label <> ":\n" <> pp it <> "\n")
@@ -66,39 +86,43 @@ eliminateDeadCode uber@UberModule {..} =
   --           }
 
   -- See Note [Foreign bindings structure emitted by the Linker]
-  preservedForeigns ∷ [(QName, Exp)]
-  preservedForeigns = do
-    (name, expr) ← annotatedForeigns
-    guard $ nodeId expr `member` reachableIds
-    pure . (name,) $ case expr of
-      ForeignImport (_id, ann) modname path names →
-        ForeignImport
-          ann
-          modname
-          path
-          [(a, n) | ((i, a), n) ← names, i `member` reachableIds]
-      other → dceAnnotatedExp other
-
-  preservedBindings ∷ [Grouping (QName, Exp)] =
-    annotatedBindings >>= \case
-      Standalone (qname, expr) → do
-        guard $ nodeId expr `member` reachableIds
-        [Standalone (qname, dceAnnotatedExp expr)]
-      RecursiveGroup recBinds →
-        case NE.nonEmpty (preservedRecBinds (toList recBinds)) of
-          Nothing → []
-          Just pb → [RecursiveGroup pb]
-   where
-    preservedRecBinds ∷ [(QName, AExp)] → [(QName, Exp)]
-    preservedRecBinds recBinds = do
-      (qname, expr) ← recBinds
+  ( preservedForeigns ∷ [(QName, Exp)]
+    , foreignExprRewrites ∷ WasRewritten
+    ) = second fold $ unzip do
+      (name, expr) ← annotatedForeigns
       guard $ nodeId expr `member` reachableIds
-      pure (qname, dceAnnotatedExp expr)
+      pure case expr of
+        ForeignImport (_id, ann) modname path names →
+          let keptNames = [(a, n) | ((i, a), n) ← names, i `member` reachableIds]
+           in ( (name, ForeignImport ann modname path keptNames)
+              , rewrittenIf (length keptNames /= length names)
+              )
+        other → first (name,) (dceAnnotatedExp other)
 
-  preservedExports ∷ [(Name, Exp)]
-  preservedExports = do
-    (name, annotatedExp) ← annotatedExports
-    pure (name, dceAnnotatedExp annotatedExp)
+  ( preservedBindings ∷ [Grouping (QName, Exp)]
+    , bindingExprRewrites ∷ WasRewritten
+    ) = second fold $ unzip do
+      annotatedBindings >>= \case
+        Standalone (qname, expr) → do
+          guard $ nodeId expr `member` reachableIds
+          let (e, rewritten) = dceAnnotatedExp expr
+          [(Standalone (qname, e), rewritten)]
+        RecursiveGroup recBinds →
+          case NE.nonEmpty (preservedRecBinds (toList recBinds)) of
+            Nothing → []
+            Just pb → [(RecursiveGroup (fst <$> pb), foldMap snd pb)]
+     where
+      preservedRecBinds ∷ [(QName, AExp)] → [((QName, Exp), WasRewritten)]
+      preservedRecBinds recBinds = do
+        (qname, expr) ← recBinds
+        guard $ nodeId expr `member` reachableIds
+        pure (first (qname,) (dceAnnotatedExp expr))
+
+  ( preservedExports ∷ [(Name, Exp)]
+    , exportExprRewrites ∷ WasRewritten
+    ) = second fold $ unzip do
+      (name, annotatedExp) ← annotatedExports
+      pure (first (name,) (dceAnnotatedExp annotatedExp))
 
   -- run these computations in the same monad
   -- so that we can share the state of the ID counter
@@ -124,16 +148,16 @@ eliminateDeadCode uber@UberModule {..} =
   -- the node collapses to its body, a body that is itself a Let has
   -- already had its own dead bindings dropped — the Recurse-escape bug
   -- class (issue #149) cannot arise, and no rebuild cascade is needed.
-  -- Both rules observe the honesty contract of 'RewriteRule': they fire
-  -- only when a binder is actually blanked or dropped (issue #145), so
-  -- the driver's change flag is a sound fixpoint signal (issue #144).
-  dceAnnotatedExp ∷ AExp → Exp
+  -- Both rules fire only when a binder is actually blanked or dropped
+  -- (the 'RewriteRule' contract, issue #145), so the driver's
+  -- 'WasRewritten' signal is precise.
+  dceAnnotatedExp ∷ AExp → (Exp, WasRewritten)
   dceAnnotatedExp =
-    deannotateExp . fst . rewriteExpBottomUp \case
+    first deannotateExp . rewriteExpBottomUp \case
       -- Under GUC a dead binder is unreferenced by definition, so
       -- blanking its name touches no reference elsewhere (the hazard
       -- behind issue #56). Requiring 'ParamNamed' keeps the rule
-      -- honest: an already-blank parameter is left alone (issue #145).
+      -- precise: an already-blank parameter is left alone.
       Abs ann (ParamNamed pann@(paramId, _) _name) b
         | not (paramId `member` reachableIds) →
             Just (Abs ann (ParamUnused pann) b)
