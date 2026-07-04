@@ -218,10 +218,10 @@ UberModule
         ( LiteralObject Nothing
           [
             ( PropName "discard", Abs Nothing
-              ( ParamNamed Nothing ( Name "dictBind$30$1374" ) )
+              ( ParamNamed Nothing ( Name "dictBind$30$730" ) )
               ( App Nothing
                 ( Ref Nothing ( Imported ( ModuleName "Control.Bind" ) ( Name "bind" ) ) )
-                ( Ref Nothing ( Local ( Name "dictBind$30$1374" ) ) )
+                ( Ref Nothing ( Local ( Name "dictBind$30$730" ) ) )
               )
             )
           ]
@@ -233,7 +233,7 @@ UberModule
       ( Name "baz", App Nothing
         ( Let Nothing
           ( Standalone
-            ( Nothing, Name "Bind1$1376", App Nothing
+            ( Nothing, Name "Bind1$732", App Nothing
               ( ObjectProp Nothing
                 ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "monadEffect" ) ) )
                 ( PropName "Bind1" )
@@ -241,7 +241,7 @@ UberModule
               ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) )
             ) :|
             [ Standalone
-              ( Nothing, Name "pure$1377", App Nothing
+              ( Nothing, Name "pure$733", App Nothing
                 ( Ref Nothing ( Imported ( ModuleName "Control.Applicative" ) ( Name "pure" ) ) )
                 ( App Nothing
                   ( ObjectProp Nothing
@@ -254,31 +254,31 @@ UberModule
             ]
           )
           ( Abs Nothing
-            ( ParamNamed Nothing ( Name "f$1378" ) )
+            ( ParamNamed Nothing ( Name "f$734" ) )
             ( App Nothing
               ( App Nothing
                 ( App Nothing
                   ( Ref Nothing
                     ( Imported ( ModuleName "Golden.Issue37.Test" ) ( Name "discard" ) )
                   )
-                  ( Ref Nothing ( Local ( Name "Bind1$1376" ) ) )
+                  ( Ref Nothing ( Local ( Name "Bind1$732" ) ) )
                 )
-                ( Ref Nothing ( Local ( Name "f$1378" ) ) )
+                ( Ref Nothing ( Local ( Name "f$734" ) ) )
               )
               ( Abs Nothing ( ParamUnused Nothing )
                 ( App Nothing
                   ( App Nothing
                     ( App Nothing
                       ( Ref Nothing ( Imported ( ModuleName "Control.Bind" ) ( Name "bind" ) ) )
-                      ( Ref Nothing ( Local ( Name "Bind1$1376" ) ) )
+                      ( Ref Nothing ( Local ( Name "Bind1$732" ) ) )
                     )
                     ( App Nothing
-                      ( Ref Nothing ( Local ( Name "pure$1377" ) ) )
+                      ( Ref Nothing ( Local ( Name "pure$733" ) ) )
                       ( LiteralArray Nothing
                         [ App Nothing
                           ( Let Nothing
                             ( Standalone
-                              ( Nothing, Name "Bind1$6$1379", App Nothing
+                              ( Nothing, Name "Bind1$6$735", App Nothing
                                 ( ObjectProp Nothing
                                   ( Ref Nothing
                                     ( Imported ( ModuleName "Effect" ) ( Name "monadEffect" ) )
@@ -290,19 +290,19 @@ UberModule
                                 )
                               ) :|
                               [ Standalone
-                                ( Nothing, Name "discard1$8$1380", App Nothing
+                                ( Nothing, Name "discard1$8$736", App Nothing
                                   ( Ref Nothing
                                     ( Imported
                                       ( ModuleName "Golden.Issue37.Test" )
                                       ( Name "discard" )
                                     )
                                   )
-                                  ( Ref Nothing ( Local ( Name "Bind1$6$1379" ) ) )
+                                  ( Ref Nothing ( Local ( Name "Bind1$6$735" ) ) )
                                 )
                               ]
                             )
                             ( Abs Nothing
-                              ( ParamNamed Nothing ( Name "fn1$9$1381" ) )
+                              ( ParamNamed Nothing ( Name "fn1$9$737" ) )
                               ( App Nothing
                                 ( App Nothing
                                   ( App Nothing
@@ -324,22 +324,22 @@ UberModule
                                       )
                                     )
                                   )
-                                  ( Ref Nothing ( Local ( Name "fn1$9$1381" ) ) )
+                                  ( Ref Nothing ( Local ( Name "fn1$9$737" ) ) )
                                 )
                                 ( Abs Nothing ( ParamUnused Nothing )
                                   ( App Nothing
                                     ( App Nothing
-                                      ( Ref Nothing ( Local ( Name "discard1$8$1380" ) ) )
-                                      ( Ref Nothing ( Local ( Name "fn1$9$1381" ) ) )
+                                      ( Ref Nothing ( Local ( Name "discard1$8$736" ) ) )
+                                      ( Ref Nothing ( Local ( Name "fn1$9$737" ) ) )
                                     )
                                     ( Abs Nothing ( ParamUnused Nothing )
                                       ( App Nothing
                                         ( App Nothing
-                                          ( Ref Nothing ( Local ( Name "discard1$8$1380" ) ) )
-                                          ( Ref Nothing ( Local ( Name "fn1$9$1381" ) ) )
+                                          ( Ref Nothing ( Local ( Name "discard1$8$736" ) ) )
+                                          ( Ref Nothing ( Local ( Name "fn1$9$737" ) ) )
                                         )
                                         ( Abs Nothing ( ParamUnused Nothing )
-                                          ( Ref Nothing ( Local ( Name "fn1$9$1381" ) ) )
+                                          ( Ref Nothing ( Local ( Name "fn1$9$737" ) ) )
                                         )
                                       )
                                     )
@@ -348,14 +348,14 @@ UberModule
                               )
                             )
                           )
-                          ( Ref Nothing ( Local ( Name "f$1378" ) ) )
+                          ( Ref Nothing ( Local ( Name "f$734" ) ) )
                         ]
                       )
                     )
                   )
                   ( Abs Nothing ( ParamUnused Nothing )
                     ( App Nothing
-                      ( Ref Nothing ( Local ( Name "pure$1377" ) ) )
+                      ( Ref Nothing ( Local ( Name "pure$733" ) ) )
                       ( ObjectProp ( Just Always )
                         ( Ref Nothing ( Imported ( ModuleName "Data.Unit" ) ( Name "foreign" ) ) )
                         ( PropName "unit" )

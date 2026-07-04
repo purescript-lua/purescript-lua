@@ -420,10 +420,10 @@ UberModule
           ( LiteralObject Nothing
             [
               ( PropName "discard", Abs Nothing
-                ( ParamNamed Nothing ( Name "dictBind$49$1291" ) )
+                ( ParamNamed Nothing ( Name "dictBind$49$695" ) )
                 ( App Nothing
                   ( Ref Nothing ( Imported ( ModuleName "Control.Bind" ) ( Name "bind" ) ) )
-                  ( Ref Nothing ( Local ( Name "dictBind$49$1291" ) ) )
+                  ( Ref Nothing ( Local ( Name "dictBind$49$695" ) ) )
                 )
               )
             ]
@@ -449,13 +449,13 @@ UberModule
               ( LiteralObject Nothing
                 [
                   ( PropName "show", Abs Nothing
-                    ( ParamNamed Nothing ( Name "v$928$1292" ) )
+                    ( ParamNamed Nothing ( Name "v$464$696" ) )
                     ( IfThenElse Nothing
-                      ( Ref Nothing ( Local ( Name "v$928$1292" ) ) )
+                      ( Ref Nothing ( Local ( Name "v$464$696" ) ) )
                       ( LiteralString Nothing "true" )
                       ( IfThenElse Nothing
                         ( Eq Nothing ( LiteralBool Nothing False )
-                          ( Ref Nothing ( Local ( Name "v$928$1292" ) ) )
+                          ( Ref Nothing ( Local ( Name "v$464$696" ) ) )
                         )
                         ( LiteralString Nothing "false" )
                         ( Exception Nothing "No patterns matched" )

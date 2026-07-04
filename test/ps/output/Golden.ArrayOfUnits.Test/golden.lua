@@ -69,10 +69,10 @@ M.Data_Foldable_foldableArray = {
   foldr = M.Data_Foldable_foreign.foldrArray,
   foldl = M.Data_Foldable_foreign.foldlArray,
   foldMap = function(dictMonoid)
-    return function(f_S_3356)
-      return M.Data_Foldable_foldr(M.Data_Foldable_foldableArray)(function( x_S_3357 )
-        return function(acc_S_3358)
-          return (dictMonoid.Semigroup0()).append(f_S_3356(x_S_3357))(acc_S_3358)
+    return function(f_S_1824)
+      return M.Data_Foldable_foldr(M.Data_Foldable_foldableArray)(function( x_S_1825 )
+        return function(acc_S_1826)
+          return (dictMonoid.Semigroup0()).append(f_S_1824(x_S_1825))(acc_S_1826)
         end
       end)(dictMonoid.mempty)
     end
@@ -92,9 +92,9 @@ M.Effect_applicativeEffect = {
 }
 M.Effect_Lazy_functorEffect = PSLUA_runtime_lazy("functorEffect")(function()
   return {
-    map = function(f_S_1991)
-      return function(a_S_1992)
-        return M.Control_Apply_apply(M.Effect_applicativeEffect.Apply0())(M.Control_Applicative_pure(M.Effect_applicativeEffect)(f_S_1991))(a_S_1992)
+    map = function(f_S_1109)
+      return function(a_S_1110)
+        return M.Control_Apply_apply(M.Effect_applicativeEffect.Apply0())(M.Control_Applicative_pure(M.Effect_applicativeEffect)(f_S_1109))(a_S_1110)
       end
     end
   }
@@ -102,12 +102,12 @@ end)
 M.Effect_Lazy_applyEffect = PSLUA_runtime_lazy("applyEffect")(function()
   return {
     apply = (function()
-      local bind_S_1972 = M.Control_Bind_bind(M.Effect_monadEffect.Bind1())
-      return function(f_S_1974)
-        return function(a_S_1975)
-          return bind_S_1972(f_S_1974)(function(fPrime_S_1976)
-            return bind_S_1972(a_S_1975)(function(aPrime_S_1977)
-              return M.Control_Applicative_pure(M.Effect_monadEffect.Applicative0())(fPrime_S_1976(aPrime_S_1977))
+      local bind_S_1090 = M.Control_Bind_bind(M.Effect_monadEffect.Bind1())
+      return function(f_S_1092)
+        return function(a_S_1093)
+          return bind_S_1090(f_S_1092)(function(fPrime_S_1094)
+            return bind_S_1090(a_S_1093)(function(aPrime_S_1095)
+              return M.Control_Applicative_pure(M.Effect_monadEffect.Applicative0())(fPrime_S_1094(aPrime_S_1095))
             end)
           end)
         end
@@ -128,20 +128,20 @@ return (function()
     [3] = M.Data_Unit_foreign.unit
   }
   return function()
-    local _ = M.Data_Foldable_foldr(M.Data_Foldable_foldableArray)(M.Control_Semigroupoid_semigroupoidFn.compose(function( a_S_2021_S_3362 )
-      return function(b_S_2022_S_3363)
+    local _ = M.Data_Foldable_foldr(M.Data_Foldable_foldableArray)(M.Control_Semigroupoid_semigroupoidFn.compose(function( a_S_1139_S_1830 )
+      return function(b_S_1140_S_1831)
         return M.Control_Apply_apply(M.Effect_applicativeEffect.Apply0())(((M.Effect_applicativeEffect.Apply0()).Functor0()).map(function(  )
-          return function(x_S_3375) return x_S_3375 end
-        end)(a_S_2021_S_3362))(b_S_2022_S_3363)
+          return function(x_S_1843) return x_S_1843 end
+        end)(a_S_1139_S_1830))(b_S_1140_S_1831)
       end
     end)(M.Effect_Console_logShow({
       show = function() return "unit" end
     })))(M.Control_Applicative_pure(M.Effect_applicativeEffect)(M.Data_Unit_foreign.unit))(arr_S_0)()
     return M.Effect_Console_logShow({
       show = function(n) return tostring(n) end
-    })(M.Data_Foldable_foldableArray.foldl(function(c_S_736_S_3353)
+    })(M.Data_Foldable_foldableArray.foldl(function(c_S_558_S_1821)
       return function()
-        return M.Data_Semiring_semiringInt.add(M.Data_Semiring_semiringInt.one)(c_S_736_S_3353)
+        return M.Data_Semiring_semiringInt.add(M.Data_Semiring_semiringInt.one)(c_S_558_S_1821)
       end
     end)(M.Data_Semiring_semiringInt.zero)(arr_S_0))()
   end

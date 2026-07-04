@@ -167,12 +167,14 @@ spec = describe "IR Dead Code Elimination" do
   -- Sequential (let*) resolution is covered by Uniquify.Spec ("renames
   -- a shadowing Let binder, resolving RHS pre-binding").
 
-  -- 'Rewritten Recurse' descends into the result's children without
-  -- re-applying the rule to the result itself. When a Let whose bindings
-  -- are all dead collapses to its body, and the body is itself a Let,
-  -- that inner Let node must not escape dead-code elimination: its dead
-  -- bindings would be kept while the parameters of lambdas inside them
-  -- are blanked (their ids are unreachable), leaving unbound references.
+  -- When a Let whose bindings are all dead collapses to its body, and
+  -- the body is itself a Let, that inner Let node must not escape
+  -- dead-code elimination: its dead bindings would be kept while the
+  -- parameters of lambdas inside them are blanked (their ids are
+  -- unreachable), leaving unbound references. The old top-down driver
+  -- needed a rebuild cascade for this (issue #149); the bottom-up
+  -- driver has already processed the exposed body — this test pins the
+  -- guarantee either way.
   it "eliminates dead bindings of a Let a collapsing Let exposes" $ hedgehog do
     let x = Name "x"
         k = Name "k"

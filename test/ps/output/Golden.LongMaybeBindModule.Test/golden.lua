@@ -35,12 +35,12 @@ M.Data_Maybe_applyMaybe = {
   end,
   Functor0 = function() return M.Data_Maybe_functorMaybe end
 }
-M.Golden_LongMaybeBindModule_Test_bind = function(v_S_1826)
-  return function(v1_S_1827)
-    if "Data.Maybe∷Maybe.Just" == v_S_1826["$ctor"] then
-      return v1_S_1827(v_S_1826.value0)
+M.Golden_LongMaybeBindModule_Test_bind = function(v_S_1182)
+  return function(v1_S_1183)
+    if "Data.Maybe∷Maybe.Just" == v_S_1182["$ctor"] then
+      return v1_S_1183(v_S_1182.value0)
     else
-      if "Data.Maybe∷Maybe.Nothing" == v_S_1826["$ctor"] then
+      if "Data.Maybe∷Maybe.Nothing" == v_S_1182["$ctor"] then
         return M.Data_Maybe_Nothing
       else
         return error("No patterns matched")
@@ -51,9 +51,9 @@ end
 M.Golden_LongMaybeBindModule_Test_add = M.Data_Semiring_foreign.intAdd
 return {
   compute = (function()
-    local _S_kont1832 = function(x1_S_0_S_1833)
-      return function(x277_S_276_S_1834)
-        return M.Golden_LongMaybeBindModule_Test_bind(M.Data_Maybe_Just(M.Golden_LongMaybeBindModule_Test_add(x277_S_276_S_1834)(1)))(function( x278_S_277 )
+    local _S_kont1188 = function(x1_S_0_S_1189)
+      return function(x277_S_276_S_1190)
+        return M.Golden_LongMaybeBindModule_Test_bind(M.Data_Maybe_Just(M.Golden_LongMaybeBindModule_Test_add(x277_S_276_S_1190)(1)))(function( x278_S_277 )
           return M.Golden_LongMaybeBindModule_Test_bind(M.Data_Maybe_Just(M.Golden_LongMaybeBindModule_Test_add(x278_S_277)(1)))(function( x279_S_278 )
             return M.Golden_LongMaybeBindModule_Test_bind(M.Data_Maybe_Just(M.Golden_LongMaybeBindModule_Test_add(x279_S_278)(1)))(function( x280_S_279 )
               return M.Golden_LongMaybeBindModule_Test_bind(M.Data_Maybe_Just(M.Golden_LongMaybeBindModule_Test_add(x280_S_279)(1)))(function( x281_S_280 )
@@ -76,7 +76,7 @@ return {
                                                 return M.Golden_LongMaybeBindModule_Test_bind(M.Data_Maybe_Just(M.Golden_LongMaybeBindModule_Test_add(x297_S_296)(1)))(function( x298_S_297 )
                                                   return M.Golden_LongMaybeBindModule_Test_bind(M.Data_Maybe_Just(M.Golden_LongMaybeBindModule_Test_add(x298_S_297)(1)))(function( x299_S_298 )
                                                     return M.Golden_LongMaybeBindModule_Test_bind(M.Data_Maybe_Just(M.Golden_LongMaybeBindModule_Test_add(x299_S_298)(1)))(function( x300_S_299 )
-                                                      return M.Data_Maybe_Just(M.Golden_LongMaybeBindModule_Test_add(x1_S_0_S_1833)(x300_S_299))
+                                                      return M.Data_Maybe_Just(M.Golden_LongMaybeBindModule_Test_add(x1_S_0_S_1189)(x300_S_299))
                                                     end)
                                                   end)
                                                 end)
@@ -102,9 +102,9 @@ return {
         end)
       end
     end
-    local _S_kont1835 = function(x1_S_0_S_1836)
-      return function(x238_S_237_S_1837)
-        return M.Golden_LongMaybeBindModule_Test_bind(M.Data_Maybe_Just(M.Golden_LongMaybeBindModule_Test_add(x238_S_237_S_1837)(1)))(function( x239_S_238 )
+    local _S_kont1191 = function(x1_S_0_S_1192)
+      return function(x238_S_237_S_1193)
+        return M.Golden_LongMaybeBindModule_Test_bind(M.Data_Maybe_Just(M.Golden_LongMaybeBindModule_Test_add(x238_S_237_S_1193)(1)))(function( x239_S_238 )
           return M.Golden_LongMaybeBindModule_Test_bind(M.Data_Maybe_Just(M.Golden_LongMaybeBindModule_Test_add(x239_S_238)(1)))(function( x240_S_239 )
             return M.Golden_LongMaybeBindModule_Test_bind(M.Data_Maybe_Just(M.Golden_LongMaybeBindModule_Test_add(x240_S_239)(1)))(function( x241_S_240 )
               return M.Golden_LongMaybeBindModule_Test_bind(M.Data_Maybe_Just(M.Golden_LongMaybeBindModule_Test_add(x241_S_240)(1)))(function( x242_S_241 )
@@ -144,7 +144,7 @@ return {
                                                                                   return M.Golden_LongMaybeBindModule_Test_bind(M.Data_Maybe_Just(M.Golden_LongMaybeBindModule_Test_add(x274_S_273)(1)))(function( x275_S_274 )
                                                                                     return M.Golden_LongMaybeBindModule_Test_bind(M.Data_Maybe_Just(M.Golden_LongMaybeBindModule_Test_add(x275_S_274)(1)))(function( x276_S_275 )
                                                                                       return M.Golden_LongMaybeBindModule_Test_bind(M.Data_Maybe_Just(M.Golden_LongMaybeBindModule_Test_add(x276_S_275)(1)))(function( x277_S_276 )
-                                                                                        return _S_kont1832(x1_S_0_S_1836)(x277_S_276)
+                                                                                        return _S_kont1188(x1_S_0_S_1192)(x277_S_276)
                                                                                       end)
                                                                                     end)
                                                                                   end)
@@ -187,9 +187,9 @@ return {
         end)
       end
     end
-    local _S_kont1838 = function(x1_S_0_S_1839)
-      return function(x198_S_197_S_1840)
-        return M.Golden_LongMaybeBindModule_Test_bind(M.Data_Maybe_Just(M.Golden_LongMaybeBindModule_Test_add(x198_S_197_S_1840)(1)))(function( x199_S_198 )
+    local _S_kont1194 = function(x1_S_0_S_1195)
+      return function(x198_S_197_S_1196)
+        return M.Golden_LongMaybeBindModule_Test_bind(M.Data_Maybe_Just(M.Golden_LongMaybeBindModule_Test_add(x198_S_197_S_1196)(1)))(function( x199_S_198 )
           return M.Golden_LongMaybeBindModule_Test_bind(M.Data_Maybe_Just(M.Golden_LongMaybeBindModule_Test_add(x199_S_198)(1)))(function( x200_S_199 )
             return M.Golden_LongMaybeBindModule_Test_bind(M.Data_Maybe_Just(M.Golden_LongMaybeBindModule_Test_add(x200_S_199)(1)))(function( x201_S_200 )
               return M.Golden_LongMaybeBindModule_Test_bind(M.Data_Maybe_Just(M.Golden_LongMaybeBindModule_Test_add(x201_S_200)(1)))(function( x202_S_201 )
@@ -229,7 +229,7 @@ return {
                                                                                   return M.Golden_LongMaybeBindModule_Test_bind(M.Data_Maybe_Just(M.Golden_LongMaybeBindModule_Test_add(x235_S_234)(1)))(function( x236_S_235 )
                                                                                     return M.Golden_LongMaybeBindModule_Test_bind(M.Data_Maybe_Just(M.Golden_LongMaybeBindModule_Test_add(x236_S_235)(1)))(function( x237_S_236 )
                                                                                       return M.Golden_LongMaybeBindModule_Test_bind(M.Data_Maybe_Just(M.Golden_LongMaybeBindModule_Test_add(x237_S_236)(1)))(function( x238_S_237 )
-                                                                                        return _S_kont1835(x1_S_0_S_1839)(x238_S_237)
+                                                                                        return _S_kont1191(x1_S_0_S_1195)(x238_S_237)
                                                                                       end)
                                                                                     end)
                                                                                   end)
@@ -272,9 +272,9 @@ return {
         end)
       end
     end
-    local _S_kont1841 = function(x1_S_0_S_1842)
-      return function(x158_S_157_S_1843)
-        return M.Golden_LongMaybeBindModule_Test_bind(M.Data_Maybe_Just(M.Golden_LongMaybeBindModule_Test_add(x158_S_157_S_1843)(1)))(function( x159_S_158 )
+    local _S_kont1197 = function(x1_S_0_S_1198)
+      return function(x158_S_157_S_1199)
+        return M.Golden_LongMaybeBindModule_Test_bind(M.Data_Maybe_Just(M.Golden_LongMaybeBindModule_Test_add(x158_S_157_S_1199)(1)))(function( x159_S_158 )
           return M.Golden_LongMaybeBindModule_Test_bind(M.Data_Maybe_Just(M.Golden_LongMaybeBindModule_Test_add(x159_S_158)(1)))(function( x160_S_159 )
             return M.Golden_LongMaybeBindModule_Test_bind(M.Data_Maybe_Just(M.Golden_LongMaybeBindModule_Test_add(x160_S_159)(1)))(function( x161_S_160 )
               return M.Golden_LongMaybeBindModule_Test_bind(M.Data_Maybe_Just(M.Golden_LongMaybeBindModule_Test_add(x161_S_160)(1)))(function( x162_S_161 )
@@ -314,7 +314,7 @@ return {
                                                                                   return M.Golden_LongMaybeBindModule_Test_bind(M.Data_Maybe_Just(M.Golden_LongMaybeBindModule_Test_add(x195_S_194)(1)))(function( x196_S_195 )
                                                                                     return M.Golden_LongMaybeBindModule_Test_bind(M.Data_Maybe_Just(M.Golden_LongMaybeBindModule_Test_add(x196_S_195)(1)))(function( x197_S_196 )
                                                                                       return M.Golden_LongMaybeBindModule_Test_bind(M.Data_Maybe_Just(M.Golden_LongMaybeBindModule_Test_add(x197_S_196)(1)))(function( x198_S_197 )
-                                                                                        return _S_kont1838(x1_S_0_S_1842)(x198_S_197)
+                                                                                        return _S_kont1194(x1_S_0_S_1198)(x198_S_197)
                                                                                       end)
                                                                                     end)
                                                                                   end)
@@ -357,9 +357,9 @@ return {
         end)
       end
     end
-    local _S_kont1844 = function(x1_S_0_S_1845)
-      return function(x119_S_118_S_1846)
-        return M.Golden_LongMaybeBindModule_Test_bind(M.Data_Maybe_Just(M.Golden_LongMaybeBindModule_Test_add(x119_S_118_S_1846)(1)))(function( x120_S_119 )
+    local _S_kont1200 = function(x1_S_0_S_1201)
+      return function(x119_S_118_S_1202)
+        return M.Golden_LongMaybeBindModule_Test_bind(M.Data_Maybe_Just(M.Golden_LongMaybeBindModule_Test_add(x119_S_118_S_1202)(1)))(function( x120_S_119 )
           return M.Golden_LongMaybeBindModule_Test_bind(M.Data_Maybe_Just(M.Golden_LongMaybeBindModule_Test_add(x120_S_119)(1)))(function( x121_S_120 )
             return M.Golden_LongMaybeBindModule_Test_bind(M.Data_Maybe_Just(M.Golden_LongMaybeBindModule_Test_add(x121_S_120)(1)))(function( x122_S_121 )
               return M.Golden_LongMaybeBindModule_Test_bind(M.Data_Maybe_Just(M.Golden_LongMaybeBindModule_Test_add(x122_S_121)(1)))(function( x123_S_122 )
@@ -399,7 +399,7 @@ return {
                                                                                   return M.Golden_LongMaybeBindModule_Test_bind(M.Data_Maybe_Just(M.Golden_LongMaybeBindModule_Test_add(x155_S_154)(1)))(function( x156_S_155 )
                                                                                     return M.Golden_LongMaybeBindModule_Test_bind(M.Data_Maybe_Just(M.Golden_LongMaybeBindModule_Test_add(x156_S_155)(1)))(function( x157_S_156 )
                                                                                       return M.Golden_LongMaybeBindModule_Test_bind(M.Data_Maybe_Just(M.Golden_LongMaybeBindModule_Test_add(x157_S_156)(1)))(function( x158_S_157 )
-                                                                                        return _S_kont1841(x1_S_0_S_1845)(x158_S_157)
+                                                                                        return _S_kont1197(x1_S_0_S_1201)(x158_S_157)
                                                                                       end)
                                                                                     end)
                                                                                   end)
@@ -442,9 +442,9 @@ return {
         end)
       end
     end
-    local _S_kont1847 = function(x1_S_0_S_1848)
-      return function(x79_S_78_S_1849)
-        return M.Golden_LongMaybeBindModule_Test_bind(M.Data_Maybe_Just(M.Golden_LongMaybeBindModule_Test_add(x79_S_78_S_1849)(1)))(function( x80_S_79 )
+    local _S_kont1203 = function(x1_S_0_S_1204)
+      return function(x79_S_78_S_1205)
+        return M.Golden_LongMaybeBindModule_Test_bind(M.Data_Maybe_Just(M.Golden_LongMaybeBindModule_Test_add(x79_S_78_S_1205)(1)))(function( x80_S_79 )
           return M.Golden_LongMaybeBindModule_Test_bind(M.Data_Maybe_Just(M.Golden_LongMaybeBindModule_Test_add(x80_S_79)(1)))(function( x81_S_80 )
             return M.Golden_LongMaybeBindModule_Test_bind(M.Data_Maybe_Just(M.Golden_LongMaybeBindModule_Test_add(x81_S_80)(1)))(function( x82_S_81 )
               return M.Golden_LongMaybeBindModule_Test_bind(M.Data_Maybe_Just(M.Golden_LongMaybeBindModule_Test_add(x82_S_81)(1)))(function( x83_S_82 )
@@ -484,7 +484,7 @@ return {
                                                                                   return M.Golden_LongMaybeBindModule_Test_bind(M.Data_Maybe_Just(M.Golden_LongMaybeBindModule_Test_add(x116_S_115)(1)))(function( x117_S_116 )
                                                                                     return M.Golden_LongMaybeBindModule_Test_bind(M.Data_Maybe_Just(M.Golden_LongMaybeBindModule_Test_add(x117_S_116)(1)))(function( x118_S_117 )
                                                                                       return M.Golden_LongMaybeBindModule_Test_bind(M.Data_Maybe_Just(M.Golden_LongMaybeBindModule_Test_add(x118_S_117)(1)))(function( x119_S_118 )
-                                                                                        return _S_kont1844(x1_S_0_S_1848)(x119_S_118)
+                                                                                        return _S_kont1200(x1_S_0_S_1204)(x119_S_118)
                                                                                       end)
                                                                                     end)
                                                                                   end)
@@ -527,9 +527,9 @@ return {
         end)
       end
     end
-    local _S_kont1850 = function(x1_S_0_S_1851)
-      return function(x40_S_39_S_1852)
-        return M.Golden_LongMaybeBindModule_Test_bind(M.Data_Maybe_Just(M.Golden_LongMaybeBindModule_Test_add(x40_S_39_S_1852)(1)))(function( x41_S_40 )
+    local _S_kont1206 = function(x1_S_0_S_1207)
+      return function(x40_S_39_S_1208)
+        return M.Golden_LongMaybeBindModule_Test_bind(M.Data_Maybe_Just(M.Golden_LongMaybeBindModule_Test_add(x40_S_39_S_1208)(1)))(function( x41_S_40 )
           return M.Golden_LongMaybeBindModule_Test_bind(M.Data_Maybe_Just(M.Golden_LongMaybeBindModule_Test_add(x41_S_40)(1)))(function( x42_S_41 )
             return M.Golden_LongMaybeBindModule_Test_bind(M.Data_Maybe_Just(M.Golden_LongMaybeBindModule_Test_add(x42_S_41)(1)))(function( x43_S_42 )
               return M.Golden_LongMaybeBindModule_Test_bind(M.Data_Maybe_Just(M.Golden_LongMaybeBindModule_Test_add(x43_S_42)(1)))(function( x44_S_43 )
@@ -569,7 +569,7 @@ return {
                                                                                   return M.Golden_LongMaybeBindModule_Test_bind(M.Data_Maybe_Just(M.Golden_LongMaybeBindModule_Test_add(x76_S_75)(1)))(function( x77_S_76 )
                                                                                     return M.Golden_LongMaybeBindModule_Test_bind(M.Data_Maybe_Just(M.Golden_LongMaybeBindModule_Test_add(x77_S_76)(1)))(function( x78_S_77 )
                                                                                       return M.Golden_LongMaybeBindModule_Test_bind(M.Data_Maybe_Just(M.Golden_LongMaybeBindModule_Test_add(x78_S_77)(1)))(function( x79_S_78 )
-                                                                                        return _S_kont1847(x1_S_0_S_1851)(x79_S_78)
+                                                                                        return _S_kont1203(x1_S_0_S_1207)(x79_S_78)
                                                                                       end)
                                                                                     end)
                                                                                   end)
@@ -652,7 +652,7 @@ return {
                                                                               return M.Golden_LongMaybeBindModule_Test_bind(M.Data_Maybe_Just(M.Golden_LongMaybeBindModule_Test_add(x37_S_36)(1)))(function( x38_S_37 )
                                                                                 return M.Golden_LongMaybeBindModule_Test_bind(M.Data_Maybe_Just(M.Golden_LongMaybeBindModule_Test_add(x38_S_37)(1)))(function( x39_S_38 )
                                                                                   return M.Golden_LongMaybeBindModule_Test_bind(M.Data_Maybe_Just(M.Golden_LongMaybeBindModule_Test_add(x39_S_38)(1)))(function( x40_S_39 )
-                                                                                    return _S_kont1850(x1_S_0)(x40_S_39)
+                                                                                    return _S_kont1206(x1_S_0)(x40_S_39)
                                                                                   end)
                                                                                 end)
                                                                               end)

@@ -30,9 +30,7 @@ import Language.PureScript.Backend.IR.Types
   , Grouping (..)
   , Parameter (..)
   , RawExp (..)
-  , RewriteMod (..)
   , RewriteRuleM
-  , Rewritten (..)
   , alphaEq
   , bindingExprs
   , countFreeRef
@@ -40,7 +38,7 @@ import Language.PureScript.Backend.IR.Types
   , getAnn
   , isNonRecursiveLiteral
   , literalBool
-  , rewriteExpTopDownM
+  , rewriteExpBottomUpM
   , substituteCopyM
   , substituteMoveM
   , thenRewrite
@@ -251,14 +249,16 @@ optimizedExpression = runSupply . optimizedExpressionM
 optimizedExpressionM ∷ Exp → SupplyM Exp
 optimizedExpressionM =
   -- See Note [Eta reduction is unsound]
-  rewriteExpTopDownM $
-    constantFolding
-      `thenRewrite` betaReduce
-      `thenRewrite` betaReduceUnusedParams
-      `thenRewrite` removeUnreachableThenBranch
-      `thenRewrite` removeUnreachableElseBranch
-      `thenRewrite` removeIfWithEqualBranches
-      `thenRewrite` inlineLocalBindings
+  fmap fst
+    . rewriteExpBottomUpM
+      ( constantFolding
+          `thenRewrite` betaReduce
+          `thenRewrite` betaReduceUnusedParams
+          `thenRewrite` removeUnreachableThenBranch
+          `thenRewrite` removeUnreachableElseBranch
+          `thenRewrite` removeIfWithEqualBranches
+          `thenRewrite` inlineLocalBindings
+      )
 
 {- Note [IR is assumed well-typed]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -273,19 +273,19 @@ constantFolding ∷ Applicative m ⇒ RewriteRuleM m Ann
 constantFolding =
   pure . \case
     Eq _ (LiteralBool _ a) (LiteralBool _ b) →
-      Rewritten Stop $ literalBool $ a == b
+      Just $ literalBool $ a == b
     Eq _ (LiteralBool _ True) b →
       -- 'b' must be of type Bool; see Note [IR is assumed well-typed]
-      Rewritten Stop b
+      Just b
     Eq _ (LiteralInt _ a) (LiteralInt _ b) →
-      Rewritten Stop $ literalBool $ a == b
+      Just $ literalBool $ a == b
     Eq _ (LiteralFloat _ a) (LiteralFloat _ b) →
-      Rewritten Stop $ literalBool $ a == b
+      Just $ literalBool $ a == b
     Eq _ (LiteralChar _ a) (LiteralChar _ b) →
-      Rewritten Stop $ literalBool $ a == b
+      Just $ literalBool $ a == b
     Eq _ (LiteralString _ a) (LiteralString _ b) →
-      Rewritten Stop $ literalBool $ a == b
-    _ → NoChange
+      Just $ literalBool $ a == b
+    _ → Nothing
 
 -- (λx. M) N ===> M[x := N]
 -- See Note [IR is assumed well-typed]
@@ -294,8 +294,8 @@ betaReduce = \case
   App _ (Abs _ (ParamNamed _ param) body) r →
     -- The λ is consumed by the rewrite, so the first inserted occurrence
     -- of the argument may keep its binder names ('substituteMoveM').
-    Rewritten Recurse <$> substituteMoveM (Local param) r body
-  _ → pure NoChange
+    Just <$> substituteMoveM (Local param) r body
+  _ → pure Nothing
 
 {- Note [Eta reduction is unsound]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -344,8 +344,8 @@ betaReduceUnusedParams ∷ Applicative m ⇒ RewriteRuleM m Ann
 betaReduceUnusedParams =
   pure . \case
     App _ (Abs _ (ParamUnused _) body) _arg →
-      Rewritten Recurse body
-    _ → NoChange
+      Just body
+    _ → Nothing
 
 removeIfWithEqualBranches ∷ Applicative m ⇒ RewriteRuleM m Ann
 removeIfWithEqualBranches e =
@@ -355,42 +355,51 @@ removeIfWithEqualBranches e =
       -- differ (e.g. after freshening) while the branches still compute
       -- the same value.
       | thenBranch `alphaEq` elseBranch →
-          Rewritten Recurse thenBranch
-    _ → NoChange
+          Just thenBranch
+    _ → Nothing
 
 removeUnreachableThenBranch ∷ Applicative m ⇒ RewriteRuleM m Ann
 removeUnreachableThenBranch e =
   pure case e of
     IfThenElse _ann (LiteralBool _ False) _unreachable elseBranch →
-      Rewritten Recurse elseBranch
-    _ → NoChange
+      Just elseBranch
+    _ → Nothing
 
 removeUnreachableElseBranch ∷ Applicative m ⇒ RewriteRuleM m Ann
 removeUnreachableElseBranch e = pure case e of
   IfThenElse _ann (LiteralBool _ True) thenBranch _unreachable →
-    Rewritten Recurse thenBranch
-  _ → NoChange
+    Just thenBranch
+  _ → Nothing
 
 -- Inlining is a tricky business:
 -- https://www.microsoft.com/en-us/research/wp-content/uploads/2002/07/inline.pdf
 
 inlineLocalBindings ∷ RewriteRuleM SupplyM Ann
 inlineLocalBindings = \case
-  Let ann groupings body →
-    Rewritten Recurse . Let ann groupings
-      <$> foldrM inlineLocalBinding body groupings
-  _ → pure NoChange
+  Let ann groupings body → do
+    (body', Any inlined) ← foldrM inlineLocalBinding (body, Any False) groupings
+    pure $ if inlined then Just (Let ann groupings body') else Nothing
+  _ → pure Nothing
 
-inlineLocalBinding ∷ Grouping (Ann, Name, Exp) → Exp → SupplyM Exp
-inlineLocalBinding grouping body =
+{- | Inline one binding into the Let's body when the heuristic wants it
+/and/ the body actually references it — a zero-occurrence substitution
+is a no-op and must not report a change (the honesty contract of
+'RewriteRuleM'), or the optimize fixpoint would never converge.
+-}
+inlineLocalBinding ∷ Grouping (Ann, Name, Exp) → (Exp, Any) → SupplyM (Exp, Any)
+inlineLocalBinding grouping (body, inlined) =
   case grouping of
-    RecursiveGroup _grp → pure body -- Not going to inline recursive bindings
-    Standalone (_ann, Local → name, inlinee) →
-      if isInlinableExpr inlinee || countFreeRef name body == 1
-        -- The binding survives until DCE drops it, so the inserted copy
-        -- must not reuse its binder names ('substituteCopyM').
-        then substituteCopyM name inlinee body
-        else pure body
+    RecursiveGroup _grp → pure (body, inlined) -- Not inlining recursive bindings
+    Standalone (_ann, Local → name, inlinee)
+      | occurrences > 0
+      , isInlinableExpr inlinee || occurrences == 1 →
+          -- The binding survives until DCE drops it, so the inserted copy
+          -- must not reuse its binder names ('substituteCopyM').
+          (,Any True) <$> substituteCopyM name inlinee body
+      | otherwise → pure (body, inlined)
+     where
+      occurrences ∷ Natural
+      occurrences = countFreeRef name body
 
 -- See Note [Inline annotations and inlining heuristics]
 isInlinableExpr ∷ Exp → Bool

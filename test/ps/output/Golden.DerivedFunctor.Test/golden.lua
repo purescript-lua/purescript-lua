@@ -75,8 +75,8 @@ M.Effect_Lazy_applyEffect = PSLUA_runtime_lazy("applyEffect")(function()
   }
 end)
 M.Golden_DerivedFunctor_Test_add = M.Data_Semiring_semiringInt.add
-M.Golden_DerivedFunctor_Test_discard = (function(dictBind_S_26_S_1370)
-  return M.Control_Bind_bind(dictBind_S_26_S_1370)
+M.Golden_DerivedFunctor_Test_discard = (function(dictBind_S_26_S_726)
+  return M.Control_Bind_bind(dictBind_S_26_S_726)
 end)(M.Effect_bindEffect)
 M.Golden_DerivedFunctor_Test_logShow = function(a_S_5)
   return (function(s) return function() print(s) end end)((function(n) return tostring(n) end)(a_S_5))

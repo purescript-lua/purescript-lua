@@ -8,8 +8,10 @@ import Control.Lens
   , foldMapOf
   , makePrisms
   , prism'
+  , rewriteMOf
   , traverseOf
   )
+import Control.Monad.Writer.CPS (runWriterT, tell)
 import Data.Deriving (deriveEq1, deriveOrd1)
 import Data.Map qualified as Map
 import Data.MonoidMap (MonoidMap)
@@ -392,37 +394,26 @@ subexpressions go = \case
     IfThenElse ann <$> go p <*> go th <*> go el
   e → pure e
 
-data RewriteMod = Recurse | Stop
-  deriving stock (Show, Eq, Ord)
+{- | A rewrite rule: 'Nothing' when the rule does not apply to the node,
+'Just' the rewritten node when it fired.
 
-instance Semigroup RewriteMod where
-  Recurse <> Recurse = Recurse
-  _ <> _ = Stop
+The honesty contract: a rule must return 'Just' only when it actually
+changed something. The drivers below surface "did any rule fire" as the
+change signal the optimizer fixpoint trusts (issue #144): a rule that
+reports 'Just' with an unchanged result spins the fixpoint until its
+iteration cap, and one that changes something under 'Nothing' stops it
+early — both are caught loudly by the checked pipeline runner
+("Language.PureScript.Backend.IR.Pass").
+-}
+type RewriteRule ann = RawExp ann → Maybe (RawExp ann)
 
-data Rewritten a = NoChange | Rewritten RewriteMod a
-  deriving stock (Show, Eq, Ord, Functor)
+-- | Effectful 'RewriteRule'.
+type RewriteRuleM m ann = RawExp ann → m (Maybe (RawExp ann))
 
-instance Applicative Rewritten where
-  pure ∷ ∀ a. a → Rewritten a
-  pure = Rewritten Stop
-  NoChange <*> _ = NoChange
-  _ <*> NoChange = NoChange
-  Rewritten rmf f <*> Rewritten rma a = Rewritten (rmf <> rma) (f a)
-
-instance Monad Rewritten where
-  NoChange >>= _ = NoChange
-  Rewritten m a >>= f = case f a of
-    NoChange → NoChange
-    Rewritten m' a' → Rewritten (m <> m') a'
-
-instance Alternative Rewritten where
-  empty = NoChange
-  NoChange <|> a = a
-  a <|> _ = a
-
-type RewriteRule ann = RewriteRuleM Identity ann
-type RewriteRuleM m ann = RawExp ann → m (Rewritten (RawExp ann))
-
+{- | Sequential composition: apply the second rule to the first rule's
+result (or to the original expression when the first did not fire).
+The composite fires iff either rule fired.
+-}
 thenRewrite
   ∷ Monad m
   ⇒ RewriteRuleM m ann
@@ -430,25 +421,48 @@ thenRewrite
   → RewriteRuleM m ann
 thenRewrite rewrite1 rewrite2 e =
   rewrite1 e >>= \case
-    Rewritten m' e' → do
-      rewrite2 e' <&> \case
-        NoChange → Rewritten m' e'
-        Rewritten m'' e'' → Rewritten (m' <> m'') e''
-    NoChange → rewrite2 e
+    Just e' → Just . fromMaybe e' <$> rewrite2 e'
+    Nothing → rewrite2 e
 
-rewriteExpTopDown ∷ RewriteRuleM Identity ann → RawExp ann → RawExp ann
-rewriteExpTopDown rewrite = runIdentity . rewriteExpTopDownM rewrite
+{- | Rewrite bottom-up: every node's children are fully rewritten before
+the rule sees the node, and the rule is re-applied to its own result
+until it no longer fires ('rewriteMOf' semantics). One pass is
+therefore complete and idempotent — the result contains no node the
+rule still fires on — which is what makes the returned 'Any' a precise
+change flag (issue #144), and what closes the Recurse-escape bug class
+(issue #149) structurally: a node exposed by a collapsing parent has
+already been fully rewritten.
+-}
+rewriteExpBottomUpM
+  ∷ Monad m ⇒ RewriteRuleM m ann → RawExp ann → m (RawExp ann, Any)
+rewriteExpBottomUpM rule expr =
+  runWriterT $ flip (rewriteMOf subexpressions) expr \e →
+    lift (rule e) >>= traverse \e' → e' <$ tell (Any True)
 
+-- | Pure 'rewriteExpBottomUpM'.
+rewriteExpBottomUp ∷ RewriteRule ann → RawExp ann → (RawExp ann, Any)
+rewriteExpBottomUp rule = runIdentity . rewriteExpBottomUpM (pure . rule)
+
+{- | Rewrite top-down: re-apply the rule at the node until it no longer
+fires, then descend into the children of the result.
+
+Reserved for the order-sensitive lowerings that consume a pattern
+spanning a node and its descendants from the outside in — magic-do
+chains ("Language.PureScript.Backend.IR.MagicDo") and deep-bind
+flattening ("Language.PureScript.Backend.IR.FlattenDeepBinds"). A
+bottom-up driver would dismantle such a chain from the inside out
+(every tail of a magic-do chain is itself a chain head), rewriting it
+into per-step nested thunks and defeating the flattening that is the
+point of those passes. Termination is the rule's obligation: it must
+not fire on the root of its own result.
+-}
 rewriteExpTopDownM ∷ Monad m ⇒ RewriteRuleM m ann → RawExp ann → m (RawExp ann)
-rewriteExpTopDownM rewrite = visit
+rewriteExpTopDownM rule = visit
  where
   visit expression =
-    rewrite expression >>= \case
-      NoChange → descendInto expression
-      Rewritten Stop expression' → pure expression'
-      Rewritten Recurse expression' → descendInto expression'
-
-  descendInto = traverseOf subexpressions visit
+    rule expression >>= \case
+      Just expression' → visit expression'
+      Nothing → traverseOf subexpressions visit expression
 
 countFreeRefs ∷ RawExp ann → Map (Qualified Name) Natural
 countFreeRefs = fmap getSum . MMap.toMap . countFreeRefs' mempty

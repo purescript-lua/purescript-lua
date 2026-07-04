@@ -66,9 +66,7 @@ import Language.PureScript.Backend.IR.Types
   , Grouping (..)
   , Parameter (..)
   , RawExp (..)
-  , RewriteMod (..)
   , RewriteRuleM
-  , Rewritten (..)
   , noAnn
   , rewriteExpTopDownM
   , substituteMoveM
@@ -86,6 +84,10 @@ magicDo uber@UberModule {uberModuleBindings, uberModuleExports} = do
       , uberModuleExports = uberModuleExports'
       }
  where
+  -- Top-down deliberately: a chain must be consumed from its outermost
+  -- head (every tail of a chain is itself a chain head, so a bottom-up
+  -- driver would rewrite the tails first, nesting one thunk per step
+  -- and defeating the flattening). See 'rewriteExpTopDownM'.
   rewrite ∷ Exp → SupplyM Exp
   rewrite = rewriteExpTopDownM (magicDoRule resolve)
 
@@ -106,8 +108,8 @@ magicDoRule ∷ (QName → Maybe Exp) → RewriteRuleM SupplyM Ann
 magicDoRule resolve expr = do
   (statements, finalAction) ← peelChain resolve expr
   pure case statements of
-    [] → NoChange
-    _ → Rewritten Recurse (buildThunk statements finalAction)
+    [] → Nothing
+    _ → Just (buildThunk statements finalAction)
 
 {- | Wrap the flattened statements and final action into an Effect/ST thunk.
 

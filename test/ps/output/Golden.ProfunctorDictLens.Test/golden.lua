@@ -39,13 +39,13 @@ M.Control_Bind_bind = function(dict) return dict.bind end
 M.Data_Newtype_unwrap = function()
   return M.Unsafe_Coerce_foreign.unsafeCoerce
 end
-M.Data_Profunctor_composeFlipped = function(f_S_1530)
-  return function(g_S_1531)
-    return (function(f_S_1536)
-      return function(g_S_1537)
-        return function(x_S_1538) return f_S_1536(g_S_1537(x_S_1538)) end
+M.Data_Profunctor_composeFlipped = function(f_S_886)
+  return function(g_S_887)
+    return (function(f_S_892)
+      return function(g_S_893)
+        return function(x_S_894) return f_S_892(g_S_893(x_S_894)) end
       end
-    end)(g_S_1531)(f_S_1530)
+    end)(g_S_887)(f_S_886)
   end
 end
 M.Data_Profunctor_profunctorFn = {
@@ -97,8 +97,8 @@ M.Effect_Lazy_applyEffect = PSLUA_runtime_lazy("applyEffect")(function()
   }
 end)
 M.Golden_ProfunctorDictLens_Test_unwrap = M.Data_Newtype_unwrap()
-M.Golden_ProfunctorDictLens_Test_discard = (function(dictBind_S_184_S_1532)
-  return M.Control_Bind_bind(dictBind_S_184_S_1532)
+M.Golden_ProfunctorDictLens_Test_discard = (function(dictBind_S_184_S_888)
+  return M.Control_Bind_bind(dictBind_S_184_S_888)
 end)(M.Effect_bindEffect)
 M.Golden_ProfunctorDictLens_Test_logShow = function(a_S_5)
   return (function(s) return function() print(s) end end)((function(n) return tostring(n) end)(a_S_5))

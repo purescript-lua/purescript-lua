@@ -92,7 +92,7 @@ longer than 'threshold'); a bind chain hides its depth under lambdas, so its
 application-spine depth is tiny and Strategy B never fires on it. Strategy B
 then fires on any remaining contiguous 'App' spine deeper than 'threshold'.
 Both emit segments shallower than 'threshold', and B's output binds every 'App'
-to a depth-1 right-hand side, so the 'Recurse' rewrite cannot re-fire on its own
+to a depth-1 right-hand side, so the top-down rewrite cannot re-fire on its own
 output.
 
 == GUC safety: no shifting, fresh helper parameters
@@ -123,7 +123,7 @@ the magic-do statement sequence.
 Lambda-lifting bounds /nesting/ but the innermost closure of a segment captures
 the segment's own binders plus the forwarded live set as upvalues, and Lua 5.1
 caps a function at 60 upvalues (@LUAI_MAXUPVALUES@, see @docs\/QUIRKS.md@). When
-the live set at a cut is too large Strategy A bails (returns 'NoChange', leaving
+the live set at a cut is too large Strategy A bails (returns 'Nothing', leaving
 the chain nested): the program then overflows exactly as it does today, now
 caught by the post-codegen nesting detector
 ('Language.PureScript.Backend.Lua.NestingCheck'). Strategy B introduces only
@@ -150,9 +150,7 @@ import Language.PureScript.Backend.IR.Types
   , Grouping (..)
   , Parameter (..)
   , RawExp (..)
-  , RewriteMod (..)
   , RewriteRuleM
-  , Rewritten (..)
   , countFreeRefs
   , noAnn
   , refLocal
@@ -174,6 +172,11 @@ flattenDeepBindsM uber@UberModule {uberModuleBindings, uberModuleExports} = do
   exports' ← traverse (traverse rewrite) uberModuleExports
   pure uber {uberModuleBindings = bindings', uberModuleExports = exports'}
  where
+  -- Top-down deliberately: a chain/spine must be measured and cut from
+  -- its outermost node (every suffix of a chain is itself a chain, so a
+  -- bottom-up driver would segment the deep tails first and the
+  -- remaining upper chain would never reach 'threshold' as one piece).
+  -- See 'rewriteExpTopDownM'.
   rewrite ∷ Exp → SupplyM Exp
   rewrite = rewriteExpTopDownM flattenRule
 
@@ -183,17 +186,17 @@ flattenDeepBindsM uber@UberModule {uberModuleBindings, uberModuleExports} = do
 {- | Dispatch the two strategies. Strategy A handles a recognised continuation
 chain longer than 'threshold' (depth under trailing lambdas); a bind chain's
 application-spine depth is tiny, so Strategy B only ever sees the remaining deep
-'App' spines. Either may leave the expression unchanged ('NoChange'), in which
+'App' spines. Either may leave the expression unchanged ('Nothing'), in which
 case 'Language.PureScript.Backend.Lua.NestingCheck' remains the backstop.
 -}
 flattenRule ∷ RewriteRuleM SupplyM Ann
 flattenRule expr
   | (steps, finalAction) ← peelChain expr
   , length steps > threshold =
-      maybe NoChange (Rewritten Recurse) <$> lambdaLift steps finalAction
+      lambdaLift steps finalAction
   | spineDepth expr > threshold =
-      maybe NoChange (Rewritten Recurse) <$> sequentialiseSpine expr
-  | otherwise = pure NoChange
+      sequentialiseSpine expr
+  | otherwise = pure Nothing
 
 --------------------------------------------------------------------------------
 -- Strategy A: continuation lambda-lifting -------------------------------------
@@ -424,7 +427,7 @@ chunksOf n xs = let (h, t) = splitAt n xs in h : chunksOf n t
 {- | Only fire on chains\/spines deeper than this. Shorter ones are below Lua's
 nesting cap and are left untouched, so existing goldens do not churn. Must exceed
 'segmentSize' so the helper\/body segments Strategy A produces never re-fire
-(which guarantees termination of the 'Recurse' rewrite); Strategy B's output
+(which guarantees termination of the top-down rewrite); Strategy B's output
 binds every 'App' to a depth-1 right-hand side and so cannot re-fire either.
 -}
 threshold ∷ Int

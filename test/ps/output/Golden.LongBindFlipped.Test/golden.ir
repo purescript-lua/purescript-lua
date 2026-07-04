@@ -75,34 +75,34 @@ UberModule
       ( QName
         { qnameModuleName = ModuleName "Golden.LongBindFlipped.Test", qnameName = Name "bindFlipped"
         }, Abs Nothing
-        ( ParamNamed Nothing ( Name "b$264$1556" ) )
+        ( ParamNamed Nothing ( Name "b$264$912" ) )
         ( Abs Nothing
-          ( ParamNamed Nothing ( Name "a$265$1557" ) )
+          ( ParamNamed Nothing ( Name "a$265$913" ) )
           ( App Nothing
             ( App Nothing
               ( ObjectProp Nothing
                 ( LiteralObject Nothing
                   [
                     ( PropName "bind", Abs Nothing
-                      ( ParamNamed Nothing ( Name "v$1549" ) )
+                      ( ParamNamed Nothing ( Name "v$905" ) )
                       ( Abs Nothing
-                        ( ParamNamed Nothing ( Name "v1$1550" ) )
+                        ( ParamNamed Nothing ( Name "v1$906" ) )
                         ( IfThenElse Nothing
                           ( Eq Nothing
                             ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
-                            ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v$1549" ) ) ) )
+                            ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v$905" ) ) ) )
                           )
                           ( App Nothing
-                            ( Ref Nothing ( Local ( Name "v1$1550" ) ) )
+                            ( Ref Nothing ( Local ( Name "v1$906" ) ) )
                             ( ObjectProp Nothing
-                              ( Ref Nothing ( Local ( Name "v$1549" ) ) )
+                              ( Ref Nothing ( Local ( Name "v$905" ) ) )
                               ( PropName "value0" )
                             )
                           )
                           ( IfThenElse Nothing
                             ( Eq Nothing
                               ( LiteralString Nothing "Data.Maybe∷Maybe.Nothing" )
-                              ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v$1549" ) ) ) )
+                              ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v$905" ) ) ) )
                             )
                             ( Ref Nothing
                               ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) )
@@ -116,15 +116,13 @@ UberModule
                       ( LiteralObject Nothing
                         [
                           ( PropName "apply", Abs Nothing
-                            ( ParamNamed Nothing ( Name "v$1551" ) )
+                            ( ParamNamed Nothing ( Name "v$907" ) )
                             ( Abs Nothing
-                              ( ParamNamed Nothing ( Name "v1$1552" ) )
+                              ( ParamNamed Nothing ( Name "v1$908" ) )
                               ( IfThenElse Nothing
                                 ( Eq Nothing
                                   ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
-                                  ( ReflectCtor Nothing
-                                    ( Ref Nothing ( Local ( Name "v$1551" ) ) )
-                                  )
+                                  ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v$907" ) ) ) )
                                 )
                                 ( App Nothing
                                   ( App Nothing
@@ -138,17 +136,17 @@ UberModule
                                       ( PropName "map" )
                                     )
                                     ( ObjectProp Nothing
-                                      ( Ref Nothing ( Local ( Name "v$1551" ) ) )
+                                      ( Ref Nothing ( Local ( Name "v$907" ) ) )
                                       ( PropName "value0" )
                                     )
                                   )
-                                  ( Ref Nothing ( Local ( Name "v1$1552" ) ) )
+                                  ( Ref Nothing ( Local ( Name "v1$908" ) ) )
                                 )
                                 ( IfThenElse Nothing
                                   ( Eq Nothing
                                     ( LiteralString Nothing "Data.Maybe∷Maybe.Nothing" )
                                     ( ReflectCtor Nothing
-                                      ( Ref Nothing ( Local ( Name "v$1551" ) ) )
+                                      ( Ref Nothing ( Local ( Name "v$907" ) ) )
                                     )
                                   )
                                   ( Ref Nothing
@@ -171,9 +169,9 @@ UberModule
                 )
                 ( PropName "bind" )
               )
-              ( Ref Nothing ( Local ( Name "a$265$1557" ) ) )
+              ( Ref Nothing ( Local ( Name "a$265$913" ) ) )
             )
-            ( Ref Nothing ( Local ( Name "b$264$1556" ) ) )
+            ( Ref Nothing ( Local ( Name "b$264$912" ) ) )
           )
         )
       ), Standalone
@@ -216,7 +214,7 @@ UberModule
         { qnameModuleName = ModuleName "Golden.LongBindFlipped.Test", qnameName = Name "compute"
         }, Let Nothing
         ( Standalone
-          ( Nothing, Name "$tmp1562", App Nothing
+          ( Nothing, Name "$tmp918", App Nothing
             ( App Nothing
               ( Ref Nothing
                 ( Imported ( ModuleName "Golden.LongBindFlipped.Test" ) ( Name "bindFlipped" ) )
@@ -820,7 +818,7 @@ UberModule
             )
           ) :|
           [ Standalone
-            ( Nothing, Name "$tmp1563", App Nothing
+            ( Nothing, Name "$tmp919", App Nothing
               ( App Nothing
                 ( Ref Nothing
                   ( Imported ( ModuleName "Golden.LongBindFlipped.Test" ) ( Name "bindFlipped" ) )
@@ -1398,7 +1396,7 @@ UberModule
                                                                                             )
                                                                                             ( Ref Nothing
                                                                                               ( Local
-                                                                                                ( Name "$tmp1562" )
+                                                                                                ( Name "$tmp918" )
                                                                                               )
                                                                                             )
                                                                                           )
@@ -1441,7 +1439,7 @@ UberModule
                 )
               )
             ), Standalone
-            ( Nothing, Name "$tmp1564", App Nothing
+            ( Nothing, Name "$tmp920", App Nothing
               ( App Nothing
                 ( Ref Nothing
                   ( Imported ( ModuleName "Golden.LongBindFlipped.Test" ) ( Name "bindFlipped" ) )
@@ -2019,7 +2017,7 @@ UberModule
                                                                                             )
                                                                                             ( Ref Nothing
                                                                                               ( Local
-                                                                                                ( Name "$tmp1563" )
+                                                                                                ( Name "$tmp919" )
                                                                                               )
                                                                                             )
                                                                                           )
@@ -2062,7 +2060,7 @@ UberModule
                 )
               )
             ), Standalone
-            ( Nothing, Name "$tmp1565", App Nothing
+            ( Nothing, Name "$tmp921", App Nothing
               ( App Nothing
                 ( Ref Nothing
                   ( Imported ( ModuleName "Golden.LongBindFlipped.Test" ) ( Name "bindFlipped" ) )
@@ -2640,7 +2638,7 @@ UberModule
                                                                                             )
                                                                                             ( Ref Nothing
                                                                                               ( Local
-                                                                                                ( Name "$tmp1564" )
+                                                                                                ( Name "$tmp920" )
                                                                                               )
                                                                                             )
                                                                                           )
@@ -2683,7 +2681,7 @@ UberModule
                 )
               )
             ), Standalone
-            ( Nothing, Name "$tmp1566", App Nothing
+            ( Nothing, Name "$tmp922", App Nothing
               ( App Nothing
                 ( Ref Nothing
                   ( Imported ( ModuleName "Golden.LongBindFlipped.Test" ) ( Name "bindFlipped" ) )
@@ -3261,7 +3259,7 @@ UberModule
                                                                                             )
                                                                                             ( Ref Nothing
                                                                                               ( Local
-                                                                                                ( Name "$tmp1565" )
+                                                                                                ( Name "$tmp921" )
                                                                                               )
                                                                                             )
                                                                                           )
@@ -3304,7 +3302,7 @@ UberModule
                 )
               )
             ), Standalone
-            ( Nothing, Name "$tmp1567", App Nothing
+            ( Nothing, Name "$tmp923", App Nothing
               ( App Nothing
                 ( Ref Nothing
                   ( Imported ( ModuleName "Golden.LongBindFlipped.Test" ) ( Name "bindFlipped" ) )
@@ -3882,7 +3880,7 @@ UberModule
                                                                                             )
                                                                                             ( Ref Nothing
                                                                                               ( Local
-                                                                                                ( Name "$tmp1566" )
+                                                                                                ( Name "$tmp922" )
                                                                                               )
                                                                                             )
                                                                                           )
@@ -3925,7 +3923,7 @@ UberModule
                 )
               )
             ), Standalone
-            ( Nothing, Name "$tmp1568", App Nothing
+            ( Nothing, Name "$tmp924", App Nothing
               ( App Nothing
                 ( Ref Nothing
                   ( Imported ( ModuleName "Golden.LongBindFlipped.Test" ) ( Name "bindFlipped" ) )
@@ -4503,7 +4501,7 @@ UberModule
                                                                                             )
                                                                                             ( Ref Nothing
                                                                                               ( Local
-                                                                                                ( Name "$tmp1567" )
+                                                                                                ( Name "$tmp923" )
                                                                                               )
                                                                                             )
                                                                                           )
@@ -4825,7 +4823,7 @@ UberModule
                                                       )
                                                     )
                                                   )
-                                                  ( Ref Nothing ( Local ( Name "$tmp1568" ) ) )
+                                                  ( Ref Nothing ( Local ( Name "$tmp924" ) ) )
                                                 )
                                               )
                                             )
@@ -4870,11 +4868,11 @@ UberModule
             ( LiteralObject Nothing
               [
                 ( PropName "show", Abs Nothing
-                  ( ParamNamed Nothing ( Name "v$1554" ) )
+                  ( ParamNamed Nothing ( Name "v$910" ) )
                   ( IfThenElse Nothing
                     ( Eq Nothing
                       ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
-                      ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v$1554" ) ) ) )
+                      ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v$910" ) ) ) )
                     )
                     ( App Nothing
                       ( App Nothing
@@ -4904,7 +4902,7 @@ UberModule
                               )
                             )
                             ( ObjectProp Nothing
-                              ( Ref Nothing ( Local ( Name "v$1554" ) ) )
+                              ( Ref Nothing ( Local ( Name "v$910" ) ) )
                               ( PropName "value0" )
                             )
                           )
@@ -4915,7 +4913,7 @@ UberModule
                     ( IfThenElse Nothing
                       ( Eq Nothing
                         ( LiteralString Nothing "Data.Maybe∷Maybe.Nothing" )
-                        ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v$1554" ) ) ) )
+                        ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v$910" ) ) ) )
                       )
                       ( LiteralString Nothing "Nothing" )
                       ( Exception Nothing "No patterns matched" )

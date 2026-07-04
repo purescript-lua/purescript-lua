@@ -85,11 +85,11 @@ end)
 M.Golden_MaybeChain_Test_logShow = function(a_S_4)
   return (function(s) return function() print(s) end end)((function(n) return tostring(n) end)(a_S_4))
 end
-M.Golden_MaybeChain_Test_identity = function(x_S_1568) return x_S_1568 end
-M.Golden_MaybeChain_Test_map = function(v_S_1561)
-  return function(v1_S_1562)
-    if "Data.Maybe∷Maybe.Just" == v1_S_1562["$ctor"] then
-      return M.Data_Maybe_Just(v_S_1561(v1_S_1562.value0))
+M.Golden_MaybeChain_Test_identity = function(x_S_924) return x_S_924 end
+M.Golden_MaybeChain_Test_map = function(v_S_917)
+  return function(v1_S_918)
+    if "Data.Maybe∷Maybe.Just" == v1_S_918["$ctor"] then
+      return M.Data_Maybe_Just(v_S_917(v1_S_918.value0))
     else
       return M.Data_Maybe_Nothing
     end

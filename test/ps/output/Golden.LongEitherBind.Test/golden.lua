@@ -84,12 +84,12 @@ M.Data_Either_applyEither = {
   end,
   Functor0 = function() return M.Data_Either_functorEither end
 }
-M.Golden_LongEitherBind_Test_bind = function(v2_S_1571)
-  if "Data.Either∷Either.Left" == v2_S_1571["$ctor"] then
-    return function() return M.Data_Either_Left(v2_S_1571.value0) end
+M.Golden_LongEitherBind_Test_bind = function(v2_S_927)
+  if "Data.Either∷Either.Left" == v2_S_927["$ctor"] then
+    return function() return M.Data_Either_Left(v2_S_927.value0) end
   else
-    if "Data.Either∷Either.Right" == v2_S_1571["$ctor"] then
-      return function(f_S_1568) return f_S_1568(v2_S_1571.value0) end
+    if "Data.Either∷Either.Right" == v2_S_927["$ctor"] then
+      return function(f_S_924) return f_S_924(v2_S_927.value0) end
     else
       return error("No patterns matched")
     end
@@ -97,10 +97,10 @@ M.Golden_LongEitherBind_Test_bind = function(v2_S_1571)
 end
 M.Golden_LongEitherBind_Test_add = M.Data_Semiring_foreign.intAdd
 M.Golden_LongEitherBind_Test_compute = (function()
-  local _S_kont1580 = function(x1_S_1581)
-    return function(x150_S_1582)
-      return function(x280_S_1583)
-        return M.Golden_LongEitherBind_Test_bind(M.Data_Either_Right(M.Golden_LongEitherBind_Test_add(x280_S_1583)(1)))(function( x281 )
+  local _S_kont936 = function(x1_S_937)
+    return function(x150_S_938)
+      return function(x280_S_939)
+        return M.Golden_LongEitherBind_Test_bind(M.Data_Either_Right(M.Golden_LongEitherBind_Test_add(x280_S_939)(1)))(function( x281 )
           return M.Golden_LongEitherBind_Test_bind(M.Data_Either_Right(M.Golden_LongEitherBind_Test_add(x281)(1)))(function( x282 )
             return M.Golden_LongEitherBind_Test_bind(M.Data_Either_Right(M.Golden_LongEitherBind_Test_add(x282)(1)))(function( x283 )
               return M.Golden_LongEitherBind_Test_bind(M.Data_Either_Right(M.Golden_LongEitherBind_Test_add(x283)(1)))(function( x284 )
@@ -120,7 +120,7 @@ M.Golden_LongEitherBind_Test_compute = (function()
                                           return M.Golden_LongEitherBind_Test_bind(M.Data_Either_Right(M.Golden_LongEitherBind_Test_add(x297)(1)))(function( x298 )
                                             return M.Golden_LongEitherBind_Test_bind(M.Data_Either_Right(M.Golden_LongEitherBind_Test_add(x298)(1)))(function( x299 )
                                               return M.Golden_LongEitherBind_Test_bind(M.Data_Either_Right(M.Golden_LongEitherBind_Test_add(x299)(1)))(function( x300 )
-                                                return M.Data_Either_Right(M.Golden_LongEitherBind_Test_add(M.Golden_LongEitherBind_Test_add(x1_S_1581)(x150_S_1582))(x300))
+                                                return M.Data_Either_Right(M.Golden_LongEitherBind_Test_add(M.Golden_LongEitherBind_Test_add(x1_S_937)(x150_S_938))(x300))
                                               end)
                                             end)
                                           end)
@@ -144,10 +144,10 @@ M.Golden_LongEitherBind_Test_compute = (function()
       end
     end
   end
-  local _S_kont1584 = function(x1_S_1585)
-    return function(x150_S_1586)
-      return function(x240_S_1587)
-        return M.Golden_LongEitherBind_Test_bind(M.Data_Either_Right(M.Golden_LongEitherBind_Test_add(x240_S_1587)(1)))(function( x241 )
+  local _S_kont940 = function(x1_S_941)
+    return function(x150_S_942)
+      return function(x240_S_943)
+        return M.Golden_LongEitherBind_Test_bind(M.Data_Either_Right(M.Golden_LongEitherBind_Test_add(x240_S_943)(1)))(function( x241 )
           return M.Golden_LongEitherBind_Test_bind(M.Data_Either_Right(M.Golden_LongEitherBind_Test_add(x241)(1)))(function( x242 )
             return M.Golden_LongEitherBind_Test_bind(M.Data_Either_Right(M.Golden_LongEitherBind_Test_add(x242)(1)))(function( x243 )
               return M.Golden_LongEitherBind_Test_bind(M.Data_Either_Right(M.Golden_LongEitherBind_Test_add(x243)(1)))(function( x244 )
@@ -187,7 +187,7 @@ M.Golden_LongEitherBind_Test_compute = (function()
                                                                                   return M.Golden_LongEitherBind_Test_bind(M.Data_Either_Right(M.Golden_LongEitherBind_Test_add(x277)(1)))(function( x278 )
                                                                                     return M.Golden_LongEitherBind_Test_bind(M.Data_Either_Right(M.Golden_LongEitherBind_Test_add(x278)(1)))(function( x279 )
                                                                                       return M.Golden_LongEitherBind_Test_bind(M.Data_Either_Right(M.Golden_LongEitherBind_Test_add(x279)(1)))(function( x280 )
-                                                                                        return _S_kont1580(x1_S_1585)(x150_S_1586)(x280)
+                                                                                        return _S_kont936(x1_S_941)(x150_S_942)(x280)
                                                                                       end)
                                                                                     end)
                                                                                   end)
@@ -231,10 +231,10 @@ M.Golden_LongEitherBind_Test_compute = (function()
       end
     end
   end
-  local _S_kont1588 = function(x1_S_1589)
-    return function(x150_S_1590)
-      return function(x200_S_1591)
-        return M.Golden_LongEitherBind_Test_bind(M.Data_Either_Right(M.Golden_LongEitherBind_Test_add(x200_S_1591)(1)))(function( x201 )
+  local _S_kont944 = function(x1_S_945)
+    return function(x150_S_946)
+      return function(x200_S_947)
+        return M.Golden_LongEitherBind_Test_bind(M.Data_Either_Right(M.Golden_LongEitherBind_Test_add(x200_S_947)(1)))(function( x201 )
           return M.Golden_LongEitherBind_Test_bind(M.Data_Either_Right(M.Golden_LongEitherBind_Test_add(x201)(1)))(function( x202 )
             return M.Golden_LongEitherBind_Test_bind(M.Data_Either_Right(M.Golden_LongEitherBind_Test_add(x202)(1)))(function( x203 )
               return M.Golden_LongEitherBind_Test_bind(M.Data_Either_Right(M.Golden_LongEitherBind_Test_add(x203)(1)))(function( x204 )
@@ -274,7 +274,7 @@ M.Golden_LongEitherBind_Test_compute = (function()
                                                                                   return M.Golden_LongEitherBind_Test_bind(M.Data_Either_Right(M.Golden_LongEitherBind_Test_add(x237)(1)))(function( x238 )
                                                                                     return M.Golden_LongEitherBind_Test_bind(M.Data_Either_Right(M.Golden_LongEitherBind_Test_add(x238)(1)))(function( x239 )
                                                                                       return M.Golden_LongEitherBind_Test_bind(M.Data_Either_Right(M.Golden_LongEitherBind_Test_add(x239)(1)))(function( x240 )
-                                                                                        return _S_kont1584(x1_S_1589)(x150_S_1590)(x240)
+                                                                                        return _S_kont940(x1_S_945)(x150_S_946)(x240)
                                                                                       end)
                                                                                     end)
                                                                                   end)
@@ -318,10 +318,10 @@ M.Golden_LongEitherBind_Test_compute = (function()
       end
     end
   end
-  local _S_kont1592 = function(x1_S_1593)
-    return function(x150_S_1594)
-      return function(x160_S_1595)
-        return M.Golden_LongEitherBind_Test_bind(M.Data_Either_Right(M.Golden_LongEitherBind_Test_add(x160_S_1595)(1)))(function( x161 )
+  local _S_kont948 = function(x1_S_949)
+    return function(x150_S_950)
+      return function(x160_S_951)
+        return M.Golden_LongEitherBind_Test_bind(M.Data_Either_Right(M.Golden_LongEitherBind_Test_add(x160_S_951)(1)))(function( x161 )
           return M.Golden_LongEitherBind_Test_bind(M.Data_Either_Right(M.Golden_LongEitherBind_Test_add(x161)(1)))(function( x162 )
             return M.Golden_LongEitherBind_Test_bind(M.Data_Either_Right(M.Golden_LongEitherBind_Test_add(x162)(1)))(function( x163 )
               return M.Golden_LongEitherBind_Test_bind(M.Data_Either_Right(M.Golden_LongEitherBind_Test_add(x163)(1)))(function( x164 )
@@ -361,7 +361,7 @@ M.Golden_LongEitherBind_Test_compute = (function()
                                                                                   return M.Golden_LongEitherBind_Test_bind(M.Data_Either_Right(M.Golden_LongEitherBind_Test_add(x197)(1)))(function( x198 )
                                                                                     return M.Golden_LongEitherBind_Test_bind(M.Data_Either_Right(M.Golden_LongEitherBind_Test_add(x198)(1)))(function( x199 )
                                                                                       return M.Golden_LongEitherBind_Test_bind(M.Data_Either_Right(M.Golden_LongEitherBind_Test_add(x199)(1)))(function( x200 )
-                                                                                        return _S_kont1588(x1_S_1593)(x150_S_1594)(x200)
+                                                                                        return _S_kont944(x1_S_949)(x150_S_950)(x200)
                                                                                       end)
                                                                                     end)
                                                                                   end)
@@ -405,9 +405,9 @@ M.Golden_LongEitherBind_Test_compute = (function()
       end
     end
   end
-  local _S_kont1596 = function(x1_S_1597)
-    return function(x120_S_1598)
-      return M.Golden_LongEitherBind_Test_bind(M.Data_Either_Right(M.Golden_LongEitherBind_Test_add(x120_S_1598)(1)))(function( x121 )
+  local _S_kont952 = function(x1_S_953)
+    return function(x120_S_954)
+      return M.Golden_LongEitherBind_Test_bind(M.Data_Either_Right(M.Golden_LongEitherBind_Test_add(x120_S_954)(1)))(function( x121 )
         return M.Golden_LongEitherBind_Test_bind(M.Data_Either_Right(M.Golden_LongEitherBind_Test_add(x121)(1)))(function( x122 )
           return M.Golden_LongEitherBind_Test_bind(M.Data_Either_Right(M.Golden_LongEitherBind_Test_add(x122)(1)))(function( x123 )
             return M.Golden_LongEitherBind_Test_bind(M.Data_Either_Right(M.Golden_LongEitherBind_Test_add(x123)(1)))(function( x124 )
@@ -447,7 +447,7 @@ M.Golden_LongEitherBind_Test_compute = (function()
                                                                                 return M.Golden_LongEitherBind_Test_bind(M.Data_Either_Right(M.Golden_LongEitherBind_Test_add(x157)(1)))(function( x158 )
                                                                                   return M.Golden_LongEitherBind_Test_bind(M.Data_Either_Right(M.Golden_LongEitherBind_Test_add(x158)(1)))(function( x159 )
                                                                                     return M.Golden_LongEitherBind_Test_bind(M.Data_Either_Right(M.Golden_LongEitherBind_Test_add(x159)(1)))(function( x160 )
-                                                                                      return _S_kont1592(x1_S_1597)(x150)(x160)
+                                                                                      return _S_kont948(x1_S_953)(x150)(x160)
                                                                                     end)
                                                                                   end)
                                                                                 end)
@@ -490,9 +490,9 @@ M.Golden_LongEitherBind_Test_compute = (function()
       end)
     end
   end
-  local _S_kont1599 = function(x1_S_1600)
-    return function(x80_S_1601)
-      return M.Golden_LongEitherBind_Test_bind(M.Data_Either_Right(M.Golden_LongEitherBind_Test_add(x80_S_1601)(1)))(function( x81 )
+  local _S_kont955 = function(x1_S_956)
+    return function(x80_S_957)
+      return M.Golden_LongEitherBind_Test_bind(M.Data_Either_Right(M.Golden_LongEitherBind_Test_add(x80_S_957)(1)))(function( x81 )
         return M.Golden_LongEitherBind_Test_bind(M.Data_Either_Right(M.Golden_LongEitherBind_Test_add(x81)(1)))(function( x82 )
           return M.Golden_LongEitherBind_Test_bind(M.Data_Either_Right(M.Golden_LongEitherBind_Test_add(x82)(1)))(function( x83 )
             return M.Golden_LongEitherBind_Test_bind(M.Data_Either_Right(M.Golden_LongEitherBind_Test_add(x83)(1)))(function( x84 )
@@ -532,7 +532,7 @@ M.Golden_LongEitherBind_Test_compute = (function()
                                                                                 return M.Golden_LongEitherBind_Test_bind(M.Data_Either_Right(M.Golden_LongEitherBind_Test_add(x117)(1)))(function( x118 )
                                                                                   return M.Golden_LongEitherBind_Test_bind(M.Data_Either_Right(M.Golden_LongEitherBind_Test_add(x118)(1)))(function( x119 )
                                                                                     return M.Golden_LongEitherBind_Test_bind(M.Data_Either_Right(M.Golden_LongEitherBind_Test_add(x119)(1)))(function( x120 )
-                                                                                      return _S_kont1596(x1_S_1600)(x120)
+                                                                                      return _S_kont952(x1_S_956)(x120)
                                                                                     end)
                                                                                   end)
                                                                                 end)
@@ -575,9 +575,9 @@ M.Golden_LongEitherBind_Test_compute = (function()
       end)
     end
   end
-  local _S_kont1602 = function(x1_S_1603)
-    return function(x40_S_1604)
-      return M.Golden_LongEitherBind_Test_bind(M.Data_Either_Right(M.Golden_LongEitherBind_Test_add(x40_S_1604)(1)))(function( x41 )
+  local _S_kont958 = function(x1_S_959)
+    return function(x40_S_960)
+      return M.Golden_LongEitherBind_Test_bind(M.Data_Either_Right(M.Golden_LongEitherBind_Test_add(x40_S_960)(1)))(function( x41 )
         return M.Golden_LongEitherBind_Test_bind(M.Data_Either_Right(M.Golden_LongEitherBind_Test_add(x41)(1)))(function( x42 )
           return M.Golden_LongEitherBind_Test_bind(M.Data_Either_Right(M.Golden_LongEitherBind_Test_add(x42)(1)))(function( x43 )
             return M.Golden_LongEitherBind_Test_bind(M.Data_Either_Right(M.Golden_LongEitherBind_Test_add(x43)(1)))(function( x44 )
@@ -617,7 +617,7 @@ M.Golden_LongEitherBind_Test_compute = (function()
                                                                                 return M.Golden_LongEitherBind_Test_bind(M.Data_Either_Right(M.Golden_LongEitherBind_Test_add(x77)(1)))(function( x78 )
                                                                                   return M.Golden_LongEitherBind_Test_bind(M.Data_Either_Right(M.Golden_LongEitherBind_Test_add(x78)(1)))(function( x79 )
                                                                                     return M.Golden_LongEitherBind_Test_bind(M.Data_Either_Right(M.Golden_LongEitherBind_Test_add(x79)(1)))(function( x80 )
-                                                                                      return _S_kont1599(x1_S_1603)(x80)
+                                                                                      return _S_kont955(x1_S_959)(x80)
                                                                                     end)
                                                                                   end)
                                                                                 end)
@@ -700,7 +700,7 @@ M.Golden_LongEitherBind_Test_compute = (function()
                                                                             return M.Golden_LongEitherBind_Test_bind(M.Data_Either_Right(M.Golden_LongEitherBind_Test_add(x37)(1)))(function( x38 )
                                                                               return M.Golden_LongEitherBind_Test_bind(M.Data_Either_Right(M.Golden_LongEitherBind_Test_add(x38)(1)))(function( x39 )
                                                                                 return M.Golden_LongEitherBind_Test_bind(M.Data_Either_Right(M.Golden_LongEitherBind_Test_add(x39)(1)))(function( x40 )
-                                                                                  return _S_kont1602(x1)(x40)
+                                                                                  return _S_kont958(x1)(x40)
                                                                                 end)
                                                                               end)
                                                                             end)
@@ -743,16 +743,16 @@ M.Golden_LongEitherBind_Test_compute = (function()
   end)
 end)()
 return (function(s) return function() print(s) end end)(M.Data_Show_show({
-  show = function(v_S_1574)
-    if "Data.Either∷Either.Left" == v_S_1574["$ctor"] then
+  show = function(v_S_930)
+    if "Data.Either∷Either.Left" == v_S_930["$ctor"] then
       return M.Data_Either_append("(Left ")(M.Data_Either_append(M.Data_Show_show({
         show = M.Data_Show_foreign.showStringImpl
-      })(v_S_1574.value0))(")"))
+      })(v_S_930.value0))(")"))
     else
-      if "Data.Either∷Either.Right" == v_S_1574["$ctor"] then
+      if "Data.Either∷Either.Right" == v_S_930["$ctor"] then
         return M.Data_Either_append("(Right ")(M.Data_Either_append(M.Data_Show_show({
           show = M.Data_Show_foreign.showIntImpl
-        })(v_S_1574.value0))(")"))
+        })(v_S_930.value0))(")"))
       else
         return error("No patterns matched")
       end
