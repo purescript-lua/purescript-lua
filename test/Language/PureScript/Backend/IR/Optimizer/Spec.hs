@@ -40,6 +40,8 @@ import Language.PureScript.Backend.IR.Types
   , literalInt
   , literalObject
   , noAnn
+  , objectProp
+  , objectUpdate
   , paramNamed
   , paramUnused
   , refImported
@@ -102,6 +104,52 @@ spec = describe "IR Optimizer" do
               (refImported dict (Name "eqInt"))
           original = abstraction (paramNamed param) (application m (refLocal param))
       optimizedExpression original === original
+
+  describe "folds record-literal projections" do
+    let foo = PropName "foo"
+        bar = PropName "bar"
+
+    it "projects a field out of a record literal" do
+      let original =
+            objectProp
+              (literalObject [(foo, literalInt 1), (bar, literalInt 2)])
+              foo
+      optimizedExpression original `shouldBe` literalInt 1
+
+    it "declines when the projected field is absent" do
+      -- Unreachable for well-typed IR; the rule must decline rather
+      -- than invent a value.
+      let original = objectProp (literalObject [(bar, literalInt 2)]) foo
+      optimizedExpression original `shouldBe` original
+
+    it "feeds the folded value into sibling rules in one pass" do
+      let original =
+            eq
+              (objectProp (literalObject [(foo, literalInt 1)]) foo)
+              (literalInt 1)
+      optimizedExpression original `shouldBe` literalBool True
+
+    it "projects a patched field out of a record update" do
+      let original =
+            objectProp
+              ( objectUpdate
+                  (refLocal (Name "r"))
+                  ((foo, literalInt 3) :| [])
+              )
+              foo
+      optimizedExpression original `shouldBe` literalInt 3
+
+    it "projects through an update that skips the field" do
+      -- The update does not patch foo, so the projection reaches
+      -- through it into the underlying literal.
+      let original =
+            objectProp
+              ( objectUpdate
+                  (literalObject [(foo, literalInt 1), (bar, literalInt 2)])
+                  ((bar, literalInt 3) :| [])
+              )
+              foo
+      optimizedExpression original `shouldBe` literalInt 1
 
   describe "inlines expressions" do
     test "inlines literals" do
@@ -207,6 +255,33 @@ spec = describe "IR Optimizer" do
               }
       annotateShow original
       annotateShow expected
+      optimizedUberModule original === expected
+
+    -- The live trigger for the projection fold: inlining a record
+    -- literal into its projection site creates the redex mid-fixpoint,
+    -- and DCE then drops the emptied binding.
+    test "record projection after inlining" do
+      name ← forAll Gen.name
+      let uberName = moduleNameFromString "Main"
+          linkMode = LinkAsModule uberName
+          mkUber = Linker.makeUberModule linkMode . pure . wrapInModule
+          original =
+            mkUber $
+              let1
+                name
+                ( literalObject
+                    [ (PropName "foo", literalInt 1)
+                    , (PropName "bar", literalInt 2)
+                    ]
+                )
+                (objectProp (refLocal name) (PropName "foo"))
+          expected =
+            Linker.UberModule
+              { uberModuleForeigns = []
+              , uberModuleBindings = []
+              , uberModuleExports = [(Name "main", literalInt 1)]
+              }
+      annotateShow original
       optimizedUberModule original === expected
 
   describe "scoping invariants" do

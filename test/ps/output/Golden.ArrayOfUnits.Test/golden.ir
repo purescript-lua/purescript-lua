@@ -26,28 +26,6 @@ UberModule
         [ ( Nothing, Name "pureE" ), ( Nothing, Name "bindE" ) ]
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Control.Semigroupoid", qnameName = Name "semigroupoidFn"
-        }, LiteralObject Nothing
-        [
-          ( PropName "compose", Abs Nothing
-            ( ParamNamed Nothing ( Name "f" ) )
-            ( Abs Nothing
-              ( ParamNamed Nothing ( Name "g" ) )
-              ( Abs Nothing
-                ( ParamNamed Nothing ( Name "x" ) )
-                ( App Nothing
-                  ( Ref Nothing ( Local ( Name "f" ) ) )
-                  ( App Nothing
-                    ( Ref Nothing ( Local ( Name "g" ) ) )
-                    ( Ref Nothing ( Local ( Name "x" ) ) )
-                  )
-                )
-              )
-            )
-          )
-        ]
-      ), Standalone
-      ( QName
         { qnameModuleName = ModuleName "Data.Semiring", qnameName = Name "semiringInt"
         }, LiteralObject Nothing
         [
@@ -390,112 +368,86 @@ UberModule
                           ( Imported ( ModuleName "Data.Foldable" ) ( Name "foldableArray" ) )
                         )
                       )
-                      ( App Nothing
-                        ( App Nothing
-                          ( ObjectProp Nothing
-                            ( Ref Nothing
-                              ( Imported
-                                ( ModuleName "Control.Semigroupoid" )
-                                ( Name "semigroupoidFn" )
+                      ( Abs Nothing
+                        ( ParamNamed Nothing ( Name "x$1847" ) )
+                        ( Abs Nothing
+                          ( ParamNamed Nothing ( Name "b$1140$1831" ) )
+                          ( App Nothing
+                            ( App Nothing
+                              ( App Nothing
+                                ( Ref Nothing
+                                  ( Imported ( ModuleName "Control.Apply" ) ( Name "apply" ) )
+                                )
+                                ( App Nothing
+                                  ( ObjectProp Nothing
+                                    ( Ref Nothing
+                                      ( Imported
+                                        ( ModuleName "Effect" )
+                                        ( Name "applicativeEffect" )
+                                      )
+                                    )
+                                    ( PropName "Apply0" )
+                                  )
+                                  ( Ref Nothing
+                                    ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) )
+                                  )
+                                )
                               )
-                            )
-                            ( PropName "compose" )
-                          )
-                          ( Abs Nothing
-                            ( ParamNamed Nothing ( Name "a$1139$1830" ) )
-                            ( Abs Nothing
-                              ( ParamNamed Nothing ( Name "b$1140$1831" ) )
                               ( App Nothing
                                 ( App Nothing
-                                  ( App Nothing
-                                    ( Ref Nothing
-                                      ( Imported ( ModuleName "Control.Apply" ) ( Name "apply" ) )
-                                    )
-                                    ( App Nothing
-                                      ( ObjectProp Nothing
-                                        ( Ref Nothing
-                                          ( Imported
-                                            ( ModuleName "Effect" )
-                                            ( Name "applicativeEffect" )
-                                          )
-                                        )
-                                        ( PropName "Apply0" )
-                                      )
-                                      ( Ref Nothing
-                                        ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) )
-                                      )
-                                    )
-                                  )
-                                  ( App Nothing
+                                  ( ObjectProp Nothing
                                     ( App Nothing
                                       ( ObjectProp Nothing
                                         ( App Nothing
                                           ( ObjectProp Nothing
-                                            ( App Nothing
-                                              ( ObjectProp Nothing
-                                                ( Ref Nothing
-                                                  ( Imported
-                                                    ( ModuleName "Effect" )
-                                                    ( Name "applicativeEffect" )
-                                                  )
-                                                )
-                                                ( PropName "Apply0" )
-                                              )
-                                              ( Ref Nothing
-                                                ( Imported
-                                                  ( ModuleName "Prim" )
-                                                  ( Name "undefined" )
-                                                )
+                                            ( Ref Nothing
+                                              ( Imported
+                                                ( ModuleName "Effect" )
+                                                ( Name "applicativeEffect" )
                                               )
                                             )
-                                            ( PropName "Functor0" )
+                                            ( PropName "Apply0" )
                                           )
                                           ( Ref Nothing
                                             ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) )
                                           )
                                         )
-                                        ( PropName "map" )
+                                        ( PropName "Functor0" )
                                       )
-                                      ( Abs Nothing ( ParamUnused Nothing )
-                                        ( ObjectProp Nothing
-                                          ( LiteralObject Nothing
-                                            [
-                                              ( PropName "identity", Abs Nothing
-                                                ( ParamNamed Nothing ( Name "x$1843" ) )
-                                                ( Ref Nothing ( Local ( Name "x$1843" ) ) )
-                                              ),
-                                              ( PropName "Semigroupoid0", Abs Nothing ( ParamUnused Nothing )
-                                                ( Ref Nothing
-                                                  ( Imported
-                                                    ( ModuleName "Control.Semigroupoid" )
-                                                    ( Name "semigroupoidFn" )
-                                                  )
-                                                )
-                                              )
-                                            ]
-                                          )
-                                          ( PropName "identity" )
-                                        )
+                                      ( Ref Nothing
+                                        ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) )
                                       )
                                     )
-                                    ( Ref Nothing ( Local ( Name "a$1139$1830" ) ) )
+                                    ( PropName "map" )
+                                  )
+                                  ( Abs Nothing ( ParamUnused Nothing )
+                                    ( Abs Nothing
+                                      ( ParamNamed Nothing ( Name "x$1843" ) )
+                                      ( Ref Nothing ( Local ( Name "x$1843" ) ) )
+                                    )
                                   )
                                 )
-                                ( Ref Nothing ( Local ( Name "b$1140$1831" ) ) )
+                                ( App Nothing
+                                  ( App Nothing
+                                    ( Ref Nothing
+                                      ( Imported
+                                        ( ModuleName "Effect.Console" )
+                                        ( Name "logShow" )
+                                      )
+                                    )
+                                    ( LiteralObject Nothing
+                                      [
+                                        ( PropName "show", Abs Nothing ( ParamUnused Nothing )
+                                          ( LiteralString Nothing "unit" )
+                                        )
+                                      ]
+                                    )
+                                  )
+                                  ( Ref Nothing ( Local ( Name "x$1847" ) ) )
+                                )
                               )
                             )
-                          )
-                        )
-                        ( App Nothing
-                          ( Ref Nothing
-                            ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow" ) )
-                          )
-                          ( LiteralObject Nothing
-                            [
-                              ( PropName "show", Abs Nothing ( ParamUnused Nothing )
-                                ( LiteralString Nothing "unit" )
-                              )
-                            ]
+                            ( Ref Nothing ( Local ( Name "b$1140$1831" ) ) )
                           )
                         )
                       )

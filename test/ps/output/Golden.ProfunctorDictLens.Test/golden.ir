@@ -60,34 +60,15 @@ UberModule
         ( ParamNamed Nothing ( Name "f$886" ) )
         ( Abs Nothing
           ( ParamNamed Nothing ( Name "g$887" ) )
-          ( App Nothing
+          ( Abs Nothing
+            ( ParamNamed Nothing ( Name "x$894" ) )
             ( App Nothing
-              ( ObjectProp Nothing
-                ( LiteralObject Nothing
-                  [
-                    ( PropName "compose", Abs Nothing
-                      ( ParamNamed Nothing ( Name "f$892" ) )
-                      ( Abs Nothing
-                        ( ParamNamed Nothing ( Name "g$893" ) )
-                        ( Abs Nothing
-                          ( ParamNamed Nothing ( Name "x$894" ) )
-                          ( App Nothing
-                            ( Ref Nothing ( Local ( Name "f$892" ) ) )
-                            ( App Nothing
-                              ( Ref Nothing ( Local ( Name "g$893" ) ) )
-                              ( Ref Nothing ( Local ( Name "x$894" ) ) )
-                            )
-                          )
-                        )
-                      )
-                    )
-                  ]
-                )
-                ( PropName "compose" )
-              )
               ( Ref Nothing ( Local ( Name "g$887" ) ) )
+              ( App Nothing
+                ( Ref Nothing ( Local ( Name "f$886" ) ) )
+                ( Ref Nothing ( Local ( Name "x$894" ) ) )
+              )
             )
-            ( Ref Nothing ( Local ( Name "f$886" ) ) )
           )
         )
       ), Standalone
@@ -325,20 +306,7 @@ UberModule
       ( QName
         { qnameModuleName = ModuleName "Golden.ProfunctorDictLens.Test", qnameName = Name "discard"
         }, App Nothing
-        ( ObjectProp Nothing
-          ( LiteralObject Nothing
-            [
-              ( PropName "discard", Abs Nothing
-                ( ParamNamed Nothing ( Name "dictBind$184$888" ) )
-                ( App Nothing
-                  ( Ref Nothing ( Imported ( ModuleName "Control.Bind" ) ( Name "bind" ) ) )
-                  ( Ref Nothing ( Local ( Name "dictBind$184$888" ) ) )
-                )
-              )
-            ]
-          )
-          ( PropName "discard" )
-        )
+        ( Ref Nothing ( Imported ( ModuleName "Control.Bind" ) ( Name "bind" ) ) )
         ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "bindEffect" ) ) )
       ), Standalone
       ( QName
@@ -354,19 +322,12 @@ UberModule
             ( PropName "log" )
           )
           ( App Nothing
-            ( ObjectProp Nothing
-              ( LiteralObject Nothing
-                [
-                  ( PropName "show", ObjectProp ( Just Always )
-                    ( ForeignImport Nothing
-                      ( ModuleName "Data.Show" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Show.purs"
-                      [ ( Nothing, Name "showIntImpl" ) ]
-                    )
-                    ( PropName "showIntImpl" )
-                  )
-                ]
+            ( ObjectProp ( Just Always )
+              ( ForeignImport Nothing
+                ( ModuleName "Data.Show" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Show.purs"
+                [ ( Nothing, Name "showIntImpl" ) ]
               )
-              ( PropName "show" )
+              ( PropName "showIntImpl" )
             )
             ( Ref Nothing ( Local ( Name "a$5" ) ) )
           )
@@ -536,27 +497,12 @@ UberModule
                       ( ParamNamed Nothing ( Name "v1$2" ) )
                       ( App Nothing
                         ( App Nothing
-                          ( ObjectProp Nothing
-                            ( LiteralObject Nothing
-                              [
-                                ( PropName "sub", ObjectProp ( Just Always )
-                                  ( ForeignImport Nothing
-                                    ( ModuleName "Data.Ring" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Ring.purs"
-                                    [ ( Nothing, Name "intSub" ) ]
-                                  )
-                                  ( PropName "intSub" )
-                                ),
-                                ( PropName "Semiring0", Abs Nothing ( ParamUnused Nothing )
-                                  ( Ref Nothing
-                                    ( Imported
-                                      ( ModuleName "Data.Semiring" )
-                                      ( Name "semiringInt" )
-                                    )
-                                  )
-                                )
-                              ]
+                          ( ObjectProp ( Just Always )
+                            ( ForeignImport Nothing
+                              ( ModuleName "Data.Ring" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Ring.purs"
+                              [ ( Nothing, Name "intSub" ) ]
                             )
-                            ( PropName "sub" )
+                            ( PropName "intSub" )
                           )
                           ( Ref Nothing ( Local ( Name "v1$2" ) ) )
                         )

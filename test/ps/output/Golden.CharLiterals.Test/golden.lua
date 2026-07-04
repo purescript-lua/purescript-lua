@@ -26,12 +26,6 @@ M.Effect_foreign = {
 M.Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
 }
-M.Data_Eq_eqChar = {
-  eq = ((function()
-    local refEq = function(r1) return function(r2) return r1 == r2 end end
-    return { eqCharImpl = refEq }
-  end)()).eqCharImpl
-}
 M.Data_Show_show = function(dict) return dict.show end
 M.Control_Applicative_pure = function(dict) return dict.pure end
 M.Control_Bind_bind = function(dict) return dict.bind end
@@ -73,9 +67,7 @@ M.Effect_Lazy_applyEffect = PSLUA_runtime_lazy("applyEffect")(function()
     Functor0 = function() return M.Effect_Lazy_functorEffect(0) end
   }
 end)
-M.Golden_CharLiterals_Test_discard = (function(dictBind_S_20_S_721)
-  return M.Control_Bind_bind(dictBind_S_20_S_721)
-end)(M.Effect_bindEffect)
+M.Golden_CharLiterals_Test_discard = M.Control_Bind_bind(M.Effect_bindEffect)
 M.Golden_CharLiterals_Test_show = M.Data_Show_show({
   show = function(n)
       local code = n:byte()
@@ -113,7 +105,10 @@ return (function()
   local _ = M.Effect_Console_foreign.log(M.Golden_CharLiterals_Test_show("\'"))()
   local _ = M.Effect_Console_foreign.log(M.Golden_CharLiterals_Test_show("\\"))()
   local _ = M.Effect_Console_foreign.log(M.Golden_CharLiterals_Test_show("a"))()
-  local _ = M.Effect_Console_foreign.log(M.Golden_CharLiterals_Test_show1(M.Data_Eq_eqChar.eq("\n")("\n")))()
+  local _ = M.Effect_Console_foreign.log(M.Golden_CharLiterals_Test_show1(((function(  )
+    local refEq = function(r1) return function(r2) return r1 == r2 end end
+    return { eqCharImpl = refEq }
+  end)()).eqCharImpl("\n")("\n")))()
   return M.Effect_Console_foreign.log(M.Golden_CharLiterals_Test_show1((function(  )
     if "Data.Ordering∷Ordering.LT" == (((function()
       local unsafeCoerceImpl = function(lt)

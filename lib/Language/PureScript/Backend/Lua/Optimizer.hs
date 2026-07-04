@@ -72,6 +72,13 @@ removeScopeWhenInsideEmptyFunction = \case
 
 {- | Rewrites '{ foo = 1, bar = 2 }.foo' to '1'.
 
+IR-visible record literals are already folded by the IR optimizer
+('Language.PureScript.Backend.IR.Optimizer.reduceObjectProp'); this rule
+catches the constructors that only materialize during lowering. The live
+trigger is a projection out of a foreign module — @ObjectProp
+(ForeignImport …)@ lowers to a field access into the table of the foreign
+source's exports.
+
 Only fires when the constructor is unambiguous: every row is a name-value
 row and no field name repeats. A 'TableRowKV' row could carry a string key
 equal to the accessed field (e.g. @["foo"] = …@) that this name-keyed lookup

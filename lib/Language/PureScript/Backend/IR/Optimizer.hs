@@ -2,6 +2,7 @@ module Language.PureScript.Backend.IR.Optimizer where
 
 import Control.Monad.Writer.CPS (WriterT, runWriterT, tell)
 import Data.Foldable (foldrM)
+import Data.List qualified as List
 import Data.Map qualified as Map
 import Data.Set qualified as Set
 import Language.PureScript.Backend.IR.DCE (eliminateDeadCode)
@@ -277,6 +278,7 @@ optimizedExpressionM =
   -- See Note [Eta reduction is unsound]
   rewriteExpBottomUpM
     ( constantFolding
+        `thenRewrite` reduceObjectProp
         `thenRewrite` betaReduce
         `thenRewrite` betaReduceUnusedParams
         `thenRewrite` removeUnreachableThenBranch
@@ -310,6 +312,30 @@ constantFolding =
       Just $ literalBool $ a == b
     Eq _ (LiteralString _ a) (LiteralString _ b) →
       Just $ literalBool $ a == b
+    _ → Nothing
+
+{- | Folds a record projection into the record constructor:
+@{ foo: 1, bar: 2 }.foo@ becomes @1@, and a projection through a record
+update takes the patched value (or reaches into the updated record when
+the field is not patched).
+
+'PropName' keys are static labels — no computed-key form exists — and
+the type checker forbids duplicate labels in record literals and
+updates, so a plain 'lookup' is exact (see Note [IR is assumed
+well-typed]). A miss is only possible on ill-typed input, where the
+rule declines.
+
+The discarded fields are never evaluated — the same call DCE makes when
+it drops an unused binding unconditionally.
+-}
+reduceObjectProp ∷ Applicative m ⇒ RewriteRuleM m Ann
+reduceObjectProp =
+  pure . \case
+    ObjectProp _ann (LiteralObject _ props) prop →
+      List.lookup prop props
+    ObjectProp ann (ObjectUpdate _ obj patches) prop →
+      Just $
+        fromMaybe (ObjectProp ann obj prop) (List.lookup prop (toList patches))
     _ → Nothing
 
 -- (λx. M) N ===> M[x := N]

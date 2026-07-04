@@ -1,16 +1,4 @@
 UberModule
   { uberModuleBindings = [], uberModuleForeigns = [], uberModuleExports =
-    [
-      ( Name "test", ObjectProp Nothing
-        ( LiteralObject Nothing
-          [
-            ( PropName "elem", ObjectProp Nothing
-              ( LiteralObject Nothing [ ( PropName "elem", LiteralInt Nothing 1 ) ] )
-              ( PropName "elem" )
-            )
-          ]
-        )
-        ( PropName "elem" )
-      )
-    ]
+    [ ( Name "test", LiteralInt Nothing 1 ) ]
   }

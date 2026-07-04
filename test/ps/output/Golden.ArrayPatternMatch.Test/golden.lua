@@ -80,9 +80,7 @@ end)
 M.Golden_ArrayPatternMatch_Test_negate = function(a_S_165)
   return M.Data_Ring_ringInt.sub((M.Data_Ring_ringInt.Semiring0()).zero)(a_S_165)
 end
-M.Golden_ArrayPatternMatch_Test_discard = (function(dictBind_S_23_S_727)
-  return M.Control_Bind_bind(dictBind_S_23_S_727)
-end)(M.Effect_bindEffect)
+M.Golden_ArrayPatternMatch_Test_discard = M.Control_Bind_bind(M.Effect_bindEffect)
 M.Golden_ArrayPatternMatch_Test_logShow = function(a_S_2)
   return (function(s) return function() print(s) end end)((function(n) return tostring(n) end)(a_S_2))
 end
