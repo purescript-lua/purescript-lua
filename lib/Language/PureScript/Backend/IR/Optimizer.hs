@@ -31,6 +31,7 @@ import Language.PureScript.Backend.IR.Types
   , Parameter (..)
   , RawExp (..)
   , RewriteRuleM
+  , WasRewritten (..)
   , alphaEq
   , bindingExprs
   , countFreeRef
@@ -377,8 +378,10 @@ removeUnreachableElseBranch e = pure case e of
 inlineLocalBindings ∷ RewriteRuleM SupplyM Ann
 inlineLocalBindings = \case
   Let ann groupings body → do
-    (body', Any inlined) ← foldrM inlineLocalBinding (body, Any False) groupings
-    pure $ if inlined then Just (Let ann groupings body') else Nothing
+    (body', inlined) ← foldrM inlineLocalBinding (body, Unmodified) groupings
+    pure case inlined of
+      Rewritten → Just (Let ann groupings body')
+      Unmodified → Nothing
   _ → pure Nothing
 
 {- | Inline one binding into the Let's body when the heuristic wants it
@@ -398,7 +401,10 @@ a same-named reference in the RHS would be a duplicate binder upstream
 — but 'optimizedExpression' is also exercised directly on non-GUC
 input, where the rule must decline rather than loop or capture.
 -}
-inlineLocalBinding ∷ Grouping (Ann, Name, Exp) → (Exp, Any) → SupplyM (Exp, Any)
+inlineLocalBinding
+  ∷ Grouping (Ann, Name, Exp)
+  → (Exp, WasRewritten)
+  → SupplyM (Exp, WasRewritten)
 inlineLocalBinding grouping (body, inlined) =
   case grouping of
     RecursiveGroup _grp → pure (body, inlined) -- Not inlining recursive bindings
@@ -408,7 +414,7 @@ inlineLocalBinding grouping (body, inlined) =
       , isInlinableExpr inlinee || occurrences == 1 →
           -- The binding survives until DCE drops it, so the inserted copy
           -- must not reuse its binder names ('substituteCopyM').
-          (,Any True) <$> substituteCopyM name inlinee body
+          (,Rewritten) <$> substituteCopyM name inlinee body
       | otherwise → pure (body, inlined)
      where
       occurrences ∷ Natural

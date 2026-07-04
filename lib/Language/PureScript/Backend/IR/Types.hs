@@ -399,7 +399,7 @@ subexpressions go = \case
 
 The honesty contract: a rule must return 'Just' only when it actually
 changed something. The drivers below surface "did any rule fire" as the
-change signal the optimizer fixpoint trusts (issue #144): a rule that
+'WasRewritten' signal the optimizer fixpoint trusts: a rule that
 reports 'Just' with an unchanged result spins the fixpoint until its
 iteration cap, and one that changes something under 'Nothing' stops it
 early — both are caught loudly by the checked pipeline runner
@@ -409,6 +409,25 @@ type RewriteRule ann = RawExp ann → Maybe (RawExp ann)
 
 -- | Effectful 'RewriteRule'.
 type RewriteRuleM m ann = RawExp ann → m (Maybe (RawExp ann))
+
+{- | Did rewriting change anything? The '(<>)' answers "did either":
+'Rewritten' wins, 'Unmodified' is 'mempty'. 'Unmodified' asserts the
+result is structurally identical to the input; 'Rewritten' says it may
+differ.
+-}
+data WasRewritten = Rewritten | Unmodified
+  deriving stock (Show, Eq)
+
+instance Semigroup WasRewritten where
+  Unmodified <> Unmodified = Unmodified
+  _ <> _ = Rewritten
+
+instance Monoid WasRewritten where
+  mempty = Unmodified
+
+-- | 'Rewritten' iff the condition holds.
+rewrittenIf ∷ Bool → WasRewritten
+rewrittenIf b = if b then Rewritten else Unmodified
 
 {- | Sequential composition: apply the second rule to the first rule's
 result (or to the original expression when the first did not fire).
@@ -428,19 +447,19 @@ thenRewrite rewrite1 rewrite2 e =
 the rule sees the node, and the rule is re-applied to its own result
 until it no longer fires ('rewriteMOf' semantics). One pass is
 therefore complete and idempotent — the result contains no node the
-rule still fires on — which is what makes the returned 'Any' a precise
-change flag (issue #144), and what closes the Recurse-escape bug class
-(issue #149) structurally: a node exposed by a collapsing parent has
-already been fully rewritten.
+rule still fires on — which is what makes the returned 'WasRewritten'
+precise, and what closes the Recurse-escape bug class (issue #149)
+structurally: a node exposed by a collapsing parent has already been
+fully rewritten.
 -}
 rewriteExpBottomUpM
-  ∷ Monad m ⇒ RewriteRuleM m ann → RawExp ann → m (RawExp ann, Any)
+  ∷ Monad m ⇒ RewriteRuleM m ann → RawExp ann → m (RawExp ann, WasRewritten)
 rewriteExpBottomUpM rule expr =
   runWriterT $ flip (rewriteMOf subexpressions) expr \e →
-    lift (rule e) >>= traverse \e' → e' <$ tell (Any True)
+    lift (rule e) >>= traverse \e' → e' <$ tell Rewritten
 
 -- | Pure 'rewriteExpBottomUpM'.
-rewriteExpBottomUp ∷ RewriteRule ann → RawExp ann → (RawExp ann, Any)
+rewriteExpBottomUp ∷ RewriteRule ann → RawExp ann → (RawExp ann, WasRewritten)
 rewriteExpBottomUp rule = runIdentity . rewriteExpBottomUpM (pure . rule)
 
 {- | Rewrite top-down: re-apply the rule at the node until it no longer

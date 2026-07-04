@@ -126,14 +126,14 @@ eliminateDeadCode uber@UberModule {..} =
   -- class (issue #149) cannot arise, and no rebuild cascade is needed.
   -- Both rules observe the honesty contract of 'RewriteRule': they fire
   -- only when a binder is actually blanked or dropped (issue #145), so
-  -- the driver's change flag is a sound fixpoint signal (issue #144).
+  -- the driver's 'WasRewritten' signal is sound.
   dceAnnotatedExp ∷ AExp → Exp
   dceAnnotatedExp =
     deannotateExp . fst . rewriteExpBottomUp \case
       -- Under GUC a dead binder is unreferenced by definition, so
       -- blanking its name touches no reference elsewhere (the hazard
       -- behind issue #56). Requiring 'ParamNamed' keeps the rule
-      -- honest: an already-blank parameter is left alone (issue #145).
+      -- honest: an already-blank parameter is left alone.
       Abs ann (ParamNamed pann@(paramId, _) _name) b
         | not (paramId `member` reachableIds) →
             Just (Abs ann (ParamUnused pann) b)
