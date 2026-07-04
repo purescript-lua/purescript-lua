@@ -52,6 +52,7 @@ rewriteRulesInOrder ∷ [RewriteRule]
 rewriteRulesInOrder =
   [ removeScopeWhenInsideEmptyFunction
   , reduceTableDefinitionAccessor
+  , foldFieldProjectionThroughScopeCall
   ]
 
 type RewriteRule = Exp → Exp
@@ -101,3 +102,39 @@ reduceTableDefinitionAccessor = \case
   hasDuplicateNames rows =
     let names = [n | (_ann, TableRowNV n _) ← rows]
      in length names /= length (ordNub names)
+
+{- | Rewrites @(function() …; return e end)().foo@ to
+@(function() …; return e.foo end)()@.
+
+A no-argument, immediately-invoked function whose last statement is a
+@return@ is projected into right after the call. Projecting the field
+before returning versus after the call returns is the same value, and no
+side effect crosses the call boundary since both happen within the same
+activation. This lets a later pass (or 'reduceTableDefinitionAccessor', on
+a subsequent bottom-up pass) see through to a table constructor that would
+otherwise be hidden behind the call. See issue #159.
+-}
+foldFieldProjectionThroughScopeCall ∷ RewriteRule
+foldFieldProjectionThroughScopeCall = \case
+  original@( Var
+               ( Ann
+                   ( VarField
+                       (Ann (FunctionCall (Ann (Function [] body)) []))
+                       accessedField
+                     )
+                 )
+             ) →
+      case reverse body of
+        (Ann (Return (Ann returnExp)) : reverseLeading) →
+          FunctionCall
+            ( Lua.ann
+                ( Function
+                    []
+                    ( reverse reverseLeading
+                        <> [Lua.ann (Return (Lua.ann (Lua.varField returnExp accessedField)))]
+                    )
+                )
+            )
+            []
+        _ → original
+  e → e
