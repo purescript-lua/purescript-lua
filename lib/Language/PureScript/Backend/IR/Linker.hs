@@ -2,6 +2,7 @@
 
 module Language.PureScript.Backend.IR.Linker where
 
+import Control.Lens (over)
 import Data.Graph (graphFromEdges', reverseTopSort)
 import Data.Set qualified as Set
 import Language.PureScript.Backend.IR.Inliner qualified as Inline
@@ -23,6 +24,7 @@ import Language.PureScript.Backend.IR.Types
   , bindingNames
   , noAnn
   , refImported
+  , subexpressions
   )
 
 data LinkMode
@@ -152,31 +154,14 @@ qualifyTopRefs moduleName = go
              where
               names' =
                 foldr Set.delete names (bindingNames grouping)
-      App ann argument function →
-        App ann (go' argument) (go' function)
-      LiteralArray ann as →
-        LiteralArray ann (go' <$> as)
-      LiteralObject ann props →
-        LiteralObject ann (go' <<$>> props)
-      ReflectCtor ann a →
-        ReflectCtor ann (go' a)
-      DataArgumentByIndex ann idx a →
-        DataArgumentByIndex ann idx (go' a)
-      Eq ann a b →
-        Eq ann (go' a) (go' b)
-      ArrayLength ann a →
-        ArrayLength ann (go' a)
-      ArrayIndex ann a indx →
-        ArrayIndex ann (go' a) indx
-      ObjectProp ann a prop →
-        ObjectProp ann (go' a) prop
-      ObjectUpdate ann a patches →
-        ObjectUpdate ann (go' a) (go' <<$>> patches)
-      IfThenElse ann p th el →
-        IfThenElse ann (go' p) (go' th) (go' el)
-      _ → expression
+      -- No other constructor binds names, so the top-name set passes
+      -- through:
+      _ → over subexpressions go' expression
    where
+    isTopLevel ∷ Name → Bool
     isTopLevel name = Set.member name topNames
+
+    go' ∷ Exp → Exp
     go' = go topNames
 
 --------------------------------------------------------------------------------

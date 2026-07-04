@@ -2,7 +2,14 @@
 
 module Language.PureScript.Backend.IR.Types where
 
-import Control.Lens (Prism', Traversal', makePrisms, prism')
+import Control.Lens
+  ( Prism'
+  , Traversal'
+  , foldMapOf
+  , makePrisms
+  , prism'
+  , traverseOf
+  )
 import Data.Deriving (deriveEq1, deriveOrd1)
 import Data.Map qualified as Map
 import Data.MonoidMap (MonoidMap)
@@ -67,7 +74,7 @@ data AlgebraicType = SumType | ProductType
   deriving stock (Generic, Eq, Ord, Show, Enum, Bounded)
 
 data Parameter ann = ParamUnused ann | ParamNamed ann Name
-  deriving stock (Show, Eq, Ord)
+  deriving stock (Show, Eq, Ord, Functor, Foldable, Traversable)
 
 paramName ∷ Parameter ann → Maybe Name
 paramName (ParamUnused _ann) = Nothing
@@ -165,6 +172,15 @@ scoping" tests pin the convention.
 deriving stock instance Show ann ⇒ Show (RawExp ann)
 deriving stock instance Eq ann ⇒ Eq (RawExp ann)
 deriving stock instance Ord ann ⇒ Ord (RawExp ann)
+
+{- | Map/fold/traverse over every annotation of the expression: the
+per-node @ann@s, the 'Parameter' annotations, the name annotations of
+'Let' bindings, and the name annotations of a 'ForeignImport'.
+-}
+deriving stock instance Functor RawExp
+
+deriving stock instance Foldable RawExp
+deriving stock instance Traversable RawExp
 
 getAnn ∷ RawExp ann → ann
 getAnn = \case
@@ -341,90 +357,6 @@ literalObject = LiteralObject noAnn
 --------------------------------------------------------------------------------
 -- Traversals ------------------------------------------------------------------
 
-annotateExpM
-  ∷ ∀ ann ann' m
-   . Monad m
-  ⇒ (∀ x. m x → m x)
-  → (RawExp ann → m ann')
-  → (Parameter ann → m (Parameter ann'))
-  → (ann → Name → m ann')
-  → (RawExp ann → m (RawExp ann'))
-annotateExpM around annotateExp annotateParam annotateName =
-  around . \expr → do
-    ann ← annotateExp expr
-    case expr of
-      LiteralInt _ann i →
-        pure $ LiteralInt ann i
-      LiteralFloat _ann f →
-        pure $ LiteralFloat ann f
-      LiteralString _ann s →
-        pure $ LiteralString ann s
-      LiteralChar _ann c →
-        pure $ LiteralChar ann c
-      LiteralBool _ann b →
-        pure $ LiteralBool ann b
-      LiteralArray _ann elems → do
-        elems' ← traverse mkAnn elems
-        pure $ LiteralArray ann elems'
-      LiteralObject _ann props → do
-        props' ← traverse (traverse mkAnn) props
-        pure $ LiteralObject ann props'
-      ReflectCtor _ann a → do
-        a' ← mkAnn a
-        pure $ ReflectCtor ann a'
-      Eq _ann a b → do
-        a' ← mkAnn a
-        b' ← mkAnn b
-        pure $ Eq ann a' b'
-      DataArgumentByIndex _ann index a → do
-        a' ← mkAnn a
-        pure $ DataArgumentByIndex ann index a'
-      ArrayLength _ann a → do
-        a' ← mkAnn a
-        pure $ ArrayLength ann a'
-      ArrayIndex _ann a index → do
-        a' ← mkAnn a
-        pure $ ArrayIndex ann a' index
-      ObjectProp _ann a prop → do
-        a' ← mkAnn a
-        pure $ ObjectProp ann a' prop
-      ObjectUpdate _ann a props → do
-        a' ← mkAnn a
-        props' ← traverse (traverse mkAnn) props
-        pure $ ObjectUpdate ann a' props'
-      Abs _ann param body → do
-        body' ← mkAnn body
-        param' ← annotateParam param
-        pure $ Abs ann param' body'
-      App _ann a b → do
-        a' ← mkAnn a
-        b' ← mkAnn b
-        pure $ App ann a' b'
-      Ref _ann qname → pure $ Ref ann qname
-      Let _ann binds body → do
-        binds' ←
-          forM binds $
-            traverse \(a, n, e) → do
-              n' ← annotateName a n
-              e' ← mkAnn e
-              pure (n', n, e')
-        body' ← mkAnn body
-        pure $ Let ann binds' body'
-      IfThenElse _ann i t e → do
-        i' ← mkAnn i
-        t' ← mkAnn t
-        e' ← mkAnn e
-        pure $ IfThenElse ann i' t' e'
-      Ctor _ann mn aty ty ctr fs → pure $ Ctor ann mn aty ty ctr fs
-      Exception _ann m → pure $ Exception ann m
-      ForeignImport _ann m p ns → do
-        anns ← traverse (uncurry annotateName) ns
-        let ns' = zip anns (fmap snd ns)
-        pure $ ForeignImport ann m p ns'
- where
-  mkAnn ∷ RawExp ann → m (RawExp ann')
-  mkAnn = annotateExpM around annotateExp annotateParam annotateName
-
 {-# INLINE subexpressions #-}
 
 -- | Get all the direct child 'RawExp's of the given 'RawExp'
@@ -516,36 +448,7 @@ rewriteExpTopDownM rewrite = visit
       Rewritten Stop expression' → pure expression'
       Rewritten Recurse expression' → descendInto expression'
 
-  descendInto e = case e of
-    LiteralArray ann as →
-      LiteralArray ann <$> traverse visit as
-    LiteralObject ann props →
-      LiteralObject ann <$> traverse (traverse visit) props
-    ReflectCtor ann a →
-      ReflectCtor ann <$> visit a
-    DataArgumentByIndex ann idx a →
-      DataArgumentByIndex ann idx <$> visit a
-    Eq ann a b →
-      Eq ann <$> visit a <*> visit b
-    ArrayLength ann a →
-      ArrayLength ann <$> visit a
-    ArrayIndex ann a indx →
-      visit a <&> \expr → ArrayIndex ann expr indx
-    ObjectProp ann a prop →
-      visit a <&> \expr → ObjectProp ann expr prop
-    ObjectUpdate ann a patches →
-      ObjectUpdate ann <$> visit a <*> traverse (traverse visit) patches
-    App ann a b →
-      App ann <$> visit a <*> visit b
-    Abs ann param expr →
-      Abs ann param <$> visit expr
-    Let ann binds body →
-      Let ann
-        <$> forM binds (traverse \(a, n, expr) → (a,n,) <$> visit expr)
-        <*> visit body
-    IfThenElse ann p th el →
-      IfThenElse ann <$> visit p <*> visit th <*> visit el
-    _ → pure e
+  descendInto = traverseOf subexpressions visit
 
 countFreeRefs ∷ RawExp ann → Map (Qualified Name) Natural
 countFreeRefs = fmap getSum . MMap.toMap . countFreeRefs' mempty
@@ -593,39 +496,8 @@ countFreeRefs = fmap getSum . MMap.toMap . countFreeRefs' mempty
               (\(_nameAnn, boundName, _expr) → Set.insert boundName)
               names
               recBinds
-    App _ann argument function →
-      go argument <> go function
-    LiteralArray _ann as →
-      foldMap go as
-    LiteralObject _ann props →
-      foldMap (go . snd) props
-    ReflectCtor _ann a →
-      go a
-    DataArgumentByIndex _ann _idx a →
-      go a
-    Eq _ann a b →
-      go a <> go b
-    ArrayLength _ann a →
-      go a
-    ArrayIndex _ann a _indx →
-      go a
-    ObjectProp _ann a _prop →
-      go a
-    ObjectUpdate _ann a patches →
-      go a <> foldMap (go . snd) patches
-    IfThenElse _ann p th el →
-      go p <> go th <> go el
-    -- Terminals:
-    LiteralInt {} → mempty
-    LiteralBool {} → mempty
-    LiteralFloat {} → mempty
-    LiteralString {} → mempty
-    LiteralChar {} → mempty
-    Ctor {} → mempty
-    Exception {} → mempty
-    ForeignImport {} → mempty
-   where
-    go = countFreeRefs' bound
+    -- No other constructor binds names, so the scope passes through:
+    other → foldMapOf subexpressions (countFreeRefs' bound) other
 
 countFreeRef ∷ Qualified Name → RawExp ann → Natural
 countFreeRef name = Map.findWithDefault 0 name . countFreeRefs
@@ -827,30 +699,9 @@ freshenBinders = go Map.empty
             (bindAnn,Map.findWithDefault name name renames',)
               <$> go renames' expr
       Let ann <$> traverse (traverse renameBound) binds <*> go renames' body
-    LiteralArray ann as →
-      LiteralArray ann <$> traverse (go renames) as
-    LiteralObject ann props →
-      LiteralObject ann <$> traverse (traverse (go renames)) props
-    ReflectCtor ann a →
-      ReflectCtor ann <$> go renames a
-    DataArgumentByIndex ann idx a →
-      DataArgumentByIndex ann idx <$> go renames a
-    Eq ann a b →
-      Eq ann <$> go renames a <*> go renames b
-    ArrayLength ann a →
-      ArrayLength ann <$> go renames a
-    ArrayIndex ann a idx →
-      ArrayIndex ann <$> go renames a <*> pure idx
-    ObjectProp ann a prop →
-      ObjectProp ann <$> go renames a <*> pure prop
-    ObjectUpdate ann a patches →
-      ObjectUpdate ann <$> go renames a <*> traverse (traverse (go renames)) patches
-    App ann a b →
-      App ann <$> go renames a <*> go renames b
-    IfThenElse ann p th el →
-      IfThenElse ann <$> go renames p <*> go renames th <*> go renames el
-    -- Terminals:
-    terminal → pure terminal
+    -- No other constructor binds or references names ('ForeignImport'
+    -- included: its name list holds export keys, not binders):
+    other → traverseOf subexpressions (go renames) other
 
   freshNameFor ∷ Name → SupplyM Name
   freshNameFor name = freshName (nameToText name <> "$")
@@ -902,44 +753,16 @@ substituteFreshening freshenFirst name replacement target =
   evalStateT (go target) freshenFirst
  where
   -- The state is whether the next inserted occurrence must be freshened.
+  -- Under GUC no scope is threaded (see the haddock above): binders are
+  -- descended through blindly, so only 'Ref' needs a dedicated case.
   go ∷ RawExp ann → StateT Bool SupplyM (RawExp ann)
   go = \case
-    r@(Ref _ann name')
+    Ref _ann name'
       | name' == name → do
           freshen ← get
           put True
           if freshen then lift (freshenBinders replacement) else pure replacement
-      | otherwise → pure r
-    Abs ann param body →
-      Abs ann param <$> go body
-    Let ann binds body →
-      Let ann
-        <$> traverse (traverse \(a, n, expr) → (a,n,) <$> go expr) binds
-        <*> go body
-    LiteralArray ann as →
-      LiteralArray ann <$> traverse go as
-    LiteralObject ann props →
-      LiteralObject ann <$> traverse (traverse go) props
-    ReflectCtor ann a →
-      ReflectCtor ann <$> go a
-    DataArgumentByIndex ann idx a →
-      DataArgumentByIndex ann idx <$> go a
-    Eq ann a b →
-      Eq ann <$> go a <*> go b
-    ArrayLength ann a →
-      ArrayLength ann <$> go a
-    ArrayIndex ann a idx →
-      ArrayIndex ann <$> go a <*> pure idx
-    ObjectProp ann a prop →
-      ObjectProp ann <$> go a <*> pure prop
-    ObjectUpdate ann a patches →
-      ObjectUpdate ann <$> go a <*> traverse (traverse go) patches
-    App ann a b →
-      App ann <$> go a <*> go b
-    IfThenElse ann p th el →
-      IfThenElse ann <$> go p <*> go th <*> go el
-    -- Terminals:
-    terminal → pure terminal
+    other → traverseOf subexpressions go other
 
 $(makePrisms ''AlgebraicType)
 $(makePrisms ''Parameter)
