@@ -16,6 +16,7 @@ import Language.PureScript.Backend.IR.Names
   ( Name (..)
   , PropName (..)
   , QName (..)
+  , Qualified (Local)
   , moduleNameFromString
   )
 import Language.PureScript.Backend.IR.Optimizer
@@ -30,6 +31,7 @@ import Language.PureScript.Backend.IR.Types
   , abstraction
   , alphaEq
   , application
+  , countFreeRef
   , eq
   , ifThenElse
   , isLiteral
@@ -43,7 +45,7 @@ import Language.PureScript.Backend.IR.Types
   , refImported
   , refLocal
   )
-import Test.Hspec (Spec, SpecWith, describe, it)
+import Test.Hspec (Spec, SpecWith, describe, it, shouldBe)
 import Test.Hspec.Hedgehog (hedgehog, modifyMaxShrinks, modifyMaxSuccess)
 import Test.Hspec.Hedgehog.Extended (test)
 
@@ -111,15 +113,38 @@ spec = describe "IR Optimizer" do
 
     test "inlines references" do
       name ← forAll Gen.name
-      inlinee ← forAll Gen.refLocal
+      -- A reference to the binding's own name is the one reference that
+      -- must NOT be inlined (see the self-inlining test below), so the
+      -- inlinee is drawn from the other names.
+      inlinee ← refLocal <$> forAll (mfilter (/= name) Gen.name)
       let original = let1 name inlinee (refLocal name)
           expected = let1 name inlinee inlinee
       optimizedExpression original === expected
 
+    -- Regression: substituting @x := x@ is a textual no-op, so the
+    -- occurrence count of @x@ never reaches zero and an unguarded rule
+    -- keeps firing forever under the driver's repeat-until-Nothing
+    -- (caught by CI hanging: the generator above draws the same name
+    -- for binder and inlinee with probability 1/7). Such input is
+    -- outside the pipeline's GUC domain — under unique binders a
+    -- Standalone RHS cannot see its own binder — so the rule must
+    -- decline, not loop.
+    it "declines to inline a self-referential binding" do
+      let x = Name "x"
+          original = let1 x (refLocal x) (refLocal x)
+      optimizedExpression original `shouldBe` original
+
     test "inlines expressions referenced once" do
       name ← forAll Gen.name
       inlinee ← forAll $ fmap optimizedExpression do
-        mfilter (\e → not (isRef e || isLiteral e)) Gen.exp
+        -- No self-reference: inlining a binding whose RHS mentions its
+        -- own name is declined by the optimizer (non-GUC input).
+        mfilter
+          ( \e →
+              not (isRef e || isLiteral e)
+                && countFreeRef (Local name) e == 0
+          )
+          Gen.exp
       let body = refLocal name
           original = let1 name inlinee body
           expected = let1 name inlinee inlinee

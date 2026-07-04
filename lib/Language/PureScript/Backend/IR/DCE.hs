@@ -9,7 +9,7 @@ import Data.DList qualified as DL
 import Data.Graph (Graph, Vertex, graphFromEdges, reachable)
 import Data.List.NonEmpty qualified as NE
 import Data.Map qualified as Map
-import Data.Set (member, notMember)
+import Data.Set (member)
 import Data.Set qualified as Set
 import Language.PureScript.Backend.IR.Linker (UberModule (..))
 import Language.PureScript.Backend.IR.Names
@@ -24,11 +24,9 @@ import Language.PureScript.Backend.IR.Types
   , Grouping (..)
   , Parameter (..)
   , RawExp (..)
-  , RewriteMod (..)
-  , Rewritten (..)
   , getAnn
   , listGrouping
-  , rewriteExpTopDown
+  , rewriteExpBottomUp
   , subexpressions
   )
 
@@ -121,73 +119,53 @@ eliminateDeadCode uber@UberModule {..} =
   annotatedForeignBindings ∷ [(QName, AExp)] =
     [b | b@(_qname, ObjectProp {}) ← annotatedForeigns]
 
+  -- Bottom-up ('rewriteExpBottomUp'): a Let is decided only after its
+  -- body has been fully processed, so when every binding is dropped and
+  -- the node collapses to its body, a body that is itself a Let has
+  -- already had its own dead bindings dropped — the Recurse-escape bug
+  -- class (issue #149) cannot arise, and no rebuild cascade is needed.
+  -- Both rules observe the honesty contract of 'RewriteRule': they fire
+  -- only when a binder is actually blanked or dropped (issue #145), so
+  -- the driver's change flag is a sound fixpoint signal (issue #144).
   dceAnnotatedExp ∷ AExp → Exp
   dceAnnotatedExp =
-    deannotateExp <$> rewriteExpTopDown do
-      pure . \case
-        Abs ann param b
-          | not (paramId `member` reachableIds) →
-              Rewritten Recurse (Abs ann param' b)
-         where
-          paramId ∷ Id =
-            case param of
-              ParamUnused (pid, _) → pid
-              ParamNamed (pid, _) _name → pid
-          -- Under GUC a dead binder is unreferenced by definition, so
-          -- blanking its name touches no reference elsewhere (the
-          -- hazard behind issue #56).
-          param' =
-            case param of
-              ParamUnused pann → ParamUnused pann
-              ParamNamed pann _name → ParamUnused pann
-        Let ann binds body →
-          Rewritten Recurse (rebuild ann (preserveLetBinds (toList binds) body))
-         where
-          -- 'Rewritten Recurse' descends into the result's children without
-          -- re-applying the rule to the result itself, so when every binding
-          -- of the Let is dropped and the node collapses to its body, a body
-          -- that is itself a Let would escape the rule: its dead bindings
-          -- would be kept, while the parameters of lambdas inside them get
-          -- blanked (their ids are unreachable), leaving unbound references
-          -- behind. Process such a body here; the collapse can cascade.
-          rebuild ann' = \case
-            ([], Let ann'' binds' body') →
-              rebuild ann'' (preserveLetBinds (toList binds') body')
-            ([], body') → body'
-            (b : bs, body') → Let ann' (b :| bs) body'
+    deannotateExp . fst . rewriteExpBottomUp \case
+      -- Under GUC a dead binder is unreferenced by definition, so
+      -- blanking its name touches no reference elsewhere (the hazard
+      -- behind issue #56). Requiring 'ParamNamed' keeps the rule
+      -- honest: an already-blank parameter is left alone (issue #145).
+      Abs ann (ParamNamed pann@(paramId, _) _name) b
+        | not (paramId `member` reachableIds) →
+            Just (Abs ann (ParamUnused pann) b)
+      Let ann binds body
+        -- Under GUC dropping a dead binder touches no reference
+        -- elsewhere in the Let (later grouping RHSs or the body): a
+        -- dropped binder is unreferenced by definition, same as the
+        -- Abs case above (pre-GUC this required 'unshift'ing the
+        -- tail, issue #56).
+        | let kept = preservedGroupings (toList binds)
+        , members kept < members (toList binds) →
+            Just case NE.nonEmpty kept of
+              Nothing → body
+              Just keptNE → Let ann keptNE body
+      _ → Nothing
+   where
+    preservedGroupings
+      ∷ [Grouping ((Id, Ann), Name, AExp)]
+      → [Grouping ((Id, Ann), Name, AExp)]
+    preservedGroupings = mapMaybe \case
+      g@(Standalone ((nameId, _ann), _name, _expr)) →
+        g <$ guard (nameId `member` reachableIds)
+      RecursiveGroup recBinds →
+        RecursiveGroup
+          <$> NE.nonEmpty
+            [ b
+            | b@((nameId, _ann), _name, _expr) ← toList recBinds
+            , nameId `member` reachableIds
+            ]
 
-          -- Under GUC dropping a dead binder touches no reference
-          -- elsewhere in the Let (later grouping RHSs or the body): a
-          -- dropped binder is unreferenced by definition, same as the
-          -- Abs case above (pre-GUC this required 'unshift'ing the
-          -- tail, issue #56).
-          preserveLetBinds
-            ∷ [Grouping ((Id, Ann), Name, AExp)]
-            → AExp
-            → ([Grouping ((Id, Ann), Name, AExp)], AExp)
-          preserveLetBinds groupings body' = case groupings of
-            [] → ([], body')
-            g : gs → case g of
-              Standalone ((expId, _ann), _name, _expr)
-                | not (expId `member` reachableIds) →
-                    preserveLetBinds gs body'
-              RecursiveGroup recBinds
-                | any
-                    (\((nameId, _ann), _, _) → nameId `notMember` reachableIds)
-                    (toList recBinds) →
-                    preserveLetBinds remainingGs body'
-               where
-                keptBinds =
-                  [ b
-                  | b@((nameId, _), _, _) ← toList recBinds
-                  , nameId `member` reachableIds
-                  ]
-                remainingGs =
-                  case NE.nonEmpty keptBinds of
-                    Nothing → gs
-                    Just kept → RecursiveGroup kept : gs
-              _keep → first (g :) (preserveLetBinds gs body')
-        _ → NoChange
+    members ∷ [Grouping ((Id, Ann), Name, AExp)] → Int
+    members = length . (listGrouping =<<)
 
   reachableIds ∷ Set Id =
     Set.fromList

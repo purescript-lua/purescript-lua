@@ -171,23 +171,23 @@ M.Golden_GenericEqTwoTypes_Test_genericEqSum = function(dictGenericEq1_S_7)
     end
   }
 end
-M.Golden_GenericEqTwoTypes_Test_eqRec = function(dictEqRecord_S_1285)
-  return { eq = M.Data_Eq_eqRecord(dictEqRecord_S_1285)(M.Type_Proxy_Proxy) }
+M.Golden_GenericEqTwoTypes_Test_eqRec = function(dictEqRecord_S_689)
+  return { eq = M.Data_Eq_eqRecord(dictEqRecord_S_689)(M.Type_Proxy_Proxy) }
 end
 M.Golden_GenericEqTwoTypes_Test_eqRowCons = M.Data_Eq_eqRowCons({
   eqRecord = function()
     return function() return function() return true end end
   end
 })()
-M.Golden_GenericEqTwoTypes_Test_discard = (function(dictBind_S_37_S_1281)
-  return M.Control_Bind_bind(dictBind_S_37_S_1281)
+M.Golden_GenericEqTwoTypes_Test_discard = (function(dictBind_S_37_S_685)
+  return M.Control_Bind_bind(dictBind_S_37_S_685)
 end)(M.Effect_bindEffect)
 M.Golden_GenericEqTwoTypes_Test_logShow = function(a_S_2)
-  return (function(s) return function() print(s) end end)((function( v_S_916_S_1282 )
-    if v_S_916_S_1282 then
+  return (function(s) return function() print(s) end end)((function( v_S_452_S_686 )
+    if v_S_452_S_686 then
       return "true"
     else
-      if false == v_S_916_S_1282 then
+      if false == v_S_452_S_686 then
         return "false"
       else
         return error("No patterns matched")

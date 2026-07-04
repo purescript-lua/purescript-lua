@@ -385,11 +385,11 @@ M.Data_Maybe_showMaybe = function(dictShow)
     end
   }
 end
-M.Data_Maybe_isNothing = function(v2_S_3977)
-  if "Data.Maybe∷Maybe.Nothing" == v2_S_3977["$ctor"] then
+M.Data_Maybe_isNothing = function(v2_S_2338)
+  if "Data.Maybe∷Maybe.Nothing" == v2_S_2338["$ctor"] then
     return true
   else
-    if "Data.Maybe∷Maybe.Just" == v2_S_3977["$ctor"] then
+    if "Data.Maybe∷Maybe.Just" == v2_S_2338["$ctor"] then
       return false
     else
       return error("No patterns matched")
@@ -432,9 +432,9 @@ M.Effect_applicativeEffect = {
 }
 M.Effect_Lazy_functorEffect = PSLUA_runtime_lazy("functorEffect")(function()
   return {
-    map = function(f_S_2450)
-      return function(a_S_2451)
-        return (M.Effect_applicativeEffect.Apply0()).apply(M.Control_Applicative_pure(M.Effect_applicativeEffect)(f_S_2450))(a_S_2451)
+    map = function(f_S_1464)
+      return function(a_S_1465)
+        return (M.Effect_applicativeEffect.Apply0()).apply(M.Control_Applicative_pure(M.Effect_applicativeEffect)(f_S_1464))(a_S_1465)
       end
     end
   }
@@ -442,12 +442,12 @@ end)
 M.Effect_Lazy_applyEffect = PSLUA_runtime_lazy("applyEffect")(function()
   return {
     apply = (function()
-      local bind_S_3981 = M.Control_Bind_bind(M.Effect_monadEffect.Bind1())
-      return function(f_S_3982)
-        return function(a_S_3983)
-          return bind_S_3981(f_S_3982)(function(fPrime_S_3984)
-            return bind_S_3981(a_S_3983)(function(aPrime_S_3985)
-              return M.Control_Applicative_pure(M.Effect_monadEffect.Applicative0())(fPrime_S_3984(aPrime_S_3985))
+      local bind_S_2342 = M.Control_Bind_bind(M.Effect_monadEffect.Bind1())
+      return function(f_S_2343)
+        return function(a_S_2344)
+          return bind_S_2342(f_S_2343)(function(fPrime_S_2345)
+            return bind_S_2342(a_S_2344)(function(aPrime_S_2346)
+              return M.Control_Applicative_pure(M.Effect_monadEffect.Applicative0())(fPrime_S_2345(aPrime_S_2346))
             end)
           end)
         end
@@ -716,8 +716,8 @@ M.Effect_Console_logShow = function(dictShow)
 end
 M.Golden_StringCodePoints_Test_compose = M.Control_Semigroupoid_compose(M.Control_Semigroupoid_semigroupoidFn)
 M.Golden_StringCodePoints_Test_fromEnum = M.Data_Enum_fromEnum(M.Data_String_CodePoints_boundedEnumCodePoint)
-M.Golden_StringCodePoints_Test_discard = (function(dictBind_S_3986)
-  return M.Control_Bind_bind(dictBind_S_3986)
+M.Golden_StringCodePoints_Test_discard = (function(dictBind_S_2347)
+  return M.Control_Bind_bind(dictBind_S_2347)
 end)(M.Effect_bindEffect)
 M.Golden_StringCodePoints_Test_showArray = {
   show = M.Data_Show_foreign.showArrayImpl(M.Data_Show_show(M.Data_Show_showInt))
@@ -755,11 +755,11 @@ return (function()
     return v0_S_1.tail
   end))(M.Data_String_CodePoints_uncons("aéЯ𝐀z")))()
   local _ = M.Effect_Console_logShow({
-    show = function(v_S_3461_S_3973)
-      if v_S_3461_S_3973 then
+    show = function(v_S_2005_S_2334)
+      if v_S_2005_S_2334 then
         return "true"
       else
-        if false == v_S_3461_S_3973 then
+        if false == v_S_2005_S_2334 then
           return "false"
         else
           return error("No patterns matched")

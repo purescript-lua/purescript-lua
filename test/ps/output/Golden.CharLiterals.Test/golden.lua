@@ -73,8 +73,8 @@ M.Effect_Lazy_applyEffect = PSLUA_runtime_lazy("applyEffect")(function()
     Functor0 = function() return M.Effect_Lazy_functorEffect(0) end
   }
 end)
-M.Golden_CharLiterals_Test_discard = (function(dictBind_S_20_S_1365)
-  return M.Control_Bind_bind(dictBind_S_20_S_1365)
+M.Golden_CharLiterals_Test_discard = (function(dictBind_S_20_S_721)
+  return M.Control_Bind_bind(dictBind_S_20_S_721)
 end)(M.Effect_bindEffect)
 M.Golden_CharLiterals_Test_show = M.Data_Show_show({
   show = function(n)
@@ -94,11 +94,11 @@ M.Golden_CharLiterals_Test_show = M.Data_Show_show({
     end
 })
 M.Golden_CharLiterals_Test_show1 = M.Data_Show_show({
-  show = function(v_S_899)
-    if v_S_899 then
+  show = function(v_S_435)
+    if v_S_435 then
       return "true"
     else
-      if false == v_S_899 then
+      if false == v_S_435 then
         return "false"
       else
         return error("No patterns matched")

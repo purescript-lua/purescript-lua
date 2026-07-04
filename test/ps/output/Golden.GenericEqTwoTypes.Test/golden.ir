@@ -605,13 +605,13 @@ UberModule
       ( QName
         { qnameModuleName = ModuleName "Golden.GenericEqTwoTypes.Test", qnameName = Name "eqRec"
         }, Abs Nothing
-        ( ParamNamed Nothing ( Name "dictEqRecord$1285" ) )
+        ( ParamNamed Nothing ( Name "dictEqRecord$689" ) )
         ( LiteralObject Nothing
           [
             ( PropName "eq", App Nothing
               ( App Nothing
                 ( Ref Nothing ( Imported ( ModuleName "Data.Eq" ) ( Name "eqRecord" ) ) )
-                ( Ref Nothing ( Local ( Name "dictEqRecord$1285" ) ) )
+                ( Ref Nothing ( Local ( Name "dictEqRecord$689" ) ) )
               )
               ( Ref Nothing ( Imported ( ModuleName "Type.Proxy" ) ( Name "Proxy" ) ) )
             )
@@ -642,10 +642,10 @@ UberModule
           ( LiteralObject Nothing
             [
               ( PropName "discard", Abs Nothing
-                ( ParamNamed Nothing ( Name "dictBind$37$1281" ) )
+                ( ParamNamed Nothing ( Name "dictBind$37$685" ) )
                 ( App Nothing
                   ( Ref Nothing ( Imported ( ModuleName "Control.Bind" ) ( Name "bind" ) ) )
-                  ( Ref Nothing ( Local ( Name "dictBind$37$1281" ) ) )
+                  ( Ref Nothing ( Local ( Name "dictBind$37$685" ) ) )
                 )
               )
             ]
@@ -671,13 +671,13 @@ UberModule
               ( LiteralObject Nothing
                 [
                   ( PropName "show", Abs Nothing
-                    ( ParamNamed Nothing ( Name "v$916$1282" ) )
+                    ( ParamNamed Nothing ( Name "v$452$686" ) )
                     ( IfThenElse Nothing
-                      ( Ref Nothing ( Local ( Name "v$916$1282" ) ) )
+                      ( Ref Nothing ( Local ( Name "v$452$686" ) ) )
                       ( LiteralString Nothing "true" )
                       ( IfThenElse Nothing
                         ( Eq Nothing ( LiteralBool Nothing False )
-                          ( Ref Nothing ( Local ( Name "v$916$1282" ) ) )
+                          ( Ref Nothing ( Local ( Name "v$452$686" ) ) )
                         )
                         ( LiteralString Nothing "false" )
                         ( Exception Nothing "No patterns matched" )

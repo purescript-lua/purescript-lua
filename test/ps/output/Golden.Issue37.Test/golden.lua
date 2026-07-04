@@ -64,30 +64,30 @@ M.Effect_Lazy_applyEffect = PSLUA_runtime_lazy("applyEffect")(function()
     Functor0 = function() return M.Effect_Lazy_functorEffect(0) end
   }
 end)
-M.Golden_Issue37_Test_discard = function(dictBind_S_30_S_1374)
-  return M.Control_Bind_bind(dictBind_S_30_S_1374)
+M.Golden_Issue37_Test_discard = function(dictBind_S_30_S_730)
+  return M.Control_Bind_bind(dictBind_S_30_S_730)
 end
 return {
   baz = (function()
-    local Bind1_S_1376 = M.Effect_monadEffect.Bind1()
-    local pure_S_1377 = M.Control_Applicative_pure(M.Effect_monadEffect.Applicative0())
-    return function(f_S_1378)
-      return M.Golden_Issue37_Test_discard(Bind1_S_1376)(f_S_1378)(function()
-        return M.Control_Bind_bind(Bind1_S_1376)(pure_S_1377({
+    local Bind1_S_732 = M.Effect_monadEffect.Bind1()
+    local pure_S_733 = M.Control_Applicative_pure(M.Effect_monadEffect.Applicative0())
+    return function(f_S_734)
+      return M.Golden_Issue37_Test_discard(Bind1_S_732)(f_S_734)(function()
+        return M.Control_Bind_bind(Bind1_S_732)(pure_S_733({
           [1] = (function()
-            local Bind1_S_6_S_1379 = M.Effect_monadEffect.Bind1()
-            local discard1_S_8_S_1380 = M.Golden_Issue37_Test_discard(Bind1_S_6_S_1379)
-            return function(fn1_S_9_S_1381)
-              return M.Control_Bind_bind(M.Effect_monadEffect.Bind1())(fn1_S_9_S_1381)(function(  )
-                return discard1_S_8_S_1380(fn1_S_9_S_1381)(function()
-                  return discard1_S_8_S_1380(fn1_S_9_S_1381)(function()
-                    return fn1_S_9_S_1381
+            local Bind1_S_6_S_735 = M.Effect_monadEffect.Bind1()
+            local discard1_S_8_S_736 = M.Golden_Issue37_Test_discard(Bind1_S_6_S_735)
+            return function(fn1_S_9_S_737)
+              return M.Control_Bind_bind(M.Effect_monadEffect.Bind1())(fn1_S_9_S_737)(function(  )
+                return discard1_S_8_S_736(fn1_S_9_S_737)(function()
+                  return discard1_S_8_S_736(fn1_S_9_S_737)(function()
+                    return fn1_S_9_S_737
                   end)
                 end)
               end)
             end
-          end)()(f_S_1378)
-        }))(function() return pure_S_1377(M.Data_Unit_foreign.unit) end)
+          end)()(f_S_734)
+        }))(function() return pure_S_733(M.Data_Unit_foreign.unit) end)
       end)
     end
   end)()(M.Control_Applicative_pure(M.Effect_applicativeEffect)(M.Data_Unit_foreign.unit))

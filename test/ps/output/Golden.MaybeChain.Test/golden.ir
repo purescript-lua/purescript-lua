@@ -289,23 +289,23 @@ UberModule
         ( LiteralObject Nothing
           [
             ( PropName "identity", Abs Nothing
-              ( ParamNamed Nothing ( Name "x$1568" ) )
-              ( Ref Nothing ( Local ( Name "x$1568" ) ) )
+              ( ParamNamed Nothing ( Name "x$924" ) )
+              ( Ref Nothing ( Local ( Name "x$924" ) ) )
             ),
             ( PropName "Semigroupoid0", Abs Nothing ( ParamUnused Nothing )
               ( LiteralObject Nothing
                 [
                   ( PropName "compose", Abs Nothing
-                    ( ParamNamed Nothing ( Name "f$1570" ) )
+                    ( ParamNamed Nothing ( Name "f$926" ) )
                     ( Abs Nothing
-                      ( ParamNamed Nothing ( Name "g$1571" ) )
+                      ( ParamNamed Nothing ( Name "g$927" ) )
                       ( Abs Nothing
-                        ( ParamNamed Nothing ( Name "x$1572" ) )
+                        ( ParamNamed Nothing ( Name "x$928" ) )
                         ( App Nothing
-                          ( Ref Nothing ( Local ( Name "f$1570" ) ) )
+                          ( Ref Nothing ( Local ( Name "f$926" ) ) )
                           ( App Nothing
-                            ( Ref Nothing ( Local ( Name "g$1571" ) ) )
-                            ( Ref Nothing ( Local ( Name "x$1572" ) ) )
+                            ( Ref Nothing ( Local ( Name "g$927" ) ) )
+                            ( Ref Nothing ( Local ( Name "x$928" ) ) )
                           )
                         )
                       )
@@ -324,20 +324,20 @@ UberModule
         ( LiteralObject Nothing
           [
             ( PropName "map", Abs Nothing
-              ( ParamNamed Nothing ( Name "v$1561" ) )
+              ( ParamNamed Nothing ( Name "v$917" ) )
               ( Abs Nothing
-                ( ParamNamed Nothing ( Name "v1$1562" ) )
+                ( ParamNamed Nothing ( Name "v1$918" ) )
                 ( IfThenElse Nothing
                   ( Eq Nothing
                     ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
-                    ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v1$1562" ) ) ) )
+                    ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v1$918" ) ) ) )
                   )
                   ( App Nothing
                     ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Just" ) ) )
                     ( App Nothing
-                      ( Ref Nothing ( Local ( Name "v$1561" ) ) )
+                      ( Ref Nothing ( Local ( Name "v$917" ) ) )
                       ( ObjectProp Nothing
-                        ( Ref Nothing ( Local ( Name "v1$1562" ) ) )
+                        ( Ref Nothing ( Local ( Name "v1$918" ) ) )
                         ( PropName "value0" )
                       )
                     )

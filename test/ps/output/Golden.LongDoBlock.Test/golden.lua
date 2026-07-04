@@ -66,8 +66,8 @@ M.Effect_Lazy_applyEffect = PSLUA_runtime_lazy("applyEffect")(function()
     Functor0 = function() return M.Effect_Lazy_functorEffect(0) end
   }
 end)
-M.Golden_LongDoBlock_Test_discard = (function(dictBind_S_20_S_1364)
-  return M.Control_Bind_bind(dictBind_S_20_S_1364)
+M.Golden_LongDoBlock_Test_discard = (function(dictBind_S_20_S_720)
+  return M.Control_Bind_bind(dictBind_S_20_S_720)
 end)(M.Effect_bindEffect)
 return (function()
   local _ = M.Effect_Console_foreign.log("1")()

@@ -10,21 +10,28 @@ import Language.PureScript.Backend.IR.Names
   )
 import Language.PureScript.Backend.IR.Supply (freshName, runSupply)
 import Language.PureScript.Backend.IR.Types
-  ( Exp
+  ( Ann
+  , Exp
   , Grouping (..)
+  , RawExp (..)
+  , RewriteRule
   , abstraction
   , alphaEq
   , application
   , countFreeRef
   , countFreeRefs
+  , eq
   , freshenBinders
   , lets
+  , literalBool
   , literalInt
   , noAnn
   , paramNamed
   , paramUnused
   , refImported
   , refLocal
+  , rewriteExpBottomUp
+  , rewriteExpTopDownM
   , substituteCopyM
   , substituteMoveM
   )
@@ -144,6 +151,56 @@ spec = describe "Types" do
             (literalInt 1)
         )
         === True
+
+  describe "rewrite drivers" do
+    let x = Name "x"
+
+        -- Constant-fold Eq over literals, and drop an Eq against a
+        -- literal True — a miniature of the optimizer's constantFolding.
+        foldEq ∷ RewriteRule Ann
+        foldEq = \case
+          Eq _ (LiteralInt _ a) (LiteralInt _ b) →
+            Just (literalBool (a == b))
+          Eq _ (LiteralBool _ True) b → Just b
+          _ → Nothing
+
+    describe "rewriteExpBottomUp" do
+      it "reports no change when no rule fires" do
+        -- The honesty contract end-to-end: the flag must be False on an
+        -- expression the rule set cannot rewrite (issue #144 relies on
+        -- this to stop the optimize fixpoint).
+        let e = abstraction (paramNamed x) (eq (refLocal x) (literalInt 1))
+        rewriteExpBottomUp foldEq e `shouldBe` (e, Any False)
+
+      it "folds children before their parent sees them" do
+        -- The outer Eq only matches because the inner Eq was folded
+        -- first: bottom-up order, one pass.
+        let e = eq (eq (literalInt 1) (literalInt 1)) (refLocal x)
+        rewriteExpBottomUp foldEq e `shouldBe` (refLocal x, Any True)
+
+      it "one pass is complete: a second pass reports no change" do
+        let e =
+              abstraction (paramNamed x) $
+                eq
+                  (eq (literalInt 1) (literalInt 2))
+                  (eq (literalInt 3) (literalInt 3))
+            (once, Any changed) = rewriteExpBottomUp foldEq e
+        changed `shouldBe` True
+        rewriteExpBottomUp foldEq once `shouldBe` (once, Any False)
+
+    describe "rewriteExpTopDownM" do
+      let topDown ∷ RewriteRule Ann → Exp → Exp
+          topDown rule = runIdentity . rewriteExpTopDownM (pure . rule)
+
+      it "re-applies the rule to its own result before descending" do
+        -- The first fire exposes a second redex at the same node; the
+        -- old driver left it for the next fixpoint round.
+        let e = eq (literalBool True) (eq (literalBool True) (refLocal x))
+        topDown foldEq e `shouldBe` refLocal x
+
+      it "descends into children when the rule does not fire" do
+        let e = abstraction (paramNamed x) (eq (literalInt 1) (literalInt 1))
+        topDown foldEq e `shouldBe` abstraction (paramNamed x) (literalBool True)
 
   describe "freshenBinders" do
     let x = Name "x"
