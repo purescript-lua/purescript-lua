@@ -10,7 +10,8 @@ import Language.PureScript.Backend.Lua.Traversal
   , everywhereStatM
   )
 import Language.PureScript.Backend.Lua.Types
-  ( Chunk
+  ( Annotated
+  , Chunk
   , Exp
   , ExpF (..)
   , Statement
@@ -69,14 +70,34 @@ removeScopeWhenInsideEmptyFunction = \case
       Function outerArgs body
   e → e
 
--- | Rewrites '{ foo = 1, bar = 2 }.foo' to '1'
+{- | Rewrites '{ foo = 1, bar = 2 }.foo' to '1'.
+
+Only fires when the constructor is unambiguous: every row is a name-value
+row and no field name repeats. A 'TableRowKV' row could carry a string key
+equal to the accessed field (e.g. @["foo"] = …@) that this name-keyed lookup
+cannot see, and on a repeated name Lua's constructor keeps the last
+assignment while a first-match lookup returns the earliest; in either case
+the fold could pick the wrong value, so the rule declines. See issue #140.
+-}
 reduceTableDefinitionAccessor ∷ RewriteRule
 reduceTableDefinitionAccessor = \case
-  Var (Ann (VarField (Ann (TableCtor rows)) accessedField)) →
-    fromMaybe Nil $
-      listToMaybe
-        [ fieldValue
-        | (_ann, TableRowNV tableField (Ann fieldValue)) ← rows
-        , tableField == accessedField
-        ]
+  original@(Var (Ann (VarField (Ann (TableCtor rows)) accessedField)))
+    | all isNameValue rows
+    , not (hasDuplicateNames rows) →
+        fromMaybe Nil $
+          listToMaybe
+            [ fieldValue
+            | (_ann, TableRowNV tableField (Ann fieldValue)) ← rows
+            , tableField == accessedField
+            ]
+    | otherwise → original
   e → e
+ where
+  isNameValue ∷ Annotated () TableRowF → Bool
+  isNameValue (_ann, row) = case row of
+    TableRowNV {} → True
+    TableRowKV {} → False
+  hasDuplicateNames ∷ [Annotated () TableRowF] → Bool
+  hasDuplicateNames rows =
+    let names = [n | (_ann, TableRowNV n _) ← rows]
+     in length names /= length (ordNub names)
