@@ -385,6 +385,18 @@ inlineLocalBindings = \case
 /and/ the body actually references it — a zero-occurrence substitution
 is a no-op and must not report a change (the honesty contract of
 'RewriteRuleM'), or the optimize fixpoint would never converge.
+
+The inlinee must not reference the binding's own name: substitution
+never descends into its insertions, so a self-reference would keep the
+occurrence count above zero and the rule firing forever (for the
+non-GUC shape @let x = x in x@ the substitution is a textual no-op, so
+the driver's repeat-until-Nothing loops — found by a hung CI run), and
+the pasted copy's free self-reference would be captured by the very
+binding it names. Under GUC this cannot arise — a Standalone RHS does
+not see its own binder (Note [Sequential scoping of Let bindings]), so
+a same-named reference in the RHS would be a duplicate binder upstream
+— but 'optimizedExpression' is also exercised directly on non-GUC
+input, where the rule must decline rather than loop or capture.
 -}
 inlineLocalBinding ∷ Grouping (Ann, Name, Exp) → (Exp, Any) → SupplyM (Exp, Any)
 inlineLocalBinding grouping (body, inlined) =
@@ -392,6 +404,7 @@ inlineLocalBinding grouping (body, inlined) =
     RecursiveGroup _grp → pure (body, inlined) -- Not inlining recursive bindings
     Standalone (_ann, Local → name, inlinee)
       | occurrences > 0
+      , countFreeRef name inlinee == 0 -- no self-reference, see above
       , isInlinableExpr inlinee || occurrences == 1 →
           -- The binding survives until DCE drops it, so the inserted copy
           -- must not reuse its binder names ('substituteCopyM').
