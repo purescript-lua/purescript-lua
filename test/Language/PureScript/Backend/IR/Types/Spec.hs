@@ -167,7 +167,7 @@ spec = describe "Types" do
 
     describe "rewriteExpBottomUp" do
       it "reports no change when no rule fires" do
-        -- The honesty contract end-to-end: the result must say
+        -- The 'RewriteRule' contract end-to-end: the result must say
         -- 'Unmodified' for an expression the rule set cannot rewrite
         -- (the optimize fixpoint relies on this to stop).
         let e = abstraction (paramNamed x) (eq (refLocal x) (literalInt 1))

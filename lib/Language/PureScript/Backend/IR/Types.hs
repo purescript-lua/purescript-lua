@@ -397,8 +397,8 @@ subexpressions go = \case
 {- | A rewrite rule: 'Nothing' when the rule does not apply to the node,
 'Just' the rewritten node when it fired.
 
-The honesty contract: a rule must return 'Just' only when it actually
-changed something. The drivers below surface "did any rule fire" as the
+The contract: a rule must return 'Just' only when it actually changed
+something. The drivers below surface "did any rule fire" as the
 'WasRewritten' signal the optimizer fixpoint trusts: a rule that
 reports 'Just' with an unchanged result spins the fixpoint until its
 iteration cap, and one that changes something under 'Nothing' stops it

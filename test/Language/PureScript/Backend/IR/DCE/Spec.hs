@@ -28,6 +28,7 @@ import Language.PureScript.Backend.IR.Types
   ( Ann
   , Exp
   , Grouping (..)
+  , WasRewritten (..)
   , abstraction
   , application
   , countFreeRefs
@@ -60,7 +61,9 @@ spec = describe "IR Dead Code Elimination" do
 
   test "doesn't eliminate an exported entry point" do
     optimalModule ← forAll singletonModule
-    optimalModule === eliminateDeadCode optimalModule
+    -- Nothing to drop, and the result must say so (the precision the
+    -- fixpoint oracle relies on).
+    (optimalModule, Unmodified) === eliminateDeadCode optimalModule
 
   test "eliminates unused non-exported binding" do
     expected@UberModule {uberModuleBindings} ← forAll singletonModule
@@ -69,7 +72,7 @@ spec = describe "IR Dead Code Elimination" do
             { uberModuleBindings = topBinding_ "unused" : uberModuleBindings
             }
     annotate . toString $ pShow unoptimized
-    eliminateDeadCode unoptimized === expected
+    eliminateDeadCode unoptimized === (expected, Rewritten)
 
   -- The unit-level twin of the 'dcePass' ensures-contract: on GUC input
   -- (which the pipeline guarantees via the uniquify entry pass), DCE
@@ -80,7 +83,7 @@ spec = describe "IR Dead Code Elimination" do
           emptyUberModule
             { uberModuleExports = [(Name "main", uniquifyNamesInExpr e)]
             }
-        optimized = eliminateDeadCode uber
+        optimized = fst (eliminateDeadCode uber)
     annotateShow optimized
     lintWellScoped optimized === []
     lintUniqueBinders optimized === []
@@ -195,7 +198,7 @@ spec = describe "IR Dead Code Elimination" do
 -- Helpers ---------------------------------------------------------------------
 
 dceExpression ∷ HasCallStack ⇒ Exp → Exp
-dceExpression = applyPassToExpression "dceExpression" eliminateDeadCode
+dceExpression = applyPassToExpression "dceExpression" (fst . eliminateDeadCode)
 
 --------------------------------------------------------------------------------
 -- Fixture ---------------------------------------------------------------------
