@@ -116,28 +116,29 @@ sees through to a table constructor that would otherwise be hidden behind
 the call. See issue #159.
 -}
 foldFieldProjectionThroughScopeCall ∷ RewriteRule
-foldFieldProjectionThroughScopeCall = \case
-  original@( Var
-               ( Ann
-                   ( VarField
-                       (Ann (FunctionCall (Ann (Function [] body)) []))
-                       accessedField
-                     )
-                 )
-             ) →
-      case reverse body of
-        (Ann (Return (Ann returnExp)) : reverseLeading) →
-          let projectedReturnValue =
-                optimizeExpression (Lua.varField returnExp accessedField)
-           in FunctionCall
-                ( Lua.ann
-                    ( Function
-                        []
-                        ( reverse reverseLeading
-                            <> [Lua.ann (Return (Lua.ann projectedReturnValue))]
-                        )
-                    )
-                )
-                []
-        _ → original
-  e → e
+foldFieldProjectionThroughScopeCall original
+  | Just (accessedField, leading, returnExp) ←
+      matchScopeCallProjection original =
+      let projectedReturnValue =
+            optimizeExpression (Lua.varField returnExp accessedField)
+          returnStatement = Lua.ann (Return (Lua.ann projectedReturnValue))
+       in FunctionCall (Lua.ann (Function [] (leading <> [returnStatement]))) []
+  | otherwise = original
+ where
+  -- Matches 'Var (VarField (FunctionCall (Function [] body) []) field)' where
+  -- the last statement of 'body' is a 'Return', splitting it into the
+  -- accessed field name, the leading statements, and the returned expression.
+  matchScopeCallProjection
+    ∷ Exp → Maybe (Lua.Name, [Annotated () StatementF], Exp)
+  matchScopeCallProjection = \case
+    Var
+      ( Ann
+          ( VarField
+              (Ann (FunctionCall (Ann (Function [] body)) []))
+              accessedField
+            )
+        ) → case reverse body of
+        Ann (Return (Ann returnExp)) : reverseLeading →
+          Just (accessedField, reverse reverseLeading, returnExp)
+        _ → Nothing
+    _ → Nothing

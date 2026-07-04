@@ -79,8 +79,8 @@ spec = describe "Lua AST Optimizer" do
 
   describe "foldFieldProjectionThroughScopeCall" do
     it "folds a field projection through a header-scope IIFE's return" do
-      -- The '(function() local refEq = …; return { eqCharImpl = refEq } end)()
-      -- .eqCharImpl' shape from a foreign import with a header (issue #159).
+      -- The @(function() local refEq = …; return { eqCharImpl = refEq } end)()
+      -- .eqCharImpl@ shape from a foreign import with a header (issue #159).
       -- The projected field is immediately re-optimized, so
       -- 'reduceTableDefinitionAccessor' sees through the exposed table
       -- constructor and reduces it all the way to the referenced local.
