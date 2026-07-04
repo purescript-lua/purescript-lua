@@ -209,11 +209,13 @@ fromIR foreigns topLevelNames modname ir = case ir of
       Lua.functionCall (Lua.varName Fixture.objectUpdateName) [obj, vals]
   -- See Note [Nullary functions and Prim.undefined]
   IR.Abs _ann param expr → do
-    e ← goExp expr
+    body ← go expr
     let luaParams = case param of
           IR.ParamUnused _ann → []
           IR.ParamNamed _ann name → [ParamNamed (fromName name)]
-    pure . Right $ Lua.functionDef luaParams [Lua.return e]
+    pure . Right $ case body of
+      Left chunk → Lua.functionDef luaParams chunk
+      Right e → Lua.functionDef luaParams [Lua.return e]
   IR.App _ann expr arg → do
     e ← goExp expr
     Right . Lua.functionCall e <$> case arg of

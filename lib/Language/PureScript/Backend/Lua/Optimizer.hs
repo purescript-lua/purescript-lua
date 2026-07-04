@@ -15,7 +15,6 @@ import Language.PureScript.Backend.Lua.Types
   , Exp
   , ExpF (..)
   , Statement
-  , StatementF (Return)
   , TableRowF (..)
   , VarF (..)
   , pattern Ann
@@ -50,8 +49,7 @@ optimizeExpression = foldr (>>>) identity rewriteRulesInOrder
 
 rewriteRulesInOrder ∷ [RewriteRule]
 rewriteRulesInOrder =
-  [ removeScopeWhenInsideEmptyFunction
-  , reduceTableDefinitionAccessor
+  [ reduceTableDefinitionAccessor
   ]
 
 type RewriteRule = Exp → Exp
@@ -61,14 +59,6 @@ rewriteExpWithRule rule = everywhereExp rule identity
 
 --------------------------------------------------------------------------------
 -- Rewrite rules for expressions -----------------------------------------------
-
-removeScopeWhenInsideEmptyFunction ∷ RewriteRule
-removeScopeWhenInsideEmptyFunction = \case
-  Function
-    outerArgs
-    [Ann (Return (Ann (FunctionCall (Ann (Function [] body)) [])))] →
-      Function outerArgs body
-  e → e
 
 {- | Rewrites '{ foo = 1, bar = 2 }.foo' to '1'.
 
