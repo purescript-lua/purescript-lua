@@ -136,11 +136,36 @@ Lua's operators bind at these levels (1 loosest, 12 tightest):
    12  ^
 
 The 'HasPrecedence' instances for 'BinaryOp' and 'UnaryOp' transcribe this
-table into 'PrecOperation' levels. 'Language.PureScript.Backend.Lua.Printer'
-parenthesises an operand only when its precedence is looser than the enclosing
-operator's ('wrapPrec'). Keep the instances and this table in step, or the
-printer emits wrongly-associated or over-bracketed expressions.
+table into 'PrecOperation' levels. All operators are left-associative except
+'..' and '^' ('assoc'); Lua has no chained-comparison sugar, so the
+comparisons at level 3 are left-associative too (`a == b == c` parses as
+`(a == b) == c`, comparing a boolean against `c`).
+
+'Language.PureScript.Backend.Lua.Printer' always parenthesises an operand
+looser than the enclosing operator. At the *same* precedence, it must also
+parenthesise whichever side bare juxtaposition would re-associate away from
+the AST: the right operand of a left-associative operator, or the left
+operand of a right-associative one ('wrapPrec' vs 'wrapPrecGte'). Keep the
+instances, this table, and 'assoc' in step, or the printer emits
+wrongly-associated or over-bracketed expressions.
 -}
+
+{- | Whether @a `op` b `op` c@ parses as @(a `op` b) `op` c@ (left-associative)
+or @a `op` (b `op` c)@ (right-associative). See Note [Lua operator
+precedence].
+-}
+data Associativity = LeftAssoc | RightAssoc
+  deriving stock (Show, Eq)
+
+{- | Lua's only right-associative binary operators are '..' and '^'; every
+other operator, including the non-chainable comparisons, is
+left-associative.
+-}
+assoc ∷ BinaryOp → Associativity
+assoc = \case
+  Concat → RightAssoc
+  Exp → RightAssoc
+  _ → LeftAssoc
 
 instance HasPrecedence BinaryOp where
   prec =

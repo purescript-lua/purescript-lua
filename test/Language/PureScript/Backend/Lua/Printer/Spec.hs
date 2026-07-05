@@ -167,6 +167,84 @@ spec = do
           (Lua.Integer 2 `Lua.add` (Lua.Integer 3 `Lua.mul` Lua.Integer 4))
           `shouldBe` "2 + 3 * 4"
 
+      -- https://github.com/purescript-lua/purescript-lua/issues/164
+      describe "same-precedence associativity" do
+        it "left-nested left-associative op needs no parens: (1 - 2) - 3" do
+          renderedExpression
+            ((Lua.Integer 1 `Lua.sub` Lua.Integer 2) `Lua.sub` Lua.Integer 3)
+            `shouldBe` "1 - 2 - 3"
+
+        it "right-nested left-associative op needs parens: 1 - (2 - 3)" do
+          renderedExpression
+            (Lua.Integer 1 `Lua.sub` (Lua.Integer 2 `Lua.sub` Lua.Integer 3))
+            `shouldBe` "1 - (2 - 3)"
+
+        it "right-nested same-level op needs parens: 1 - (2 + 3)" do
+          renderedExpression
+            (Lua.Integer 1 `Lua.sub` (Lua.Integer 2 `Lua.add` Lua.Integer 3))
+            `shouldBe` "1 - (2 + 3)"
+
+        it "right-nested same-level op needs parens: 1 / (2 * 3)" do
+          renderedExpression
+            ( Lua.Integer 1
+                `Lua.floatDiv` (Lua.Integer 2 `Lua.mul` Lua.Integer 3)
+            )
+            `shouldBe` "1 / (2 * 3)"
+
+        it "comparisons parse left, so nesting on the right needs parens" do
+          renderedExpression
+            ( Lua.Integer 1
+                `Lua.equalTo` (Lua.Integer 2 `Lua.equalTo` Lua.Integer 3)
+            )
+            `shouldBe` "1 == (2 == 3)"
+
+        it "right-nested right-associative op needs no parens: 1 ^ (2 ^ 3)" do
+          renderedExpression
+            ( Lua.Integer 1
+                `Lua.exponent` (Lua.Integer 2 `Lua.exponent` Lua.Integer 3)
+            )
+            `shouldBe` "1 ^ 2 ^ 3"
+
+        it "left-nested right-associative op needs parens: (1 ^ 2) ^ 3" do
+          renderedExpression
+            ( (Lua.Integer 1 `Lua.exponent` Lua.Integer 2)
+                `Lua.exponent` Lua.Integer 3
+            )
+            `shouldBe` "(1 ^ 2) ^ 3"
+
+        it "left-nested concat needs parens to preserve the AST shape" do
+          renderedExpression
+            ( (Lua.String "a" `Lua.concat` Lua.String "b")
+                `Lua.concat` Lua.String "c"
+            )
+            `shouldBe` "(\"a\" .. \"b\") .. \"c\""
+
+  describe "prefix position" do
+    -- https://github.com/purescript-lua/purescript-lua/issues/164
+    it "a string literal needs parens before a field access" do
+      renderedExpression (Lua.varField (Lua.String "s") [Lua.name|foo|])
+        `shouldBe` "(\"s\").foo"
+
+    it "a table constructor needs parens before a call" do
+      let callee = Lua.table [Lua.tableRowNV [Lua.name|foo|] (Lua.Integer 1)]
+      renderedExpression (Lua.functionCall callee [])
+        `shouldBe` "({ foo = 1 })()"
+
+  describe "Float" do
+    -- https://github.com/purescript-lua/purescript-lua/issues/164
+    it "NaN prints as a Lua-readable expression, not \"NaN\"" do
+      renderedExpression (Lua.Float (0 / 0)) `shouldBe` "(0/0)"
+
+    it "positive infinity prints as math.huge, not \"Infinity\"" do
+      renderedExpression (Lua.Float (1 / 0)) `shouldBe` "math.huge"
+
+    it "negative infinity prints as -math.huge, not \"-Infinity\"" do
+      renderedExpression (Lua.Float (-(1 / 0))) `shouldBe` "-math.huge"
+
+    it "negative infinity as the base of ^ still needs parens" do
+      renderedExpression (Lua.Float (-(1 / 0)) `Lua.exponent` Lua.Integer 2)
+        `shouldBe` "(-math.huge) ^ 2"
+
 --------------------------------------------------------------------------------
 -- Utility funtions ------------------------------------------------------------
 
