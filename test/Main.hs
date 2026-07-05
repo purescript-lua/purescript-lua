@@ -18,6 +18,7 @@ import Language.PureScript.Backend.Lua.Optimizer.Spec qualified as LuaOptimizer
 import Language.PureScript.Backend.Lua.Printer.Spec qualified as Printer
 import Language.PureScript.Backend.Lua.Run.Spec qualified as Run
 import Language.PureScript.Backend.Output.Spec qualified as Output
+import Language.PureScript.PSString.Spec qualified as PSString
 import Test.Hspec (hspec)
 
 main ∷ IO ()
@@ -40,3 +41,4 @@ main = hspec do
   FlattenDeepBinds.spec
   FloatIn.spec
   Output.spec
+  PSString.spec

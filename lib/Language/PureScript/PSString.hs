@@ -12,7 +12,7 @@ module Language.PureScript.PSString
 import Control.Exception (evaluate, try)
 import Data.Aeson qualified as A
 import Data.Aeson.Types qualified as A
-import Data.Bits (shiftR)
+import Data.Bits (shiftR, (.&.), (.|.))
 import Data.ByteString qualified as BS
 import Data.Char qualified as Char
 import Data.IntCast (intCast)
@@ -45,9 +45,9 @@ literals (see 'Language.PureScript.CoreFn.FromJSON').
 Decode-or-escape into Lua. A lone surrogate has no corresponding 'Char', so
 code generation never decodes literal data with 'decodeString'. It uses
 'decodeStringEscaping', which renders decodable code points directly and
-emits a lone surrogate as a \xNNNNNN escape. The IR string and char literal
-sites and the Lua backend rely on this to avoid failing on otherwise-legal
-PureScript strings.
+emits a lone surrogate as its WTF-8 bytes, each a \ddd decimal escape. The IR
+string and char literal sites and the Lua backend rely on this to avoid
+failing on otherwise-legal PureScript strings.
 -}
 
 {- | A sequence of UTF-16 code units, not necessarily well-formed UTF-16
@@ -174,11 +174,21 @@ instance A.FromJSON PSString where
 Decode a PSString as UTF-16, using PureScript escape sequences.
 -}
 decodeStringEscaping ∷ PSString → Text
-decodeStringEscaping s = foldMap encodeChar (decodeStringEither s)
+decodeStringEscaping s = foldMap encodeAtom (withNextDigit (decodeStringEither s))
  where
-  encodeChar ∷ Either Word16 Char → Text
-  encodeChar (Left c) = "\\x" <> showHex' 6 c
-  encodeChar (Right c)
+  -- Lua's decimal escape reads up to three digits after the backslash, so an
+  -- escape immediately followed by a literal digit character must be
+  -- zero-padded to three digits or it swallows that digit.
+  withNextDigit ∷ [Either Word16 Char] → [(Either Word16 Char, Bool)]
+  withNextDigit atoms = zip atoms (map startsWithAsciiDigit (drop 1 atoms) <> [False])
+
+  startsWithAsciiDigit ∷ Either Word16 Char → Bool
+  startsWithAsciiDigit (Right c) = Char.isDigit c
+  startsWithAsciiDigit (Left _) = False
+
+  encodeAtom ∷ (Either Word16 Char, Bool) → Text
+  encodeAtom (Left c, padLast) = decimalEscapes padLast (wtf8SurrogateBytes c)
+  encodeAtom (Right c, padLast)
     | c == '\t' = "\\t"
     | c == '\r' = "\\r"
     | c == '\n' = "\\n"
@@ -186,7 +196,32 @@ decodeStringEscaping s = foldMap encodeChar (decodeStringEither s)
     | c == '\'' = "\\\'"
     | c == '\\' = "\\\\"
     | shouldPrint c = T.singleton c
-    | otherwise = "\\x" <> showHex' 6 (Char.ord c)
+    | otherwise = decimalEscapes padLast (BS.unpack (encodeUtf8 (T.singleton c)))
+
+  -- Every Lua version, including our 5.1 floor, reads a \ddd decimal escape,
+  -- unlike \x, which is unsupported in 5.1 and reads a different number of
+  -- digits in 5.2+/LuaJIT. A code point needing escape becomes one \ddd per
+  -- UTF-8 byte; only the last byte can abut the next character, so only it is
+  -- ever zero-padded.
+  decimalEscapes ∷ Bool → [Word8] → Text
+  decimalEscapes padLast bytes =
+    foldMap escapeByte (zip bytes (replicate (length bytes - 1) False <> [padLast]))
+   where
+    escapeByte ∷ (Word8, Bool) → Text
+    escapeByte (b, pad) =
+      let digits = show b
+       in "\\"
+            <> T.pack (if pad then replicate (3 - length digits) '0' <> digits else digits)
+
+  -- A lone surrogate has no UTF-8 encoding (it is not a valid Unicode scalar
+  -- value); WTF-8 extends UTF-8 by encoding it with the same 3-byte pattern
+  -- UTF-8 uses for any other code point in the same 0x0800-0xFFFF range.
+  wtf8SurrogateBytes ∷ Word16 → [Word8]
+  wtf8SurrogateBytes w =
+    [ 0xE0 .|. fromIntegral (w `shiftR` 12)
+    , 0x80 .|. fromIntegral ((w `shiftR` 6) .&. 0x3F)
+    , 0x80 .|. fromIntegral (w .&. 0x3F)
+    ]
 
   -- Note we do not use Data.Char.isPrint here because that includes things
   -- like zero-width spaces and combining punctuation marks, which could be
