@@ -85,7 +85,7 @@ M.Golden_TailRecM2Shadow_Test_sumFrom = function(dictMonadRec)
     return function(n)
       return dictMonadRec.tailRecM(function(o_S_31)
         if (function()
-          if "Data.Ordering∷Ordering.LT" == (((function()
+          if "Data.Ordering∷Ordering.LT" == ((function()
             local unsafeCoerceImpl = function(lt)
               return function(eq)
                 return function(gt)
@@ -103,8 +103,8 @@ M.Golden_TailRecM2Shadow_Test_sumFrom = function(dictMonadRec)
                 end
               end
             end
-            return { ordIntImpl = unsafeCoerceImpl }
-          end)()).ordIntImpl({ ["$ctor"] = "Data.Ordering∷Ordering.LT" })({
+            return unsafeCoerceImpl
+          end)()({ ["$ctor"] = "Data.Ordering∷Ordering.LT" })({
             ["$ctor"] = "Data.Ordering∷Ordering.EQ"
           })({
             ["$ctor"] = "Data.Ordering∷Ordering.GT"

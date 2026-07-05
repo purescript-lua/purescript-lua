@@ -27,10 +27,10 @@ M.Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
 }
 M.Data_Eq_eqChar = {
-  eq = ((function()
+  eq = (function()
     local refEq = function(r1) return function(r2) return r1 == r2 end end
-    return { eqCharImpl = refEq }
-  end)()).eqCharImpl
+    return refEq
+  end)()
 }
 M.Data_Show_show = function(dict) return dict.show end
 M.Control_Applicative_pure = function(dict) return dict.pure end
@@ -115,7 +115,7 @@ return (function()
   local _ = M.Effect_Console_foreign.log(M.Golden_CharLiterals_Test_show("a"))()
   local _ = M.Effect_Console_foreign.log(M.Golden_CharLiterals_Test_show1(M.Data_Eq_eqChar.eq("\n")("\n")))()
   return M.Effect_Console_foreign.log(M.Golden_CharLiterals_Test_show1((function(  )
-    if "Data.Ordering∷Ordering.LT" == (((function()
+    if "Data.Ordering∷Ordering.LT" == ((function()
       local unsafeCoerceImpl = function(lt)
         return function(eq)
           return function(gt)
@@ -133,8 +133,8 @@ return (function()
           end
         end
       end
-      return { ordCharImpl = unsafeCoerceImpl }
-    end)()).ordCharImpl({ ["$ctor"] = "Data.Ordering∷Ordering.LT" })({
+      return unsafeCoerceImpl
+    end)()({ ["$ctor"] = "Data.Ordering∷Ordering.LT" })({
       ["$ctor"] = "Data.Ordering∷Ordering.EQ"
     })({ ["$ctor"] = "Data.Ordering∷Ordering.GT" })("\t")("\n"))["$ctor"] then
       return true
