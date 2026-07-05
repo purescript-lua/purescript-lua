@@ -552,23 +552,6 @@ UberModule
         )
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Data.Maybe", qnameName = Name "isNothing" }, Abs Nothing
-        ( ParamNamed Nothing ( Name "v2$2338" ) )
-        ( IfThenElse Nothing
-          ( Eq Nothing
-            ( LiteralString Nothing "Data.Maybe∷Maybe.Nothing" )
-            ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v2$2338" ) ) ) )
-          ) ( LiteralBool Nothing True )
-          ( IfThenElse Nothing
-            ( Eq Nothing
-              ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
-              ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v2$2338" ) ) ) )
-            ) ( LiteralBool Nothing False )
-            ( Exception Nothing "No patterns matched" )
-          )
-        )
-      ), Standalone
-      ( QName
         { qnameModuleName = ModuleName "Data.Maybe", qnameName = Name "functorMaybe"
         }, LiteralObject Nothing
         [
@@ -611,16 +594,6 @@ UberModule
             ( Exception Nothing "No patterns matched" )
           )
         )
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Data.Tuple", qnameName = Name "snd" }, Abs Nothing
-        ( ParamNamed Nothing ( Name "v" ) )
-        ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "v" ) ) ) ( PropName "value1" ) )
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Data.Tuple", qnameName = Name "fst" }, Abs Nothing
-        ( ParamNamed Nothing ( Name "v" ) )
-        ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "v" ) ) ) ( PropName "value0" ) )
       ), RecursiveGroup
       (
         ( QName
@@ -1726,103 +1699,71 @@ UberModule
             ( ParamNamed Nothing ( Name "s$10" ) )
             ( App Nothing
               ( App Nothing
-                ( ObjectProp Nothing
-                  ( LiteralObject Nothing
-                    [
-                      ( PropName "unfoldr", App Nothing
-                        ( App Nothing
-                          ( App Nothing
-                            ( App Nothing
-                              ( ObjectProp ( Just Always )
-                                ( ForeignImport Nothing
-                                  ( ModuleName "Data.Unfoldable" ) ".spago/p/unfoldable/edeede27b9604d28373c864d963fcac51398905b/src/Data/Unfoldable.purs"
-                                  [ ( Nothing, Name "unfoldrArrayImpl" ) ]
+                ( App Nothing
+                  ( App Nothing
+                    ( App Nothing
+                      ( App Nothing
+                        ( ObjectProp ( Just Always )
+                          ( ForeignImport Nothing
+                            ( ModuleName "Data.Unfoldable" ) ".spago/p/unfoldable/edeede27b9604d28373c864d963fcac51398905b/src/Data/Unfoldable.purs"
+                            [ ( Nothing, Name "unfoldrArrayImpl" ) ]
+                          )
+                          ( PropName "unfoldrArrayImpl" )
+                        )
+                        ( Abs Nothing
+                          ( ParamNamed Nothing ( Name "v2$2338$2360" ) )
+                          ( IfThenElse Nothing
+                            ( Eq Nothing
+                              ( LiteralString Nothing "Data.Maybe∷Maybe.Nothing" )
+                              ( ReflectCtor Nothing
+                                ( Ref Nothing ( Local ( Name "v2$2338$2360" ) ) )
+                              )
+                            ) ( LiteralBool Nothing True )
+                            ( IfThenElse Nothing
+                              ( Eq Nothing
+                                ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
+                                ( ReflectCtor Nothing
+                                  ( Ref Nothing ( Local ( Name "v2$2338$2360" ) ) )
                                 )
-                                ( PropName "unfoldrArrayImpl" )
-                              )
-                              ( Ref Nothing
-                                ( Imported ( ModuleName "Data.Maybe" ) ( Name "isNothing" ) )
-                              )
-                            )
-                            ( App Nothing
-                              ( ObjectProp ( Just Always )
-                                ( ForeignImport Nothing
-                                  ( ModuleName "Partial.Unsafe" ) ".spago/p/partial/2f5c69b1de8f88f1fbc9b98281c9436088ae0789/src/Partial/Unsafe.purs"
-                                  [ ( Nothing, Name "_unsafePartial" ) ]
-                                )
-                                ( PropName "_unsafePartial" )
-                              )
-                              ( Abs Nothing ( ParamUnused Nothing )
-                                ( App Nothing
-                                  ( Ref Nothing
-                                    ( Imported ( ModuleName "Data.Maybe" ) ( Name "fromJust" ) )
-                                  )
-                                  ( Ref Nothing
-                                    ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) )
-                                  )
-                                )
-                              )
+                              ) ( LiteralBool Nothing False )
+                              ( Exception Nothing "No patterns matched" )
                             )
                           )
-                          ( Ref Nothing ( Imported ( ModuleName "Data.Tuple" ) ( Name "fst" ) ) )
-                        )
-                        ( Ref Nothing ( Imported ( ModuleName "Data.Tuple" ) ( Name "snd" ) ) )
-                      ),
-                      ( PropName "Unfoldable10", Abs Nothing ( ParamUnused Nothing )
-                        ( LiteralObject Nothing
-                          [
-                            ( PropName "unfoldr1", App Nothing
-                              ( App Nothing
-                                ( App Nothing
-                                  ( App Nothing
-                                    ( ObjectProp ( Just Always )
-                                      ( ForeignImport Nothing
-                                        ( ModuleName "Data.Unfoldable1" ) ".spago/p/unfoldable/edeede27b9604d28373c864d963fcac51398905b/src/Data/Unfoldable1.purs"
-                                        [ ( Nothing, Name "unfoldr1ArrayImpl" ) ]
-                                      )
-                                      ( PropName "unfoldr1ArrayImpl" )
-                                    )
-                                    ( Ref Nothing
-                                      ( Imported ( ModuleName "Data.Maybe" ) ( Name "isNothing" ) )
-                                    )
-                                  )
-                                  ( App Nothing
-                                    ( ObjectProp ( Just Always )
-                                      ( ForeignImport Nothing
-                                        ( ModuleName "Partial.Unsafe" ) ".spago/p/partial/2f5c69b1de8f88f1fbc9b98281c9436088ae0789/src/Partial/Unsafe.purs"
-                                        [ ( Nothing, Name "_unsafePartial" ) ]
-                                      )
-                                      ( PropName "_unsafePartial" )
-                                    )
-                                    ( Abs Nothing ( ParamUnused Nothing )
-                                      ( App Nothing
-                                        ( Ref Nothing
-                                          ( Imported
-                                            ( ModuleName "Data.Maybe" )
-                                            ( Name "fromJust" )
-                                          )
-                                        )
-                                        ( Ref Nothing
-                                          ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) )
-                                        )
-                                      )
-                                    )
-                                  )
-                                )
-                                ( Ref Nothing
-                                  ( Imported ( ModuleName "Data.Tuple" ) ( Name "fst" ) )
-                                )
-                              )
-                              ( Ref Nothing
-                                ( Imported ( ModuleName "Data.Tuple" ) ( Name "snd" ) )
-                              )
-                            )
-                          ]
                         )
                       )
-                    ]
+                      ( App Nothing
+                        ( ObjectProp ( Just Always )
+                          ( ForeignImport Nothing
+                            ( ModuleName "Partial.Unsafe" ) ".spago/p/partial/2f5c69b1de8f88f1fbc9b98281c9436088ae0789/src/Partial/Unsafe.purs"
+                            [ ( Nothing, Name "_unsafePartial" ) ]
+                          )
+                          ( PropName "_unsafePartial" )
+                        )
+                        ( Abs Nothing ( ParamUnused Nothing )
+                          ( App Nothing
+                            ( Ref Nothing
+                              ( Imported ( ModuleName "Data.Maybe" ) ( Name "fromJust" ) )
+                            )
+                            ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) )
+                          )
+                        )
+                      )
+                    )
+                    ( Abs Nothing
+                      ( ParamNamed Nothing ( Name "v$2358" ) )
+                      ( ObjectProp Nothing
+                        ( Ref Nothing ( Local ( Name "v$2358" ) ) )
+                        ( PropName "value0" )
+                      )
+                    )
                   )
-                  ( PropName "unfoldr" )
+                  ( Abs Nothing
+                    ( ParamNamed Nothing ( Name "v$2359" ) )
+                    ( ObjectProp Nothing
+                      ( Ref Nothing ( Local ( Name "v$2359" ) ) )
+                      ( PropName "value1" )
+                    )
+                  )
                 )
                 ( Abs Nothing
                   ( ParamNamed Nothing ( Name "s$11" ) )
@@ -2269,20 +2210,7 @@ UberModule
       ( QName
         { qnameModuleName = ModuleName "Golden.StringCodePoints.Test", qnameName = Name "discard"
         }, App Nothing
-        ( ObjectProp Nothing
-          ( LiteralObject Nothing
-            [
-              ( PropName "discard", Abs Nothing
-                ( ParamNamed Nothing ( Name "dictBind$2347" ) )
-                ( App Nothing
-                  ( Ref Nothing ( Imported ( ModuleName "Control.Bind" ) ( Name "bind" ) ) )
-                  ( Ref Nothing ( Local ( Name "dictBind$2347" ) ) )
-                )
-              )
-            ]
-          )
-          ( PropName "discard" )
-        )
+        ( Ref Nothing ( Imported ( ModuleName "Control.Bind" ) ( Name "bind" ) ) )
         ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "bindEffect" ) ) )
       ), Standalone
       ( QName

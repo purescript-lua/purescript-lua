@@ -215,20 +215,7 @@ UberModule
       ( QName
         { qnameModuleName = ModuleName "Golden.LongDoBlock.Test", qnameName = Name "discard"
         }, App Nothing
-        ( ObjectProp Nothing
-          ( LiteralObject Nothing
-            [
-              ( PropName "discard", Abs Nothing
-                ( ParamNamed Nothing ( Name "dictBind$20$720" ) )
-                ( App Nothing
-                  ( Ref Nothing ( Imported ( ModuleName "Control.Bind" ) ( Name "bind" ) ) )
-                  ( Ref Nothing ( Local ( Name "dictBind$20$720" ) ) )
-                )
-              )
-            ]
-          )
-          ( PropName "discard" )
-        )
+        ( Ref Nothing ( Imported ( ModuleName "Control.Bind" ) ( Name "bind" ) ) )
         ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "bindEffect" ) ) )
       )
     ], uberModuleForeigns = [], uberModuleExports =

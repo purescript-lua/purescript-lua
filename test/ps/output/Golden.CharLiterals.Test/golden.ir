@@ -14,19 +14,6 @@ UberModule
         [ ( Nothing, Name "log" ) ]
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Data.Eq", qnameName = Name "eqChar"
-        }, LiteralObject Nothing
-        [
-          ( PropName "eq", ObjectProp ( Just Always )
-            ( ForeignImport Nothing
-              ( ModuleName "Data.Eq" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Eq.purs"
-              [ ( Nothing, Name "eqCharImpl" ) ]
-            )
-            ( PropName "eqCharImpl" )
-          )
-        ]
-      ), Standalone
-      ( QName
         { qnameModuleName = ModuleName "Data.Show", qnameName = Name "show" }, Abs Nothing
         ( ParamNamed Nothing ( Name "dict" ) )
         ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) ) ( PropName "show" ) )
@@ -233,20 +220,7 @@ UberModule
       ( QName
         { qnameModuleName = ModuleName "Golden.CharLiterals.Test", qnameName = Name "discard"
         }, App Nothing
-        ( ObjectProp Nothing
-          ( LiteralObject Nothing
-            [
-              ( PropName "discard", Abs Nothing
-                ( ParamNamed Nothing ( Name "dictBind$20$721" ) )
-                ( App Nothing
-                  ( Ref Nothing ( Imported ( ModuleName "Control.Bind" ) ( Name "bind" ) ) )
-                  ( Ref Nothing ( Local ( Name "dictBind$20$721" ) ) )
-                )
-              )
-            ]
-          )
-          ( PropName "discard" )
-        )
+        ( Ref Nothing ( Imported ( ModuleName "Control.Bind" ) ( Name "bind" ) ) )
         ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "bindEffect" ) ) )
       ), Standalone
       ( QName
@@ -396,9 +370,12 @@ UberModule
                     )
                     ( App Nothing
                       ( App Nothing
-                        ( ObjectProp Nothing
-                          ( Ref Nothing ( Imported ( ModuleName "Data.Eq" ) ( Name "eqChar" ) ) )
-                          ( PropName "eq" )
+                        ( ObjectProp ( Just Always )
+                          ( ForeignImport Nothing
+                            ( ModuleName "Data.Eq" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Eq.purs"
+                            [ ( Nothing, Name "eqCharImpl" ) ]
+                          )
+                          ( PropName "eqCharImpl" )
                         )
                         ( LiteralChar Nothing ' ' )
                       )
@@ -426,45 +403,33 @@ UberModule
                     ( ReflectCtor Nothing
                       ( App Nothing
                         ( App Nothing
-                          ( ObjectProp Nothing
-                            ( LiteralObject Nothing
-                              [
-                                ( PropName "compare", App Nothing
-                                  ( App Nothing
-                                    ( App Nothing
-                                      ( ObjectProp ( Just Always )
-                                        ( ForeignImport Nothing
-                                          ( ModuleName "Data.Ord" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Ord.purs"
-                                          [ ( Nothing, Name "ordCharImpl" ) ]
-                                        )
-                                        ( PropName "ordCharImpl" )
-                                      )
-                                      ( Ctor Nothing SumType
-                                        ( ModuleName "Data.Ordering" )
-                                        ( TyName "Ordering" )
-                                        ( CtorName "LT" ) []
-                                      )
-                                    )
-                                    ( Ctor Nothing SumType
-                                      ( ModuleName "Data.Ordering" )
-                                      ( TyName "Ordering" )
-                                      ( CtorName "EQ" ) []
-                                    )
+                          ( App Nothing
+                            ( App Nothing
+                              ( App Nothing
+                                ( ObjectProp ( Just Always )
+                                  ( ForeignImport Nothing
+                                    ( ModuleName "Data.Ord" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Ord.purs"
+                                    [ ( Nothing, Name "ordCharImpl" ) ]
                                   )
-                                  ( Ctor Nothing SumType
-                                    ( ModuleName "Data.Ordering" )
-                                    ( TyName "Ordering" )
-                                    ( CtorName "GT" ) []
-                                  )
-                                ),
-                                ( PropName "Eq0", Abs Nothing ( ParamUnused Nothing )
-                                  ( Ref Nothing
-                                    ( Imported ( ModuleName "Data.Eq" ) ( Name "eqChar" ) )
-                                  )
+                                  ( PropName "ordCharImpl" )
                                 )
-                              ]
+                                ( Ctor Nothing SumType
+                                  ( ModuleName "Data.Ordering" )
+                                  ( TyName "Ordering" )
+                                  ( CtorName "LT" ) []
+                                )
+                              )
+                              ( Ctor Nothing SumType
+                                ( ModuleName "Data.Ordering" )
+                                ( TyName "Ordering" )
+                                ( CtorName "EQ" ) []
+                              )
                             )
-                            ( PropName "compare" )
+                            ( Ctor Nothing SumType
+                              ( ModuleName "Data.Ordering" )
+                              ( TyName "Ordering" )
+                              ( CtorName "GT" ) []
+                            )
                           )
                           ( LiteralChar Nothing '\x9' )
                         )

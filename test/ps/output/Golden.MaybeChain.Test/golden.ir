@@ -265,19 +265,12 @@ UberModule
             ( PropName "log" )
           )
           ( App Nothing
-            ( ObjectProp Nothing
-              ( LiteralObject Nothing
-                [
-                  ( PropName "show", ObjectProp ( Just Always )
-                    ( ForeignImport Nothing
-                      ( ModuleName "Data.Show" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Show.purs"
-                      [ ( Nothing, Name "showIntImpl" ) ]
-                    )
-                    ( PropName "showIntImpl" )
-                  )
-                ]
+            ( ObjectProp ( Just Always )
+              ( ForeignImport Nothing
+                ( ModuleName "Data.Show" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Show.purs"
+                [ ( Nothing, Name "showIntImpl" ) ]
               )
-              ( PropName "show" )
+              ( PropName "showIntImpl" )
             )
             ( Ref Nothing ( Local ( Name "a$4" ) ) )
           )
@@ -285,70 +278,34 @@ UberModule
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.MaybeChain.Test", qnameName = Name "identity"
-        }, ObjectProp Nothing
-        ( LiteralObject Nothing
-          [
-            ( PropName "identity", Abs Nothing
-              ( ParamNamed Nothing ( Name "x$924" ) )
-              ( Ref Nothing ( Local ( Name "x$924" ) ) )
-            ),
-            ( PropName "Semigroupoid0", Abs Nothing ( ParamUnused Nothing )
-              ( LiteralObject Nothing
-                [
-                  ( PropName "compose", Abs Nothing
-                    ( ParamNamed Nothing ( Name "f$926" ) )
-                    ( Abs Nothing
-                      ( ParamNamed Nothing ( Name "g$927" ) )
-                      ( Abs Nothing
-                        ( ParamNamed Nothing ( Name "x$928" ) )
-                        ( App Nothing
-                          ( Ref Nothing ( Local ( Name "f$926" ) ) )
-                          ( App Nothing
-                            ( Ref Nothing ( Local ( Name "g$927" ) ) )
-                            ( Ref Nothing ( Local ( Name "x$928" ) ) )
-                          )
-                        )
-                      )
-                    )
-                  )
-                ]
-              )
-            )
-          ]
-        )
-        ( PropName "identity" )
+        }, Abs Nothing
+        ( ParamNamed Nothing ( Name "x$924" ) )
+        ( Ref Nothing ( Local ( Name "x$924" ) ) )
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.MaybeChain.Test", qnameName = Name "map"
-        }, ObjectProp Nothing
-        ( LiteralObject Nothing
-          [
-            ( PropName "map", Abs Nothing
-              ( ParamNamed Nothing ( Name "v$917" ) )
-              ( Abs Nothing
-                ( ParamNamed Nothing ( Name "v1$918" ) )
-                ( IfThenElse Nothing
-                  ( Eq Nothing
-                    ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
-                    ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v1$918" ) ) ) )
-                  )
-                  ( App Nothing
-                    ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Just" ) ) )
-                    ( App Nothing
-                      ( Ref Nothing ( Local ( Name "v$917" ) ) )
-                      ( ObjectProp Nothing
-                        ( Ref Nothing ( Local ( Name "v1$918" ) ) )
-                        ( PropName "value0" )
-                      )
-                    )
-                  )
-                  ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) )
+        }, Abs Nothing
+        ( ParamNamed Nothing ( Name "v$917" ) )
+        ( Abs Nothing
+          ( ParamNamed Nothing ( Name "v1$918" ) )
+          ( IfThenElse Nothing
+            ( Eq Nothing
+              ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
+              ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v1$918" ) ) ) )
+            )
+            ( App Nothing
+              ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Just" ) ) )
+              ( App Nothing
+                ( Ref Nothing ( Local ( Name "v$917" ) ) )
+                ( ObjectProp Nothing
+                  ( Ref Nothing ( Local ( Name "v1$918" ) ) )
+                  ( PropName "value0" )
                 )
               )
             )
-          ]
+            ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) )
+          )
         )
-        ( PropName "map" )
       )
     ], uberModuleForeigns = [], uberModuleExports =
     [
