@@ -131,3 +131,20 @@ spec = describe "Lua AST Optimizer" do
             Lua.varField (Lua.varName [name|notACall|]) [name|eqCharImpl|]
       assertEqual (toString $ pShow original) original $
         rewriteExpWithRule foldFieldProjectionThroughScopeCall original
+
+    it "declines when a leading statement contains an early return" do
+      -- Projecting only into the final return would leave the early
+      -- return unprojected, changing the value on that path.
+      let original ∷ Lua.Exp =
+            Lua.varField
+              ( Lua.scope
+                  [ Lua.ifThenElse
+                      (Lua.Boolean True)
+                      [Lua.return (Lua.varName [name|a|])]
+                      []
+                  , Lua.return (Lua.varName [name|b|])
+                  ]
+              )
+              [name|foo|]
+      assertEqual (toString $ pShow original) original $
+        rewriteExpWithRule foldFieldProjectionThroughScopeCall original

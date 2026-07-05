@@ -15,7 +15,7 @@ import Language.PureScript.Backend.Lua.Types
   , Exp
   , ExpF (..)
   , Statement
-  , StatementF (Return)
+  , StatementF (IfThenElse, Return)
   , TableRowF (..)
   , VarF (..)
   , pattern Ann
@@ -114,6 +114,14 @@ activation. The new @e.foo@ projection is immediately re-optimized (rather
 than waiting for a later pass) so that, e.g., 'reduceTableDefinitionAccessor'
 sees through to a table constructor that would otherwise be hidden behind
 the call. See issue #159.
+
+The rule declines when a leading statement contains a body-level 'Return':
+such an early return exits the call on a path the projection would not
+cover. A 'Return' inside a nested 'Function' belongs to a different
+activation and does not count. 'ForeignSourceStat' is opaque text and is
+assumed return-free: a foreign header returning at body level would skip
+the exports return that follows it and break the module regardless of this
+rule.
 -}
 foldFieldProjectionThroughScopeCall ∷ RewriteRule
 foldFieldProjectionThroughScopeCall original
@@ -138,7 +146,15 @@ foldFieldProjectionThroughScopeCall original
               accessedField
             )
         ) → case reverse body of
-        Ann (Return (Ann returnExp)) : reverseLeading →
-          Just (accessedField, reverse reverseLeading, returnExp)
+        Ann (Return (Ann returnExp)) : reverseLeading
+          | not (any containsReturn reverseLeading) →
+              Just (accessedField, reverse reverseLeading, returnExp)
         _ → Nothing
     _ → Nothing
+
+  containsReturn ∷ Annotated () StatementF → Bool
+  containsReturn (Ann statement) = case statement of
+    Return {} → True
+    IfThenElse _predicate thenBlock elseBlock →
+      any containsReturn thenBlock || any containsReturn elseBlock
+    _ → False
