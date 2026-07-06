@@ -664,9 +664,9 @@ UberModule
               ( LiteralObject Nothing
                 [
                   ( PropName "map", Abs Nothing
-                    ( ParamNamed Nothing ( Name "f$998" ) )
+                    ( ParamNamed Nothing ( Name "f$997" ) )
                     ( Abs Nothing
-                      ( ParamNamed Nothing ( Name "a$999" ) )
+                      ( ParamNamed Nothing ( Name "a$998" ) )
                       ( App Nothing
                         ( App Nothing
                           ( ObjectProp Nothing
@@ -692,10 +692,10 @@ UberModule
                                 ( Imported ( ModuleName "Effect" ) ( Name "applicativeEffect" ) )
                               )
                             )
-                            ( Ref Nothing ( Local ( Name "f$998" ) ) )
+                            ( Ref Nothing ( Local ( Name "f$997" ) ) )
                           )
                         )
-                        ( Ref Nothing ( Local ( Name "a$999" ) ) )
+                        ( Ref Nothing ( Local ( Name "a$998" ) ) )
                       )
                     )
                   )
@@ -715,7 +715,7 @@ UberModule
                 [
                   ( PropName "apply", Let Nothing
                     ( Standalone
-                      ( Nothing, Name "bind$1334", App Nothing
+                      ( Nothing, Name "bind$1317", App Nothing
                         ( Ref Nothing ( Imported ( ModuleName "Control.Bind" ) ( Name "bind" ) ) )
                         ( App Nothing
                           ( ObjectProp Nothing
@@ -729,23 +729,23 @@ UberModule
                       ) :| []
                     )
                     ( Abs Nothing
-                      ( ParamNamed Nothing ( Name "f$1335" ) )
+                      ( ParamNamed Nothing ( Name "f$1318" ) )
                       ( Abs Nothing
-                        ( ParamNamed Nothing ( Name "a$1336" ) )
+                        ( ParamNamed Nothing ( Name "a$1319" ) )
                         ( App Nothing
                           ( App Nothing
-                            ( Ref Nothing ( Local ( Name "bind$1334" ) ) )
-                            ( Ref Nothing ( Local ( Name "f$1335" ) ) )
+                            ( Ref Nothing ( Local ( Name "bind$1317" ) ) )
+                            ( Ref Nothing ( Local ( Name "f$1318" ) ) )
                           )
                           ( Abs Nothing
-                            ( ParamNamed Nothing ( Name "f'$1337" ) )
+                            ( ParamNamed Nothing ( Name "f'$1320" ) )
                             ( App Nothing
                               ( App Nothing
-                                ( Ref Nothing ( Local ( Name "bind$1334" ) ) )
-                                ( Ref Nothing ( Local ( Name "a$1336" ) ) )
+                                ( Ref Nothing ( Local ( Name "bind$1317" ) ) )
+                                ( Ref Nothing ( Local ( Name "a$1319" ) ) )
                               )
                               ( Abs Nothing
-                                ( ParamNamed Nothing ( Name "a'$1338" ) )
+                                ( ParamNamed Nothing ( Name "a'$1321" ) )
                                 ( App Nothing
                                   ( App Nothing
                                     ( Ref Nothing
@@ -770,8 +770,8 @@ UberModule
                                     )
                                   )
                                   ( App Nothing
-                                    ( Ref Nothing ( Local ( Name "f'$1337" ) ) )
-                                    ( Ref Nothing ( Local ( Name "a'$1338" ) ) )
+                                    ( Ref Nothing ( Local ( Name "f'$1320" ) ) )
+                                    ( Ref Nothing ( Local ( Name "a'$1321" ) ) )
                                   )
                                 )
                               )
@@ -1721,19 +1721,19 @@ UberModule
                           ( PropName "unfoldrArrayImpl" )
                         )
                         ( Abs Nothing
-                          ( ParamNamed Nothing ( Name "v2$1330$1352" ) )
+                          ( ParamNamed Nothing ( Name "v2$1313$1335" ) )
                           ( IfThenElse Nothing
                             ( Eq Nothing
                               ( LiteralString Nothing "Data.Maybe∷Maybe.Nothing" )
                               ( ReflectCtor Nothing
-                                ( Ref Nothing ( Local ( Name "v2$1330$1352" ) ) )
+                                ( Ref Nothing ( Local ( Name "v2$1313$1335" ) ) )
                               )
                             ) ( LiteralBool Nothing True )
                             ( IfThenElse Nothing
                               ( Eq Nothing
                                 ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
                                 ( ReflectCtor Nothing
-                                  ( Ref Nothing ( Local ( Name "v2$1330$1352" ) ) )
+                                  ( Ref Nothing ( Local ( Name "v2$1313$1335" ) ) )
                                 )
                               ) ( LiteralBool Nothing False )
                               ( Exception Nothing "No patterns matched" )
@@ -1759,17 +1759,17 @@ UberModule
                       )
                     )
                     ( Abs Nothing
-                      ( ParamNamed Nothing ( Name "v$1350" ) )
+                      ( ParamNamed Nothing ( Name "v$1333" ) )
                       ( ObjectProp Nothing
-                        ( Ref Nothing ( Local ( Name "v$1350" ) ) )
+                        ( Ref Nothing ( Local ( Name "v$1333" ) ) )
                         ( PropName "value0" )
                       )
                     )
                   )
                   ( Abs Nothing
-                    ( ParamNamed Nothing ( Name "v$1351" ) )
+                    ( ParamNamed Nothing ( Name "v$1334" ) )
                     ( ObjectProp Nothing
-                      ( Ref Nothing ( Local ( Name "v$1351" ) ) )
+                      ( Ref Nothing ( Local ( Name "v$1334" ) ) )
                       ( PropName "value1" )
                     )
                   )
@@ -2644,13 +2644,13 @@ UberModule
                     ( LiteralObject Nothing
                       [
                         ( PropName "show", Abs Nothing
-                          ( ParamNamed Nothing ( Name "v$1236" ) )
+                          ( ParamNamed Nothing ( Name "v$1235" ) )
                           ( IfThenElse Nothing
-                            ( Ref Nothing ( Local ( Name "v$1236" ) ) )
+                            ( Ref Nothing ( Local ( Name "v$1235" ) ) )
                             ( LiteralString Nothing "true" )
                             ( IfThenElse Nothing
                               ( Eq Nothing ( LiteralBool Nothing False )
-                                ( Ref Nothing ( Local ( Name "v$1236" ) ) )
+                                ( Ref Nothing ( Local ( Name "v$1235" ) ) )
                               )
                               ( LiteralString Nothing "false" )
                               ( Exception Nothing "No patterns matched" )

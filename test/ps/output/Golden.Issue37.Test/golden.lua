@@ -64,8 +64,8 @@ M.Effect_Lazy_applyEffect = PSLUA_runtime_lazy("applyEffect")(function()
     Functor0 = function() return M.Effect_Lazy_functorEffect(0) end
   }
 end)
-M.Golden_Issue37_Test_discard = function(dictBind_S_17_S_182)
-  return M.Control_Bind_bind(dictBind_S_17_S_182)
+M.Golden_Issue37_Test_discard = function(dictBind_S_17_S_186)
+  return M.Control_Bind_bind(dictBind_S_17_S_186)
 end
 return {
   baz = (function()
@@ -75,13 +75,13 @@ return {
       return M.Golden_Issue37_Test_discard(Bind1_S_1)(f_S_6)(function()
         return M.Control_Bind_bind(Bind1_S_1)(pure_S_4({
           [1] = (function()
-            local Bind1_S_184 = M.Effect_monadEffect.Bind1()
-            local discard1_S_185 = M.Golden_Issue37_Test_discard(Bind1_S_184)
-            return function(fn1_S_186)
-              return M.Control_Bind_bind(M.Effect_monadEffect.Bind1())(fn1_S_186)(function(  )
-                return discard1_S_185(fn1_S_186)(function()
-                  return discard1_S_185(fn1_S_186)(function()
-                    return fn1_S_186
+            local Bind1_S_183 = M.Effect_monadEffect.Bind1()
+            local discard1_S_184 = M.Golden_Issue37_Test_discard(Bind1_S_183)
+            return function(fn1_S_185)
+              return M.Control_Bind_bind(M.Effect_monadEffect.Bind1())(fn1_S_185)(function(  )
+                return discard1_S_184(fn1_S_185)(function()
+                  return discard1_S_184(fn1_S_185)(function()
+                    return fn1_S_185
                   end)
                 end)
               end)

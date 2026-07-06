@@ -107,6 +107,37 @@ spec = describe "IR Optimizer" do
           original = abstraction (paramNamed param) (application m (refLocal param))
       optimizedExpression original === original
 
+  -- Beta reduction must not paste a non-trivial argument into every
+  -- occurrence of the parameter, repeating its work at each use site in a
+  -- strict language; it let-binds the argument instead.
+  -- See Note [Beta reduction and local inlining share an inlining guard]
+  describe "beta reduction does not duplicate work (#167)" do
+    let m = moduleNameFromString "M"
+        x = Name "x"
+        -- An application: evaluating it twice would repeat the work.
+        nonTrivial = application (refImported m (Name "g")) (literalInt 1)
+
+    it "let-binds a non-trivial argument used more than once" do
+      let body = eq (refLocal x) (refLocal x)
+          original = application (abstraction (paramNamed x) body) nonTrivial
+      optimizedExpression original `shouldBe` let1 x nonTrivial body
+
+    it "still substitutes a trivial reference used more than once" do
+      let g = refImported m (Name "g")
+          body = eq (refLocal x) (refLocal x)
+          original = application (abstraction (paramNamed x) body) g
+      optimizedExpression original `shouldBe` eq g g
+
+    it "substitutes a non-trivial argument used exactly once" do
+      let original =
+            application (abstraction (paramNamed x) (refLocal x)) nonTrivial
+      optimizedExpression original `shouldBe` nonTrivial
+
+    it "discards a non-trivial argument that is never used" do
+      let original =
+            application (abstraction (paramNamed x) (literalInt 7)) nonTrivial
+      optimizedExpression original `shouldBe` literalInt 7
+
   describe "folds record-literal projections" do
     let foo = PropName "foo"
         bar = PropName "bar"

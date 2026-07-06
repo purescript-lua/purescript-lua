@@ -67,14 +67,14 @@ M.Data_Identity_applyIdentity = {
   apply = function(v) return function(v1) return v(v1) end end,
   Functor0 = function()
     return {
-      map = function(f_S_512)
-        return function(m_S_513) return f_S_512(m_S_513) end
+      map = function(f_S_501)
+        return function(m_S_502) return f_S_501(m_S_502) end
       end
     }
   end
 }
 M.Data_Identity_applicativeIdentity = {
-  pure = function(x_S_514) return x_S_514 end,
+  pure = function(x_S_503) return x_S_503 end,
   Apply0 = function() return M.Data_Identity_applyIdentity end
 }
 M.Data_Identity_monadIdentity = {
@@ -104,12 +104,12 @@ M.Control_Monad_Except_Trans_bindExceptT = function(dictMonad)
   return {
     bind = function(v)
       return function(k)
-        return M.Control_Bind_bind(dictMonad.Bind1())(v)(function(v2_S_517)
-          if "Data.Either∷Either.Left" == v2_S_517["$ctor"] then
-            return M.Control_Monad_Except_Trans_compose(M.Control_Applicative_pure(dictMonad.Applicative0()))(M.Data_Either_Left)(v2_S_517.value0)
+        return M.Control_Bind_bind(dictMonad.Bind1())(v)(function(v2_S_506)
+          if "Data.Either∷Either.Left" == v2_S_506["$ctor"] then
+            return M.Control_Monad_Except_Trans_compose(M.Control_Applicative_pure(dictMonad.Applicative0()))(M.Data_Either_Left)(v2_S_506.value0)
           else
-            if "Data.Either∷Either.Right" == v2_S_517["$ctor"] then
-              return k(v2_S_517.value0)
+            if "Data.Either∷Either.Right" == v2_S_506["$ctor"] then
+              return k(v2_S_506.value0)
             else
               return error("No patterns matched")
             end
@@ -125,12 +125,13 @@ end
 M.Control_Monad_Except_Trans_applyExceptT = function(dictMonad)
   return {
     apply = (function()
-      local bind_S_521 = M.Control_Bind_bind((M.Control_Monad_Except_Trans_monadExceptT(dictMonad)).Bind1())
-      return function(f_S_522)
-        return function(a_S_523)
-          return bind_S_521(f_S_522)(function(fPrime_S_524)
-            return bind_S_521(a_S_523)(function(aPrime_S_525)
-              return M.Control_Applicative_pure((M.Control_Monad_Except_Trans_monadExceptT(dictMonad)).Applicative0())(fPrime_S_524(aPrime_S_525))
+      local dictMonad_S_509 = M.Control_Monad_Except_Trans_monadExceptT(dictMonad)
+      local bind_S_510 = M.Control_Bind_bind(dictMonad_S_509.Bind1())
+      return function(f_S_511)
+        return function(a_S_512)
+          return bind_S_510(f_S_511)(function(fPrime_S_513)
+            return bind_S_510(a_S_512)(function(aPrime_S_514)
+              return M.Control_Applicative_pure(dictMonad_S_509.Applicative0())(fPrime_S_513(aPrime_S_514))
             end)
           end)
         end
@@ -138,23 +139,23 @@ M.Control_Monad_Except_Trans_applyExceptT = function(dictMonad)
     end)(),
     Functor0 = function()
       return {
-        map = function(f_S_509)
-          return function(v_S_511)
+        map = function(f_S_498)
+          return function(v_S_500)
             return M.Data_Functor_map(((dictMonad.Bind1()).Apply0()).Functor0())(M.Data_Functor_map({
-              map = function(f_S_518)
-                return function(m_S_519)
-                  if "Data.Either∷Either.Left" == m_S_519["$ctor"] then
-                    return M.Data_Either_Left(m_S_519.value0)
+              map = function(f_S_507)
+                return function(m_S_508)
+                  if "Data.Either∷Either.Left" == m_S_508["$ctor"] then
+                    return M.Data_Either_Left(m_S_508.value0)
                   else
-                    if "Data.Either∷Either.Right" == m_S_519["$ctor"] then
-                      return M.Data_Either_Right(f_S_518(m_S_519.value0))
+                    if "Data.Either∷Either.Right" == m_S_508["$ctor"] then
+                      return M.Data_Either_Right(f_S_507(m_S_508.value0))
                     else
                       return error("No patterns matched")
                     end
                   end
                 end
               end
-            })(f_S_509))(v_S_511)
+            })(f_S_498))(v_S_500)
           end
         end
       }
@@ -172,9 +173,9 @@ end
 M.Golden_LongExceptBind_Test_bind = M.Control_Bind_bind(M.Control_Monad_Except_Trans_bindExceptT(M.Data_Identity_monadIdentity))
 M.Golden_LongExceptBind_Test_except = M.Control_Monad_Except_Trans_compose(M.Control_Monad_Except_Trans_ExceptT)(M.Control_Applicative_pure(M.Data_Identity_applicativeIdentity))
 M.Golden_LongExceptBind_Test_go = (function()
-  local _S_kont528 = function(x1_S_529)
-    return function(x160_S_530)
-      return M.Golden_LongExceptBind_Test_bind(M.Golden_LongExceptBind_Test_except(M.Data_Either_Right(M.Data_Semiring_foreign.intAdd(x160_S_530)(1))))(function( x161 )
+  local _S_kont518 = function(x1_S_519)
+    return function(x160_S_520)
+      return M.Golden_LongExceptBind_Test_bind(M.Golden_LongExceptBind_Test_except(M.Data_Either_Right(M.Data_Semiring_foreign.intAdd(x160_S_520)(1))))(function( x161 )
         return M.Golden_LongExceptBind_Test_bind(M.Golden_LongExceptBind_Test_except(M.Data_Either_Right(M.Data_Semiring_foreign.intAdd(x161)(1))))(function( x162 )
           return M.Golden_LongExceptBind_Test_bind(M.Golden_LongExceptBind_Test_except(M.Data_Either_Right(M.Data_Semiring_foreign.intAdd(x162)(1))))(function( x163 )
             return M.Golden_LongExceptBind_Test_bind(M.Golden_LongExceptBind_Test_except(M.Data_Either_Right(M.Data_Semiring_foreign.intAdd(x163)(1))))(function( x164 )
@@ -214,7 +215,7 @@ M.Golden_LongExceptBind_Test_go = (function()
                                                                                 return M.Golden_LongExceptBind_Test_bind(M.Golden_LongExceptBind_Test_except(M.Data_Either_Right(M.Data_Semiring_foreign.intAdd(x197)(1))))(function( x198 )
                                                                                   return M.Golden_LongExceptBind_Test_bind(M.Golden_LongExceptBind_Test_except(M.Data_Either_Right(M.Data_Semiring_foreign.intAdd(x198)(1))))(function( x199 )
                                                                                     return M.Golden_LongExceptBind_Test_bind(M.Golden_LongExceptBind_Test_except(M.Data_Either_Right(M.Data_Semiring_foreign.intAdd(x199)(1))))(function( x200 )
-                                                                                      return M.Control_Applicative_pure(M.Control_Monad_Except_Trans_applicativeExceptT(M.Data_Identity_monadIdentity))(M.Data_Semiring_foreign.intAdd(x1_S_529)(x200))
+                                                                                      return M.Control_Applicative_pure(M.Control_Monad_Except_Trans_applicativeExceptT(M.Data_Identity_monadIdentity))(M.Data_Semiring_foreign.intAdd(x1_S_519)(x200))
                                                                                     end)
                                                                                   end)
                                                                                 end)
@@ -257,9 +258,9 @@ M.Golden_LongExceptBind_Test_go = (function()
       end)
     end
   end
-  local _S_kont531 = function(x1_S_532)
-    return function(x120_S_533)
-      return M.Golden_LongExceptBind_Test_bind(M.Golden_LongExceptBind_Test_except(M.Data_Either_Right(M.Data_Semiring_foreign.intAdd(x120_S_533)(1))))(function( x121 )
+  local _S_kont521 = function(x1_S_522)
+    return function(x120_S_523)
+      return M.Golden_LongExceptBind_Test_bind(M.Golden_LongExceptBind_Test_except(M.Data_Either_Right(M.Data_Semiring_foreign.intAdd(x120_S_523)(1))))(function( x121 )
         return M.Golden_LongExceptBind_Test_bind(M.Golden_LongExceptBind_Test_except(M.Data_Either_Right(M.Data_Semiring_foreign.intAdd(x121)(1))))(function( x122 )
           return M.Golden_LongExceptBind_Test_bind(M.Golden_LongExceptBind_Test_except(M.Data_Either_Right(M.Data_Semiring_foreign.intAdd(x122)(1))))(function( x123 )
             return M.Golden_LongExceptBind_Test_bind(M.Golden_LongExceptBind_Test_except(M.Data_Either_Right(M.Data_Semiring_foreign.intAdd(x123)(1))))(function( x124 )
@@ -299,7 +300,7 @@ M.Golden_LongExceptBind_Test_go = (function()
                                                                                 return M.Golden_LongExceptBind_Test_bind(M.Golden_LongExceptBind_Test_except(M.Data_Either_Right(M.Data_Semiring_foreign.intAdd(x157)(1))))(function( x158 )
                                                                                   return M.Golden_LongExceptBind_Test_bind(M.Golden_LongExceptBind_Test_except(M.Data_Either_Right(M.Data_Semiring_foreign.intAdd(x158)(1))))(function( x159 )
                                                                                     return M.Golden_LongExceptBind_Test_bind(M.Golden_LongExceptBind_Test_except(M.Data_Either_Right(M.Data_Semiring_foreign.intAdd(x159)(1))))(function( x160 )
-                                                                                      return _S_kont528(x1_S_532)(x160)
+                                                                                      return _S_kont518(x1_S_522)(x160)
                                                                                     end)
                                                                                   end)
                                                                                 end)
@@ -342,9 +343,9 @@ M.Golden_LongExceptBind_Test_go = (function()
       end)
     end
   end
-  local _S_kont534 = function(x1_S_535)
-    return function(x80_S_536)
-      return M.Golden_LongExceptBind_Test_bind(M.Golden_LongExceptBind_Test_except(M.Data_Either_Right(M.Data_Semiring_foreign.intAdd(x80_S_536)(1))))(function( x81 )
+  local _S_kont524 = function(x1_S_525)
+    return function(x80_S_526)
+      return M.Golden_LongExceptBind_Test_bind(M.Golden_LongExceptBind_Test_except(M.Data_Either_Right(M.Data_Semiring_foreign.intAdd(x80_S_526)(1))))(function( x81 )
         return M.Golden_LongExceptBind_Test_bind(M.Golden_LongExceptBind_Test_except(M.Data_Either_Right(M.Data_Semiring_foreign.intAdd(x81)(1))))(function( x82 )
           return M.Golden_LongExceptBind_Test_bind(M.Golden_LongExceptBind_Test_except(M.Data_Either_Right(M.Data_Semiring_foreign.intAdd(x82)(1))))(function( x83 )
             return M.Golden_LongExceptBind_Test_bind(M.Golden_LongExceptBind_Test_except(M.Data_Either_Right(M.Data_Semiring_foreign.intAdd(x83)(1))))(function( x84 )
@@ -384,7 +385,7 @@ M.Golden_LongExceptBind_Test_go = (function()
                                                                                 return M.Golden_LongExceptBind_Test_bind(M.Golden_LongExceptBind_Test_except(M.Data_Either_Right(M.Data_Semiring_foreign.intAdd(x117)(1))))(function( x118 )
                                                                                   return M.Golden_LongExceptBind_Test_bind(M.Golden_LongExceptBind_Test_except(M.Data_Either_Right(M.Data_Semiring_foreign.intAdd(x118)(1))))(function( x119 )
                                                                                     return M.Golden_LongExceptBind_Test_bind(M.Golden_LongExceptBind_Test_except(M.Data_Either_Right(M.Data_Semiring_foreign.intAdd(x119)(1))))(function( x120 )
-                                                                                      return _S_kont531(x1_S_535)(x120)
+                                                                                      return _S_kont521(x1_S_525)(x120)
                                                                                     end)
                                                                                   end)
                                                                                 end)
@@ -427,9 +428,9 @@ M.Golden_LongExceptBind_Test_go = (function()
       end)
     end
   end
-  local _S_kont537 = function(x1_S_538)
-    return function(x40_S_539)
-      return M.Golden_LongExceptBind_Test_bind(M.Golden_LongExceptBind_Test_except(M.Data_Either_Right(M.Data_Semiring_foreign.intAdd(x40_S_539)(1))))(function( x41 )
+  local _S_kont527 = function(x1_S_528)
+    return function(x40_S_529)
+      return M.Golden_LongExceptBind_Test_bind(M.Golden_LongExceptBind_Test_except(M.Data_Either_Right(M.Data_Semiring_foreign.intAdd(x40_S_529)(1))))(function( x41 )
         return M.Golden_LongExceptBind_Test_bind(M.Golden_LongExceptBind_Test_except(M.Data_Either_Right(M.Data_Semiring_foreign.intAdd(x41)(1))))(function( x42 )
           return M.Golden_LongExceptBind_Test_bind(M.Golden_LongExceptBind_Test_except(M.Data_Either_Right(M.Data_Semiring_foreign.intAdd(x42)(1))))(function( x43 )
             return M.Golden_LongExceptBind_Test_bind(M.Golden_LongExceptBind_Test_except(M.Data_Either_Right(M.Data_Semiring_foreign.intAdd(x43)(1))))(function( x44 )
@@ -469,7 +470,7 @@ M.Golden_LongExceptBind_Test_go = (function()
                                                                                 return M.Golden_LongExceptBind_Test_bind(M.Golden_LongExceptBind_Test_except(M.Data_Either_Right(M.Data_Semiring_foreign.intAdd(x77)(1))))(function( x78 )
                                                                                   return M.Golden_LongExceptBind_Test_bind(M.Golden_LongExceptBind_Test_except(M.Data_Either_Right(M.Data_Semiring_foreign.intAdd(x78)(1))))(function( x79 )
                                                                                     return M.Golden_LongExceptBind_Test_bind(M.Golden_LongExceptBind_Test_except(M.Data_Either_Right(M.Data_Semiring_foreign.intAdd(x79)(1))))(function( x80 )
-                                                                                      return _S_kont534(x1_S_538)(x80)
+                                                                                      return _S_kont524(x1_S_528)(x80)
                                                                                     end)
                                                                                   end)
                                                                                 end)
@@ -552,7 +553,7 @@ M.Golden_LongExceptBind_Test_go = (function()
                                                                             return M.Golden_LongExceptBind_Test_bind(M.Golden_LongExceptBind_Test_except(M.Data_Either_Right(M.Data_Semiring_foreign.intAdd(x37)(1))))(function( x38 )
                                                                               return M.Golden_LongExceptBind_Test_bind(M.Golden_LongExceptBind_Test_except(M.Data_Either_Right(M.Data_Semiring_foreign.intAdd(x38)(1))))(function( x39 )
                                                                                 return M.Golden_LongExceptBind_Test_bind(M.Golden_LongExceptBind_Test_except(M.Data_Either_Right(M.Data_Semiring_foreign.intAdd(x39)(1))))(function( x40 )
-                                                                                  return _S_kont537(x1)(x40)
+                                                                                  return _S_kont527(x1)(x40)
                                                                                 end)
                                                                               end)
                                                                             end)
@@ -598,16 +599,16 @@ M.Golden_LongExceptBind_Test_compute = M.Control_Semigroupoid_compose(M.Control_
   return v_S_39
 end)(M.Golden_LongExceptBind_Test_go)
 return (function(s) return function() print(s) end end)(M.Data_Show_show({
-  show = function(v_S_189_S_505)
-    if "Data.Either∷Either.Left" == v_S_189_S_505["$ctor"] then
+  show = function(v_S_189_S_517)
+    if "Data.Either∷Either.Left" == v_S_189_S_517["$ctor"] then
       return M.Data_Semigroup_foreign.concatString("(Left ")(M.Data_Semigroup_foreign.concatString(M.Data_Show_show({
         show = M.Data_Show_foreign.showStringImpl
-      })(v_S_189_S_505.value0))(")"))
+      })(v_S_189_S_517.value0))(")"))
     else
-      if "Data.Either∷Either.Right" == v_S_189_S_505["$ctor"] then
+      if "Data.Either∷Either.Right" == v_S_189_S_517["$ctor"] then
         return M.Data_Semigroup_foreign.concatString("(Right ")(M.Data_Semigroup_foreign.concatString(M.Data_Show_show({
           show = M.Data_Show_foreign.showIntImpl
-        })(v_S_189_S_505.value0))(")"))
+        })(v_S_189_S_517.value0))(")"))
       else
         return error("No patterns matched")
       end

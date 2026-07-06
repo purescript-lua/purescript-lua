@@ -81,54 +81,59 @@ M.Golden_TailRecM2Shadow_Test_sumFrom = function(dictMonadRec)
   local pure = M.Control_Applicative_pure((dictMonadRec.Monad0()).Applicative0())
   return function(b)
     return function(n)
-      return dictMonadRec.tailRecM(function(o_S_451)
-        if (function()
-          if "Data.Ordering∷Ordering.LT" == ((function()
-            local unsafeCoerceImpl = function(lt)
-              return function(eq)
-                return function(gt)
-                  return function(x)
-                    return function(y)
-                      if x < y then
-                        return lt
-                      elseif x == y then
-                        return eq
-                      else
-                        return gt
+      return dictMonadRec.tailRecM(function(o_S_450)
+        return (function()
+          local acc_S_1 = o_S_450.a
+          return function(i_S_2)
+            if (function()
+              if "Data.Ordering∷Ordering.LT" == ((function()
+                local unsafeCoerceImpl = function(lt)
+                  return function(eq)
+                    return function(gt)
+                      return function(x)
+                        return function(y)
+                          if x < y then
+                            return lt
+                          elseif x == y then
+                            return eq
+                          else
+                            return gt
+                          end
+                        end
                       end
                     end
                   end
                 end
+                return unsafeCoerceImpl
+              end)()({ ["$ctor"] = "Data.Ordering∷Ordering.LT" })({
+                ["$ctor"] = "Data.Ordering∷Ordering.EQ"
+              })({
+                ["$ctor"] = "Data.Ordering∷Ordering.GT"
+              })(i_S_2)(n))["$ctor"] then
+                return false
+              else
+                return true
               end
+            end)() then
+              return pure((function(value0)
+                return {
+                  ["$ctor"] = "Control.Monad.Rec.Class∷Step.Done",
+                  value0 = value0
+                }
+              end)(acc_S_1))
+            else
+              return pure((function(value0)
+                return {
+                  ["$ctor"] = "Control.Monad.Rec.Class∷Step.Loop",
+                  value0 = value0
+                }
+              end)({
+                a = M.Data_Semiring_foreign.intAdd(acc_S_1)(i_S_2),
+                b = M.Data_Semiring_foreign.intAdd(i_S_2)(1)
+              }))
             end
-            return unsafeCoerceImpl
-          end)()({ ["$ctor"] = "Data.Ordering∷Ordering.LT" })({
-            ["$ctor"] = "Data.Ordering∷Ordering.EQ"
-          })({
-            ["$ctor"] = "Data.Ordering∷Ordering.GT"
-          })(o_S_451.b)(n))["$ctor"] then
-            return false
-          else
-            return true
           end
-        end)() then
-          return pure((function(value0)
-            return {
-              ["$ctor"] = "Control.Monad.Rec.Class∷Step.Done",
-              value0 = value0
-            }
-          end)(o_S_451.a))
-        else
-          return pure((function(value0)
-            return {
-              ["$ctor"] = "Control.Monad.Rec.Class∷Step.Loop",
-              value0 = value0
-            }
-          end)({
-            a = M.Data_Semiring_foreign.intAdd(o_S_451.a)(o_S_451.b),
-            b = M.Data_Semiring_foreign.intAdd(o_S_451.b)(1)
-          }))
-        end
+        end)()(o_S_450.b)
       end)({ a = b, b = 0 })
     end
   end

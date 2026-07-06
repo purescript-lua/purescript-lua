@@ -171,8 +171,8 @@ M.Golden_GenericEqTwoTypes_Test_genericEqSum = function(dictGenericEq1_S_5)
     end
   }
 end
-M.Golden_GenericEqTwoTypes_Test_eqRec = function(dictEqRecord_S_195)
-  return { eq = M.Data_Eq_eqRecord(dictEqRecord_S_195)(M.Type_Proxy_Proxy) }
+M.Golden_GenericEqTwoTypes_Test_eqRec = function(dictEqRecord_S_193)
+  return { eq = M.Data_Eq_eqRecord(dictEqRecord_S_193)(M.Type_Proxy_Proxy) }
 end
 M.Golden_GenericEqTwoTypes_Test_eqRowCons = M.Data_Eq_eqRowCons({
   eqRecord = function()

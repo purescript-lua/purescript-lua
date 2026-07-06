@@ -215,10 +215,10 @@ UberModule
       ( QName
         { qnameModuleName = ModuleName "Golden.Issue37.Test", qnameName = Name "discard"
         }, Abs Nothing
-        ( ParamNamed Nothing ( Name "dictBind$17$182" ) )
+        ( ParamNamed Nothing ( Name "dictBind$17$186" ) )
         ( App Nothing
           ( Ref Nothing ( Imported ( ModuleName "Control.Bind" ) ( Name "bind" ) ) )
-          ( Ref Nothing ( Local ( Name "dictBind$17$182" ) ) )
+          ( Ref Nothing ( Local ( Name "dictBind$17$186" ) ) )
         )
       )
     ], uberModuleForeigns = [], uberModuleExports =
@@ -271,7 +271,7 @@ UberModule
                         [ App Nothing
                           ( Let Nothing
                             ( Standalone
-                              ( Nothing, Name "Bind1$184", App Nothing
+                              ( Nothing, Name "Bind1$183", App Nothing
                                 ( ObjectProp Nothing
                                   ( Ref Nothing
                                     ( Imported ( ModuleName "Effect" ) ( Name "monadEffect" ) )
@@ -283,19 +283,19 @@ UberModule
                                 )
                               ) :|
                               [ Standalone
-                                ( Nothing, Name "discard1$185", App Nothing
+                                ( Nothing, Name "discard1$184", App Nothing
                                   ( Ref Nothing
                                     ( Imported
                                       ( ModuleName "Golden.Issue37.Test" )
                                       ( Name "discard" )
                                     )
                                   )
-                                  ( Ref Nothing ( Local ( Name "Bind1$184" ) ) )
+                                  ( Ref Nothing ( Local ( Name "Bind1$183" ) ) )
                                 )
                               ]
                             )
                             ( Abs Nothing
-                              ( ParamNamed Nothing ( Name "fn1$186" ) )
+                              ( ParamNamed Nothing ( Name "fn1$185" ) )
                               ( App Nothing
                                 ( App Nothing
                                   ( App Nothing
@@ -317,22 +317,22 @@ UberModule
                                       )
                                     )
                                   )
-                                  ( Ref Nothing ( Local ( Name "fn1$186" ) ) )
+                                  ( Ref Nothing ( Local ( Name "fn1$185" ) ) )
                                 )
                                 ( Abs Nothing ( ParamUnused Nothing )
                                   ( App Nothing
                                     ( App Nothing
-                                      ( Ref Nothing ( Local ( Name "discard1$185" ) ) )
-                                      ( Ref Nothing ( Local ( Name "fn1$186" ) ) )
+                                      ( Ref Nothing ( Local ( Name "discard1$184" ) ) )
+                                      ( Ref Nothing ( Local ( Name "fn1$185" ) ) )
                                     )
                                     ( Abs Nothing ( ParamUnused Nothing )
                                       ( App Nothing
                                         ( App Nothing
-                                          ( Ref Nothing ( Local ( Name "discard1$185" ) ) )
-                                          ( Ref Nothing ( Local ( Name "fn1$186" ) ) )
+                                          ( Ref Nothing ( Local ( Name "discard1$184" ) ) )
+                                          ( Ref Nothing ( Local ( Name "fn1$185" ) ) )
                                         )
                                         ( Abs Nothing ( ParamUnused Nothing )
-                                          ( Ref Nothing ( Local ( Name "fn1$186" ) ) )
+                                          ( Ref Nothing ( Local ( Name "fn1$185" ) ) )
                                         )
                                       )
                                     )

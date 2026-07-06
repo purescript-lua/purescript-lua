@@ -279,26 +279,26 @@ UberModule
       ( QName
         { qnameModuleName = ModuleName "Golden.MaybeChain.Test", qnameName = Name "identity"
         }, Abs Nothing
-        ( ParamNamed Nothing ( Name "x$281" ) )
-        ( Ref Nothing ( Local ( Name "x$281" ) ) )
+        ( ParamNamed Nothing ( Name "x$280" ) )
+        ( Ref Nothing ( Local ( Name "x$280" ) ) )
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.MaybeChain.Test", qnameName = Name "map"
         }, Abs Nothing
-        ( ParamNamed Nothing ( Name "v$276" ) )
+        ( ParamNamed Nothing ( Name "v$275" ) )
         ( Abs Nothing
-          ( ParamNamed Nothing ( Name "v1$277" ) )
+          ( ParamNamed Nothing ( Name "v1$276" ) )
           ( IfThenElse Nothing
             ( Eq Nothing
               ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
-              ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v1$277" ) ) ) )
+              ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v1$276" ) ) ) )
             )
             ( App Nothing
               ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Just" ) ) )
               ( App Nothing
-                ( Ref Nothing ( Local ( Name "v$276" ) ) )
+                ( Ref Nothing ( Local ( Name "v$275" ) ) )
                 ( ObjectProp Nothing
-                  ( Ref Nothing ( Local ( Name "v1$277" ) ) )
+                  ( Ref Nothing ( Local ( Name "v1$276" ) ) )
                   ( PropName "value0" )
                 )
               )
