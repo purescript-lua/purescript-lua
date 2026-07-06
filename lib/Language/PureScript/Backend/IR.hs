@@ -7,7 +7,6 @@ module Language.PureScript.Backend.IR
 import Control.Monad.Error.Class (MonadError (throwError))
 import Control.Monad.Writer.Class (MonadWriter (..))
 import Data.IntCast (intCast)
-import Data.List qualified as List
 import Data.List.NonEmpty ((<|))
 import Data.List.NonEmpty qualified as NE
 import Data.Map.Lazy qualified as Map
@@ -177,21 +176,24 @@ mkForeigns = do
 collectDataDeclarations
   ∷ Map ModuleName (Cfn.Module Cfn.Ann)
   → Map (ModuleName, TyName) (AlgebraicType, Map CtorName [FieldName])
-collectDataDeclarations cfnModules = Map.unions do
-  Map.toList cfnModules <&> \(modName, cfnModule) →
-    Map.fromList
-      [ ((modName, ty), (algebraicType, Map.fromList (snd <$> ctors)))
-      | ctors ←
-          List.groupBy
-            ((==) `on` fst)
-            [ (mkTyName tyName, (mkCtorName ctorName, mkFieldName <$> fields))
-            | bind ← Cfn.moduleBindings cfnModule
-            , Cfn.Constructor _ann tyName ctorName fields ← boundExp bind
-            ]
-      , let ty = fst (head (NE.fromList ctors)) -- groupBy never makes an empty group
-      , let algebraicType = if length ctors == 1 then ProductType else SumType
+collectDataDeclarations cfnModules =
+  classify
+    <$> Map.fromListWith
+      (<>)
+      [ ( (modName, mkTyName tyName)
+        , Map.singleton (mkCtorName ctorName) (mkFieldName <$> fields)
+        )
+      | (modName, cfnModule) ← Map.toList cfnModules
+      , bind ← Cfn.moduleBindings cfnModule
+      , Cfn.Constructor _ann tyName ctorName fields ← boundExp bind
       ]
  where
+  -- A type is a product type iff it has exactly one constructor. Grouping the
+  -- constructors by type first makes this independent of the order in which
+  -- they appear in the module bindings.
+  classify ctors =
+    (if Map.size ctors == 1 then ProductType else SumType, ctors)
+
   boundExp ∷ Cfn.Bind a → [Cfn.Expr a]
   boundExp = \case
     Cfn.Rec bindingGroup → snd <$> bindingGroup
