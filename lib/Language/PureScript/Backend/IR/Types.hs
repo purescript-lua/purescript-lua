@@ -209,6 +209,36 @@ getAnn = \case
   Exception ann _ → ann
   ForeignImport ann _ _ _ → ann
 
+{- | Replace the root annotation, leaving every other node's annotation
+(children, 'Parameter's, 'Let' binder names, 'ForeignImport' names)
+untouched. The symmetric setter to 'getAnn'.
+-}
+setAnn ∷ ann → RawExp ann → RawExp ann
+setAnn ann = \case
+  LiteralInt _ n → LiteralInt ann n
+  LiteralFloat _ n → LiteralFloat ann n
+  LiteralString _ s → LiteralString ann s
+  LiteralChar _ c → LiteralChar ann c
+  LiteralBool _ b → LiteralBool ann b
+  LiteralArray _ es → LiteralArray ann es
+  LiteralObject _ props → LiteralObject ann props
+  Ctor _ algTy modName tyName ctorName fields →
+    Ctor ann algTy modName tyName ctorName fields
+  ReflectCtor _ e → ReflectCtor ann e
+  Eq _ l r → Eq ann l r
+  DataArgumentByIndex _ i e → DataArgumentByIndex ann i e
+  ArrayLength _ e → ArrayLength ann e
+  ArrayIndex _ e i → ArrayIndex ann e i
+  ObjectProp _ e prop → ObjectProp ann e prop
+  ObjectUpdate _ e patches → ObjectUpdate ann e patches
+  Abs _ param body → Abs ann param body
+  App _ f arg → App ann f arg
+  Ref _ qname → Ref ann qname
+  Let _ binds body → Let ann binds body
+  IfThenElse _ cond th el → IfThenElse ann cond th el
+  Exception _ msg → Exception ann msg
+  ForeignImport _ modName path names → ForeignImport ann modName path names
+
 isLiteral ∷ RawExp ann → Bool
 isLiteral = (||) <$> isNonRecursiveLiteral <*> isRecursiveLiteral
 

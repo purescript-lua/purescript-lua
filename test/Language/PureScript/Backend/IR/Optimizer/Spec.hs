@@ -4,7 +4,7 @@ import Data.Map qualified as Map
 import Hedgehog (PropertyT, annotateShow, diff, forAll, (===))
 import Hedgehog.Gen qualified as Gen
 import Language.PureScript.Backend.IR.Gen qualified as Gen
-import Language.PureScript.Backend.IR.Inliner (Annotation (Never))
+import Language.PureScript.Backend.IR.Inliner (Annotation (Always, Never))
 import Language.PureScript.Backend.IR.Linker (LinkMode (..))
 import Language.PureScript.Backend.IR.Linker qualified as Linker
 import Language.PureScript.Backend.IR.Linter
@@ -35,6 +35,7 @@ import Language.PureScript.Backend.IR.Types
   , application
   , countFreeRef
   , eq
+  , getAnn
   , ifThenElse
   , isLiteral
   , lets
@@ -183,6 +184,60 @@ spec = describe "IR Optimizer" do
               )
               foo
       optimizedExpression original `shouldBe` literalInt 1
+
+    -- A record field can hold an expression whose root annotation is
+    -- `Just Always` — the shape the Linker gives foreign accessors (see
+    -- Note [Foreign bindings structure emitted by the Linker]). The fold
+    -- must not hand that annotation to its result: the result occupies
+    -- the projection's position, so it carries the projection's
+    -- annotation.
+    let dictModule = moduleNameFromString "Dict"
+        accessor =
+          ObjectProp
+            (Just Always)
+            (refImported dictModule (Name "foreign"))
+            foo
+
+    it "does not leak the field's annotation out of a record literal" do
+      let original = objectProp (literalObject [(foo, accessor)]) foo
+      getAnn (optimizedExpression original) `shouldBe` Nothing
+
+    it "does not leak the patch's annotation out of a record update" do
+      let original =
+            objectProp
+              (objectUpdate (refLocal (Name "r")) ((foo, accessor) :| []))
+              foo
+      getAnn (optimizedExpression original) `shouldBe` Nothing
+
+    it "keeps the projection's own annotation on the folded value" do
+      let original =
+            ObjectProp (Just Never) (literalObject [(foo, accessor)]) foo
+      getAnn (optimizedExpression original) `shouldBe` Just Never
+
+    -- The end-to-end manifestation: a leaked `Just Always` makes an
+    -- unrelated top-level binding unconditionally inlinable, so it gets
+    -- duplicated into every use site and dropped from the bindings.
+    test "keeps a binding whose RHS folds to an annotated field" do
+      let mainModule = moduleNameFromString "Main"
+          addExp = objectProp (literalObject [(foo, accessor)]) foo
+          original =
+            Linker.UberModule
+              { uberModuleForeigns = []
+              , uberModuleBindings =
+                  [Standalone (QName mainModule (Name "add"), addExp)]
+              , uberModuleExports =
+                  [ (Name "main1", refImported mainModule (Name "add"))
+                  , (Name "main2", refImported mainModule (Name "add"))
+                  ]
+              }
+          optimized = optimizedUberModule original
+          addKept =
+            [ qn
+            | Standalone (qn, _) ← Linker.uberModuleBindings optimized
+            , qn == QName mainModule (Name "add")
+            ]
+      annotateShow optimized
+      addKept === [QName mainModule (Name "add")]
 
   describe "inlines expressions" do
     test "inlines literals" do

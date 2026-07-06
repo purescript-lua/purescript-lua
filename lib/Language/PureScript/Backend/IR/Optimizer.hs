@@ -42,6 +42,7 @@ import Language.PureScript.Backend.IR.Types
   , lets
   , literalBool
   , rewriteExpBottomUpM
+  , setAnn
   , substituteCopyM
   , substituteMoveM
   , thenRewrite
@@ -385,15 +386,23 @@ rule declines.
 
 The discarded fields are never evaluated — the same call DCE makes when
 it drops an unused binding unconditionally.
+
+The folded value takes the projection's own root annotation, not the
+field's: the result occupies the projection's position in the tree. A
+field can hold a foreign accessor annotated @Just Always@ (see
+Note [Foreign bindings structure emitted by the Linker]), and passing
+that annotation along would make whatever binding receives the fold
+unconditionally inlinable, duplicating it at every use site.
 -}
 reduceObjectProp ∷ Applicative m ⇒ RewriteRuleM m Ann
 reduceObjectProp =
   pure . \case
-    ObjectProp _ann (LiteralObject _ props) prop →
-      List.lookup prop props
+    ObjectProp ann (LiteralObject _ props) prop →
+      setAnn ann <$> List.lookup prop props
     ObjectProp ann (ObjectUpdate _ obj patches) prop →
-      Just $
-        fromMaybe (ObjectProp ann obj prop) (List.lookup prop (toList patches))
+      Just case List.lookup prop (toList patches) of
+        Just patched → setAnn ann patched
+        Nothing → ObjectProp ann obj prop
     _ → Nothing
 
 {- Note [Beta reduction and local inlining share an inlining guard]
