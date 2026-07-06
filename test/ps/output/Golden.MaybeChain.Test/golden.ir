@@ -121,9 +121,9 @@ UberModule
               ( LiteralObject Nothing
                 [
                   ( PropName "map", Abs Nothing
-                    ( ParamNamed Nothing ( Name "f$230" ) )
+                    ( ParamNamed Nothing ( Name "f$121" ) )
                     ( Abs Nothing
-                      ( ParamNamed Nothing ( Name "a$231" ) )
+                      ( ParamNamed Nothing ( Name "a$122" ) )
                       ( App Nothing
                         ( App Nothing
                           ( ObjectProp Nothing
@@ -149,10 +149,10 @@ UberModule
                                 ( Imported ( ModuleName "Effect" ) ( Name "applicativeEffect" ) )
                               )
                             )
-                            ( Ref Nothing ( Local ( Name "f$230" ) ) )
+                            ( Ref Nothing ( Local ( Name "f$121" ) ) )
                           )
                         )
-                        ( Ref Nothing ( Local ( Name "a$231" ) ) )
+                        ( Ref Nothing ( Local ( Name "a$122" ) ) )
                       )
                     )
                   )
@@ -172,7 +172,7 @@ UberModule
                 [
                   ( PropName "apply", Let Nothing
                     ( Standalone
-                      ( Nothing, Name "bind$211", App Nothing
+                      ( Nothing, Name "bind$101", App Nothing
                         ( Ref Nothing ( Imported ( ModuleName "Control.Bind" ) ( Name "bind" ) ) )
                         ( App Nothing
                           ( ObjectProp Nothing
@@ -186,23 +186,23 @@ UberModule
                       ) :| []
                     )
                     ( Abs Nothing
-                      ( ParamNamed Nothing ( Name "f$213" ) )
+                      ( ParamNamed Nothing ( Name "f$103" ) )
                       ( Abs Nothing
-                        ( ParamNamed Nothing ( Name "a$214" ) )
+                        ( ParamNamed Nothing ( Name "a$104" ) )
                         ( App Nothing
                           ( App Nothing
-                            ( Ref Nothing ( Local ( Name "bind$211" ) ) )
-                            ( Ref Nothing ( Local ( Name "f$213" ) ) )
+                            ( Ref Nothing ( Local ( Name "bind$101" ) ) )
+                            ( Ref Nothing ( Local ( Name "f$103" ) ) )
                           )
                           ( Abs Nothing
-                            ( ParamNamed Nothing ( Name "f'$215" ) )
+                            ( ParamNamed Nothing ( Name "f'$105" ) )
                             ( App Nothing
                               ( App Nothing
-                                ( Ref Nothing ( Local ( Name "bind$211" ) ) )
-                                ( Ref Nothing ( Local ( Name "a$214" ) ) )
+                                ( Ref Nothing ( Local ( Name "bind$101" ) ) )
+                                ( Ref Nothing ( Local ( Name "a$104" ) ) )
                               )
                               ( Abs Nothing
-                                ( ParamNamed Nothing ( Name "a'$216" ) )
+                                ( ParamNamed Nothing ( Name "a'$106" ) )
                                 ( App Nothing
                                   ( App Nothing
                                     ( Ref Nothing
@@ -227,8 +227,8 @@ UberModule
                                     )
                                   )
                                   ( App Nothing
-                                    ( Ref Nothing ( Local ( Name "f'$215" ) ) )
-                                    ( Ref Nothing ( Local ( Name "a'$216" ) ) )
+                                    ( Ref Nothing ( Local ( Name "f'$105" ) ) )
+                                    ( Ref Nothing ( Local ( Name "a'$106" ) ) )
                                   )
                                 )
                               )
@@ -279,26 +279,26 @@ UberModule
       ( QName
         { qnameModuleName = ModuleName "Golden.MaybeChain.Test", qnameName = Name "identity"
         }, Abs Nothing
-        ( ParamNamed Nothing ( Name "x$924" ) )
-        ( Ref Nothing ( Local ( Name "x$924" ) ) )
+        ( ParamNamed Nothing ( Name "x$281" ) )
+        ( Ref Nothing ( Local ( Name "x$281" ) ) )
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.MaybeChain.Test", qnameName = Name "map"
         }, Abs Nothing
-        ( ParamNamed Nothing ( Name "v$917" ) )
+        ( ParamNamed Nothing ( Name "v$276" ) )
         ( Abs Nothing
-          ( ParamNamed Nothing ( Name "v1$918" ) )
+          ( ParamNamed Nothing ( Name "v1$277" ) )
           ( IfThenElse Nothing
             ( Eq Nothing
               ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
-              ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v1$918" ) ) ) )
+              ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v1$277" ) ) ) )
             )
             ( App Nothing
               ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Just" ) ) )
               ( App Nothing
-                ( Ref Nothing ( Local ( Name "v$917" ) ) )
+                ( Ref Nothing ( Local ( Name "v$276" ) ) )
                 ( ObjectProp Nothing
-                  ( Ref Nothing ( Local ( Name "v1$918" ) ) )
+                  ( Ref Nothing ( Local ( Name "v1$277" ) ) )
                   ( PropName "value0" )
                 )
               )

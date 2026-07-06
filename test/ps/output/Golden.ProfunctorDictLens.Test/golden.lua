@@ -39,9 +39,9 @@ M.Control_Bind_bind = function(dict) return dict.bind end
 M.Data_Newtype_unwrap = function()
   return M.Unsafe_Coerce_foreign.unsafeCoerce
 end
-M.Data_Profunctor_composeFlipped = function(f_S_886)
-  return function(g_S_887)
-    return function(x_S_894) return g_S_887(f_S_886(x_S_894)) end
+M.Data_Profunctor_composeFlipped = function(f_S_263)
+  return function(g_S_264)
+    return function(x_S_274) return g_S_264(f_S_263(x_S_274)) end
   end
 end
 M.Data_Profunctor_profunctorFn = {
@@ -68,9 +68,9 @@ M.Effect_applicativeEffect = {
 }
 M.Effect_Lazy_functorEffect = PSLUA_runtime_lazy("functorEffect")(function()
   return {
-    map = function(f_S_201)
-      return function(a_S_202)
-        return (M.Effect_applicativeEffect.Apply0()).apply(M.Control_Applicative_pure(M.Effect_applicativeEffect)(f_S_201))(a_S_202)
+    map = function(f_S_111)
+      return function(a_S_112)
+        return (M.Effect_applicativeEffect.Apply0()).apply(M.Control_Applicative_pure(M.Effect_applicativeEffect)(f_S_111))(a_S_112)
       end
     end
   }
@@ -78,12 +78,12 @@ end)
 M.Effect_Lazy_applyEffect = PSLUA_runtime_lazy("applyEffect")(function()
   return {
     apply = (function()
-      local bind_S_178 = M.Control_Bind_bind(M.Effect_monadEffect.Bind1())
-      return function(f_S_180)
-        return function(a_S_181)
-          return bind_S_178(f_S_180)(function(fPrime_S_182)
-            return bind_S_178(a_S_181)(function(aPrime_S_183)
-              return M.Control_Applicative_pure(M.Effect_monadEffect.Applicative0())(fPrime_S_182(aPrime_S_183))
+      local bind_S_90 = M.Control_Bind_bind(M.Effect_monadEffect.Bind1())
+      return function(f_S_92)
+        return function(a_S_93)
+          return bind_S_90(f_S_92)(function(fPrime_S_94)
+            return bind_S_90(a_S_93)(function(aPrime_S_95)
+              return M.Control_Applicative_pure(M.Effect_monadEffect.Applicative0())(fPrime_S_94(aPrime_S_95))
             end)
           end)
         end

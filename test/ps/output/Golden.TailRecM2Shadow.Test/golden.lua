@@ -19,6 +19,9 @@ local function PSLUA_runtime_lazy(name)
   end
 end
 local M = {}
+M.Data_Semiring_foreign = {
+  intAdd = function(x) return function(y) return x + y end end
+}
 M.Effect_foreign = {
   pureE = function(a) return function() return a end end,
   bindE = function(a) return function(f) return function() return f(a())() end end end,
@@ -47,9 +50,9 @@ M.Effect_applicativeEffect = {
 }
 M.Effect_Lazy_functorEffect = PSLUA_runtime_lazy("functorEffect")(function()
   return {
-    map = function(f_S_408)
-      return function(a_S_409)
-        return (M.Effect_applicativeEffect.Apply0()).apply(M.Control_Applicative_pure(M.Effect_applicativeEffect)(f_S_408))(a_S_409)
+    map = function(f_S_239)
+      return function(a_S_240)
+        return (M.Effect_applicativeEffect.Apply0()).apply(M.Control_Applicative_pure(M.Effect_applicativeEffect)(f_S_239))(a_S_240)
       end
     end
   }
@@ -57,12 +60,12 @@ end)
 M.Effect_Lazy_applyEffect = PSLUA_runtime_lazy("applyEffect")(function()
   return {
     apply = (function()
-      local bind_S_388 = M.Control_Bind_bind(M.Effect_monadEffect.Bind1())
-      return function(f_S_390)
-        return function(a_S_391)
-          return bind_S_388(f_S_390)(function(fPrime_S_392)
-            return bind_S_388(a_S_391)(function(aPrime_S_393)
-              return M.Control_Applicative_pure(M.Effect_monadEffect.Applicative0())(fPrime_S_392(aPrime_S_393))
+      local bind_S_219 = M.Control_Bind_bind(M.Effect_monadEffect.Bind1())
+      return function(f_S_221)
+        return function(a_S_222)
+          return bind_S_219(f_S_221)(function(fPrime_S_223)
+            return bind_S_219(a_S_222)(function(aPrime_S_224)
+              return M.Control_Applicative_pure(M.Effect_monadEffect.Applicative0())(fPrime_S_223(aPrime_S_224))
             end)
           end)
         end
@@ -78,7 +81,7 @@ M.Golden_TailRecM2Shadow_Test_sumFrom = function(dictMonadRec)
   local pure = M.Control_Applicative_pure((dictMonadRec.Monad0()).Applicative0())
   return function(b)
     return function(n)
-      return dictMonadRec.tailRecM(function(o_S_31)
+      return dictMonadRec.tailRecM(function(o_S_451)
         if (function()
           if "Data.Ordering∷Ordering.LT" == ((function()
             local unsafeCoerceImpl = function(lt)
@@ -103,7 +106,7 @@ M.Golden_TailRecM2Shadow_Test_sumFrom = function(dictMonadRec)
             ["$ctor"] = "Data.Ordering∷Ordering.EQ"
           })({
             ["$ctor"] = "Data.Ordering∷Ordering.GT"
-          })(o_S_31.b)(n))["$ctor"] then
+          })(o_S_451.b)(n))["$ctor"] then
             return false
           else
             return true
@@ -114,7 +117,7 @@ M.Golden_TailRecM2Shadow_Test_sumFrom = function(dictMonadRec)
               ["$ctor"] = "Control.Monad.Rec.Class∷Step.Done",
               value0 = value0
             }
-          end)(o_S_31.a))
+          end)(o_S_451.a))
         else
           return pure((function(value0)
             return {
@@ -122,8 +125,8 @@ M.Golden_TailRecM2Shadow_Test_sumFrom = function(dictMonadRec)
               value0 = value0
             }
           end)({
-            a = (function(x) return function(y) return x + y end end)(o_S_31.a)(o_S_31.b),
-            b = (function(x) return function(y) return x + y end end)(o_S_31.b)(1)
+            a = M.Data_Semiring_foreign.intAdd(o_S_451.a)(o_S_451.b),
+            b = M.Data_Semiring_foreign.intAdd(o_S_451.b)(1)
           }))
         end
       end)({ a = b, b = 0 })
@@ -132,21 +135,21 @@ M.Golden_TailRecM2Shadow_Test_sumFrom = function(dictMonadRec)
 end
 return (function()
   local r_S_0 = M.Golden_TailRecM2Shadow_Test_sumFrom({
-    tailRecM = function(f_S_1139)
-      return function(a_S_1140)
+    tailRecM = function(f_S_11)
+      return function(a_S_12)
         return function()
-          local r_S_1141 = M.Control_Bind_bind(M.Effect_bindEffect)(f_S_1139(a_S_1140))(M.Effect_Ref_foreign._new)()
+          local r_S_16 = M.Control_Bind_bind(M.Effect_bindEffect)(f_S_11(a_S_12))(M.Effect_Ref_foreign._new)()
           local _ = M.Effect_foreign.untilE(function()
-            local v0_S_1142 = M.Effect_Ref_foreign.read(r_S_1141)()
+            local v0_S_17 = M.Effect_Ref_foreign.read(r_S_16)()
             return (function()
-              if "Control.Monad.Rec.Class∷Step.Loop" == v0_S_1142["$ctor"] then
+              if "Control.Monad.Rec.Class∷Step.Loop" == v0_S_17["$ctor"] then
                 return function()
-                  local e_S_1143 = f_S_1139(v0_S_1142.value0)()
-                  local _ = M.Effect_Ref_foreign.write(e_S_1143)(r_S_1141)()
+                  local e_S_19 = f_S_11(v0_S_17.value0)()
+                  local _ = M.Effect_Ref_foreign.write(e_S_19)(r_S_16)()
                   return M.Control_Monad_Rec_Class_pure(false)()
                 end
               else
-                if "Control.Monad.Rec.Class∷Step.Done" == v0_S_1142["$ctor"] then
+                if "Control.Monad.Rec.Class∷Step.Done" == v0_S_17["$ctor"] then
                   return M.Control_Monad_Rec_Class_pure(true)
                 else
                   return error("No patterns matched")
@@ -155,14 +158,14 @@ return (function()
             end)()()
           end)()
           return M.Effect_functorEffect.map((function(f) return f(); end)(function(  )
-            return function(v_S_9_S_1144)
-              if "Control.Monad.Rec.Class∷Step.Done" == v_S_9_S_1144["$ctor"] then
-                return v_S_9_S_1144.value0
+            return function(v_S_9_S_20)
+              if "Control.Monad.Rec.Class∷Step.Done" == v_S_9_S_20["$ctor"] then
+                return v_S_9_S_20.value0
               else
                 return error("No patterns matched")
               end
             end
-          end))(M.Effect_Ref_foreign.read(r_S_1141))()
+          end))(M.Effect_Ref_foreign.read(r_S_16))()
         end
       end
     end,

@@ -53,9 +53,9 @@ M.Effect_applicativeEffect = {
 }
 M.Effect_Lazy_functorEffect = PSLUA_runtime_lazy("functorEffect")(function()
   return {
-    map = function(f_S_40)
-      return function(a_S_41)
-        return (M.Effect_applicativeEffect.Apply0()).apply(M.Control_Applicative_pure(M.Effect_applicativeEffect)(f_S_40))(a_S_41)
+    map = function(f_S_28)
+      return function(a_S_29)
+        return (M.Effect_applicativeEffect.Apply0()).apply(M.Control_Applicative_pure(M.Effect_applicativeEffect)(f_S_28))(a_S_29)
       end
     end
   }
@@ -63,12 +63,12 @@ end)
 M.Effect_Lazy_applyEffect = PSLUA_runtime_lazy("applyEffect")(function()
   return {
     apply = (function()
-      local bind_S_17 = M.Control_Bind_bind(M.Effect_monadEffect.Bind1())
-      return function(f_S_19)
-        return function(a_S_20)
-          return bind_S_17(f_S_19)(function(fPrime_S_21)
-            return bind_S_17(a_S_20)(function(aPrime_S_22)
-              return M.Control_Applicative_pure(M.Effect_monadEffect.Applicative0())(fPrime_S_21(aPrime_S_22))
+      local bind_S_7 = M.Control_Bind_bind(M.Effect_monadEffect.Bind1())
+      return function(f_S_9)
+        return function(a_S_10)
+          return bind_S_7(f_S_9)(function(fPrime_S_11)
+            return bind_S_7(a_S_10)(function(aPrime_S_12)
+              return M.Control_Applicative_pure(M.Effect_monadEffect.Applicative0())(fPrime_S_11(aPrime_S_12))
             end)
           end)
         end
@@ -77,8 +77,8 @@ M.Effect_Lazy_applyEffect = PSLUA_runtime_lazy("applyEffect")(function()
     Functor0 = function() return M.Effect_Lazy_functorEffect(0) end
   }
 end)
-M.Golden_ArrayPatternMatch_Test_negate = function(a_S_165)
-  return M.Data_Ring_ringInt.sub((M.Data_Ring_ringInt.Semiring0()).zero)(a_S_165)
+M.Golden_ArrayPatternMatch_Test_negate = function(a_S_86)
+  return M.Data_Ring_ringInt.sub((M.Data_Ring_ringInt.Semiring0()).zero)(a_S_86)
 end
 M.Golden_ArrayPatternMatch_Test_discard = M.Control_Bind_bind(M.Effect_bindEffect)
 M.Golden_ArrayPatternMatch_Test_logShow = function(a_S_2)

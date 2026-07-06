@@ -1,4 +1,7 @@
 local M = {}
+M.Data_Ring_foreign = {
+  intSub = function(x) return function(y) return x - y end end
+}
 M.Golden_Fibonacci_Test_fib = function(v)
   if 0 == v then
     return 0
@@ -6,7 +9,7 @@ M.Golden_Fibonacci_Test_fib = function(v)
     if 1 == v then
       return 1
     else
-      return (function(x) return function(y) return x + y end end)(M.Golden_Fibonacci_Test_fib((function(x) return function(y) return x - y end end)(v)(1)))(M.Golden_Fibonacci_Test_fib((function(x) return function(y) return x - y end end)(v)(2)))
+      return (function(x) return function(y) return x + y end end)(M.Golden_Fibonacci_Test_fib(M.Data_Ring_foreign.intSub(v)(1)))(M.Golden_Fibonacci_Test_fib(M.Data_Ring_foreign.intSub(v)(2)))
     end
   end
 end

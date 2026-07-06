@@ -96,6 +96,7 @@ M.Effect_foreign = {
   pureE = function(a) return function() return a end end,
   bindE = function(a) return function(f) return function() return f(a())() end end end
 }
+M.Partial_Unsafe_foreign = { _unsafePartial = function(f) return f(); end }
 M.Data_Enum_foreign = {
   toCharCode = function(c)
       -- pslua compiles a PureScript Char literal as a string of its UTF-8 bytes,
@@ -124,6 +125,14 @@ M.Data_Enum_foreign = {
       end
       return string.char(0xF0 + math.floor(n / 0x40000), 0x80 + (math.floor(n / 0x1000) % 0x40),
                          0x80 + (math.floor(n / 0x40) % 0x40), 0x80 + (n % 0x40))
+    end
+}
+M.Data_String_Unsafe_foreign = {
+  charAt = function(i)
+      return function(s)
+        if i >= 0 and i < #s then return s:sub(i + 1, i + 1) end
+        error("Data.String.Unsafe.charAt: Invalid index.")
+      end
     end
 }
 M.Data_String_CodeUnits_foreign = (function()
@@ -419,9 +428,9 @@ M.Effect_applicativeEffect = {
 }
 M.Effect_Lazy_functorEffect = PSLUA_runtime_lazy("functorEffect")(function()
   return {
-    map = function(f_S_1464)
-      return function(a_S_1465)
-        return (M.Effect_applicativeEffect.Apply0()).apply(M.Control_Applicative_pure(M.Effect_applicativeEffect)(f_S_1464))(a_S_1465)
+    map = function(f_S_998)
+      return function(a_S_999)
+        return (M.Effect_applicativeEffect.Apply0()).apply(M.Control_Applicative_pure(M.Effect_applicativeEffect)(f_S_998))(a_S_999)
       end
     end
   }
@@ -429,12 +438,12 @@ end)
 M.Effect_Lazy_applyEffect = PSLUA_runtime_lazy("applyEffect")(function()
   return {
     apply = (function()
-      local bind_S_2342 = M.Control_Bind_bind(M.Effect_monadEffect.Bind1())
-      return function(f_S_2343)
-        return function(a_S_2344)
-          return bind_S_2342(f_S_2343)(function(fPrime_S_2345)
-            return bind_S_2342(a_S_2344)(function(aPrime_S_2346)
-              return M.Control_Applicative_pure(M.Effect_monadEffect.Applicative0())(fPrime_S_2345(aPrime_S_2346))
+      local bind_S_1334 = M.Control_Bind_bind(M.Effect_monadEffect.Bind1())
+      return function(f_S_1335)
+        return function(a_S_1336)
+          return bind_S_1334(f_S_1335)(function(fPrime_S_1337)
+            return bind_S_1334(a_S_1336)(function(aPrime_S_1338)
+              return M.Control_Applicative_pure(M.Effect_monadEffect.Applicative0())(fPrime_S_1337(aPrime_S_1338))
             end)
           end)
         end
@@ -492,12 +501,7 @@ M.Data_String_CodePoints_compose = M.Control_Semigroupoid_compose(M.Control_Semi
 M.Data_String_CodePoints_eq = M.Data_Eq_eq(M.Data_Eq_eqInt)
 M.Data_String_CodePoints_lessThan = M.Data_Ord_lessThan(M.Data_Ord_ordInt)
 M.Data_String_CodePoints_unsafeCodePointAt0 = M.Data_String_CodePoints_foreign._unsafeCodePointAt0(function( s_S_27 )
-  local cu0_S_28 = M.Data_String_CodePoints_fromEnum((function(i)
-      return function(s)
-        if i >= 0 and i < #s then return s:sub(i + 1, i + 1) end
-        error("Data.String.Unsafe.charAt: Invalid index.")
-      end
-    end)(0)(s_S_27))
+  local cu0_S_28 = M.Data_String_CodePoints_fromEnum(M.Data_String_Unsafe_foreign.charAt(0)(s_S_27))
   if M.Data_String_CodePoints_conj(M.Data_String_CodePoints_conj(M.Data_String_CodePoints_lessThanOrEq(55296)(cu0_S_28))(M.Data_String_CodePoints_lessThanOrEq(cu0_S_28)(56319)))((function(  )
     if "Data.Ordering∷Ordering.GT" == (M.Data_Ord_compare(M.Data_Ord_ordInt)(M.Data_String_CodeUnits_foreign.length(s_S_27))(1))["$ctor"] then
       return true
@@ -505,12 +509,7 @@ M.Data_String_CodePoints_unsafeCodePointAt0 = M.Data_String_CodePoints_foreign._
       return false
     end
   end)()) then
-    local cu1_S_30 = M.Data_String_CodePoints_fromEnum((function(i)
-        return function(s)
-          if i >= 0 and i < #s then return s:sub(i + 1, i + 1) end
-          error("Data.String.Unsafe.charAt: Invalid index.")
-        end
-      end)(1)(s_S_27))
+    local cu1_S_30 = M.Data_String_CodePoints_fromEnum(M.Data_String_Unsafe_foreign.charAt(1)(s_S_27))
     if M.Data_String_CodePoints_conj(M.Data_String_CodePoints_lessThanOrEq(56320)(cu1_S_30))(M.Data_String_CodePoints_lessThanOrEq(cu1_S_30)(57343)) then
       return M.Data_String_CodePoints_add(M.Data_String_CodePoints_add(M.Data_Semiring_semiringInt.mul(M.Data_String_CodePoints_sub(cu0_S_28)(55296))(1024))(M.Data_String_CodePoints_sub(cu1_S_30)(56320)))(65536)
     else
@@ -520,13 +519,13 @@ M.Data_String_CodePoints_unsafeCodePointAt0 = M.Data_String_CodePoints_foreign._
     return cu0_S_28
   end
 end)
-M.Data_String_CodePoints_fromCharCode = M.Data_String_CodePoints_compose(M.Data_String_CodeUnits_foreign.singleton)(function( x_S_68 )
-  local v_S_69 = M.Data_Enum_toEnum(M.Data_Enum_boundedEnumChar)(x_S_68)
-  if "Data.Maybe∷Maybe.Just" == v_S_69["$ctor"] then
-    return v_S_69.value0
+M.Data_String_CodePoints_fromCharCode = M.Data_String_CodePoints_compose(M.Data_String_CodeUnits_foreign.singleton)(function( x_S_62 )
+  local v_S_63 = M.Data_Enum_toEnum(M.Data_Enum_boundedEnumChar)(x_S_62)
+  if "Data.Maybe∷Maybe.Just" == v_S_63["$ctor"] then
+    return v_S_63.value0
   else
-    if "Data.Maybe∷Maybe.Nothing" == v_S_69["$ctor"] then
-      if M.Data_Ord_lessThan(M.Data_Ord_ordInt)(x_S_68)(M.Data_Enum_fromEnum(M.Data_Enum_boundedEnumChar)(M.Data_Bounded_bottom(M.Data_Enum_boundedEnumChar.Bounded0()))) then
+    if "Data.Maybe∷Maybe.Nothing" == v_S_63["$ctor"] then
+      if M.Data_Ord_lessThan(M.Data_Ord_ordInt)(x_S_62)(M.Data_Enum_fromEnum(M.Data_Enum_boundedEnumChar)(M.Data_Bounded_bottom(M.Data_Enum_boundedEnumChar.Bounded0()))) then
         return M.Data_Bounded_bottom(M.Data_Bounded_boundedChar)
       else
         return M.Data_Bounded_top(M.Data_Bounded_boundedChar)
@@ -615,20 +614,20 @@ M.Data_String_CodePoints_toCodePointArray = M.Data_String_CodePoints_foreign._to
           end
         end
       end
-    end)(function(v2_S_2338_S_2360)
-    if "Data.Maybe∷Maybe.Nothing" == v2_S_2338_S_2360["$ctor"] then
+    end)(function(v2_S_1330_S_1352)
+    if "Data.Maybe∷Maybe.Nothing" == v2_S_1330_S_1352["$ctor"] then
       return true
     else
-      if "Data.Maybe∷Maybe.Just" == v2_S_2338_S_2360["$ctor"] then
+      if "Data.Maybe∷Maybe.Just" == v2_S_1330_S_1352["$ctor"] then
         return false
       else
         return error("No patterns matched")
       end
     end
-  end)((function(f) return f(); end)(function()
+  end)(M.Partial_Unsafe_foreign._unsafePartial(function()
     return M.Data_Maybe_fromJust()
-  end))(function(v_S_2358) return v_S_2358.value0 end)(function(v_S_2359)
-    return v_S_2359.value1
+  end))(function(v_S_1350) return v_S_1350.value0 end)(function(v_S_1351)
+    return v_S_1351.value1
   end)(function(s_S_11)
     return M.Data_Functor_map(M.Data_Maybe_functorMaybe)(function(v_S_12)
       return (function(value0)
@@ -723,7 +722,7 @@ M.Golden_StringCodePoints_Test_logShow = M.Effect_Console_logShow(M.Golden_Strin
 M.Golden_StringCodePoints_Test_logShow1 = M.Effect_Console_logShow(M.Data_Show_showInt)
 M.Golden_StringCodePoints_Test_logShow2 = M.Effect_Console_logShow(M.Data_Maybe_showMaybe(M.Data_Show_showInt))
 M.Golden_StringCodePoints_Test_map = M.Data_Functor_map(M.Data_Maybe_functorMaybe)
-M.Golden_StringCodePoints_Test_cp = M.Golden_StringCodePoints_Test_compose((function(f) return f(); end)(function(  )
+M.Golden_StringCodePoints_Test_cp = M.Golden_StringCodePoints_Test_compose(M.Partial_Unsafe_foreign._unsafePartial(function(  )
   return M.Data_Maybe_fromJust()
 end))(M.Data_Enum_toEnum(M.Data_String_CodePoints_boundedEnumCodePoint))
 M.Golden_StringCodePoints_Test_codes = M.Golden_StringCodePoints_Test_compose(M.Data_Functor_map({
@@ -752,11 +751,11 @@ return (function()
     return v0_S_1.tail
   end))(M.Data_String_CodePoints_uncons("aéЯ𝐀z")))()
   local _ = M.Effect_Console_logShow({
-    show = function(v_S_2005_S_2334)
-      if v_S_2005_S_2334 then
+    show = function(v_S_1236)
+      if v_S_1236 then
         return "true"
       else
-        if false == v_S_2005_S_2334 then
+        if false == v_S_1236 then
           return "false"
         else
           return error("No patterns matched")

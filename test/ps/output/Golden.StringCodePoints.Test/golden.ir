@@ -54,10 +54,22 @@ UberModule
         [ ( Nothing, Name "pureE" ), ( Nothing, Name "bindE" ) ]
       ), Standalone
       ( QName
+        { qnameModuleName = ModuleName "Partial.Unsafe", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Partial.Unsafe" ) ".spago/p/partial/2f5c69b1de8f88f1fbc9b98281c9436088ae0789/src/Partial/Unsafe.purs"
+        [ ( Nothing, Name "_unsafePartial" ) ]
+      ), Standalone
+      ( QName
         { qnameModuleName = ModuleName "Data.Enum", qnameName = Name "foreign"
         }, ForeignImport Nothing
         ( ModuleName "Data.Enum" ) ".spago/p/enums/e85567b064ace664fca544c390c8db528514109a/src/Data/Enum.purs"
         [ ( Nothing, Name "toCharCode" ), ( Nothing, Name "fromCharCode" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.String.Unsafe", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Data.String.Unsafe" ) ".spago/p/strings/395c4b6cb74271b5570a1d7632fb6522785792af/src/Data/String/Unsafe.purs"
+        [ ( Nothing, Name "charAt" ) ]
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Data.String.CodeUnits", qnameName = Name "foreign"
@@ -652,9 +664,9 @@ UberModule
               ( LiteralObject Nothing
                 [
                   ( PropName "map", Abs Nothing
-                    ( ParamNamed Nothing ( Name "f$1464" ) )
+                    ( ParamNamed Nothing ( Name "f$998" ) )
                     ( Abs Nothing
-                      ( ParamNamed Nothing ( Name "a$1465" ) )
+                      ( ParamNamed Nothing ( Name "a$999" ) )
                       ( App Nothing
                         ( App Nothing
                           ( ObjectProp Nothing
@@ -680,10 +692,10 @@ UberModule
                                 ( Imported ( ModuleName "Effect" ) ( Name "applicativeEffect" ) )
                               )
                             )
-                            ( Ref Nothing ( Local ( Name "f$1464" ) ) )
+                            ( Ref Nothing ( Local ( Name "f$998" ) ) )
                           )
                         )
-                        ( Ref Nothing ( Local ( Name "a$1465" ) ) )
+                        ( Ref Nothing ( Local ( Name "a$999" ) ) )
                       )
                     )
                   )
@@ -703,7 +715,7 @@ UberModule
                 [
                   ( PropName "apply", Let Nothing
                     ( Standalone
-                      ( Nothing, Name "bind$2342", App Nothing
+                      ( Nothing, Name "bind$1334", App Nothing
                         ( Ref Nothing ( Imported ( ModuleName "Control.Bind" ) ( Name "bind" ) ) )
                         ( App Nothing
                           ( ObjectProp Nothing
@@ -717,23 +729,23 @@ UberModule
                       ) :| []
                     )
                     ( Abs Nothing
-                      ( ParamNamed Nothing ( Name "f$2343" ) )
+                      ( ParamNamed Nothing ( Name "f$1335" ) )
                       ( Abs Nothing
-                        ( ParamNamed Nothing ( Name "a$2344" ) )
+                        ( ParamNamed Nothing ( Name "a$1336" ) )
                         ( App Nothing
                           ( App Nothing
-                            ( Ref Nothing ( Local ( Name "bind$2342" ) ) )
-                            ( Ref Nothing ( Local ( Name "f$2343" ) ) )
+                            ( Ref Nothing ( Local ( Name "bind$1334" ) ) )
+                            ( Ref Nothing ( Local ( Name "f$1335" ) ) )
                           )
                           ( Abs Nothing
-                            ( ParamNamed Nothing ( Name "f'$2345" ) )
+                            ( ParamNamed Nothing ( Name "f'$1337" ) )
                             ( App Nothing
                               ( App Nothing
-                                ( Ref Nothing ( Local ( Name "bind$2342" ) ) )
-                                ( Ref Nothing ( Local ( Name "a$2344" ) ) )
+                                ( Ref Nothing ( Local ( Name "bind$1334" ) ) )
+                                ( Ref Nothing ( Local ( Name "a$1336" ) ) )
                               )
                               ( Abs Nothing
-                                ( ParamNamed Nothing ( Name "a'$2346" ) )
+                                ( ParamNamed Nothing ( Name "a'$1338" ) )
                                 ( App Nothing
                                   ( App Nothing
                                     ( Ref Nothing
@@ -758,8 +770,8 @@ UberModule
                                     )
                                   )
                                   ( App Nothing
-                                    ( Ref Nothing ( Local ( Name "f'$2345" ) ) )
-                                    ( Ref Nothing ( Local ( Name "a'$2346" ) ) )
+                                    ( Ref Nothing ( Local ( Name "f'$1337" ) ) )
+                                    ( Ref Nothing ( Local ( Name "a'$1338" ) ) )
                                   )
                                 )
                               )
@@ -1058,9 +1070,8 @@ UberModule
                 ( App Nothing
                   ( App Nothing
                     ( ObjectProp ( Just Always )
-                      ( ForeignImport Nothing
-                        ( ModuleName "Data.String.Unsafe" ) ".spago/p/strings/395c4b6cb74271b5570a1d7632fb6522785792af/src/Data/String/Unsafe.purs"
-                        [ ( Nothing, Name "charAt" ) ]
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Data.String.Unsafe" ) ( Name "foreign" ) )
                       )
                       ( PropName "charAt" )
                     )
@@ -1148,9 +1159,8 @@ UberModule
                     ( App Nothing
                       ( App Nothing
                         ( ObjectProp ( Just Always )
-                          ( ForeignImport Nothing
-                            ( ModuleName "Data.String.Unsafe" ) ".spago/p/strings/395c4b6cb74271b5570a1d7632fb6522785792af/src/Data/String/Unsafe.purs"
-                            [ ( Nothing, Name "charAt" ) ]
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Data.String.Unsafe" ) ( Name "foreign" ) )
                           )
                           ( PropName "charAt" )
                         )
@@ -1258,30 +1268,30 @@ UberModule
           )
         )
         ( Abs Nothing
-          ( ParamNamed Nothing ( Name "x$68" ) )
+          ( ParamNamed Nothing ( Name "x$62" ) )
           ( Let Nothing
             ( Standalone
-              ( Nothing, Name "v$69", App Nothing
+              ( Nothing, Name "v$63", App Nothing
                 ( App Nothing
                   ( Ref Nothing ( Imported ( ModuleName "Data.Enum" ) ( Name "toEnum" ) ) )
                   ( Ref Nothing ( Imported ( ModuleName "Data.Enum" ) ( Name "boundedEnumChar" ) ) )
                 )
-                ( Ref Nothing ( Local ( Name "x$68" ) ) )
+                ( Ref Nothing ( Local ( Name "x$62" ) ) )
               ) :| []
             )
             ( IfThenElse Nothing
               ( Eq Nothing
                 ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
-                ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v$69" ) ) ) )
+                ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v$63" ) ) ) )
               )
               ( ObjectProp Nothing
-                ( Ref Nothing ( Local ( Name "v$69" ) ) )
+                ( Ref Nothing ( Local ( Name "v$63" ) ) )
                 ( PropName "value0" )
               )
               ( IfThenElse Nothing
                 ( Eq Nothing
                   ( LiteralString Nothing "Data.Maybe∷Maybe.Nothing" )
-                  ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v$69" ) ) ) )
+                  ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v$63" ) ) ) )
                 )
                 ( IfThenElse Nothing
                   ( App Nothing
@@ -1290,7 +1300,7 @@ UberModule
                         ( Ref Nothing ( Imported ( ModuleName "Data.Ord" ) ( Name "lessThan" ) ) )
                         ( Ref Nothing ( Imported ( ModuleName "Data.Ord" ) ( Name "ordInt" ) ) )
                       )
-                      ( Ref Nothing ( Local ( Name "x$68" ) ) )
+                      ( Ref Nothing ( Local ( Name "x$62" ) ) )
                     )
                     ( App Nothing
                       ( App Nothing
@@ -1711,19 +1721,19 @@ UberModule
                           ( PropName "unfoldrArrayImpl" )
                         )
                         ( Abs Nothing
-                          ( ParamNamed Nothing ( Name "v2$2338$2360" ) )
+                          ( ParamNamed Nothing ( Name "v2$1330$1352" ) )
                           ( IfThenElse Nothing
                             ( Eq Nothing
                               ( LiteralString Nothing "Data.Maybe∷Maybe.Nothing" )
                               ( ReflectCtor Nothing
-                                ( Ref Nothing ( Local ( Name "v2$2338$2360" ) ) )
+                                ( Ref Nothing ( Local ( Name "v2$1330$1352" ) ) )
                               )
                             ) ( LiteralBool Nothing True )
                             ( IfThenElse Nothing
                               ( Eq Nothing
                                 ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
                                 ( ReflectCtor Nothing
-                                  ( Ref Nothing ( Local ( Name "v2$2338$2360" ) ) )
+                                  ( Ref Nothing ( Local ( Name "v2$1330$1352" ) ) )
                                 )
                               ) ( LiteralBool Nothing False )
                               ( Exception Nothing "No patterns matched" )
@@ -1733,9 +1743,8 @@ UberModule
                       )
                       ( App Nothing
                         ( ObjectProp ( Just Always )
-                          ( ForeignImport Nothing
-                            ( ModuleName "Partial.Unsafe" ) ".spago/p/partial/2f5c69b1de8f88f1fbc9b98281c9436088ae0789/src/Partial/Unsafe.purs"
-                            [ ( Nothing, Name "_unsafePartial" ) ]
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Partial.Unsafe" ) ( Name "foreign" ) )
                           )
                           ( PropName "_unsafePartial" )
                         )
@@ -1750,17 +1759,17 @@ UberModule
                       )
                     )
                     ( Abs Nothing
-                      ( ParamNamed Nothing ( Name "v$2358" ) )
+                      ( ParamNamed Nothing ( Name "v$1350" ) )
                       ( ObjectProp Nothing
-                        ( Ref Nothing ( Local ( Name "v$2358" ) ) )
+                        ( Ref Nothing ( Local ( Name "v$1350" ) ) )
                         ( PropName "value0" )
                       )
                     )
                   )
                   ( Abs Nothing
-                    ( ParamNamed Nothing ( Name "v$2359" ) )
+                    ( ParamNamed Nothing ( Name "v$1351" ) )
                     ( ObjectProp Nothing
-                      ( Ref Nothing ( Local ( Name "v$2359" ) ) )
+                      ( Ref Nothing ( Local ( Name "v$1351" ) ) )
                       ( PropName "value1" )
                     )
                   )
@@ -2267,10 +2276,7 @@ UberModule
           )
           ( App Nothing
             ( ObjectProp ( Just Always )
-              ( ForeignImport Nothing
-                ( ModuleName "Partial.Unsafe" ) ".spago/p/partial/2f5c69b1de8f88f1fbc9b98281c9436088ae0789/src/Partial/Unsafe.purs"
-                [ ( Nothing, Name "_unsafePartial" ) ]
-              )
+              ( Ref Nothing ( Imported ( ModuleName "Partial.Unsafe" ) ( Name "foreign" ) ) )
               ( PropName "_unsafePartial" )
             )
             ( Abs Nothing ( ParamUnused Nothing )
@@ -2638,13 +2644,13 @@ UberModule
                     ( LiteralObject Nothing
                       [
                         ( PropName "show", Abs Nothing
-                          ( ParamNamed Nothing ( Name "v$2005$2334" ) )
+                          ( ParamNamed Nothing ( Name "v$1236" ) )
                           ( IfThenElse Nothing
-                            ( Ref Nothing ( Local ( Name "v$2005$2334" ) ) )
+                            ( Ref Nothing ( Local ( Name "v$1236" ) ) )
                             ( LiteralString Nothing "true" )
                             ( IfThenElse Nothing
                               ( Eq Nothing ( LiteralBool Nothing False )
-                                ( Ref Nothing ( Local ( Name "v$2005$2334" ) ) )
+                                ( Ref Nothing ( Local ( Name "v$1236" ) ) )
                               )
                               ( LiteralString Nothing "false" )
                               ( Exception Nothing "No patterns matched" )

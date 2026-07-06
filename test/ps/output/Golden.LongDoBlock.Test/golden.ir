@@ -81,9 +81,9 @@ UberModule
               ( LiteralObject Nothing
                 [
                   ( PropName "map", Abs Nothing
-                    ( ParamNamed Nothing ( Name "f$37" ) )
+                    ( ParamNamed Nothing ( Name "f$25" ) )
                     ( Abs Nothing
-                      ( ParamNamed Nothing ( Name "a$38" ) )
+                      ( ParamNamed Nothing ( Name "a$26" ) )
                       ( App Nothing
                         ( App Nothing
                           ( ObjectProp Nothing
@@ -109,10 +109,10 @@ UberModule
                                 ( Imported ( ModuleName "Effect" ) ( Name "applicativeEffect" ) )
                               )
                             )
-                            ( Ref Nothing ( Local ( Name "f$37" ) ) )
+                            ( Ref Nothing ( Local ( Name "f$25" ) ) )
                           )
                         )
-                        ( Ref Nothing ( Local ( Name "a$38" ) ) )
+                        ( Ref Nothing ( Local ( Name "a$26" ) ) )
                       )
                     )
                   )
@@ -132,7 +132,7 @@ UberModule
                 [
                   ( PropName "apply", Let Nothing
                     ( Standalone
-                      ( Nothing, Name "bind$14", App Nothing
+                      ( Nothing, Name "bind$4", App Nothing
                         ( Ref Nothing ( Imported ( ModuleName "Control.Bind" ) ( Name "bind" ) ) )
                         ( App Nothing
                           ( ObjectProp Nothing
@@ -146,23 +146,23 @@ UberModule
                       ) :| []
                     )
                     ( Abs Nothing
-                      ( ParamNamed Nothing ( Name "f$16" ) )
+                      ( ParamNamed Nothing ( Name "f$6" ) )
                       ( Abs Nothing
-                        ( ParamNamed Nothing ( Name "a$17" ) )
+                        ( ParamNamed Nothing ( Name "a$7" ) )
                         ( App Nothing
                           ( App Nothing
-                            ( Ref Nothing ( Local ( Name "bind$14" ) ) )
-                            ( Ref Nothing ( Local ( Name "f$16" ) ) )
+                            ( Ref Nothing ( Local ( Name "bind$4" ) ) )
+                            ( Ref Nothing ( Local ( Name "f$6" ) ) )
                           )
                           ( Abs Nothing
-                            ( ParamNamed Nothing ( Name "f'$18" ) )
+                            ( ParamNamed Nothing ( Name "f'$8" ) )
                             ( App Nothing
                               ( App Nothing
-                                ( Ref Nothing ( Local ( Name "bind$14" ) ) )
-                                ( Ref Nothing ( Local ( Name "a$17" ) ) )
+                                ( Ref Nothing ( Local ( Name "bind$4" ) ) )
+                                ( Ref Nothing ( Local ( Name "a$7" ) ) )
                               )
                               ( Abs Nothing
-                                ( ParamNamed Nothing ( Name "a'$19" ) )
+                                ( ParamNamed Nothing ( Name "a'$9" ) )
                                 ( App Nothing
                                   ( App Nothing
                                     ( Ref Nothing
@@ -187,8 +187,8 @@ UberModule
                                     )
                                   )
                                   ( App Nothing
-                                    ( Ref Nothing ( Local ( Name "f'$18" ) ) )
-                                    ( Ref Nothing ( Local ( Name "a'$19" ) ) )
+                                    ( Ref Nothing ( Local ( Name "f'$8" ) ) )
+                                    ( Ref Nothing ( Local ( Name "a'$9" ) ) )
                                   )
                                 )
                               )

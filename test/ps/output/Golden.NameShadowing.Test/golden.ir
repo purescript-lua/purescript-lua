@@ -50,15 +50,15 @@ UberModule
         )
       ),
       ( Name "c", Abs Nothing
-        ( ParamNamed Nothing ( Name "x$2" ) )
+        ( ParamNamed Nothing ( Name "x$3" ) )
         ( Abs Nothing
-          ( ParamNamed Nothing ( Name "x1$3" ) )
+          ( ParamNamed Nothing ( Name "x1$4" ) )
           ( App Nothing
             ( App Nothing
               ( Ref Nothing ( Imported ( ModuleName "Golden.NameShadowing.Test" ) ( Name "f" ) ) )
-              ( Ref Nothing ( Local ( Name "x1$3" ) ) )
+              ( Ref Nothing ( Local ( Name "x1$4" ) ) )
             )
-            ( Ref Nothing ( Local ( Name "x$2" ) ) )
+            ( Ref Nothing ( Local ( Name "x$3" ) ) )
           )
         )
       )

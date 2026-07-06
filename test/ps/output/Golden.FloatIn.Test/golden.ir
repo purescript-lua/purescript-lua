@@ -2,6 +2,12 @@ UberModule
   { uberModuleBindings =
     [ Standalone
       ( QName
+        { qnameModuleName = ModuleName "Data.Unit", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Data.Unit" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Unit.purs"
+        [ ( Just Always, Name "unit" ) ]
+      ), Standalone
+      ( QName
         { qnameModuleName = ModuleName "Data.Semiring", qnameName = Name "foreign"
         }, ForeignImport Nothing
         ( ModuleName "Data.Semiring" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Semiring.purs"
@@ -103,9 +109,9 @@ UberModule
               ( LiteralObject Nothing
                 [
                   ( PropName "map", Abs Nothing
-                    ( ParamNamed Nothing ( Name "f$40" ) )
+                    ( ParamNamed Nothing ( Name "f$28" ) )
                     ( Abs Nothing
-                      ( ParamNamed Nothing ( Name "a$41" ) )
+                      ( ParamNamed Nothing ( Name "a$29" ) )
                       ( App Nothing
                         ( App Nothing
                           ( ObjectProp Nothing
@@ -131,10 +137,10 @@ UberModule
                                 ( Imported ( ModuleName "Effect" ) ( Name "applicativeEffect" ) )
                               )
                             )
-                            ( Ref Nothing ( Local ( Name "f$40" ) ) )
+                            ( Ref Nothing ( Local ( Name "f$28" ) ) )
                           )
                         )
-                        ( Ref Nothing ( Local ( Name "a$41" ) ) )
+                        ( Ref Nothing ( Local ( Name "a$29" ) ) )
                       )
                     )
                   )
@@ -154,7 +160,7 @@ UberModule
                 [
                   ( PropName "apply", Let Nothing
                     ( Standalone
-                      ( Nothing, Name "bind$17", App Nothing
+                      ( Nothing, Name "bind$7", App Nothing
                         ( Ref Nothing ( Imported ( ModuleName "Control.Bind" ) ( Name "bind" ) ) )
                         ( App Nothing
                           ( ObjectProp Nothing
@@ -168,23 +174,23 @@ UberModule
                       ) :| []
                     )
                     ( Abs Nothing
-                      ( ParamNamed Nothing ( Name "f$19" ) )
+                      ( ParamNamed Nothing ( Name "f$9" ) )
                       ( Abs Nothing
-                        ( ParamNamed Nothing ( Name "a$20" ) )
+                        ( ParamNamed Nothing ( Name "a$10" ) )
                         ( App Nothing
                           ( App Nothing
-                            ( Ref Nothing ( Local ( Name "bind$17" ) ) )
-                            ( Ref Nothing ( Local ( Name "f$19" ) ) )
+                            ( Ref Nothing ( Local ( Name "bind$7" ) ) )
+                            ( Ref Nothing ( Local ( Name "f$9" ) ) )
                           )
                           ( Abs Nothing
-                            ( ParamNamed Nothing ( Name "f'$21" ) )
+                            ( ParamNamed Nothing ( Name "f'$11" ) )
                             ( App Nothing
                               ( App Nothing
-                                ( Ref Nothing ( Local ( Name "bind$17" ) ) )
-                                ( Ref Nothing ( Local ( Name "a$20" ) ) )
+                                ( Ref Nothing ( Local ( Name "bind$7" ) ) )
+                                ( Ref Nothing ( Local ( Name "a$10" ) ) )
                               )
                               ( Abs Nothing
-                                ( ParamNamed Nothing ( Name "a'$22" ) )
+                                ( ParamNamed Nothing ( Name "a'$12" ) )
                                 ( App Nothing
                                   ( App Nothing
                                     ( Ref Nothing
@@ -209,8 +215,8 @@ UberModule
                                     )
                                   )
                                   ( App Nothing
-                                    ( Ref Nothing ( Local ( Name "f'$21" ) ) )
-                                    ( Ref Nothing ( Local ( Name "a'$22" ) ) )
+                                    ( Ref Nothing ( Local ( Name "f'$11" ) ) )
+                                    ( Ref Nothing ( Local ( Name "a'$12" ) ) )
                                   )
                                 )
                               )
@@ -312,10 +318,7 @@ UberModule
                     ( App Nothing
                       ( Ref Nothing ( Local ( Name "f" ) ) )
                       ( ObjectProp ( Just Always )
-                        ( ForeignImport Nothing
-                          ( ModuleName "Data.Unit" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Unit.purs"
-                          [ ( Just Always, Name "unit" ) ]
-                        )
+                        ( Ref Nothing ( Imported ( ModuleName "Data.Unit" ) ( Name "foreign" ) ) )
                         ( PropName "unit" )
                       )
                     )
@@ -323,10 +326,7 @@ UberModule
                   ( App Nothing
                     ( Ref Nothing ( Local ( Name "f" ) ) )
                     ( ObjectProp ( Just Always )
-                      ( ForeignImport Nothing
-                        ( ModuleName "Data.Unit" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Unit.purs"
-                        [ ( Just Always, Name "unit" ) ]
-                      )
+                      ( Ref Nothing ( Imported ( ModuleName "Data.Unit" ) ( Name "foreign" ) ) )
                       ( PropName "unit" )
                     )
                   )

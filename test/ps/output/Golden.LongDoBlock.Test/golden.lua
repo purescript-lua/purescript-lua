@@ -42,9 +42,9 @@ M.Effect_applicativeEffect = {
 }
 M.Effect_Lazy_functorEffect = PSLUA_runtime_lazy("functorEffect")(function()
   return {
-    map = function(f_S_37)
-      return function(a_S_38)
-        return (M.Effect_applicativeEffect.Apply0()).apply(M.Control_Applicative_pure(M.Effect_applicativeEffect)(f_S_37))(a_S_38)
+    map = function(f_S_25)
+      return function(a_S_26)
+        return (M.Effect_applicativeEffect.Apply0()).apply(M.Control_Applicative_pure(M.Effect_applicativeEffect)(f_S_25))(a_S_26)
       end
     end
   }
@@ -52,12 +52,12 @@ end)
 M.Effect_Lazy_applyEffect = PSLUA_runtime_lazy("applyEffect")(function()
   return {
     apply = (function()
-      local bind_S_14 = M.Control_Bind_bind(M.Effect_monadEffect.Bind1())
-      return function(f_S_16)
-        return function(a_S_17)
-          return bind_S_14(f_S_16)(function(fPrime_S_18)
-            return bind_S_14(a_S_17)(function(aPrime_S_19)
-              return M.Control_Applicative_pure(M.Effect_monadEffect.Applicative0())(fPrime_S_18(aPrime_S_19))
+      local bind_S_4 = M.Control_Bind_bind(M.Effect_monadEffect.Bind1())
+      return function(f_S_6)
+        return function(a_S_7)
+          return bind_S_4(f_S_6)(function(fPrime_S_8)
+            return bind_S_4(a_S_7)(function(aPrime_S_9)
+              return M.Control_Applicative_pure(M.Effect_monadEffect.Applicative0())(fPrime_S_8(aPrime_S_9))
             end)
           end)
         end

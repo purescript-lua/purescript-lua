@@ -35,7 +35,6 @@ import Language.PureScript.Backend.IR.Types
   , RewriteRuleM
   , WasRewritten (..)
   , alphaEq
-  , bindingExprs
   , countFreeRef
   , countFreeRefs
   , getAnn
@@ -184,10 +183,51 @@ neverInlineNames UberModule {uberModuleBindings} =
     , getAnn expr == Just Never
     ]
 
+-- | Free-reference counts keyed by the referenced qualified name.
+type FreeRefs = Map (Qualified Name) Natural
+
+{- Note [Incremental free-reference counting]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+'withBinding' decides whether to inline a 'Standalone' binding partly on
+whether it is referenced exactly once. Counting those references naively —
+folding 'countFreeRefs' over the whole module for each binding — costs
+O(bindings × module size) per 'optimizeModule' run, and the run itself
+repeats inside the optimize+dce fixpoint (issue #142).
+
+Instead we thread one 'FreeRefs' map through the fold, holding the exact
+invariant:
+
+    counts = free references over the current accumulator
+           = (bindingExprs =<< bindings) <> map snd exports
+
+'foldrM' visits bindings right-to-left, and a binding may only be referenced
+by material to its right (Note [Sequential scoping of Let bindings]), so by
+the time a binding is visited every one of its referencers is already in the
+accumulator and its count in 'counts' is final. The map is built once from
+the exports and updated by a known delta at each step:
+
+  * binding kept   → its own expression joins the accumulator, so add its
+    free refs: @counts ⊕ countFreeRefs expr@.
+  * binding inlined → each of its @k@ occurrences is replaced by a copy of
+    the expression, so add @k@ copies of the expression's free refs and drop
+    the binding's own entry: @delete qn (counts ⊕ k · countFreeRefs expr)@.
+    Under the pass's unique-binders invariant a 'Standalone' RHS never names
+    its own binder, so @countFreeRefs expr@ cannot reintroduce @qn@.
+  * recursive group → its members are never inlined; their (mutually
+    recursive) refs join the accumulator like any kept binding.
+
+Besides removing the quadratic cost, this counts against the live
+(post-substitution) accumulator rather than a stale snapshot of the original
+bindings, so the use-once decision no longer misjudges a binding whose
+references changed earlier in the same run (issue #143).
+-}
 optimizeModule ∷ Set QName → UberModule → SupplyM (UberModule, WasRewritten)
 optimizeModule neverNames UberModule {..} = runWriterT do
-  (bindings, exports) ←
-    foldrM withBinding ([], uberModuleExports) uberModuleBindings
+  -- See Note [Incremental free-reference counting]
+  let initialCounts =
+        Map.unionsWith (+) (countFreeRefs . snd <$> uberModuleExports)
+  (_finalCounts, bindings, exports) ←
+    foldrM withBinding (initialCounts, [], uberModuleExports) uberModuleBindings
   uberModuleBindings' ←
     traverse (traverse (traverse optimizeExp)) bindings
   uberModuleExports' ← traverse (traverse optimizeExp) exports
@@ -206,39 +246,56 @@ optimizeModule neverNames UberModule {..} = runWriterT do
     (e', rewritten) ← lift (optimizedExpressionM e)
     e' <$ tell rewritten
 
+  -- See Note [Incremental free-reference counting]
   withBinding
     ∷ Grouping (QName, Exp)
-    → ([Grouping (QName, Exp)], [(Name, Exp)])
-    → WriterT WasRewritten SupplyM ([Grouping (QName, Exp)], [(Name, Exp)])
-  withBinding binding (bindings, exports) =
+    → (FreeRefs, [Grouping (QName, Exp)], [(Name, Exp)])
+    → WriterT
+        WasRewritten
+        SupplyM
+        (FreeRefs, [Grouping (QName, Exp)], [(Name, Exp)])
+  withBinding binding (counts, bindings, exports) =
     case binding of
       Standalone (qname, expr0) → do
         expr ← optimizeExp expr0
         -- See Note [Inline annotations and inlining heuristics]
-        let isUsedOnce name =
-              1 == Map.findWithDefault 0 (qualifiedQName name) uberModuleFreeRefs
-            uberModuleFreeRefs ∷ Map (Qualified Name) Natural =
-              foldr
-                (\e m → Map.unionWith (+) m (countFreeRefs e))
-                mempty
-                uberModuleExprs
-            uberModuleExprs =
-              (bindingExprs =<< uberModuleBindings) <> map snd exports
+        let qn = qualifiedQName qname
+            occurrences = Map.findWithDefault 0 qn counts
+            isUsedOnce = occurrences == 1
         if qname `Set.notMember` neverNames
-          && (isInlinableExpr expr || isUsedOnce qname)
+          && (isInlinableExpr expr || isUsedOnce)
           then do
             -- The binding is dropped from the module in favor of the
             -- substituted copies: a rewrite even when it had no
             -- occurrences left to substitute.
             tell Rewritten
-            lift $
-              (,)
-                <$> substituteInBindings qname expr bindings
-                <*> substituteInExports qname expr exports
-          else pure (Standalone (qname, expr) : bindings, exports)
+            (bindings', exports') ←
+              lift $
+                (,)
+                  <$> substituteInBindings qname expr bindings
+                  <*> substituteInExports qname expr exports
+            -- Substituting drops the binding's own occurrences and pastes
+            -- one copy of its free refs per occurrence replaced.
+            let pastedRefs = fmap (* occurrences) (countFreeRefs expr)
+                counts' = Map.delete qn (Map.unionWith (+) counts pastedRefs)
+            pure (counts', bindings', exports')
+          else
+            -- The binding survives, so its refs now live in the accumulator.
+            pure
+              ( Map.unionWith (+) counts (countFreeRefs expr)
+              , Standalone (qname, expr) : bindings
+              , exports
+              )
       RecursiveGroup recGroup → do
         recGroup' ← traverse (traverse optimizeExp) recGroup
-        pure (RecursiveGroup recGroup' : bindings, exports)
+        -- Recursive-group members are never inlined; their (mutually
+        -- recursive) refs now live in the accumulator.
+        let counts' =
+              foldl'
+                (\m (_, e) → Map.unionWith (+) m (countFreeRefs e))
+                counts
+                (toList recGroup')
+        pure (counts', RecursiveGroup recGroup' : bindings, exports)
 
 -- Cross-entry substitution: the host entry's binders give no uniqueness
 -- guarantee against the inlinee's, so every copy is freshened
