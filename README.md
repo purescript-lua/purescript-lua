@@ -19,7 +19,7 @@ https://github.com/purescript-lua/purescript-lua/discussions/categories/ideas
 
 ## Quick Start
 
-For the moment the best way to start is to use `nix` to intall `pslua`.
+For the moment the best way to start is to use `nix` to install `pslua`.
 
 Consider configuring [Cachix](https://docs.cachix.org/installation) as a binary nix cache to avoid rebuilding a ton of dependencies:
 
@@ -28,7 +28,7 @@ cachix use purescript-lua
 ```
 You can use this [template repository](https://github.com/purescript-lua/purescript-lua-template) to initialize your project.
 
-Here is an another [example](https://github.com/purescript-lua/purescript-lua-example) project: Nginx server running Lua code using [OpenResty](https://openresty.org/).
+Here is another [example](https://github.com/purescript-lua/purescript-lua-example) project: Nginx server running Lua code using [OpenResty](https://openresty.org/).
 
 If you use [Spago](https://github.com/purescript/spago) to build your PureScript project, configure `pslua` as a custom backend in `spago.yaml`. The package set is the published [Lua package set](https://github.com/purescript-lua/purescript-lua-package-sets) (the registry baseline with the Lua FFI forks overlaid), consumed via `workspace.packageSet.url`. Assuming `pslua` is on your PATH:
 
@@ -68,11 +68,9 @@ nix run 'github:purescript-lua/purescript-lua' -- --help
 
 ## Installation
 
-If you're on a x86 64bit Linux system then you can download a pre-built executable from the [releases](https://github.com/purescript-lua/purescript-lua/releases) page:
-
-```
-wget -c https://github.com/purescript-lua/purescript-lua/releases/download/0.1.1-alpha/pslua-linux_x86_64.tar.gz -O - | tar -xz
-```
+If you're on a x86 64bit Linux system then you can grab the latest pre-built
+`pslua-linux_x86_64.tar.gz` from the [latest release](https://github.com/purescript-lua/purescript-lua/releases/latest)
+(when one is attached), or browse all [releases](https://github.com/purescript-lua/purescript-lua/releases).
 
 alternatively,
 
@@ -119,7 +117,8 @@ C:\cabal\bin\pslua --help
 pslua - a PureScript backend for Lua
 
 Usage: pslua.exe [--foreign-path FOREIGN-PATH] [--ps-output PS-PATH]
-                 [--lua-output-file LUA-OUT-FILE] [-e|--entry ENTRY]
+                 [--lua-output-file LUA-OUT-FILE] [--output-lua-ast]
+                 [--output-ir] [--lint-ir] [-e|--entry ENTRY] [--run ENTRY]
 
   Compile PureScript's CoreFn to Lua
 
@@ -132,6 +131,12 @@ Available options:
   --lua-output-file LUA-OUT-FILE
                            Path to write compiled Lua file to.
                            Default: main.lua
+  --output-lua-ast         Output Lua AST.
+                           Default: false
+  --output-ir              Output IR.
+                           Default: false
+  --lint-ir                Check IR invariants after every optimizer pass (debug).
+                           Default: false
   -e,--entry ENTRY         Where to start compilation.
                            Could be one of the following formats:
                            - Application format: <Module>.<binding>
@@ -139,5 +144,10 @@ Available options:
                            - Module format: <Module>
                              Example: Acme.Lib
                            Default: Main.main
+  --run ENTRY              Compile the given application entry point and run it with
+                           lua, forwarding lua's exit code.
+                           This is what spago run invokes.
+                           Format: <Module>.<binding>
+                             Example: Acme.App.main
   -h,--help                Show this help text
 ```
