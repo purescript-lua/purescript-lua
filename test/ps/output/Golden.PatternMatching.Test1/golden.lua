@@ -52,13 +52,7 @@ return {
     end
   end,
   T = function(value0)
-    return function(value1)
-      return {
-        ["$ctor"] = "Golden.PatternMatching.Test1∷Tuple.T",
-        value0 = value0,
-        value1 = value1
-      }
-    end
+    return function(value1) return { value0 = value0, value1 = value1 } end
   end,
   fst = function(v_S_0) return v_S_0.value0 end,
   snd = function(v_S_3) return v_S_3.value1 end

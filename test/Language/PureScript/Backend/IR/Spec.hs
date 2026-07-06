@@ -3,8 +3,20 @@
 module Language.PureScript.Backend.IR.Spec where
 
 import Data.List.NonEmpty qualified as NE
-import Language.PureScript.Backend.IR (Context (..), RepM, mkCase, runRepM)
-import Language.PureScript.Backend.IR.Names (Name (..), PropName (..))
+import Data.Map.Strict qualified as Map
+import Language.PureScript.Backend.IR
+  ( Context (..)
+  , RepM
+  , collectDataDeclarations
+  , mkCase
+  , runRepM
+  )
+import Language.PureScript.Backend.IR.Names
+  ( CtorName (..)
+  , Name (..)
+  , PropName (..)
+  , TyName (..)
+  )
 import Language.PureScript.Backend.IR.Types
 import Language.PureScript.CoreFn qualified as Cfn
 import Language.PureScript.Names qualified as PS
@@ -464,6 +476,38 @@ spec = describe "IR representation" do
                         )
                     )
               )
+
+  describe "collectDataDeclarations" do
+    it "classifies data types regardless of constructor order" do
+      let ctor tyName ctorName =
+            Cfn.Constructor
+              ann
+              (PS.ProperName tyName)
+              (PS.ProperName ctorName)
+              []
+          bind ident = Cfn.NonRec ann (PS.Ident ident)
+          -- Constructor C of type U is interleaved between T's two
+          -- constructors, so adjacency-based grouping would split T into
+          -- singleton groups and misclassify it as a product type.
+          cfnMod =
+            cfnModule
+              { Cfn.moduleBindings =
+                  [ bind "A" (ctor "T" "A")
+                  , bind "C" (ctor "U" "C")
+                  , bind "B" (ctor "T" "B")
+                  ]
+              }
+      collectDataDeclarations (Map.singleton (PS.ModuleName "M") cfnMod)
+        `shouldBe` Map.fromList
+          [
+            ( (PS.ModuleName "M", TyName "T")
+            , (SumType, Map.fromList [(CtorName "A", []), (CtorName "B", [])])
+            )
+          ,
+            ( (PS.ModuleName "M", TyName "U")
+            , (ProductType, Map.fromList [(CtorName "C", [])])
+            )
+          ]
 
 --------------------------------------------------------------------------------
 -- Helper functions ------------------------------------------------------------

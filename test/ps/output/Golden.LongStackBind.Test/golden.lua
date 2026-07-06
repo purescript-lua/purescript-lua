@@ -76,13 +76,7 @@ M.Data_Either_Right = function(value0)
   return { ["$ctor"] = "Data.Either∷Either.Right", value0 = value0 }
 end
 M.Data_Tuple_Tuple = function(value0)
-  return function(value1)
-    return {
-      ["$ctor"] = "Data.Tuple∷Tuple.Tuple",
-      value0 = value0,
-      value1 = value1
-    }
-  end
+  return function(value1) return { value0 = value0, value1 = value1 } end
 end
 M.Data_Identity_functorIdentity = {
   map = function(f) return function(m) return f(m) end end

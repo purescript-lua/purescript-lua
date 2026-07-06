@@ -25,6 +25,14 @@ spec = describe "Lua.fromUberModule" do
     rendered ← compileExportedExpr absWithIfBody
     rendered `shouldSatisfy` (not . Text.isInfixOf "(function()")
 
+  it "omits the $ctor row for a product-type constructor" do
+    rendered ← compileExportedExpr (ctorExpr IR.ProductType)
+    rendered `shouldSatisfy` (not . Text.isInfixOf "$ctor")
+
+  it "keeps the $ctor row for a sum-type constructor" do
+    rendered ← compileExportedExpr (ctorExpr IR.SumType)
+    rendered `shouldSatisfy` Text.isInfixOf "[\"$ctor\"]"
+
 compileExportedExpr ∷ IR.Exp → IO Text
 compileExportedExpr expr = do
   foreignPath ← Tagged <$> getCurrentDir
@@ -82,3 +90,12 @@ absWithIfBody =
         (IR.Ref IR.noAnn (IR.Local (IR.Name "x")))
         (IR.LiteralInt IR.noAnn 0)
     )
+
+ctorExpr ∷ IR.AlgebraicType → IR.Exp
+ctorExpr algebraicTy =
+  IR.ctor
+    algebraicTy
+    (IR.ModuleName "M")
+    (IR.TyName "T")
+    (IR.CtorName "C")
+    [IR.FieldName "value0"]
