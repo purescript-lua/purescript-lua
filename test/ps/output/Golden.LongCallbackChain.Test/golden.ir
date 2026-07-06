@@ -1,6 +1,12 @@
 UberModule
   { uberModuleBindings =
-    [ RecursiveGroup
+    [ Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Semiring", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Data.Semiring" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Semiring.purs"
+        [ ( Nothing, Name "intAdd" ) ]
+      ), RecursiveGroup
       (
         ( QName
           { qnameModuleName = ModuleName "Golden.LongCallbackChain.Test", qnameName = Name "withInc"
@@ -58,9 +64,8 @@ UberModule
                   ( App Nothing
                     ( App Nothing
                       ( ObjectProp ( Just Always )
-                        ( ForeignImport Nothing
-                          ( ModuleName "Data.Semiring" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Semiring.purs"
-                          [ ( Nothing, Name "intAdd" ) ]
+                        ( Ref Nothing
+                          ( Imported ( ModuleName "Data.Semiring" ) ( Name "foreign" ) )
                         )
                         ( PropName "intAdd" )
                       )
@@ -76,9 +81,8 @@ UberModule
                 ( App Nothing
                   ( App Nothing
                     ( ObjectProp ( Just Always )
-                      ( ForeignImport Nothing
-                        ( ModuleName "Data.Semiring" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Semiring.purs"
-                        [ ( Nothing, Name "intAdd" ) ]
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Data.Semiring" ) ( Name "foreign" ) )
                       )
                       ( PropName "intAdd" )
                     )
@@ -95,14 +99,14 @@ UberModule
         { qnameModuleName = ModuleName "Golden.LongCallbackChain.Test", qnameName = Name "compute"
         }, Let Nothing
         ( Standalone
-          ( Nothing, Name "$kont727", Abs Nothing
-            ( ParamNamed Nothing ( Name "x280$728" ) )
+          ( Nothing, Name "$kont182", Abs Nothing
+            ( ParamNamed Nothing ( Name "x280$183" ) )
             ( App Nothing
               ( App Nothing
                 ( Ref Nothing
                   ( Imported ( ModuleName "Golden.LongCallbackChain.Test" ) ( Name "withInc" ) )
                 )
-                ( Ref Nothing ( Local ( Name "x280$728" ) ) )
+                ( Ref Nothing ( Local ( Name "x280$183" ) ) )
               )
               ( Abs Nothing
                 ( ParamNamed Nothing ( Name "x281" ) )
@@ -422,14 +426,14 @@ UberModule
             )
           ) :|
           [ Standalone
-            ( Nothing, Name "$kont729", Abs Nothing
-              ( ParamNamed Nothing ( Name "x240$730" ) )
+            ( Nothing, Name "$kont184", Abs Nothing
+              ( ParamNamed Nothing ( Name "x240$185" ) )
               ( App Nothing
                 ( App Nothing
                   ( Ref Nothing
                     ( Imported ( ModuleName "Golden.LongCallbackChain.Test" ) ( Name "withInc" ) )
                   )
-                  ( Ref Nothing ( Local ( Name "x240$730" ) ) )
+                  ( Ref Nothing ( Local ( Name "x240$185" ) ) )
                 )
                 ( Abs Nothing
                   ( ParamNamed Nothing ( Name "x241" ) )
@@ -1072,7 +1076,7 @@ UberModule
                                                                                                                                                                               ( App Nothing
                                                                                                                                                                                 ( Ref Nothing
                                                                                                                                                                                   ( Local
-                                                                                                                                                                                    ( Name "$kont727" )
+                                                                                                                                                                                    ( Name "$kont182" )
                                                                                                                                                                                   )
                                                                                                                                                                                 )
                                                                                                                                                                                 ( Ref Nothing
@@ -1162,14 +1166,14 @@ UberModule
                 )
               )
             ), Standalone
-            ( Nothing, Name "$kont731", Abs Nothing
-              ( ParamNamed Nothing ( Name "x200$732" ) )
+            ( Nothing, Name "$kont186", Abs Nothing
+              ( ParamNamed Nothing ( Name "x200$187" ) )
               ( App Nothing
                 ( App Nothing
                   ( Ref Nothing
                     ( Imported ( ModuleName "Golden.LongCallbackChain.Test" ) ( Name "withInc" ) )
                   )
-                  ( Ref Nothing ( Local ( Name "x200$732" ) ) )
+                  ( Ref Nothing ( Local ( Name "x200$187" ) ) )
                 )
                 ( Abs Nothing
                   ( ParamNamed Nothing ( Name "x201" ) )
@@ -1812,7 +1816,7 @@ UberModule
                                                                                                                                                                               ( App Nothing
                                                                                                                                                                                 ( Ref Nothing
                                                                                                                                                                                   ( Local
-                                                                                                                                                                                    ( Name "$kont729" )
+                                                                                                                                                                                    ( Name "$kont184" )
                                                                                                                                                                                   )
                                                                                                                                                                                 )
                                                                                                                                                                                 ( Ref Nothing
@@ -1902,14 +1906,14 @@ UberModule
                 )
               )
             ), Standalone
-            ( Nothing, Name "$kont733", Abs Nothing
-              ( ParamNamed Nothing ( Name "x160$734" ) )
+            ( Nothing, Name "$kont188", Abs Nothing
+              ( ParamNamed Nothing ( Name "x160$189" ) )
               ( App Nothing
                 ( App Nothing
                   ( Ref Nothing
                     ( Imported ( ModuleName "Golden.LongCallbackChain.Test" ) ( Name "withInc" ) )
                   )
-                  ( Ref Nothing ( Local ( Name "x160$734" ) ) )
+                  ( Ref Nothing ( Local ( Name "x160$189" ) ) )
                 )
                 ( Abs Nothing
                   ( ParamNamed Nothing ( Name "x161" ) )
@@ -2552,7 +2556,7 @@ UberModule
                                                                                                                                                                               ( App Nothing
                                                                                                                                                                                 ( Ref Nothing
                                                                                                                                                                                   ( Local
-                                                                                                                                                                                    ( Name "$kont731" )
+                                                                                                                                                                                    ( Name "$kont186" )
                                                                                                                                                                                   )
                                                                                                                                                                                 )
                                                                                                                                                                                 ( Ref Nothing
@@ -2642,14 +2646,14 @@ UberModule
                 )
               )
             ), Standalone
-            ( Nothing, Name "$kont735", Abs Nothing
-              ( ParamNamed Nothing ( Name "x120$736" ) )
+            ( Nothing, Name "$kont190", Abs Nothing
+              ( ParamNamed Nothing ( Name "x120$191" ) )
               ( App Nothing
                 ( App Nothing
                   ( Ref Nothing
                     ( Imported ( ModuleName "Golden.LongCallbackChain.Test" ) ( Name "withInc" ) )
                   )
-                  ( Ref Nothing ( Local ( Name "x120$736" ) ) )
+                  ( Ref Nothing ( Local ( Name "x120$191" ) ) )
                 )
                 ( Abs Nothing
                   ( ParamNamed Nothing ( Name "x121" ) )
@@ -3292,7 +3296,7 @@ UberModule
                                                                                                                                                                               ( App Nothing
                                                                                                                                                                                 ( Ref Nothing
                                                                                                                                                                                   ( Local
-                                                                                                                                                                                    ( Name "$kont733" )
+                                                                                                                                                                                    ( Name "$kont188" )
                                                                                                                                                                                   )
                                                                                                                                                                                 )
                                                                                                                                                                                 ( Ref Nothing
@@ -3382,14 +3386,14 @@ UberModule
                 )
               )
             ), Standalone
-            ( Nothing, Name "$kont737", Abs Nothing
-              ( ParamNamed Nothing ( Name "x80$738" ) )
+            ( Nothing, Name "$kont192", Abs Nothing
+              ( ParamNamed Nothing ( Name "x80$193" ) )
               ( App Nothing
                 ( App Nothing
                   ( Ref Nothing
                     ( Imported ( ModuleName "Golden.LongCallbackChain.Test" ) ( Name "withInc" ) )
                   )
-                  ( Ref Nothing ( Local ( Name "x80$738" ) ) )
+                  ( Ref Nothing ( Local ( Name "x80$193" ) ) )
                 )
                 ( Abs Nothing
                   ( ParamNamed Nothing ( Name "x81" ) )
@@ -4028,7 +4032,7 @@ UberModule
                                                                                                                                                                               ( App Nothing
                                                                                                                                                                                 ( Ref Nothing
                                                                                                                                                                                   ( Local
-                                                                                                                                                                                    ( Name "$kont735" )
+                                                                                                                                                                                    ( Name "$kont190" )
                                                                                                                                                                                   )
                                                                                                                                                                                 )
                                                                                                                                                                                 ( Ref Nothing
@@ -4118,14 +4122,14 @@ UberModule
                 )
               )
             ), Standalone
-            ( Nothing, Name "$kont739", Abs Nothing
-              ( ParamNamed Nothing ( Name "x40$740" ) )
+            ( Nothing, Name "$kont194", Abs Nothing
+              ( ParamNamed Nothing ( Name "x40$195" ) )
               ( App Nothing
                 ( App Nothing
                   ( Ref Nothing
                     ( Imported ( ModuleName "Golden.LongCallbackChain.Test" ) ( Name "withInc" ) )
                   )
-                  ( Ref Nothing ( Local ( Name "x40$740" ) ) )
+                  ( Ref Nothing ( Local ( Name "x40$195" ) ) )
                 )
                 ( Abs Nothing
                   ( ParamNamed Nothing ( Name "x41" ) )
@@ -4764,7 +4768,7 @@ UberModule
                                                                                                                                                                               ( App Nothing
                                                                                                                                                                                 ( Ref Nothing
                                                                                                                                                                                   ( Local
-                                                                                                                                                                                    ( Name "$kont737" )
+                                                                                                                                                                                    ( Name "$kont192" )
                                                                                                                                                                                   )
                                                                                                                                                                                 )
                                                                                                                                                                                 ( Ref Nothing
@@ -5486,7 +5490,7 @@ UberModule
                                                                                                                                                                         ( App Nothing
                                                                                                                                                                           ( Ref Nothing
                                                                                                                                                                             ( Local
-                                                                                                                                                                              ( Name "$kont739" )
+                                                                                                                                                                              ( Name "$kont194" )
                                                                                                                                                                             )
                                                                                                                                                                           )
                                                                                                                                                                           ( Ref Nothing

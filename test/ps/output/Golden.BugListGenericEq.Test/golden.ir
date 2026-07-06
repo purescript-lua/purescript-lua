@@ -282,9 +282,9 @@ UberModule
               ( LiteralObject Nothing
                 [
                   ( PropName "map", Abs Nothing
-                    ( ParamNamed Nothing ( Name "f$66" ) )
+                    ( ParamNamed Nothing ( Name "f$54" ) )
                     ( Abs Nothing
-                      ( ParamNamed Nothing ( Name "a$67" ) )
+                      ( ParamNamed Nothing ( Name "a$55" ) )
                       ( App Nothing
                         ( App Nothing
                           ( ObjectProp Nothing
@@ -310,10 +310,10 @@ UberModule
                                 ( Imported ( ModuleName "Effect" ) ( Name "applicativeEffect" ) )
                               )
                             )
-                            ( Ref Nothing ( Local ( Name "f$66" ) ) )
+                            ( Ref Nothing ( Local ( Name "f$54" ) ) )
                           )
                         )
-                        ( Ref Nothing ( Local ( Name "a$67" ) ) )
+                        ( Ref Nothing ( Local ( Name "a$55" ) ) )
                       )
                     )
                   )
@@ -333,7 +333,7 @@ UberModule
                 [
                   ( PropName "apply", Let Nothing
                     ( Standalone
-                      ( Nothing, Name "bind$43", App Nothing
+                      ( Nothing, Name "bind$33", App Nothing
                         ( Ref Nothing ( Imported ( ModuleName "Control.Bind" ) ( Name "bind" ) ) )
                         ( App Nothing
                           ( ObjectProp Nothing
@@ -347,23 +347,23 @@ UberModule
                       ) :| []
                     )
                     ( Abs Nothing
-                      ( ParamNamed Nothing ( Name "f$45" ) )
+                      ( ParamNamed Nothing ( Name "f$35" ) )
                       ( Abs Nothing
-                        ( ParamNamed Nothing ( Name "a$46" ) )
+                        ( ParamNamed Nothing ( Name "a$36" ) )
                         ( App Nothing
                           ( App Nothing
-                            ( Ref Nothing ( Local ( Name "bind$43" ) ) )
-                            ( Ref Nothing ( Local ( Name "f$45" ) ) )
+                            ( Ref Nothing ( Local ( Name "bind$33" ) ) )
+                            ( Ref Nothing ( Local ( Name "f$35" ) ) )
                           )
                           ( Abs Nothing
-                            ( ParamNamed Nothing ( Name "f'$47" ) )
+                            ( ParamNamed Nothing ( Name "f'$37" ) )
                             ( App Nothing
                               ( App Nothing
-                                ( Ref Nothing ( Local ( Name "bind$43" ) ) )
-                                ( Ref Nothing ( Local ( Name "a$46" ) ) )
+                                ( Ref Nothing ( Local ( Name "bind$33" ) ) )
+                                ( Ref Nothing ( Local ( Name "a$36" ) ) )
                               )
                               ( Abs Nothing
-                                ( ParamNamed Nothing ( Name "a'$48" ) )
+                                ( ParamNamed Nothing ( Name "a'$38" ) )
                                 ( App Nothing
                                   ( App Nothing
                                     ( Ref Nothing
@@ -388,8 +388,8 @@ UberModule
                                     )
                                   )
                                   ( App Nothing
-                                    ( Ref Nothing ( Local ( Name "f'$47" ) ) )
-                                    ( Ref Nothing ( Local ( Name "a'$48" ) ) )
+                                    ( Ref Nothing ( Local ( Name "f'$37" ) ) )
+                                    ( Ref Nothing ( Local ( Name "a'$38" ) ) )
                                   )
                                 )
                               )
@@ -548,7 +548,7 @@ UberModule
                       ( App Nothing
                         ( Let Nothing
                           ( Standalone
-                            ( Nothing, Name "from$6", ObjectProp Nothing
+                            ( Nothing, Name "from$4", ObjectProp Nothing
                               ( Ref Nothing
                                 ( Imported
                                   ( ModuleName "Golden.BugListGenericEq.Test" )
@@ -559,11 +559,11 @@ UberModule
                             ) :| []
                           )
                           ( Abs Nothing
-                            ( ParamNamed Nothing ( Name "dictGenericEq$7" ) )
+                            ( ParamNamed Nothing ( Name "dictGenericEq$5" ) )
                             ( Abs Nothing
-                              ( ParamNamed Nothing ( Name "x$9" ) )
+                              ( ParamNamed Nothing ( Name "x$7" ) )
                               ( Abs Nothing
-                                ( ParamNamed Nothing ( Name "y$10" ) )
+                                ( ParamNamed Nothing ( Name "y$8" ) )
                                 ( App Nothing
                                   ( App Nothing
                                     ( App Nothing
@@ -573,16 +573,16 @@ UberModule
                                           ( Name "genericEq'" )
                                         )
                                       )
-                                      ( Ref Nothing ( Local ( Name "dictGenericEq$7" ) ) )
+                                      ( Ref Nothing ( Local ( Name "dictGenericEq$5" ) ) )
                                     )
                                     ( App Nothing
-                                      ( Ref Nothing ( Local ( Name "from$6" ) ) )
-                                      ( Ref Nothing ( Local ( Name "x$9" ) ) )
+                                      ( Ref Nothing ( Local ( Name "from$4" ) ) )
+                                      ( Ref Nothing ( Local ( Name "x$7" ) ) )
                                     )
                                   )
                                   ( App Nothing
-                                    ( Ref Nothing ( Local ( Name "from$6" ) ) )
-                                    ( Ref Nothing ( Local ( Name "y$10" ) ) )
+                                    ( Ref Nothing ( Local ( Name "from$4" ) ) )
+                                    ( Ref Nothing ( Local ( Name "y$8" ) ) )
                                   )
                                 )
                               )
@@ -592,21 +592,21 @@ UberModule
                         ( LiteralObject Nothing
                           [
                             ( PropName "genericEq'", Abs Nothing
-                              ( ParamNamed Nothing ( Name "v$15" ) )
+                              ( ParamNamed Nothing ( Name "v$13" ) )
                               ( Abs Nothing
-                                ( ParamNamed Nothing ( Name "v1$16" ) )
+                                ( ParamNamed Nothing ( Name "v1$14" ) )
                                 ( IfThenElse Nothing
                                   ( Eq Nothing
                                     ( LiteralString Nothing "Data.Generic.Rep∷Sum.Inl" )
                                     ( ReflectCtor Nothing
-                                      ( Ref Nothing ( Local ( Name "v$15" ) ) )
+                                      ( Ref Nothing ( Local ( Name "v$13" ) ) )
                                     )
                                   )
                                   ( IfThenElse Nothing
                                     ( Eq Nothing
                                       ( LiteralString Nothing "Data.Generic.Rep∷Sum.Inl" )
                                       ( ReflectCtor Nothing
-                                        ( Ref Nothing ( Local ( Name "v1$16" ) ) )
+                                        ( Ref Nothing ( Local ( Name "v1$14" ) ) )
                                       )
                                     )
                                     ( App Nothing
@@ -635,12 +635,12 @@ UberModule
                                           )
                                         )
                                         ( ObjectProp Nothing
-                                          ( Ref Nothing ( Local ( Name "v$15" ) ) )
+                                          ( Ref Nothing ( Local ( Name "v$13" ) ) )
                                           ( PropName "value0" )
                                         )
                                       )
                                       ( ObjectProp Nothing
-                                        ( Ref Nothing ( Local ( Name "v1$16" ) ) )
+                                        ( Ref Nothing ( Local ( Name "v1$14" ) ) )
                                         ( PropName "value0" )
                                       )
                                     ) ( LiteralBool Nothing False )
@@ -649,14 +649,14 @@ UberModule
                                     ( Eq Nothing
                                       ( LiteralString Nothing "Data.Generic.Rep∷Sum.Inr" )
                                       ( ReflectCtor Nothing
-                                        ( Ref Nothing ( Local ( Name "v$15" ) ) )
+                                        ( Ref Nothing ( Local ( Name "v$13" ) ) )
                                       )
                                     )
                                     ( IfThenElse Nothing
                                       ( Eq Nothing
                                         ( LiteralString Nothing "Data.Generic.Rep∷Sum.Inr" )
                                         ( ReflectCtor Nothing
-                                          ( Ref Nothing ( Local ( Name "v1$16" ) ) )
+                                          ( Ref Nothing ( Local ( Name "v1$14" ) ) )
                                         )
                                       )
                                       ( App Nothing
@@ -678,9 +678,9 @@ UberModule
                                               ( LiteralObject Nothing
                                                 [
                                                   ( PropName "genericEq'", Abs Nothing
-                                                    ( ParamNamed Nothing ( Name "v$23" ) )
+                                                    ( ParamNamed Nothing ( Name "v$21" ) )
                                                     ( Abs Nothing
-                                                      ( ParamNamed Nothing ( Name "v1$24" ) )
+                                                      ( ParamNamed Nothing ( Name "v1$22" ) )
                                                       ( App Nothing
                                                         ( App Nothing
                                                           ( App Nothing
@@ -790,9 +790,9 @@ UberModule
                                                               ]
                                                             )
                                                           )
-                                                          ( Ref Nothing ( Local ( Name "v$23" ) ) )
+                                                          ( Ref Nothing ( Local ( Name "v$21" ) ) )
                                                         )
-                                                        ( Ref Nothing ( Local ( Name "v1$24" ) ) )
+                                                        ( Ref Nothing ( Local ( Name "v1$22" ) ) )
                                                       )
                                                     )
                                                   )
@@ -801,12 +801,12 @@ UberModule
                                             )
                                           )
                                           ( ObjectProp Nothing
-                                            ( Ref Nothing ( Local ( Name "v$15" ) ) )
+                                            ( Ref Nothing ( Local ( Name "v$13" ) ) )
                                             ( PropName "value0" )
                                           )
                                         )
                                         ( ObjectProp Nothing
-                                          ( Ref Nothing ( Local ( Name "v1$16" ) ) )
+                                          ( Ref Nothing ( Local ( Name "v1$14" ) ) )
                                           ( PropName "value0" )
                                         )
                                       ) ( LiteralBool Nothing False )

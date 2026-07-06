@@ -58,9 +58,9 @@ M.Effect_applicativeEffect = {
 }
 M.Effect_Lazy_functorEffect = PSLUA_runtime_lazy("functorEffect")(function()
   return {
-    map = function(f_S_230)
-      return function(a_S_231)
-        return (M.Effect_applicativeEffect.Apply0()).apply(M.Control_Applicative_pure(M.Effect_applicativeEffect)(f_S_230))(a_S_231)
+    map = function(f_S_121)
+      return function(a_S_122)
+        return (M.Effect_applicativeEffect.Apply0()).apply(M.Control_Applicative_pure(M.Effect_applicativeEffect)(f_S_121))(a_S_122)
       end
     end
   }
@@ -68,12 +68,12 @@ end)
 M.Effect_Lazy_applyEffect = PSLUA_runtime_lazy("applyEffect")(function()
   return {
     apply = (function()
-      local bind_S_211 = M.Control_Bind_bind(M.Effect_monadEffect.Bind1())
-      return function(f_S_213)
-        return function(a_S_214)
-          return bind_S_211(f_S_213)(function(fPrime_S_215)
-            return bind_S_211(a_S_214)(function(aPrime_S_216)
-              return M.Control_Applicative_pure(M.Effect_monadEffect.Applicative0())(fPrime_S_215(aPrime_S_216))
+      local bind_S_101 = M.Control_Bind_bind(M.Effect_monadEffect.Bind1())
+      return function(f_S_103)
+        return function(a_S_104)
+          return bind_S_101(f_S_103)(function(fPrime_S_105)
+            return bind_S_101(a_S_104)(function(aPrime_S_106)
+              return M.Control_Applicative_pure(M.Effect_monadEffect.Applicative0())(fPrime_S_105(aPrime_S_106))
             end)
           end)
         end
@@ -85,11 +85,11 @@ end)
 M.Golden_MaybeChain_Test_logShow = function(a_S_4)
   return (function(s) return function() print(s) end end)((function(n) return tostring(n) end)(a_S_4))
 end
-M.Golden_MaybeChain_Test_identity = function(x_S_924) return x_S_924 end
-M.Golden_MaybeChain_Test_map = function(v_S_917)
-  return function(v1_S_918)
-    if "Data.Maybe∷Maybe.Just" == v1_S_918["$ctor"] then
-      return M.Data_Maybe_Just(v_S_917(v1_S_918.value0))
+M.Golden_MaybeChain_Test_identity = function(x_S_281) return x_S_281 end
+M.Golden_MaybeChain_Test_map = function(v_S_276)
+  return function(v1_S_277)
+    if "Data.Maybe∷Maybe.Just" == v1_S_277["$ctor"] then
+      return M.Data_Maybe_Just(v_S_276(v1_S_277.value0))
     else
       return M.Data_Maybe_Nothing
     end

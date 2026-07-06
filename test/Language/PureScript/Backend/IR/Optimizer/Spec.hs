@@ -20,9 +20,11 @@ import Language.PureScript.Backend.IR.Names
   , moduleNameFromString
   )
 import Language.PureScript.Backend.IR.Optimizer
-  ( optimizedExpression
+  ( optimizeModule
+  , optimizedExpression
   , optimizedUberModule
   )
+import Language.PureScript.Backend.IR.Supply (runSupply)
 import Language.PureScript.Backend.IR.Types
   ( Exp
   , Grouping (..)
@@ -233,6 +235,40 @@ spec = describe "IR Optimizer" do
             ]
       annotateShow optimized
       fooKept === [QName mainModule (Name "foo")]
+
+  describe "counts free references against the live module (#143)" do
+    -- Within a single 'optimizeModule' run the use-once check must consult
+    -- the current (post-substitution) view of the module, not a stale
+    -- snapshot of the original bindings. Here `y` collapses to a bare
+    -- reference to `x` and is inlined into the export, leaving `x`
+    -- referenced exactly once; counting against the live view inlines `x`
+    -- too, whereas counting the two pre-collapse occurrences in the
+    -- original `y` wrongly keeps it. A single run is deliberate: the
+    -- optimize+dce fixpoint masks the misjudgment by self-correcting on a
+    -- later iteration (issue #143).
+    it "inlines a binding that becomes used-once mid-run" do
+      let main' = moduleNameFromString "Main"
+          extern = moduleNameFromString "Extern"
+          -- Non-inlinable and never rewritten by 'optimizeExp'.
+          xExpr = application (refImported extern (Name "f")) (literalInt 1)
+          yExpr =
+            ifThenElse
+              (literalBool True)
+              (refImported main' (Name "x"))
+              (refImported main' (Name "x"))
+          original =
+            Linker.UberModule
+              { uberModuleForeigns = []
+              , uberModuleBindings =
+                  [ Standalone (QName main' (Name "x"), xExpr)
+                  , Standalone (QName main' (Name "y"), yExpr)
+                  ]
+              , uberModuleExports =
+                  [(Name "main", refImported main' (Name "y"))]
+              }
+          optimized = fst (runSupply (optimizeModule mempty original))
+      Linker.uberModuleBindings optimized `shouldBe` []
+      Linker.uberModuleExports optimized `shouldBe` [(Name "main", xExpr)]
 
   describe "inliner unlocks more optimizations" do
     test "constant folding after inlining" do

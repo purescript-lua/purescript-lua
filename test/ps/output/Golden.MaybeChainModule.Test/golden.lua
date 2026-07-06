@@ -18,11 +18,11 @@ M.Data_Maybe_maybe = function(v)
     end
   end
 end
-M.Golden_MaybeChainModule_Test_identity = function(x_S_891) return x_S_891 end
-M.Golden_MaybeChainModule_Test_map = function(v_S_888)
-  return function(v1_S_889)
-    if "Data.Maybe∷Maybe.Just" == v1_S_889["$ctor"] then
-      return M.Data_Maybe_Just(v_S_888(v1_S_889.value0))
+M.Golden_MaybeChainModule_Test_identity = function(x_S_254) return x_S_254 end
+M.Golden_MaybeChainModule_Test_map = function(v_S_251)
+  return function(v1_S_252)
+    if "Data.Maybe∷Maybe.Just" == v1_S_252["$ctor"] then
+      return M.Data_Maybe_Just(v_S_251(v1_S_252.value0))
     else
       return M.Data_Maybe_Nothing
     end

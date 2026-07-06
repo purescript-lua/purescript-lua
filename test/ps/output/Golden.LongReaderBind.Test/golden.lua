@@ -1,4 +1,7 @@
 local M = {}
+M.Data_Semiring_foreign = {
+  intAdd = function(x) return function(y) return x + y end end
+}
 M.Control_Semigroupoid_semigroupoidFn = {
   compose = function(f)
     return function(g) return function(x) return f(g(x)) end end
@@ -11,14 +14,14 @@ M.Data_Identity_applyIdentity = {
   apply = function(v) return function(v1) return v(v1) end end,
   Functor0 = function()
     return {
-      map = function(f_S_1277)
-        return function(m_S_1278) return f_S_1277(m_S_1278) end
+      map = function(f_S_464)
+        return function(m_S_465) return f_S_464(m_S_465) end
       end
     }
   end
 }
 M.Data_Identity_applicativeIdentity = {
-  pure = function(x_S_1279) return x_S_1279 end,
+  pure = function(x_S_466) return x_S_466 end,
   Apply0 = function() return M.Data_Identity_applyIdentity end
 }
 M.Control_Monad_Reader_Trans_compose = M.Control_Semigroupoid_compose(M.Control_Semigroupoid_semigroupoidFn)
@@ -31,9 +34,9 @@ M.Control_Monad_Reader_Trans_applyReaderT = function(dictApply)
     end,
     Functor0 = function()
       return {
-        map = M.Control_Monad_Reader_Trans_compose(function(f_S_1274)
-          return function(v_S_1275)
-            return M.Control_Monad_Reader_Trans_compose(f_S_1274)(v_S_1275)
+        map = M.Control_Monad_Reader_Trans_compose(function(f_S_461)
+          return function(v_S_462)
+            return M.Control_Monad_Reader_Trans_compose(f_S_461)(v_S_462)
           end
         end)((dictApply.Functor0()).map)
       }
@@ -41,16 +44,16 @@ M.Control_Monad_Reader_Trans_applyReaderT = function(dictApply)
   }
 end
 M.Golden_LongReaderBind_Test_bind = M.Control_Bind_bind({
-  bind = function(v_S_1288)
-    return function(k_S_1289)
-      return function(r_S_1290)
+  bind = function(v_S_476)
+    return function(k_S_477)
+      return function(r_S_478)
         return M.Control_Bind_bind({
-          bind = function(v_S_1292)
-            return function(f_S_1293) return f_S_1293(v_S_1292) end
+          bind = function(v_S_480)
+            return function(f_S_481) return f_S_481(v_S_480) end
           end,
           Apply0 = function() return M.Data_Identity_applyIdentity end
-        })(v_S_1288(r_S_1290))(function(a_S_1291)
-          return k_S_1289(a_S_1291)(r_S_1290)
+        })(v_S_476(r_S_478))(function(a_S_479)
+          return k_S_477(a_S_479)(r_S_478)
         end)
       end
     end
@@ -61,8 +64,8 @@ M.Golden_LongReaderBind_Test_bind = M.Control_Bind_bind({
 })
 M.Golden_LongReaderBind_Test_ask = M.Control_Applicative_pure(M.Data_Identity_applicativeIdentity)
 M.Golden_LongReaderBind_Test_go = (function()
-  local _S_kont1297 = function(x1_S_1298)
-    return function(x100_S_1299)
+  local _S_kont484 = function(x1_S_485)
+    return function(x100_S_486)
       return M.Golden_LongReaderBind_Test_bind(M.Golden_LongReaderBind_Test_ask)(function(  )
         return M.Golden_LongReaderBind_Test_bind(M.Golden_LongReaderBind_Test_ask)(function(  )
           return M.Golden_LongReaderBind_Test_bind(M.Golden_LongReaderBind_Test_ask)(function(  )
@@ -104,17 +107,17 @@ M.Golden_LongReaderBind_Test_go = (function()
                                                                                   return M.Golden_LongReaderBind_Test_bind(M.Golden_LongReaderBind_Test_ask)(function(  )
                                                                                     return M.Golden_LongReaderBind_Test_bind(M.Golden_LongReaderBind_Test_ask)(function( x200 )
                                                                                       return M.Control_Applicative_pure({
-                                                                                        pure = M.Control_Monad_Reader_Trans_compose(function( x_S_1276_S_1285 )
-                                                                                          return x_S_1276_S_1285
-                                                                                        end)(M.Control_Monad_Reader_Trans_compose(function( a_S_607_S_1286 )
+                                                                                        pure = M.Control_Monad_Reader_Trans_compose(function( x_S_463_S_473 )
+                                                                                          return x_S_463_S_473
+                                                                                        end)(M.Control_Monad_Reader_Trans_compose(function( a_S_306_S_474 )
                                                                                           return function(  )
-                                                                                            return a_S_607_S_1286
+                                                                                            return a_S_306_S_474
                                                                                           end
                                                                                         end)(M.Control_Applicative_pure(M.Data_Identity_applicativeIdentity))),
                                                                                         Apply0 = function(  )
                                                                                           return M.Control_Monad_Reader_Trans_applyReaderT(M.Data_Identity_applicativeIdentity.Apply0())
                                                                                         end
-                                                                                      })((function(x) return function(y) return x + y end end)((function(x) return function(y) return x + y end end)(x1_S_1298)(x100_S_1299))(x200))
+                                                                                      })(M.Data_Semiring_foreign.intAdd(M.Data_Semiring_foreign.intAdd(x1_S_485)(x100_S_486))(x200))
                                                                                     end)
                                                                                   end)
                                                                                 end)
@@ -157,8 +160,8 @@ M.Golden_LongReaderBind_Test_go = (function()
       end)
     end
   end
-  local _S_kont1300 = function(x1_S_1301)
-    return function(x100_S_1302)
+  local _S_kont487 = function(x1_S_488)
+    return function(x100_S_489)
       return M.Golden_LongReaderBind_Test_bind(M.Golden_LongReaderBind_Test_ask)(function(  )
         return M.Golden_LongReaderBind_Test_bind(M.Golden_LongReaderBind_Test_ask)(function(  )
           return M.Golden_LongReaderBind_Test_bind(M.Golden_LongReaderBind_Test_ask)(function(  )
@@ -199,7 +202,7 @@ M.Golden_LongReaderBind_Test_go = (function()
                                                                                 return M.Golden_LongReaderBind_Test_bind(M.Golden_LongReaderBind_Test_ask)(function(  )
                                                                                   return M.Golden_LongReaderBind_Test_bind(M.Golden_LongReaderBind_Test_ask)(function(  )
                                                                                     return M.Golden_LongReaderBind_Test_bind(M.Golden_LongReaderBind_Test_ask)(function(  )
-                                                                                      return _S_kont1297(x1_S_1301)(x100_S_1302)
+                                                                                      return _S_kont484(x1_S_488)(x100_S_489)
                                                                                     end)
                                                                                   end)
                                                                                 end)
@@ -242,7 +245,7 @@ M.Golden_LongReaderBind_Test_go = (function()
       end)
     end
   end
-  local _S_kont1303 = function(x1_S_1304)
+  local _S_kont490 = function(x1_S_491)
     return M.Golden_LongReaderBind_Test_bind(M.Golden_LongReaderBind_Test_ask)(function(  )
       return M.Golden_LongReaderBind_Test_bind(M.Golden_LongReaderBind_Test_ask)(function(  )
         return M.Golden_LongReaderBind_Test_bind(M.Golden_LongReaderBind_Test_ask)(function(  )
@@ -283,7 +286,7 @@ M.Golden_LongReaderBind_Test_go = (function()
                                                                               return M.Golden_LongReaderBind_Test_bind(M.Golden_LongReaderBind_Test_ask)(function(  )
                                                                                 return M.Golden_LongReaderBind_Test_bind(M.Golden_LongReaderBind_Test_ask)(function(  )
                                                                                   return M.Golden_LongReaderBind_Test_bind(M.Golden_LongReaderBind_Test_ask)(function(  )
-                                                                                    return _S_kont1300(x1_S_1304)(x100)
+                                                                                    return _S_kont487(x1_S_491)(x100)
                                                                                   end)
                                                                                 end)
                                                                               end)
@@ -325,7 +328,7 @@ M.Golden_LongReaderBind_Test_go = (function()
       end)
     end)
   end
-  local _S_kont1305 = function(x1_S_1306)
+  local _S_kont492 = function(x1_S_493)
     return M.Golden_LongReaderBind_Test_bind(M.Golden_LongReaderBind_Test_ask)(function(  )
       return M.Golden_LongReaderBind_Test_bind(M.Golden_LongReaderBind_Test_ask)(function(  )
         return M.Golden_LongReaderBind_Test_bind(M.Golden_LongReaderBind_Test_ask)(function(  )
@@ -366,7 +369,7 @@ M.Golden_LongReaderBind_Test_go = (function()
                                                                               return M.Golden_LongReaderBind_Test_bind(M.Golden_LongReaderBind_Test_ask)(function(  )
                                                                                 return M.Golden_LongReaderBind_Test_bind(M.Golden_LongReaderBind_Test_ask)(function(  )
                                                                                   return M.Golden_LongReaderBind_Test_bind(M.Golden_LongReaderBind_Test_ask)(function(  )
-                                                                                    return _S_kont1303(x1_S_1306)
+                                                                                    return _S_kont490(x1_S_493)
                                                                                   end)
                                                                                 end)
                                                                               end)
@@ -448,7 +451,7 @@ M.Golden_LongReaderBind_Test_go = (function()
                                                                             return M.Golden_LongReaderBind_Test_bind(M.Golden_LongReaderBind_Test_ask)(function(  )
                                                                               return M.Golden_LongReaderBind_Test_bind(M.Golden_LongReaderBind_Test_ask)(function(  )
                                                                                 return M.Golden_LongReaderBind_Test_bind(M.Golden_LongReaderBind_Test_ask)(function(  )
-                                                                                  return _S_kont1305(x1)
+                                                                                  return _S_kont492(x1)
                                                                                 end)
                                                                               end)
                                                                             end)

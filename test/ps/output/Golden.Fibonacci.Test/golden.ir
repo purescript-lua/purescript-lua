@@ -1,6 +1,12 @@
 UberModule
   { uberModuleBindings =
-    [ RecursiveGroup
+    [ Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Ring", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Data.Ring" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Ring.purs"
+        [ ( Nothing, Name "intSub" ) ]
+      ), RecursiveGroup
       (
         ( QName
           { qnameModuleName = ModuleName "Golden.Fibonacci.Test", qnameName = Name "fib"
@@ -28,9 +34,8 @@ UberModule
                     ( App Nothing
                       ( App Nothing
                         ( ObjectProp ( Just Always )
-                          ( ForeignImport Nothing
-                            ( ModuleName "Data.Ring" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Ring.purs"
-                            [ ( Nothing, Name "intSub" ) ]
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Data.Ring" ) ( Name "foreign" ) )
                           )
                           ( PropName "intSub" )
                         )
@@ -47,10 +52,7 @@ UberModule
                   ( App Nothing
                     ( App Nothing
                       ( ObjectProp ( Just Always )
-                        ( ForeignImport Nothing
-                          ( ModuleName "Data.Ring" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Ring.purs"
-                          [ ( Nothing, Name "intSub" ) ]
-                        )
+                        ( Ref Nothing ( Imported ( ModuleName "Data.Ring" ) ( Name "foreign" ) ) )
                         ( PropName "intSub" )
                       )
                       ( Ref Nothing ( Local ( Name "v" ) ) )
