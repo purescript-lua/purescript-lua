@@ -50,8 +50,7 @@ optimizeExpression = foldr (>>>) identity rewriteRulesInOrder
 
 rewriteRulesInOrder ∷ [RewriteRule]
 rewriteRulesInOrder =
-  [ removeScopeWhenInsideEmptyFunction
-  , reduceTableDefinitionAccessor
+  [ reduceTableDefinitionAccessor
   , foldFieldProjectionThroughScopeCall
   ]
 
@@ -62,14 +61,6 @@ rewriteExpWithRule rule = everywhereExp rule identity
 
 --------------------------------------------------------------------------------
 -- Rewrite rules for expressions -----------------------------------------------
-
-removeScopeWhenInsideEmptyFunction ∷ RewriteRule
-removeScopeWhenInsideEmptyFunction = \case
-  Function
-    outerArgs
-    [Ann (Return (Ann (FunctionCall (Ann (Function [] body)) [])))] →
-      Function outerArgs body
-  e → e
 
 {- | Rewrites '{ foo = 1, bar = 2 }.foo' to '1'.
 
