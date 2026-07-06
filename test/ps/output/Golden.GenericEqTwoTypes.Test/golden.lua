@@ -43,10 +43,10 @@ M.Data_HeytingAlgebra_heytingAlgebraBoolean = {
 }
 M.Data_Eq_eqRecord = function(dict) return dict.eqRecord end
 M.Data_Eq_eqInt = {
-  eq = ((function()
+  eq = (function()
     local refEq = function(r1) return function(r2) return r1 == r2 end end
-    return { eqIntImpl = refEq }
-  end)()).eqIntImpl
+    return refEq
+  end)()
 }
 M.Data_Eq_eq = function(dict) return dict.eq end
 M.Data_Eq_eqRowCons = function(dictEqRecord)

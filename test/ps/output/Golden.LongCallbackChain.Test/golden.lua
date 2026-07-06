@@ -2,7 +2,7 @@ local M = {}
 M.Golden_LongCallbackChain_Test_withInc = function(n)
   return function(k)
     if (function()
-      if "Data.Ordering∷Ordering.LT" == (((function()
+      if "Data.Ordering∷Ordering.LT" == ((function()
         local unsafeCoerceImpl = function(lt)
           return function(eq)
             return function(gt)
@@ -20,8 +20,8 @@ M.Golden_LongCallbackChain_Test_withInc = function(n)
             end
           end
         end
-        return { ordIntImpl = unsafeCoerceImpl }
-      end)()).ordIntImpl({ ["$ctor"] = "Data.Ordering∷Ordering.LT" })({
+        return unsafeCoerceImpl
+      end)()({ ["$ctor"] = "Data.Ordering∷Ordering.LT" })({
         ["$ctor"] = "Data.Ordering∷Ordering.EQ"
       })({ ["$ctor"] = "Data.Ordering∷Ordering.GT" })(n)(0))["$ctor"] then
         return true

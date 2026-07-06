@@ -105,12 +105,12 @@ return (function()
   local _ = M.Effect_Console_foreign.log(M.Golden_CharLiterals_Test_show("\'"))()
   local _ = M.Effect_Console_foreign.log(M.Golden_CharLiterals_Test_show("\\"))()
   local _ = M.Effect_Console_foreign.log(M.Golden_CharLiterals_Test_show("a"))()
-  local _ = M.Effect_Console_foreign.log(M.Golden_CharLiterals_Test_show1(((function(  )
+  local _ = M.Effect_Console_foreign.log(M.Golden_CharLiterals_Test_show1((function(  )
     local refEq = function(r1) return function(r2) return r1 == r2 end end
-    return { eqCharImpl = refEq }
-  end)()).eqCharImpl("\n")("\n")))()
+    return refEq
+  end)()("\n")("\n")))()
   return M.Effect_Console_foreign.log(M.Golden_CharLiterals_Test_show1((function(  )
-    if "Data.Ordering∷Ordering.LT" == (((function()
+    if "Data.Ordering∷Ordering.LT" == ((function()
       local unsafeCoerceImpl = function(lt)
         return function(eq)
           return function(gt)
@@ -128,8 +128,8 @@ return (function()
           end
         end
       end
-      return { ordCharImpl = unsafeCoerceImpl }
-    end)()).ordCharImpl({ ["$ctor"] = "Data.Ordering∷Ordering.LT" })({
+      return unsafeCoerceImpl
+    end)()({ ["$ctor"] = "Data.Ordering∷Ordering.LT" })({
       ["$ctor"] = "Data.Ordering∷Ordering.EQ"
     })({ ["$ctor"] = "Data.Ordering∷Ordering.GT" })("\t")("\n"))["$ctor"] then
       return true

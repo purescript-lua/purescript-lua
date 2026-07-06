@@ -226,10 +226,10 @@ M.Golden_BugListGenericEq_Test_eqList = function(dictEq)
   }
 end
 M.Golden_BugListGenericEq_Test_eq = M.Data_Eq_eq(M.Golden_BugListGenericEq_Test_eqList({
-  eq = ((function()
+  eq = (function()
     local refEq = function(r1) return function(r2) return r1 == r2 end end
-    return { eqIntImpl = refEq }
-  end)()).eqIntImpl
+    return refEq
+  end)()
 }))
 M.Golden_BugListGenericEq_Test_cons = function(head)
   return function(tail)
