@@ -428,9 +428,9 @@ M.Effect_applicativeEffect = {
 }
 M.Effect_Lazy_functorEffect = PSLUA_runtime_lazy("functorEffect")(function()
   return {
-    map = function(f_S_998)
-      return function(a_S_999)
-        return (M.Effect_applicativeEffect.Apply0()).apply(M.Control_Applicative_pure(M.Effect_applicativeEffect)(f_S_998))(a_S_999)
+    map = function(f_S_997)
+      return function(a_S_998)
+        return (M.Effect_applicativeEffect.Apply0()).apply(M.Control_Applicative_pure(M.Effect_applicativeEffect)(f_S_997))(a_S_998)
       end
     end
   }
@@ -438,12 +438,12 @@ end)
 M.Effect_Lazy_applyEffect = PSLUA_runtime_lazy("applyEffect")(function()
   return {
     apply = (function()
-      local bind_S_1334 = M.Control_Bind_bind(M.Effect_monadEffect.Bind1())
-      return function(f_S_1335)
-        return function(a_S_1336)
-          return bind_S_1334(f_S_1335)(function(fPrime_S_1337)
-            return bind_S_1334(a_S_1336)(function(aPrime_S_1338)
-              return M.Control_Applicative_pure(M.Effect_monadEffect.Applicative0())(fPrime_S_1337(aPrime_S_1338))
+      local bind_S_1317 = M.Control_Bind_bind(M.Effect_monadEffect.Bind1())
+      return function(f_S_1318)
+        return function(a_S_1319)
+          return bind_S_1317(f_S_1318)(function(fPrime_S_1320)
+            return bind_S_1317(a_S_1319)(function(aPrime_S_1321)
+              return M.Control_Applicative_pure(M.Effect_monadEffect.Applicative0())(fPrime_S_1320(aPrime_S_1321))
             end)
           end)
         end
@@ -614,11 +614,11 @@ M.Data_String_CodePoints_toCodePointArray = M.Data_String_CodePoints_foreign._to
           end
         end
       end
-    end)(function(v2_S_1330_S_1352)
-    if "Data.Maybe∷Maybe.Nothing" == v2_S_1330_S_1352["$ctor"] then
+    end)(function(v2_S_1313_S_1335)
+    if "Data.Maybe∷Maybe.Nothing" == v2_S_1313_S_1335["$ctor"] then
       return true
     else
-      if "Data.Maybe∷Maybe.Just" == v2_S_1330_S_1352["$ctor"] then
+      if "Data.Maybe∷Maybe.Just" == v2_S_1313_S_1335["$ctor"] then
         return false
       else
         return error("No patterns matched")
@@ -626,8 +626,8 @@ M.Data_String_CodePoints_toCodePointArray = M.Data_String_CodePoints_foreign._to
     end
   end)(M.Partial_Unsafe_foreign._unsafePartial(function()
     return M.Data_Maybe_fromJust()
-  end))(function(v_S_1350) return v_S_1350.value0 end)(function(v_S_1351)
-    return v_S_1351.value1
+  end))(function(v_S_1333) return v_S_1333.value0 end)(function(v_S_1334)
+    return v_S_1334.value1
   end)(function(s_S_11)
     return M.Data_Functor_map(M.Data_Maybe_functorMaybe)(function(v_S_12)
       return (function(value0)
@@ -751,11 +751,11 @@ return (function()
     return v0_S_1.tail
   end))(M.Data_String_CodePoints_uncons("aéЯ𝐀z")))()
   local _ = M.Effect_Console_logShow({
-    show = function(v_S_1236)
-      if v_S_1236 then
+    show = function(v_S_1235)
+      if v_S_1235 then
         return "true"
       else
-        if false == v_S_1236 then
+        if false == v_S_1235 then
           return "false"
         else
           return error("No patterns matched")

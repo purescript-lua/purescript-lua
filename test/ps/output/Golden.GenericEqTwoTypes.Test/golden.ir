@@ -605,13 +605,13 @@ UberModule
       ( QName
         { qnameModuleName = ModuleName "Golden.GenericEqTwoTypes.Test", qnameName = Name "eqRec"
         }, Abs Nothing
-        ( ParamNamed Nothing ( Name "dictEqRecord$195" ) )
+        ( ParamNamed Nothing ( Name "dictEqRecord$193" ) )
         ( LiteralObject Nothing
           [
             ( PropName "eq", App Nothing
               ( App Nothing
                 ( Ref Nothing ( Imported ( ModuleName "Data.Eq" ) ( Name "eqRecord" ) ) )
-                ( Ref Nothing ( Local ( Name "dictEqRecord$195" ) ) )
+                ( Ref Nothing ( Local ( Name "dictEqRecord$193" ) ) )
               )
               ( Ref Nothing ( Imported ( ModuleName "Type.Proxy" ) ( Name "Proxy" ) ) )
             )

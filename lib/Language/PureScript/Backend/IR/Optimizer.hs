@@ -39,6 +39,7 @@ import Language.PureScript.Backend.IR.Types
   , countFreeRefs
   , getAnn
   , isNonRecursiveLiteral
+  , lets
   , literalBool
   , rewriteExpBottomUpM
   , substituteCopyM
@@ -395,14 +396,36 @@ reduceObjectProp =
         fromMaybe (ObjectProp ann obj prop) (List.lookup prop (toList patches))
     _ → Nothing
 
+{- Note [Beta reduction and local inlining share an inlining guard]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+'betaReduce' and 'inlineLocalBinding' decide whether to paste an expression
+into its use sites by the same test: paste only when re-evaluating it cannot
+multiply work — the expression is trivial ('isInlinableExpr': a Ref, a
+literal, or an @inline-always node) or it is used at most once. Otherwise the
+expression stays behind a single 'Let' binding.
+
+The two rules must agree, because they hand work to each other. When
+'betaReduce' declines to substitute a redex it rewrites it to
+@let param = arg in body@ rather than duplicating @arg@ (in a strict language
+that would repeat @arg@'s evaluation at every occurrence). That 'Let' is then
+visited by 'inlineLocalBinding', which faces the identical choice for the same
+expression. Because the guards match, it declines too, so the pair reaches a
+fixpoint in one bottom-up pass instead of oscillating.
+-}
+
 -- (λx. M) N ===> M[x := N]
 -- See Note [IR is assumed well-typed]
 betaReduce ∷ RewriteRuleM SupplyM Ann
 betaReduce = \case
-  App _ (Abs _ (ParamNamed _ param) body) r →
-    -- The λ is consumed by the rewrite, so the first inserted occurrence
-    -- of the argument may keep its binder names ('substituteMoveM').
-    Just <$> substituteMoveM (Local param) r body
+  App _ (Abs _ (ParamNamed paramAnn param) body) r
+    -- See Note [Beta reduction and local inlining share an inlining guard]
+    | isInlinableExpr r || countFreeRef (Local param) body <= 1 →
+        -- The λ is consumed by the rewrite, so the first inserted occurrence
+        -- of the argument may keep its binder names ('substituteMoveM').
+        Just <$> substituteMoveM (Local param) r body
+    | otherwise →
+        -- Bind the argument once; its evaluation now happens a single time.
+        pure . Just $ lets (Standalone (paramAnn, param, r) :| []) body
   _ → pure Nothing
 
 {- Note [Eta reduction is unsound]
@@ -518,7 +541,8 @@ inlineLocalBinding grouping (body, inlined) =
     Standalone (_ann, Local → name, inlinee)
       | occurrences > 0
       , countFreeRef name inlinee == 0 -- no self-reference, see above
-      , isInlinableExpr inlinee || occurrences == 1 →
+      , -- See Note [Beta reduction and local inlining share an inlining guard]
+        isInlinableExpr inlinee || occurrences == 1 →
           -- The binding survives until DCE drops it, so the inserted copy
           -- must not reuse its binder names ('substituteCopyM').
           (,Rewritten) <$> substituteCopyM name inlinee body

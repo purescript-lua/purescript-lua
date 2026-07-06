@@ -64,10 +64,10 @@ M.Data_Foldable_foldableArray = {
   foldr = M.Data_Foldable_foreign.foldrArray,
   foldl = M.Data_Foldable_foreign.foldlArray,
   foldMap = function(dictMonoid)
-    return function(f_S_885)
-      return M.Data_Foldable_foldr(M.Data_Foldable_foldableArray)(function( x_S_886 )
-        return function(acc_S_887)
-          return (dictMonoid.Semigroup0()).append(f_S_885(x_S_886))(acc_S_887)
+    return function(f_S_884)
+      return M.Data_Foldable_foldr(M.Data_Foldable_foldableArray)(function( x_S_885 )
+        return function(acc_S_886)
+          return (dictMonoid.Semigroup0()).append(f_S_884(x_S_885))(acc_S_886)
         end
       end)(dictMonoid.mempty)
     end
@@ -124,19 +124,24 @@ return (function()
   }
   return function()
     local _ = M.Data_Foldable_foldr(M.Data_Foldable_foldableArray)(function( x_S_907 )
-      return function(b_S_895)
-        return M.Control_Apply_apply(M.Effect_applicativeEffect.Apply0())(((M.Effect_applicativeEffect.Apply0()).Functor0()).map(function(  )
-          return function(x_S_902) return x_S_902 end
-        end)(M.Effect_Console_logShow({
-          show = function() return "unit" end
-        })(x_S_907)))(b_S_895)
-      end
+      return (function()
+        local dictApply_S_892 = M.Effect_applicativeEffect.Apply0()
+        return function(a_S_893)
+          return function(b_S_894)
+            return M.Control_Apply_apply(dictApply_S_892)((dictApply_S_892.Functor0()).map(function(  )
+              return function(x_S_901) return x_S_901 end
+            end)(a_S_893))(b_S_894)
+          end
+        end
+      end)()(M.Effect_Console_logShow({
+        show = function() return "unit" end
+      })(x_S_907))
     end)(M.Control_Applicative_pure(M.Effect_applicativeEffect)(M.Data_Unit_foreign.unit))(arr_S_0)()
     return M.Effect_Console_logShow({
       show = function(n) return tostring(n) end
-    })(M.Data_Foldable_foldableArray.foldl(function(c_S_372_S_882)
+    })(M.Data_Foldable_foldableArray.foldl(function(c_S_372_S_881)
       return function()
-        return M.Data_Semiring_semiringInt.add(M.Data_Semiring_semiringInt.one)(c_S_372_S_882)
+        return M.Data_Semiring_semiringInt.add(M.Data_Semiring_semiringInt.one)(c_S_372_S_881)
       end
     end)(M.Data_Semiring_semiringInt.zero)(arr_S_0))()
   end
