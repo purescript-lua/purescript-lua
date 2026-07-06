@@ -1,13 +1,14 @@
 module Language.PureScript.Backend.Lua.Spec where
 
-import Control.Monad.Trans.Except (runExceptT)
-import Data.List.NonEmpty ((:|))
+import Control.Monad.Oops (Variant)
+import Control.Monad.Trans.Except (ExceptT, runExceptT)
 import Data.Tagged (Tagged (..))
 import Data.Text qualified as Text
 import Language.PureScript.Backend.IR qualified as IR
 import Language.PureScript.Backend.IR.Linker (UberModule (..))
 import Language.PureScript.Backend.Lua qualified as Lua
 import Language.PureScript.Backend.Lua.Printer qualified as Printer
+import Language.PureScript.Backend.Lua.Types qualified as Lua.Types
 import Language.PureScript.Backend.Types (AppOrModule (AsModule))
 import Path.IO (getCurrentDir)
 import Prettyprinter (defaultLayoutOptions, layoutPretty)
@@ -35,14 +36,17 @@ compileExportedExpr expr = do
         , uberModuleForeigns = []
         , uberModuleExports = [(IR.Name "value", expr)]
         }
-  result ← runExceptT $
-    Lua.fromUberModule
-      foreignPath
-      (Tagged False)
-      (AsModule moduleName)
-      uberModule
+  result ←
+    runExceptT
+      ( Lua.fromUberModule
+          foreignPath
+          (Tagged False)
+          (AsModule moduleName)
+          uberModule
+          ∷ ExceptT (Variant '[Lua.Error]) IO Lua.Types.Chunk
+      )
   case result of
-    Left err → expectationFailure (show err) >> pure ""
+    Left _err → expectationFailure "Lua.fromUberModule failed" >> pure ""
     Right chunk →
       pure . renderStrict $
         layoutPretty defaultLayoutOptions (Printer.printLuaChunk chunk)
