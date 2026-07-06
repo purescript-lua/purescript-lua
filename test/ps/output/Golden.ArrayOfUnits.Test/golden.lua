@@ -20,6 +20,7 @@ local function PSLUA_runtime_lazy(name)
 end
 local M = {}
 M.Data_Unit_foreign = { unit = {} }
+M.Data_Show_foreign = { showIntImpl = function(n) return tostring(n) end }
 M.Data_Semiring_foreign = {
   intAdd = function(x) return function(y) return x + y end end,
   intMul = function(x) return function(y) return x * y end end
@@ -49,6 +50,9 @@ M.Data_Foldable_foreign = {
 M.Effect_foreign = {
   pureE = function(a) return function() return a end end,
   bindE = function(a) return function(f) return function() return f(a())() end end end
+}
+M.Effect_Console_foreign = {
+  log = function(s) return function() print(s) end end
 }
 M.Data_Semiring_semiringInt = {
   add = M.Data_Semiring_foreign.intAdd,
@@ -112,9 +116,7 @@ M.Effect_Lazy_applyEffect = PSLUA_runtime_lazy("applyEffect")(function()
   }
 end)
 M.Effect_Console_logShow = function(dictShow)
-  return function(a)
-    return (function(s) return function() print(s) end end)(dictShow.show(a))
-  end
+  return function(a) return M.Effect_Console_foreign.log(dictShow.show(a)) end
 end
 return (function()
   local arr_S_0 = {
@@ -138,7 +140,7 @@ return (function()
       })(x_S_907))
     end)(M.Control_Applicative_pure(M.Effect_applicativeEffect)(M.Data_Unit_foreign.unit))(arr_S_0)()
     return M.Effect_Console_logShow({
-      show = function(n) return tostring(n) end
+      show = M.Data_Show_foreign.showIntImpl
     })(M.Data_Foldable_foldableArray.foldl(function(c_S_372_S_881)
       return function()
         return M.Data_Semiring_semiringInt.add(M.Data_Semiring_semiringInt.one)(c_S_372_S_881)

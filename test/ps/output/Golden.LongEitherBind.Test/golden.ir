@@ -20,6 +20,12 @@ UberModule
         [ ( Nothing, Name "intAdd" ) ]
       ), Standalone
       ( QName
+        { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Effect.Console" ) ".spago/p/console/f82835a0b873aafe6bd7b14dd30cc150553d4ab9/src/Effect/Console.purs"
+        [ ( Nothing, Name "log" ) ]
+      ), Standalone
+      ( QName
         { qnameModuleName = ModuleName "Data.Show", qnameName = Name "show" }, Abs Nothing
         ( ParamNamed Nothing ( Name "dict" ) )
         ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) ) ( PropName "show" ) )
@@ -12155,10 +12161,7 @@ UberModule
       ),
       ( Name "main", App Nothing
         ( ObjectProp ( Just Always )
-          ( ForeignImport Nothing
-            ( ModuleName "Effect.Console" ) ".spago/p/console/f82835a0b873aafe6bd7b14dd30cc150553d4ab9/src/Effect/Console.purs"
-            [ ( Nothing, Name "log" ) ]
-          )
+          ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
           ( PropName "log" )
         )
         ( App Nothing

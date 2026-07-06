@@ -32,6 +32,16 @@ Pragmas reach this map only for non-foreign top-level bindings (the ones
 bound to an 'ObjectProp' marked 'Inline.Always' so the wrapper around the FFI
 object is always inlined away (see
 Note [Foreign bindings structure emitted by the Linker]).
+
+The 'ForeignImport' expression itself — the table of a foreign module's
+exports — is the one shape the optimizer refuses to inline even when it is
+referenced exactly once. Its export values are opaque to the IR, and some of
+them are Lua table constructors with identity (e.g. @unit = {}@ in the
+prelude), so pasting the import into its use site — possibly under a lambda —
+would re-evaluate the foreign source per call and allocate fresh tables where
+every site is supposed to share one. The table stays hoisted as a single
+binding and the always-inlined 'ObjectProp' wrappers turn into field reads
+off it.
 -}
 data Annotation = Always | Never
   deriving stock (Show, Eq, Ord)

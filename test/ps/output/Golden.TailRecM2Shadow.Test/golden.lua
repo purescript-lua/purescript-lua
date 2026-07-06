@@ -19,9 +19,30 @@ local function PSLUA_runtime_lazy(name)
   end
 end
 local M = {}
+M.Data_Show_foreign = { showIntImpl = function(n) return tostring(n) end }
 M.Data_Semiring_foreign = {
   intAdd = function(x) return function(y) return x + y end end
 }
+M.Data_Ord_foreign = (function()
+  local unsafeCoerceImpl = function(lt)
+    return function(eq)
+      return function(gt)
+        return function(x)
+          return function(y)
+            if x < y then
+              return lt
+            elseif x == y then
+              return eq
+            else
+              return gt
+            end
+          end
+        end
+      end
+    end
+  end
+  return { ordIntImpl = unsafeCoerceImpl }
+end)()
 M.Effect_foreign = {
   pureE = function(a) return function() return a end end,
   bindE = function(a) return function(f) return function() return f(a())() end end end,
@@ -33,6 +54,10 @@ M.Effect_Ref_foreign = {
   write = function(val)
       return function(ref) return function() ref.value = val end end
     end
+}
+M.Partial_Unsafe_foreign = { _unsafePartial = function(f) return f(); end }
+M.Effect_Console_foreign = {
+  log = function(s) return function() print(s) end end
 }
 M.Control_Applicative_pure = function(dict) return dict.pure end
 M.Control_Bind_bind = function(dict) return dict.bind end
@@ -86,28 +111,9 @@ M.Golden_TailRecM2Shadow_Test_sumFrom = function(dictMonadRec)
           local acc_S_1 = o_S_450.a
           return function(i_S_2)
             if (function()
-              if "Data.Ordering∷Ordering.LT" == ((function()
-                local unsafeCoerceImpl = function(lt)
-                  return function(eq)
-                    return function(gt)
-                      return function(x)
-                        return function(y)
-                          if x < y then
-                            return lt
-                          elseif x == y then
-                            return eq
-                          else
-                            return gt
-                          end
-                        end
-                      end
-                    end
-                  end
-                end
-                return unsafeCoerceImpl
-              end)()({ ["$ctor"] = "Data.Ordering∷Ordering.LT" })({
-                ["$ctor"] = "Data.Ordering∷Ordering.EQ"
-              })({
+              if "Data.Ordering∷Ordering.LT" == (M.Data_Ord_foreign.ordIntImpl({
+                ["$ctor"] = "Data.Ordering∷Ordering.LT"
+              })({ ["$ctor"] = "Data.Ordering∷Ordering.EQ" })({
                 ["$ctor"] = "Data.Ordering∷Ordering.GT"
               })(i_S_2)(n))["$ctor"] then
                 return false
@@ -162,7 +168,7 @@ return (function()
               end
             end)()()
           end)()
-          return M.Effect_functorEffect.map((function(f) return f(); end)(function(  )
+          return M.Effect_functorEffect.map(M.Partial_Unsafe_foreign._unsafePartial(function(  )
             return function(v_S_9_S_20)
               if "Control.Monad.Rec.Class∷Step.Done" == v_S_9_S_20["$ctor"] then
                 return v_S_9_S_20.value0
@@ -176,5 +182,5 @@ return (function()
     end,
     Monad0 = function() return M.Effect_monadEffect end
   })(0)(5)()
-  return (function(s) return function() print(s) end end)((function(n) return tostring(n) end)(r_S_0))()
+  return M.Effect_Console_foreign.log(M.Data_Show_foreign.showIntImpl(r_S_0))()
 end)()

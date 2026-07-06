@@ -38,6 +38,7 @@ import Language.PureScript.Backend.IR.Types
   , countFreeRef
   , countFreeRefs
   , getAnn
+  , isForeignImport
   , isNonRecursiveLiteral
   , lets
   , literalBool
@@ -265,6 +266,7 @@ optimizeModule neverNames UberModule {..} = runWriterT do
             occurrences = Map.findWithDefault 0 qn counts
             isUsedOnce = occurrences == 1
         if qname `Set.notMember` neverNames
+          && not (isForeignImport expr)
           && (isInlinableExpr expr || isUsedOnce)
           then do
             -- The binding is dropped from the module in favor of the

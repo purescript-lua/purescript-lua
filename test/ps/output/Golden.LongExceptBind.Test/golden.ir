@@ -20,6 +20,18 @@ UberModule
         [ ( Nothing, Name "intAdd" ) ]
       ), Standalone
       ( QName
+        { qnameModuleName = ModuleName "Unsafe.Coerce", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Unsafe.Coerce" ) ".spago/p/unsafe-coerce/7a4c95f14b8118d9fb052e130d6e862fa3f5166a/src/Unsafe/Coerce.purs"
+        [ ( Nothing, Name "unsafeCoerce" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Effect.Console" ) ".spago/p/console/f82835a0b873aafe6bd7b14dd30cc150553d4ab9/src/Effect/Console.purs"
+        [ ( Nothing, Name "log" ) ]
+      ), Standalone
+      ( QName
         { qnameModuleName = ModuleName "Control.Semigroupoid", qnameName = Name "semigroupoidFn"
         }, LiteralObject Nothing
         [
@@ -10205,10 +10217,7 @@ UberModule
               )
             )
             ( ObjectProp ( Just Always )
-              ( ForeignImport Nothing
-                ( ModuleName "Unsafe.Coerce" ) ".spago/p/unsafe-coerce/7a4c95f14b8118d9fb052e130d6e862fa3f5166a/src/Unsafe/Coerce.purs"
-                [ ( Nothing, Name "unsafeCoerce" ) ]
-              )
+              ( Ref Nothing ( Imported ( ModuleName "Unsafe.Coerce" ) ( Name "foreign" ) ) )
               ( PropName "unsafeCoerce" )
             )
           )
@@ -10229,10 +10238,7 @@ UberModule
       ),
       ( Name "main", App Nothing
         ( ObjectProp ( Just Always )
-          ( ForeignImport Nothing
-            ( ModuleName "Effect.Console" ) ".spago/p/console/f82835a0b873aafe6bd7b14dd30cc150553d4ab9/src/Effect/Console.purs"
-            [ ( Nothing, Name "log" ) ]
-          )
+          ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
           ( PropName "log" )
         )
         ( App Nothing

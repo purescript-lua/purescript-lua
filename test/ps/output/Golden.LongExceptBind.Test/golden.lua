@@ -47,6 +47,10 @@ M.Data_Show_foreign = {
 M.Data_Semiring_foreign = {
   intAdd = function(x) return function(y) return x + y end end
 }
+M.Unsafe_Coerce_foreign = { unsafeCoerce = function(x) return x end }
+M.Effect_Console_foreign = {
+  log = function(s) return function() print(s) end end
+}
 M.Control_Semigroupoid_semigroupoidFn = {
   compose = function(f)
     return function(g) return function(x) return f(g(x)) end end
@@ -595,10 +599,10 @@ M.Golden_LongExceptBind_Test_go = (function()
     end)
   end)
 end)()
-M.Golden_LongExceptBind_Test_compute = M.Control_Semigroupoid_compose(M.Control_Semigroupoid_semigroupoidFn)(function(x) return x end)(function( v_S_39 )
+M.Golden_LongExceptBind_Test_compute = M.Control_Semigroupoid_compose(M.Control_Semigroupoid_semigroupoidFn)(M.Unsafe_Coerce_foreign.unsafeCoerce)(function( v_S_39 )
   return v_S_39
 end)(M.Golden_LongExceptBind_Test_go)
-return (function(s) return function() print(s) end end)(M.Data_Show_show({
+return M.Effect_Console_foreign.log(M.Data_Show_show({
   show = function(v_S_189_S_517)
     if "Data.Either∷Either.Left" == v_S_189_S_517["$ctor"] then
       return M.Data_Semigroup_foreign.concatString("(Left ")(M.Data_Semigroup_foreign.concatString(M.Data_Show_show({

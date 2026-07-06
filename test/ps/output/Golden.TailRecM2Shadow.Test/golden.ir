@@ -2,10 +2,22 @@ UberModule
   { uberModuleBindings =
     [ Standalone
       ( QName
+        { qnameModuleName = ModuleName "Data.Show", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Data.Show" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Show.purs"
+        [ ( Nothing, Name "showIntImpl" ) ]
+      ), Standalone
+      ( QName
         { qnameModuleName = ModuleName "Data.Semiring", qnameName = Name "foreign"
         }, ForeignImport Nothing
         ( ModuleName "Data.Semiring" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Semiring.purs"
         [ ( Nothing, Name "intAdd" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Ord", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Data.Ord" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Ord.purs"
+        [ ( Nothing, Name "ordIntImpl" ) ]
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Effect", qnameName = Name "foreign"
@@ -18,6 +30,18 @@ UberModule
         }, ForeignImport Nothing
         ( ModuleName "Effect.Ref" ) ".spago/p/refs/ee6e959ec21b752622e105a14816e7983b21b9a5/src/Effect/Ref.purs"
         [ ( Nothing, Name "_new" ), ( Nothing, Name "read" ), ( Nothing, Name "write" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Partial.Unsafe", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Partial.Unsafe" ) ".spago/p/partial/2f5c69b1de8f88f1fbc9b98281c9436088ae0789/src/Partial/Unsafe.purs"
+        [ ( Nothing, Name "_unsafePartial" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Effect.Console" ) ".spago/p/console/f82835a0b873aafe6bd7b14dd30cc150553d4ab9/src/Effect/Console.purs"
+        [ ( Nothing, Name "log" ) ]
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Control.Applicative", qnameName = Name "pure"
@@ -292,9 +316,11 @@ UberModule
                                         ( App Nothing
                                           ( App Nothing
                                             ( ObjectProp ( Just Always )
-                                              ( ForeignImport Nothing
-                                                ( ModuleName "Data.Ord" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Ord.purs"
-                                                [ ( Nothing, Name "ordIntImpl" ) ]
+                                              ( Ref Nothing
+                                                ( Imported
+                                                  ( ModuleName "Data.Ord" )
+                                                  ( Name "foreign" )
+                                                )
                                               )
                                               ( PropName "ordIntImpl" )
                                             )
@@ -618,9 +644,11 @@ UberModule
                                       )
                                       ( App Nothing
                                         ( ObjectProp ( Just Always )
-                                          ( ForeignImport Nothing
-                                            ( ModuleName "Partial.Unsafe" ) ".spago/p/partial/2f5c69b1de8f88f1fbc9b98281c9436088ae0789/src/Partial/Unsafe.purs"
-                                            [ ( Nothing, Name "_unsafePartial" ) ]
+                                          ( Ref Nothing
+                                            ( Imported
+                                              ( ModuleName "Partial.Unsafe" )
+                                              ( Name "foreign" )
+                                            )
                                           )
                                           ( PropName "_unsafePartial" )
                                         )
@@ -683,18 +711,12 @@ UberModule
           ( App Nothing
             ( App Nothing
               ( ObjectProp ( Just Always )
-                ( ForeignImport Nothing
-                  ( ModuleName "Effect.Console" ) ".spago/p/console/f82835a0b873aafe6bd7b14dd30cc150553d4ab9/src/Effect/Console.purs"
-                  [ ( Nothing, Name "log" ) ]
-                )
+                ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
                 ( PropName "log" )
               )
               ( App Nothing
                 ( ObjectProp ( Just Always )
-                  ( ForeignImport Nothing
-                    ( ModuleName "Data.Show" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Show.purs"
-                    [ ( Nothing, Name "showIntImpl" ) ]
-                  )
+                  ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
                   ( PropName "showIntImpl" )
                 )
                 ( Ref Nothing ( Local ( Name "r$0" ) ) )

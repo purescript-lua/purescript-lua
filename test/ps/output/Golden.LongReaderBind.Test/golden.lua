@@ -1,6 +1,11 @@
 local M = {}
+M.Data_Show_foreign = { showIntImpl = function(n) return tostring(n) end }
 M.Data_Semiring_foreign = {
   intAdd = function(x) return function(y) return x + y end end
+}
+M.Unsafe_Coerce_foreign = { unsafeCoerce = function(x) return x end }
+M.Effect_Console_foreign = {
+  log = function(s) return function() print(s) end end
 }
 M.Control_Semigroupoid_semigroupoidFn = {
   compose = function(f)
@@ -502,5 +507,5 @@ M.Golden_LongReaderBind_Test_go = (function()
     end)
   end)
 end)()
-M.Golden_LongReaderBind_Test_compute = M.Control_Semigroupoid_compose(M.Control_Semigroupoid_semigroupoidFn)(function(x) return x end)(M.Golden_LongReaderBind_Test_go)(3)
-return (function(s) return function() print(s) end end)((function(n) return tostring(n) end)(M.Golden_LongReaderBind_Test_compute))()
+M.Golden_LongReaderBind_Test_compute = M.Control_Semigroupoid_compose(M.Control_Semigroupoid_semigroupoidFn)(M.Unsafe_Coerce_foreign.unsafeCoerce)(M.Golden_LongReaderBind_Test_go)(3)
+return M.Effect_Console_foreign.log(M.Data_Show_foreign.showIntImpl(M.Golden_LongReaderBind_Test_compute))()

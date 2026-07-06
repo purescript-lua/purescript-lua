@@ -19,14 +19,24 @@ local function PSLUA_runtime_lazy(name)
   end
 end
 local M = {}
+M.Record_Unsafe_foreign = {
+  unsafeGet = function(l) return function(r) return r[l] end end
+}
 M.Data_HeytingAlgebra_foreign = {
   boolConj = function(b1) return function(b2) return b1 and b2 end end,
   boolDisj = function(b1) return function(b2) return b1 or b2 end end,
   boolNot = function(b) return not b end
 }
+M.Data_Eq_foreign = (function()
+  local refEq = function(r1) return function(r2) return r1 == r2 end end
+  return { eqIntImpl = refEq }
+end)()
 M.Effect_foreign = {
   pureE = function(a) return function() return a end end,
   bindE = function(a) return function(f) return function() return f(a())() end end end
+}
+M.Effect_Console_foreign = {
+  log = function(s) return function() print(s) end end
 }
 M.Type_Proxy_Proxy = {}
 M.Data_HeytingAlgebra_heytingAlgebraBoolean = {
@@ -52,7 +62,7 @@ M.Data_Eq_eqRowCons = function(dictEqRecord)
             return function(ra)
               return function(rb)
                 local key = dictIsSymbol.reflectSymbol(M.Type_Proxy_Proxy)
-                local get = (function(l) return function(r) return r[l] end end)(key)
+                local get = M.Record_Unsafe_foreign.unsafeGet(key)
                 return M.Data_HeytingAlgebra_heytingAlgebraBoolean.conj(M.Data_Eq_eq(dictEq)(get(ra))(get(rb)))(M.Data_Eq_eqRecord(dictEqRecord)(M.Type_Proxy_Proxy)(ra)(rb))
               end
             end
@@ -114,7 +124,7 @@ M.Effect_Lazy_applyEffect = PSLUA_runtime_lazy("applyEffect")(function()
 end)
 M.Golden_BugListGenericEq_Test_discard = M.Control_Bind_bind(M.Effect_bindEffect)
 M.Golden_BugListGenericEq_Test_logShow = function(a_S_2)
-  return (function(s) return function() print(s) end end)((function()
+  return M.Effect_Console_foreign.log((function()
     if a_S_2 then
       return "true"
     else
@@ -226,10 +236,7 @@ M.Golden_BugListGenericEq_Test_eqList = function(dictEq)
   }
 end
 M.Golden_BugListGenericEq_Test_eq = M.Data_Eq_eq(M.Golden_BugListGenericEq_Test_eqList({
-  eq = (function()
-    local refEq = function(r1) return function(r2) return r1 == r2 end end
-    return refEq
-  end)()
+  eq = M.Data_Eq_foreign.eqIntImpl
 }))
 M.Golden_BugListGenericEq_Test_cons = function(head)
   return function(tail)

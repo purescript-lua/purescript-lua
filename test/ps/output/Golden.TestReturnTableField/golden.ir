@@ -1,10 +1,17 @@
 UberModule
-  { uberModuleBindings = [], uberModuleForeigns = [], uberModuleExports =
+  { uberModuleBindings =
+    [ Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.TestReturnTableField", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Golden.TestReturnTableField" ) "src/Golden/ReturnTableField/Test.purs"
+        [ ( Nothing, Name "u" ) ]
+      )
+    ], uberModuleForeigns = [], uberModuleExports =
     [
       ( Name "u", ObjectProp ( Just Always )
-        ( ForeignImport Nothing
-          ( ModuleName "Golden.TestReturnTableField" ) "src/Golden/ReturnTableField/Test.purs"
-          [ ( Nothing, Name "u" ) ]
+        ( Ref Nothing
+          ( Imported ( ModuleName "Golden.TestReturnTableField" ) ( Name "foreign" ) )
         )
         ( PropName "u" )
       )

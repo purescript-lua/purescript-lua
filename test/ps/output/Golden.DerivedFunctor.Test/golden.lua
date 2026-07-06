@@ -19,6 +19,7 @@ local function PSLUA_runtime_lazy(name)
   end
 end
 local M = {}
+M.Data_Show_foreign = { showIntImpl = function(n) return tostring(n) end }
 M.Data_Semiring_foreign = {
   intAdd = function(x) return function(y) return x + y end end,
   intMul = function(x) return function(y) return x * y end end
@@ -26,6 +27,9 @@ M.Data_Semiring_foreign = {
 M.Effect_foreign = {
   pureE = function(a) return function() return a end end,
   bindE = function(a) return function(f) return function() return f(a())() end end end
+}
+M.Effect_Console_foreign = {
+  log = function(s) return function() print(s) end end
 }
 M.Data_Semiring_semiringInt = {
   add = M.Data_Semiring_foreign.intAdd,
@@ -77,7 +81,7 @@ end)
 M.Golden_DerivedFunctor_Test_add = M.Data_Semiring_semiringInt.add
 M.Golden_DerivedFunctor_Test_discard = M.Control_Bind_bind(M.Effect_bindEffect)
 M.Golden_DerivedFunctor_Test_logShow = function(a_S_5)
-  return (function(s) return function() print(s) end end)((function(n) return tostring(n) end)(a_S_5))
+  return M.Effect_Console_foreign.log(M.Data_Show_foreign.showIntImpl(a_S_5))
 end
 M.Golden_DerivedFunctor_Test_Leaf = {
   ["$ctor"] = "Golden.DerivedFunctor.Test∷Tree.Leaf"

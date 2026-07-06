@@ -20,6 +20,7 @@ local function PSLUA_runtime_lazy(name)
 end
 local M = {}
 M.Data_Unit_foreign = { unit = {} }
+M.Data_Show_foreign = { showIntImpl = function(n) return tostring(n) end }
 M.Data_Semiring_foreign = {
   intAdd = function(x) return function(y) return x + y end end,
   intMul = function(x) return function(y) return x * y end end
@@ -27,6 +28,9 @@ M.Data_Semiring_foreign = {
 M.Effect_foreign = {
   pureE = function(a) return function() return a end end,
   bindE = function(a) return function(f) return function() return f(a())() end end end
+}
+M.Effect_Console_foreign = {
+  log = function(s) return function() print(s) end end
 }
 M.Golden_FloatIn_Test_foreign = {
   tick = function(n)
@@ -83,7 +87,7 @@ end)
 M.Golden_FloatIn_Test_add = M.Data_Semiring_semiringInt.add
 M.Golden_FloatIn_Test_discard = M.Control_Bind_bind(M.Effect_bindEffect)
 M.Golden_FloatIn_Test_logShow = function(a_S_2)
-  return (function(s) return function() print(s) end end)((function(n) return tostring(n) end)(a_S_2))
+  return M.Effect_Console_foreign.log(M.Data_Show_foreign.showIntImpl(a_S_2))
 end
 M.Golden_FloatIn_Test_pickShared = function(useIt)
   return function(n)

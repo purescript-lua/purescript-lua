@@ -1,12 +1,7 @@
 local M = {}
-M.Control_Semigroupoid_semigroupoidFn = {
-  compose = function(f)
-    return function(g) return function(x) return f(g(x)) end end
-  end
-}
-M.Control_Semigroupoid_compose = function(dict) return dict.compose end
-M.Data_Semigroup_semigroupArray = {
-  append = function(xs)
+M.Data_Unit_foreign = { unit = {} }
+M.Data_Semigroup_foreign = {
+  concatArray = function(xs)
       return function(ys)
         if #xs == 0 then return ys end
         if #ys == 0 then return xs end
@@ -17,6 +12,20 @@ M.Data_Semigroup_semigroupArray = {
         return result
       end
     end
+}
+M.Data_Show_foreign = { showIntImpl = function(n) return tostring(n) end }
+M.Unsafe_Coerce_foreign = { unsafeCoerce = function(x) return x end }
+M.Effect_Console_foreign = {
+  log = function(s) return function() print(s) end end
+}
+M.Control_Semigroupoid_semigroupoidFn = {
+  compose = function(f)
+    return function(g) return function(x) return f(g(x)) end end
+  end
+}
+M.Control_Semigroupoid_compose = function(dict) return dict.compose end
+M.Data_Semigroup_semigroupArray = {
+  append = M.Data_Semigroup_foreign.concatArray
 }
 M.Data_Semigroup_append = function(dict) return dict.append end
 M.Data_Functor_map = function(dict) return dict.map end
@@ -114,7 +123,7 @@ M.Golden_LongWriterBind_Test_tell = (function()
   }
   return M.Control_Monad_Writer_Trans_compose(function(x_S_467_S_479)
     return x_S_467_S_479
-  end)(M.Control_Monad_Writer_Trans_compose(M.Control_Applicative_pure(dictMonad_S_478.Applicative0()))(M.Data_Tuple_Tuple({})))
+  end)(M.Control_Monad_Writer_Trans_compose(M.Control_Applicative_pure(dictMonad_S_478.Applicative0()))(M.Data_Tuple_Tuple(M.Data_Unit_foreign.unit)))
 end)()
 M.Golden_LongWriterBind_Test_go = (function()
   local _S_kont482 = M.Golden_LongWriterBind_Test_discard(M.Golden_LongWriterBind_Test_tell({
@@ -923,7 +932,7 @@ M.Golden_LongWriterBind_Test_go = (function()
     end)
   end)
 end)()
-M.Golden_LongWriterBind_Test_compute = (M.Control_Semigroupoid_compose(M.Control_Semigroupoid_semigroupoidFn)(function(x) return x end)(function( v_S_39_S_461 )
+M.Golden_LongWriterBind_Test_compute = (M.Control_Semigroupoid_compose(M.Control_Semigroupoid_semigroupoidFn)(M.Unsafe_Coerce_foreign.unsafeCoerce)(function( v_S_39_S_461 )
   return v_S_39_S_461
 end)(M.Golden_LongWriterBind_Test_go)).value0
-return (function(s) return function() print(s) end end)((function(n) return tostring(n) end)(M.Golden_LongWriterBind_Test_compute))()
+return M.Effect_Console_foreign.log(M.Data_Show_foreign.showIntImpl(M.Golden_LongWriterBind_Test_compute))()

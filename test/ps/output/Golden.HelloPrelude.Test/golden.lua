@@ -19,6 +19,7 @@ local function PSLUA_runtime_lazy(name)
   end
 end
 local M = {}
+M.Data_Unit_foreign = { unit = {} }
 M.Effect_foreign = {
   pureE = function(a) return function() return a end end,
   bindE = function(a) return function(f) return function() return f(a())() end end end
@@ -62,4 +63,6 @@ M.Effect_Lazy_applyEffect = PSLUA_runtime_lazy("applyEffect")(function()
     Functor0 = function() return M.Effect_Lazy_functorEffect(0) end
   }
 end)
-return { main = M.Control_Applicative_pure(M.Effect_applicativeEffect)({}) }
+return {
+  main = M.Control_Applicative_pure(M.Effect_applicativeEffect)(M.Data_Unit_foreign.unit)
+}

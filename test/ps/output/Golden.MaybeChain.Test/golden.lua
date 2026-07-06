@@ -19,9 +19,13 @@ local function PSLUA_runtime_lazy(name)
   end
 end
 local M = {}
+M.Data_Show_foreign = { showIntImpl = function(n) return tostring(n) end }
 M.Effect_foreign = {
   pureE = function(a) return function() return a end end,
   bindE = function(a) return function(f) return function() return f(a())() end end end
+}
+M.Effect_Console_foreign = {
+  log = function(s) return function() print(s) end end
 }
 M.Control_Applicative_pure = function(dict) return dict.pure end
 M.Control_Bind_bind = function(dict) return dict.bind end
@@ -83,7 +87,7 @@ M.Effect_Lazy_applyEffect = PSLUA_runtime_lazy("applyEffect")(function()
   }
 end)
 M.Golden_MaybeChain_Test_logShow = function(a_S_4)
-  return (function(s) return function() print(s) end end)((function(n) return tostring(n) end)(a_S_4))
+  return M.Effect_Console_foreign.log(M.Data_Show_foreign.showIntImpl(a_S_4))
 end
 M.Golden_MaybeChain_Test_identity = function(x_S_280) return x_S_280 end
 M.Golden_MaybeChain_Test_map = function(v_S_275)

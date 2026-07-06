@@ -322,6 +322,42 @@ spec = describe "IR Optimizer" do
       annotateShow optimized
       fooKept === [QName mainModule (Name "foo")]
 
+  describe "keeps foreign module tables hoisted (issue #175)" do
+    -- A foreign module's value table must stay a single shared binding:
+    -- its export values (some of which are Lua table constructors with
+    -- identity, e.g. `unit = {}`) are invisible to the IR, so pasting the
+    -- 'ForeignImport' into its use site can multiply allocations and
+    -- change identity. Here the only use sits under a lambda: inlining
+    -- would re-create the table on every call.
+    test "does not inline a used-once foreign import" do
+      let mainModule = moduleNameFromString "Main"
+          original =
+            Module
+              { moduleName = mainModule
+              , moduleBindings =
+                  [ Standalone
+                      ( noAnn
+                      , Name "f"
+                      , abstraction paramUnused (refLocal (Name "x"))
+                      )
+                  ]
+              , moduleImports = []
+              , moduleExports = [Name "f"]
+              , moduleReExports = Map.empty
+              , moduleForeigns = [(noAnn, Name "x")]
+              , modulePath = "Main.purs"
+              }
+          optimized =
+            optimizedUberModule $
+              Linker.makeUberModule (LinkAsModule mainModule) [original]
+          foreignKept =
+            [ qn
+            | Standalone (qn, ForeignImport {}) ←
+                Linker.uberModuleBindings optimized
+            ]
+      annotateShow optimized
+      foreignKept === [QName mainModule (Name "foreign")]
+
   describe "counts free references against the live module (#143)" do
     -- Within a single 'optimizeModule' run the use-once check must consult
     -- the current (post-substitution) view of the module, not a stale

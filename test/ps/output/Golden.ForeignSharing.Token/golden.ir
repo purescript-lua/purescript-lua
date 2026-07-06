@@ -1,0 +1,19 @@
+UberModule
+  { uberModuleBindings =
+    [ Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.ForeignSharing.Token", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Golden.ForeignSharing.Token" ) "src/Golden/ForeignSharing/Token.purs"
+        [ ( Nothing, Name "token" ) ]
+      )
+    ], uberModuleForeigns = [], uberModuleExports =
+    [
+      ( Name "token", ObjectProp ( Just Always )
+        ( Ref Nothing
+          ( Imported ( ModuleName "Golden.ForeignSharing.Token" ) ( Name "foreign" ) )
+        )
+        ( PropName "token" )
+      )
+    ]
+  }

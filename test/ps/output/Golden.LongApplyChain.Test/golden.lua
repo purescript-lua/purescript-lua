@@ -2,6 +2,10 @@ local M = {}
 M.Data_Semigroup_foreign = {
   concatString = function(s1) return function(s2) return s1 .. s2 end end
 }
+M.Data_Show_foreign = { showIntImpl = function(n) return tostring(n) end }
+M.Effect_Console_foreign = {
+  log = function(s) return function() print(s) end end
+}
 M.Data_Show_show = function(dict) return dict.show end
 M.Data_Functor_map = function(dict) return dict.map end
 M.Data_Maybe_Nothing = { ["$ctor"] = "Data.Maybe∷Maybe.Nothing" }
@@ -59,11 +63,11 @@ M.Golden_LongApplyChain_Test_compute = (function()
   local _S_tmp301 = M.Golden_LongApplyChain_Test_applySecond(M.Golden_LongApplyChain_Test_applySecond(M.Golden_LongApplyChain_Test_applySecond(M.Golden_LongApplyChain_Test_applySecond(M.Golden_LongApplyChain_Test_applySecond(M.Golden_LongApplyChain_Test_applySecond(M.Golden_LongApplyChain_Test_applySecond(M.Golden_LongApplyChain_Test_applySecond(M.Golden_LongApplyChain_Test_applySecond(M.Golden_LongApplyChain_Test_applySecond(M.Golden_LongApplyChain_Test_applySecond(M.Golden_LongApplyChain_Test_applySecond(M.Golden_LongApplyChain_Test_applySecond(M.Golden_LongApplyChain_Test_applySecond(M.Golden_LongApplyChain_Test_applySecond(M.Golden_LongApplyChain_Test_applySecond(M.Golden_LongApplyChain_Test_applySecond(M.Golden_LongApplyChain_Test_applySecond(M.Golden_LongApplyChain_Test_applySecond(M.Golden_LongApplyChain_Test_applySecond(_S_tmp300(M.Data_Maybe_Just(261)))(M.Data_Maybe_Just(262)))(M.Data_Maybe_Just(263)))(M.Data_Maybe_Just(264)))(M.Data_Maybe_Just(265)))(M.Data_Maybe_Just(266)))(M.Data_Maybe_Just(267)))(M.Data_Maybe_Just(268)))(M.Data_Maybe_Just(269)))(M.Data_Maybe_Just(270)))(M.Data_Maybe_Just(271)))(M.Data_Maybe_Just(272)))(M.Data_Maybe_Just(273)))(M.Data_Maybe_Just(274)))(M.Data_Maybe_Just(275)))(M.Data_Maybe_Just(276)))(M.Data_Maybe_Just(277)))(M.Data_Maybe_Just(278)))(M.Data_Maybe_Just(279)))(M.Data_Maybe_Just(280)))
   return M.Golden_LongApplyChain_Test_applySecond(M.Golden_LongApplyChain_Test_applySecond(M.Golden_LongApplyChain_Test_applySecond(M.Golden_LongApplyChain_Test_applySecond(M.Golden_LongApplyChain_Test_applySecond(M.Golden_LongApplyChain_Test_applySecond(M.Golden_LongApplyChain_Test_applySecond(M.Golden_LongApplyChain_Test_applySecond(M.Golden_LongApplyChain_Test_applySecond(M.Golden_LongApplyChain_Test_applySecond(M.Golden_LongApplyChain_Test_applySecond(M.Golden_LongApplyChain_Test_applySecond(M.Golden_LongApplyChain_Test_applySecond(M.Golden_LongApplyChain_Test_applySecond(M.Golden_LongApplyChain_Test_applySecond(M.Golden_LongApplyChain_Test_applySecond(M.Golden_LongApplyChain_Test_applySecond(M.Golden_LongApplyChain_Test_applySecond(M.Golden_LongApplyChain_Test_applySecond(_S_tmp301(M.Data_Maybe_Just(281)))(M.Data_Maybe_Just(282)))(M.Data_Maybe_Just(283)))(M.Data_Maybe_Just(284)))(M.Data_Maybe_Just(285)))(M.Data_Maybe_Just(286)))(M.Data_Maybe_Just(287)))(M.Data_Maybe_Just(288)))(M.Data_Maybe_Just(289)))(M.Data_Maybe_Just(290)))(M.Data_Maybe_Just(291)))(M.Data_Maybe_Just(292)))(M.Data_Maybe_Just(293)))(M.Data_Maybe_Just(294)))(M.Data_Maybe_Just(295)))(M.Data_Maybe_Just(296)))(M.Data_Maybe_Just(297)))(M.Data_Maybe_Just(298)))(M.Data_Maybe_Just(299)))(M.Data_Maybe_Just(300))
 end)()
-return (function(s) return function() print(s) end end)(M.Data_Show_show({
+return M.Effect_Console_foreign.log(M.Data_Show_show({
   show = function(v_S_20_S_287)
     if "Data.Maybe∷Maybe.Just" == v_S_20_S_287["$ctor"] then
       return M.Data_Semigroup_foreign.concatString("(Just ")(M.Data_Semigroup_foreign.concatString(M.Data_Show_show({
-        show = function(n) return tostring(n) end
+        show = M.Data_Show_foreign.showIntImpl
       })(v_S_20_S_287.value0))(")"))
     else
       if "Data.Maybe∷Maybe.Nothing" == v_S_20_S_287["$ctor"] then

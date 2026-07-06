@@ -1,32 +1,39 @@
 local M = {}
+M.Data_Show_foreign = { showIntImpl = function(n) return tostring(n) end }
 M.Data_Semiring_foreign = {
   intAdd = function(x) return function(y) return x + y end end
+}
+M.Data_Ord_foreign = (function()
+  local unsafeCoerceImpl = function(lt)
+    return function(eq)
+      return function(gt)
+        return function(x)
+          return function(y)
+            if x < y then
+              return lt
+            elseif x == y then
+              return eq
+            else
+              return gt
+            end
+          end
+        end
+      end
+    end
+  end
+  return { ordIntImpl = unsafeCoerceImpl }
+end)()
+M.Effect_Console_foreign = {
+  log = function(s) return function() print(s) end end
 }
 M.Golden_LongCallbackChain_Test_withInc = function(n)
   return function(k)
     if (function()
-      if "Data.Ordering∷Ordering.LT" == ((function()
-        local unsafeCoerceImpl = function(lt)
-          return function(eq)
-            return function(gt)
-              return function(x)
-                return function(y)
-                  if x < y then
-                    return lt
-                  elseif x == y then
-                    return eq
-                  else
-                    return gt
-                  end
-                end
-              end
-            end
-          end
-        end
-        return unsafeCoerceImpl
-      end)()({ ["$ctor"] = "Data.Ordering∷Ordering.LT" })({
-        ["$ctor"] = "Data.Ordering∷Ordering.EQ"
-      })({ ["$ctor"] = "Data.Ordering∷Ordering.GT" })(n)(0))["$ctor"] then
+      if "Data.Ordering∷Ordering.LT" == (M.Data_Ord_foreign.ordIntImpl({
+        ["$ctor"] = "Data.Ordering∷Ordering.LT"
+      })({ ["$ctor"] = "Data.Ordering∷Ordering.EQ" })({
+        ["$ctor"] = "Data.Ordering∷Ordering.GT"
+      })(n)(0))["$ctor"] then
         return true
       else
         return false
@@ -662,4 +669,4 @@ M.Golden_LongCallbackChain_Test_compute = (function()
     end)
   end)
 end)()
-return (function(s) return function() print(s) end end)((function(n) return tostring(n) end)(M.Golden_LongCallbackChain_Test_compute))()
+return M.Effect_Console_foreign.log(M.Data_Show_foreign.showIntImpl(M.Golden_LongCallbackChain_Test_compute))()

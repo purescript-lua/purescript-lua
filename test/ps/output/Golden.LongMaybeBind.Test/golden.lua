@@ -3,8 +3,12 @@ M.Data_Unit_foreign = { unit = {} }
 M.Data_Semigroup_foreign = {
   concatString = function(s1) return function(s2) return s1 .. s2 end end
 }
+M.Data_Show_foreign = { showIntImpl = function(n) return tostring(n) end }
 M.Data_Semiring_foreign = {
   intAdd = function(x) return function(y) return x + y end end
+}
+M.Effect_Console_foreign = {
+  log = function(s) return function() print(s) end end
 }
 M.Data_Show_show = function(dict) return dict.show end
 M.Data_Maybe_Just = function(value0)
@@ -667,11 +671,11 @@ M.Golden_LongMaybeBind_Test_compute = (function()
     end)
   end)
 end)()
-return (function(s) return function() print(s) end end)(M.Data_Show_show({
+return M.Effect_Console_foreign.log(M.Data_Show_show({
   show = function(v_S_16_S_278)
     if "Data.Maybe∷Maybe.Just" == v_S_16_S_278["$ctor"] then
       return M.Data_Semigroup_foreign.concatString("(Just ")(M.Data_Semigroup_foreign.concatString(M.Data_Show_show({
-        show = function(n) return tostring(n) end
+        show = M.Data_Show_foreign.showIntImpl
       })(v_S_16_S_278.value0))(")"))
     else
       if "Data.Maybe∷Maybe.Nothing" == v_S_16_S_278["$ctor"] then

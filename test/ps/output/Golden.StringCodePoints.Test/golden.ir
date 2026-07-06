@@ -18,6 +18,12 @@ UberModule
         ]
       ), Standalone
       ( QName
+        { qnameModuleName = ModuleName "Data.Semigroup", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Data.Semigroup" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Semigroup.purs"
+        [ ( Nothing, Name "concatString" ) ]
+      ), Standalone
+      ( QName
         { qnameModuleName = ModuleName "Data.Show", qnameName = Name "foreign"
         }, ForeignImport Nothing
         ( ModuleName "Data.Show" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Show.purs"
@@ -30,10 +36,22 @@ UberModule
         [ ( Nothing, Name "intAdd" ), ( Nothing, Name "intMul" ) ]
       ), Standalone
       ( QName
+        { qnameModuleName = ModuleName "Data.Ring", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Data.Ring" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Ring.purs"
+        [ ( Nothing, Name "intSub" ) ]
+      ), Standalone
+      ( QName
         { qnameModuleName = ModuleName "Data.Ord", qnameName = Name "foreign"
         }, ForeignImport Nothing
         ( ModuleName "Data.Ord" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Ord.purs"
         [ ( Nothing, Name "ordIntImpl" ), ( Nothing, Name "ordCharImpl" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Functor", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Data.Functor" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Functor.purs"
+        [ ( Nothing, Name "arrayMap" ) ]
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Data.Bounded", qnameName = Name "foreign"
@@ -58,6 +76,18 @@ UberModule
         }, ForeignImport Nothing
         ( ModuleName "Partial.Unsafe" ) ".spago/p/partial/2f5c69b1de8f88f1fbc9b98281c9436088ae0789/src/Partial/Unsafe.purs"
         [ ( Nothing, Name "_unsafePartial" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Unfoldable", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Data.Unfoldable" ) ".spago/p/unfoldable/edeede27b9604d28373c864d963fcac51398905b/src/Data/Unfoldable.purs"
+        [ ( Nothing, Name "unfoldrArrayImpl" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Array", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Data.Array" ) ".spago/p/arrays/1579351579d43877b3c90a47ead9f88d8904c448/src/Data/Array.purs"
+        [ ( Nothing, Name "length" ) ]
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Data.Enum", qnameName = Name "foreign"
@@ -89,6 +119,12 @@ UberModule
           ( Nothing, Name "_take" ),
           ( Nothing, Name "_unsafeCodePointAt0" )
         ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Effect.Console" ) ".spago/p/console/f82835a0b873aafe6bd7b14dd30cc150553d4ab9/src/Effect/Console.purs"
+        [ ( Nothing, Name "log" ) ]
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Control.Semigroupoid", qnameName = Name "semigroupoidFn"
@@ -197,10 +233,7 @@ UberModule
         }, LiteralObject Nothing
         [
           ( PropName "append", ObjectProp ( Just Always )
-            ( ForeignImport Nothing
-              ( ModuleName "Data.Semigroup" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Semigroup.purs"
-              [ ( Nothing, Name "concatString" ) ]
-            )
+            ( Ref Nothing ( Imported ( ModuleName "Data.Semigroup" ) ( Name "foreign" ) ) )
             ( PropName "concatString" )
           )
         ]
@@ -277,10 +310,7 @@ UberModule
         }, LiteralObject Nothing
         [
           ( PropName "sub", ObjectProp ( Just Always )
-            ( ForeignImport Nothing
-              ( ModuleName "Data.Ring" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Ring.purs"
-              [ ( Nothing, Name "intSub" ) ]
-            )
+            ( Ref Nothing ( Imported ( ModuleName "Data.Ring" ) ( Name "foreign" ) ) )
             ( PropName "intSub" )
           ),
           ( PropName "Semiring0", Abs Nothing ( ParamUnused Nothing )
@@ -1714,9 +1744,8 @@ UberModule
                     ( App Nothing
                       ( App Nothing
                         ( ObjectProp ( Just Always )
-                          ( ForeignImport Nothing
-                            ( ModuleName "Data.Unfoldable" ) ".spago/p/unfoldable/edeede27b9604d28373c864d963fcac51398905b/src/Data/Unfoldable.purs"
-                            [ ( Nothing, Name "unfoldrArrayImpl" ) ]
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Data.Unfoldable" ) ( Name "foreign" ) )
                           )
                           ( PropName "unfoldrArrayImpl" )
                         )
@@ -2186,10 +2215,7 @@ UberModule
           ( ParamNamed Nothing ( Name "a" ) )
           ( App Nothing
             ( ObjectProp ( Just Always )
-              ( ForeignImport Nothing
-                ( ModuleName "Effect.Console" ) ".spago/p/console/f82835a0b873aafe6bd7b14dd30cc150553d4ab9/src/Effect/Console.purs"
-                [ ( Nothing, Name "log" ) ]
-              )
+              ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
               ( PropName "log" )
             )
             ( App Nothing
@@ -2307,10 +2333,7 @@ UberModule
               ( LiteralObject Nothing
                 [
                   ( PropName "map", ObjectProp ( Just Always )
-                    ( ForeignImport Nothing
-                      ( ModuleName "Data.Functor" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Functor.purs"
-                      [ ( Nothing, Name "arrayMap" ) ]
-                    )
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Functor" ) ( Name "foreign" ) ) )
                     ( PropName "arrayMap" )
                   )
                 ]
@@ -2361,9 +2384,8 @@ UberModule
                           ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "compose" ) )
                         )
                         ( ObjectProp ( Just Always )
-                          ( ForeignImport Nothing
-                            ( ModuleName "Data.Array" ) ".spago/p/arrays/1579351579d43877b3c90a47ead9f88d8904c448/src/Data/Array.purs"
-                            [ ( Nothing, Name "length" ) ]
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Data.Array" ) ( Name "foreign" ) )
                           )
                           ( PropName "length" )
                         )
