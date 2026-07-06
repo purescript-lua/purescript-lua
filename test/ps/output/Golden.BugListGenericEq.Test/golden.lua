@@ -28,7 +28,7 @@ M.Effect_foreign = {
   pureE = function(a) return function() return a end end,
   bindE = function(a) return function(f) return function() return f(a())() end end end
 }
-M.Type_Proxy_Proxy = { ["$ctor"] = "Type.Proxy∷Proxy.Proxy" }
+M.Type_Proxy_Proxy = {}
 M.Data_HeytingAlgebra_heytingAlgebraBoolean = {
   ff = false,
   tt = true,
@@ -151,7 +151,7 @@ M.Golden_BugListGenericEq_Test_genericList = {
     if "Golden.BugListGenericEq.Test∷List.Nil" == x0["$ctor"] then
       return (function(value0)
         return { ["$ctor"] = "Data.Generic.Rep∷Sum.Inl", value0 = value0 }
-      end)({ ["$ctor"] = "Data.Generic.Rep∷NoArguments.NoArguments" })
+      end)({})
     else
       if "Golden.BugListGenericEq.Test∷List.Cons" == x0["$ctor"] then
         return (function(value0)

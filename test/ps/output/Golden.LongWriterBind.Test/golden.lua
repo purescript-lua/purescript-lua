@@ -27,13 +27,7 @@ M.Data_Monoid_monoidArray = {
   Semigroup0 = function() return M.Data_Semigroup_semigroupArray end
 }
 M.Data_Tuple_Tuple = function(value0)
-  return function(value1)
-    return {
-      ["$ctor"] = "Data.Tuple∷Tuple.Tuple",
-      value0 = value0,
-      value1 = value1
-    }
-  end
+  return function(value1) return { value0 = value0, value1 = value1 } end
 end
 M.Data_Identity_applyIdentity = {
   apply = function(v) return function(v1) return v(v1) end end,

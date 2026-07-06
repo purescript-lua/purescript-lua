@@ -631,13 +631,7 @@ M.Data_String_CodePoints_toCodePointArray = M.Data_String_CodePoints_foreign._to
   end)(function(s_S_11)
     return M.Data_Functor_map(M.Data_Maybe_functorMaybe)(function(v_S_12)
       return (function(value0)
-        return function(value1)
-          return {
-            ["$ctor"] = "Data.Tuple∷Tuple.Tuple",
-            value0 = value0,
-            value1 = value1
-          }
-        end
+        return function(value1) return { value0 = value0, value1 = value1 } end
       end)(v_S_12.head)(v_S_12.tail)
     end)(M.Data_String_CodePoints_uncons(s_S_11))
   end)(s_S_10)

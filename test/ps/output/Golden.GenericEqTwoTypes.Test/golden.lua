@@ -28,7 +28,7 @@ M.Effect_foreign = {
   pureE = function(a) return function() return a end end,
   bindE = function(a) return function(f) return function() return f(a())() end end end
 }
-M.Type_Proxy_Proxy = { ["$ctor"] = "Type.Proxy∷Proxy.Proxy" }
+M.Type_Proxy_Proxy = {}
 M.Data_HeytingAlgebra_heytingAlgebraBoolean = {
   ff = false,
   tt = true,
@@ -76,9 +76,7 @@ end
 M.Data_Generic_Rep_Inr = function(value0)
   return { ["$ctor"] = "Data.Generic.Rep∷Sum.Inr", value0 = value0 }
 end
-M.Data_Generic_Rep_NoArguments = {
-  ["$ctor"] = "Data.Generic.Rep∷NoArguments.NoArguments"
-}
+M.Data_Generic_Rep_NoArguments = {}
 M.Data_Eq_Generic_genericEqArgument = function(dictEq)
   return {
     genericEqPrime = function(v)

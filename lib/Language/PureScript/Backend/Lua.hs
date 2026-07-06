@@ -181,11 +181,17 @@ fromIR foreigns topLevelNames modname ir = case ir of
     Right . (`Lua.varField` Lua.unsafeName ("value" <> show i)) <$> goExp e
   IR.Eq _ann l r →
     Right <$> liftA2 Lua.equalTo (goExp l) (goExp r)
-  IR.Ctor _ann _algebraicTy ctorModName ctorTyName ctorName fieldNames →
+  IR.Ctor _ann algebraicTy ctorModName ctorTyName ctorName fieldNames →
     pure . Right $ foldr wrap value args
    where
     wrap name expr = Lua.functionDef [ParamNamed name] [Lua.return expr]
-    value = Lua.table $ ctorRow : attributes
+    -- Only sum-type constructors need the tag row: the pattern matcher emits a
+    -- ReflectCtor read (the reflectCtor == ctorId test) exclusively for sum
+    -- types, so on a product value the row would never be read.
+    -- See Note [Compiling case expressions to decision trees].
+    value = Lua.table case algebraicTy of
+      IR.SumType → ctorRow : attributes
+      IR.ProductType → attributes
     ctorId = IR.ctorId ctorModName ctorTyName ctorName
     ctorRow = Lua.tableRowKV keyCtor (Lua.String ctorId)
     args = Name.unsafeName . IR.renderFieldName <$> fieldNames
