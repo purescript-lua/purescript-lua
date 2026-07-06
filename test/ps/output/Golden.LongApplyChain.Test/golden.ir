@@ -2,6 +2,12 @@ UberModule
   { uberModuleBindings =
     [ Standalone
       ( QName
+        { qnameModuleName = ModuleName "Data.Semigroup", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Data.Semigroup" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Semigroup.purs"
+        [ ( Nothing, Name "concatString" ) ]
+      ), Standalone
+      ( QName
         { qnameModuleName = ModuleName "Data.Show", qnameName = Name "show" }, Abs Nothing
         ( ParamNamed Nothing ( Name "dict" ) )
         ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) ) ( PropName "show" ) )
@@ -10,22 +16,6 @@ UberModule
         { qnameModuleName = ModuleName "Data.Functor", qnameName = Name "map" }, Abs Nothing
         ( ParamNamed Nothing ( Name "dict" ) )
         ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) ) ( PropName "map" ) )
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Data.Maybe", qnameName = Name "append"
-        }, ObjectProp Nothing
-        ( LiteralObject Nothing
-          [
-            ( PropName "append", ObjectProp ( Just Always )
-              ( ForeignImport Nothing
-                ( ModuleName "Data.Semigroup" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Semigroup.purs"
-                [ ( Nothing, Name "concatString" ) ]
-              )
-              ( PropName "concatString" )
-            )
-          ]
-        )
-        ( PropName "append" )
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Data.Maybe", qnameName = Name "Nothing"
@@ -142,38 +132,9 @@ UberModule
                     )
                   )
                   ( Abs Nothing ( ParamUnused Nothing )
-                    ( ObjectProp Nothing
-                      ( LiteralObject Nothing
-                        [
-                          ( PropName "identity", Abs Nothing
-                            ( ParamNamed Nothing ( Name "x$923" ) )
-                            ( Ref Nothing ( Local ( Name "x$923" ) ) )
-                          ),
-                          ( PropName "Semigroupoid0", Abs Nothing ( ParamUnused Nothing )
-                            ( LiteralObject Nothing
-                              [
-                                ( PropName "compose", Abs Nothing
-                                  ( ParamNamed Nothing ( Name "f$925" ) )
-                                  ( Abs Nothing
-                                    ( ParamNamed Nothing ( Name "g$926" ) )
-                                    ( Abs Nothing
-                                      ( ParamNamed Nothing ( Name "x$927" ) )
-                                      ( App Nothing
-                                        ( Ref Nothing ( Local ( Name "f$925" ) ) )
-                                        ( App Nothing
-                                          ( Ref Nothing ( Local ( Name "g$926" ) ) )
-                                          ( Ref Nothing ( Local ( Name "x$927" ) ) )
-                                        )
-                                      )
-                                    )
-                                  )
-                                )
-                              ]
-                            )
-                          )
-                        ]
-                      )
-                      ( PropName "identity" )
+                    ( Abs Nothing
+                      ( ParamNamed Nothing ( Name "x$923" ) )
+                      ( Ref Nothing ( Local ( Name "x$923" ) ) )
                     )
                   )
                 )
@@ -5479,13 +5440,21 @@ UberModule
                     )
                     ( App Nothing
                       ( App Nothing
-                        ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "append" ) ) )
+                        ( ObjectProp ( Just Always )
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Data.Semigroup" ) ( Name "foreign" ) )
+                          )
+                          ( PropName "concatString" )
+                        )
                         ( LiteralString Nothing "(Just " )
                       )
                       ( App Nothing
                         ( App Nothing
-                          ( Ref Nothing
-                            ( Imported ( ModuleName "Data.Maybe" ) ( Name "append" ) )
+                          ( ObjectProp ( Just Always )
+                            ( Ref Nothing
+                              ( Imported ( ModuleName "Data.Semigroup" ) ( Name "foreign" ) )
+                            )
+                            ( PropName "concatString" )
                           )
                           ( App Nothing
                             ( App Nothing

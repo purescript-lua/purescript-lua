@@ -385,17 +385,6 @@ M.Data_Maybe_showMaybe = function(dictShow)
     end
   }
 end
-M.Data_Maybe_isNothing = function(v2_S_2338)
-  if "Data.Maybe∷Maybe.Nothing" == v2_S_2338["$ctor"] then
-    return true
-  else
-    if "Data.Maybe∷Maybe.Just" == v2_S_2338["$ctor"] then
-      return false
-    else
-      return error("No patterns matched")
-    end
-  end
-end
 M.Data_Maybe_functorMaybe = {
   map = function(v)
     return function(v1)
@@ -416,8 +405,6 @@ M.Data_Maybe_fromJust = function()
     end
   end
 end
-M.Data_Tuple_snd = function(v) return v.value1 end
-M.Data_Tuple_fst = function(v) return v.value0 end
 M.Effect_monadEffect = {
   Applicative0 = function() return M.Effect_applicativeEffect end,
   Bind1 = function() return M.Effect_bindEffect end
@@ -628,9 +615,21 @@ M.Data_String_CodePoints_toCodePointArray = M.Data_String_CodePoints_foreign._to
           end
         end
       end
-    end)(M.Data_Maybe_isNothing)((function(f) return f(); end)(function()
+    end)(function(v2_S_2338_S_2360)
+    if "Data.Maybe∷Maybe.Nothing" == v2_S_2338_S_2360["$ctor"] then
+      return true
+    else
+      if "Data.Maybe∷Maybe.Just" == v2_S_2338_S_2360["$ctor"] then
+        return false
+      else
+        return error("No patterns matched")
+      end
+    end
+  end)((function(f) return f(); end)(function()
     return M.Data_Maybe_fromJust()
-  end))(M.Data_Tuple_fst)(M.Data_Tuple_snd)(function(s_S_11)
+  end))(function(v_S_2358) return v_S_2358.value0 end)(function(v_S_2359)
+    return v_S_2359.value1
+  end)(function(s_S_11)
     return M.Data_Functor_map(M.Data_Maybe_functorMaybe)(function(v_S_12)
       return (function(value0)
         return function(value1)
@@ -716,9 +715,7 @@ M.Effect_Console_logShow = function(dictShow)
 end
 M.Golden_StringCodePoints_Test_compose = M.Control_Semigroupoid_compose(M.Control_Semigroupoid_semigroupoidFn)
 M.Golden_StringCodePoints_Test_fromEnum = M.Data_Enum_fromEnum(M.Data_String_CodePoints_boundedEnumCodePoint)
-M.Golden_StringCodePoints_Test_discard = (function(dictBind_S_2347)
-  return M.Control_Bind_bind(dictBind_S_2347)
-end)(M.Effect_bindEffect)
+M.Golden_StringCodePoints_Test_discard = M.Control_Bind_bind(M.Effect_bindEffect)
 M.Golden_StringCodePoints_Test_showArray = {
   show = M.Data_Show_foreign.showArrayImpl(M.Data_Show_show(M.Data_Show_showInt))
 }

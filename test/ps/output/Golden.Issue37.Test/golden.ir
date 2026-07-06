@@ -214,19 +214,12 @@ UberModule
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.Issue37.Test", qnameName = Name "discard"
-        }, ObjectProp Nothing
-        ( LiteralObject Nothing
-          [
-            ( PropName "discard", Abs Nothing
-              ( ParamNamed Nothing ( Name "dictBind$30$730" ) )
-              ( App Nothing
-                ( Ref Nothing ( Imported ( ModuleName "Control.Bind" ) ( Name "bind" ) ) )
-                ( Ref Nothing ( Local ( Name "dictBind$30$730" ) ) )
-              )
-            )
-          ]
+        }, Abs Nothing
+        ( ParamNamed Nothing ( Name "dictBind$30$730" ) )
+        ( App Nothing
+          ( Ref Nothing ( Imported ( ModuleName "Control.Bind" ) ( Name "bind" ) ) )
+          ( Ref Nothing ( Local ( Name "dictBind$30$730" ) ) )
         )
-        ( PropName "discard" )
       )
     ], uberModuleForeigns = [], uberModuleExports =
     [

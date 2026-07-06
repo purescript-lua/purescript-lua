@@ -112,21 +112,19 @@ M.Effect_Lazy_applyEffect = PSLUA_runtime_lazy("applyEffect")(function()
     Functor0 = function() return M.Effect_Lazy_functorEffect(0) end
   }
 end)
-M.Golden_BugListGenericEq_Test_discard = (function(dictBind_S_49_S_695)
-  return M.Control_Bind_bind(dictBind_S_49_S_695)
-end)(M.Effect_bindEffect)
+M.Golden_BugListGenericEq_Test_discard = M.Control_Bind_bind(M.Effect_bindEffect)
 M.Golden_BugListGenericEq_Test_logShow = function(a_S_2)
-  return (function(s) return function() print(s) end end)((function( v_S_464_S_696 )
-    if v_S_464_S_696 then
+  return (function(s) return function() print(s) end end)((function()
+    if a_S_2 then
       return "true"
     else
-      if false == v_S_464_S_696 then
+      if false == a_S_2 then
         return "false"
       else
         return error("No patterns matched")
       end
     end
-  end)(a_S_2))
+  end)())
 end
 M.Golden_BugListGenericEq_Test_Nil = {
   ["$ctor"] = "Golden.BugListGenericEq.Test∷List.Nil"

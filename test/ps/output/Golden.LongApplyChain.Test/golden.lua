@@ -1,7 +1,9 @@
 local M = {}
+M.Data_Semigroup_foreign = {
+  concatString = function(s1) return function(s2) return s1 .. s2 end end
+}
 M.Data_Show_show = function(dict) return dict.show end
 M.Data_Functor_map = function(dict) return dict.map end
-M.Data_Maybe_append = function(s1) return function(s2) return s1 .. s2 end end
 M.Data_Maybe_Nothing = { ["$ctor"] = "Data.Maybe∷Maybe.Nothing" }
 M.Data_Maybe_Just = function(value0)
   return { ["$ctor"] = "Data.Maybe∷Maybe.Just", value0 = value0 }
@@ -60,7 +62,7 @@ end)()
 return (function(s) return function() print(s) end end)(M.Data_Show_show({
   show = function(v_S_920)
     if "Data.Maybe∷Maybe.Just" == v_S_920["$ctor"] then
-      return M.Data_Maybe_append("(Just ")(M.Data_Maybe_append(M.Data_Show_show({
+      return M.Data_Semigroup_foreign.concatString("(Just ")(M.Data_Semigroup_foreign.concatString(M.Data_Show_show({
         show = function(n) return tostring(n) end
       })(v_S_920.value0))(")"))
     else

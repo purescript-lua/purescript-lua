@@ -179,21 +179,19 @@ M.Golden_GenericEqTwoTypes_Test_eqRowCons = M.Data_Eq_eqRowCons({
     return function() return function() return true end end
   end
 })()
-M.Golden_GenericEqTwoTypes_Test_discard = (function(dictBind_S_37_S_685)
-  return M.Control_Bind_bind(dictBind_S_37_S_685)
-end)(M.Effect_bindEffect)
+M.Golden_GenericEqTwoTypes_Test_discard = M.Control_Bind_bind(M.Effect_bindEffect)
 M.Golden_GenericEqTwoTypes_Test_logShow = function(a_S_2)
-  return (function(s) return function() print(s) end end)((function( v_S_452_S_686 )
-    if v_S_452_S_686 then
+  return (function(s) return function() print(s) end end)((function()
+    if a_S_2 then
       return "true"
     else
-      if false == v_S_452_S_686 then
+      if false == a_S_2 then
         return "false"
       else
         return error("No patterns matched")
       end
     end
-  end)(a_S_2))
+  end)())
 end
 M.Golden_GenericEqTwoTypes_Test_Leaf = {
   ["$ctor"] = "Golden.GenericEqTwoTypes.Test∷Tree.Leaf"
