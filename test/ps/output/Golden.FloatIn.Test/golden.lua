@@ -80,9 +80,7 @@ M.Effect_Lazy_applyEffect = PSLUA_runtime_lazy("applyEffect")(function()
   }
 end)
 M.Golden_FloatIn_Test_add = M.Data_Semiring_semiringInt.add
-M.Golden_FloatIn_Test_discard = (function(dictBind_S_23_S_723)
-  return M.Control_Bind_bind(dictBind_S_23_S_723)
-end)(M.Effect_bindEffect)
+M.Golden_FloatIn_Test_discard = M.Control_Bind_bind(M.Effect_bindEffect)
 M.Golden_FloatIn_Test_logShow = function(a_S_2)
   return (function(s) return function() print(s) end end)((function(n) return tostring(n) end)(a_S_2))
 end

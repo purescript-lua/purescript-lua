@@ -242,20 +242,7 @@ UberModule
       ( QName
         { qnameModuleName = ModuleName "Golden.DerivedFunctor.Test", qnameName = Name "discard"
         }, App Nothing
-        ( ObjectProp Nothing
-          ( LiteralObject Nothing
-            [
-              ( PropName "discard", Abs Nothing
-                ( ParamNamed Nothing ( Name "dictBind$26$726" ) )
-                ( App Nothing
-                  ( Ref Nothing ( Imported ( ModuleName "Control.Bind" ) ( Name "bind" ) ) )
-                  ( Ref Nothing ( Local ( Name "dictBind$26$726" ) ) )
-                )
-              )
-            ]
-          )
-          ( PropName "discard" )
-        )
+        ( Ref Nothing ( Imported ( ModuleName "Control.Bind" ) ( Name "bind" ) ) )
         ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "bindEffect" ) ) )
       ), Standalone
       ( QName
@@ -271,19 +258,12 @@ UberModule
             ( PropName "log" )
           )
           ( App Nothing
-            ( ObjectProp Nothing
-              ( LiteralObject Nothing
-                [
-                  ( PropName "show", ObjectProp ( Just Always )
-                    ( ForeignImport Nothing
-                      ( ModuleName "Data.Show" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Show.purs"
-                      [ ( Nothing, Name "showIntImpl" ) ]
-                    )
-                    ( PropName "showIntImpl" )
-                  )
-                ]
+            ( ObjectProp ( Just Always )
+              ( ForeignImport Nothing
+                ( ModuleName "Data.Show" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Show.purs"
+                [ ( Nothing, Name "showIntImpl" ) ]
               )
-              ( PropName "show" )
+              ( PropName "showIntImpl" )
             )
             ( Ref Nothing ( Local ( Name "a$5" ) ) )
           )

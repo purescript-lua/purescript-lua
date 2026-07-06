@@ -416,20 +416,7 @@ UberModule
       ( QName
         { qnameModuleName = ModuleName "Golden.BugListGenericEq.Test", qnameName = Name "discard"
         }, App Nothing
-        ( ObjectProp Nothing
-          ( LiteralObject Nothing
-            [
-              ( PropName "discard", Abs Nothing
-                ( ParamNamed Nothing ( Name "dictBind$49$695" ) )
-                ( App Nothing
-                  ( Ref Nothing ( Imported ( ModuleName "Control.Bind" ) ( Name "bind" ) ) )
-                  ( Ref Nothing ( Local ( Name "dictBind$49$695" ) ) )
-                )
-              )
-            ]
-          )
-          ( PropName "discard" )
-        )
+        ( Ref Nothing ( Imported ( ModuleName "Control.Bind" ) ( Name "bind" ) ) )
         ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "bindEffect" ) ) )
       ), Standalone
       ( QName
@@ -444,29 +431,14 @@ UberModule
             )
             ( PropName "log" )
           )
-          ( App Nothing
-            ( ObjectProp Nothing
-              ( LiteralObject Nothing
-                [
-                  ( PropName "show", Abs Nothing
-                    ( ParamNamed Nothing ( Name "v$464$696" ) )
-                    ( IfThenElse Nothing
-                      ( Ref Nothing ( Local ( Name "v$464$696" ) ) )
-                      ( LiteralString Nothing "true" )
-                      ( IfThenElse Nothing
-                        ( Eq Nothing ( LiteralBool Nothing False )
-                          ( Ref Nothing ( Local ( Name "v$464$696" ) ) )
-                        )
-                        ( LiteralString Nothing "false" )
-                        ( Exception Nothing "No patterns matched" )
-                      )
-                    )
-                  )
-                ]
-              )
-              ( PropName "show" )
-            )
+          ( IfThenElse Nothing
             ( Ref Nothing ( Local ( Name "a$2" ) ) )
+            ( LiteralString Nothing "true" )
+            ( IfThenElse Nothing
+              ( Eq Nothing ( LiteralBool Nothing False ) ( Ref Nothing ( Local ( Name "a$2" ) ) ) )
+              ( LiteralString Nothing "false" )
+              ( Exception Nothing "No patterns matched" )
+            )
           )
         )
       ), Standalone

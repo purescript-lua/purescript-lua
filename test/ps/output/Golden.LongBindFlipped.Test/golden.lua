@@ -1,44 +1,26 @@
 local M = {}
-M.Data_Semiring_foreign = {
-  intAdd = function(x) return function(y) return x + y end end,
-  intMul = function(x) return function(y) return x * y end end
+M.Data_Semigroup_foreign = {
+  concatString = function(s1) return function(s2) return s1 .. s2 end end
 }
 M.Data_Show_show = function(dict) return dict.show end
-M.Data_Maybe_append = function(s1) return function(s2) return s1 .. s2 end end
-M.Data_Maybe_Nothing = { ["$ctor"] = "Data.Maybe∷Maybe.Nothing" }
 M.Data_Maybe_Just = function(value0)
   return { ["$ctor"] = "Data.Maybe∷Maybe.Just", value0 = value0 }
 end
-M.Data_Maybe_functorMaybe = {
-  map = function(v)
-    return function(v1)
-      if "Data.Maybe∷Maybe.Just" == v1["$ctor"] then
-        return M.Data_Maybe_Just(v(v1.value0))
+M.Golden_LongBindFlipped_Test_bindFlipped = function(b_S_264_S_912)
+  return function(a_S_265_S_913)
+    if "Data.Maybe∷Maybe.Just" == a_S_265_S_913["$ctor"] then
+      return b_S_264_S_912(a_S_265_S_913.value0)
+    else
+      if "Data.Maybe∷Maybe.Nothing" == a_S_265_S_913["$ctor"] then
+        return { ["$ctor"] = "Data.Maybe∷Maybe.Nothing" }
       else
-        return M.Data_Maybe_Nothing
+        return error("No patterns matched")
       end
     end
   end
-}
-M.Golden_LongBindFlipped_Test_bindFlipped = function(b_S_264_S_912)
-  return function(a_S_265_S_913)
-    return (function(v_S_905)
-      return function(v1_S_906)
-        if "Data.Maybe∷Maybe.Just" == v_S_905["$ctor"] then
-          return v1_S_906(v_S_905.value0)
-        else
-          if "Data.Maybe∷Maybe.Nothing" == v_S_905["$ctor"] then
-            return M.Data_Maybe_Nothing
-          else
-            return error("No patterns matched")
-          end
-        end
-      end
-    end)(a_S_265_S_913)(b_S_264_S_912)
-  end
 end
 M.Golden_LongBindFlipped_Test_inc = function(x)
-  return M.Data_Maybe_Just(M.Data_Semiring_foreign.intAdd(x)(1))
+  return M.Data_Maybe_Just((function(x) return function(y) return x + y end end)(x)(1))
 end
 M.Golden_LongBindFlipped_Test_compute = (function()
   local _S_tmp918 = M.Golden_LongBindFlipped_Test_bindFlipped(M.Golden_LongBindFlipped_Test_inc)(M.Golden_LongBindFlipped_Test_bindFlipped(M.Golden_LongBindFlipped_Test_inc)(M.Golden_LongBindFlipped_Test_bindFlipped(M.Golden_LongBindFlipped_Test_inc)(M.Golden_LongBindFlipped_Test_bindFlipped(M.Golden_LongBindFlipped_Test_inc)(M.Golden_LongBindFlipped_Test_bindFlipped(M.Golden_LongBindFlipped_Test_inc)(M.Golden_LongBindFlipped_Test_bindFlipped(M.Golden_LongBindFlipped_Test_inc)(M.Golden_LongBindFlipped_Test_bindFlipped(M.Golden_LongBindFlipped_Test_inc)(M.Golden_LongBindFlipped_Test_bindFlipped(M.Golden_LongBindFlipped_Test_inc)(M.Golden_LongBindFlipped_Test_bindFlipped(M.Golden_LongBindFlipped_Test_inc)(M.Golden_LongBindFlipped_Test_bindFlipped(M.Golden_LongBindFlipped_Test_inc)(M.Golden_LongBindFlipped_Test_bindFlipped(M.Golden_LongBindFlipped_Test_inc)(M.Golden_LongBindFlipped_Test_bindFlipped(M.Golden_LongBindFlipped_Test_inc)(M.Golden_LongBindFlipped_Test_bindFlipped(M.Golden_LongBindFlipped_Test_inc)(M.Golden_LongBindFlipped_Test_bindFlipped(M.Golden_LongBindFlipped_Test_inc)(M.Golden_LongBindFlipped_Test_bindFlipped(M.Golden_LongBindFlipped_Test_inc)(M.Golden_LongBindFlipped_Test_bindFlipped(M.Golden_LongBindFlipped_Test_inc)(M.Golden_LongBindFlipped_Test_bindFlipped(M.Golden_LongBindFlipped_Test_inc)(M.Golden_LongBindFlipped_Test_bindFlipped(M.Golden_LongBindFlipped_Test_inc)(M.Golden_LongBindFlipped_Test_bindFlipped(M.Golden_LongBindFlipped_Test_inc)(M.Golden_LongBindFlipped_Test_bindFlipped(M.Golden_LongBindFlipped_Test_inc)(M.Golden_LongBindFlipped_Test_bindFlipped(M.Golden_LongBindFlipped_Test_inc)(M.Golden_LongBindFlipped_Test_bindFlipped(M.Golden_LongBindFlipped_Test_inc)(M.Golden_LongBindFlipped_Test_bindFlipped(M.Golden_LongBindFlipped_Test_inc)(M.Golden_LongBindFlipped_Test_bindFlipped(M.Golden_LongBindFlipped_Test_inc)(M.Golden_LongBindFlipped_Test_bindFlipped(M.Golden_LongBindFlipped_Test_inc)(M.Golden_LongBindFlipped_Test_bindFlipped(M.Golden_LongBindFlipped_Test_inc)(M.Golden_LongBindFlipped_Test_bindFlipped(M.Golden_LongBindFlipped_Test_inc)(M.Golden_LongBindFlipped_Test_bindFlipped(M.Golden_LongBindFlipped_Test_inc)(M.Golden_LongBindFlipped_Test_bindFlipped(M.Golden_LongBindFlipped_Test_inc)(M.Golden_LongBindFlipped_Test_bindFlipped(M.Golden_LongBindFlipped_Test_inc)(M.Golden_LongBindFlipped_Test_bindFlipped(M.Golden_LongBindFlipped_Test_inc)(M.Golden_LongBindFlipped_Test_bindFlipped(M.Golden_LongBindFlipped_Test_inc)(M.Golden_LongBindFlipped_Test_bindFlipped(M.Golden_LongBindFlipped_Test_inc)(M.Golden_LongBindFlipped_Test_bindFlipped(M.Golden_LongBindFlipped_Test_inc)(M.Golden_LongBindFlipped_Test_bindFlipped(M.Golden_LongBindFlipped_Test_inc)(M.Golden_LongBindFlipped_Test_bindFlipped(M.Golden_LongBindFlipped_Test_inc)(M.Golden_LongBindFlipped_Test_bindFlipped(M.Golden_LongBindFlipped_Test_inc)(M.Golden_LongBindFlipped_Test_bindFlipped(M.Golden_LongBindFlipped_Test_inc)(M.Golden_LongBindFlipped_Test_bindFlipped(M.Golden_LongBindFlipped_Test_inc)(M.Data_Maybe_Just(1))))))))))))))))))))))))))))))))))))))))
@@ -53,7 +35,7 @@ end)()
 return (function(s) return function() print(s) end end)(M.Data_Show_show({
   show = function(v_S_910)
     if "Data.Maybe∷Maybe.Just" == v_S_910["$ctor"] then
-      return M.Data_Maybe_append("(Just ")(M.Data_Maybe_append(M.Data_Show_show({
+      return M.Data_Semigroup_foreign.concatString("(Just ")(M.Data_Semigroup_foreign.concatString(M.Data_Show_show({
         show = function(n) return tostring(n) end
       })(v_S_910.value0))(")"))
     else

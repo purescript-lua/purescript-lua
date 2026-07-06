@@ -1,13 +1,8 @@
 local M = {}
-M.Data_Semiring_foreign = {
-  intAdd = function(x) return function(y) return x + y end end,
-  intMul = function(x) return function(y) return x * y end end
-}
-M.Golden_LongCallbackChain_Test_add = M.Data_Semiring_foreign.intAdd
 M.Golden_LongCallbackChain_Test_withInc = function(n)
   return function(k)
     if (function()
-      if "Data.Ordering∷Ordering.LT" == (((function()
+      if "Data.Ordering∷Ordering.LT" == ((function()
         local unsafeCoerceImpl = function(lt)
           return function(eq)
             return function(gt)
@@ -25,8 +20,8 @@ M.Golden_LongCallbackChain_Test_withInc = function(n)
             end
           end
         end
-        return { ordIntImpl = unsafeCoerceImpl }
-      end)()).ordIntImpl({ ["$ctor"] = "Data.Ordering∷Ordering.LT" })({
+        return unsafeCoerceImpl
+      end)()({ ["$ctor"] = "Data.Ordering∷Ordering.LT" })({
         ["$ctor"] = "Data.Ordering∷Ordering.EQ"
       })({ ["$ctor"] = "Data.Ordering∷Ordering.GT" })(n)(0))["$ctor"] then
         return true
@@ -34,9 +29,9 @@ M.Golden_LongCallbackChain_Test_withInc = function(n)
         return false
       end
     end)() then
-      return M.Golden_LongCallbackChain_Test_withInc(M.Golden_LongCallbackChain_Test_add(n)(1))(k)
+      return M.Golden_LongCallbackChain_Test_withInc((function(x) return function(y) return x + y end end)(n)(1))(k)
     else
-      return k(M.Golden_LongCallbackChain_Test_add(n)(1))
+      return k((function(x) return function(y) return x + y end end)(n)(1))
     end
   end
 end

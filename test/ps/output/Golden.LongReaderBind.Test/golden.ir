@@ -2,12 +2,6 @@ UberModule
   { uberModuleBindings =
     [ Standalone
       ( QName
-        { qnameModuleName = ModuleName "Data.Semiring", qnameName = Name "foreign"
-        }, ForeignImport Nothing
-        ( ModuleName "Data.Semiring" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Semiring.purs"
-        [ ( Nothing, Name "intAdd" ), ( Nothing, Name "intMul" ) ]
-      ), Standalone
-      ( QName
         { qnameModuleName = ModuleName "Control.Semigroupoid", qnameName = Name "semigroupoidFn"
         }, LiteralObject Nothing
         [
@@ -75,25 +69,6 @@ UberModule
                 )
               ]
             )
-          )
-        ]
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Data.Identity", qnameName = Name "bindIdentity"
-        }, LiteralObject Nothing
-        [
-          ( PropName "bind", Abs Nothing
-            ( ParamNamed Nothing ( Name "v" ) )
-            ( Abs Nothing
-              ( ParamNamed Nothing ( Name "f" ) )
-              ( App Nothing
-                ( Ref Nothing ( Local ( Name "f" ) ) )
-                ( Ref Nothing ( Local ( Name "v" ) ) )
-              )
-            )
-          ),
-          ( PropName "Apply0", Abs Nothing ( ParamUnused Nothing )
-            ( Ref Nothing ( Imported ( ModuleName "Data.Identity" ) ( Name "applyIdentity" ) ) )
           )
         ]
       ), Standalone
@@ -192,36 +167,54 @@ UberModule
         )
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Control.Monad.Reader.Trans", qnameName = Name "bindReaderT"
-        }, Abs Nothing
-        ( ParamNamed Nothing ( Name "dictBind" ) )
+        { qnameModuleName = ModuleName "Golden.LongReaderBind.Test", qnameName = Name "bind"
+        }, App Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Control.Bind" ) ( Name "bind" ) ) )
         ( LiteralObject Nothing
           [
             ( PropName "bind", Abs Nothing
-              ( ParamNamed Nothing ( Name "v" ) )
+              ( ParamNamed Nothing ( Name "v$1288" ) )
               ( Abs Nothing
-                ( ParamNamed Nothing ( Name "k" ) )
+                ( ParamNamed Nothing ( Name "k$1289" ) )
                 ( Abs Nothing
-                  ( ParamNamed Nothing ( Name "r" ) )
+                  ( ParamNamed Nothing ( Name "r$1290" ) )
                   ( App Nothing
                     ( App Nothing
                       ( App Nothing
                         ( Ref Nothing ( Imported ( ModuleName "Control.Bind" ) ( Name "bind" ) ) )
-                        ( Ref Nothing ( Local ( Name "dictBind" ) ) )
+                        ( LiteralObject Nothing
+                          [
+                            ( PropName "bind", Abs Nothing
+                              ( ParamNamed Nothing ( Name "v$1292" ) )
+                              ( Abs Nothing
+                                ( ParamNamed Nothing ( Name "f$1293" ) )
+                                ( App Nothing
+                                  ( Ref Nothing ( Local ( Name "f$1293" ) ) )
+                                  ( Ref Nothing ( Local ( Name "v$1292" ) ) )
+                                )
+                              )
+                            ),
+                            ( PropName "Apply0", Abs Nothing ( ParamUnused Nothing )
+                              ( Ref Nothing
+                                ( Imported ( ModuleName "Data.Identity" ) ( Name "applyIdentity" ) )
+                              )
+                            )
+                          ]
+                        )
                       )
                       ( App Nothing
-                        ( Ref Nothing ( Local ( Name "v" ) ) )
-                        ( Ref Nothing ( Local ( Name "r" ) ) )
+                        ( Ref Nothing ( Local ( Name "v$1288" ) ) )
+                        ( Ref Nothing ( Local ( Name "r$1290" ) ) )
                       )
                     )
                     ( Abs Nothing
-                      ( ParamNamed Nothing ( Name "a" ) )
+                      ( ParamNamed Nothing ( Name "a$1291" ) )
                       ( App Nothing
                         ( App Nothing
-                          ( Ref Nothing ( Local ( Name "k" ) ) )
-                          ( Ref Nothing ( Local ( Name "a" ) ) )
+                          ( Ref Nothing ( Local ( Name "k$1289" ) ) )
+                          ( Ref Nothing ( Local ( Name "a$1291" ) ) )
                         )
-                        ( Ref Nothing ( Local ( Name "r" ) ) )
+                        ( Ref Nothing ( Local ( Name "r$1290" ) ) )
                       )
                     )
                   )
@@ -233,217 +226,26 @@ UberModule
                 ( Ref Nothing
                   ( Imported ( ModuleName "Control.Monad.Reader.Trans" ) ( Name "applyReaderT" ) )
                 )
-                ( App Nothing
-                  ( ObjectProp Nothing
-                    ( Ref Nothing ( Local ( Name "dictBind" ) ) )
-                    ( PropName "Apply0" )
-                  )
-                  ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) )
-                )
+                ( Ref Nothing ( Imported ( ModuleName "Data.Identity" ) ( Name "applyIdentity" ) ) )
               )
             )
           ]
-        )
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Control.Monad.Reader.Trans", qnameName = Name "applicativeReaderT"
-        }, Abs Nothing
-        ( ParamNamed Nothing ( Name "dictApplicative" ) )
-        ( LiteralObject Nothing
-          [
-            ( PropName "pure", App Nothing
-              ( App Nothing
-                ( Ref Nothing
-                  ( Imported ( ModuleName "Control.Monad.Reader.Trans" ) ( Name "compose" ) )
-                )
-                ( Abs Nothing
-                  ( ParamNamed Nothing ( Name "x$1276" ) )
-                  ( Ref Nothing ( Local ( Name "x$1276" ) ) )
-                )
-              )
-              ( App Nothing
-                ( App Nothing
-                  ( Ref Nothing
-                    ( Imported ( ModuleName "Control.Monad.Reader.Trans" ) ( Name "compose" ) )
-                  )
-                  ( Abs ( Just Always )
-                    ( ParamNamed Nothing ( Name "a$607" ) )
-                    ( Abs Nothing ( ParamUnused Nothing )
-                      ( Ref Nothing ( Local ( Name "a$607" ) ) )
-                    )
-                  )
-                )
-                ( App Nothing
-                  ( Ref Nothing ( Imported ( ModuleName "Control.Applicative" ) ( Name "pure" ) ) )
-                  ( Ref Nothing ( Local ( Name "dictApplicative" ) ) )
-                )
-              )
-            ),
-            ( PropName "Apply0", Abs Nothing ( ParamUnused Nothing )
-              ( App Nothing
-                ( Ref Nothing
-                  ( Imported ( ModuleName "Control.Monad.Reader.Trans" ) ( Name "applyReaderT" ) )
-                )
-                ( App Nothing
-                  ( ObjectProp Nothing
-                    ( Ref Nothing ( Local ( Name "dictApplicative" ) ) )
-                    ( PropName "Apply0" )
-                  )
-                  ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) )
-                )
-              )
-            )
-          ]
-        )
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Golden.LongReaderBind.Test", qnameName = Name "bind"
-        }, App Nothing
-        ( Ref Nothing ( Imported ( ModuleName "Control.Bind" ) ( Name "bind" ) ) )
-        ( App Nothing
-          ( Ref Nothing
-            ( Imported ( ModuleName "Control.Monad.Reader.Trans" ) ( Name "bindReaderT" ) )
-          )
-          ( Ref Nothing ( Imported ( ModuleName "Data.Identity" ) ( Name "bindIdentity" ) ) )
         )
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.LongReaderBind.Test", qnameName = Name "ask"
-        }, ObjectProp Nothing
-        ( LiteralObject Nothing
-          [
-            ( PropName "ask", App Nothing
-              ( Ref Nothing ( Imported ( ModuleName "Control.Applicative" ) ( Name "pure" ) ) )
-              ( App Nothing
-                ( ObjectProp Nothing
-                  ( LiteralObject Nothing
-                    [
-                      ( PropName "Applicative0", Abs Nothing ( ParamUnused Nothing )
-                        ( Ref Nothing
-                          ( Imported ( ModuleName "Data.Identity" ) ( Name "applicativeIdentity" ) )
-                        )
-                      ),
-                      ( PropName "Bind1", Abs Nothing ( ParamUnused Nothing )
-                        ( Ref Nothing
-                          ( Imported ( ModuleName "Data.Identity" ) ( Name "bindIdentity" ) )
-                        )
-                      )
-                    ]
-                  )
-                  ( PropName "Applicative0" )
-                )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) )
-              )
-            ),
-            ( PropName "Monad0", Abs Nothing ( ParamUnused Nothing )
-              ( LiteralObject Nothing
-                [
-                  ( PropName "Applicative0", Abs Nothing ( ParamUnused Nothing )
-                    ( App Nothing
-                      ( Ref Nothing
-                        ( Imported
-                          ( ModuleName "Control.Monad.Reader.Trans" )
-                          ( Name "applicativeReaderT" )
-                        )
-                      )
-                      ( App Nothing
-                        ( ObjectProp Nothing
-                          ( LiteralObject Nothing
-                            [
-                              ( PropName "Applicative0", Abs Nothing ( ParamUnused Nothing )
-                                ( Ref Nothing
-                                  ( Imported
-                                    ( ModuleName "Data.Identity" )
-                                    ( Name "applicativeIdentity" )
-                                  )
-                                )
-                              ),
-                              ( PropName "Bind1", Abs Nothing ( ParamUnused Nothing )
-                                ( Ref Nothing
-                                  ( Imported
-                                    ( ModuleName "Data.Identity" )
-                                    ( Name "bindIdentity" )
-                                  )
-                                )
-                              )
-                            ]
-                          )
-                          ( PropName "Applicative0" )
-                        )
-                        ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) )
-                      )
-                    )
-                  ),
-                  ( PropName "Bind1", Abs Nothing ( ParamUnused Nothing )
-                    ( App Nothing
-                      ( Ref Nothing
-                        ( Imported
-                          ( ModuleName "Control.Monad.Reader.Trans" )
-                          ( Name "bindReaderT" )
-                        )
-                      )
-                      ( App Nothing
-                        ( ObjectProp Nothing
-                          ( LiteralObject Nothing
-                            [
-                              ( PropName "Applicative0", Abs Nothing ( ParamUnused Nothing )
-                                ( Ref Nothing
-                                  ( Imported
-                                    ( ModuleName "Data.Identity" )
-                                    ( Name "applicativeIdentity" )
-                                  )
-                                )
-                              ),
-                              ( PropName "Bind1", Abs Nothing ( ParamUnused Nothing )
-                                ( Ref Nothing
-                                  ( Imported
-                                    ( ModuleName "Data.Identity" )
-                                    ( Name "bindIdentity" )
-                                  )
-                                )
-                              )
-                            ]
-                          )
-                          ( PropName "Bind1" )
-                        )
-                        ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) )
-                      )
-                    )
-                  )
-                ]
-              )
-            )
-          ]
-        )
-        ( PropName "ask" )
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Golden.LongReaderBind.Test", qnameName = Name "add"
-        }, ObjectProp Nothing
-        ( LiteralObject Nothing
-          [
-            ( PropName "add", ObjectProp ( Just Always )
-              ( Ref Nothing ( Imported ( ModuleName "Data.Semiring" ) ( Name "foreign" ) ) )
-              ( PropName "intAdd" )
-            ),
-            ( PropName "zero", LiteralInt Nothing 0 ),
-            ( PropName "mul", ObjectProp ( Just Always )
-              ( Ref Nothing ( Imported ( ModuleName "Data.Semiring" ) ( Name "foreign" ) ) )
-              ( PropName "intMul" )
-            ),
-            ( PropName "one", LiteralInt Nothing 1 )
-          ]
-        )
-        ( PropName "add" )
+        }, App Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Control.Applicative" ) ( Name "pure" ) ) )
+        ( Ref Nothing ( Imported ( ModuleName "Data.Identity" ) ( Name "applicativeIdentity" ) ) )
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.LongReaderBind.Test", qnameName = Name "go"
         }, Let Nothing
         ( Standalone
-          ( Nothing, Name "$kont1285", Abs Nothing
-            ( ParamNamed Nothing ( Name "x1$1286" ) )
+          ( Nothing, Name "$kont1297", Abs Nothing
+            ( ParamNamed Nothing ( Name "x1$1298" ) )
             ( Abs Nothing
-              ( ParamNamed Nothing ( Name "x100$1287" ) )
+              ( ParamNamed Nothing ( Name "x100$1299" ) )
               ( App Nothing
                 ( App Nothing
                   ( Ref Nothing
@@ -1077,46 +879,127 @@ UberModule
                                                                                                                                                                                       ( Name "pure" )
                                                                                                                                                                                     )
                                                                                                                                                                                   )
-                                                                                                                                                                                  ( App Nothing
-                                                                                                                                                                                    ( Ref Nothing
-                                                                                                                                                                                      ( Imported
-                                                                                                                                                                                        ( ModuleName "Control.Monad.Reader.Trans" )
-                                                                                                                                                                                        ( Name "applicativeReaderT" )
+                                                                                                                                                                                  ( LiteralObject Nothing
+                                                                                                                                                                                    [
+                                                                                                                                                                                      ( PropName "pure", App Nothing
+                                                                                                                                                                                        ( App Nothing
+                                                                                                                                                                                          ( Ref Nothing
+                                                                                                                                                                                            ( Imported
+                                                                                                                                                                                              ( ModuleName "Control.Monad.Reader.Trans" )
+                                                                                                                                                                                              ( Name "compose" )
+                                                                                                                                                                                            )
+                                                                                                                                                                                          )
+                                                                                                                                                                                          ( Abs Nothing
+                                                                                                                                                                                            ( ParamNamed Nothing
+                                                                                                                                                                                              ( Name "x$1276$1285" )
+                                                                                                                                                                                            )
+                                                                                                                                                                                            ( Ref Nothing
+                                                                                                                                                                                              ( Local
+                                                                                                                                                                                                ( Name "x$1276$1285" )
+                                                                                                                                                                                              )
+                                                                                                                                                                                            )
+                                                                                                                                                                                          )
+                                                                                                                                                                                        )
+                                                                                                                                                                                        ( App Nothing
+                                                                                                                                                                                          ( App Nothing
+                                                                                                                                                                                            ( Ref Nothing
+                                                                                                                                                                                              ( Imported
+                                                                                                                                                                                                ( ModuleName "Control.Monad.Reader.Trans" )
+                                                                                                                                                                                                ( Name "compose" )
+                                                                                                                                                                                              )
+                                                                                                                                                                                            )
+                                                                                                                                                                                            ( Abs ( Just Always )
+                                                                                                                                                                                              ( ParamNamed Nothing
+                                                                                                                                                                                                ( Name "a$607$1286" )
+                                                                                                                                                                                              )
+                                                                                                                                                                                              ( Abs Nothing ( ParamUnused Nothing )
+                                                                                                                                                                                                ( Ref Nothing
+                                                                                                                                                                                                  ( Local
+                                                                                                                                                                                                    ( Name "a$607$1286" )
+                                                                                                                                                                                                  )
+                                                                                                                                                                                                )
+                                                                                                                                                                                              )
+                                                                                                                                                                                            )
+                                                                                                                                                                                          )
+                                                                                                                                                                                          ( App Nothing
+                                                                                                                                                                                            ( Ref Nothing
+                                                                                                                                                                                              ( Imported
+                                                                                                                                                                                                ( ModuleName "Control.Applicative" )
+                                                                                                                                                                                                ( Name "pure" )
+                                                                                                                                                                                              )
+                                                                                                                                                                                            )
+                                                                                                                                                                                            ( Ref Nothing
+                                                                                                                                                                                              ( Imported
+                                                                                                                                                                                                ( ModuleName "Data.Identity" )
+                                                                                                                                                                                                ( Name "applicativeIdentity" )
+                                                                                                                                                                                              )
+                                                                                                                                                                                            )
+                                                                                                                                                                                          )
+                                                                                                                                                                                        )
+                                                                                                                                                                                      ),
+                                                                                                                                                                                      ( PropName "Apply0", Abs Nothing ( ParamUnused Nothing )
+                                                                                                                                                                                        ( App Nothing
+                                                                                                                                                                                          ( Ref Nothing
+                                                                                                                                                                                            ( Imported
+                                                                                                                                                                                              ( ModuleName "Control.Monad.Reader.Trans" )
+                                                                                                                                                                                              ( Name "applyReaderT" )
+                                                                                                                                                                                            )
+                                                                                                                                                                                          )
+                                                                                                                                                                                          ( App Nothing
+                                                                                                                                                                                            ( ObjectProp Nothing
+                                                                                                                                                                                              ( Ref Nothing
+                                                                                                                                                                                                ( Imported
+                                                                                                                                                                                                  ( ModuleName "Data.Identity" )
+                                                                                                                                                                                                  ( Name "applicativeIdentity" )
+                                                                                                                                                                                                )
+                                                                                                                                                                                              )
+                                                                                                                                                                                              ( PropName "Apply0" )
+                                                                                                                                                                                            )
+                                                                                                                                                                                            ( Ref Nothing
+                                                                                                                                                                                              ( Imported
+                                                                                                                                                                                                ( ModuleName "Prim" )
+                                                                                                                                                                                                ( Name "undefined" )
+                                                                                                                                                                                              )
+                                                                                                                                                                                            )
+                                                                                                                                                                                          )
+                                                                                                                                                                                        )
                                                                                                                                                                                       )
-                                                                                                                                                                                    )
-                                                                                                                                                                                    ( Ref Nothing
-                                                                                                                                                                                      ( Imported
-                                                                                                                                                                                        ( ModuleName "Data.Identity" )
-                                                                                                                                                                                        ( Name "applicativeIdentity" )
-                                                                                                                                                                                      )
-                                                                                                                                                                                    )
+                                                                                                                                                                                    ]
                                                                                                                                                                                   )
                                                                                                                                                                                 )
                                                                                                                                                                                 ( App Nothing
                                                                                                                                                                                   ( App Nothing
-                                                                                                                                                                                    ( Ref Nothing
-                                                                                                                                                                                      ( Imported
-                                                                                                                                                                                        ( ModuleName "Golden.LongReaderBind.Test" )
-                                                                                                                                                                                        ( Name "add" )
+                                                                                                                                                                                    ( ObjectProp ( Just Always )
+                                                                                                                                                                                      ( ForeignImport Nothing
+                                                                                                                                                                                        ( ModuleName "Data.Semiring" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Semiring.purs"
+                                                                                                                                                                                        [
+                                                                                                                                                                                          ( Nothing, Name "intAdd"
+                                                                                                                                                                                          )
+                                                                                                                                                                                        ]
                                                                                                                                                                                       )
+                                                                                                                                                                                      ( PropName "intAdd" )
                                                                                                                                                                                     )
                                                                                                                                                                                     ( App Nothing
                                                                                                                                                                                       ( App Nothing
-                                                                                                                                                                                        ( Ref Nothing
-                                                                                                                                                                                          ( Imported
-                                                                                                                                                                                            ( ModuleName "Golden.LongReaderBind.Test" )
-                                                                                                                                                                                            ( Name "add" )
+                                                                                                                                                                                        ( ObjectProp ( Just Always )
+                                                                                                                                                                                          ( ForeignImport Nothing
+                                                                                                                                                                                            ( ModuleName "Data.Semiring" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Semiring.purs"
+                                                                                                                                                                                            [
+                                                                                                                                                                                              ( Nothing, Name "intAdd"
+                                                                                                                                                                                              )
+                                                                                                                                                                                            ]
                                                                                                                                                                                           )
+                                                                                                                                                                                          ( PropName "intAdd" )
                                                                                                                                                                                         )
                                                                                                                                                                                         ( Ref Nothing
                                                                                                                                                                                           ( Local
-                                                                                                                                                                                            ( Name "x1$1286" )
+                                                                                                                                                                                            ( Name "x1$1298" )
                                                                                                                                                                                           )
                                                                                                                                                                                         )
                                                                                                                                                                                       )
                                                                                                                                                                                       ( Ref Nothing
                                                                                                                                                                                         ( Local
-                                                                                                                                                                                          ( Name "x100$1287" )
+                                                                                                                                                                                          ( Name "x100$1299" )
                                                                                                                                                                                         )
                                                                                                                                                                                       )
                                                                                                                                                                                     )
@@ -1211,10 +1094,10 @@ UberModule
             )
           ) :|
           [ Standalone
-            ( Nothing, Name "$kont1288", Abs Nothing
-              ( ParamNamed Nothing ( Name "x1$1289" ) )
+            ( Nothing, Name "$kont1300", Abs Nothing
+              ( ParamNamed Nothing ( Name "x1$1301" ) )
               ( Abs Nothing
-                ( ParamNamed Nothing ( Name "x100$1290" ) )
+                ( ParamNamed Nothing ( Name "x100$1302" ) )
                 ( App Nothing
                   ( App Nothing
                     ( Ref Nothing
@@ -1847,18 +1730,18 @@ UberModule
                                                                                                                                                                                   ( App Nothing
                                                                                                                                                                                     ( Ref Nothing
                                                                                                                                                                                       ( Local
-                                                                                                                                                                                        ( Name "$kont1285" )
+                                                                                                                                                                                        ( Name "$kont1297" )
                                                                                                                                                                                       )
                                                                                                                                                                                     )
                                                                                                                                                                                     ( Ref Nothing
                                                                                                                                                                                       ( Local
-                                                                                                                                                                                        ( Name "x1$1289" )
+                                                                                                                                                                                        ( Name "x1$1301" )
                                                                                                                                                                                       )
                                                                                                                                                                                     )
                                                                                                                                                                                   )
                                                                                                                                                                                   ( Ref Nothing
                                                                                                                                                                                     ( Local
-                                                                                                                                                                                      ( Name "x100$1290" )
+                                                                                                                                                                                      ( Name "x100$1302" )
                                                                                                                                                                                     )
                                                                                                                                                                                   )
                                                                                                                                                                                 )
@@ -1944,8 +1827,8 @@ UberModule
                 )
               )
             ), Standalone
-            ( Nothing, Name "$kont1291", Abs Nothing
-              ( ParamNamed Nothing ( Name "x1$1292" ) )
+            ( Nothing, Name "$kont1303", Abs Nothing
+              ( ParamNamed Nothing ( Name "x1$1304" ) )
               ( App Nothing
                 ( App Nothing
                   ( Ref Nothing
@@ -2575,12 +2458,12 @@ UberModule
                                                                                                                                                                                 ( App Nothing
                                                                                                                                                                                   ( Ref Nothing
                                                                                                                                                                                     ( Local
-                                                                                                                                                                                      ( Name "$kont1288" )
+                                                                                                                                                                                      ( Name "$kont1300" )
                                                                                                                                                                                     )
                                                                                                                                                                                   )
                                                                                                                                                                                   ( Ref Nothing
                                                                                                                                                                                     ( Local
-                                                                                                                                                                                      ( Name "x1$1292" )
+                                                                                                                                                                                      ( Name "x1$1304" )
                                                                                                                                                                                     )
                                                                                                                                                                                   )
                                                                                                                                                                                 )
@@ -2671,8 +2554,8 @@ UberModule
                 )
               )
             ), Standalone
-            ( Nothing, Name "$kont1293", Abs Nothing
-              ( ParamNamed Nothing ( Name "x1$1294" ) )
+            ( Nothing, Name "$kont1305", Abs Nothing
+              ( ParamNamed Nothing ( Name "x1$1306" ) )
               ( App Nothing
                 ( App Nothing
                   ( Ref Nothing
@@ -3298,12 +3181,12 @@ UberModule
                                                                                                                                                                               ( App Nothing
                                                                                                                                                                                 ( Ref Nothing
                                                                                                                                                                                   ( Local
-                                                                                                                                                                                    ( Name "$kont1291" )
+                                                                                                                                                                                    ( Name "$kont1303" )
                                                                                                                                                                                   )
                                                                                                                                                                                 )
                                                                                                                                                                                 ( Ref Nothing
                                                                                                                                                                                   ( Local
-                                                                                                                                                                                    ( Name "x1$1294" )
+                                                                                                                                                                                    ( Name "x1$1306" )
                                                                                                                                                                                   )
                                                                                                                                                                                 )
                                                                                                                                                                               )
@@ -4008,7 +3891,7 @@ UberModule
                                                                                                                                                                         ( App Nothing
                                                                                                                                                                           ( Ref Nothing
                                                                                                                                                                             ( Local
-                                                                                                                                                                              ( Name "$kont1293" )
+                                                                                                                                                                              ( Name "$kont1305" )
                                                                                                                                                                             )
                                                                                                                                                                           )
                                                                                                                                                                           ( Ref Nothing
@@ -4138,19 +4021,12 @@ UberModule
           ( PropName "log" )
         )
         ( App Nothing
-          ( ObjectProp Nothing
-            ( LiteralObject Nothing
-              [
-                ( PropName "show", ObjectProp ( Just Always )
-                  ( ForeignImport Nothing
-                    ( ModuleName "Data.Show" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Show.purs"
-                    [ ( Nothing, Name "showIntImpl" ) ]
-                  )
-                  ( PropName "showIntImpl" )
-                )
-              ]
+          ( ObjectProp ( Just Always )
+            ( ForeignImport Nothing
+              ( ModuleName "Data.Show" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Show.purs"
+              [ ( Nothing, Name "showIntImpl" ) ]
             )
-            ( PropName "show" )
+            ( PropName "showIntImpl" )
           )
           ( Ref Nothing
             ( Imported ( ModuleName "Golden.LongReaderBind.Test" ) ( Name "compute" ) )

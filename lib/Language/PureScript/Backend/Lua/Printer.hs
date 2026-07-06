@@ -57,7 +57,11 @@ printExp ∷ Lua.Exp → PADoc
 printExp = \case
   Lua.Nil → (PrecAtom, "nil")
   Lua.Boolean b → (PrecAtom, if b then "true" else "false")
-  Lua.Float f → (PrecAtom, pretty f)
+  Lua.Float f
+    | isNaN f → (PrecAtom, "(0/0)")
+    | isInfinite f && f > 0 → (PrecAtom, "math.huge")
+    | isInfinite f → (prec Lua.Negate, "-math.huge")
+    | otherwise → (PrecAtom, pretty f)
   Lua.Integer i → (PrecAtom, pretty i)
   Lua.String t → (PrecAtom, dquotes (pretty t))
   Lua.Function args body →
@@ -72,9 +76,7 @@ printExp = \case
   Lua.Var (Ann v) → (PrecAtom, printVar v)
   Lua.FunctionCall (Ann prefix) args →
     ( PrecPrefix
-    , printFunctionCall
-        (printExp prefix)
-        (printExp . unAnn <$> args)
+    , printFunctionCall prefix (printExp . unAnn <$> args)
     )
   Lua.ForeignSourceExp code → (PrecFunction, pretty code)
 
@@ -84,7 +86,11 @@ printUnaryOp op (_, a) = (prec op, pretty (sym op) <> parens a)
 -- See Note [Lua operator precedence] in ...Backend.Lua.Types
 printBinaryOp ∷ Lua.BinaryOp → PADoc → PADoc → PADoc
 printBinaryOp op l r =
-  (prec op, wrapPrec op l <+> pretty (sym op) <+> wrapPrec op r)
+  (prec op, wrapLeft l <+> pretty (sym op) <+> wrapRight r)
+ where
+  (wrapLeft, wrapRight) = case Lua.assoc op of
+    Lua.LeftAssoc → (wrapPrec op, wrapPrecGte op)
+    Lua.RightAssoc → (wrapPrecGte op, wrapPrec op)
 
 printFunction ∷ [Lua.Name] → [Lua.Statement] → ADoc
 printFunction params body =
@@ -109,13 +115,33 @@ printRow = \case
 printVar ∷ Lua.Var → ADoc
 printVar = \case
   Lua.VarName name → printName name
-  Lua.VarIndex (Ann e) (Ann i) → wrapPrec PrecAtom (printExp e) <> brackets (printedExp i)
-  Lua.VarField (Ann e) n → wrapPrec PrecAtom (printExp e) <> "." <> printName n
+  Lua.VarIndex (Ann e) (Ann i) → wrapIndexedPrefix e <> brackets (printedExp i)
+  Lua.VarField (Ann e) n → wrapIndexedPrefix e <> "." <> printName n
 
-printFunctionCall ∷ PADoc → [PADoc] → ADoc
-printFunctionCall prefix args =
-  wrapPrec PrecPrefix prefix
+printFunctionCall ∷ Lua.Exp → [PADoc] → ADoc
+printFunctionCall prefixExp args =
+  wrapCallTarget prefixExp
     <> parens (hsep (punctuate comma (snd <$> args)))
+
+{- | Lua's grammar allows a bare variable before '.' or '[...]'; every other
+expression form -- literals, table constructors, function calls, operator
+results -- must be parenthesised there. A function call is technically
+also valid bare, but wrapping it too is harmless and matches existing
+output.
+-}
+wrapIndexedPrefix ∷ Lua.Exp → ADoc
+wrapIndexedPrefix e@(Lua.Var _) = printedExp e
+wrapIndexedPrefix e = parens (printedExp e)
+
+{- | Lua's grammar allows a bare variable or function call (to permit
+chaining, e.g. @f()()@) before a call's argument list; every other
+expression form -- literals, table constructors, function definitions,
+operator results -- must be parenthesised there.
+-}
+wrapCallTarget ∷ Lua.Exp → ADoc
+wrapCallTarget e@(Lua.Var _) = printedExp e
+wrapCallTarget e@(Lua.FunctionCall _ _) = printedExp e
+wrapCallTarget e = parens (printedExp e)
 
 printLocal ∷ Lua.Name → Maybe ADoc → ADoc
 printLocal name value =

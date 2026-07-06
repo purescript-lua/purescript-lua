@@ -1,31 +1,6 @@
 UberModule
   { uberModuleBindings =
-    [ Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Data.Semiring", qnameName = Name "foreign"
-        }, ForeignImport Nothing
-        ( ModuleName "Data.Semiring" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Semiring.purs"
-        [ ( Nothing, Name "intAdd" ), ( Nothing, Name "intMul" ) ]
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Golden.LongCallbackChain.Test", qnameName = Name "add"
-        }, ObjectProp Nothing
-        ( LiteralObject Nothing
-          [
-            ( PropName "add", ObjectProp ( Just Always )
-              ( Ref Nothing ( Imported ( ModuleName "Data.Semiring" ) ( Name "foreign" ) ) )
-              ( PropName "intAdd" )
-            ),
-            ( PropName "zero", LiteralInt Nothing 0 ),
-            ( PropName "mul", ObjectProp ( Just Always )
-              ( Ref Nothing ( Imported ( ModuleName "Data.Semiring" ) ( Name "foreign" ) ) )
-              ( PropName "intMul" )
-            ),
-            ( PropName "one", LiteralInt Nothing 1 )
-          ]
-        )
-        ( PropName "add" )
-      ), RecursiveGroup
+    [ RecursiveGroup
       (
         ( QName
           { qnameModuleName = ModuleName "Golden.LongCallbackChain.Test", qnameName = Name "withInc"
@@ -40,53 +15,33 @@ UberModule
                   ( ReflectCtor Nothing
                     ( App Nothing
                       ( App Nothing
-                        ( ObjectProp Nothing
-                          ( LiteralObject Nothing
-                            [
-                              ( PropName "compare", App Nothing
-                                ( App Nothing
-                                  ( App Nothing
-                                    ( ObjectProp ( Just Always )
-                                      ( ForeignImport Nothing
-                                        ( ModuleName "Data.Ord" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Ord.purs"
-                                        [ ( Nothing, Name "ordIntImpl" ) ]
-                                      )
-                                      ( PropName "ordIntImpl" )
-                                    )
-                                    ( Ctor Nothing SumType
-                                      ( ModuleName "Data.Ordering" )
-                                      ( TyName "Ordering" )
-                                      ( CtorName "LT" ) []
-                                    )
-                                  )
-                                  ( Ctor Nothing SumType
-                                    ( ModuleName "Data.Ordering" )
-                                    ( TyName "Ordering" )
-                                    ( CtorName "EQ" ) []
-                                  )
+                        ( App Nothing
+                          ( App Nothing
+                            ( App Nothing
+                              ( ObjectProp ( Just Always )
+                                ( ForeignImport Nothing
+                                  ( ModuleName "Data.Ord" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Ord.purs"
+                                  [ ( Nothing, Name "ordIntImpl" ) ]
                                 )
-                                ( Ctor Nothing SumType
-                                  ( ModuleName "Data.Ordering" )
-                                  ( TyName "Ordering" )
-                                  ( CtorName "GT" ) []
-                                )
-                              ),
-                              ( PropName "Eq0", Abs Nothing ( ParamUnused Nothing )
-                                ( LiteralObject Nothing
-                                  [
-                                    ( PropName "eq", ObjectProp ( Just Always )
-                                      ( ForeignImport Nothing
-                                        ( ModuleName "Data.Eq" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Eq.purs"
-                                        [ ( Nothing, Name "eqIntImpl" ) ]
-                                      )
-                                      ( PropName "eqIntImpl" )
-                                    )
-                                  ]
-                                )
+                                ( PropName "ordIntImpl" )
                               )
-                            ]
+                              ( Ctor Nothing SumType
+                                ( ModuleName "Data.Ordering" )
+                                ( TyName "Ordering" )
+                                ( CtorName "LT" ) []
+                              )
+                            )
+                            ( Ctor Nothing SumType
+                              ( ModuleName "Data.Ordering" )
+                              ( TyName "Ordering" )
+                              ( CtorName "EQ" ) []
+                            )
                           )
-                          ( PropName "compare" )
+                          ( Ctor Nothing SumType
+                            ( ModuleName "Data.Ordering" )
+                            ( TyName "Ordering" )
+                            ( CtorName "GT" ) []
+                          )
                         )
                         ( Ref Nothing ( Local ( Name "n" ) ) )
                       )
@@ -102,8 +57,12 @@ UberModule
                   )
                   ( App Nothing
                     ( App Nothing
-                      ( Ref Nothing
-                        ( Imported ( ModuleName "Golden.LongCallbackChain.Test" ) ( Name "add" ) )
+                      ( ObjectProp ( Just Always )
+                        ( ForeignImport Nothing
+                          ( ModuleName "Data.Semiring" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Semiring.purs"
+                          [ ( Nothing, Name "intAdd" ) ]
+                        )
+                        ( PropName "intAdd" )
                       )
                       ( Ref Nothing ( Local ( Name "n" ) ) )
                     )
@@ -116,8 +75,12 @@ UberModule
                 ( Ref Nothing ( Local ( Name "k" ) ) )
                 ( App Nothing
                   ( App Nothing
-                    ( Ref Nothing
-                      ( Imported ( ModuleName "Golden.LongCallbackChain.Test" ) ( Name "add" ) )
+                    ( ObjectProp ( Just Always )
+                      ( ForeignImport Nothing
+                        ( ModuleName "Data.Semiring" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Semiring.purs"
+                        [ ( Nothing, Name "intAdd" ) ]
+                      )
+                      ( PropName "intAdd" )
                     )
                     ( Ref Nothing ( Local ( Name "n" ) ) )
                   )
@@ -5630,19 +5593,12 @@ UberModule
           ( PropName "log" )
         )
         ( App Nothing
-          ( ObjectProp Nothing
-            ( LiteralObject Nothing
-              [
-                ( PropName "show", ObjectProp ( Just Always )
-                  ( ForeignImport Nothing
-                    ( ModuleName "Data.Show" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Show.purs"
-                    [ ( Nothing, Name "showIntImpl" ) ]
-                  )
-                  ( PropName "showIntImpl" )
-                )
-              ]
+          ( ObjectProp ( Just Always )
+            ( ForeignImport Nothing
+              ( ModuleName "Data.Show" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Show.purs"
+              [ ( Nothing, Name "showIntImpl" ) ]
             )
-            ( PropName "show" )
+            ( PropName "showIntImpl" )
           )
           ( Ref Nothing
             ( Imported ( ModuleName "Golden.LongCallbackChain.Test" ) ( Name "compute" ) )

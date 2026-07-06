@@ -1,47 +1,6 @@
 UberModule
   { uberModuleBindings =
-    [ Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Data.Semiring", qnameName = Name "foreign"
-        }, ForeignImport Nothing
-        ( ModuleName "Data.Semiring" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Semiring.purs"
-        [ ( Nothing, Name "intAdd" ), ( Nothing, Name "intMul" ) ]
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Data.Semiring", qnameName = Name "semiringInt"
-        }, LiteralObject Nothing
-        [
-          ( PropName "add", ObjectProp ( Just Always )
-            ( Ref Nothing ( Imported ( ModuleName "Data.Semiring" ) ( Name "foreign" ) ) )
-            ( PropName "intAdd" )
-          ),
-          ( PropName "zero", LiteralInt Nothing 0 ),
-          ( PropName "mul", ObjectProp ( Just Always )
-            ( Ref Nothing ( Imported ( ModuleName "Data.Semiring" ) ( Name "foreign" ) ) )
-            ( PropName "intMul" )
-          ),
-          ( PropName "one", LiteralInt Nothing 1 )
-        ]
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Golden.Fibonacci.Test", qnameName = Name "sub"
-        }, ObjectProp Nothing
-        ( LiteralObject Nothing
-          [
-            ( PropName "sub", ObjectProp ( Just Always )
-              ( ForeignImport Nothing
-                ( ModuleName "Data.Ring" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Ring.purs"
-                [ ( Nothing, Name "intSub" ) ]
-              )
-              ( PropName "intSub" )
-            ),
-            ( PropName "Semiring0", Abs Nothing ( ParamUnused Nothing )
-              ( Ref Nothing ( Imported ( ModuleName "Data.Semiring" ) ( Name "semiringInt" ) ) )
-            )
-          ]
-        )
-        ( PropName "sub" )
-      ), RecursiveGroup
+    [ RecursiveGroup
       (
         ( QName
           { qnameModuleName = ModuleName "Golden.Fibonacci.Test", qnameName = Name "fib"
@@ -55,11 +14,12 @@ UberModule
               ( LiteralInt Nothing 1 )
               ( App Nothing
                 ( App Nothing
-                  ( ObjectProp Nothing
-                    ( Ref Nothing
-                      ( Imported ( ModuleName "Data.Semiring" ) ( Name "semiringInt" ) )
+                  ( ObjectProp ( Just Always )
+                    ( ForeignImport Nothing
+                      ( ModuleName "Data.Semiring" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Semiring.purs"
+                      [ ( Nothing, Name "intAdd" ) ]
                     )
-                    ( PropName "add" )
+                    ( PropName "intAdd" )
                   )
                   ( App Nothing
                     ( Ref Nothing
@@ -67,8 +27,12 @@ UberModule
                     )
                     ( App Nothing
                       ( App Nothing
-                        ( Ref Nothing
-                          ( Imported ( ModuleName "Golden.Fibonacci.Test" ) ( Name "sub" ) )
+                        ( ObjectProp ( Just Always )
+                          ( ForeignImport Nothing
+                            ( ModuleName "Data.Ring" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Ring.purs"
+                            [ ( Nothing, Name "intSub" ) ]
+                          )
+                          ( PropName "intSub" )
                         )
                         ( Ref Nothing ( Local ( Name "v" ) ) )
                       )
@@ -82,8 +46,12 @@ UberModule
                   )
                   ( App Nothing
                     ( App Nothing
-                      ( Ref Nothing
-                        ( Imported ( ModuleName "Golden.Fibonacci.Test" ) ( Name "sub" ) )
+                      ( ObjectProp ( Just Always )
+                        ( ForeignImport Nothing
+                          ( ModuleName "Data.Ring" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Ring.purs"
+                          [ ( Nothing, Name "intSub" ) ]
+                        )
+                        ( PropName "intSub" )
                       )
                       ( Ref Nothing ( Local ( Name "v" ) ) )
                     )
@@ -109,19 +77,12 @@ UberModule
           ( PropName "log" )
         )
         ( App Nothing
-          ( ObjectProp Nothing
-            ( LiteralObject Nothing
-              [
-                ( PropName "show", ObjectProp ( Just Always )
-                  ( ForeignImport Nothing
-                    ( ModuleName "Data.Show" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Show.purs"
-                    [ ( Nothing, Name "showIntImpl" ) ]
-                  )
-                  ( PropName "showIntImpl" )
-                )
-              ]
+          ( ObjectProp ( Just Always )
+            ( ForeignImport Nothing
+              ( ModuleName "Data.Show" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Show.purs"
+              [ ( Nothing, Name "showIntImpl" ) ]
             )
-            ( PropName "show" )
+            ( PropName "showIntImpl" )
           )
           ( App Nothing
             ( Ref Nothing ( Imported ( ModuleName "Golden.Fibonacci.Test" ) ( Name "fib" ) ) )

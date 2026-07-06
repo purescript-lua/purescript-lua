@@ -15,6 +15,7 @@ import Language.PureScript.Backend.Lua.Types
   , Exp
   , ExpF (..)
   , Statement
+  , StatementF (IfThenElse, Return)
   , TableRowF (..)
   , VarF (..)
   , pattern Ann
@@ -50,6 +51,7 @@ optimizeExpression = foldr (>>>) identity rewriteRulesInOrder
 rewriteRulesInOrder ∷ [RewriteRule]
 rewriteRulesInOrder =
   [ reduceTableDefinitionAccessor
+  , foldFieldProjectionThroughScopeCall
   ]
 
 type RewriteRule = Exp → Exp
@@ -61,6 +63,13 @@ rewriteExpWithRule rule = everywhereExp rule identity
 -- Rewrite rules for expressions -----------------------------------------------
 
 {- | Rewrites '{ foo = 1, bar = 2 }.foo' to '1'.
+
+IR-visible record literals are already folded by the IR optimizer
+('Language.PureScript.Backend.IR.Optimizer.reduceObjectProp'); this rule
+catches the constructors that only materialize during lowering. The live
+trigger is a projection out of a foreign module — @ObjectProp
+(ForeignImport …)@ lowers to a field access into the table of the foreign
+source's exports.
 
 Only fires when the constructor is unambiguous: every row is a name-value
 row and no field name repeats. A 'TableRowKV' row could carry a string key
@@ -91,3 +100,59 @@ reduceTableDefinitionAccessor = \case
   hasDuplicateNames rows =
     let names = [n | (_ann, TableRowNV n _) ← rows]
      in length names /= length (ordNub names)
+
+{- | Rewrites @(function() …; return e end)().foo@ to
+@(function() …; return e.foo end)()@.
+
+A no-argument, immediately-invoked function whose last statement is a
+@return@ is projected into right after the call. Projecting the field
+before returning versus after the call returns is the same value, and no
+side effect crosses the call boundary since both happen within the same
+activation. The new @e.foo@ projection is immediately re-optimized (rather
+than waiting for a later pass) so that, e.g., 'reduceTableDefinitionAccessor'
+sees through to a table constructor that would otherwise be hidden behind
+the call. See issue #159.
+
+The rule declines when a leading statement contains a body-level 'Return':
+such an early return exits the call on a path the projection would not
+cover. A 'Return' inside a nested 'Function' belongs to a different
+activation and does not count. 'ForeignSourceStat' is opaque text and is
+assumed return-free: a foreign header returning at body level would skip
+the exports return that follows it and break the module regardless of this
+rule.
+-}
+foldFieldProjectionThroughScopeCall ∷ RewriteRule
+foldFieldProjectionThroughScopeCall original
+  | Just (accessedField, leading, returnExp) ←
+      matchScopeCallProjection original =
+      let projectedReturnValue =
+            optimizeExpression (Lua.varField returnExp accessedField)
+          returnStatement = Lua.ann (Return (Lua.ann projectedReturnValue))
+       in FunctionCall (Lua.ann (Function [] (leading <> [returnStatement]))) []
+  | otherwise = original
+ where
+  -- Matches 'Var (VarField (FunctionCall (Function [] body) []) field)' where
+  -- the last statement of 'body' is a 'Return', splitting it into the
+  -- accessed field name, the leading statements, and the returned expression.
+  matchScopeCallProjection
+    ∷ Exp → Maybe (Lua.Name, [Annotated () StatementF], Exp)
+  matchScopeCallProjection = \case
+    Var
+      ( Ann
+          ( VarField
+              (Ann (FunctionCall (Ann (Function [] body)) []))
+              accessedField
+            )
+        ) → case reverse body of
+        Ann (Return (Ann returnExp)) : reverseLeading
+          | not (any containsReturn reverseLeading) →
+              Just (accessedField, reverse reverseLeading, returnExp)
+        _ → Nothing
+    _ → Nothing
+
+  containsReturn ∷ Annotated () StatementF → Bool
+  containsReturn (Ann statement) = case statement of
+    Return {} → True
+    IfThenElse _predicate thenBlock elseBlock →
+      any containsReturn thenBlock || any containsReturn elseBlock
+    _ → False
