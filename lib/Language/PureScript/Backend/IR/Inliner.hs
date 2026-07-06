@@ -26,12 +26,13 @@ travels to the optimizer's inlining decision through several stages:
      the annotation off a binding's root) and refuses to inline them. @Nothing@
      leaves the ref / small-literal / single-use heuristic to decide.
 
-Pragmas reach this map only for non-foreign top-level bindings (the ones
-'useAnnotation' drains as it translates them). The linker synthesises
-@Just Always@ separately and independently of any pragma: each foreign name is
-bound to an 'ObjectProp' marked 'Inline.Always' so the wrapper around the FFI
-object is always inlined away (see
-Note [Foreign bindings structure emitted by the Linker]).
+A pragma on a foreign name is drained into 'moduleForeigns' and reaches the
+linker, which binds each foreign name to an 'ObjectProp' accessor annotated
+with that pragma, defaulting to 'Inline.Always' so the wrapper around the FFI
+object is inlined away unless a pragma says otherwise (see
+Note [Foreign bindings structure emitted by the Linker]). @never@ keeps the
+accessor as a shared binding — the way to declare sharing intent for an FFI
+value.
 
 The 'ForeignImport' expression itself — the table of a foreign module's
 exports — is the one shape the optimizer refuses to inline even when it is

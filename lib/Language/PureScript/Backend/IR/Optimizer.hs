@@ -179,12 +179,19 @@ must key off the name rather than re-reading the annotation after optimization.
 See Note [Inline annotations and inlining heuristics].
 -}
 neverInlineNames ∷ UberModule → Set QName
-neverInlineNames UberModule {uberModuleBindings} =
-  Set.fromList
+neverInlineNames UberModule {uberModuleBindings, uberModuleForeigns} =
+  Set.fromList $
     [ qname
     | Standalone (qname, expr) ← uberModuleBindings
     , getAnn expr == Just Never
     ]
+      -- Foreign accessors merge into the bindings mid-pipeline
+      -- ('mergeForeignsIntoBindings'), after this set is collected, so
+      -- their annotations are read here.
+      <> [ qname
+         | (qname, expr) ← uberModuleForeigns
+         , getAnn expr == Just Never
+         ]
 
 -- | Free-reference counts keyed by the referenced qualified name.
 type FreeRefs = Map (Qualified Name) Natural

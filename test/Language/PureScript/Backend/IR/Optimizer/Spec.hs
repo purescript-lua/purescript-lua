@@ -358,6 +358,35 @@ spec = describe "IR Optimizer" do
       annotateShow optimized
       foreignKept === [QName mainModule (Name "foreign")]
 
+  describe "respects @inline never on foreign export names (issue #175)" do
+    -- The pragma annotation drained into 'moduleForeigns' must reach the
+    -- accessor the Linker binds the name to, overriding the default
+    -- 'Always'; the veto then keeps the accessor as a shared binding
+    -- (a fork's way to declare sharing intent for an FFI value).
+    test "keeps a never-annotated foreign accessor instead of inlining it" do
+      let mainModule = moduleNameFromString "Main"
+          original =
+            Module
+              { moduleName = mainModule
+              , moduleBindings =
+                  [Standalone (noAnn, Name "use", refLocal (Name "x"))]
+              , moduleImports = []
+              , moduleExports = [Name "use"]
+              , moduleReExports = Map.empty
+              , moduleForeigns = [(Just Never, Name "x")]
+              , modulePath = "Main.purs"
+              }
+          optimized =
+            optimizedUberModule $
+              Linker.makeUberModule (LinkAsModule mainModule) [original]
+          accessorKept =
+            [ (qn, getAnn expr)
+            | Standalone (qn, expr) ← Linker.uberModuleBindings optimized
+            , qn == QName mainModule (Name "x")
+            ]
+      annotateShow optimized
+      accessorKept === [(QName mainModule (Name "x"), Just Never)]
+
   describe "counts free references against the live module (#143)" do
     -- Within a single 'optimizeModule' run the use-once check must consult
     -- the current (post-substitution) view of the module, not a stale

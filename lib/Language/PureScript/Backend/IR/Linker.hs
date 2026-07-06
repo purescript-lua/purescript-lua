@@ -66,7 +66,8 @@ consumers must agree.
     name @foreign@ (@QName moduleName (Name "foreign")@). It carries the module
     name, the source path, and the list of foreign names.
   * One 'ObjectProp' per foreign name, bound to @QName moduleName name@, that
-    reads that name as a field off the @foreign@ import and is marked
+    reads that name as a field off the @foreign@ import. It carries the name's
+    @inline@ pragma annotation when one is declared, and defaults to
     'Inline.Always'.
 
 'Language.PureScript.Backend.IR.DCE' depends on exactly these shapes: it splits
@@ -89,10 +90,10 @@ foreignBindings Module {moduleName, modulePath, moduleForeigns} =
 
   -- See Note [Inline annotations and inlining heuristics]
   foreignNamesBindings ∷ [(QName, Exp)] =
-    moduleForeigns <&> \(_ann, name) →
+    moduleForeigns <&> \(ann, name) →
       ( QName moduleName name
       , ObjectProp
-          (Just Inline.Always)
+          (ann <|> Just Inline.Always)
           (refImported moduleName foreignName)
           (PropName (nameToText name))
       )
