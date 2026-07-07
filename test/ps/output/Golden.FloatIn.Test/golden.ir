@@ -298,53 +298,41 @@ UberModule
         )
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Golden.FloatIn.Test", qnameName = Name "pickShared"
+        { qnameModuleName = ModuleName "Golden.FloatIn.Test", qnameName = Name "pickShared$w"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "useIt" ) :| [] )
-        ( AbsN Nothing
-          ( ParamNamed Nothing ( Name "n" ) :| [] )
-          ( IfThenElse Nothing
-            ( Ref Nothing ( Local ( Name "useIt" ) ) )
+        ( ParamNamed Nothing ( Name "useIt" ) :| [ ParamNamed Nothing ( Name "n" ) ] )
+        ( IfThenElse Nothing
+          ( Ref Nothing ( Local ( Name "useIt" ) ) )
+          ( Let Nothing
+            ( Standalone
+              ( Nothing, Name "shared", AppN Nothing
+                ( ObjectProp ( Just Always )
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Golden.FloatIn.Test" ) ( Name "foreign" ) )
+                  )
+                  ( PropName "tick" )
+                )
+                ( Ref Nothing ( Local ( Name "n" ) ) :| [] )
+              ) :| []
+            )
             ( Let Nothing
               ( Standalone
-                ( Nothing, Name "shared", AppN Nothing
-                  ( ObjectProp ( Just Always )
-                    ( Ref Nothing
-                      ( Imported ( ModuleName "Golden.FloatIn.Test" ) ( Name "foreign" ) )
-                    )
-                    ( PropName "tick" )
-                  )
-                  ( Ref Nothing ( Local ( Name "n" ) ) :| [] )
-                ) :| []
-              )
-              ( Let Nothing
-                ( Standalone
-                  ( Nothing, Name "f", AbsN Nothing
-                    ( ParamUnused Nothing :| [] )
+                ( Nothing, Name "f", AbsN Nothing
+                  ( ParamUnused Nothing :| [] )
+                  ( AppN Nothing
                     ( AppN Nothing
-                      ( AppN Nothing
-                        ( Ref Nothing
-                          ( Imported ( ModuleName "Golden.FloatIn.Test" ) ( Name "add" ) )
-                        )
-                        ( Ref Nothing ( Local ( Name "shared" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Golden.FloatIn.Test" ) ( Name "add" ) )
                       )
                       ( Ref Nothing ( Local ( Name "shared" ) ) :| [] )
                     )
-                  ) :| []
-                )
-                ( AppN Nothing
-                  ( AppN Nothing
-                    ( Ref Nothing
-                      ( Imported ( ModuleName "Golden.FloatIn.Test" ) ( Name "add" ) )
-                    )
-                    ( AppN Nothing
-                      ( Ref Nothing ( Local ( Name "f" ) ) )
-                      ( ObjectProp ( Just Always )
-                        ( Ref Nothing ( Imported ( ModuleName "Data.Unit" ) ( Name "foreign" ) ) )
-                        ( PropName "unit" ) :| []
-                      ) :| []
-                    )
+                    ( Ref Nothing ( Local ( Name "shared" ) ) :| [] )
                   )
+                ) :| []
+              )
+              ( AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Golden.FloatIn.Test" ) ( Name "add" ) ) )
                   ( AppN Nothing
                     ( Ref Nothing ( Local ( Name "f" ) ) )
                     ( ObjectProp ( Just Always )
@@ -353,10 +341,17 @@ UberModule
                     ) :| []
                   )
                 )
+                ( AppN Nothing
+                  ( Ref Nothing ( Local ( Name "f" ) ) )
+                  ( ObjectProp ( Just Always )
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Unit" ) ( Name "foreign" ) ) )
+                    ( PropName "unit" ) :| []
+                  ) :| []
+                )
               )
             )
-            ( LiteralInt Nothing 0 )
           )
+          ( LiteralInt Nothing 0 )
         )
       ), Standalone
       ( QName
@@ -383,32 +378,29 @@ UberModule
         )
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Golden.FloatIn.Test", qnameName = Name "pick"
+        { qnameModuleName = ModuleName "Golden.FloatIn.Test", qnameName = Name "pick$w"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "useIt" ) :| [] )
-        ( AbsN Nothing
-          ( ParamNamed Nothing ( Name "n" ) :| [] )
-          ( IfThenElse Nothing
-            ( Ref Nothing ( Local ( Name "useIt" ) ) )
-            ( Let Nothing
-              ( Standalone
-                ( Nothing, Name "shared", AppN Nothing
-                  ( Ref Nothing
-                    ( Imported ( ModuleName "Golden.FloatIn.Test" ) ( Name "expensive" ) )
-                  )
-                  ( Ref Nothing ( Local ( Name "n" ) ) :| [] )
-                ) :| []
-              )
-              ( AppN Nothing
-                ( AppN Nothing
-                  ( Ref Nothing ( Imported ( ModuleName "Golden.FloatIn.Test" ) ( Name "add" ) ) )
-                  ( Ref Nothing ( Local ( Name "shared" ) ) :| [] )
+        ( ParamNamed Nothing ( Name "useIt" ) :| [ ParamNamed Nothing ( Name "n" ) ] )
+        ( IfThenElse Nothing
+          ( Ref Nothing ( Local ( Name "useIt" ) ) )
+          ( Let Nothing
+            ( Standalone
+              ( Nothing, Name "shared", AppN Nothing
+                ( Ref Nothing
+                  ( Imported ( ModuleName "Golden.FloatIn.Test" ) ( Name "expensive" ) )
                 )
+                ( Ref Nothing ( Local ( Name "n" ) ) :| [] )
+              ) :| []
+            )
+            ( AppN Nothing
+              ( AppN Nothing
+                ( Ref Nothing ( Imported ( ModuleName "Golden.FloatIn.Test" ) ( Name "add" ) ) )
                 ( Ref Nothing ( Local ( Name "shared" ) ) :| [] )
               )
+              ( Ref Nothing ( Local ( Name "shared" ) ) :| [] )
             )
-            ( LiteralInt Nothing 0 )
           )
+          ( LiteralInt Nothing 0 )
         )
       )
     ], uberModuleForeigns = [], uberModuleExports =
@@ -420,11 +412,33 @@ UberModule
       ( Name "expensive", Ref Nothing
         ( Imported ( ModuleName "Golden.FloatIn.Test" ) ( Name "expensive" ) )
       ),
-      ( Name "pick", Ref Nothing
-        ( Imported ( ModuleName "Golden.FloatIn.Test" ) ( Name "pick" ) )
+      ( Name "pick", AbsN Nothing
+        ( ParamNamed Nothing ( Name "pick$p1$183" ) :| [] )
+        ( AbsN Nothing
+          ( ParamNamed Nothing ( Name "pick$p2$184" ) :| [] )
+          ( AppN Nothing
+            ( Ref Nothing ( Imported ( ModuleName "Golden.FloatIn.Test" ) ( Name "pick$w" ) ) )
+            ( Ref Nothing
+              ( Local ( Name "pick$p1$183" ) ) :|
+              [ Ref Nothing ( Local ( Name "pick$p2$184" ) ) ]
+            )
+          )
+        )
       ),
-      ( Name "pickShared", Ref Nothing
-        ( Imported ( ModuleName "Golden.FloatIn.Test" ) ( Name "pickShared" ) )
+      ( Name "pickShared", AbsN Nothing
+        ( ParamNamed Nothing ( Name "pickShared$p1$185" ) :| [] )
+        ( AbsN Nothing
+          ( ParamNamed Nothing ( Name "pickShared$p2$186" ) :| [] )
+          ( AppN Nothing
+            ( Ref Nothing
+              ( Imported ( ModuleName "Golden.FloatIn.Test" ) ( Name "pickShared$w" ) )
+            )
+            ( Ref Nothing
+              ( Local ( Name "pickShared$p1$185" ) ) :|
+              [ Ref Nothing ( Local ( Name "pickShared$p2$186" ) ) ]
+            )
+          )
+        )
       ),
       ( Name "main", AbsN Nothing
         ( ParamUnused Nothing :| [] )
@@ -436,13 +450,10 @@ UberModule
                   ( Imported ( ModuleName "Golden.FloatIn.Test" ) ( Name "logShow" ) )
                 )
                 ( AppN Nothing
-                  ( AppN Nothing
-                    ( Ref Nothing
-                      ( Imported ( ModuleName "Golden.FloatIn.Test" ) ( Name "pick" ) )
-                    )
-                    ( LiteralBool Nothing True :| [] )
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Golden.FloatIn.Test" ) ( Name "pick$w" ) )
                   )
-                  ( LiteralInt Nothing 3 :| [] ) :| []
+                  ( LiteralBool Nothing True :| [ LiteralInt Nothing 3 ] ) :| []
                 )
               )
               ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
@@ -454,13 +465,10 @@ UberModule
                     ( Imported ( ModuleName "Golden.FloatIn.Test" ) ( Name "logShow" ) )
                   )
                   ( AppN Nothing
-                    ( AppN Nothing
-                      ( Ref Nothing
-                        ( Imported ( ModuleName "Golden.FloatIn.Test" ) ( Name "pick" ) )
-                      )
-                      ( LiteralBool Nothing False :| [] )
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Golden.FloatIn.Test" ) ( Name "pick$w" ) )
                     )
-                    ( LiteralInt Nothing 3 :| [] ) :| []
+                    ( LiteralBool Nothing False :| [ LiteralInt Nothing 3 ] ) :| []
                   )
                 )
                 ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
@@ -471,13 +479,10 @@ UberModule
                     ( Imported ( ModuleName "Golden.FloatIn.Test" ) ( Name "logShow" ) )
                   )
                   ( AppN Nothing
-                    ( AppN Nothing
-                      ( Ref Nothing
-                        ( Imported ( ModuleName "Golden.FloatIn.Test" ) ( Name "pickShared" ) )
-                      )
-                      ( LiteralBool Nothing True :| [] )
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Golden.FloatIn.Test" ) ( Name "pickShared$w" ) )
                     )
-                    ( LiteralInt Nothing 3 :| [] ) :| []
+                    ( LiteralBool Nothing True :| [ LiteralInt Nothing 3 ] ) :| []
                   )
                 )
                 ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
@@ -488,13 +493,10 @@ UberModule
             ( AppN Nothing
               ( Ref Nothing ( Imported ( ModuleName "Golden.FloatIn.Test" ) ( Name "logShow" ) ) )
               ( AppN Nothing
-                ( AppN Nothing
-                  ( Ref Nothing
-                    ( Imported ( ModuleName "Golden.FloatIn.Test" ) ( Name "pickShared" ) )
-                  )
-                  ( LiteralBool Nothing False :| [] )
+                ( Ref Nothing
+                  ( Imported ( ModuleName "Golden.FloatIn.Test" ) ( Name "pickShared$w" ) )
                 )
-                ( LiteralInt Nothing 3 :| [] ) :| []
+                ( LiteralBool Nothing False :| [ LiteralInt Nothing 3 ] ) :| []
               )
             )
             ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )

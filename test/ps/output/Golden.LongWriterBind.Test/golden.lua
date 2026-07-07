@@ -57,65 +57,61 @@ M.Data_Identity_applicativeIdentity = {
   Apply0 = function() return M.Data_Identity_applyIdentity end
 }
 M.Control_Monad_Writer_Trans_compose = M.Control_Semigroupoid_compose(M.Control_Semigroupoid_semigroupoidFn)
-M.Control_Monad_Writer_Trans_applyWriterT = function(dictSemigroup)
-  return function(dictApply)
-    local Functor0 = dictApply.Functor0()
-    return {
-      apply = function(v)
-        return function(v1)
-          return dictApply.apply(M.Data_Functor_map(Functor0)(function(v3_S_33)
-            return function(v4_S_34)
-              return M.Data_Tuple_Tuple(v3_S_33.value0(v4_S_34.value0))(M.Data_Semigroup_append(dictSemigroup)(v3_S_33.value1)(v4_S_34.value1))
-            end
-          end)(v))(v1)
-        end
-      end,
-      Functor0 = function()
-        return {
-          map = function(f_S_463)
-            return function(v_S_466)
-              return M.Data_Functor_map(Functor0)(function(v_S_464)
-                return M.Data_Tuple_Tuple(f_S_463(v_S_464.value0))(v_S_464.value1)
-              end)(v_S_466)
-            end
+M.Control_Monad_Writer_Trans_applyWriterT_S_w = function( dictSemigroup
+, dictApply )
+  local Functor0 = dictApply.Functor0()
+  return {
+    apply = function(v)
+      return function(v1)
+        return dictApply.apply(M.Data_Functor_map(Functor0)(function(v3_S_33)
+          return function(v4_S_34)
+            return M.Data_Tuple_Tuple(v3_S_33.value0(v4_S_34.value0))(M.Data_Semigroup_append(dictSemigroup)(v3_S_33.value1)(v4_S_34.value1))
           end
-        }
+        end)(v))(v1)
       end
-    }
-  end
-end
-M.Control_Monad_Writer_Trans_bindWriterT = function(dictSemigroup)
-  return function(dictBind)
-    local Apply0 = dictBind.Apply0()
-    return {
-      bind = function(v)
-        return function(k)
-          return M.Control_Bind_bind(dictBind)(v)(function(v1)
-            return M.Data_Functor_map(Apply0.Functor0())(function(v3)
-              return M.Data_Tuple_Tuple(v3.value0)(M.Data_Semigroup_append(dictSemigroup)(v1.value1)(v3.value1))
-            end)(k(v1.value0))
-          end)
+    end,
+    Functor0 = function()
+      return {
+        map = function(f_S_463)
+          return function(v_S_466)
+            return M.Data_Functor_map(Functor0)(function(v_S_464)
+              return M.Data_Tuple_Tuple(f_S_463(v_S_464.value0))(v_S_464.value1)
+            end)(v_S_466)
+          end
         end
-      end,
-      Apply0 = function()
-        return M.Control_Monad_Writer_Trans_applyWriterT(dictSemigroup)(Apply0)
-      end
-    }
-  end
+      }
+    end
+  }
 end
-M.Control_Monad_Writer_Trans_applicativeWriterT = function(dictMonoid)
-  return function(dictApplicative)
-    return {
-      pure = function(a)
-        return M.Control_Applicative_pure(dictApplicative)(M.Data_Tuple_Tuple(a)(dictMonoid.mempty))
-      end,
-      Apply0 = function()
-        return M.Control_Monad_Writer_Trans_applyWriterT(dictMonoid.Semigroup0())(dictApplicative.Apply0())
+M.Control_Monad_Writer_Trans_bindWriterT_S_w = function(dictSemigroup, dictBind)
+  local Apply0 = dictBind.Apply0()
+  return {
+    bind = function(v)
+      return function(k)
+        return M.Control_Bind_bind(dictBind)(v)(function(v1)
+          return M.Data_Functor_map(Apply0.Functor0())(function(v3)
+            return M.Data_Tuple_Tuple(v3.value0)(M.Data_Semigroup_append(dictSemigroup)(v1.value1)(v3.value1))
+          end)(k(v1.value0))
+        end)
       end
-    }
-  end
+    end,
+    Apply0 = function()
+      return M.Control_Monad_Writer_Trans_applyWriterT_S_w(dictSemigroup, Apply0)
+    end
+  }
 end
-M.Golden_LongWriterBind_Test_discard = M.Control_Bind_bind(M.Control_Monad_Writer_Trans_bindWriterT(M.Data_Semigroup_semigroupArray)(M.Data_Identity_bindIdentity))
+M.Control_Monad_Writer_Trans_applicativeWriterT_S_w = function( dictMonoid
+, dictApplicative )
+  return {
+    pure = function(a)
+      return M.Control_Applicative_pure(dictApplicative)(M.Data_Tuple_Tuple(a)(dictMonoid.mempty))
+    end,
+    Apply0 = function()
+      return M.Control_Monad_Writer_Trans_applyWriterT_S_w(dictMonoid.Semigroup0(), dictApplicative.Apply0())
+    end
+  }
+end
+M.Golden_LongWriterBind_Test_discard = M.Control_Bind_bind(M.Control_Monad_Writer_Trans_bindWriterT_S_w(M.Data_Semigroup_semigroupArray, M.Data_Identity_bindIdentity))
 M.Golden_LongWriterBind_Test_tell = (function()
   local dictMonad_S_478 = {
     Applicative0 = function() return M.Data_Identity_applicativeIdentity end,
@@ -246,7 +242,7 @@ M.Golden_LongWriterBind_Test_go = (function()
                                                                                 return M.Golden_LongWriterBind_Test_discard(M.Golden_LongWriterBind_Test_tell({
                                                                                   [1] = 200
                                                                                 }))(function(  )
-                                                                                  return M.Control_Applicative_pure(M.Control_Monad_Writer_Trans_applicativeWriterT(M.Data_Monoid_monoidArray)(M.Data_Identity_applicativeIdentity))(42)
+                                                                                  return M.Control_Applicative_pure(M.Control_Monad_Writer_Trans_applicativeWriterT_S_w(M.Data_Monoid_monoidArray, M.Data_Identity_applicativeIdentity))(42)
                                                                                 end)
                                                                               end)
                                                                             end)

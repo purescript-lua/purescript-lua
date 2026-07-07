@@ -52,6 +52,7 @@ import Language.PureScript.Backend.IR.Types
   , pattern Abs
   , pattern App
   )
+import Language.PureScript.Backend.IR.Uncurry (uncurryWorkerWrapper)
 import Language.PureScript.Backend.IR.Uniquify (uniquifyNames)
 
 optimizedUberModule ∷ UberModule → UberModule
@@ -82,6 +83,16 @@ optimizerPipeline neverNames =
     -- unblock even more optimizations, e.g. inline foreign bindings.
     RunPass mergeForeignsPass
   , RunFixpoint "optimize+dce-post-merge" (optimizePass :| [dcePass])
+  , -- Split curried bindings into n-ary workers and curried wrappers
+    -- and rewrite the saturated call sites to direct worker calls
+    -- (issue #24). Runs after the post-merge fixpoint, so manifest
+    -- arities are measured once inlining has settled. See
+    -- Language.PureScript.Backend.IR.Uncurry.
+    RunPass uncurryPass
+  , -- The post-uncurry fixpoint dead-code-eliminates wrappers with no
+    -- remaining references and reduces the n-ary redexes that pasting
+    -- a single-use worker into its one call site produces.
+    RunFixpoint "optimize+dce-post-uncurry" (optimizePass :| [dcePass])
   , -- Float a Let-bound value down into the single IfThenElse branch that
     -- uses it (issue #136). Runs after DCE (a dead binding is simply gone,
     -- never worth sinking) and outside any fixpoint: it preserves every
@@ -132,6 +143,13 @@ optimizerPipeline neverNames =
       , passEnsures = guc
       }
   mergeForeignsPass = gucPass "mergeForeigns" mergeForeignsIntoBindings
+  uncurryPass =
+    Pass
+      { passName = "uncurry"
+      , passRun = pure . uncurryWorkerWrapper neverNames
+      , passRequires = guc
+      , passEnsures = guc
+      }
   floatInPass = gucPass "float-in" floatIn
   magicDoPass =
     Pass

@@ -2,27 +2,35 @@ UberModule
   { uberModuleBindings =
     [ Standalone
       ( QName
-        { qnameModuleName = ModuleName "Golden.Unbinding.Test", qnameName = Name "f"
+        { qnameModuleName = ModuleName "Golden.Unbinding.Test", qnameName = Name "f$w"
         }, AbsN Nothing
-        ( ParamUnused Nothing :| [] )
-        ( AbsN Nothing ( ParamUnused Nothing :| [] ) ( LiteralInt Nothing 3 ) )
+        ( ParamUnused Nothing :| [ ParamUnused Nothing ] )
+        ( LiteralInt Nothing 3 )
       )
     ], uberModuleForeigns = [], uberModuleExports =
     [
       ( Name "a", LiteralInt Nothing 1 ),
       ( Name "b", LiteralInt Nothing 2 ),
-      ( Name "f", Ref Nothing ( Imported ( ModuleName "Golden.Unbinding.Test" ) ( Name "f" ) ) ),
-      ( Name "c", AppN Nothing
-        ( AppN Nothing
-          ( Ref Nothing ( Imported ( ModuleName "Golden.Unbinding.Test" ) ( Name "f" ) ) )
-          ( LiteralInt Nothing 1 :| [] )
-        )
-        ( AppN Nothing
+      ( Name "f", AbsN Nothing
+        ( ParamNamed Nothing ( Name "f$p1$0" ) :| [] )
+        ( AbsN Nothing
+          ( ParamNamed Nothing ( Name "f$p2$1" ) :| [] )
           ( AppN Nothing
-            ( Ref Nothing ( Imported ( ModuleName "Golden.Unbinding.Test" ) ( Name "f" ) ) )
-            ( LiteralInt Nothing 2 :| [] )
+            ( Ref Nothing ( Imported ( ModuleName "Golden.Unbinding.Test" ) ( Name "f$w" ) ) )
+            ( Ref Nothing
+              ( Local ( Name "f$p1$0" ) ) :|
+              [ Ref Nothing ( Local ( Name "f$p2$1" ) ) ]
+            )
           )
-          ( LiteralInt Nothing 1 :| [] ) :| []
+        )
+      ),
+      ( Name "c", AppN Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Golden.Unbinding.Test" ) ( Name "f$w" ) ) )
+        ( LiteralInt Nothing 1 :|
+          [ AppN Nothing
+            ( Ref Nothing ( Imported ( ModuleName "Golden.Unbinding.Test" ) ( Name "f$w" ) ) )
+            ( LiteralInt Nothing 2 :| [ LiteralInt Nothing 1 ] )
+          ]
         )
       )
     ]

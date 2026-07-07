@@ -185,203 +185,60 @@ UberModule
         )
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Control.Monad.Writer.Trans", qnameName = Name "applyWriterT"
+        { qnameModuleName = ModuleName "Control.Monad.Writer.Trans", qnameName = Name "applyWriterT$w"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "dictSemigroup" ) :| [] )
-        ( AbsN Nothing
-          ( ParamNamed Nothing ( Name "dictApply" ) :| [] )
-          ( Let Nothing
-            ( Standalone
-              ( Nothing, Name "Functor0", AppN Nothing
-                ( ObjectProp Nothing
-                  ( Ref Nothing ( Local ( Name "dictApply" ) ) )
-                  ( PropName "Functor0" )
-                )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
-              ) :| []
-            )
-            ( LiteralObject Nothing
-              [
-                ( PropName "apply", AbsN Nothing
-                  ( ParamNamed Nothing ( Name "v" ) :| [] )
-                  ( AbsN Nothing
-                    ( ParamNamed Nothing ( Name "v1" ) :| [] )
-                    ( AppN Nothing
-                      ( AppN Nothing
-                        ( ObjectProp Nothing
-                          ( Ref Nothing ( Local ( Name "dictApply" ) ) )
-                          ( PropName "apply" )
-                        )
-                        ( AppN Nothing
-                          ( AppN Nothing
-                            ( AppN Nothing
-                              ( Ref Nothing
-                                ( Imported ( ModuleName "Data.Functor" ) ( Name "map" ) )
-                              )
-                              ( Ref Nothing ( Local ( Name "Functor0" ) ) :| [] )
-                            )
-                            ( AbsN Nothing
-                              ( ParamNamed Nothing ( Name "v3$33" ) :| [] )
-                              ( AbsN Nothing
-                                ( ParamNamed Nothing ( Name "v4$34" ) :| [] )
-                                ( AppN Nothing
-                                  ( AppN Nothing
-                                    ( Ref Nothing
-                                      ( Imported ( ModuleName "Data.Tuple" ) ( Name "Tuple" ) )
-                                    )
-                                    ( AppN Nothing
-                                      ( ObjectProp Nothing
-                                        ( Ref Nothing ( Local ( Name "v3$33" ) ) )
-                                        ( PropName "value0" )
-                                      )
-                                      ( ObjectProp Nothing
-                                        ( Ref Nothing ( Local ( Name "v4$34" ) ) )
-                                        ( PropName "value0" ) :| []
-                                      ) :| []
-                                    )
-                                  )
-                                  ( AppN Nothing
-                                    ( AppN Nothing
-                                      ( AppN Nothing
-                                        ( Ref Nothing
-                                          ( Imported
-                                            ( ModuleName "Data.Semigroup" )
-                                            ( Name "append" )
-                                          )
-                                        )
-                                        ( Ref Nothing ( Local ( Name "dictSemigroup" ) ) :| [] )
-                                      )
-                                      ( ObjectProp Nothing
-                                        ( Ref Nothing ( Local ( Name "v3$33" ) ) )
-                                        ( PropName "value1" ) :| []
-                                      )
-                                    )
-                                    ( ObjectProp Nothing
-                                      ( Ref Nothing ( Local ( Name "v4$34" ) ) )
-                                      ( PropName "value1" ) :| []
-                                    ) :| []
-                                  )
-                                )
-                              ) :| []
-                            )
-                          )
-                          ( Ref Nothing ( Local ( Name "v" ) ) :| [] ) :| []
-                        )
-                      )
-                      ( Ref Nothing ( Local ( Name "v1" ) ) :| [] )
-                    )
-                  )
-                ),
-                ( PropName "Functor0", AbsN Nothing
-                  ( ParamUnused Nothing :| [] )
-                  ( LiteralObject Nothing
-                    [
-                      ( PropName "map", AbsN Nothing
-                        ( ParamNamed Nothing ( Name "f$463" ) :| [] )
-                        ( AbsN Nothing
-                          ( ParamNamed Nothing ( Name "v$466" ) :| [] )
-                          ( AppN Nothing
-                            ( AppN Nothing
-                              ( AppN Nothing
-                                ( Ref Nothing
-                                  ( Imported ( ModuleName "Data.Functor" ) ( Name "map" ) )
-                                )
-                                ( Ref Nothing ( Local ( Name "Functor0" ) ) :| [] )
-                              )
-                              ( AbsN Nothing
-                                ( ParamNamed Nothing ( Name "v$464" ) :| [] )
-                                ( AppN Nothing
-                                  ( AppN Nothing
-                                    ( Ref Nothing
-                                      ( Imported ( ModuleName "Data.Tuple" ) ( Name "Tuple" ) )
-                                    )
-                                    ( AppN Nothing
-                                      ( Ref Nothing ( Local ( Name "f$463" ) ) )
-                                      ( ObjectProp Nothing
-                                        ( Ref Nothing ( Local ( Name "v$464" ) ) )
-                                        ( PropName "value0" ) :| []
-                                      ) :| []
-                                    )
-                                  )
-                                  ( ObjectProp Nothing
-                                    ( Ref Nothing ( Local ( Name "v$464" ) ) )
-                                    ( PropName "value1" ) :| []
-                                  )
-                                ) :| []
-                              )
-                            )
-                            ( Ref Nothing ( Local ( Name "v$466" ) ) :| [] )
-                          )
-                        )
-                      )
-                    ]
-                  )
-                )
-              ]
-            )
-          )
+        ( ParamNamed Nothing
+          ( Name "dictSemigroup" ) :|
+          [ ParamNamed Nothing ( Name "dictApply" ) ]
         )
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Control.Monad.Writer.Trans", qnameName = Name "bindWriterT"
-        }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "dictSemigroup" ) :| [] )
-        ( AbsN Nothing
-          ( ParamNamed Nothing ( Name "dictBind" ) :| [] )
-          ( Let Nothing
-            ( Standalone
-              ( Nothing, Name "Apply0", AppN Nothing
-                ( ObjectProp Nothing
-                  ( Ref Nothing ( Local ( Name "dictBind" ) ) )
-                  ( PropName "Apply0" )
-                )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
-              ) :| []
-            )
-            ( LiteralObject Nothing
-              [
-                ( PropName "bind", AbsN Nothing
-                  ( ParamNamed Nothing ( Name "v" ) :| [] )
-                  ( AbsN Nothing
-                    ( ParamNamed Nothing ( Name "k" ) :| [] )
+        ( Let Nothing
+          ( Standalone
+            ( Nothing, Name "Functor0", AppN Nothing
+              ( ObjectProp Nothing
+                ( Ref Nothing ( Local ( Name "dictApply" ) ) )
+                ( PropName "Functor0" )
+              )
+              ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+            ) :| []
+          )
+          ( LiteralObject Nothing
+            [
+              ( PropName "apply", AbsN Nothing
+                ( ParamNamed Nothing ( Name "v" ) :| [] )
+                ( AbsN Nothing
+                  ( ParamNamed Nothing ( Name "v1" ) :| [] )
+                  ( AppN Nothing
                     ( AppN Nothing
+                      ( ObjectProp Nothing
+                        ( Ref Nothing ( Local ( Name "dictApply" ) ) )
+                        ( PropName "apply" )
+                      )
                       ( AppN Nothing
                         ( AppN Nothing
-                          ( Ref Nothing
-                            ( Imported ( ModuleName "Control.Bind" ) ( Name "bind" ) )
-                          )
-                          ( Ref Nothing ( Local ( Name "dictBind" ) ) :| [] )
-                        )
-                        ( Ref Nothing ( Local ( Name "v" ) ) :| [] )
-                      )
-                      ( AbsN Nothing
-                        ( ParamNamed Nothing ( Name "v1" ) :| [] )
-                        ( AppN Nothing
                           ( AppN Nothing
-                            ( AppN Nothing
-                              ( Ref Nothing
-                                ( Imported ( ModuleName "Data.Functor" ) ( Name "map" ) )
-                              )
-                              ( AppN Nothing
-                                ( ObjectProp Nothing
-                                  ( Ref Nothing ( Local ( Name "Apply0" ) ) )
-                                  ( PropName "Functor0" )
-                                )
-                                ( Ref Nothing
-                                  ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| []
-                                ) :| []
-                              )
+                            ( Ref Nothing
+                              ( Imported ( ModuleName "Data.Functor" ) ( Name "map" ) )
                             )
+                            ( Ref Nothing ( Local ( Name "Functor0" ) ) :| [] )
+                          )
+                          ( AbsN Nothing
+                            ( ParamNamed Nothing ( Name "v3$33" ) :| [] )
                             ( AbsN Nothing
-                              ( ParamNamed Nothing ( Name "v3" ) :| [] )
+                              ( ParamNamed Nothing ( Name "v4$34" ) :| [] )
                               ( AppN Nothing
                                 ( AppN Nothing
                                   ( Ref Nothing
                                     ( Imported ( ModuleName "Data.Tuple" ) ( Name "Tuple" ) )
                                   )
-                                  ( ObjectProp Nothing
-                                    ( Ref Nothing ( Local ( Name "v3" ) ) )
-                                    ( PropName "value0" ) :| []
+                                  ( AppN Nothing
+                                    ( ObjectProp Nothing
+                                      ( Ref Nothing ( Local ( Name "v3$33" ) ) )
+                                      ( PropName "value0" )
+                                    )
+                                    ( ObjectProp Nothing
+                                      ( Ref Nothing ( Local ( Name "v4$34" ) ) )
+                                      ( PropName "value0" ) :| []
+                                    ) :| []
                                   )
                                 )
                                 ( AppN Nothing
@@ -396,107 +253,181 @@ UberModule
                                       ( Ref Nothing ( Local ( Name "dictSemigroup" ) ) :| [] )
                                     )
                                     ( ObjectProp Nothing
-                                      ( Ref Nothing ( Local ( Name "v1" ) ) )
+                                      ( Ref Nothing ( Local ( Name "v3$33" ) ) )
                                       ( PropName "value1" ) :| []
                                     )
                                   )
                                   ( ObjectProp Nothing
-                                    ( Ref Nothing ( Local ( Name "v3" ) ) )
+                                    ( Ref Nothing ( Local ( Name "v4$34" ) ) )
                                     ( PropName "value1" ) :| []
                                   ) :| []
+                                )
+                              )
+                            ) :| []
+                          )
+                        )
+                        ( Ref Nothing ( Local ( Name "v" ) ) :| [] ) :| []
+                      )
+                    )
+                    ( Ref Nothing ( Local ( Name "v1" ) ) :| [] )
+                  )
+                )
+              ),
+              ( PropName "Functor0", AbsN Nothing
+                ( ParamUnused Nothing :| [] )
+                ( LiteralObject Nothing
+                  [
+                    ( PropName "map", AbsN Nothing
+                      ( ParamNamed Nothing ( Name "f$463" ) :| [] )
+                      ( AbsN Nothing
+                        ( ParamNamed Nothing ( Name "v$466" ) :| [] )
+                        ( AppN Nothing
+                          ( AppN Nothing
+                            ( AppN Nothing
+                              ( Ref Nothing
+                                ( Imported ( ModuleName "Data.Functor" ) ( Name "map" ) )
+                              )
+                              ( Ref Nothing ( Local ( Name "Functor0" ) ) :| [] )
+                            )
+                            ( AbsN Nothing
+                              ( ParamNamed Nothing ( Name "v$464" ) :| [] )
+                              ( AppN Nothing
+                                ( AppN Nothing
+                                  ( Ref Nothing
+                                    ( Imported ( ModuleName "Data.Tuple" ) ( Name "Tuple" ) )
+                                  )
+                                  ( AppN Nothing
+                                    ( Ref Nothing ( Local ( Name "f$463" ) ) )
+                                    ( ObjectProp Nothing
+                                      ( Ref Nothing ( Local ( Name "v$464" ) ) )
+                                      ( PropName "value0" ) :| []
+                                    ) :| []
+                                  )
+                                )
+                                ( ObjectProp Nothing
+                                  ( Ref Nothing ( Local ( Name "v$464" ) ) )
+                                  ( PropName "value1" ) :| []
                                 )
                               ) :| []
                             )
                           )
-                          ( AppN Nothing
-                            ( Ref Nothing ( Local ( Name "k" ) ) )
-                            ( ObjectProp Nothing
-                              ( Ref Nothing ( Local ( Name "v1" ) ) )
-                              ( PropName "value0" ) :| []
-                            ) :| []
-                          )
-                        ) :| []
-                      )
-                    )
-                  )
-                ),
-                ( PropName "Apply0", AbsN Nothing
-                  ( ParamUnused Nothing :| [] )
-                  ( AppN Nothing
-                    ( AppN Nothing
-                      ( Ref Nothing
-                        ( Imported
-                          ( ModuleName "Control.Monad.Writer.Trans" )
-                          ( Name "applyWriterT" )
+                          ( Ref Nothing ( Local ( Name "v$466" ) ) :| [] )
                         )
                       )
-                      ( Ref Nothing ( Local ( Name "dictSemigroup" ) ) :| [] )
                     )
-                    ( Ref Nothing ( Local ( Name "Apply0" ) ) :| [] )
-                  )
+                  ]
                 )
-              ]
-            )
+              )
+            ]
           )
         )
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Control.Monad.Writer.Trans", qnameName = Name "applicativeWriterT"
+        { qnameModuleName = ModuleName "Control.Monad.Writer.Trans", qnameName = Name "bindWriterT$w"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "dictMonoid" ) :| [] )
-        ( AbsN Nothing
-          ( ParamNamed Nothing ( Name "dictApplicative" ) :| [] )
+        ( ParamNamed Nothing
+          ( Name "dictSemigroup" ) :|
+          [ ParamNamed Nothing ( Name "dictBind" ) ]
+        )
+        ( Let Nothing
+          ( Standalone
+            ( Nothing, Name "Apply0", AppN Nothing
+              ( ObjectProp Nothing
+                ( Ref Nothing ( Local ( Name "dictBind" ) ) )
+                ( PropName "Apply0" )
+              )
+              ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+            ) :| []
+          )
           ( LiteralObject Nothing
             [
-              ( PropName "pure", AbsN Nothing
-                ( ParamNamed Nothing ( Name "a" ) :| [] )
-                ( AppN Nothing
-                  ( AppN Nothing
-                    ( Ref Nothing
-                      ( Imported ( ModuleName "Control.Applicative" ) ( Name "pure" ) )
-                    )
-                    ( Ref Nothing ( Local ( Name "dictApplicative" ) ) :| [] )
-                  )
+              ( PropName "bind", AbsN Nothing
+                ( ParamNamed Nothing ( Name "v" ) :| [] )
+                ( AbsN Nothing
+                  ( ParamNamed Nothing ( Name "k" ) :| [] )
                   ( AppN Nothing
                     ( AppN Nothing
-                      ( Ref Nothing ( Imported ( ModuleName "Data.Tuple" ) ( Name "Tuple" ) ) )
-                      ( Ref Nothing ( Local ( Name "a" ) ) :| [] )
+                      ( AppN Nothing
+                        ( Ref Nothing ( Imported ( ModuleName "Control.Bind" ) ( Name "bind" ) ) )
+                        ( Ref Nothing ( Local ( Name "dictBind" ) ) :| [] )
+                      )
+                      ( Ref Nothing ( Local ( Name "v" ) ) :| [] )
                     )
-                    ( ObjectProp Nothing
-                      ( Ref Nothing ( Local ( Name "dictMonoid" ) ) )
-                      ( PropName "mempty" ) :| []
-                    ) :| []
+                    ( AbsN Nothing
+                      ( ParamNamed Nothing ( Name "v1" ) :| [] )
+                      ( AppN Nothing
+                        ( AppN Nothing
+                          ( AppN Nothing
+                            ( Ref Nothing
+                              ( Imported ( ModuleName "Data.Functor" ) ( Name "map" ) )
+                            )
+                            ( AppN Nothing
+                              ( ObjectProp Nothing
+                                ( Ref Nothing ( Local ( Name "Apply0" ) ) )
+                                ( PropName "Functor0" )
+                              )
+                              ( Ref Nothing
+                                ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| []
+                              ) :| []
+                            )
+                          )
+                          ( AbsN Nothing
+                            ( ParamNamed Nothing ( Name "v3" ) :| [] )
+                            ( AppN Nothing
+                              ( AppN Nothing
+                                ( Ref Nothing
+                                  ( Imported ( ModuleName "Data.Tuple" ) ( Name "Tuple" ) )
+                                )
+                                ( ObjectProp Nothing
+                                  ( Ref Nothing ( Local ( Name "v3" ) ) )
+                                  ( PropName "value0" ) :| []
+                                )
+                              )
+                              ( AppN Nothing
+                                ( AppN Nothing
+                                  ( AppN Nothing
+                                    ( Ref Nothing
+                                      ( Imported ( ModuleName "Data.Semigroup" ) ( Name "append" ) )
+                                    )
+                                    ( Ref Nothing ( Local ( Name "dictSemigroup" ) ) :| [] )
+                                  )
+                                  ( ObjectProp Nothing
+                                    ( Ref Nothing ( Local ( Name "v1" ) ) )
+                                    ( PropName "value1" ) :| []
+                                  )
+                                )
+                                ( ObjectProp Nothing
+                                  ( Ref Nothing ( Local ( Name "v3" ) ) )
+                                  ( PropName "value1" ) :| []
+                                ) :| []
+                              )
+                            ) :| []
+                          )
+                        )
+                        ( AppN Nothing
+                          ( Ref Nothing ( Local ( Name "k" ) ) )
+                          ( ObjectProp Nothing
+                            ( Ref Nothing ( Local ( Name "v1" ) ) )
+                            ( PropName "value0" ) :| []
+                          ) :| []
+                        )
+                      ) :| []
+                    )
                   )
                 )
               ),
               ( PropName "Apply0", AbsN Nothing
                 ( ParamUnused Nothing :| [] )
                 ( AppN Nothing
-                  ( AppN Nothing
-                    ( Ref Nothing
-                      ( Imported
-                        ( ModuleName "Control.Monad.Writer.Trans" )
-                        ( Name "applyWriterT" )
-                      )
-                    )
-                    ( AppN Nothing
-                      ( ObjectProp Nothing
-                        ( Ref Nothing ( Local ( Name "dictMonoid" ) ) )
-                        ( PropName "Semigroup0" )
-                      )
-                      ( Ref Nothing
-                        ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| []
-                      ) :| []
+                  ( Ref Nothing
+                    ( Imported
+                      ( ModuleName "Control.Monad.Writer.Trans" )
+                      ( Name "applyWriterT$w" )
                     )
                   )
-                  ( AppN Nothing
-                    ( ObjectProp Nothing
-                      ( Ref Nothing ( Local ( Name "dictApplicative" ) ) )
-                      ( PropName "Apply0" )
-                    )
-                    ( Ref Nothing
-                      ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| []
-                    ) :| []
+                  ( Ref Nothing
+                    ( Local ( Name "dictSemigroup" ) ) :|
+                    [ Ref Nothing ( Local ( Name "Apply0" ) ) ]
                   )
                 )
               )
@@ -505,20 +436,69 @@ UberModule
         )
       ), Standalone
       ( QName
+        { qnameModuleName = ModuleName "Control.Monad.Writer.Trans", qnameName = Name "applicativeWriterT$w"
+        }, AbsN Nothing
+        ( ParamNamed Nothing
+          ( Name "dictMonoid" ) :|
+          [ ParamNamed Nothing ( Name "dictApplicative" ) ]
+        )
+        ( LiteralObject Nothing
+          [
+            ( PropName "pure", AbsN Nothing
+              ( ParamNamed Nothing ( Name "a" ) :| [] )
+              ( AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Control.Applicative" ) ( Name "pure" ) ) )
+                  ( Ref Nothing ( Local ( Name "dictApplicative" ) ) :| [] )
+                )
+                ( AppN Nothing
+                  ( AppN Nothing
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Tuple" ) ( Name "Tuple" ) ) )
+                    ( Ref Nothing ( Local ( Name "a" ) ) :| [] )
+                  )
+                  ( ObjectProp Nothing
+                    ( Ref Nothing ( Local ( Name "dictMonoid" ) ) )
+                    ( PropName "mempty" ) :| []
+                  ) :| []
+                )
+              )
+            ),
+            ( PropName "Apply0", AbsN Nothing
+              ( ParamUnused Nothing :| [] )
+              ( AppN Nothing
+                ( Ref Nothing
+                  ( Imported ( ModuleName "Control.Monad.Writer.Trans" ) ( Name "applyWriterT$w" ) )
+                )
+                ( AppN Nothing
+                  ( ObjectProp Nothing
+                    ( Ref Nothing ( Local ( Name "dictMonoid" ) ) )
+                    ( PropName "Semigroup0" )
+                  )
+                  ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] ) :|
+                  [ AppN Nothing
+                    ( ObjectProp Nothing
+                      ( Ref Nothing ( Local ( Name "dictApplicative" ) ) )
+                      ( PropName "Apply0" )
+                    )
+                    ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                  ]
+                )
+              )
+            )
+          ]
+        )
+      ), Standalone
+      ( QName
         { qnameModuleName = ModuleName "Golden.LongWriterBind.Test", qnameName = Name "discard"
         }, AppN Nothing
         ( Ref Nothing ( Imported ( ModuleName "Control.Bind" ) ( Name "bind" ) ) )
         ( AppN Nothing
-          ( AppN Nothing
-            ( Ref Nothing
-              ( Imported ( ModuleName "Control.Monad.Writer.Trans" ) ( Name "bindWriterT" ) )
-            )
-            ( Ref Nothing
-              ( Imported ( ModuleName "Data.Semigroup" ) ( Name "semigroupArray" ) ) :| []
-            )
+          ( Ref Nothing
+            ( Imported ( ModuleName "Control.Monad.Writer.Trans" ) ( Name "bindWriterT$w" ) )
           )
           ( Ref Nothing
-            ( Imported ( ModuleName "Data.Identity" ) ( Name "bindIdentity" ) ) :| []
+            ( Imported ( ModuleName "Data.Semigroup" ) ( Name "semigroupArray" ) ) :|
+            [ Ref Nothing ( Imported ( ModuleName "Data.Identity" ) ( Name "bindIdentity" ) ) ]
           ) :| []
         )
       ), Standalone
@@ -604,58 +584,54 @@ UberModule
                     ( PropName "Applicative0", AbsN Nothing
                       ( ParamUnused Nothing :| [] )
                       ( AppN Nothing
-                        ( AppN Nothing
-                          ( Ref Nothing
-                            ( Imported
-                              ( ModuleName "Control.Monad.Writer.Trans" )
-                              ( Name "applicativeWriterT" )
-                            )
-                          )
-                          ( Ref Nothing
-                            ( Imported ( ModuleName "Data.Monoid" ) ( Name "monoidArray" ) ) :| []
+                        ( Ref Nothing
+                          ( Imported
+                            ( ModuleName "Control.Monad.Writer.Trans" )
+                            ( Name "applicativeWriterT$w" )
                           )
                         )
-                        ( AppN Nothing
-                          ( ObjectProp Nothing
-                            ( Ref Nothing ( Local ( Name "dictMonad$478" ) ) )
-                            ( PropName "Applicative0" )
-                          )
-                          ( Ref Nothing
-                            ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| []
-                          ) :| []
+                        ( Ref Nothing
+                          ( Imported ( ModuleName "Data.Monoid" ) ( Name "monoidArray" ) ) :|
+                          [ AppN Nothing
+                            ( ObjectProp Nothing
+                              ( Ref Nothing ( Local ( Name "dictMonad$478" ) ) )
+                              ( PropName "Applicative0" )
+                            )
+                            ( Ref Nothing
+                              ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| []
+                            )
+                          ]
                         )
                       )
                     ),
                     ( PropName "Bind1", AbsN Nothing
                       ( ParamUnused Nothing :| [] )
                       ( AppN Nothing
-                        ( AppN Nothing
-                          ( Ref Nothing
-                            ( Imported
-                              ( ModuleName "Control.Monad.Writer.Trans" )
-                              ( Name "bindWriterT" )
-                            )
-                          )
-                          ( AppN Nothing
-                            ( ObjectProp Nothing
-                              ( Ref Nothing
-                                ( Imported ( ModuleName "Data.Monoid" ) ( Name "monoidArray" ) )
-                              )
-                              ( PropName "Semigroup0" )
-                            )
-                            ( Ref Nothing
-                              ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| []
-                            ) :| []
+                        ( Ref Nothing
+                          ( Imported
+                            ( ModuleName "Control.Monad.Writer.Trans" )
+                            ( Name "bindWriterT$w" )
                           )
                         )
                         ( AppN Nothing
                           ( ObjectProp Nothing
-                            ( Ref Nothing ( Local ( Name "dictMonad$478" ) ) )
-                            ( PropName "Bind1" )
+                            ( Ref Nothing
+                              ( Imported ( ModuleName "Data.Monoid" ) ( Name "monoidArray" ) )
+                            )
+                            ( PropName "Semigroup0" )
                           )
                           ( Ref Nothing
                             ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| []
-                          ) :| []
+                          ) :|
+                          [ AppN Nothing
+                            ( ObjectProp Nothing
+                              ( Ref Nothing ( Local ( Name "dictMonad$478" ) ) )
+                              ( PropName "Bind1" )
+                            )
+                            ( Ref Nothing
+                              ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| []
+                            )
+                          ]
                         )
                       )
                     )
@@ -1530,25 +1506,23 @@ UberModule
                                                                                                                                                                                 )
                                                                                                                                                                               )
                                                                                                                                                                               ( AppN Nothing
-                                                                                                                                                                                ( AppN Nothing
-                                                                                                                                                                                  ( Ref Nothing
-                                                                                                                                                                                    ( Imported
-                                                                                                                                                                                      ( ModuleName "Control.Monad.Writer.Trans" )
-                                                                                                                                                                                      ( Name "applicativeWriterT" )
-                                                                                                                                                                                    )
-                                                                                                                                                                                  )
-                                                                                                                                                                                  ( Ref Nothing
-                                                                                                                                                                                    ( Imported
-                                                                                                                                                                                      ( ModuleName "Data.Monoid" )
-                                                                                                                                                                                      ( Name "monoidArray" )
-                                                                                                                                                                                    ) :| []
+                                                                                                                                                                                ( Ref Nothing
+                                                                                                                                                                                  ( Imported
+                                                                                                                                                                                    ( ModuleName "Control.Monad.Writer.Trans" )
+                                                                                                                                                                                    ( Name "applicativeWriterT$w" )
                                                                                                                                                                                   )
                                                                                                                                                                                 )
                                                                                                                                                                                 ( Ref Nothing
                                                                                                                                                                                   ( Imported
-                                                                                                                                                                                    ( ModuleName "Data.Identity" )
-                                                                                                                                                                                    ( Name "applicativeIdentity" )
-                                                                                                                                                                                  ) :| []
+                                                                                                                                                                                    ( ModuleName "Data.Monoid" )
+                                                                                                                                                                                    ( Name "monoidArray" )
+                                                                                                                                                                                  ) :|
+                                                                                                                                                                                  [ Ref Nothing
+                                                                                                                                                                                    ( Imported
+                                                                                                                                                                                      ( ModuleName "Data.Identity" )
+                                                                                                                                                                                      ( Name "applicativeIdentity" )
+                                                                                                                                                                                    )
+                                                                                                                                                                                  ]
                                                                                                                                                                                 ) :| []
                                                                                                                                                                               )
                                                                                                                                                                             )

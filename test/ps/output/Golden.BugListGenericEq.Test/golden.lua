@@ -53,24 +53,21 @@ M.Data_HeytingAlgebra_heytingAlgebraBoolean = {
 }
 M.Data_Eq_eqRecord = function(dict) return dict.eqRecord end
 M.Data_Eq_eq = function(dict) return dict.eq end
-M.Data_Eq_eqRowCons = function(dictEqRecord)
-  return function()
-    return function(dictIsSymbol)
-      return function(dictEq)
-        return {
-          eqRecord = function()
-            return function(ra)
-              return function(rb)
-                local key = dictIsSymbol.reflectSymbol(M.Type_Proxy_Proxy)
-                local get = M.Record_Unsafe_foreign.unsafeGet(key)
-                return M.Data_HeytingAlgebra_heytingAlgebraBoolean.conj(M.Data_Eq_eq(dictEq)(get(ra))(get(rb)))(M.Data_Eq_eqRecord(dictEqRecord)(M.Type_Proxy_Proxy)(ra)(rb))
-              end
-            end
-          end
-        }
+M.Data_Eq_eqRowCons_S_w = function( dictEqRecord
+, eqRowCons_S_u2
+, dictIsSymbol
+, dictEq )
+  return {
+    eqRecord = function()
+      return function(ra)
+        return function(rb)
+          local key = dictIsSymbol.reflectSymbol(M.Type_Proxy_Proxy)
+          local get = M.Record_Unsafe_foreign.unsafeGet(key)
+          return M.Data_HeytingAlgebra_heytingAlgebraBoolean.conj(M.Data_Eq_eq(dictEq)(get(ra))(get(rb)))(M.Data_Eq_eqRecord(dictEqRecord)(M.Type_Proxy_Proxy)(ra)(rb))
+        end
       end
     end
-  end
+  }
 end
 M.Control_Applicative_pure = function(dict) return dict.pure end
 M.Control_Bind_bind = function(dict) return dict.bind end
@@ -199,17 +196,17 @@ M.Golden_BugListGenericEq_Test_eqList = function(dictEq)
                     genericEqPrime = function(v_S_21)
                       return function(v1_S_22)
                         return M.Data_Eq_eq({
-                          eq = M.Data_Eq_eqRecord(M.Data_Eq_eqRowCons(M.Data_Eq_eqRowCons({
+                          eq = M.Data_Eq_eqRecord(M.Data_Eq_eqRowCons_S_w(M.Data_Eq_eqRowCons_S_w({
                             eqRecord = function()
                               return function()
                                 return function() return true end
                               end
                             end
-                          })()({
+                          }, nil, {
                             reflectSymbol = function() return "tail" end
-                          })(M.Golden_BugListGenericEq_Test_eqList(dictEq)))()({
+                          }, M.Golden_BugListGenericEq_Test_eqList(dictEq)), nil, {
                             reflectSymbol = function() return "head" end
-                          })(dictEq))(M.Type_Proxy_Proxy)
+                          }, dictEq))(M.Type_Proxy_Proxy)
                         })(v_S_21)(v1_S_22)
                       end
                     end
@@ -230,13 +227,11 @@ end
 M.Golden_BugListGenericEq_Test_eq = M.Data_Eq_eq(M.Golden_BugListGenericEq_Test_eqList({
   eq = M.Data_Eq_foreign.eqIntImpl
 }))
-M.Golden_BugListGenericEq_Test_cons = function(head)
-  return function(tail)
-    return M.Golden_BugListGenericEq_Test_Cons({ head = head, tail = tail })
-  end
+M.Golden_BugListGenericEq_Test_cons_S_w = function(head, tail)
+  return M.Golden_BugListGenericEq_Test_Cons({ head = head, tail = tail })
 end
 return (function()
   local _ = M.Golden_BugListGenericEq_Test_logShow(M.Golden_BugListGenericEq_Test_eq(M.Golden_BugListGenericEq_Test_Nil)(M.Golden_BugListGenericEq_Test_Nil))()
-  local _ = M.Golden_BugListGenericEq_Test_logShow(M.Golden_BugListGenericEq_Test_eq(M.Golden_BugListGenericEq_Test_cons(1)(M.Golden_BugListGenericEq_Test_cons(2)(M.Golden_BugListGenericEq_Test_Nil)))(M.Golden_BugListGenericEq_Test_cons(1)(M.Golden_BugListGenericEq_Test_cons(2)(M.Golden_BugListGenericEq_Test_Nil))))()
-  return M.Golden_BugListGenericEq_Test_logShow(M.Golden_BugListGenericEq_Test_eq(M.Golden_BugListGenericEq_Test_cons(1)(M.Golden_BugListGenericEq_Test_Nil))(M.Golden_BugListGenericEq_Test_cons(2)(M.Golden_BugListGenericEq_Test_Nil)))()
+  local _ = M.Golden_BugListGenericEq_Test_logShow(M.Golden_BugListGenericEq_Test_eq(M.Golden_BugListGenericEq_Test_cons_S_w(1, M.Golden_BugListGenericEq_Test_cons_S_w(2, M.Golden_BugListGenericEq_Test_Nil)))(M.Golden_BugListGenericEq_Test_cons_S_w(1, M.Golden_BugListGenericEq_Test_cons_S_w(2, M.Golden_BugListGenericEq_Test_Nil))))()
+  return M.Golden_BugListGenericEq_Test_logShow(M.Golden_BugListGenericEq_Test_eq(M.Golden_BugListGenericEq_Test_cons_S_w(1, M.Golden_BugListGenericEq_Test_Nil))(M.Golden_BugListGenericEq_Test_cons_S_w(2, M.Golden_BugListGenericEq_Test_Nil)))()
 end)()

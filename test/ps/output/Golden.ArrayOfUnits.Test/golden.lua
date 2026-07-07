@@ -115,8 +115,8 @@ M.Effect_Lazy_applyEffect = PSLUA_runtime_lazy("applyEffect")(function()
     Functor0 = function() return M.Effect_Lazy_functorEffect(0) end
   }
 end)
-M.Effect_Console_logShow = function(dictShow)
-  return function(a) return M.Effect_Console_foreign.log(dictShow.show(a)) end
+M.Effect_Console_logShow_S_w = function(dictShow, a)
+  return M.Effect_Console_foreign.log(dictShow.show(a))
 end
 return (function()
   local arr_S_0 = {
@@ -135,13 +135,13 @@ return (function()
             end)(a_S_893))(b_S_894)
           end
         end
-      end)()(M.Effect_Console_logShow({
+      end)()(M.Effect_Console_logShow_S_w({
         show = function() return "unit" end
-      })(x_S_907))
+      }, x_S_907))
     end)(M.Control_Applicative_pure(M.Effect_applicativeEffect)(M.Data_Unit_foreign.unit))(arr_S_0)()
-    return M.Effect_Console_logShow({
+    return M.Effect_Console_logShow_S_w({
       show = M.Data_Show_foreign.showIntImpl
-    })(M.Data_Foldable_foldableArray.foldl(function(c_S_372_S_881)
+    }, M.Data_Foldable_foldableArray.foldl(function(c_S_372_S_881)
       return function()
         return M.Data_Semiring_semiringInt.add(M.Data_Semiring_semiringInt.one)(c_S_372_S_881)
       end

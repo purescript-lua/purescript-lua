@@ -10,6 +10,7 @@ import Language.PureScript.Backend.IR.Optimizer.Spec qualified as IROptimizer
 import Language.PureScript.Backend.IR.Pass.Spec qualified as IRPass
 import Language.PureScript.Backend.IR.Spec qualified as IR
 import Language.PureScript.Backend.IR.Types.Spec qualified as Types
+import Language.PureScript.Backend.IR.Uncurry.Spec qualified as IRUncurry
 import Language.PureScript.Backend.IR.Uniquify.Spec qualified as IRUniquify
 import Language.PureScript.Backend.Lua.Differential.Spec qualified as LuaDifferential
 import Language.PureScript.Backend.Lua.Golden.Spec qualified as Golden
@@ -36,6 +37,7 @@ main = hspec do
   IRLinter.spec
   IROptimizer.spec
   IRPass.spec
+  IRUncurry.spec
   IRUniquify.spec
   LuaOptimizer.spec
   Lua.spec

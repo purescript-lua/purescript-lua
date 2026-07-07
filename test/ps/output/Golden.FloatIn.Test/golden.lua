@@ -86,33 +86,29 @@ M.Golden_FloatIn_Test_discard = M.Control_Bind_bind(M.Effect_bindEffect)
 M.Golden_FloatIn_Test_logShow = function(a_S_2)
   return M.Effect_Console_foreign.log(M.Data_Show_foreign.showIntImpl(a_S_2))
 end
-M.Golden_FloatIn_Test_pickShared = function(useIt)
-  return function(n)
-    if useIt then
-      local shared = M.Golden_FloatIn_Test_foreign.tick(n)
-      local f = function() return M.Golden_FloatIn_Test_add(shared)(shared) end
-      return M.Golden_FloatIn_Test_add(f(M.Data_Unit_foreign.unit))(f(M.Data_Unit_foreign.unit))
-    else
-      return 0
-    end
+M.Golden_FloatIn_Test_pickShared_S_w = function(useIt, n)
+  if useIt then
+    local shared = M.Golden_FloatIn_Test_foreign.tick(n)
+    local f = function() return M.Golden_FloatIn_Test_add(shared)(shared) end
+    return M.Golden_FloatIn_Test_add(f(M.Data_Unit_foreign.unit))(f(M.Data_Unit_foreign.unit))
+  else
+    return 0
   end
 end
 M.Golden_FloatIn_Test_expensive = function(x)
   return M.Golden_FloatIn_Test_add(M.Data_Semiring_semiringInt.mul(x)(x))(1)
 end
-M.Golden_FloatIn_Test_pick = function(useIt)
-  return function(n)
-    if useIt then
-      local shared = M.Golden_FloatIn_Test_expensive(n)
-      return M.Golden_FloatIn_Test_add(shared)(shared)
-    else
-      return 0
-    end
+M.Golden_FloatIn_Test_pick_S_w = function(useIt, n)
+  if useIt then
+    local shared = M.Golden_FloatIn_Test_expensive(n)
+    return M.Golden_FloatIn_Test_add(shared)(shared)
+  else
+    return 0
   end
 end
 return (function()
-  local _ = M.Golden_FloatIn_Test_logShow(M.Golden_FloatIn_Test_pick(true)(3))()
-  local _ = M.Golden_FloatIn_Test_logShow(M.Golden_FloatIn_Test_pick(false)(3))()
-  local _ = M.Golden_FloatIn_Test_logShow(M.Golden_FloatIn_Test_pickShared(true)(3))()
-  return M.Golden_FloatIn_Test_logShow(M.Golden_FloatIn_Test_pickShared(false)(3))()
+  local _ = M.Golden_FloatIn_Test_logShow(M.Golden_FloatIn_Test_pick_S_w(true, 3))()
+  local _ = M.Golden_FloatIn_Test_logShow(M.Golden_FloatIn_Test_pick_S_w(false, 3))()
+  local _ = M.Golden_FloatIn_Test_logShow(M.Golden_FloatIn_Test_pickShared_S_w(true, 3))()
+  return M.Golden_FloatIn_Test_logShow(M.Golden_FloatIn_Test_pickShared_S_w(false, 3))()
 end)()

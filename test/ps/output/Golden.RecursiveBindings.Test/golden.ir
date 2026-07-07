@@ -127,42 +127,28 @@ UberModule
                 )
               ]
             ), Standalone
-            ( Nothing, Name "f$7", AbsN Nothing
-              ( ParamUnused Nothing :| [] )
-              ( AbsN Nothing
-                ( ParamNamed Nothing ( Name "k$13" ) :| [] )
-                ( AppN Nothing
-                  ( Ref Nothing ( Local ( Name "a$6" ) ) )
-                  ( Ref Nothing ( Local ( Name "k$13" ) ) :| [] )
-                )
+            ( Nothing, Name "f$7$w", AbsN Nothing
+              ( ParamNamed Nothing ( Name "f$7$u1" ) :| [ ParamNamed Nothing ( Name "k$13" ) ] )
+              ( AppN Nothing
+                ( Ref Nothing ( Local ( Name "a$6" ) ) )
+                ( Ref Nothing ( Local ( Name "k$13" ) ) :| [] )
               )
             ), Standalone
             ( Nothing, Name "y$8", AppN Nothing
-              ( AppN Nothing
-                ( Ref Nothing ( Local ( Name "f$7" ) ) )
-                ( Ref Nothing ( Local ( Name "z$4" ) ) :| [] )
-              )
-              ( Ref Nothing ( Local ( Name "z$4" ) ) :| [] )
+              ( Ref Nothing ( Local ( Name "f$7$w" ) ) )
+              ( Ref Nothing ( Local ( Name "z$4" ) ) :| [ Ref Nothing ( Local ( Name "z$4" ) ) ] )
             )
           ]
         )
         ( AppN Nothing
+          ( Ref Nothing ( Local ( Name "f$7$w" ) ) )
           ( AppN Nothing
-            ( Ref Nothing ( Local ( Name "f$7" ) ) )
-            ( AppN Nothing
-              ( AppN Nothing
-                ( Ref Nothing ( Local ( Name "f$7" ) ) )
-                ( Ref Nothing ( Local ( Name "y$8" ) ) :| [] )
-              )
-              ( Ref Nothing ( Local ( Name "y$8" ) ) :| [] ) :| []
-            )
-          )
-          ( AppN Nothing
-            ( AppN Nothing
-              ( Ref Nothing ( Local ( Name "f$7" ) ) )
-              ( Ref Nothing ( Local ( Name "y$8" ) ) :| [] )
-            )
-            ( LiteralInt Nothing 0 :| [] ) :| []
+            ( Ref Nothing ( Local ( Name "f$7$w" ) ) )
+            ( Ref Nothing ( Local ( Name "y$8" ) ) :| [ Ref Nothing ( Local ( Name "y$8" ) ) ] ) :|
+            [ AppN Nothing
+              ( Ref Nothing ( Local ( Name "f$7$w" ) ) )
+              ( Ref Nothing ( Local ( Name "y$8" ) ) :| [ LiteralInt Nothing 0 ] )
+            ]
           )
         )
       )

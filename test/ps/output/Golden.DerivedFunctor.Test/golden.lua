@@ -146,22 +146,20 @@ M.Golden_DerivedFunctor_Test_functorEither = {
   end
 }
 M.Golden_DerivedFunctor_Test_map1 = M.Data_Functor_map(M.Golden_DerivedFunctor_Test_functorEither)
-M.Golden_DerivedFunctor_Test_fromRight = function(fallback)
-  return function(v)
-    if "Golden.DerivedFunctor.Test∷Either.Left" == v["$ctor"] then
-      return fallback
-    elseif "Golden.DerivedFunctor.Test∷Either.Right" == v["$ctor"] then
-      return v.value0
-    else
-      return error("No patterns matched")
-    end
+M.Golden_DerivedFunctor_Test_fromRight_S_w = function(fallback, v)
+  if "Golden.DerivedFunctor.Test∷Either.Left" == v["$ctor"] then
+    return fallback
+  elseif "Golden.DerivedFunctor.Test∷Either.Right" == v["$ctor"] then
+    return v.value0
+  else
+    return error("No patterns matched")
   end
 end
 return (function()
-  local _ = M.Golden_DerivedFunctor_Test_logShow(M.Golden_DerivedFunctor_Test_fromRight(0)(M.Golden_DerivedFunctor_Test_map1(function( v_S_0 )
+  local _ = M.Golden_DerivedFunctor_Test_logShow(M.Golden_DerivedFunctor_Test_fromRight_S_w(0, M.Golden_DerivedFunctor_Test_map1(function( v_S_0 )
     return M.Golden_DerivedFunctor_Test_add(v_S_0)(1)
   end)(M.Golden_DerivedFunctor_Test_Right(41))))()
-  local _ = M.Golden_DerivedFunctor_Test_logShow(M.Golden_DerivedFunctor_Test_fromRight(7)(M.Golden_DerivedFunctor_Test_map1(function( v0_S_1 )
+  local _ = M.Golden_DerivedFunctor_Test_logShow(M.Golden_DerivedFunctor_Test_fromRight_S_w(7, M.Golden_DerivedFunctor_Test_map1(function( v0_S_1 )
     return M.Golden_DerivedFunctor_Test_add(v0_S_1)(1)
   end)(M.Golden_DerivedFunctor_Test_Left("no"))))()
   return M.Golden_DerivedFunctor_Test_logShow(M.Golden_DerivedFunctor_Test_sumTree(M.Data_Functor_map(M.Golden_DerivedFunctor_Test_functorTree)(function( v1_S_2 )
