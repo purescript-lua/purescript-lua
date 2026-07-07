@@ -1,0 +1,18 @@
+spec: bind_chain
+workload: n=1000000 reps=2 result=3000000
+aborts (distinct site -- reason):
+  Bench.BindChain.lua:19 -- NYI: bytecode FNEW
+  Bench.BindChain.lua:3 -- NYI: bytecode FNEW
+bytecode end state (J*=compiled, I*=blacklisted):
+  Bench.BindChain.lua:22 IFUNCF
+  Bench.BindChain.lua:23 IFUNCF
+  Bench.BindChain.lua:24 IFUNCF
+  Bench.BindChain.lua:3 IFUNCF
+  Bench.BindChain.lua:3 JFUNCF
+  Bench.BindChain.lua:5 JFUNCF
+  Bench.BindChain.lua:8 IFUNCF
+  Bench.BindChain.lua:9 IFUNCF
+  bind_chain.lua:11 IFORL
+  bind_chain.lua:18 JFORI
+  bind_chain.lua:18 JFORL
+counts: aborts=2 compiled=4 blacklisted=7

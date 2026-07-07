@@ -1,0 +1,14 @@
+spec: fibonacci
+workload: n=30 reps=2 result=832040
+aborts (distinct site -- reason):
+  Bench.Fib.lua:3 -- NYI: bytecode FNEW
+  Bench.Fib.lua:6 -- NYI: bytecode FNEW
+  fibonacci.lua:12 -- call unroll limit reached
+bytecode end state (J*=compiled, I*=blacklisted):
+  Bench.Fib.lua:3 IFUNCF
+  Bench.Fib.lua:3 JFUNCF
+  Bench.Fib.lua:6 IFUNCF
+  Bench.Fib.lua:6 JFUNCF
+  Bench.Fib.lua:8 JFUNCF
+  fibonacci.lua:12 JFUNCF
+counts: aborts=3 compiled=4 blacklisted=2

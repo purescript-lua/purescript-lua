@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# Wall-clock benchmarks: micro codegen patterns and linked macro modules
+# under PUC Lua and LuaJIT (with and without the JIT). Timings are for local
+# use — too noisy for CI, which gates on ./bench/ci instead. For quieter
+# numbers pin the process (e.g. `taskset -c N ./bench/run`) and use the
+# `performance` CPU governor.
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+./bench/link
+
+echo "== micro: codegen patterns =="
+for bench in bench/micro/*.lua; do
+  lua bench/tools/run_micro.lua "$bench"
+  luajit bench/tools/run_micro.lua "$bench"
+  luajit -joff bench/tools/run_micro.lua "$bench"
+done
+
+echo
+echo "== macro: linked modules =="
+for spec in bench/macro/*.lua; do
+  lua bench/tools/run_macro.lua "$spec"
+  luajit bench/tools/run_macro.lua "$spec"
+  luajit -joff bench/tools/run_macro.lua "$spec"
+done
