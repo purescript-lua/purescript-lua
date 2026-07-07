@@ -58,23 +58,90 @@ spec = describe "Lua.fromUberModule" do
     rendered ← compileExportedExpr (naryCallOn [primUndefined, ref "b"])
     rendered `shouldSatisfy` Text.isInfixOf "f(nil, b)"
 
+  describe "loopification (#181)" do
+    it "lowers a top-level self-recursive tail call to a while loop" do
+      rendered ← compileRecBinding (selfTailLoop topSelf)
+      rendered `shouldSatisfy` Text.isInfixOf "while true do"
+      rendered `shouldSatisfy` Text.isInfixOf "acc, n = n, acc"
+      rendered `shouldSatisfy` (not . Text.isInfixOf "M.Test_Loopify_go(n, acc)")
+
+    it "loopifies a Let-bound recursive group the same way" do
+      rendered ← compileExportedExpr letRecLoop
+      rendered `shouldSatisfy` Text.isInfixOf "while true do"
+      rendered `shouldSatisfy` Text.isInfixOf "acc, n = n, acc"
+
+    it "keeps a non-tail self-call a real call" do
+      rendered ← compileRecBinding (selfNonTailCall topSelf)
+      rendered `shouldSatisfy` (not . Text.isInfixOf "while true do")
+
+    it "does not loopify when a closure captures a parameter" do
+      rendered ← compileRecBinding (selfTailLoopCapturing topSelf)
+      rendered `shouldSatisfy` (not . Text.isInfixOf "while true do")
+
+    it "rewrites both tail branches and keeps the non-tail one" do
+      rendered ← compileRecBinding (mixedTailCalls topSelf)
+      rendered `shouldSatisfy` Text.isInfixOf "while true do"
+      rendered `shouldSatisfy` Text.isInfixOf "M.Test_Loopify_go(acc, acc)"
+
+    it "drops a pure surplus argument facing a dropped parameter" do
+      rendered ← compileRecBinding (surplusArg topSelf (ref "acc"))
+      rendered `shouldSatisfy` Text.isInfixOf "while true do"
+      rendered `shouldSatisfy` Text.isInfixOf "acc = q"
+      rendered `shouldSatisfy` (not . Text.isInfixOf "acc = q, acc")
+
+    it "declines on an effectful surplus argument" do
+      rendered ←
+        compileRecBinding
+          (surplusArg topSelf (IR.App IR.noAnn (ref "f") (ref "acc")))
+      rendered `shouldSatisfy` (not . Text.isInfixOf "while true do")
+
+    it "pads elided trailing arguments with nil" do
+      rendered ← compileRecBinding (shortCall topSelf (ref "x"))
+      rendered `shouldSatisfy` Text.isInfixOf "while true do"
+      rendered `shouldSatisfy` Text.isInfixOf "acc, n = x, nil"
+
+    it "declines to pad after a multi-value argument" do
+      rendered ←
+        compileRecBinding
+          (shortCall topSelf (IR.App IR.noAnn (ref "g") (ref "x")))
+      rendered `shouldSatisfy` (not . Text.isInfixOf "while true do")
+
 compileExportedExpr ∷ IR.Exp → IO Text
-compileExportedExpr expr = do
+compileExportedExpr expr =
+  compileUberModule
+    UberModule
+      { uberModuleBindings = []
+      , uberModuleForeigns = []
+      , uberModuleExports = [(IR.Name "value", expr)]
+      }
+
+{- | Compile a module with a single self-recursive top-level binding
+@go@ (a 'IR.RecursiveGroup' of one member).
+-}
+compileRecBinding ∷ IR.Exp → IO Text
+compileRecBinding expr =
+  compileUberModule
+    UberModule
+      { uberModuleBindings =
+          [ IR.RecursiveGroup
+              ((IR.QName testModuleName (IR.Name "go"), expr) :| [])
+          ]
+      , uberModuleForeigns = []
+      , uberModuleExports = [(IR.Name "value", topSelf)]
+      }
+
+testModuleName ∷ IR.ModuleName
+testModuleName = IR.ModuleName "Test.Loopify"
+
+compileUberModule ∷ UberModule → IO Text
+compileUberModule uberModule = do
   foreignPath ← Tagged <$> getCurrentDir
-  let
-    moduleName = IR.ModuleName "Test.AbsScopeIife"
-    uberModule =
-      UberModule
-        { uberModuleBindings = []
-        , uberModuleForeigns = []
-        , uberModuleExports = [(IR.Name "value", expr)]
-        }
   result ←
     runExceptT
       ( Lua.fromUberModule
           foreignPath
           (Tagged False)
-          (AsModule moduleName)
+          (AsModule testModuleName)
           uberModule
           ∷ ExceptT (Variant '[Lua.Error]) IO Lua.Types.Chunk
       )
@@ -151,6 +218,136 @@ naryAbsTrailingUnused =
         :| [IR.ParamUnused IR.noAnn, IR.ParamUnused IR.noAnn]
     )
     (ref "a")
+
+-- Loopification fixtures ------------------------------------------------------
+
+-- | The top-level binding @go@ referencing itself.
+topSelf ∷ IR.Exp
+topSelf = IR.Ref IR.noAnn (IR.Imported testModuleName (IR.Name "go"))
+
+{- | @go acc n = if p then acc else go n acc@ — the argument swap pins
+the simultaneity of the parameter reassignment.
+-}
+selfTailLoop ∷ IR.Exp → IR.Exp
+selfTailLoop self =
+  absN ["acc", "n"] $
+    IR.IfThenElse
+      IR.noAnn
+      (ref "p")
+      (ref "acc")
+      (IR.AppN IR.noAnn self (ref "n" :| [ref "acc"]))
+
+{- | @go acc n = if p then acc else f (go n acc)@ — the self-call is an
+argument, not a tail call.
+-}
+selfNonTailCall ∷ IR.Exp → IR.Exp
+selfNonTailCall self =
+  absN ["acc", "n"] $
+    IR.IfThenElse
+      IR.noAnn
+      (ref "p")
+      (ref "acc")
+      ( IR.App
+          IR.noAnn
+          (ref "f")
+          (IR.AppN IR.noAnn self (ref "n" :| [ref "acc"]))
+      )
+
+{- | @go acc n = if p then acc else go (\\r → acc n) acc@ — the closure
+argument captures the loop-carried parameters.
+-}
+selfTailLoopCapturing ∷ IR.Exp → IR.Exp
+selfTailLoopCapturing self =
+  absN ["acc", "n"] $
+    IR.IfThenElse
+      IR.noAnn
+      (ref "p")
+      (ref "acc")
+      ( IR.AppN
+          IR.noAnn
+          self
+          ( IR.Abs
+              IR.noAnn
+              (IR.ParamNamed IR.noAnn (IR.Name "r"))
+              (IR.App IR.noAnn (ref "acc") (ref "n"))
+              :| [ref "acc"]
+          )
+      )
+
+{- | @go acc n = if p then go n acc else f (go acc acc)@ — a tail and a
+non-tail self-call side by side.
+-}
+mixedTailCalls ∷ IR.Exp → IR.Exp
+mixedTailCalls self =
+  absN ["acc", "n"] $
+    IR.IfThenElse
+      IR.noAnn
+      (IR.App IR.noAnn (ref "p") (ref "n"))
+      (IR.AppN IR.noAnn self (ref "n" :| [ref "acc"]))
+      ( IR.App
+          IR.noAnn
+          (ref "f")
+          (IR.AppN IR.noAnn self (ref "acc" :| [ref "acc"]))
+      )
+
+-- | @\\m → let go acc n = … in go 0 m@ with a self-recursive local @go@.
+letRecLoop ∷ IR.Exp
+letRecLoop =
+  IR.Abs IR.noAnn (IR.ParamNamed IR.noAnn (IR.Name "m")) $
+    IR.Let
+      IR.noAnn
+      ( IR.RecursiveGroup
+          ( ( IR.noAnn
+            , IR.Name "go"
+            , selfTailLoop (IR.Ref IR.noAnn (IR.Local (IR.Name "go")))
+            )
+              :| []
+          )
+          :| []
+      )
+      ( IR.AppN
+          IR.noAnn
+          (IR.Ref IR.noAnn (IR.Local (IR.Name "go")))
+          (IR.LiteralInt IR.noAnn 0 :| [ref "m"])
+      )
+
+{- | @go acc _ = if p then acc else go q \<arg\>@ — the second parameter
+is unused (and dropped by the Lua backend), so the self-call passes one
+value more than the function has variables to assign.
+-}
+surplusArg ∷ IR.Exp → IR.Exp → IR.Exp
+surplusArg self arg =
+  IR.AbsN
+    IR.noAnn
+    (IR.ParamNamed IR.noAnn (IR.Name "acc") :| [IR.ParamUnused IR.noAnn])
+    ( IR.IfThenElse
+        IR.noAnn
+        (ref "p")
+        (ref "acc")
+        (IR.AppN IR.noAnn self (ref "q" :| [arg]))
+    )
+
+{- | @go acc n = if p then acc else go \<arg\> Prim.undefined@ — the
+trailing undefined argument is elided from the call, leaving it one
+value short of the parameter list.
+-}
+shortCall ∷ IR.Exp → IR.Exp → IR.Exp
+shortCall self arg =
+  absN ["acc", "n"] $
+    IR.IfThenElse
+      IR.noAnn
+      (ref "p")
+      (ref "acc")
+      (IR.AppN IR.noAnn self (arg :| [primUndefined]))
+
+absN ∷ [Text] → IR.Exp → IR.Exp
+absN names body = case names of
+  n : ns →
+    IR.AbsN
+      IR.noAnn
+      (IR.ParamNamed IR.noAnn . IR.Name <$> (n :| ns))
+      body
+  [] → error "absN: needs at least one parameter"
 
 ctorExpr ∷ IR.AlgebraicType → IR.Exp
 ctorExpr algebraicTy =

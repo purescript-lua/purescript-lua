@@ -25,6 +25,7 @@ import Language.PureScript.Backend.IR.Query (usesRuntimeLazy)
 import Language.PureScript.Backend.Lua.Fixture qualified as Fixture
 import Language.PureScript.Backend.Lua.Key qualified as Key
 import Language.PureScript.Backend.Lua.Linker.Foreign qualified as Foreign
+import Language.PureScript.Backend.Lua.Loopify qualified as Loopify
 import Language.PureScript.Backend.Lua.Name qualified as Lua
 import Language.PureScript.Backend.Lua.Name qualified as Name
 import Language.PureScript.Backend.Lua.Types (ParamF (..))
@@ -87,7 +88,13 @@ fromUberModule foreigns needsRuntimeLazy appOrModule uber = (`evalStateT` 0) do
               <$> fromIR foreigns Set.empty modname irExp
           pure $ DList.fromList do
             (modname, name, exp) ← recBinds
-            pure $ mkBinding modname (fromName name) exp
+            -- A self-recursive member references itself through the
+            -- module-scope table, mirroring the Ref case of 'fromIR'.
+            let self =
+                  Loopify.SelfField
+                    Fixture.moduleName
+                    (qualifyName modname (fromName name))
+            pure $ mkBinding modname (fromName name) (Loopify.loopify self exp)
 
     returnExp ←
       case appOrModule of
@@ -271,15 +278,20 @@ fromIR foreigns topLevelNames modname ir = case ir of
                         then qualifyName modname name
                         else name
                     )
-          assignments ← forM (toList grp) \(_ann, fromName → name, expr) →
+          assignments ← forM (toList grp) \(_ann, fromName → name, expr) → do
+            -- The self-reference mirrors the Ref case below: through the
+            -- module-scope table for a top-level name, plain otherwise.
+            let (target, self)
+                  | Set.member (qualifyName modname name) topLevelNames =
+                      ( qualifyName modname name
+                      , Loopify.SelfField
+                          Fixture.moduleName
+                          (qualifyName modname name)
+                      )
+                  | otherwise = (name, Loopify.SelfLocal name)
             goExp expr
-              <&> Lua.assign
-                ( Lua.VarName
-                    ( if Set.member (qualifyName modname name) topLevelNames
-                        then qualifyName modname name
-                        else name
-                    )
-                )
+              <&> Lua.assign (Lua.VarName target)
+              . Loopify.loopify self
           pure $ DList.fromList binds <> DList.fromList assignments
     pure . Left . DList.toList $
       recs <> either DList.fromList (DList.singleton . Lua.return) body
