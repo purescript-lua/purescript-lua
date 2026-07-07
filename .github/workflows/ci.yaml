@@ -24,6 +24,12 @@ jobs:
       - name: "🔨 Build & test"
         run: >-
           nix develop --accept-flake-config --allow-import-from-derivation --command cabal test all --test-show-details=direct
+      # Deterministic LuaJIT counters over freshly linked bench artifacts
+      # (FNEW census, trace abort/blacklist state). Wall-clock benchmarks
+      # stay local — shared runners are too noisy; see bench/README.md.
+      - name: "📊 Bench counters"
+        run: >-
+          nix develop --accept-flake-config --allow-import-from-derivation --command ./bench/ci
   format:
     runs-on: ubuntu-latest
     steps:
