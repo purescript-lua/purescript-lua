@@ -73,6 +73,10 @@ anywhere in the file is a compile-time error.
   that starts with `(` right after an expression is rejected as an ambiguous
   function call — end the previous statement with `;` or keep the `(` on the
   same line as the callee.
+- Top-level `...` is rejected: the file is embedded into a function scope in
+  the generated output, so chunk varargs (e.g. the `local name = ...`
+  module-name idiom) cannot work there. `...` inside the file's own vararg
+  functions is fine.
 
 ```lua
 -- header: shared helpers

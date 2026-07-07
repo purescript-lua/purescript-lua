@@ -55,6 +55,23 @@ spec = describe "Foreign module parser" do
         expectationFailure
           ("Expected an ambiguity parse error, got: " <> show other)
 
+  it "rejects '...' in the chunk's top-level scope" do
+    -- Legal Lua (the main chunk is vararg), but the file is embedded into
+    -- a function scope in the output, where chunk varargs cannot mean
+    -- anything (see the Copilot finding on PR #197).
+    headerResult ← parseForeign "local m = ...\nreturn { m = m }"
+    headerResult `shouldSatisfy` \case
+      Left (ForeignChunkVararg _path) → True
+      _ → False
+    exportResult ← parseForeign "return { v = ... }"
+    exportResult `shouldSatisfy` \case
+      Left (ForeignChunkVararg _path) → True
+      _ → False
+
+  it "keeps '...' legal inside a vararg function export" do
+    result ← parseForeign "return { f = function(...) return ... end }"
+    result `shouldSatisfy` isRight
+
   it "rejects a file that does not end in `return { ... }`" do
     result ← parseForeign "local x = 1"
     result `shouldSatisfy` \case
