@@ -1,8 +1,18 @@
 module Language.PureScript.Backend.IR.Uncurry.Spec where
 
 import Data.Set qualified as Set
+import Data.Text qualified as Text
+import Hedgehog (Gen, annotateShow, forAll, (===))
+import Hedgehog.Gen qualified as Gen
+import Hedgehog.Range qualified as Range
 import Language.PureScript.Backend.IR.Inliner qualified as Inline
 import Language.PureScript.Backend.IR.Linker (UberModule (..))
+import Language.PureScript.Backend.IR.Linter
+  ( Violation
+  , lintUniqueBinders
+  , lintWellApplied
+  , lintWellScoped
+  )
 import Language.PureScript.Backend.IR.Names
   ( ModuleName
   , Name (..)
@@ -30,6 +40,7 @@ import Language.PureScript.Backend.IR.Types
   )
 import Language.PureScript.Backend.IR.Uncurry (uncurryWorkerWrapper)
 import Test.Hspec (Spec, describe, it, shouldBe)
+import Test.Hspec.Hedgehog.Extended (prop)
 
 spec ∷ Spec
 spec = describe "IR Uncurry (worker/wrapper)" do
@@ -245,6 +256,29 @@ spec = describe "IR Uncurry (worker/wrapper)" do
     -- …g2's same-named go is not.
     exprOf "g2" `shouldBe` siteWith partial
 
+  -- The pass's module-level contract, over generated modules (see the
+  -- generators below): whatever mix of candidates, vetoes and call
+  -- shapes the module holds, the output lints clean, a second run is a
+  -- no-op, and the 'WasRewritten' signal is precise.
+  describe "contract properties (generated modules)" do
+    prop 200 "preserves the GUC and WellApplied invariants" do
+      (m, veto) ← forAll genModuleAndVeto
+      lintAll m === [] -- generator sanity: the contract starts clean
+      let (m', _) = uncurryWorkerWrapper veto m
+      annotateShow m'
+      lintAll m' === []
+
+    prop 200 "is idempotent" do
+      (m, veto) ← forAll genModuleAndVeto
+      let (once, _) = uncurryWorkerWrapper veto m
+      uncurryWorkerWrapper veto once === (once, Unmodified)
+
+    prop 200 "signals Rewritten exactly when the module changed" do
+      (m, veto) ← forAll genModuleAndVeto
+      let (m', rewritten) = uncurryWorkerWrapper veto m
+      annotateShow m'
+      (rewritten == Unmodified) === (m' == m)
+
 --------------------------------------------------------------------------------
 -- Fixture ---------------------------------------------------------------------
 
@@ -302,3 +336,109 @@ moduleOf bindings exports =
     , uberModuleForeigns = []
     , uberModuleExports = exports
     }
+
+--------------------------------------------------------------------------------
+-- Generators ------------------------------------------------------------------
+
+-- | All three invariant lints the pass's contract set requires.
+lintAll ∷ UberModule → [Violation]
+lintAll m = lintWellScoped m <> lintUniqueBinders m <> lintWellApplied m
+
+{- | A structurally valid module: 1–3 candidate functions of arity 1–3
+(arity 1 is the negative case — below the split threshold) under
+indexed names, so binders are unique per top-level site (GUC by
+construction), and 1–3 consumer expressions mixing saturated, partial
+and over-applied call shapes. The first consumer is the @main@ export —
+sites in exports are counted too — the rest are bindings. Returned
+together with a random @inline never@ veto subset of the candidates.
+-}
+genModuleAndVeto ∷ Gen (UberModule, Set QName)
+genModuleAndVeto = do
+  arities ← Gen.nonEmpty (Range.linear 1 3) (Gen.int (Range.linear 1 3))
+  let candidates = zip [1 ∷ Int ..] (toList arities)
+  candidateBindings ← forM candidates \(i, arity) →
+    Standalone . (qn (fnName i),) <$> genCandidateDef i arity
+  consumerCount ← Gen.int (Range.linear 1 3)
+  consumerExprs ← forM [1 .. consumerCount] (genConsumer candidates)
+  veto ←
+    Set.fromList . map (qn . fnName . fst) <$> Gen.subsequence candidates
+  let consumerBindings =
+        [ Standalone (qn ("use" <> Text.pack (show i)), e)
+        | (i, e) ← zip [2 ∷ Int ..] (drop 1 consumerExprs)
+        ]
+      exports = [(Name "main", e) | e ← take 1 consumerExprs]
+  pure (moduleOf (candidateBindings <> consumerBindings) exports, veto)
+
+fnName ∷ Int → Text
+fnName i = "fn" <> Text.pack (show i)
+
+-- | @λp\<i\>x1. … λp\<i\>xk. body@ — a curried candidate definition.
+genCandidateDef ∷ Int → Int → Gen Exp
+genCandidateDef i arity = do
+  let params =
+        [ Name ("p" <> Text.pack (show i) <> "x" <> Text.pack (show j))
+        | j ← [1 .. arity]
+        ]
+  body ← genBody params
+  pure (foldr (abstraction . paramNamed) body params)
+
+-- | A small expression over the candidate's own parameters.
+genBody ∷ [Name] → Gen Exp
+genBody params =
+  Gen.choice
+    [ ref
+    , eq <$> ref <*> ref
+    , eq (literalInt 0) <$> ref
+    ]
+ where
+  ref = refLocal <$> Gen.element params
+
+{- | One consumer: 1–3 call shapes of random candidates folded into one
+expression, optionally wrapped in a local 'Let' candidate site.
+-}
+genConsumer ∷ [(Int, Int)] → Int → Gen Exp
+genConsumer candidates i = do
+  calls ←
+    Gen.nonEmpty (Range.linear 1 3) (Gen.element candidates >>= genCallShape)
+  let combined = foldl' eq (head calls) (tail calls)
+  withLocal ← Gen.bool
+  if withLocal then genLocalSite i combined else pure combined
+
+{- | A unary application spine of a candidate: saturated (exactly the
+arity), partial (anything below, a bare reference included), or
+over-applied (one argument past the arity).
+-}
+genCallShape ∷ (Int, Int) → Gen Exp
+genCallShape (i, arity) = do
+  argCount ←
+    Gen.choice
+      [ pure arity
+      , Gen.int (Range.linear 0 (arity - 1))
+      , pure (arity + 1)
+      ]
+  pure $
+    foldl'
+      application
+      (refImported mn (Name (fnName i)))
+      [literalInt (fromIntegral j) | j ← [1 .. argCount]]
+
+{- | Wrap a consumer in a local arity-2 candidate with one site of its
+own — saturated, partial, or a bare reference.
+-}
+genLocalSite ∷ Int → Exp → Gen Exp
+genLocalSite i body = do
+  let suffix = Text.pack (show i)
+      go = Name ("go" <> suffix)
+      a = Name ("a" <> suffix)
+      b = Name ("b" <> suffix)
+      goDef =
+        abstraction
+          (paramNamed a)
+          (abstraction (paramNamed b) (eq (refLocal a) (refLocal b)))
+  argCount ← Gen.int (Range.linear 0 2)
+  let call =
+        foldl'
+          application
+          (refLocal go)
+          [literalInt (fromIntegral j) | j ← [1 .. argCount]]
+  pure (lets (Standalone (noAnn, go, goDef) :| []) (eq call body))

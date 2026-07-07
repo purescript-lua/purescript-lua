@@ -1,6 +1,7 @@
 module Language.PureScript.Backend.IR.Optimizer.Spec where
 
 import Data.Map qualified as Map
+import Data.Text qualified as Text
 import Hedgehog (PropertyT, annotateShow, diff, forAll, (===))
 import Hedgehog.Gen qualified as Gen
 import Language.PureScript.Backend.IR.Gen qualified as Gen
@@ -23,6 +24,7 @@ import Language.PureScript.Backend.IR.Optimizer
   ( optimizeModule
   , optimizedExpression
   , optimizedUberModule
+  , optimizedUberModuleChecked
   )
 import Language.PureScript.Backend.IR.Supply (runSupply)
 import Language.PureScript.Backend.IR.Types
@@ -51,8 +53,17 @@ import Language.PureScript.Backend.IR.Types
   , paramUnused
   , refImported
   , refLocal
+  , setAnn
   )
-import Test.Hspec (Spec, SpecWith, describe, it, shouldBe)
+import Test.Hspec
+  ( Spec
+  , SpecWith
+  , describe
+  , expectationFailure
+  , it
+  , shouldBe
+  , shouldSatisfy
+  )
 import Test.Hspec.Hedgehog (hedgehog, modifyMaxShrinks, modifyMaxSuccess)
 import Test.Hspec.Hedgehog.Extended (test)
 
@@ -379,6 +390,126 @@ spec = describe "IR Optimizer" do
             ]
       annotateShow optimized
       fooKept === [QName mainModule (Name "foo")]
+
+  -- What a worker/wrapper split turns into is decided by the passes
+  -- downstream of the uncurrying pass — the post-uncurry optimize+dce
+  -- fixpoint drops dead wrappers and inlines use-once workers — so
+  -- these run the whole checked pipeline and assert the final shape.
+  describe "composes uncurrying with inlining and DCE (issue #24)" do
+    let mainModule = moduleNameFromString "Main"
+        extern = moduleNameFromString "Extern"
+        g = refImported extern (Name "g")
+        fName = QName mainModule (Name "f")
+        fRef = refImported mainModule (Name "f")
+        -- λa. λb. g a b — non-foldable, so every shape survives on
+        -- its own merit.
+        fDef =
+          abstraction (paramNamed (Name "a")) $
+            abstraction (paramNamed (Name "b")) $
+              application
+                (application g (refLocal (Name "a")))
+                (refLocal (Name "b"))
+        saturated x y =
+          application (application fRef (literalInt x)) (literalInt y)
+        checked = either (fail . show) pure . optimizedUberModuleChecked
+        namesOf uber =
+          [ name
+          | Standalone (QName _ (Name name), _) ←
+              Linker.uberModuleBindings uber
+          ]
+
+    it "drops the wrapper once every site calls the worker directly" do
+      -- Two saturated sites and no other use: the split sends both to
+      -- f$w, the wrapper loses its last reference, and the post-uncurry
+      -- fixpoint removes it. The worker (used twice) stays a shared
+      -- binding.
+      optimized ←
+        checked
+          Linker.UberModule
+            { uberModuleForeigns = []
+            , uberModuleBindings = [Standalone (fName, fDef)]
+            , uberModuleExports =
+                [(Name "main1", saturated 1 2), (Name "main2", saturated 3 4)]
+            }
+      namesOf optimized `shouldBe` ["f$w"]
+
+    it "leaves no residue for a used-once function" do
+      -- A single saturated site: the use-once inliner claims the whole
+      -- binding (before or after the split, either path must end the
+      -- same), and beta reduction pastes the body into the site.
+      optimized ←
+        checked
+          Linker.UberModule
+            { uberModuleForeigns = []
+            , uberModuleBindings = [Standalone (fName, fDef)]
+            , uberModuleExports = [(Name "main", saturated 1 2)]
+            }
+      Linker.uberModuleBindings optimized `shouldBe` []
+      Linker.uberModuleExports optimized
+        `shouldBe` [
+                     ( Name "main"
+                     , application (application g (literalInt 1)) (literalInt 2)
+                     )
+                   ]
+
+    it "keeps an exported function curried when its saturated consumer dies" do
+      -- The only saturated site sits in a binding unreachable from the
+      -- exports: DCE removes it before the uncurry pass measures sites,
+      -- so the exported name must come out unsplit — alpha-equal to the
+      -- original curried definition, with no worker left anywhere.
+      optimized ←
+        checked
+          Linker.UberModule
+            { uberModuleForeigns = []
+            , uberModuleBindings =
+                [ Standalone (fName, fDef)
+                , Standalone (QName mainModule (Name "dead"), saturated 1 2)
+                ]
+            , uberModuleExports = [(Name "main1", fRef), (Name "main2", fRef)]
+            }
+      filter ("$w" `Text.isSuffixOf`) (namesOf optimized) `shouldBe` []
+      case [ e
+           | Standalone (q, e) ← Linker.uberModuleBindings optimized
+           , q == fName
+           ] of
+        [e] → e `shouldSatisfy` (`alphaEq` fDef)
+        es → expectationFailure ("expected exactly one f binding: " <> show es)
+
+    it "lets @inline always claim the binding before the split" do
+      -- An Always-annotated standalone binding is pasted at every
+      -- occurrence by the first optimize+dce fixpoint, so the uncurry
+      -- pass never sees it: the pragma wins over the split. The checked
+      -- pipeline must stay clean through that interaction — the
+      -- saturated paste beta-reduces away, the partial one becomes a
+      -- manifest lambda, and neither the name nor a worker survives.
+      optimized ←
+        checked
+          Linker.UberModule
+            { uberModuleForeigns = []
+            , uberModuleBindings =
+                [Standalone (fName, setAnn (Just Always) fDef)]
+            , uberModuleExports =
+                [ (Name "main1", saturated 1 2)
+                , (Name "main2", application fRef (literalInt 5))
+                ]
+            }
+      namesOf optimized `shouldBe` []
+      case Linker.uberModuleExports optimized of
+        [(Name "main1", e1), (Name "main2", e2)] → do
+          e1
+            `shouldBe` application
+              (application g (literalInt 1))
+              (literalInt 2)
+          e2
+            `shouldSatisfy` ( `alphaEq`
+                                abstraction
+                                  (paramNamed (Name "b"))
+                                  ( application
+                                      (application g (literalInt 5))
+                                      (refLocal (Name "b"))
+                                  )
+                            )
+        es → expectationFailure ("unexpected exports: " <> show es)
 
   describe "keeps foreign module tables hoisted (issue #175)" do
     -- A foreign module's value table must stay a single shared binding:
