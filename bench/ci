@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+# Deterministic LuaJIT counters: a static FNEW census per linked artifact
+# and a trace abort/blacklist report per macro spec. Every report is
+# generated twice and compared, proving byte-stability, then diffed against
+# the committed oracles in bench/goldens/. Pass --accept after a deliberate
+# codegen change to rewrite the oracles from the current output.
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+accept=0
+if [ "${1:-}" = "--accept" ]; then
+  accept=1
+fi
+
+./bench/link
+
+out=bench/_build/counters
+rm -rf "$out"
+mkdir -p "$out"
+
+for artifact in bench/_build/Bench.*.lua; do
+  name=$(basename "$artifact" .lua)
+  luajit bench/tools/fnew_census.lua "$artifact" >"$out/fnew_$name.txt"
+  luajit bench/tools/fnew_census.lua "$artifact" >"$out/second-run.txt"
+  cmp "$out/fnew_$name.txt" "$out/second-run.txt"
+done
+
+for spec in bench/macro/*.lua; do
+  name=$(basename "$spec" .lua)
+  luajit bench/tools/trace_report.lua "$spec" >"$out/trace_$name.txt"
+  luajit bench/tools/trace_report.lua "$spec" >"$out/second-run.txt"
+  cmp "$out/trace_$name.txt" "$out/second-run.txt"
+done
+rm "$out/second-run.txt"
+
+if [ "$accept" = 1 ]; then
+  mkdir -p bench/goldens
+  rm -f bench/goldens/*.txt
+  cp "$out"/*.txt bench/goldens/
+  echo "accepted $(find "$out" -name '*.txt' | wc -l) counter files into bench/goldens/"
+else
+  diff -ru bench/goldens "$out"
+  echo "bench counters match goldens"
+fi

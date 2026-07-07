@@ -65,6 +65,7 @@
                   spago-bin.spago-1_0_4
                   lua51Packages.lua
                   lua51Packages.luacheck
+                  luajit
                   nil
                   scriv
                   upx

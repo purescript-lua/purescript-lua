@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+# Links the Bench.* PureScript modules into standalone Lua artifacts under
+# bench/_build/, building pslua and the CoreFn output first. The module list
+# is derived from test/ps/src/Bench/*.purs, and stale artifacts are removed,
+# so bench/_build/Bench.*.lua always mirrors the current sources.
+set -euo pipefail
+cd "$(dirname "$0")/.."
+root=$PWD
+
+(cd test/ps && spago build)
+
+cabal build -v0 exe:pslua
+pslua=$(cabal list-bin pslua)
+
+mkdir -p bench/_build
+rm -f bench/_build/Bench.*.lua
+# CoreFn module paths are relative to test/ps (where spago runs), and pslua
+# resolves foreign files against them, so it has to run from there too.
+for src in test/ps/src/Bench/*.purs; do
+  module="Bench.$(basename "$src" .purs)"
+  (
+    cd test/ps
+    "$pslua" \
+      --ps-output output \
+      --foreign-path foreign \
+      --entry "$module" \
+      --lua-output-file "$root/bench/_build/$module.lua"
+  )
+done
