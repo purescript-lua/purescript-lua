@@ -12,10 +12,11 @@ import Language.PureScript.Backend.Lua.Traversal
 import Language.PureScript.Backend.Lua.Types
   ( Annotated
   , Chunk
+  , Comments
   , Exp
   , ExpF (..)
   , Statement
-  , StatementF (IfThenElse, Return)
+  , StatementF (..)
   , TableRowF (..)
   , VarF (..)
   , pattern Ann
@@ -92,11 +93,12 @@ reduceTableDefinitionAccessor = \case
     | otherwise → original
   e → e
  where
-  isNameValue ∷ Annotated () TableRowF → Bool
+  isNameValue ∷ Annotated Comments TableRowF → Bool
   isNameValue (_ann, row) = case row of
     TableRowNV {} → True
     TableRowKV {} → False
-  hasDuplicateNames ∷ [Annotated () TableRowF] → Bool
+    TableRowV {} → False
+  hasDuplicateNames ∷ [Annotated Comments TableRowF] → Bool
   hasDuplicateNames rows =
     let names = [n | (_ann, TableRowNV n _) ← rows]
      in length names /= length (ordNub names)
@@ -115,11 +117,9 @@ the call. See issue #159.
 
 The rule declines when a leading statement contains a body-level 'Return':
 such an early return exits the call on a path the projection would not
-cover. A 'Return' inside a nested 'Function' belongs to a different
-activation and does not count. 'ForeignSourceStat' is opaque text and is
-assumed return-free: a foreign header returning at body level would skip
-the exports return that follows it and break the module regardless of this
-rule.
+cover. A 'Return' inside a nested 'Function' (or 'LocalFunction') belongs
+to a different activation and does not count, while a 'Return' inside a
+loop or 'Do' block at body level does.
 -}
 foldFieldProjectionThroughScopeCall ∷ RewriteRule
 foldFieldProjectionThroughScopeCall original
@@ -127,15 +127,16 @@ foldFieldProjectionThroughScopeCall original
       matchScopeCallProjection original =
       let projectedReturnValue =
             optimizeExpression (Lua.varField returnExp accessedField)
-          returnStatement = Lua.ann (Return (Lua.ann projectedReturnValue))
+          returnStatement = Lua.ann (Return [Lua.ann projectedReturnValue])
        in FunctionCall (Lua.ann (Function [] (leading <> [returnStatement]))) []
   | otherwise = original
  where
   -- Matches 'Var (VarField (FunctionCall (Function [] body) []) field)' where
-  -- the last statement of 'body' is a 'Return', splitting it into the
-  -- accessed field name, the leading statements, and the returned expression.
+  -- the last statement of 'body' is a single-valued 'Return', splitting it
+  -- into the accessed field name, the leading statements, and the returned
+  -- expression.
   matchScopeCallProjection
-    ∷ Exp → Maybe (Lua.Name, [Annotated () StatementF], Exp)
+    ∷ Exp → Maybe (Lua.Name, [Annotated Comments StatementF], Exp)
   matchScopeCallProjection = \case
     Var
       ( Ann
@@ -144,15 +145,26 @@ foldFieldProjectionThroughScopeCall original
               accessedField
             )
         ) → case reverse body of
-        Ann (Return (Ann returnExp)) : reverseLeading
+        Ann (Return [Ann returnExp]) : reverseLeading
           | not (any containsReturn reverseLeading) →
               Just (accessedField, reverse reverseLeading, returnExp)
         _ → Nothing
     _ → Nothing
 
-  containsReturn ∷ Annotated () StatementF → Bool
+  containsReturn ∷ Annotated Comments StatementF → Bool
   containsReturn (Ann statement) = case statement of
     Return {} → True
     IfThenElse _predicate thenBlock elseBlock →
       any containsReturn thenBlock || any containsReturn elseBlock
-    _ → False
+    Do body → any containsReturn body
+    While _predicate body → any containsReturn body
+    Repeat body _predicate → any containsReturn body
+    ForNum _name _start _limit _step body → any containsReturn body
+    ForIn _names _exprs body → any containsReturn body
+    -- A nested (local) function is a different activation: its returns do
+    -- not exit this call.
+    LocalFunction {} → False
+    Assign {} → False
+    Local {} → False
+    CallStatement {} → False
+    Break → False

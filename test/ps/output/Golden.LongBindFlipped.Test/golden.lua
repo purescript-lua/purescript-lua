@@ -17,12 +17,10 @@ M.Golden_LongBindFlipped_Test_bindFlipped = function(b_S_135_S_275)
   return function(a_S_136_S_276)
     if "Data.Maybe∷Maybe.Just" == a_S_136_S_276["$ctor"] then
       return b_S_135_S_275(a_S_136_S_276.value0)
+    elseif "Data.Maybe∷Maybe.Nothing" == a_S_136_S_276["$ctor"] then
+      return { ["$ctor"] = "Data.Maybe∷Maybe.Nothing" }
     else
-      if "Data.Maybe∷Maybe.Nothing" == a_S_136_S_276["$ctor"] then
-        return { ["$ctor"] = "Data.Maybe∷Maybe.Nothing" }
-      else
-        return error("No patterns matched")
-      end
+      return error("No patterns matched")
     end
   end
 end
@@ -45,12 +43,10 @@ return M.Effect_Console_foreign.log(M.Data_Show_show({
       return M.Data_Semigroup_foreign.concatString("(Just ")(M.Data_Semigroup_foreign.concatString(M.Data_Show_show({
         show = M.Data_Show_foreign.showIntImpl
       })(v_S_16_S_282.value0))(")"))
+    elseif "Data.Maybe∷Maybe.Nothing" == v_S_16_S_282["$ctor"] then
+      return "Nothing"
     else
-      if "Data.Maybe∷Maybe.Nothing" == v_S_16_S_282["$ctor"] then
-        return "Nothing"
-      else
-        return error("No patterns matched")
-      end
+      return error("No patterns matched")
     end
   end
 })(M.Golden_LongBindFlipped_Test_compute))()

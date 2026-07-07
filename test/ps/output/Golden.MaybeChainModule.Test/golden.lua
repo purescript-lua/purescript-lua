@@ -8,12 +8,10 @@ M.Data_Maybe_maybe = function(v)
     return function(v2)
       if "Data.Maybe∷Maybe.Nothing" == v2["$ctor"] then
         return v
+      elseif "Data.Maybe∷Maybe.Just" == v2["$ctor"] then
+        return v1(v2.value0)
       else
-        if "Data.Maybe∷Maybe.Just" == v2["$ctor"] then
-          return v1(v2.value0)
-        else
-          return error("No patterns matched")
-        end
+        return error("No patterns matched")
       end
     end
   end

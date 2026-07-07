@@ -12,12 +12,10 @@ M.Effect_Console_foreign = {
 M.Golden_Fibonacci_Test_fib = function(v)
   if 0 == v then
     return 0
+  elseif 1 == v then
+    return 1
   else
-    if 1 == v then
-      return 1
-    else
-      return M.Data_Semiring_foreign.intAdd(M.Golden_Fibonacci_Test_fib(M.Data_Ring_foreign.intSub(v)(1)))(M.Golden_Fibonacci_Test_fib(M.Data_Ring_foreign.intSub(v)(2)))
-    end
+    return M.Data_Semiring_foreign.intAdd(M.Golden_Fibonacci_Test_fib(M.Data_Ring_foreign.intSub(v)(1)))(M.Golden_Fibonacci_Test_fib(M.Data_Ring_foreign.intSub(v)(2)))
   end
 end
 return M.Effect_Console_foreign.log(M.Data_Show_foreign.showIntImpl(M.Golden_Fibonacci_Test_fib(32)))()

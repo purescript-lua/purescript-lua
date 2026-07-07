@@ -2,12 +2,8 @@ local M = {}
 M.Golden_Annotations_M1_foreign = (function()
   local step = 2
   return {
-    dontInlineClosure = function(i)
-        return i + step
-      end,
-    inlineMeLambda = function(i)
-        return i + i
-      end
+    dontInlineClosure = function(i) return i + step end,
+    inlineMeLambda = function(i) return i + i end
   }
 end)()
 return {

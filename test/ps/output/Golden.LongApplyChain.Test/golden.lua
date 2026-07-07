@@ -28,12 +28,10 @@ M.Data_Maybe_applyMaybe = {
     return function(v1)
       if "Data.Maybe∷Maybe.Just" == v["$ctor"] then
         return M.Data_Functor_map(M.Data_Maybe_functorMaybe)(v.value0)(v1)
+      elseif "Data.Maybe∷Maybe.Nothing" == v["$ctor"] then
+        return M.Data_Maybe_Nothing
       else
-        if "Data.Maybe∷Maybe.Nothing" == v["$ctor"] then
-          return M.Data_Maybe_Nothing
-        else
-          return error("No patterns matched")
-        end
+        return error("No patterns matched")
       end
     end
   end,
@@ -69,12 +67,10 @@ return M.Effect_Console_foreign.log(M.Data_Show_show({
       return M.Data_Semigroup_foreign.concatString("(Just ")(M.Data_Semigroup_foreign.concatString(M.Data_Show_show({
         show = M.Data_Show_foreign.showIntImpl
       })(v_S_20_S_287.value0))(")"))
+    elseif "Data.Maybe∷Maybe.Nothing" == v_S_20_S_287["$ctor"] then
+      return "Nothing"
     else
-      if "Data.Maybe∷Maybe.Nothing" == v_S_20_S_287["$ctor"] then
-        return "Nothing"
-      else
-        return error("No patterns matched")
-      end
+      return error("No patterns matched")
     end
   end
 })(M.Golden_LongApplyChain_Test_compute))()

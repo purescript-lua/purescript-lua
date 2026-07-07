@@ -18,12 +18,10 @@ M.Golden_LongMaybeBind_Test_bind = function(v_S_270)
   return function(v1_S_271)
     if "Data.Maybe∷Maybe.Just" == v_S_270["$ctor"] then
       return v1_S_271(v_S_270.value0)
+    elseif "Data.Maybe∷Maybe.Nothing" == v_S_270["$ctor"] then
+      return { ["$ctor"] = "Data.Maybe∷Maybe.Nothing" }
     else
-      if "Data.Maybe∷Maybe.Nothing" == v_S_270["$ctor"] then
-        return { ["$ctor"] = "Data.Maybe∷Maybe.Nothing" }
-      else
-        return error("No patterns matched")
-      end
+      return error("No patterns matched")
     end
   end
 end
@@ -677,12 +675,10 @@ return M.Effect_Console_foreign.log(M.Data_Show_show({
       return M.Data_Semigroup_foreign.concatString("(Just ")(M.Data_Semigroup_foreign.concatString(M.Data_Show_show({
         show = M.Data_Show_foreign.showIntImpl
       })(v_S_16_S_278.value0))(")"))
+    elseif "Data.Maybe∷Maybe.Nothing" == v_S_16_S_278["$ctor"] then
+      return "Nothing"
     else
-      if "Data.Maybe∷Maybe.Nothing" == v_S_16_S_278["$ctor"] then
-        return "Nothing"
-      else
-        return error("No patterns matched")
-      end
+      return error("No patterns matched")
     end
   end
 })(M.Golden_LongMaybeBind_Test_compute))()

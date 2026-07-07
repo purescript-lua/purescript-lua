@@ -106,7 +106,7 @@ fromUberModule foreigns needsRuntimeLazy appOrModule uber = (`evalStateT` 0) do
 
     pure
       ( DList.fromList foreignBindings <> bindings
-      , Lua.Return (Lua.ann returnExp)
+      , Lua.Return [Lua.ann returnExp]
       )
 
   pure . mconcat $
@@ -257,12 +257,11 @@ fromIR foreigns topLevelNames modname ir = case ir of
         IR.RecursiveGroup grp → do
           let binds =
                 toList grp <&> \(_ann, fromName → name, _) →
-                  Lua.Local
+                  Lua.local0
                     ( if Set.member (qualifyName modname name) topLevelNames
                         then qualifyName modname name
                         else name
                     )
-                    Nothing
           assignments ← forM (toList grp) \(_ann, fromName → name, expr) →
             goExp expr
               <&> Lua.assign
@@ -288,23 +287,33 @@ fromIR foreigns topLevelNames modname ir = case ir of
   IR.ForeignImport _ann _moduleName path annotatedNames → do
     let foreignNames = fromName <<$>> annotatedNames
     -- See Note [Foreign module source format] in ...Lua.Linker.Foreign
-    Foreign.Source {header, exports} ←
+    Foreign.Source {header, returnComments, exports} ←
       Oops.hoistEither =<< liftIO do
         left LinkerErrorForeign
           <$> Foreign.parseForeignSource (untag foreigns) path
-    let foreignExports ∷ Lua.Exp =
-          Lua.table
-            [ Lua.tableRowNV name (Lua.ForeignSourceExp src)
-            | (key, src) ← toList exports
-            , -- See Note [Lua reserved words as foreign export keys]
-            -- Export tables can contain Lua-reserved words as keys, for
-            -- example `{ ["for"] = 42 }`; toSafeName mangles them.
-            let name = Key.toSafeName key
-            , name `elem` fmap snd foreignNames
-            ]
+    let keptRows =
+          [ (comments, Lua.TableRowNV name (Lua.ann value))
+          | (key, (comments, value)) ← toList exports
+          , -- See Note [Lua reserved words as foreign export keys]
+          -- Export tables can contain Lua-reserved words as keys, for
+          -- example `{ ["for"] = 42 }`; toSafeName mangles them.
+          let name = Key.toSafeName key
+          , name `elem` fmap snd foreignNames
+          ]
+        -- Comments preceding the exports return (e.g. the module-level
+        -- commentary of a header-less FFI file) stay with the first kept row.
+        foreignExports = Lua.TableCtor case keptRows of
+          (comments, row) : rest → (returnComments <> comments, row) : rest
+          [] → []
     pure case header of
-      Nothing → Right foreignExports
-      Just fh → Left $ Lua.ForeignSourceStat fh : [Lua.return foreignExports]
+      [] → Right foreignExports
+      stats →
+        -- The parsed header statements keep their comment annotations, so
+        -- they are embedded directly rather than re-annotated via smart
+        -- constructors.
+        Right . Lua.FunctionCall (Lua.ann (Lua.Function [] scopeBody)) $ []
+       where
+        scopeBody = stats <> [Lua.ann (Lua.Return [Lua.ann foreignExports])]
  where
   go ∷ IR.Exp → LuaM e (Either Lua.Chunk Lua.Exp)
   go = fromIR foreigns topLevelNames modname

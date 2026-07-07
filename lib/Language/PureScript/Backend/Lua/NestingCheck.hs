@@ -60,16 +60,29 @@ blockDepth = foldl' (\acc s → acc `max` statementDepth s) 0
 
 statementDepth ∷ StatementF a → Int
 statementDepth = \case
-  Assign v e → varDepth (unAnn v) `max` expDepth (unAnn e)
-  Local _name me → maybe 0 (expDepth . unAnn) me
-  Return e → expDepth (unAnn e)
-  ForeignSourceStat _ → 0
+  Assign vs es →
+    maxOf (varDepth . unAnn) (toList vs) `max` maxOf (expDepth . unAnn) es
+  Local _names es → maxOf (expDepth . unAnn) es
+  Return es → maxOf (expDepth . unAnn) es
+  CallStatement e → expDepth (unAnn e)
+  Break → 0
   IfThenElse c t e →
     1
       + ( expDepth (unAnn c)
             `max` blockDepth (unAnn <$> t)
             `max` blockDepth (unAnn <$> e)
         )
+  Do body → 1 + blockDepth (unAnn <$> body)
+  While c body → 1 + (expDepth (unAnn c) `max` blockDepth (unAnn <$> body))
+  Repeat body c → 1 + (blockDepth (unAnn <$> body) `max` expDepth (unAnn c))
+  ForNum _name start limit step body →
+    1
+      + ( maxOf (expDepth . unAnn) ([start, limit] <> maybeToList step)
+            `max` blockDepth (unAnn <$> body)
+        )
+  ForIn _names es body →
+    1 + (maxOf (expDepth . unAnn) es `max` blockDepth (unAnn <$> body))
+  LocalFunction _name _params body → 1 + blockDepth (unAnn <$> body)
 
 expDepth ∷ ExpF a → Int
 expDepth = \case
@@ -78,17 +91,19 @@ expDepth = \case
   Integer _ → 0
   Float _ → 0
   String _ → 0
-  ForeignSourceExp _ → 0
+  Vararg → 0
   Var v → varDepth (unAnn v)
   UnOp _op e → 1 + expDepth (unAnn e)
   BinOp _op l r → 1 + (expDepth (unAnn l) `max` expDepth (unAnn r))
   Function _params body → 1 + blockDepth (unAnn <$> body)
-  TableCtor rows → 1 + foldl' (\acc r → acc `max` rowDepth (unAnn r)) 0 rows
+  TableCtor rows → 1 + maxOf (rowDepth . unAnn) rows
   -- The callee spine of @f(a)(b)@ is parsed iteratively, so it does not add a
   -- level; each argument position does.
   FunctionCall f args →
-    expDepth (unAnn f)
-      `max` (1 + foldl' (\acc a → acc `max` expDepth (unAnn a)) 0 args)
+    expDepth (unAnn f) `max` (1 + maxOf (expDepth . unAnn) args)
+  MethodCall o _name args →
+    expDepth (unAnn o) `max` (1 + maxOf (expDepth . unAnn) args)
+  Paren e → 1 + expDepth (unAnn e)
 
 varDepth ∷ VarF a → Int
 varDepth = \case
@@ -100,3 +115,7 @@ rowDepth ∷ TableRowF a → Int
 rowDepth = \case
   TableRowKV k v → expDepth (unAnn k) `max` expDepth (unAnn v)
   TableRowNV _name v → expDepth (unAnn v)
+  TableRowV v → expDepth (unAnn v)
+
+maxOf ∷ Foldable t ⇒ (x → Int) → t x → Int
+maxOf f = foldl' (\acc x → acc `max` f x) 0

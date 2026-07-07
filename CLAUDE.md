@@ -69,6 +69,10 @@ The test suite includes:
 - **Golden tests**: Compiles PureScript test modules from `test/ps/src/Golden/*/Test.purs` to Lua and compares against golden files
 - **Evaluation tests**: Runs generated Lua code and verifies output
 - **Luacheck tests**: Validates generated Lua code syntax
+- **Differential tests**: Anchors the Lua printer/parser pair to the reference
+  implementation (`Differential.Spec` via `Test.Lua`): `luac -p` must accept
+  everything the printer emits, and a semantic differential evaluates the
+  printer's precedence/associativity against the `lua` interpreter itself
 
 ### Testing PureScript Code
 
@@ -223,12 +227,15 @@ PureScript Source → CoreFn → IR → Lua → Optimized Lua
 - `IR.Query`: Queries over IR expressions
 
 **Lua Backend** (`Language.PureScript.Backend.Lua.*`):
-- `Lua.Types`: Lua AST types (`Chunk`, `Statement`, `Exp`)
+- `Lua.Types`: Lua AST types (`Chunk`, `Statement`, `Exp`), annotated with
+  `Comments`
 - `Lua.Name`: Safe Lua identifier generation
+- `Lua.Parser`: Full Lua 5.1 parser producing the Lua AST (used for FFI files
+  and runtime fixtures; preserves comments in annotation slots)
 - `Lua.Printer`: Pretty-printing Lua code
 - `Lua.Optimizer`: Lua-level optimizations
-- `Lua.DCE`: Lua-specific DCE
-- `Lua.Linker.Foreign`: FFI support for Lua foreign modules
+- `Lua.Linker.Foreign`: FFI support for Lua foreign modules (file resolution +
+  foreign-module shape on top of `Lua.Parser`)
 - `Lua.Fixture`: Runtime support code injected into output
 - `Lua.Key`, `Lua.Traversal`: Table keys and AST traversal helpers
 

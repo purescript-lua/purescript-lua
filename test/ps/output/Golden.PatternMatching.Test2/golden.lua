@@ -2,12 +2,10 @@ local M = {}
 M.Golden_PatternMatching_Test2_bat = function(n)
   if "Golden.PatternMatching.Test1∷N.Zero" == n["$ctor"] then
     return 1
+  elseif "Golden.PatternMatching.Test1∷N.Succ" == n["$ctor"] then
+    return M.Golden_PatternMatching_Test2_bat(n.value0)
   else
-    if "Golden.PatternMatching.Test1∷N.Succ" == n["$ctor"] then
-      return M.Golden_PatternMatching_Test2_bat(n.value0)
-    else
-      return error("No patterns matched")
-    end
+    return error("No patterns matched")
   end
 end
 return {
@@ -41,27 +39,19 @@ return {
       if "Golden.PatternMatching.Test2∷N.Zero" == e_S_0.value1["$ctor"] then
         if "Golden.PatternMatching.Test2∷N.Add" == e_S_0.value0["$ctor"] then
           return 1
+        elseif "Golden.PatternMatching.Test2∷N.Mul" == e_S_0.value0["$ctor"] then
+          return 2
         else
-          if "Golden.PatternMatching.Test2∷N.Mul" == e_S_0.value0["$ctor"] then
-            return 2
-          else
-            return 5
-          end
+          return 5
         end
+      elseif "Golden.PatternMatching.Test2∷N.Mul" == e_S_0.value1["$ctor"] then
+        return 3
+      elseif "Golden.PatternMatching.Test2∷N.Add" == e_S_0.value1["$ctor"] then
+        return 4
+      elseif "Golden.PatternMatching.Test2∷N.Zero" == e_S_0.value1["$ctor"] then
+        return 5
       else
-        if "Golden.PatternMatching.Test2∷N.Mul" == e_S_0.value1["$ctor"] then
-          return 3
-        else
-          if "Golden.PatternMatching.Test2∷N.Add" == e_S_0.value1["$ctor"] then
-            return 4
-          else
-            if "Golden.PatternMatching.Test2∷N.Zero" == e_S_0.value1["$ctor"] then
-              return 5
-            else
-              return 6
-            end
-          end
-        end
+        return 6
       end
     else
       return 6

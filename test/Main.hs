@@ -11,13 +11,16 @@ import Language.PureScript.Backend.IR.Pass.Spec qualified as IRPass
 import Language.PureScript.Backend.IR.Spec qualified as IR
 import Language.PureScript.Backend.IR.Types.Spec qualified as Types
 import Language.PureScript.Backend.IR.Uniquify.Spec qualified as IRUniquify
+import Language.PureScript.Backend.Lua.Differential.Spec qualified as LuaDifferential
 import Language.PureScript.Backend.Lua.Golden.Spec qualified as Golden
 import Language.PureScript.Backend.Lua.Linker.Foreign.Spec qualified as LuaLinkerForeign
 import Language.PureScript.Backend.Lua.NestingCheck.Spec qualified as NestingCheck
 import Language.PureScript.Backend.Lua.Optimizer.Spec qualified as LuaOptimizer
+import Language.PureScript.Backend.Lua.Parser.Spec qualified as LuaParser
 import Language.PureScript.Backend.Lua.Printer.Spec qualified as Printer
 import Language.PureScript.Backend.Lua.Run.Spec qualified as Run
 import Language.PureScript.Backend.Lua.Spec qualified as Lua
+import Language.PureScript.Backend.Lua.Traversal.Spec qualified as LuaTraversal
 import Language.PureScript.Backend.Output.Spec qualified as Output
 import Language.PureScript.PSString.Spec qualified as PSString
 import Test.Hspec (hspec)
@@ -36,6 +39,9 @@ main = hspec do
   IRUniquify.spec
   LuaOptimizer.spec
   Lua.spec
+  LuaParser.spec
+  LuaDifferential.spec
+  LuaTraversal.spec
   Printer.spec
   Run.spec
   LuaLinkerForeign.spec

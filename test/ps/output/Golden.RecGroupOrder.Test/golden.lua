@@ -5,15 +5,13 @@ local function PSLUA_runtime_lazy(name)
     return function()
       if state == 2 then
         return val
+      elseif state == 1 then
+        return error(name .. " was needed before it finished initializing")
       else
-        if state == 1 then
-          return error(name .. " was needed before it finished initializing")
-        else
-          state = 1
-          val = init()
-          state = 2
-          return val
-        end
+        state = 1
+        val = init()
+        state = 2
+        return val
       end
     end
   end

@@ -5,15 +5,13 @@ local function PSLUA_runtime_lazy(name)
     return function()
       if state == 2 then
         return val
+      elseif state == 1 then
+        return error(name .. " was needed before it finished initializing")
       else
-        if state == 1 then
-          return error(name .. " was needed before it finished initializing")
-        else
-          state = 1
-          val = init()
-          state = 2
-          return val
-        end
+        state = 1
+        val = init()
+        state = 2
+        return val
       end
     end
   end
@@ -25,20 +23,20 @@ M.Data_Eq_foreign = (function()
 end)()
 M.Data_Show_foreign = {
   showCharImpl = function(n)
-      local code = n:byte()
-      if code < 0x20 or code == 0x7F then
-        if n == "\a" then return "'\\a'" end
-        if n == "\b" then return "'\\b'" end
-        if n == "\f" then return "'\\f'" end
-        if n == "\n" then return "'\\n'" end
-        if n == "\r" then return "'\\r'" end
-        if n == "\t" then return "'\\t'" end
-        if n == "\v" then return "'\\v'" end
-        return "'\\" .. tostring(code) .. "'"
-      end
-      if n == "'" or n == "\\" then return "'\\" .. n .. "'" end
-      return "'" .. n .. "'"
+    local code = n:byte()
+    if code < 32 or code == 127 then
+      if n == "\a" then return "'\\a'" end
+      if n == "\b" then return "'\\b'" end
+      if n == "\f" then return "'\\f'" end
+      if n == "\n" then return "'\\n'" end
+      if n == "\r" then return "'\\r'" end
+      if n == "\t" then return "'\\t'" end
+      if n == "\v" then return "'\\v'" end
+      return "'\\" .. tostring(code) .. "'"
     end
+    if n == "'" or n == "\\" then return "'\\" .. n .. "'" end
+    return "'" .. n .. "'"
+  end
 }
 M.Data_Ord_foreign = (function()
   local unsafeCoerceImpl = function(lt)
@@ -62,7 +60,9 @@ M.Data_Ord_foreign = (function()
 end)()
 M.Effect_foreign = {
   pureE = function(a) return function() return a end end,
-  bindE = function(a) return function(f) return function() return f(a())() end end end
+  bindE = function(a)
+    return function(f) return function() return f(a())() end end
+  end
 }
 M.Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
@@ -116,12 +116,10 @@ M.Golden_CharLiterals_Test_show1 = M.Data_Show_show({
   show = function(v_S_111)
     if v_S_111 then
       return "true"
+    elseif false == v_S_111 then
+      return "false"
     else
-      if false == v_S_111 then
-        return "false"
-      else
-        return error("No patterns matched")
-      end
+      return error("No patterns matched")
     end
   end
 })

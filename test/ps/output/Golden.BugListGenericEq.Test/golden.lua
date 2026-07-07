@@ -5,15 +5,13 @@ local function PSLUA_runtime_lazy(name)
     return function()
       if state == 2 then
         return val
+      elseif state == 1 then
+        return error(name .. " was needed before it finished initializing")
       else
-        if state == 1 then
-          return error(name .. " was needed before it finished initializing")
-        else
-          state = 1
-          val = init()
-          state = 2
-          return val
-        end
+        state = 1
+        val = init()
+        state = 2
+        return val
       end
     end
   end
@@ -25,7 +23,7 @@ M.Record_Unsafe_foreign = {
 M.Data_HeytingAlgebra_foreign = {
   boolConj = function(b1) return function(b2) return b1 and b2 end end,
   boolDisj = function(b1) return function(b2) return b1 or b2 end end,
-  boolNot = function(b) return not b end
+  boolNot = function(b) return not(b) end
 }
 M.Data_Eq_foreign = (function()
   local refEq = function(r1) return function(r2) return r1 == r2 end end
@@ -33,7 +31,9 @@ M.Data_Eq_foreign = (function()
 end)()
 M.Effect_foreign = {
   pureE = function(a) return function() return a end end,
-  bindE = function(a) return function(f) return function() return f(a())() end end end
+  bindE = function(a)
+    return function(f) return function() return f(a())() end end
+  end
 }
 M.Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
@@ -127,12 +127,10 @@ M.Golden_BugListGenericEq_Test_logShow = function(a_S_2)
   return M.Effect_Console_foreign.log((function()
     if a_S_2 then
       return "true"
+    elseif false == a_S_2 then
+      return "false"
     else
-      if false == a_S_2 then
-        return "false"
-      else
-        return error("No patterns matched")
-      end
+      return error("No patterns matched")
     end
   end)())
 end
@@ -149,12 +147,10 @@ M.Golden_BugListGenericEq_Test_genericList = {
   to = function(x)
     if "Data.Generic.Rep∷Sum.Inl" == x["$ctor"] then
       return M.Golden_BugListGenericEq_Test_Nil
+    elseif "Data.Generic.Rep∷Sum.Inr" == x["$ctor"] then
+      return M.Golden_BugListGenericEq_Test_Cons(x.value0)
     else
-      if "Data.Generic.Rep∷Sum.Inr" == x["$ctor"] then
-        return M.Golden_BugListGenericEq_Test_Cons(x.value0)
-      else
-        return error("No patterns matched")
-      end
+      return error("No patterns matched")
     end
   end,
   from = function(x0)
@@ -162,14 +158,12 @@ M.Golden_BugListGenericEq_Test_genericList = {
       return (function(value0)
         return { ["$ctor"] = "Data.Generic.Rep∷Sum.Inl", value0 = value0 }
       end)({})
+    elseif "Golden.BugListGenericEq.Test∷List.Cons" == x0["$ctor"] then
+      return (function(value0)
+        return { ["$ctor"] = "Data.Generic.Rep∷Sum.Inr", value0 = value0 }
+      end)(x0.value0)
     else
-      if "Golden.BugListGenericEq.Test∷List.Cons" == x0["$ctor"] then
-        return (function(value0)
-          return { ["$ctor"] = "Data.Generic.Rep∷Sum.Inr", value0 = value0 }
-        end)(x0.value0)
-      else
-        return error("No patterns matched")
-      end
+      return error("No patterns matched")
     end
   end
 }
@@ -199,34 +193,32 @@ M.Golden_BugListGenericEq_Test_eqList = function(dictEq)
                 else
                   return false
                 end
-              else
-                if "Data.Generic.Rep∷Sum.Inr" == v_S_13["$ctor"] then
-                  if "Data.Generic.Rep∷Sum.Inr" == v1_S_14["$ctor"] then
-                    return M.Data_Eq_Generic_genericEqPrime(M.Data_Eq_Generic_genericEqConstructor({
-                      genericEqPrime = function(v_S_21)
-                        return function(v1_S_22)
-                          return M.Data_Eq_eq({
-                            eq = M.Data_Eq_eqRecord(M.Data_Eq_eqRowCons(M.Data_Eq_eqRowCons({
-                              eqRecord = function()
-                                return function()
-                                  return function() return true end
-                                end
+              elseif "Data.Generic.Rep∷Sum.Inr" == v_S_13["$ctor"] then
+                if "Data.Generic.Rep∷Sum.Inr" == v1_S_14["$ctor"] then
+                  return M.Data_Eq_Generic_genericEqPrime(M.Data_Eq_Generic_genericEqConstructor({
+                    genericEqPrime = function(v_S_21)
+                      return function(v1_S_22)
+                        return M.Data_Eq_eq({
+                          eq = M.Data_Eq_eqRecord(M.Data_Eq_eqRowCons(M.Data_Eq_eqRowCons({
+                            eqRecord = function()
+                              return function()
+                                return function() return true end
                               end
-                            })()({
-                              reflectSymbol = function() return "tail" end
-                            })(M.Golden_BugListGenericEq_Test_eqList(dictEq)))()({
-                              reflectSymbol = function() return "head" end
-                            })(dictEq))(M.Type_Proxy_Proxy)
-                          })(v_S_21)(v1_S_22)
-                        end
+                            end
+                          })()({
+                            reflectSymbol = function() return "tail" end
+                          })(M.Golden_BugListGenericEq_Test_eqList(dictEq)))()({
+                            reflectSymbol = function() return "head" end
+                          })(dictEq))(M.Type_Proxy_Proxy)
+                        })(v_S_21)(v1_S_22)
                       end
-                    }))(v_S_13.value0)(v1_S_14.value0)
-                  else
-                    return false
-                  end
+                    end
+                  }))(v_S_13.value0)(v1_S_14.value0)
                 else
                   return false
                 end
+              else
+                return false
               end
             end
           end

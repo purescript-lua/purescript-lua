@@ -4,11 +4,7 @@ M.Effect_Console_foreign = {
 }
 M.Golden_ForeignSharing_Token_foreign = { token = {} }
 M.Golden_ForeignSharing_Test_foreign = {
-  same = function(a)
-      return function(b)
-        return rawequal(a, b)
-      end
-    end
+  same = function(a) return function(b) return rawequal(a, b) end end
 }
 M.Golden_ForeignSharing_Test_sharedToken = function()
   return M.Golden_ForeignSharing_Token_foreign.token

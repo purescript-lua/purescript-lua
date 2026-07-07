@@ -9,7 +9,6 @@ import Data.List qualified as List
 import Data.String qualified as String
 import Data.Tagged (Tagged (..))
 import Data.Text qualified as Text
-import Data.Text.IO qualified as Text.IO
 import Language.PureScript.Backend.IR qualified as IR
 import Language.PureScript.Backend.IR.FlattenDeepBinds (flattenDeepBinds)
 import Language.PureScript.Backend.IR.Linker (LinkMode (..))
@@ -18,6 +17,7 @@ import Language.PureScript.Backend.IR.Linker qualified as Linker
 import Language.PureScript.Backend.IR.Optimizer (optimizedUberModuleChecked)
 import Language.PureScript.Backend.Lua qualified as Lua
 import Language.PureScript.Backend.Lua.Optimizer (optimizeChunk)
+import Language.PureScript.Backend.Lua.Parser qualified as Parser
 import Language.PureScript.Backend.Lua.Printer qualified as Printer
 import Language.PureScript.Backend.Types (AppOrModule (..))
 import Language.PureScript.CoreFn.Reader qualified as CoreFn
@@ -44,7 +44,6 @@ import Path.IO
   , makeAbsolute
   , walkDirAccum
   , withCurrentDir
-  , withSystemTempFile
   )
 import Path.Posix (mkRelFile)
 import Prettyprinter (defaultLayoutOptions, layoutPretty)
@@ -52,7 +51,6 @@ import Prettyprinter.Render.Text (renderStrict)
 import System.FilePath qualified as FilePath
 import System.Process.Typed
   ( ExitCode (..)
-  , proc
   , readProcessInterleaved
   , runProcess
   , setWorkingDir
@@ -70,6 +68,7 @@ import Test.Hspec
   )
 import Test.Hspec.Extra (annotatingWith)
 import Test.Hspec.Golden (acceptableGolden, defaultGolden)
+import Test.Lua (luacParse)
 import Text.Pretty.Simple
   ( OutputOptions (..)
   , defaultOutputOptionsNoColor
@@ -128,7 +127,7 @@ spec = do
         it luaTestName do
           acceptableGolden luaGolden (Just luaActual) do
             appOrModule ←
-              (doesFileExist evalGolden) <&> \case
+              doesFileExist evalGolden <&> \case
                 True → AsApplication moduleName (PS.Ident "main")
                 False → AsModule moduleName
             cfn ← compileCorefn (Tagged (Rel psOutputPath)) moduleName
@@ -249,21 +248,6 @@ applySpineUberModule n =
       (IR.App IR.noAnn applyHead acc)
       (IR.LiteralInt IR.noAnn (fromIntegral i))
 
-{- | Parse-check (no execution) a Lua source with @luac -p@; returns the exit
-code and combined output. Writes to a unique auto-cleaned temp file and invokes
-@luac@ via 'proc' (an argv list, no shell), so it is portable and safe against
-paths with spaces or concurrent runs.
--}
-luacParse ∷ Text → IO (ExitCode, Text)
-luacParse src =
-  withSystemTempFile "pslua-nesting.lua" \file handle → do
-    -- Write through the handle the bracket owns and flush (so the separate
-    -- `luac` process sees the bytes); the bracket closes it on cleanup.
-    Text.IO.hPutStr handle src
-    hFlush handle
-    (code, out) ← readProcessInterleaved (proc "luac" ["-p", toFilePath file])
-    pure (code, decodeUtf8 out)
-
 {- | Corefn files that participate in golden tests: only Golden.* modules.
 Other modules compiled from test/ps/src pass through uncollected —
 bench/link relies on this to link the Bench.* corefns without them
@@ -324,7 +308,14 @@ compileIr appOrModule uberModule = withCurrentDir [reldir|test/ps|] do
           & optimizeChunk
           & Printer.printLuaChunk
   let addTrailingLf = (<> "\n")
-  pure $ addTrailingLf $ renderStrict $ layoutPretty defaultLayoutOptions doc
+  let rendered = addTrailingLf $ renderStrict $ layoutPretty defaultLayoutOptions doc
+  -- Everything the codegen prints must be readable back by the compiler's
+  -- own Lua parser (#173): the golden corpus doubles as its round-trip
+  -- fixture (luacheck separately vouches for third-party parseability).
+  liftIO $
+    either (fail . Parser.renderParseError) (const pass) $
+      Parser.parseChunk "<rendered>" rendered
+  pure rendered
 
 --------------------------------------------------------------------------------
 -- Error handlers --------------------------------------------------------------

@@ -5,15 +5,13 @@ local function PSLUA_runtime_lazy(name)
     return function()
       if state == 2 then
         return val
+      elseif state == 1 then
+        return error(name .. " was needed before it finished initializing")
       else
-        if state == 1 then
-          return error(name .. " was needed before it finished initializing")
-        else
-          state = 1
-          val = init()
-          state = 2
-          return val
-        end
+        state = 1
+        val = init()
+        state = 2
+        return val
       end
     end
   end
@@ -45,17 +43,19 @@ M.Data_Ord_foreign = (function()
 end)()
 M.Effect_foreign = {
   pureE = function(a) return function() return a end end,
-  bindE = function(a) return function(f) return function() return f(a())() end end end,
-  untilE = function(f) return function() while not f() do end end end
+  bindE = function(a)
+    return function(f) return function() return f(a())() end end
+  end,
+  untilE = function(f) return function() while not(f()) do  end end end
 }
 M.Effect_Ref_foreign = {
-  _new = function(val) return function() return {value = val} end end,
+  _new = function(val) return function() return { value = val } end end,
   read = function(ref) return function() return ref.value end end,
   write = function(val)
-      return function(ref) return function() ref.value = val end end
-    end
+    return function(ref) return function() ref.value = val end end
+  end
 }
-M.Partial_Unsafe_foreign = { _unsafePartial = function(f) return f(); end }
+M.Partial_Unsafe_foreign = { _unsafePartial = function(f) return f() end }
 M.Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
 }
@@ -159,12 +159,10 @@ return (function()
                   local _ = M.Effect_Ref_foreign.write(e_S_19)(r_S_16)()
                   return M.Control_Monad_Rec_Class_pure(false)()
                 end
+              elseif "Control.Monad.Rec.Class∷Step.Done" == v0_S_17["$ctor"] then
+                return M.Control_Monad_Rec_Class_pure(true)
               else
-                if "Control.Monad.Rec.Class∷Step.Done" == v0_S_17["$ctor"] then
-                  return M.Control_Monad_Rec_Class_pure(true)
-                else
-                  return error("No patterns matched")
-                end
+                return error("No patterns matched")
               end
             end)()()
           end)()
