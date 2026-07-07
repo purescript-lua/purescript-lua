@@ -31,8 +31,10 @@ import Language.PureScript.Backend.IR.Types
   , Module (..)
   , RawExp (..)
   , abstraction
+  , abstractionN
   , alphaEq
   , application
+  , applicationN
   , countFreeRef
   , eq
   , getAnn
@@ -138,6 +140,62 @@ spec = describe "IR Optimizer" do
       let original =
             application (abstraction (paramNamed x) (literalInt 7)) nonTrivial
       optimizedExpression original `shouldBe` literalInt 7
+
+  -- The n-ary redex — one call binding every parameter of a literal
+  -- 'AbsN' (Note [n-ary abstraction]). Reduces only at exact arity;
+  -- each pair is decided by the same guard as the unary rule.
+  describe "n-ary beta reduction" do
+    let m = moduleNameFromString "M"
+        x = Name "x"
+        y = Name "y"
+        nonTrivial = application (refImported m (Name "g")) (literalInt 1)
+
+    it "substitutes every trivial argument of a saturated call" do
+      let a = refImported m (Name "a")
+          b = refImported m (Name "b")
+          body = eq (refLocal x) (refLocal y)
+          original =
+            applicationN
+              (abstractionN (paramNamed x :| [paramNamed y]) body)
+              (a :| [b])
+      optimizedExpression original `shouldBe` eq a b
+
+    it "let-binds the non-trivial multiply-used argument only" do
+      let body = eq (refLocal y) (eq (refLocal x) (refLocal y))
+          original =
+            applicationN
+              (abstractionN (paramNamed x :| [paramNamed y]) body)
+              (literalInt 1 :| [nonTrivial])
+      optimizedExpression original
+        `shouldBe` let1
+          y
+          nonTrivial
+          (eq (refLocal y) (eq (literalInt 1) (refLocal y)))
+
+    it "drops the argument at a ParamUnused position" do
+      let original =
+            applicationN
+              (abstractionN (paramNamed x :| [paramUnused]) (refLocal x))
+              (literalInt 1 :| [nonTrivial])
+      optimizedExpression original `shouldBe` literalInt 1
+
+    it "does not reduce an under-applied n-ary lambda" do
+      -- Ill-formed input ('WellApplied'); the rule must decline rather
+      -- than pretend the call curries.
+      let original =
+            application
+              (abstractionN (paramNamed x :| [paramNamed y]) (refLocal x))
+              (literalInt 1)
+      optimizedExpression original `shouldBe` original
+
+    it "does not reduce a lambda with repeated parameter names" do
+      -- Non-GUC input: substituting left to right would steal the
+      -- occurrences belonging to the last same-named parameter.
+      let original =
+            applicationN
+              (abstractionN (paramNamed x :| [paramNamed x]) (refLocal x))
+              (literalInt 1 :| [literalInt 2])
+      optimizedExpression original `shouldBe` original
 
   describe "folds record-literal projections" do
     let foo = PropName "foo"

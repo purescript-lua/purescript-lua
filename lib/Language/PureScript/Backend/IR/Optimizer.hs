@@ -3,6 +3,7 @@ module Language.PureScript.Backend.IR.Optimizer where
 import Control.Monad.Writer.CPS (WriterT, runWriterT, tell)
 import Data.Foldable (foldrM)
 import Data.List qualified as List
+import Data.List.NonEmpty qualified as NE
 import Data.Map qualified as Map
 import Data.Set qualified as Set
 import Language.PureScript.Backend.IR.DCE (eliminateDeadCode)
@@ -42,6 +43,7 @@ import Language.PureScript.Backend.IR.Types
   , isNonRecursiveLiteral
   , lets
   , literalBool
+  , paramName
   , rewriteExpBottomUpM
   , setAnn
   , substituteCopyM
@@ -354,7 +356,6 @@ optimizedExpressionM =
     ( constantFolding
         `thenRewrite` reduceObjectProp
         `thenRewrite` betaReduce
-        `thenRewrite` betaReduceUnusedParams
         `thenRewrite` removeUnreachableThenBranch
         `thenRewrite` removeUnreachableElseBranch
         `thenRewrite` removeIfWithEqualBranches
@@ -437,20 +438,54 @@ expression. Because the guards match, it declines too, so the pair reaches a
 fixpoint in one bottom-up pass instead of oscillating.
 -}
 
--- (λx. M) N ===> M[x := N]
--- See Note [IR is assumed well-typed]
+{- | (λx₁ … xₙ. M) N₁ … Nₙ ===> M[x₁ := N₁, …, xₙ := Nₙ]
+
+Fires only at exact arity: any other argument count on a literal lambda
+head is ill-formed ('WellApplied', Note [n-ary abstraction]). The unary
+redex is the singleton case. Each pair reduces by the shared guard: the
+argument is substituted when trivial or used at most once, and bound by
+a 'Let' otherwise; an argument at a 'ParamUnused' position is dropped
+with its evaluation — the same call DCE makes when it drops an unused
+binding unconditionally. See Note [IR is assumed well-typed].
+-}
 betaReduce ∷ RewriteRuleM SupplyM Ann
 betaReduce = \case
-  App _ (Abs _ (ParamNamed paramAnn param) body) r
-    -- See Note [Beta reduction and local inlining share an inlining guard]
-    | isInlinableExpr r || countFreeRef (Local param) body <= 1 →
-        -- The λ is consumed by the rewrite, so the first inserted occurrence
-        -- of the argument may keep its binder names ('substituteMoveM').
-        Just <$> substituteMoveM (Local param) r body
-    | otherwise →
-        -- Bind the argument once; its evaluation now happens a single time.
-        pure . Just $ lets (Standalone (paramAnn, param, r) :| []) body
+  AppN _ (AbsN _ params body) args
+    | length args == length params
+    , -- Under GUC the parameters are pairwise-distinct binders. The rule
+      -- is also exercised standalone on non-GUC input, where a repeated
+      -- parameter name would let the first substitution steal the
+      -- occurrences belonging to the last same-named parameter (the one
+      -- Lua binds), so it declines rather than mis-substitute.
+      distinctParamNames params → do
+        (body', letBinds) ←
+          foldlM reduceOne (body, []) (NE.zip params args)
+        pure . Just $ case nonEmpty (reverse letBinds) of
+          Nothing → body'
+          Just binds → lets (Standalone <$> binds) body'
   _ → pure Nothing
+ where
+  reduceOne
+    ∷ (Exp, [(Ann, Name, Exp)])
+    → (Parameter Ann, Exp)
+    → SupplyM (Exp, [(Ann, Name, Exp)])
+  reduceOne (body, letBinds) (param, arg) = case param of
+    ParamUnused _ann → pure (body, letBinds)
+    ParamNamed paramAnn name
+      -- See Note [Beta reduction and local inlining share an inlining guard]
+      | isInlinableExpr arg || countFreeRef (Local name) body <= 1 →
+          -- The λ is consumed by the rewrite, so the first inserted
+          -- occurrence of the argument may keep its binder names
+          -- ('substituteMoveM').
+          (,letBinds) <$> substituteMoveM (Local name) arg body
+      | otherwise →
+          -- Bind the argument once; its evaluation happens a single time.
+          pure (body, (paramAnn, name, arg) : letBinds)
+
+  distinctParamNames ∷ NonEmpty (Parameter Ann) → Bool
+  distinctParamNames params = length names == length (ordNub names)
+   where
+    names = mapMaybe paramName (toList params)
 
 {- Note [Eta reduction is unsound]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -494,13 +529,6 @@ Reducing only special cases of M does not help either:
 
 Hence no eta reduction is performed at all.
 -}
-
-betaReduceUnusedParams ∷ Applicative m ⇒ RewriteRuleM m Ann
-betaReduceUnusedParams =
-  pure . \case
-    App _ (Abs _ (ParamUnused _) body) _arg →
-      Just body
-    _ → Nothing
 
 removeIfWithEqualBranches ∷ Applicative m ⇒ RewriteRuleM m Ann
 removeIfWithEqualBranches e =
