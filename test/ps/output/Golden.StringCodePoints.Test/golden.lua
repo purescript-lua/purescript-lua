@@ -627,15 +627,17 @@ M.Data_String_CodePoints_toCodePointArray = M.Data_String_CodePoints_foreign._to
   end)(s_S_10)
 end)(M.Data_String_CodePoints_unsafeCodePointAt0)
 M.Data_String_CodePoints_codePointAtFallback_S_w = function(n, s)
-  local v = M.Data_String_CodePoints_uncons(s)
-  if "Data.Maybe∷Maybe.Just" == v["$ctor"] then
-    if M.Data_String_CodePoints_eq(n)(0) then
-      return M.Data_Maybe_Just(v.value0.head)
+  while true do
+    local v = M.Data_String_CodePoints_uncons(s)
+    if "Data.Maybe∷Maybe.Just" == v["$ctor"] then
+      if M.Data_String_CodePoints_eq(n)(0) then
+        return M.Data_Maybe_Just(v.value0.head)
+      else
+        n, s = M.Data_String_CodePoints_sub(n)(1), v.value0.tail
+      end
     else
-      return M.Data_String_CodePoints_codePointAtFallback_S_w(M.Data_String_CodePoints_sub(n)(1), v.value0.tail)
+      return M.Data_Maybe_Nothing
     end
-  else
-    return M.Data_Maybe_Nothing
   end
 end
 M.Data_String_CodePoints_codePointAtFallback = function( codePointAtFallback_S_p1 )

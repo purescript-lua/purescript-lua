@@ -27,20 +27,22 @@ M.Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
 }
 M.Golden_LongCallbackChain_Test_withInc_S_w = function(n, k)
-  if (function()
-    if "Data.Ordering∷Ordering.LT" == (M.Data_Ord_foreign.ordIntImpl({
-      ["$ctor"] = "Data.Ordering∷Ordering.LT"
-    })({ ["$ctor"] = "Data.Ordering∷Ordering.EQ" })({
-      ["$ctor"] = "Data.Ordering∷Ordering.GT"
-    })(n)(0))["$ctor"] then
-      return true
+  while true do
+    if (function()
+      if "Data.Ordering∷Ordering.LT" == (M.Data_Ord_foreign.ordIntImpl({
+        ["$ctor"] = "Data.Ordering∷Ordering.LT"
+      })({ ["$ctor"] = "Data.Ordering∷Ordering.EQ" })({
+        ["$ctor"] = "Data.Ordering∷Ordering.GT"
+      })(n)(0))["$ctor"] then
+        return true
+      else
+        return false
+      end
+    end)() then
+      n, k = M.Data_Semiring_foreign.intAdd(n)(1), k
     else
-      return false
+      return k(M.Data_Semiring_foreign.intAdd(n)(1))
     end
-  end)() then
-    return M.Golden_LongCallbackChain_Test_withInc_S_w(M.Data_Semiring_foreign.intAdd(n)(1), k)
-  else
-    return k(M.Data_Semiring_foreign.intAdd(n)(1))
   end
 end
 M.Golden_LongCallbackChain_Test_withInc = function(withInc_S_p1)

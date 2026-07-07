@@ -109,10 +109,12 @@ end
 M.Golden_Uncurry_Test_sumTo = function(m)
   local go_S_w
   go_S_w = function(acc, n)
-    if M.Data_Eq_foreign.eqIntImpl(n)(0) then
-      return acc
-    else
-      return go_S_w(M.Data_Semiring_foreign.intAdd(acc)(n), M.Data_Ring_foreign.intSub(n)(1))
+    while true do
+      if M.Data_Eq_foreign.eqIntImpl(n)(0) then
+        return acc
+      else
+        acc, n = M.Data_Semiring_foreign.intAdd(acc)(n), M.Data_Ring_foreign.intSub(n)(1)
+      end
     end
   end
   return go_S_w(0, m)
