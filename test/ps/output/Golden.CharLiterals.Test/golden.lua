@@ -19,6 +19,47 @@ local function PSLUA_runtime_lazy(name)
   end
 end
 local M = {}
+M.Data_Eq_foreign = (function()
+  local refEq = function(r1) return function(r2) return r1 == r2 end end
+  return { eqCharImpl = refEq }
+end)()
+M.Data_Show_foreign = {
+  showCharImpl = function(n)
+      local code = n:byte()
+      if code < 0x20 or code == 0x7F then
+        if n == "\a" then return "'\\a'" end
+        if n == "\b" then return "'\\b'" end
+        if n == "\f" then return "'\\f'" end
+        if n == "\n" then return "'\\n'" end
+        if n == "\r" then return "'\\r'" end
+        if n == "\t" then return "'\\t'" end
+        if n == "\v" then return "'\\v'" end
+        return "'\\" .. tostring(code) .. "'"
+      end
+      if n == "'" or n == "\\" then return "'\\" .. n .. "'" end
+      return "'" .. n .. "'"
+    end
+}
+M.Data_Ord_foreign = (function()
+  local unsafeCoerceImpl = function(lt)
+    return function(eq)
+      return function(gt)
+        return function(x)
+          return function(y)
+            if x < y then
+              return lt
+            elseif x == y then
+              return eq
+            else
+              return gt
+            end
+          end
+        end
+      end
+    end
+  end
+  return { ordCharImpl = unsafeCoerceImpl }
+end)()
 M.Effect_foreign = {
   pureE = function(a) return function() return a end end,
   bindE = function(a) return function(f) return function() return f(a())() end end end
@@ -69,21 +110,7 @@ M.Effect_Lazy_applyEffect = PSLUA_runtime_lazy("applyEffect")(function()
 end)
 M.Golden_CharLiterals_Test_discard = M.Control_Bind_bind(M.Effect_bindEffect)
 M.Golden_CharLiterals_Test_show = M.Data_Show_show({
-  show = function(n)
-      local code = n:byte()
-      if code < 0x20 or code == 0x7F then
-        if n == "\a" then return "'\\a'" end
-        if n == "\b" then return "'\\b'" end
-        if n == "\f" then return "'\\f'" end
-        if n == "\n" then return "'\\n'" end
-        if n == "\r" then return "'\\r'" end
-        if n == "\t" then return "'\\t'" end
-        if n == "\v" then return "'\\v'" end
-        return "'\\" .. tostring(code) .. "'"
-      end
-      if n == "'" or n == "\\" then return "'\\" .. n .. "'" end
-      return "'" .. n .. "'"
-    end
+  show = M.Data_Show_foreign.showCharImpl
 })
 M.Golden_CharLiterals_Test_show1 = M.Data_Show_show({
   show = function(v_S_111)
@@ -105,33 +132,13 @@ return (function()
   local _ = M.Effect_Console_foreign.log(M.Golden_CharLiterals_Test_show("\'"))()
   local _ = M.Effect_Console_foreign.log(M.Golden_CharLiterals_Test_show("\\"))()
   local _ = M.Effect_Console_foreign.log(M.Golden_CharLiterals_Test_show("a"))()
-  local _ = M.Effect_Console_foreign.log(M.Golden_CharLiterals_Test_show1((function(  )
-    local refEq = function(r1) return function(r2) return r1 == r2 end end
-    return refEq
-  end)()("\n")("\n")))()
+  local _ = M.Effect_Console_foreign.log(M.Golden_CharLiterals_Test_show1(M.Data_Eq_foreign.eqCharImpl("\n")("\n")))()
   return M.Effect_Console_foreign.log(M.Golden_CharLiterals_Test_show1((function(  )
-    if "Data.Ordering∷Ordering.LT" == ((function()
-      local unsafeCoerceImpl = function(lt)
-        return function(eq)
-          return function(gt)
-            return function(x)
-              return function(y)
-                if x < y then
-                  return lt
-                elseif x == y then
-                  return eq
-                else
-                  return gt
-                end
-              end
-            end
-          end
-        end
-      end
-      return unsafeCoerceImpl
-    end)()({ ["$ctor"] = "Data.Ordering∷Ordering.LT" })({
-      ["$ctor"] = "Data.Ordering∷Ordering.EQ"
-    })({ ["$ctor"] = "Data.Ordering∷Ordering.GT" })("\t")("\n"))["$ctor"] then
+    if "Data.Ordering∷Ordering.LT" == (M.Data_Ord_foreign.ordCharImpl({
+      ["$ctor"] = "Data.Ordering∷Ordering.LT"
+    })({ ["$ctor"] = "Data.Ordering∷Ordering.EQ" })({
+      ["$ctor"] = "Data.Ordering∷Ordering.GT"
+    })("\t")("\n"))["$ctor"] then
       return true
     else
       return false

@@ -2,6 +2,12 @@ UberModule
   { uberModuleBindings =
     [ Standalone
       ( QName
+        { qnameModuleName = ModuleName "Golden.Foreign.Lib", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Golden.Foreign.Lib" ) "src/Golden/Foreign/Lib.purs"
+        [ ( Nothing, Name "alive" ) ]
+      ), Standalone
+      ( QName
         { qnameModuleName = ModuleName "Golden.Foreign.Test", qnameName = Name "foreign"
         }, ForeignImport Nothing
         ( ModuleName "Golden.Foreign.Test" ) "src/Golden/Foreign/Test.purs"
@@ -17,10 +23,7 @@ UberModule
         [ ObjectProp ( Just Always )
           ( Ref Nothing ( Imported ( ModuleName "Golden.Foreign.Test" ) ( Name "foreign" ) ) )
           ( PropName "boo" ), ObjectProp ( Just Always )
-          ( ForeignImport Nothing
-            ( ModuleName "Golden.Foreign.Lib" ) "src/Golden/Foreign/Lib.purs"
-            [ ( Nothing, Name "alive" ) ]
-          )
+          ( Ref Nothing ( Imported ( ModuleName "Golden.Foreign.Lib" ) ( Name "foreign" ) ) )
           ( PropName "alive" )
         ]
       )

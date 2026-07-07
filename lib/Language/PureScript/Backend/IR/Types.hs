@@ -257,6 +257,11 @@ isRecursiveLiteral = \case
   LiteralObject {} → True
   _ → False
 
+isForeignImport ∷ RawExp ann → Bool
+isForeignImport = \case
+  ForeignImport {} → True
+  _ → False
+
 ctorId ∷ ModuleName → TyName → CtorName → Text
 ctorId modName tyName ctorName =
   runModuleName modName

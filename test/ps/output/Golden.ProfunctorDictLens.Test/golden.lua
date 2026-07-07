@@ -19,14 +19,21 @@ local function PSLUA_runtime_lazy(name)
   end
 end
 local M = {}
+M.Data_Show_foreign = { showIntImpl = function(n) return tostring(n) end }
 M.Data_Semiring_foreign = {
   intAdd = function(x) return function(y) return x + y end end,
   intMul = function(x) return function(y) return x * y end end
+}
+M.Data_Ring_foreign = {
+  intSub = function(x) return function(y) return x - y end end
 }
 M.Unsafe_Coerce_foreign = { unsafeCoerce = function(x) return x end }
 M.Effect_foreign = {
   pureE = function(a) return function() return a end end,
   bindE = function(a) return function(f) return function() return f(a())() end end end
+}
+M.Effect_Console_foreign = {
+  log = function(s) return function() print(s) end end
 }
 M.Data_Semiring_semiringInt = {
   add = M.Data_Semiring_foreign.intAdd,
@@ -95,7 +102,7 @@ end)
 M.Golden_ProfunctorDictLens_Test_unwrap = M.Data_Newtype_unwrap()
 M.Golden_ProfunctorDictLens_Test_discard = M.Control_Bind_bind(M.Effect_bindEffect)
 M.Golden_ProfunctorDictLens_Test_logShow = function(a_S_5)
-  return (function(s) return function() print(s) end end)((function(n) return tostring(n) end)(a_S_5))
+  return M.Effect_Console_foreign.log(M.Data_Show_foreign.showIntImpl(a_S_5))
 end
 M.Golden_ProfunctorDictLens_Test_Wrapped = function(x) return x end
 M.Golden_ProfunctorDictLens_Test__Wrapped = function(dictProfunctor)
@@ -110,6 +117,6 @@ return (function()
     return M.Data_Semiring_semiringInt.mul(v0_S_1)(2)
   end)(10)))()
   return M.Golden_ProfunctorDictLens_Test_logShow(M.Golden_ProfunctorDictLens_Test_unwrap(M.Data_Profunctor_dimap(M.Data_Profunctor_profunctorFn)(M.Data_Newtype_unwrap())(M.Unsafe_Coerce_foreign.unsafeCoerce)(function( v1_S_2 )
-    return (function(x) return function(y) return x - y end end)(v1_S_2)(5)
+    return M.Data_Ring_foreign.intSub(v1_S_2)(5)
   end)(10)))()
 end)()

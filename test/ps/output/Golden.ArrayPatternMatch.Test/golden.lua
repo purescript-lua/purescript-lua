@@ -19,13 +19,20 @@ local function PSLUA_runtime_lazy(name)
   end
 end
 local M = {}
+M.Data_Show_foreign = { showIntImpl = function(n) return tostring(n) end }
 M.Data_Semiring_foreign = {
   intAdd = function(x) return function(y) return x + y end end,
   intMul = function(x) return function(y) return x * y end end
 }
+M.Data_Ring_foreign = {
+  intSub = function(x) return function(y) return x - y end end
+}
 M.Effect_foreign = {
   pureE = function(a) return function() return a end end,
   bindE = function(a) return function(f) return function() return f(a())() end end end
+}
+M.Effect_Console_foreign = {
+  log = function(s) return function() print(s) end end
 }
 M.Data_Semiring_semiringInt = {
   add = M.Data_Semiring_foreign.intAdd,
@@ -34,7 +41,7 @@ M.Data_Semiring_semiringInt = {
   one = 1
 }
 M.Data_Ring_ringInt = {
-  sub = function(x) return function(y) return x - y end end,
+  sub = M.Data_Ring_foreign.intSub,
   Semiring0 = function() return M.Data_Semiring_semiringInt end
 }
 M.Control_Applicative_pure = function(dict) return dict.pure end
@@ -82,7 +89,7 @@ M.Golden_ArrayPatternMatch_Test_negate = function(a_S_86)
 end
 M.Golden_ArrayPatternMatch_Test_discard = M.Control_Bind_bind(M.Effect_bindEffect)
 M.Golden_ArrayPatternMatch_Test_logShow = function(a_S_2)
-  return (function(s) return function() print(s) end end)((function(n) return tostring(n) end)(a_S_2))
+  return M.Effect_Console_foreign.log(M.Data_Show_foreign.showIntImpl(a_S_2))
 end
 M.Golden_ArrayPatternMatch_Test_lastOfThree = function(v)
   if 3 == #(v) then

@@ -1,0 +1,67 @@
+UberModule
+  { uberModuleBindings =
+    [ Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Effect.Console" ) ".spago/p/console/f82835a0b873aafe6bd7b14dd30cc150553d4ab9/src/Effect/Console.purs"
+        [ ( Nothing, Name "log" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.ForeignSharing.Token", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Golden.ForeignSharing.Token" ) "src/Golden/ForeignSharing/Token.purs"
+        [ ( Nothing, Name "token" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.ForeignSharing.Test", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Golden.ForeignSharing.Test" ) "src/Golden/ForeignSharing/Test.purs"
+        [ ( Nothing, Name "same" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.ForeignSharing.Test", qnameName = Name "sharedToken"
+        }, Abs Nothing ( ParamUnused Nothing )
+        ( ObjectProp ( Just Always )
+          ( Ref Nothing
+            ( Imported ( ModuleName "Golden.ForeignSharing.Token" ) ( Name "foreign" ) )
+          )
+          ( PropName "token" )
+        )
+      )
+    ], uberModuleForeigns = [], uberModuleExports =
+    [
+      ( Name "main", App Nothing
+        ( ObjectProp ( Just Always )
+          ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
+          ( PropName "log" )
+        )
+        ( IfThenElse Nothing
+          ( App Nothing
+            ( App Nothing
+              ( ObjectProp ( Just Always )
+                ( Ref Nothing
+                  ( Imported ( ModuleName "Golden.ForeignSharing.Test" ) ( Name "foreign" ) )
+                )
+                ( PropName "same" )
+              )
+              ( App Nothing
+                ( Ref Nothing
+                  ( Imported ( ModuleName "Golden.ForeignSharing.Test" ) ( Name "sharedToken" ) )
+                )
+                ( LiteralInt Nothing 0 )
+              )
+            )
+            ( App Nothing
+              ( Ref Nothing
+                ( Imported ( ModuleName "Golden.ForeignSharing.Test" ) ( Name "sharedToken" ) )
+              )
+              ( LiteralInt Nothing 1 )
+            )
+          )
+          ( LiteralString Nothing "shared" )
+          ( LiteralString Nothing "fresh" )
+        )
+      )
+    ]
+  }

@@ -1,6 +1,11 @@
 local M = {}
+M.Data_Unit_foreign = { unit = {} }
+M.Data_Show_foreign = { showIntImpl = function(n) return tostring(n) end }
 M.Data_Semiring_foreign = {
   intAdd = function(x) return function(y) return x + y end end
+}
+M.Effect_Console_foreign = {
+  log = function(s) return function() print(s) end end
 }
 M.Control_Applicative_pure = function(dict) return dict.pure end
 M.Control_Bind_bind = function(dict) return dict.bind end
@@ -120,7 +125,7 @@ end)
 M.Golden_LongStateBind_Test_discard = M.Control_Bind_bind(M.Golden_LongStateBind_Test_bindStateT)
 M.Golden_LongStateBind_Test_put = function(s_S_57)
   return M.Control_Monad_State_Class_state(M.Golden_LongStateBind_Test_monadStateStateT)(function(  )
-    return M.Data_Tuple_Tuple({})(s_S_57)
+    return M.Data_Tuple_Tuple(M.Data_Unit_foreign.unit)(s_S_57)
   end)
 end
 M.Golden_LongStateBind_Test_go = (function()
@@ -756,4 +761,4 @@ M.Golden_LongStateBind_Test_go = (function()
   end)
 end)()
 M.Golden_LongStateBind_Test_compute = (M.Golden_LongStateBind_Test_go(0)).value0
-return (function(s) return function() print(s) end end)((function(n) return tostring(n) end)(M.Golden_LongStateBind_Test_compute))()
+return M.Effect_Console_foreign.log(M.Data_Show_foreign.showIntImpl(M.Golden_LongStateBind_Test_compute))()

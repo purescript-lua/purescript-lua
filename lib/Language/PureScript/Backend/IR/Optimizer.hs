@@ -38,6 +38,7 @@ import Language.PureScript.Backend.IR.Types
   , countFreeRef
   , countFreeRefs
   , getAnn
+  , isForeignImport
   , isNonRecursiveLiteral
   , lets
   , literalBool
@@ -178,12 +179,19 @@ must key off the name rather than re-reading the annotation after optimization.
 See Note [Inline annotations and inlining heuristics].
 -}
 neverInlineNames ∷ UberModule → Set QName
-neverInlineNames UberModule {uberModuleBindings} =
-  Set.fromList
+neverInlineNames UberModule {uberModuleBindings, uberModuleForeigns} =
+  Set.fromList $
     [ qname
     | Standalone (qname, expr) ← uberModuleBindings
     , getAnn expr == Just Never
     ]
+      -- Foreign accessors merge into the bindings mid-pipeline
+      -- ('mergeForeignsIntoBindings'), after this set is collected, so
+      -- their annotations are read here.
+      <> [ qname
+         | (qname, expr) ← uberModuleForeigns
+         , getAnn expr == Just Never
+         ]
 
 -- | Free-reference counts keyed by the referenced qualified name.
 type FreeRefs = Map (Qualified Name) Natural
@@ -265,6 +273,7 @@ optimizeModule neverNames UberModule {..} = runWriterT do
             occurrences = Map.findWithDefault 0 qn counts
             isUsedOnce = occurrences == 1
         if qname `Set.notMember` neverNames
+          && not (isForeignImport expr)
           && (isInlinableExpr expr || isUsedOnce)
           then do
             -- The binding is dropped from the module in favor of the

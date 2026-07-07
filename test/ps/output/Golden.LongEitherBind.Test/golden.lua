@@ -47,6 +47,9 @@ M.Data_Show_foreign = {
 M.Data_Semiring_foreign = {
   intAdd = function(x) return function(y) return x + y end end
 }
+M.Effect_Console_foreign = {
+  log = function(s) return function() print(s) end end
+}
 M.Data_Show_show = function(dict) return dict.show end
 M.Data_Either_Right = function(value0)
   return { ["$ctor"] = "Data.Either∷Either.Right", value0 = value0 }
@@ -712,7 +715,7 @@ M.Golden_LongEitherBind_Test_compute = (function()
     end)
   end)
 end)()
-return (function(s) return function() print(s) end end)(M.Data_Show_show({
+return M.Effect_Console_foreign.log(M.Data_Show_show({
   show = function(v_S_7_S_294)
     if "Data.Either∷Either.Left" == v_S_7_S_294["$ctor"] then
       return M.Data_Semigroup_foreign.concatString("(Left ")(M.Data_Semigroup_foreign.concatString(M.Data_Show_show({

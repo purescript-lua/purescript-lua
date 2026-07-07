@@ -28,6 +28,9 @@ M.Data_Eq_foreign = (function()
   local refEq = function(r1) return function(r2) return r1 == r2 end end
   return { eqIntImpl = refEq, eqCharImpl = refEq, eqStringImpl = refEq }
 end)()
+M.Data_Semigroup_foreign = {
+  concatString = function(s1) return function(s2) return s1 .. s2 end end
+}
 M.Data_Show_foreign = {
   showIntImpl = function(n) return tostring(n) end,
   showArrayImpl = function(f)
@@ -42,6 +45,9 @@ M.Data_Show_foreign = {
 M.Data_Semiring_foreign = {
   intAdd = function(x) return function(y) return x + y end end,
   intMul = function(x) return function(y) return x * y end end
+}
+M.Data_Ring_foreign = {
+  intSub = function(x) return function(y) return x - y end end
 }
 M.Data_Ord_foreign = (function()
   local unsafeCoerceImpl = function(lt)
@@ -63,6 +69,16 @@ M.Data_Ord_foreign = (function()
   end
   return { ordIntImpl = unsafeCoerceImpl, ordCharImpl = unsafeCoerceImpl }
 end)()
+M.Data_Functor_foreign = {
+  arrayMap = function(f)
+      return function(arr)
+        local l = #arr
+        local result = {}
+        for i = 1, l do result[i] = f(arr[i]) end
+        return result
+      end
+    end
+}
 M.Data_Bounded_foreign = (function()
   -- Lua 5.1 compatibility:
   -- * math.maxinteger/math.mininteger appeared in Lua 5.3; PureScript Int
@@ -97,6 +113,32 @@ M.Effect_foreign = {
   bindE = function(a) return function(f) return function() return f(a())() end end end
 }
 M.Partial_Unsafe_foreign = { _unsafePartial = function(f) return f(); end }
+M.Data_Unfoldable_foreign = {
+  unfoldrArrayImpl = function(isNothing)
+      return function(fromJust)
+        return function(fst)
+          return function(snd)
+            return function(f)
+              return function(b)
+                local result = {}
+                local value = b
+                while true do
+                  local maybe = f(value)
+                  if isNothing(maybe) then
+                    return result
+                  end
+                  local tuple = fromJust(maybe)
+                  table.insert(result, fst(tuple))
+                  value = snd(tuple)
+                end
+              end
+            end
+          end
+        end
+      end
+    end
+}
+M.Data_Array_foreign = { length = function(xs) return #xs end }
 M.Data_Enum_foreign = {
   toCharCode = function(c)
       -- pslua compiles a PureScript Char literal as a string of its UTF-8 bytes,
@@ -272,6 +314,9 @@ M.Data_String_CodePoints_foreign = (function()
       end
   }
 end)()
+M.Effect_Console_foreign = {
+  log = function(s) return function() print(s) end end
+}
 M.Control_Semigroupoid_semigroupoidFn = {
   compose = function(f)
     return function(g) return function(x) return f(g(x)) end end
@@ -294,7 +339,7 @@ M.Data_HeytingAlgebra_conj = function(dict) return dict.conj end
 M.Data_Eq_eqInt = { eq = M.Data_Eq_foreign.eqIntImpl }
 M.Data_Eq_eq = function(dict) return dict.eq end
 M.Data_Semigroup_semigroupString = {
-  append = function(s1) return function(s2) return s1 .. s2 end end
+  append = M.Data_Semigroup_foreign.concatString
 }
 M.Data_Semigroup_append = function(dict) return dict.append end
 M.Data_Show_showInt = { show = M.Data_Show_foreign.showIntImpl }
@@ -311,7 +356,7 @@ M.Data_Semiring_semiringInt = {
 M.Data_Semiring_add = function(dict) return dict.add end
 M.Data_Ring_sub = function(dict) return dict.sub end
 M.Data_Ring_ringInt = {
-  sub = function(x) return function(y) return x - y end end,
+  sub = M.Data_Ring_foreign.intSub,
   Semiring0 = function() return M.Data_Semiring_semiringInt end
 }
 M.Data_Ord_ordInt = {
@@ -592,29 +637,7 @@ M.Data_String_CodePoints_drop = function(n)
   end
 end
 M.Data_String_CodePoints_toCodePointArray = M.Data_String_CodePoints_foreign._toCodePointArray(function( s_S_10 )
-  return (function(isNothing)
-      return function(fromJust)
-        return function(fst)
-          return function(snd)
-            return function(f)
-              return function(b)
-                local result = {}
-                local value = b
-                while true do
-                  local maybe = f(value)
-                  if isNothing(maybe) then
-                    return result
-                  end
-                  local tuple = fromJust(maybe)
-                  table.insert(result, fst(tuple))
-                  value = snd(tuple)
-                end
-              end
-            end
-          end
-        end
-      end
-    end)(function(v2_S_1313_S_1335)
+  return M.Data_Unfoldable_foreign.unfoldrArrayImpl(function(v2_S_1313_S_1335)
     if "Data.Maybe∷Maybe.Nothing" == v2_S_1313_S_1335["$ctor"] then
       return true
     else
@@ -703,7 +726,7 @@ M.Data_String_CodePoints_Lazy_enumCodePoint = PSLUA_runtime_lazy("enumCodePoint"
 end)
 M.Effect_Console_logShow = function(dictShow)
   return function(a)
-    return (function(s) return function() print(s) end end)(M.Data_Show_show(dictShow)(a))
+    return M.Effect_Console_foreign.log(M.Data_Show_show(dictShow)(a))
   end
 end
 M.Golden_StringCodePoints_Test_compose = M.Control_Semigroupoid_compose(M.Control_Semigroupoid_semigroupoidFn)
@@ -720,18 +743,11 @@ M.Golden_StringCodePoints_Test_cp = M.Golden_StringCodePoints_Test_compose(M.Par
   return M.Data_Maybe_fromJust()
 end))(M.Data_Enum_toEnum(M.Data_String_CodePoints_boundedEnumCodePoint))
 M.Golden_StringCodePoints_Test_codes = M.Golden_StringCodePoints_Test_compose(M.Data_Functor_map({
-  map = function(f)
-      return function(arr)
-        local l = #arr
-        local result = {}
-        for i = 1, l do result[i] = f(arr[i]) end
-        return result
-      end
-    end
+  map = M.Data_Functor_foreign.arrayMap
 })(M.Golden_StringCodePoints_Test_fromEnum))(M.Data_String_CodePoints_toCodePointArray)
 return (function()
   local _ = M.Golden_StringCodePoints_Test_logShow(M.Golden_StringCodePoints_Test_codes("aéЯ𝐀z"))()
-  local _ = M.Golden_StringCodePoints_Test_logShow1(M.Data_String_CodePoints_compose(function(xs) return #xs end)(M.Data_String_CodePoints_toCodePointArray)("aéЯ𝐀z"))()
+  local _ = M.Golden_StringCodePoints_Test_logShow1(M.Data_String_CodePoints_compose(M.Data_Array_foreign.length)(M.Data_String_CodePoints_toCodePointArray)("aéЯ𝐀z"))()
   local _ = M.Golden_StringCodePoints_Test_logShow1(M.Data_String_CodeUnits_foreign.length("aéЯ𝐀z"))()
   local _ = M.Golden_StringCodePoints_Test_logShow(M.Golden_StringCodePoints_Test_codes(M.Data_String_CodePoints_take(2)("aéЯ𝐀z")))()
   local _ = M.Golden_StringCodePoints_Test_logShow(M.Golden_StringCodePoints_Test_codes(M.Data_String_CodePoints_drop(2)("aéЯ𝐀z")))()

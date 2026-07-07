@@ -1,4 +1,5 @@
 local M = {}
+M.Data_Unit_foreign = { unit = {} }
 M.Data_Semigroup_foreign = {
   concatString = function(s1) return function(s2) return s1 .. s2 end end
 }
@@ -46,6 +47,10 @@ M.Data_Show_foreign = {
 }
 M.Data_Semiring_foreign = {
   intAdd = function(x) return function(y) return x + y end end
+}
+M.Unsafe_Coerce_foreign = { unsafeCoerce = function(x) return x end }
+M.Effect_Console_foreign = {
+  log = function(s) return function() print(s) end end
 }
 M.Control_Semigroupoid_semigroupoidFn = {
   compose = function(f)
@@ -248,7 +253,7 @@ end)
 M.Golden_LongStackBind_Test_discard = M.Control_Bind_bind(M.Golden_LongStackBind_Test_bindStateT)
 M.Golden_LongStackBind_Test_put = function(s_S_109)
   return M.Control_Monad_State_Class_state(M.Golden_LongStackBind_Test_monadStateStateT)(function(  )
-    return M.Data_Tuple_Tuple({})(s_S_109)
+    return M.Data_Tuple_Tuple(M.Data_Unit_foreign.unit)(s_S_109)
   end)
 end
 M.Golden_LongStackBind_Test_go = (function()
@@ -877,12 +882,12 @@ M.Golden_LongStackBind_Test_go = (function()
     end)
   end)
 end)()
-M.Golden_LongStackBind_Test_compute = M.Control_Semigroupoid_compose(M.Control_Semigroupoid_semigroupoidFn)(function(x) return x end)(function( v_S_82 )
+M.Golden_LongStackBind_Test_compute = M.Control_Semigroupoid_compose(M.Control_Semigroupoid_semigroupoidFn)(M.Unsafe_Coerce_foreign.unsafeCoerce)(function( v_S_82 )
   return v_S_82
 end)(M.Data_Functor_map(M.Control_Monad_Except_Trans_functorExceptT(M.Data_Identity_functorIdentity))(function( v_S_547 )
   return v_S_547.value0
 end)(M.Golden_LongStackBind_Test_go(0)))
-return (function(s) return function() print(s) end end)(M.Data_Show_show({
+return M.Effect_Console_foreign.log(M.Data_Show_show({
   show = function(v_S_228_S_557)
     if "Data.Either∷Either.Left" == v_S_228_S_557["$ctor"] then
       return M.Data_Semigroup_foreign.concatString("(Left ")(M.Data_Semigroup_foreign.concatString(M.Data_Show_show({
