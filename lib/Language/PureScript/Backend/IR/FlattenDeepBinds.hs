@@ -156,6 +156,7 @@ import Language.PureScript.Backend.IR.Types
   , refLocal
   , rewriteExpTopDownM
   , substituteCopyM
+  , pattern App
   )
 
 -- | 'flattenDeepBindsM' with a private supply, for standalone use.

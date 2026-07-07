@@ -16,19 +16,25 @@ UberModule
           ) :| []
         )
         ( IfThenElse Nothing
-          ( App Nothing
+          ( AppN Nothing
             ( Ref Nothing ( Imported ( ModuleName "Golden.Values.Test" ) ( Name "f" ) ) )
-            ( LiteralInt Nothing 2 )
+            ( LiteralInt Nothing 2 :| [] )
           )
           ( IfThenElse Nothing
-            ( App Nothing
+            ( AppN Nothing
               ( Ref Nothing ( Imported ( ModuleName "Golden.Values.Test" ) ( Name "f" ) ) )
-              ( LiteralInt Nothing 1 )
+              ( LiteralInt Nothing 1 :| [] )
             )
             ( LiteralInt Nothing 42 )
-            ( App Nothing ( Ref Nothing ( Local ( Name "v$6" ) ) ) ( LiteralBool Nothing True ) )
+            ( AppN Nothing
+              ( Ref Nothing ( Local ( Name "v$6" ) ) )
+              ( LiteralBool Nothing True :| [] )
+            )
           )
-          ( App Nothing ( Ref Nothing ( Local ( Name "v$6" ) ) ) ( LiteralBool Nothing True ) )
+          ( AppN Nothing
+            ( Ref Nothing ( Local ( Name "v$6" ) ) )
+            ( LiteralBool Nothing True :| [] )
+          )
         )
       ),
       ( Name "J", Ctor Nothing SumType
@@ -80,16 +86,19 @@ UberModule
                       ( Ref Nothing ( Local ( Name "m$34" ) ) )
                       ( PropName "value0" )
                     )
-                    ( App Nothing
-                      ( Ref Nothing ( Local ( Name "v$37" ) ) ) ( LiteralBool Nothing True )
+                    ( AppN Nothing
+                      ( Ref Nothing ( Local ( Name "v$37" ) ) )
+                      ( LiteralBool Nothing True :| [] )
                     )
                   )
-                  ( App Nothing
-                    ( Ref Nothing ( Local ( Name "v$37" ) ) ) ( LiteralBool Nothing True )
+                  ( AppN Nothing
+                    ( Ref Nothing ( Local ( Name "v$37" ) ) )
+                    ( LiteralBool Nothing True :| [] )
                   )
                 )
-                ( App Nothing
-                  ( Ref Nothing ( Local ( Name "v$37" ) ) ) ( LiteralBool Nothing True )
+                ( AppN Nothing
+                  ( Ref Nothing ( Local ( Name "v$37" ) ) )
+                  ( LiteralBool Nothing True :| [] )
                 )
               )
             )

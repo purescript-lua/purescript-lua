@@ -47,6 +47,7 @@ import Language.PureScript.Backend.IR.Types
   , substituteCopyM
   , substituteMoveM
   , thenRewrite
+  , pattern App
   )
 import Language.PureScript.Backend.IR.Uniquify (uniquifyNames)
 

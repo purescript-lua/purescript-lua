@@ -80,9 +80,9 @@ UberModule
                 ( PropName "bindE" )
               ),
               ( PropName "Apply0", Abs Nothing ( ParamUnused Nothing )
-                ( App Nothing
+                ( AppN Nothing
                   ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "Lazy_applyEffect" ) ) )
-                  ( LiteralInt Nothing 0 )
+                  ( LiteralInt Nothing 0 :| [] )
                 )
               )
             ]
@@ -96,19 +96,19 @@ UberModule
                 ( PropName "pureE" )
               ),
               ( PropName "Apply0", Abs Nothing ( ParamUnused Nothing )
-                ( App Nothing
+                ( AppN Nothing
                   ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "Lazy_applyEffect" ) ) )
-                  ( LiteralInt Nothing 0 )
+                  ( LiteralInt Nothing 0 :| [] )
                 )
               )
             ]
           ),
           ( QName
             { qnameModuleName = ModuleName "Effect", qnameName = Name "Lazy_functorEffect"
-            }, App Nothing
-            ( App Nothing
+            }, AppN Nothing
+            ( AppN Nothing
               ( Ref Nothing ( Local ( Name "PSLUA_runtime_lazy" ) ) )
-              ( LiteralString Nothing "functorEffect" )
+              ( LiteralString Nothing "functorEffect" :| [] )
             )
             ( Abs Nothing ( ParamUnused Nothing )
               ( LiteralObject Nothing
@@ -117,10 +117,10 @@ UberModule
                     ( ParamNamed Nothing ( Name "f$31" ) )
                     ( Abs Nothing
                       ( ParamNamed Nothing ( Name "a$32" ) )
-                      ( App Nothing
-                        ( App Nothing
+                      ( AppN Nothing
+                        ( AppN Nothing
                           ( ObjectProp Nothing
-                            ( App Nothing
+                            ( AppN Nothing
                               ( ObjectProp Nothing
                                 ( Ref Nothing
                                   ( Imported ( ModuleName "Effect" ) ( Name "applicativeEffect" ) )
@@ -128,53 +128,58 @@ UberModule
                                 ( PropName "Apply0" )
                               )
                               ( Ref Nothing
-                                ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) )
+                                ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| []
                               )
                             )
                             ( PropName "apply" )
                           )
-                          ( App Nothing
-                            ( App Nothing
+                          ( AppN Nothing
+                            ( AppN Nothing
                               ( Ref Nothing
                                 ( Imported ( ModuleName "Control.Applicative" ) ( Name "pure" ) )
                               )
                               ( Ref Nothing
-                                ( Imported ( ModuleName "Effect" ) ( Name "applicativeEffect" ) )
+                                ( Imported
+                                  ( ModuleName "Effect" )
+                                  ( Name "applicativeEffect" )
+                                ) :| []
                               )
                             )
-                            ( Ref Nothing ( Local ( Name "f$31" ) ) )
+                            ( Ref Nothing ( Local ( Name "f$31" ) ) :| [] ) :| []
                           )
                         )
-                        ( Ref Nothing ( Local ( Name "a$32" ) ) )
+                        ( Ref Nothing ( Local ( Name "a$32" ) ) :| [] )
                       )
                     )
                   )
                 ]
-              )
+              ) :| []
             )
           ),
           ( QName
             { qnameModuleName = ModuleName "Effect", qnameName = Name "Lazy_applyEffect"
-            }, App Nothing
-            ( App Nothing
+            }, AppN Nothing
+            ( AppN Nothing
               ( Ref Nothing ( Local ( Name "PSLUA_runtime_lazy" ) ) )
-              ( LiteralString Nothing "applyEffect" )
+              ( LiteralString Nothing "applyEffect" :| [] )
             )
             ( Abs Nothing ( ParamUnused Nothing )
               ( LiteralObject Nothing
                 [
                   ( PropName "apply", Let Nothing
                     ( Standalone
-                      ( Nothing, Name "bind$10", App Nothing
+                      ( Nothing, Name "bind$10", AppN Nothing
                         ( Ref Nothing ( Imported ( ModuleName "Control.Bind" ) ( Name "bind" ) ) )
-                        ( App Nothing
+                        ( AppN Nothing
                           ( ObjectProp Nothing
                             ( Ref Nothing
                               ( Imported ( ModuleName "Effect" ) ( Name "monadEffect" ) )
                             )
                             ( PropName "Bind1" )
                           )
-                          ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) )
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| []
+                          ) :| []
                         )
                       ) :| []
                     )
@@ -182,29 +187,29 @@ UberModule
                       ( ParamNamed Nothing ( Name "f$12" ) )
                       ( Abs Nothing
                         ( ParamNamed Nothing ( Name "a$13" ) )
-                        ( App Nothing
-                          ( App Nothing
+                        ( AppN Nothing
+                          ( AppN Nothing
                             ( Ref Nothing ( Local ( Name "bind$10" ) ) )
-                            ( Ref Nothing ( Local ( Name "f$12" ) ) )
+                            ( Ref Nothing ( Local ( Name "f$12" ) ) :| [] )
                           )
                           ( Abs Nothing
                             ( ParamNamed Nothing ( Name "f'$14" ) )
-                            ( App Nothing
-                              ( App Nothing
+                            ( AppN Nothing
+                              ( AppN Nothing
                                 ( Ref Nothing ( Local ( Name "bind$10" ) ) )
-                                ( Ref Nothing ( Local ( Name "a$13" ) ) )
+                                ( Ref Nothing ( Local ( Name "a$13" ) ) :| [] )
                               )
                               ( Abs Nothing
                                 ( ParamNamed Nothing ( Name "a'$15" ) )
-                                ( App Nothing
-                                  ( App Nothing
+                                ( AppN Nothing
+                                  ( AppN Nothing
                                     ( Ref Nothing
                                       ( Imported
                                         ( ModuleName "Control.Applicative" )
                                         ( Name "pure" )
                                       )
                                     )
-                                    ( App Nothing
+                                    ( AppN Nothing
                                       ( ObjectProp Nothing
                                         ( Ref Nothing
                                           ( Imported
@@ -215,32 +220,35 @@ UberModule
                                         ( PropName "Applicative0" )
                                       )
                                       ( Ref Nothing
-                                        ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) )
-                                      )
+                                        ( Imported
+                                          ( ModuleName "Prim" )
+                                          ( Name "undefined" )
+                                        ) :| []
+                                      ) :| []
                                     )
                                   )
-                                  ( App Nothing
+                                  ( AppN Nothing
                                     ( Ref Nothing ( Local ( Name "f'$14" ) ) )
-                                    ( Ref Nothing ( Local ( Name "a'$15" ) ) )
+                                    ( Ref Nothing ( Local ( Name "a'$15" ) ) :| [] ) :| []
                                   )
-                                )
+                                ) :| []
                               )
-                            )
+                            ) :| []
                           )
                         )
                       )
                     )
                   ),
                   ( PropName "Functor0", Abs Nothing ( ParamUnused Nothing )
-                    ( App Nothing
+                    ( AppN Nothing
                       ( Ref Nothing
                         ( Imported ( ModuleName "Effect" ) ( Name "Lazy_functorEffect" ) )
                       )
-                      ( LiteralInt Nothing 0 )
+                      ( LiteralInt Nothing 0 :| [] )
                     )
                   )
                 ]
-              )
+              ) :| []
             )
           )
         ]
@@ -253,25 +261,25 @@ UberModule
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.DerivedFunctor.Test", qnameName = Name "discard"
-        }, App Nothing
+        }, AppN Nothing
         ( Ref Nothing ( Imported ( ModuleName "Control.Bind" ) ( Name "bind" ) ) )
-        ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "bindEffect" ) ) )
+        ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "bindEffect" ) ) :| [] )
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.DerivedFunctor.Test", qnameName = Name "logShow"
         }, Abs Nothing
         ( ParamNamed Nothing ( Name "a$5" ) )
-        ( App Nothing
+        ( AppN Nothing
           ( ObjectProp ( Just Always )
             ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
             ( PropName "log" )
           )
-          ( App Nothing
+          ( AppN Nothing
             ( ObjectProp ( Just Always )
               ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
               ( PropName "showIntImpl" )
             )
-            ( Ref Nothing ( Local ( Name "a$5" ) ) )
+            ( Ref Nothing ( Local ( Name "a$5" ) ) :| [] ) :| []
           )
         )
       ), Standalone
@@ -322,17 +330,17 @@ UberModule
                 ( LiteralString Nothing "Golden.DerivedFunctor.Test∷Tree.Node" )
                 ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v" ) ) ) )
               )
-              ( App Nothing
-                ( App Nothing
+              ( AppN Nothing
+                ( AppN Nothing
                   ( Ref Nothing
                     ( Imported ( ModuleName "Golden.DerivedFunctor.Test" ) ( Name "add" ) )
                   )
-                  ( App Nothing
-                    ( App Nothing
+                  ( AppN Nothing
+                    ( AppN Nothing
                       ( Ref Nothing
                         ( Imported ( ModuleName "Golden.DerivedFunctor.Test" ) ( Name "add" ) )
                       )
-                      ( App Nothing
+                      ( AppN Nothing
                         ( Ref Nothing
                           ( Imported
                             ( ModuleName "Golden.DerivedFunctor.Test" )
@@ -341,24 +349,24 @@ UberModule
                         )
                         ( ObjectProp Nothing
                           ( Ref Nothing ( Local ( Name "v" ) ) )
-                          ( PropName "value0" )
-                        )
+                          ( PropName "value0" ) :| []
+                        ) :| []
                       )
                     )
                     ( ObjectProp Nothing
                       ( Ref Nothing ( Local ( Name "v" ) ) )
-                      ( PropName "value1" )
-                    )
+                      ( PropName "value1" ) :| []
+                    ) :| []
                   )
                 )
-                ( App Nothing
+                ( AppN Nothing
                   ( Ref Nothing
                     ( Imported ( ModuleName "Golden.DerivedFunctor.Test" ) ( Name "sumTree" ) )
                   )
                   ( ObjectProp Nothing
                     ( Ref Nothing ( Local ( Name "v" ) ) )
-                    ( PropName "value2" )
-                  )
+                    ( PropName "value2" ) :| []
+                  ) :| []
                 )
               )
               ( Exception Nothing "No patterns matched" )
@@ -388,15 +396,15 @@ UberModule
                       ( LiteralString Nothing "Golden.DerivedFunctor.Test∷Tree.Node" )
                       ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "m" ) ) ) )
                     )
-                    ( App Nothing
-                      ( App Nothing
-                        ( App Nothing
+                    ( AppN Nothing
+                      ( AppN Nothing
+                        ( AppN Nothing
                           ( Ref Nothing
                             ( Imported ( ModuleName "Golden.DerivedFunctor.Test" ) ( Name "Node" ) )
                           )
-                          ( App Nothing
-                            ( App Nothing
-                              ( App Nothing
+                          ( AppN Nothing
+                            ( AppN Nothing
+                              ( AppN Nothing
                                 ( Ref Nothing
                                   ( Imported ( ModuleName "Data.Functor" ) ( Name "map" ) )
                                 )
@@ -404,28 +412,28 @@ UberModule
                                   ( Imported
                                     ( ModuleName "Golden.DerivedFunctor.Test" )
                                     ( Name "functorTree" )
-                                  )
+                                  ) :| []
                                 )
                               )
-                              ( Ref Nothing ( Local ( Name "f" ) ) )
+                              ( Ref Nothing ( Local ( Name "f" ) ) :| [] )
                             )
                             ( ObjectProp Nothing
                               ( Ref Nothing ( Local ( Name "m" ) ) )
-                              ( PropName "value0" )
-                            )
+                              ( PropName "value0" ) :| []
+                            ) :| []
                           )
                         )
-                        ( App Nothing
+                        ( AppN Nothing
                           ( Ref Nothing ( Local ( Name "f" ) ) )
                           ( ObjectProp Nothing
                             ( Ref Nothing ( Local ( Name "m" ) ) )
-                            ( PropName "value1" )
-                          )
+                            ( PropName "value1" ) :| []
+                          ) :| []
                         )
                       )
-                      ( App Nothing
-                        ( App Nothing
-                          ( App Nothing
+                      ( AppN Nothing
+                        ( AppN Nothing
+                          ( AppN Nothing
                             ( Ref Nothing
                               ( Imported ( ModuleName "Data.Functor" ) ( Name "map" ) )
                             )
@@ -433,15 +441,15 @@ UberModule
                               ( Imported
                                 ( ModuleName "Golden.DerivedFunctor.Test" )
                                 ( Name "functorTree" )
-                              )
+                              ) :| []
                             )
                           )
-                          ( Ref Nothing ( Local ( Name "f" ) ) )
+                          ( Ref Nothing ( Local ( Name "f" ) ) :| [] )
                         )
                         ( ObjectProp Nothing
                           ( Ref Nothing ( Local ( Name "m" ) ) )
-                          ( PropName "value2" )
-                        )
+                          ( PropName "value2" ) :| []
+                        ) :| []
                       )
                     )
                     ( Exception Nothing "No patterns matched" )
@@ -465,13 +473,13 @@ UberModule
                   ( LiteralString Nothing "Golden.DerivedFunctor.Test∷Either.Left" )
                   ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "m" ) ) ) )
                 )
-                ( App Nothing
+                ( AppN Nothing
                   ( Ref Nothing
                     ( Imported ( ModuleName "Golden.DerivedFunctor.Test" ) ( Name "Left" ) )
                   )
                   ( ObjectProp Nothing
                     ( Ref Nothing ( Local ( Name "m" ) ) )
-                    ( PropName "value0" )
+                    ( PropName "value0" ) :| []
                   )
                 )
                 ( IfThenElse Nothing
@@ -479,16 +487,16 @@ UberModule
                     ( LiteralString Nothing "Golden.DerivedFunctor.Test∷Either.Right" )
                     ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "m" ) ) ) )
                   )
-                  ( App Nothing
+                  ( AppN Nothing
                     ( Ref Nothing
                       ( Imported ( ModuleName "Golden.DerivedFunctor.Test" ) ( Name "Right" ) )
                     )
-                    ( App Nothing
+                    ( AppN Nothing
                       ( Ref Nothing ( Local ( Name "f" ) ) )
                       ( ObjectProp Nothing
                         ( Ref Nothing ( Local ( Name "m" ) ) )
-                        ( PropName "value0" )
-                      )
+                        ( PropName "value0" ) :| []
+                      ) :| []
                     )
                   )
                   ( Exception Nothing "No patterns matched" )
@@ -500,10 +508,10 @@ UberModule
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.DerivedFunctor.Test", qnameName = Name "map1"
-        }, App Nothing
+        }, AppN Nothing
         ( Ref Nothing ( Imported ( ModuleName "Data.Functor" ) ( Name "map" ) ) )
         ( Ref Nothing
-          ( Imported ( ModuleName "Golden.DerivedFunctor.Test" ) ( Name "functorEither" ) )
+          ( Imported ( ModuleName "Golden.DerivedFunctor.Test" ) ( Name "functorEither" ) ) :| []
         )
       ), Standalone
       ( QName
@@ -552,145 +560,145 @@ UberModule
       ( Name "main", Abs Nothing ( ParamUnused Nothing )
         ( Let Nothing
           ( Standalone
-            ( Nothing, Name "_", App Nothing
-              ( App Nothing
+            ( Nothing, Name "_", AppN Nothing
+              ( AppN Nothing
                 ( Ref Nothing
                   ( Imported ( ModuleName "Golden.DerivedFunctor.Test" ) ( Name "logShow" ) )
                 )
-                ( App Nothing
-                  ( App Nothing
+                ( AppN Nothing
+                  ( AppN Nothing
                     ( Ref Nothing
                       ( Imported ( ModuleName "Golden.DerivedFunctor.Test" ) ( Name "fromRight" ) )
                     )
-                    ( LiteralInt Nothing 0 )
+                    ( LiteralInt Nothing 0 :| [] )
                   )
-                  ( App Nothing
-                    ( App Nothing
+                  ( AppN Nothing
+                    ( AppN Nothing
                       ( Ref Nothing
                         ( Imported ( ModuleName "Golden.DerivedFunctor.Test" ) ( Name "map1" ) )
                       )
                       ( Abs Nothing
                         ( ParamNamed Nothing ( Name "v$0" ) )
-                        ( App Nothing
-                          ( App Nothing
+                        ( AppN Nothing
+                          ( AppN Nothing
                             ( Ref Nothing
                               ( Imported
                                 ( ModuleName "Golden.DerivedFunctor.Test" )
                                 ( Name "add" )
                               )
                             )
-                            ( Ref Nothing ( Local ( Name "v$0" ) ) )
+                            ( Ref Nothing ( Local ( Name "v$0" ) ) :| [] )
                           )
-                          ( LiteralInt Nothing 1 )
-                        )
+                          ( LiteralInt Nothing 1 :| [] )
+                        ) :| []
                       )
                     )
-                    ( App Nothing
+                    ( AppN Nothing
                       ( Ref Nothing
                         ( Imported ( ModuleName "Golden.DerivedFunctor.Test" ) ( Name "Right" ) )
                       )
-                      ( LiteralInt Nothing 41 )
-                    )
-                  )
+                      ( LiteralInt Nothing 41 :| [] ) :| []
+                    ) :| []
+                  ) :| []
                 )
               )
-              ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) )
+              ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
             ) :|
             [ Standalone
-              ( Nothing, Name "_", App Nothing
-                ( App Nothing
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
                   ( Ref Nothing
                     ( Imported ( ModuleName "Golden.DerivedFunctor.Test" ) ( Name "logShow" ) )
                   )
-                  ( App Nothing
-                    ( App Nothing
+                  ( AppN Nothing
+                    ( AppN Nothing
                       ( Ref Nothing
                         ( Imported
                           ( ModuleName "Golden.DerivedFunctor.Test" )
                           ( Name "fromRight" )
                         )
                       )
-                      ( LiteralInt Nothing 7 )
+                      ( LiteralInt Nothing 7 :| [] )
                     )
-                    ( App Nothing
-                      ( App Nothing
+                    ( AppN Nothing
+                      ( AppN Nothing
                         ( Ref Nothing
                           ( Imported ( ModuleName "Golden.DerivedFunctor.Test" ) ( Name "map1" ) )
                         )
                         ( Abs Nothing
                           ( ParamNamed Nothing ( Name "v0$1" ) )
-                          ( App Nothing
-                            ( App Nothing
+                          ( AppN Nothing
+                            ( AppN Nothing
                               ( Ref Nothing
                                 ( Imported
                                   ( ModuleName "Golden.DerivedFunctor.Test" )
                                   ( Name "add" )
                                 )
                               )
-                              ( Ref Nothing ( Local ( Name "v0$1" ) ) )
+                              ( Ref Nothing ( Local ( Name "v0$1" ) ) :| [] )
                             )
-                            ( LiteralInt Nothing 1 )
-                          )
+                            ( LiteralInt Nothing 1 :| [] )
+                          ) :| []
                         )
                       )
-                      ( App Nothing
+                      ( AppN Nothing
                         ( Ref Nothing
                           ( Imported ( ModuleName "Golden.DerivedFunctor.Test" ) ( Name "Left" ) )
                         )
-                        ( LiteralString Nothing "no" )
-                      )
-                    )
+                        ( LiteralString Nothing "no" :| [] ) :| []
+                      ) :| []
+                    ) :| []
                   )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
               )
             ]
           )
-          ( App Nothing
-            ( App Nothing
+          ( AppN Nothing
+            ( AppN Nothing
               ( Ref Nothing
                 ( Imported ( ModuleName "Golden.DerivedFunctor.Test" ) ( Name "logShow" ) )
               )
-              ( App Nothing
+              ( AppN Nothing
                 ( Ref Nothing
                   ( Imported ( ModuleName "Golden.DerivedFunctor.Test" ) ( Name "sumTree" ) )
                 )
-                ( App Nothing
-                  ( App Nothing
-                    ( App Nothing
+                ( AppN Nothing
+                  ( AppN Nothing
+                    ( AppN Nothing
                       ( Ref Nothing ( Imported ( ModuleName "Data.Functor" ) ( Name "map" ) ) )
                       ( Ref Nothing
                         ( Imported
                           ( ModuleName "Golden.DerivedFunctor.Test" )
                           ( Name "functorTree" )
-                        )
+                        ) :| []
                       )
                     )
                     ( Abs Nothing
                       ( ParamNamed Nothing ( Name "v1$2" ) )
-                      ( App Nothing
-                        ( App Nothing
+                      ( AppN Nothing
+                        ( AppN Nothing
                           ( ObjectProp Nothing
                             ( Ref Nothing
                               ( Imported ( ModuleName "Data.Semiring" ) ( Name "semiringInt" ) )
                             )
                             ( PropName "mul" )
                           )
-                          ( Ref Nothing ( Local ( Name "v1$2" ) ) )
+                          ( Ref Nothing ( Local ( Name "v1$2" ) ) :| [] )
                         )
-                        ( LiteralInt Nothing 2 )
-                      )
+                        ( LiteralInt Nothing 2 :| [] )
+                      ) :| []
                     )
                   )
-                  ( App Nothing
-                    ( App Nothing
-                      ( App Nothing
+                  ( AppN Nothing
+                    ( AppN Nothing
+                      ( AppN Nothing
                         ( Ref Nothing
                           ( Imported ( ModuleName "Golden.DerivedFunctor.Test" ) ( Name "Node" ) )
                         )
-                        ( App Nothing
-                          ( App Nothing
-                            ( App Nothing
+                        ( AppN Nothing
+                          ( AppN Nothing
+                            ( AppN Nothing
                               ( Ref Nothing
                                 ( Imported
                                   ( ModuleName "Golden.DerivedFunctor.Test" )
@@ -701,39 +709,48 @@ UberModule
                                 ( Imported
                                   ( ModuleName "Golden.DerivedFunctor.Test" )
                                   ( Name "Leaf" )
-                                )
+                                ) :| []
                               )
                             )
-                            ( LiteralInt Nothing 1 )
+                            ( LiteralInt Nothing 1 :| [] )
                           )
                           ( Ref Nothing
-                            ( Imported ( ModuleName "Golden.DerivedFunctor.Test" ) ( Name "Leaf" ) )
-                          )
+                            ( Imported
+                              ( ModuleName "Golden.DerivedFunctor.Test" )
+                              ( Name "Leaf" )
+                            ) :| []
+                          ) :| []
                         )
                       )
-                      ( LiteralInt Nothing 2 )
+                      ( LiteralInt Nothing 2 :| [] )
                     )
-                    ( App Nothing
-                      ( App Nothing
-                        ( App Nothing
+                    ( AppN Nothing
+                      ( AppN Nothing
+                        ( AppN Nothing
                           ( Ref Nothing
                             ( Imported ( ModuleName "Golden.DerivedFunctor.Test" ) ( Name "Node" ) )
                           )
                           ( Ref Nothing
-                            ( Imported ( ModuleName "Golden.DerivedFunctor.Test" ) ( Name "Leaf" ) )
+                            ( Imported
+                              ( ModuleName "Golden.DerivedFunctor.Test" )
+                              ( Name "Leaf" )
+                            ) :| []
                           )
                         )
-                        ( LiteralInt Nothing 3 )
+                        ( LiteralInt Nothing 3 :| [] )
                       )
                       ( Ref Nothing
-                        ( Imported ( ModuleName "Golden.DerivedFunctor.Test" ) ( Name "Leaf" ) )
-                      )
-                    )
-                  )
-                )
+                        ( Imported
+                          ( ModuleName "Golden.DerivedFunctor.Test" )
+                          ( Name "Leaf" )
+                        ) :| []
+                      ) :| []
+                    ) :| []
+                  ) :| []
+                ) :| []
               )
             )
-            ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) )
+            ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
           )
         )
       ),

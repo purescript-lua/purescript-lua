@@ -15,6 +15,7 @@ module Language.PureScript.Backend.IR.Linter
   , Site (..)
   , lintWellScoped
   , lintUniqueBinders
+  , lintWellApplied
   , unboundLocals
   ) where
 
@@ -53,6 +54,13 @@ data Violation
     (see 'discardName').
     -}
     RefToDiscard Site
+  | {- | A literal lambda applied to more than one argument in a single
+    call ('WellApplied'). A lambda compiles to a one-parameter Lua
+    function (Note [n-ary application]), so every argument past the first
+    would be silently dropped. The 'Natural' is the offending call's
+    argument count.
+    -}
+    OverApplied Site Natural
   deriving stock (Eq, Show)
 
 -- | The top-level entry of the module a violation was found in.
@@ -82,6 +90,18 @@ lintUniqueBinders ∷ UberModule → [Violation]
 lintUniqueBinders = overSites \site e →
   (DuplicateBinder site <$> duplicateBinders e)
     <> [RefToDiscard site | hasRefToDiscard e]
+
+{- | Check the @WellApplied@ invariant: no literal lambda is applied to
+more than one argument in a single call. A lambda compiles to a
+one-parameter Lua function, so a multi-argument 'AppN' onto a lambda head
+drops every argument past the first (Note [n-ary application]). A
+well-formed multi-argument call always has a non-lambda head — a reference
+to an n-ary foreign function. An empty result means the module holds the
+invariant.
+-}
+lintWellApplied ∷ UberModule → [Violation]
+lintWellApplied = overSites \site e →
+  OverApplied site <$> overApplications e
 
 {- | Run a per-site check over every top-level binding, foreign binding,
 and export of the module.
@@ -170,3 +190,14 @@ hasRefToDiscard e =
     [ nm == discardName
     | Ref _ (Local nm) ← toListOf (cosmosOf subexpressions) e
     ]
+
+{- | The argument count of every 'AppN' that applies a literal lambda to
+more than one argument. Each such node is a miscompile: the lambda is a
+one-parameter Lua function, so its surplus arguments are dropped.
+-}
+overApplications ∷ Exp → [Natural]
+overApplications e =
+  [ fromIntegral (length args)
+  | AppN _ (Abs {}) args ← toListOf (cosmosOf subexpressions) e
+  , length args > (1 ∷ Int)
+  ]

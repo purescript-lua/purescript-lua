@@ -5,9 +5,9 @@ UberModule
         { qnameModuleName = ModuleName "Golden.Inline.Test", qnameName = Name "runMu"
         }, Abs Nothing
         ( ParamNamed Nothing ( Name "v" ) )
-        ( App Nothing
+        ( AppN Nothing
           ( Ref Nothing ( Local ( Name "v" ) ) )
-          ( Ref Nothing ( Local ( Name "v" ) ) )
+          ( Ref Nothing ( Local ( Name "v" ) ) :| [] )
         )
       )
     ], uberModuleForeigns = [], uberModuleExports =

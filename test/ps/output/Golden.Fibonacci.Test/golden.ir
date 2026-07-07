@@ -36,44 +36,44 @@ UberModule
             ( IfThenElse Nothing
               ( Eq Nothing ( LiteralInt Nothing 1 ) ( Ref Nothing ( Local ( Name "v" ) ) ) )
               ( LiteralInt Nothing 1 )
-              ( App Nothing
-                ( App Nothing
+              ( AppN Nothing
+                ( AppN Nothing
                   ( ObjectProp ( Just Always )
                     ( Ref Nothing ( Imported ( ModuleName "Data.Semiring" ) ( Name "foreign" ) ) )
                     ( PropName "intAdd" )
                   )
-                  ( App Nothing
+                  ( AppN Nothing
                     ( Ref Nothing
                       ( Imported ( ModuleName "Golden.Fibonacci.Test" ) ( Name "fib" ) )
                     )
-                    ( App Nothing
-                      ( App Nothing
+                    ( AppN Nothing
+                      ( AppN Nothing
                         ( ObjectProp ( Just Always )
                           ( Ref Nothing
                             ( Imported ( ModuleName "Data.Ring" ) ( Name "foreign" ) )
                           )
                           ( PropName "intSub" )
                         )
-                        ( Ref Nothing ( Local ( Name "v" ) ) )
+                        ( Ref Nothing ( Local ( Name "v" ) ) :| [] )
                       )
-                      ( LiteralInt Nothing 1 )
-                    )
+                      ( LiteralInt Nothing 1 :| [] ) :| []
+                    ) :| []
                   )
                 )
-                ( App Nothing
+                ( AppN Nothing
                   ( Ref Nothing
                     ( Imported ( ModuleName "Golden.Fibonacci.Test" ) ( Name "fib" ) )
                   )
-                  ( App Nothing
-                    ( App Nothing
+                  ( AppN Nothing
+                    ( AppN Nothing
                       ( ObjectProp ( Just Always )
                         ( Ref Nothing ( Imported ( ModuleName "Data.Ring" ) ( Name "foreign" ) ) )
                         ( PropName "intSub" )
                       )
-                      ( Ref Nothing ( Local ( Name "v" ) ) )
+                      ( Ref Nothing ( Local ( Name "v" ) ) :| [] )
                     )
-                    ( LiteralInt Nothing 2 )
-                  )
+                    ( LiteralInt Nothing 2 :| [] ) :| []
+                  ) :| []
                 )
               )
             )
@@ -85,20 +85,20 @@ UberModule
       ( Name "fib", Ref Nothing
         ( Imported ( ModuleName "Golden.Fibonacci.Test" ) ( Name "fib" ) )
       ),
-      ( Name "main", App Nothing
+      ( Name "main", AppN Nothing
         ( ObjectProp ( Just Always )
           ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
           ( PropName "log" )
         )
-        ( App Nothing
+        ( AppN Nothing
           ( ObjectProp ( Just Always )
             ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
             ( PropName "showIntImpl" )
           )
-          ( App Nothing
+          ( AppN Nothing
             ( Ref Nothing ( Imported ( ModuleName "Golden.Fibonacci.Test" ) ( Name "fib" ) ) )
-            ( LiteralInt Nothing 32 )
-          )
+            ( LiteralInt Nothing 32 :| [] ) :| []
+          ) :| []
         )
       )
     ]

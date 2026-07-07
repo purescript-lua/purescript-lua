@@ -11,17 +11,17 @@ UberModule
       ( Name "a", LiteralInt Nothing 1 ),
       ( Name "b", LiteralInt Nothing 2 ),
       ( Name "f", Ref Nothing ( Imported ( ModuleName "Golden.Unbinding.Test" ) ( Name "f" ) ) ),
-      ( Name "c", App Nothing
-        ( App Nothing
+      ( Name "c", AppN Nothing
+        ( AppN Nothing
           ( Ref Nothing ( Imported ( ModuleName "Golden.Unbinding.Test" ) ( Name "f" ) ) )
-          ( LiteralInt Nothing 1 )
+          ( LiteralInt Nothing 1 :| [] )
         )
-        ( App Nothing
-          ( App Nothing
+        ( AppN Nothing
+          ( AppN Nothing
             ( Ref Nothing ( Imported ( ModuleName "Golden.Unbinding.Test" ) ( Name "f" ) ) )
-            ( LiteralInt Nothing 2 )
+            ( LiteralInt Nothing 2 :| [] )
           )
-          ( LiteralInt Nothing 1 )
+          ( LiteralInt Nothing 1 :| [] ) :| []
         )
       )
     ]

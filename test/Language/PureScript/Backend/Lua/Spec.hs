@@ -33,6 +33,12 @@ spec = describe "Lua.fromUberModule" do
     rendered ← compileExportedExpr (ctorExpr IR.SumType)
     rendered `shouldSatisfy` Text.isInfixOf "[\"$ctor\"]"
 
+  it "emits one n-ary Lua call for a multi-argument AppN" do
+    rendered ← compileExportedExpr naryCall
+    -- A single call passing every argument, not a curried f(a)(b)(c) spine.
+    rendered `shouldSatisfy` Text.isInfixOf "f(a, b, c)"
+    rendered `shouldSatisfy` (not . Text.isInfixOf "f(a)(b)(c)")
+
 compileExportedExpr ∷ IR.Exp → IO Text
 compileExportedExpr expr = do
   foreignPath ← Tagged <$> getCurrentDir
@@ -90,6 +96,16 @@ absWithIfBody =
         (IR.Ref IR.noAnn (IR.Local (IR.Name "x")))
         (IR.LiteralInt IR.noAnn 0)
     )
+
+-- @f(a, b, c)@: one call, three arguments, head is a plain reference.
+naryCall ∷ IR.Exp
+naryCall =
+  IR.AppN
+    IR.noAnn
+    (localRef "f")
+    (localRef "a" :| [localRef "b", localRef "c"])
+ where
+  localRef = IR.Ref IR.noAnn . IR.Local . IR.Name
 
 ctorExpr ∷ IR.AlgebraicType → IR.Exp
 ctorExpr algebraicTy =

@@ -9,12 +9,12 @@ UberModule
       )
     ], uberModuleForeigns = [], uberModuleExports =
     [
-      ( Name "main", App Nothing
+      ( Name "main", AppN Nothing
         ( ObjectProp ( Just Always )
           ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
           ( PropName "log" )
         )
-        ( LiteralString Nothing "\27[31mred\27[0m" )
+        ( LiteralString Nothing "\27[31mred\27[0m" :| [] )
       )
     ]
   }

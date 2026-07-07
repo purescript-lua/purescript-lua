@@ -35,25 +35,25 @@ UberModule
           )
         )
       ),
-      ( Name "inlineIntoMe2", App Nothing
+      ( Name "inlineIntoMe2", AppN Nothing
         ( ObjectProp ( Just Always )
           ( Ref Nothing ( Imported ( ModuleName "Golden.Annotations.M1" ) ( Name "foreign" ) ) )
           ( PropName "dontInlineClosure" )
         )
-        ( App Nothing
+        ( AppN Nothing
           ( ObjectProp ( Just Always )
             ( Ref Nothing ( Imported ( ModuleName "Golden.Annotations.M1" ) ( Name "foreign" ) ) )
             ( PropName "inlineMeLambda" )
           )
-          ( App Nothing
+          ( AppN Nothing
             ( ObjectProp ( Just Always )
               ( Ref Nothing
                 ( Imported ( ModuleName "Golden.Annotations.M1" ) ( Name "foreign" ) )
               )
               ( PropName "inlineMeLambda" )
             )
-            ( LiteralInt Nothing 17 )
-          )
+            ( LiteralInt Nothing 17 :| [] ) :| []
+          ) :| []
         )
       )
     ]

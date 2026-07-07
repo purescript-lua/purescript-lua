@@ -70,6 +70,7 @@ import Language.PureScript.Backend.IR.Types
   , noAnn
   , rewriteExpTopDownM
   , substituteMoveM
+  , pattern App
   )
 
 -- | Flatten Effect/ST @do@ blocks in every binding and export of the module.
