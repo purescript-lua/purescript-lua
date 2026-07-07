@@ -15,6 +15,7 @@ import Language.PureScript.Backend.IR.Uniquify.Spec qualified as IRUniquify
 import Language.PureScript.Backend.Lua.Differential.Spec qualified as LuaDifferential
 import Language.PureScript.Backend.Lua.Golden.Spec qualified as Golden
 import Language.PureScript.Backend.Lua.Linker.Foreign.Spec qualified as LuaLinkerForeign
+import Language.PureScript.Backend.Lua.Localize.Spec qualified as LuaLocalize
 import Language.PureScript.Backend.Lua.NestingCheck.Spec qualified as NestingCheck
 import Language.PureScript.Backend.Lua.Optimizer.Spec qualified as LuaOptimizer
 import Language.PureScript.Backend.Lua.Parser.Spec qualified as LuaParser
@@ -40,6 +41,7 @@ main = hspec do
   IRUncurry.spec
   IRUniquify.spec
   LuaOptimizer.spec
+  LuaLocalize.spec
   Lua.spec
   LuaParser.spec
   LuaDifferential.spec
