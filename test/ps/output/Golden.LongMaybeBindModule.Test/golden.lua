@@ -10,12 +10,10 @@ M.Golden_LongMaybeBindModule_Test_bind = function(v_S_545)
   return function(v1_S_546)
     if "Data.Maybe∷Maybe.Just" == v_S_545["$ctor"] then
       return v1_S_546(v_S_545.value0)
+    elseif "Data.Maybe∷Maybe.Nothing" == v_S_545["$ctor"] then
+      return { ["$ctor"] = "Data.Maybe∷Maybe.Nothing" }
     else
-      if "Data.Maybe∷Maybe.Nothing" == v_S_545["$ctor"] then
-        return { ["$ctor"] = "Data.Maybe∷Maybe.Nothing" }
-      else
-        return error("No patterns matched")
-      end
+      return error("No patterns matched")
     end
   end
 end

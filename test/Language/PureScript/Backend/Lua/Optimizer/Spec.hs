@@ -123,3 +123,62 @@ spec = describe "Lua AST Optimizer" do
               [name|foo|]
       assertEqual (toString $ pShow original) original $
         rewriteExpWithRule foldFieldProjectionThroughScopeCall original
+
+    it "declines when a leading loop body contains a return" do
+      -- A `return` at the body level of a `while` exits the call the same
+      -- way a top-level early return does.
+      let original ∷ Lua.Exp =
+            Lua.varField
+              ( Lua.scope
+                  [ Lua.While
+                      (Lua.ann (Lua.Boolean True))
+                      [Lua.ann (Lua.return (Lua.varName [name|a|]))]
+                  , Lua.return (Lua.varName [name|b|])
+                  ]
+              )
+              [name|foo|]
+      assertEqual (toString $ pShow original) original $
+        rewriteExpWithRule foldFieldProjectionThroughScopeCall original
+
+    it "folds past a leading loop without a return" do
+      let scopeBody ∷ Lua.Exp → [Lua.Statement]
+          scopeBody returned =
+            [ Lua.While
+                (Lua.ann (Lua.Boolean True))
+                [Lua.ann (Lua.assignVar [name|a|] Lua.Nil)]
+            , Lua.return returned
+            ]
+          original ∷ Lua.Exp =
+            Lua.varField
+              (Lua.scope (scopeBody (Lua.varName [name|b|])))
+              [name|foo|]
+          expected ∷ Lua.Exp =
+            Lua.scope
+              ( scopeBody
+                  (Lua.varField (Lua.varName [name|b|]) [name|foo|])
+              )
+      assertEqual (toString $ pShow original) expected $
+        rewriteExpWithRule foldFieldProjectionThroughScopeCall original
+
+    it "folds past a leading local function whose body returns" do
+      -- A `return` inside a nested (local) function belongs to a different
+      -- activation: it does not exit this call, so the fold may proceed.
+      let scopeBody ∷ Lua.Exp → [Lua.Statement]
+          scopeBody returned =
+            [ Lua.LocalFunction
+                [name|helper|]
+                []
+                [Lua.ann (Lua.return Lua.Nil)]
+            , Lua.return returned
+            ]
+          original ∷ Lua.Exp =
+            Lua.varField
+              (Lua.scope (scopeBody (Lua.varName [name|b|])))
+              [name|foo|]
+          expected ∷ Lua.Exp =
+            Lua.scope
+              ( scopeBody
+                  (Lua.varField (Lua.varName [name|b|]) [name|foo|])
+              )
+      assertEqual (toString $ pShow original) expected $
+        rewriteExpWithRule foldFieldProjectionThroughScopeCall original

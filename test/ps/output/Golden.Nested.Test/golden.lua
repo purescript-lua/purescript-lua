@@ -7,8 +7,10 @@ return {
   main = (function()
     if M.Golden_Nested_Test_isZero(1) then
       if M.Golden_Nested_Test_isZero(1) then return "ok" else return "fine" end
+    elseif M.Golden_Nested_Test_isZero(0) then
+      return "ha"
     else
-      if M.Golden_Nested_Test_isZero(0) then return "ha" else return "cool" end
+      return "cool"
     end
   end)()
 }

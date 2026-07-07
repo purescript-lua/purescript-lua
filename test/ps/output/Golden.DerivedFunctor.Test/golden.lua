@@ -5,15 +5,13 @@ local function PSLUA_runtime_lazy(name)
     return function()
       if state == 2 then
         return val
+      elseif state == 1 then
+        return error(name .. " was needed before it finished initializing")
       else
-        if state == 1 then
-          return error(name .. " was needed before it finished initializing")
-        else
-          state = 1
-          val = init()
-          state = 2
-          return val
-        end
+        state = 1
+        val = init()
+        state = 2
+        return val
       end
     end
   end
@@ -26,7 +24,9 @@ M.Data_Semiring_foreign = {
 }
 M.Effect_foreign = {
   pureE = function(a) return function() return a end end,
-  bindE = function(a) return function(f) return function() return f(a())() end end end
+  bindE = function(a)
+    return function(f) return function() return f(a())() end end
+  end
 }
 M.Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
@@ -113,12 +113,10 @@ end
 M.Golden_DerivedFunctor_Test_sumTree = function(v)
   if "Golden.DerivedFunctor.Test∷Tree.Leaf" == v["$ctor"] then
     return 0
+  elseif "Golden.DerivedFunctor.Test∷Tree.Node" == v["$ctor"] then
+    return M.Golden_DerivedFunctor_Test_add(M.Golden_DerivedFunctor_Test_add(M.Golden_DerivedFunctor_Test_sumTree(v.value0))(v.value1))(M.Golden_DerivedFunctor_Test_sumTree(v.value2))
   else
-    if "Golden.DerivedFunctor.Test∷Tree.Node" == v["$ctor"] then
-      return M.Golden_DerivedFunctor_Test_add(M.Golden_DerivedFunctor_Test_add(M.Golden_DerivedFunctor_Test_sumTree(v.value0))(v.value1))(M.Golden_DerivedFunctor_Test_sumTree(v.value2))
-    else
-      return error("No patterns matched")
-    end
+    return error("No patterns matched")
   end
 end
 M.Golden_DerivedFunctor_Test_functorTree = {
@@ -126,12 +124,10 @@ M.Golden_DerivedFunctor_Test_functorTree = {
     return function(m)
       if "Golden.DerivedFunctor.Test∷Tree.Leaf" == m["$ctor"] then
         return M.Golden_DerivedFunctor_Test_Leaf
+      elseif "Golden.DerivedFunctor.Test∷Tree.Node" == m["$ctor"] then
+        return M.Golden_DerivedFunctor_Test_Node(M.Data_Functor_map(M.Golden_DerivedFunctor_Test_functorTree)(f)(m.value0))(f(m.value1))(M.Data_Functor_map(M.Golden_DerivedFunctor_Test_functorTree)(f)(m.value2))
       else
-        if "Golden.DerivedFunctor.Test∷Tree.Node" == m["$ctor"] then
-          return M.Golden_DerivedFunctor_Test_Node(M.Data_Functor_map(M.Golden_DerivedFunctor_Test_functorTree)(f)(m.value0))(f(m.value1))(M.Data_Functor_map(M.Golden_DerivedFunctor_Test_functorTree)(f)(m.value2))
-        else
-          return error("No patterns matched")
-        end
+        return error("No patterns matched")
       end
     end
   end
@@ -141,12 +137,10 @@ M.Golden_DerivedFunctor_Test_functorEither = {
     return function(m)
       if "Golden.DerivedFunctor.Test∷Either.Left" == m["$ctor"] then
         return M.Golden_DerivedFunctor_Test_Left(m.value0)
+      elseif "Golden.DerivedFunctor.Test∷Either.Right" == m["$ctor"] then
+        return M.Golden_DerivedFunctor_Test_Right(f(m.value0))
       else
-        if "Golden.DerivedFunctor.Test∷Either.Right" == m["$ctor"] then
-          return M.Golden_DerivedFunctor_Test_Right(f(m.value0))
-        else
-          return error("No patterns matched")
-        end
+        return error("No patterns matched")
       end
     end
   end
@@ -156,12 +150,10 @@ M.Golden_DerivedFunctor_Test_fromRight = function(fallback)
   return function(v)
     if "Golden.DerivedFunctor.Test∷Either.Left" == v["$ctor"] then
       return fallback
+    elseif "Golden.DerivedFunctor.Test∷Either.Right" == v["$ctor"] then
+      return v.value0
     else
-      if "Golden.DerivedFunctor.Test∷Either.Right" == v["$ctor"] then
-        return v.value0
-      else
-        return error("No patterns matched")
-      end
+      return error("No patterns matched")
     end
   end
 end

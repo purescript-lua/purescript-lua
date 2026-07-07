@@ -5,12 +5,20 @@ module Language.PureScript.Backend.Lua.Printer.Spec where
 
 import Data.Text qualified as Text
 import Language.PureScript.Backend.Lua.Name qualified as Lua
+import Language.PureScript.Backend.Lua.Parser qualified as Parser
 import Language.PureScript.Backend.Lua.Printer qualified as Printer
 import Language.PureScript.Backend.Lua.Types (ParamF (..))
 import Language.PureScript.Backend.Lua.Types qualified as Lua
-import Prettyprinter (Doc, defaultLayoutOptions, layoutPretty)
+import Prettyprinter (Doc, defaultLayoutOptions, layoutPretty, vsep)
 import Prettyprinter.Render.Text (renderStrict)
-import Test.Hspec (Spec, describe, it, shouldBe)
+import Test.Hspec
+  ( Expectation
+  , Spec
+  , describe
+  , expectationFailure
+  , it
+  , shouldBe
+  )
 
 spec ∷ Spec
 spec = do
@@ -50,7 +58,7 @@ spec = do
 
   describe "Local declaration" do
     it "without a value" do
-      let s = Lua.Local [Lua.name|foo|] Nothing
+      let s = Lua.local0 [Lua.name|foo|]
       renderedStatement s `shouldBe` "local foo"
 
     it "with value" do
@@ -230,6 +238,177 @@ spec = do
       renderedExpression (Lua.functionCall callee [])
         `shouldBe` "({ foo = 1 })()"
 
+  describe "statement separator" do
+    -- Without the ';', `local a = f` and the next line's `(` would fuse
+    -- into the call `f(nil)` — Lua 5.1 rejects that as "ambiguous syntax".
+    it "';' terminates a statement when the next one starts with '('" do
+      let stats =
+            [ Lua.ann
+                (Lua.local1 [Lua.name|a|] (Lua.varName [Lua.name|f|]))
+            , Lua.ann
+                ( Lua.Assign
+                    ( one
+                        ( Lua.ann
+                            (Lua.VarField (Lua.ann Lua.Nil) [Lua.name|x|])
+                        )
+                    )
+                    (one (Lua.ann (Lua.Integer 1)))
+                )
+            ]
+      renderedStatements stats
+        `shouldBe` multiline ["local a = f;", "(nil).x = 1"]
+      reparsesToItself stats
+
+    it "';' separates an IIFE from a preceding call statement" do
+      let stats =
+            [ Lua.ann . Lua.CallStatement . Lua.ann $
+                Lua.functionCall (Lua.varName [Lua.name|f|]) []
+            , Lua.ann . Lua.CallStatement . Lua.ann $
+                Lua.functionCall (Lua.functionDef [] [Lua.Return []]) []
+            ]
+      renderedStatements stats
+        `shouldBe` multiline ["f();", "(function() return end)()"]
+      reparsesToItself stats
+
+    it "no ';' when the next statement starts with a name" do
+      let stats =
+            [ Lua.ann . Lua.CallStatement . Lua.ann $
+                Lua.functionCall (Lua.varName [Lua.name|f|]) []
+            , Lua.ann . Lua.CallStatement . Lua.ann $
+                Lua.functionCall (Lua.varName [Lua.name|g|]) []
+            ]
+      renderedStatements stats `shouldBe` multiline ["f()", "g()"]
+      reparsesToItself stats
+
+  describe "statements from parsed foreign code" do
+    it "multiple assignment" do
+      let s =
+            Lua.Assign
+              (Lua.ann (Lua.VarName [Lua.name|a|]) :| [Lua.ann (Lua.VarName [Lua.name|b|])])
+              (Lua.ann (Lua.varName [Lua.name|b|]) :| [Lua.ann (Lua.varName [Lua.name|a|])])
+      renderedStatement s `shouldBe` "a, b = b, a"
+
+    it "multi-name local declaration" do
+      let s =
+            Lua.Local
+              ([Lua.name|a|] :| [[Lua.name|b|]])
+              [Lua.ann (Lua.Integer 1), Lua.ann (Lua.Integer 2)]
+      renderedStatement s `shouldBe` "local a, b = 1, 2"
+
+    it "local function" do
+      let s =
+            Lua.LocalFunction
+              [Lua.name|go|]
+              [Lua.ann (ParamNamed [Lua.name|n|])]
+              [Lua.ann (Lua.return (Lua.varName [Lua.name|n|]))]
+      renderedStatement s `shouldBe` "local function go(n) return n end"
+
+    it "while / repeat / break" do
+      renderedStatement
+        (Lua.While (Lua.ann (Lua.Boolean True)) [Lua.ann Lua.Break])
+        `shouldBe` "while true do break end"
+      renderedStatement
+        (Lua.Repeat [Lua.ann Lua.Break] (Lua.ann (Lua.Boolean True)))
+        `shouldBe` "repeat break until true"
+
+    it "numeric for renders its optional step" do
+      let body = [Lua.ann Lua.Break]
+      renderedStatement
+        ( Lua.ForNum
+            [Lua.name|i|]
+            (Lua.ann (Lua.Integer 1))
+            (Lua.ann (Lua.Integer 9))
+            Nothing
+            body
+        )
+        `shouldBe` "for i = 1, 9 do break end"
+      renderedStatement
+        ( Lua.ForNum
+            [Lua.name|i|]
+            (Lua.ann (Lua.Integer 9))
+            (Lua.ann (Lua.Integer 1))
+            (Just (Lua.ann (Lua.negate (Lua.Integer 1))))
+            body
+        )
+        `shouldBe` "for i = 9, 1, -(1) do break end"
+
+    it "generic for over pairs" do
+      renderedStatement
+        ( Lua.ForIn
+            ([Lua.name|k|] :| [[Lua.name|v|]])
+            ( Lua.ann
+                (Lua.functionCall (Lua.varName [Lua.name|pairs|]) [Lua.varName [Lua.name|t|]])
+                :| []
+            )
+            [Lua.ann Lua.Break]
+        )
+        `shouldBe` "for k, v in pairs(t) do break end"
+
+    it "do-block and call statement" do
+      renderedStatement
+        ( Lua.Do
+            [ Lua.ann . Lua.CallStatement . Lua.ann $
+                Lua.functionCall (Lua.varName [Lua.name|f|]) []
+            ]
+        )
+        `shouldBe` "do f() end"
+
+    it "bare and multi-value return" do
+      renderedStatement (Lua.Return []) `shouldBe` "return"
+      renderedStatement
+        (Lua.Return [Lua.ann (Lua.Integer 1), Lua.ann (Lua.Integer 2)])
+        `shouldBe` "return 1, 2"
+
+    it "an else-block holding a single if prints as elseif" do
+      let s =
+            Lua.ifThenElse
+              (Lua.varName [Lua.name|a|])
+              [Lua.return (Lua.Integer 1)]
+              [ Lua.ifThenElse
+                  (Lua.varName [Lua.name|b|])
+                  [Lua.return (Lua.Integer 2)]
+                  [Lua.return (Lua.Integer 3)]
+              ]
+      renderedStatement s
+        `shouldBe` "if a then return 1 elseif b then return 2 else return 3 end"
+
+  describe "expressions from parsed foreign code" do
+    it "method call" do
+      renderedExpression
+        (Lua.methodCall (Lua.varName [Lua.name|s|]) [Lua.name|sub|] [Lua.Integer 1])
+        `shouldBe` "s:sub(1)"
+
+    it "vararg expression and parameter" do
+      renderedExpression
+        (Lua.Function [Lua.ann ParamVararg] [Lua.ann (Lua.return Lua.Vararg)])
+        `shouldBe` "function(...) return ... end"
+
+    it "multi-value adjustment parens are preserved" do
+      renderedExpression
+        (Lua.Paren (Lua.ann (Lua.functionCall (Lua.varName [Lua.name|f|]) [])))
+        `shouldBe` "(f())"
+
+    it "array-part table row" do
+      renderedExpression (Lua.table [Lua.tableRowV (Lua.Integer 7)])
+        `shouldBe` "{ 7 }"
+
+  describe "comments" do
+    it "print on their own lines before the annotated node" do
+      let s =
+            ( ["-- doc", "-- more"]
+            , Lua.local1 [Lua.name|x|] (Lua.Integer 1)
+            )
+      rendered (Printer.printStatementA s)
+        `shouldBe` multiline ["-- doc", "-- more", "local x = 1"]
+
+    it "force a table constructor into vertical layout" do
+      let e =
+            Lua.TableCtor
+              [ (["-- why"], Lua.tableRowNV [Lua.name|foo|] (Lua.Integer 1))
+              ]
+      renderedExpression e
+        `shouldBe` multiline ["{", "  -- why", "  foo = 1", "}"]
+
   describe "Float" do
     -- https://github.com/purescript-lua/purescript-lua/issues/164
     it "NaN prints as a Lua-readable expression, not \"NaN\"" do
@@ -245,6 +424,16 @@ spec = do
       renderedExpression (Lua.Float (-(1 / 0)) `Lua.exponent` Lua.Integer 2)
         `shouldBe` "(-math.huge) ^ 2"
 
+    it "negative literals carry unary precedence: parens under ^" do
+      renderedExpression (Lua.Integer (-2) `Lua.exponent` Lua.Integer 2)
+        `shouldBe` "(-2) ^ 2"
+      renderedExpression (Lua.Float (-1.5) `Lua.exponent` Lua.Integer 2)
+        `shouldBe` "(-1.5) ^ 2"
+
+    it "negative literals need no parens under looser operators" do
+      renderedExpression (Lua.Integer (-2) `Lua.add` Lua.Integer 1)
+        `shouldBe` "-2 + 1"
+
 --------------------------------------------------------------------------------
 -- Utility functions -----------------------------------------------------------
 
@@ -253,6 +442,17 @@ multiline = Text.concat . intersperse "\n"
 
 renderedStatement ∷ Lua.Statement → Text
 renderedStatement = rendered . Printer.printStatement
+
+renderedStatements ∷ [Lua.Annotated Lua.Comments Lua.StatementF] → Text
+renderedStatements = rendered . vsep . Printer.printStatements
+
+-- | The printed form must parse back to exactly the same statements.
+reparsesToItself
+  ∷ HasCallStack ⇒ [Lua.Annotated Lua.Comments Lua.StatementF] → Expectation
+reparsesToItself stats =
+  case Parser.parseChunk "<printed>" (renderedStatements stats) of
+    Left err → expectationFailure (Parser.renderParseError err)
+    Right reparsed → reparsed `shouldBe` stats
 
 renderedExpression ∷ Lua.Exp → Text
 renderedExpression = rendered . Printer.printedExp

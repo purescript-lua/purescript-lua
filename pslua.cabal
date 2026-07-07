@@ -149,6 +149,7 @@ library
     Language.PureScript.Backend.Lua.Name
     Language.PureScript.Backend.Lua.NestingCheck
     Language.PureScript.Backend.Lua.Optimizer
+    Language.PureScript.Backend.Lua.Parser
     Language.PureScript.Backend.Lua.Printer
     Language.PureScript.Backend.Lua.Run
     Language.PureScript.Backend.Lua.Traversal
@@ -186,19 +187,24 @@ test-suite spec
     Language.PureScript.Backend.IR.SpecUtils
     Language.PureScript.Backend.IR.Types.Spec
     Language.PureScript.Backend.IR.Uniquify.Spec
+    Language.PureScript.Backend.Lua.Differential.Spec
+    Language.PureScript.Backend.Lua.Gen
     Language.PureScript.Backend.Lua.Golden.Spec
     Language.PureScript.Backend.Lua.Linker.Foreign.Spec
     Language.PureScript.Backend.Lua.NestingCheck.Spec
     Language.PureScript.Backend.Lua.Optimizer.Spec
+    Language.PureScript.Backend.Lua.Parser.Spec
     Language.PureScript.Backend.Lua.Printer.Spec
     Language.PureScript.Backend.Lua.Run.Spec
     Language.PureScript.Backend.Lua.Spec
+    Language.PureScript.Backend.Lua.Traversal.Spec
     Language.PureScript.Backend.Output.Spec
     Language.PureScript.PSString.Spec
     Test.Hspec.Expectations.Pretty
     Test.Hspec.Extra
     Test.Hspec.Golden
     Test.Hspec.Hedgehog.Extended
+    Test.Lua
 
   hs-source-dirs: test
 

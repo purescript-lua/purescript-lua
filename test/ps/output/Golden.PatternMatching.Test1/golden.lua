@@ -17,38 +17,32 @@ return {
       if "Golden.PatternMatching.Test1∷E.Num" == e_S_2.value0["$ctor"] then
         if "Golden.PatternMatching.Test1∷N.Succ" == e_S_2.value0.value0["$ctor"] then
           return 1
+        elseif "Golden.PatternMatching.Test1∷N.Zero" == e_S_2.value0.value0["$ctor"] then
+          return 2
         else
-          if "Golden.PatternMatching.Test1∷N.Zero" == e_S_2.value0.value0["$ctor"] then
-            return 2
-          else
-            return 6
-          end
+          return 6
         end
-      else
-        if "Golden.PatternMatching.Test1∷E.Not" == e_S_2.value0["$ctor"] then
-          if "Golden.PatternMatching.Test1∷E.Num" == e_S_2.value0.value0["$ctor"] then
-            if "Golden.PatternMatching.Test1∷N.Succ" == e_S_2.value0.value0.value0["$ctor"] then
-              return 3
-            else
-              return 6
-            end
+      elseif "Golden.PatternMatching.Test1∷E.Not" == e_S_2.value0["$ctor"] then
+        if "Golden.PatternMatching.Test1∷E.Num" == e_S_2.value0.value0["$ctor"] then
+          if "Golden.PatternMatching.Test1∷N.Succ" == e_S_2.value0.value0.value0["$ctor"] then
+            return 3
           else
             return 6
           end
         else
           return 6
         end
-      end
-    else
-      if "Golden.PatternMatching.Test1∷E.Num" == e_S_2["$ctor"] then
-        if "Golden.PatternMatching.Test1∷N.Succ" == e_S_2.value0["$ctor"] then
-          return 4
-        else
-          return 5
-        end
       else
         return 6
       end
+    elseif "Golden.PatternMatching.Test1∷E.Num" == e_S_2["$ctor"] then
+      if "Golden.PatternMatching.Test1∷N.Succ" == e_S_2.value0["$ctor"] then
+        return 4
+      else
+        return 5
+      end
+    else
+      return 6
     end
   end,
   T = function(value0)

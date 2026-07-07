@@ -2,16 +2,16 @@ local M = {}
 M.Data_Unit_foreign = { unit = {} }
 M.Data_Semigroup_foreign = {
   concatArray = function(xs)
-      return function(ys)
-        if #xs == 0 then return ys end
-        if #ys == 0 then return xs end
-        local result = {}
-        for index, value in ipairs(xs) do result[index] = value end
-        local offset = #result
-        for index, value in ipairs(ys) do result[index + offset] = value end
-        return result
-      end
+    return function(ys)
+      if #(xs) == 0 then return ys end
+      if #(ys) == 0 then return xs end
+      local result = {}
+      for index, value in ipairs(xs) do result[index] = value end
+      local offset = #(result)
+      for index, value in ipairs(ys) do result[index + offset] = value end
+      return result
     end
+  end
 }
 M.Data_Show_foreign = { showIntImpl = function(n) return tostring(n) end }
 M.Unsafe_Coerce_foreign = { unsafeCoerce = function(x) return x end }

@@ -5,7 +5,8 @@ module Language.PureScript.Backend.Lua.Fixture where
 import Data.String.Interpolate (__i)
 import Language.PureScript.Backend.Lua.Name (Name, name, unsafeName)
 import Language.PureScript.Backend.Lua.Name qualified as Name
-import Language.PureScript.Backend.Lua.Types hiding (var)
+import Language.PureScript.Backend.Lua.Parser (unsafeParseStatements)
+import Language.PureScript.Backend.Lua.Types hiding (error, var)
 
 --------------------------------------------------------------------------------
 -- Hard-coded Lua pieces -------------------------------------------------------
@@ -58,7 +59,7 @@ function; the Lua port is curried and omits @moduleName@.
 -}
 runtimeLazy ∷ Statement
 runtimeLazy =
-  ForeignSourceStat
+  fixtureStatement
     [__i|
     local function #{Name.toText runtimeLazyName}(name)
       return function(init)
@@ -87,7 +88,7 @@ objectUpdateName = psluaName [name|object_update|]
 
 objectUpdate ∷ Statement
 objectUpdate =
-  ForeignSourceStat
+  fixtureStatement
     [__i|
     local function #{Name.toText objectUpdateName}(o, patches)
       local o_copy = {}
@@ -102,3 +103,17 @@ objectUpdate =
       return o_copy
     end
     |]
+
+{- | The runtime fixtures above are written as Lua source for readability and
+parsed into the AST once, at first use (each fixture is a single statement).
+A syntax error in a fixture is a compiler bug, hence the unsafe parse.
+-}
+fixtureStatement ∷ HasCallStack ⇒ Text → Statement
+fixtureStatement src = case unsafeParseStatements src of
+  [statement] → statement
+  statements →
+    error . unwords $
+      [ "Language.PureScript.Backend.Lua.Fixture.fixtureStatement:"
+      , "expected exactly one statement, got"
+      , show (length statements)
+      ]

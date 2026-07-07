@@ -5,23 +5,19 @@ return {
     yes_S_0 = function(v_S_2)
       if v_S_2 then
         return no_S_1(false)
+      elseif false == v_S_2 then
+        return no_S_1(true)
       else
-        if false == v_S_2 then
-          return no_S_1(true)
-        else
-          return error("No patterns matched")
-        end
+        return error("No patterns matched")
       end
     end
     no_S_1 = function(v0_S_3)
       if v0_S_3 then
         return yes_S_0(false)
+      elseif false == v0_S_3 then
+        return yes_S_0(true)
       else
-        if false == v0_S_3 then
-          return yes_S_0(true)
-        else
-          return error("No patterns matched")
-        end
+        return error("No patterns matched")
       end
     end
     return no_S_1(false)
@@ -32,23 +28,19 @@ return {
     yes_S_14 = function(v_S_16)
       if v_S_16 then
         return no_S_15(false)
+      elseif false == v_S_16 then
+        return no_S_15(true)
       else
-        if false == v_S_16 then
-          return no_S_15(true)
-        else
-          return error("No patterns matched")
-        end
+        return error("No patterns matched")
       end
     end
     no_S_15 = function(v0_S_17)
       if v0_S_17 then
         return yes_S_14(false)
+      elseif false == v0_S_17 then
+        return yes_S_14(true)
       else
-        if false == v0_S_17 then
-          return yes_S_14(true)
-        else
-          return error("No patterns matched")
-        end
+        return error("No patterns matched")
       end
     end
     return no_S_15(false)

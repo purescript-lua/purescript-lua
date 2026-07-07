@@ -223,12 +223,15 @@ PureScript Source → CoreFn → IR → Lua → Optimized Lua
 - `IR.Query`: Queries over IR expressions
 
 **Lua Backend** (`Language.PureScript.Backend.Lua.*`):
-- `Lua.Types`: Lua AST types (`Chunk`, `Statement`, `Exp`)
+- `Lua.Types`: Lua AST types (`Chunk`, `Statement`, `Exp`), annotated with
+  `Comments`
 - `Lua.Name`: Safe Lua identifier generation
+- `Lua.Parser`: Full Lua 5.1 parser producing the Lua AST (used for FFI files
+  and runtime fixtures; preserves comments in annotation slots)
 - `Lua.Printer`: Pretty-printing Lua code
 - `Lua.Optimizer`: Lua-level optimizations
-- `Lua.DCE`: Lua-specific DCE
-- `Lua.Linker.Foreign`: FFI support for Lua foreign modules
+- `Lua.Linker.Foreign`: FFI support for Lua foreign modules (file resolution +
+  foreign-module shape on top of `Lua.Parser`)
 - `Lua.Fixture`: Runtime support code injected into output
 - `Lua.Key`, `Lua.Traversal`: Table keys and AST traversal helpers
 

@@ -5,15 +5,13 @@ local function PSLUA_runtime_lazy(name)
     return function()
       if state == 2 then
         return val
+      elseif state == 1 then
+        return error(name .. " was needed before it finished initializing")
       else
-        if state == 1 then
-          return error(name .. " was needed before it finished initializing")
-        else
-          state = 1
-          val = init()
-          state = 2
-          return val
-        end
+        state = 1
+        val = init()
+        state = 2
+        return val
       end
     end
   end
@@ -25,7 +23,7 @@ M.Record_Unsafe_foreign = {
 M.Data_HeytingAlgebra_foreign = {
   boolConj = function(b1) return function(b2) return b1 and b2 end end,
   boolDisj = function(b1) return function(b2) return b1 or b2 end end,
-  boolNot = function(b) return not b end
+  boolNot = function(b) return not(b) end
 }
 M.Data_Eq_foreign = (function()
   local refEq = function(r1) return function(r2) return r1 == r2 end end
@@ -33,7 +31,9 @@ M.Data_Eq_foreign = (function()
 end)()
 M.Effect_foreign = {
   pureE = function(a) return function() return a end end,
-  bindE = function(a) return function(f) return function() return f(a())() end end end
+  bindE = function(a)
+    return function(f) return function() return f(a())() end end
+  end
 }
 M.Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
@@ -159,16 +159,14 @@ M.Golden_GenericEqTwoTypes_Test_genericEqSum = function(dictGenericEq1_S_5)
           else
             return false
           end
-        else
-          if "Data.Generic.Rep∷Sum.Inr" == v_S_7["$ctor"] then
-            if "Data.Generic.Rep∷Sum.Inr" == v1_S_8["$ctor"] then
-              return M.Data_Eq_Generic_genericEqPrime(dictGenericEq1_S_5)(v_S_7.value0)(v1_S_8.value0)
-            else
-              return false
-            end
+        elseif "Data.Generic.Rep∷Sum.Inr" == v_S_7["$ctor"] then
+          if "Data.Generic.Rep∷Sum.Inr" == v1_S_8["$ctor"] then
+            return M.Data_Eq_Generic_genericEqPrime(dictGenericEq1_S_5)(v_S_7.value0)(v1_S_8.value0)
           else
             return false
           end
+        else
+          return false
         end
       end
     end
@@ -187,12 +185,10 @@ M.Golden_GenericEqTwoTypes_Test_logShow = function(a_S_2)
   return M.Effect_Console_foreign.log((function()
     if a_S_2 then
       return "true"
+    elseif false == a_S_2 then
+      return "false"
     else
-      if false == a_S_2 then
-        return "false"
-      else
-        return error("No patterns matched")
-      end
+      return error("No patterns matched")
     end
   end)())
 end
@@ -229,23 +225,19 @@ M.Golden_GenericEqTwoTypes_Test_genericTree = {
   to = function(x)
     if "Data.Generic.Rep∷Sum.Inl" == x["$ctor"] then
       return M.Golden_GenericEqTwoTypes_Test_Leaf
+    elseif "Data.Generic.Rep∷Sum.Inr" == x["$ctor"] then
+      return M.Golden_GenericEqTwoTypes_Test_Node(x.value0)
     else
-      if "Data.Generic.Rep∷Sum.Inr" == x["$ctor"] then
-        return M.Golden_GenericEqTwoTypes_Test_Node(x.value0)
-      else
-        return error("No patterns matched")
-      end
+      return error("No patterns matched")
     end
   end,
   from = function(x0)
     if "Golden.GenericEqTwoTypes.Test∷Tree.Leaf" == x0["$ctor"] then
       return M.Data_Generic_Rep_Inl(M.Data_Generic_Rep_NoArguments)
+    elseif "Golden.GenericEqTwoTypes.Test∷Tree.Node" == x0["$ctor"] then
+      return M.Data_Generic_Rep_Inr(x0.value0)
     else
-      if "Golden.GenericEqTwoTypes.Test∷Tree.Node" == x0["$ctor"] then
-        return M.Data_Generic_Rep_Inr(x0.value0)
-      else
-        return error("No patterns matched")
-      end
+      return error("No patterns matched")
     end
   end
 }
@@ -253,23 +245,19 @@ M.Golden_GenericEqTwoTypes_Test_genericList = {
   to = function(x)
     if "Data.Generic.Rep∷Sum.Inl" == x["$ctor"] then
       return M.Golden_GenericEqTwoTypes_Test_Nil
+    elseif "Data.Generic.Rep∷Sum.Inr" == x["$ctor"] then
+      return M.Golden_GenericEqTwoTypes_Test_Cons(x.value0)
     else
-      if "Data.Generic.Rep∷Sum.Inr" == x["$ctor"] then
-        return M.Golden_GenericEqTwoTypes_Test_Cons(x.value0)
-      else
-        return error("No patterns matched")
-      end
+      return error("No patterns matched")
     end
   end,
   from = function(x0)
     if "Golden.GenericEqTwoTypes.Test∷List.Nil" == x0["$ctor"] then
       return M.Data_Generic_Rep_Inl(M.Data_Generic_Rep_NoArguments)
+    elseif "Golden.GenericEqTwoTypes.Test∷List.Cons" == x0["$ctor"] then
+      return M.Data_Generic_Rep_Inr(x0.value0)
     else
-      if "Golden.GenericEqTwoTypes.Test∷List.Cons" == x0["$ctor"] then
-        return M.Data_Generic_Rep_Inr(x0.value0)
-      else
-        return error("No patterns matched")
-      end
+      return error("No patterns matched")
     end
   end
 }

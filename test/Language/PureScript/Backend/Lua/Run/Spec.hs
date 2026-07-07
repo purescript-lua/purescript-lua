@@ -4,6 +4,7 @@ module Language.PureScript.Backend.Lua.Run.Spec where
 
 import Language.PureScript.Backend.Lua.Fixture qualified as Fixture
 import Language.PureScript.Backend.Lua.Name qualified as Lua
+import Language.PureScript.Backend.Lua.Parser (unsafeParseStatements)
 import Language.PureScript.Backend.Lua.Run (runChunk)
 import Language.PureScript.Backend.Lua.Types qualified as Lua
 import System.Exit (ExitCode (..))
@@ -27,17 +28,14 @@ spec = describe "Lua.Run.runChunk (powers `spago run`)" do
     -- bumps a counter, force it twice, and exit 0 only if the initializer ran
     -- exactly once. A non-memoizing fixture runs it on every force and exits 1.
     code ←
-      runChunk
-        [ Fixture.runtimeLazy
-        , Lua.ForeignSourceStat . unlines $
-            [ "local count = 0"
-            , "local lazy = "
-                <> Lua.toText Fixture.runtimeLazyName
-                <> "(\"x\")(function() count = count + 1; return {} end)"
-            , "lazy(1)"
-            , "lazy(2)"
-            , "os.exit(count == 1 and 0 or 1)"
-            ]
+      runChunk . (Fixture.runtimeLazy :) . unsafeParseStatements . unlines $
+        [ "local count = 0"
+        , "local lazy = "
+            <> Lua.toText Fixture.runtimeLazyName
+            <> "(\"x\")(function() count = count + 1; return {} end)"
+        , "lazy(1)"
+        , "lazy(2)"
+        , "os.exit(count == 1 and 0 or 1)"
         ]
     code `shouldBe` ExitSuccess
  where

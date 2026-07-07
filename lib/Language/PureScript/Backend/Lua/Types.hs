@@ -22,6 +22,15 @@ newtype ChunkName = ChunkName Text
   deriving stock (Show)
   deriving newtype (Pretty)
 
+{- | Comments attached to an AST node: each element is one comment verbatim,
+including its markers (@--@ or @--[[ ... ]]@). The Lua parser
+('Language.PureScript.Backend.Lua.Parser') fills these slots with the
+comments preceding a node; the printer emits them back in front of the
+node. Code-generated nodes carry no comments ('ann' annotates with
+'mempty').
+-}
+type Comments = [Text]
+
 type Annotated (a ∷ Type) (f ∷ Type → Type) = (a, f a)
 
 pattern Ann ∷ b → (a, b)
@@ -31,8 +40,9 @@ pattern Ann fa ← (_ann, fa)
 data ParamF a
   = ParamNamed Name
   | ParamUnused
+  | ParamVararg
 
-type Param = ParamF ()
+type Param = ParamF Comments
 
 deriving stock instance Eq a ⇒ Eq (ParamF a)
 deriving stock instance Ord a ⇒ Ord (ParamF a)
@@ -43,7 +53,7 @@ data VarF a
   | VarIndex (Annotated a ExpF) (Annotated a ExpF)
   | VarField (Annotated a ExpF) Name
 
-type Var = VarF ()
+type Var = VarF Comments
 
 deriving stock instance Eq a ⇒ Eq (VarF a)
 deriving stock instance Ord a ⇒ Ord (VarF a)
@@ -52,8 +62,10 @@ deriving stock instance Show a ⇒ Show (VarF a)
 data TableRowF ann
   = TableRowKV (Annotated ann ExpF) (Annotated ann ExpF)
   | TableRowNV Name (Annotated ann ExpF)
+  | -- | Array-part row: @{ e1, e2 }@ assigns to consecutive integer keys.
+    TableRowV (Annotated ann ExpF)
 
-type TableRow = TableRowF ()
+type TableRow = TableRowF Comments
 
 deriving stock instance Eq a ⇒ Eq (TableRowF a)
 deriving stock instance Ord a ⇒ Ord (TableRowF a)
@@ -216,29 +228,53 @@ instance HasSymbol BinaryOp where
     Mod → "%"
     Exp → "^"
 
+{- | The string payload of a 'String' literal is kept in /source form/: the
+text between the quotes of a double-quoted Lua string literal, escape
+sequences unexpanded. The printer emits it verbatim between double quotes.
+Keeping escapes unexpanded is load-bearing: a @\\255@ escape denotes a
+single byte on the Lua 5.1 target, which decoded-and-reencoded Text could
+not represent (see the Char quirk in docs/QUIRKS.md). Consequently the
+payload must never contain a raw newline or an unescaped @"@ — the parser
+normalizes both when converting from other quoting styles.
+-}
 data ExpF ann
   = Nil
   | Boolean Bool
   | Integer Integer
   | Float Double
   | String Text
+  | Vararg
   | Function [Annotated ann ParamF] [Annotated ann StatementF]
   | TableCtor [Annotated ann TableRowF]
   | UnOp UnaryOp (Annotated ann ExpF)
   | BinOp BinaryOp (Annotated ann ExpF) (Annotated ann ExpF)
   | Var (Annotated ann VarF)
   | FunctionCall (Annotated ann ExpF) [Annotated ann ExpF]
-  | ForeignSourceExp Text
+  | MethodCall (Annotated ann ExpF) Name [Annotated ann ExpF]
+  | {- | Explicit parentheses around a multi-valued expression (a call or
+    '...'), which Lua adjusts to exactly one value. Grouping parens around
+    single-valued expressions are not represented; the printer re-derives
+    those from precedence.
+    -}
+    Paren (Annotated ann ExpF)
 
-type Exp = ExpF ()
+type Exp = ExpF Comments
 
 deriving stock instance Eq a ⇒ Eq (ExpF a)
 deriving stock instance Ord a ⇒ Ord (ExpF a)
 deriving stock instance Show a ⇒ Show (ExpF a)
 
 data StatementF ann
-  = Assign (Annotated ann VarF) (Annotated ann ExpF)
-  | Local Name (Maybe (Annotated ann ExpF))
+  = Assign
+      (NonEmpty (Annotated ann VarF))
+      -- ^ variables (multiple assignment assigns simultaneously)
+      (NonEmpty (Annotated ann ExpF))
+      -- ^ values
+  | Local
+      (NonEmpty Name)
+      -- ^ declared names
+      [Annotated ann ExpF]
+      -- ^ initializers; @[]@ declares without a value
   | IfThenElse
       (Annotated ann ExpF)
       -- ^ predicate
@@ -246,10 +282,34 @@ data StatementF ann
       -- ^ then block
       [Annotated ann StatementF]
       -- ^ else block
-  | Return (Annotated ann ExpF)
-  | ForeignSourceStat Text
+  | Return [Annotated ann ExpF]
+  | CallStatement (Annotated ann ExpF)
+  | Do [Annotated ann StatementF]
+  | While (Annotated ann ExpF) [Annotated ann StatementF]
+  | Repeat [Annotated ann StatementF] (Annotated ann ExpF)
+  | ForNum
+      Name
+      -- ^ loop variable
+      (Annotated ann ExpF)
+      -- ^ start
+      (Annotated ann ExpF)
+      -- ^ limit
+      (Maybe (Annotated ann ExpF))
+      -- ^ step
+      [Annotated ann StatementF]
+  | ForIn
+      (NonEmpty Name)
+      -- ^ loop variables
+      (NonEmpty (Annotated ann ExpF))
+      -- ^ iterator expressions
+      [Annotated ann StatementF]
+  | {- | @local function f() … end@; distinct from @local f = function() … end@
+    in that @f@ is in scope inside the body (self-recursion).
+    -}
+    LocalFunction Name [Annotated ann ParamF] [Annotated ann StatementF]
+  | Break
 
-type Statement = StatementF ()
+type Statement = StatementF Comments
 
 deriving stock instance Eq a ⇒ Eq (StatementF a)
 deriving stock instance Ord a ⇒ Ord (StatementF a)
@@ -258,8 +318,8 @@ deriving stock instance Show a ⇒ Show (StatementF a)
 --------------------------------------------------------------------------------
 -- Smarter constructors --------------------------------------------------------
 
-ann ∷ f () → Annotated () f
-ann f = ((), f)
+ann ∷ f Comments → Annotated Comments f
+ann f = ([], f)
 
 unAnn ∷ Annotated a f → f a
 unAnn = snd
@@ -268,25 +328,25 @@ var ∷ Var → Exp
 var = Var . ann
 
 assign ∷ Var → Exp → Statement
-assign v e = Assign (ann v) (ann e)
+assign v e = Assign (pure (ann v)) (pure (ann e))
 
 assignVar ∷ Name → Exp → Statement
 assignVar name = assign (VarName name)
 
 local ∷ Name → Maybe Exp → Statement
-local name expr = Local name (ann <$> expr)
+local name expr = Local (pure name) (ann <$> maybeToList expr)
 
 local1 ∷ Name → Exp → Statement
-local1 name expr = Local name (Just (ann expr))
+local1 name expr = Local (pure name) [ann expr]
 
 local0 ∷ Name → Statement
-local0 name = Local name Nothing
+local0 name = Local (pure name) []
 
 ifThenElse ∷ Exp → Chunk → Chunk → Statement
 ifThenElse i t e = IfThenElse (ann i) (ann <$> t) (ann <$> e)
 
 return ∷ Exp → Statement
-return = Return . ann
+return e = Return [ann e]
 
 chunkToExpression ∷ Chunk → Exp
 chunkToExpression ss = functionCall (Function [] (ann <$> ss)) []
@@ -311,6 +371,9 @@ functionDef params body = Function (ann <$> params) (ann <$> body)
 functionCall ∷ Exp → [Exp] → Exp
 functionCall f args = FunctionCall (ann f) (ann <$> args)
 
+methodCall ∷ Exp → Name → [Exp] → Exp
+methodCall obj n args = MethodCall (ann obj) n (ann <$> args)
+
 unOp ∷ UnaryOp → Exp → Exp
 unOp op e = UnOp op (ann e)
 
@@ -324,7 +387,7 @@ pun ∷ Name → TableRow
 pun n = TableRowNV n (ann (varName n))
 
 thunk ∷ Exp → Exp
-thunk e = scope [Return (ann e)]
+thunk e = scope [Return [ann e]]
 
 scope ∷ Chunk → Exp
 scope body = functionCall (Function [] (ann <$> body)) []
@@ -415,3 +478,6 @@ tableRowKV k v = TableRowKV (ann k) (ann v)
 
 tableRowNV ∷ Name → Exp → TableRow
 tableRowNV n v = TableRowNV n (ann v)
+
+tableRowV ∷ Exp → TableRow
+tableRowV = TableRowV . ann

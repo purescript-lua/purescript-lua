@@ -55,27 +55,35 @@ Notes that bite in practice:
 
 ## Writing FFI: the foreign module shape
 
-A foreign `.lua` file is split into a **header** and an **exports table**:
+A foreign `.lua` file is an ordinary Lua 5.1 module: an optional **header** of
+shared helpers followed by a single `return` of an **exports table**. The
+compiler parses the whole file with its own Lua 5.1 parser, so a syntax error
+anywhere in the file is a compile-time error.
 
-- Everything **before the first line that starts with `return` at column 0** is
-  a header of shared top-level `local` helpers, in scope for the exported
-  values. `return`s *inside* header functions must be indented (only the
-  exports `return` sits at column 0).
-- The exports are a single returned table of fields. **Each export value must be
-  wrapped in parentheses** — `key = (<lua expression>)`. The FFI parser requires
-  the `(...)`; a bare `key = function … end` will not parse.
-- **Do not put `--` comments between table fields** — the parser does not accept
-  them there. Put comments inside function bodies or in the header.
+- The header is any sequence of Lua statements (typically `local` helpers), in
+  scope for the exported values. Lua's own grammar guarantees the exports
+  `return` is the last top-level statement.
+- The exports are a single returned table of fields. Each field must be keyed
+  by an identifier (`key = <lua expression>`) or, for an export named after a
+  Lua keyword, by a bracketed string (`["if"] = …`). Values need no special
+  wrapping.
+- Comments are allowed anywhere, including between table fields, and are
+  preserved in the generated output.
+- Lua 5.1's "ambiguous syntax" rule applies, as it does under `luac`: a line
+  that starts with `(` right after an expression is rejected as an ambiguous
+  function call — end the previous statement with `;` or keep the `(` on the
+  same line as the callee.
 
 ```lua
--- header: shared helpers (this comment is fine — it's in the header)
+-- header: shared helpers
 local function helper(x)
-  return x + 1   -- indented: ok
+  return x + 1
 end
 
 return {
-  foo = (function(a) return helper(a) end),
-  bar = (function(a) return function(b) return a + b end end),
+  foo = function(a) return helper(a) end,
+  -- comments between fields are fine
+  bar = function(a) return function(b) return a + b end end,
 }
 ```
 
