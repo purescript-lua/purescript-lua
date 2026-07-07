@@ -86,7 +86,8 @@ M.Effect_Lazy_functorEffect = PSLUA_runtime_lazy("functorEffect")(function()
   return {
     map = function(f_S_25)
       return function(a_S_26)
-        return (M.Effect_applicativeEffect.Apply0()).apply(M.Control_Applicative_pure(M.Effect_applicativeEffect)(f_S_25))(a_S_26)
+        local Effect_applicativeEffect = M.Effect_applicativeEffect
+        return (Effect_applicativeEffect.Apply0()).apply(M.Control_Applicative_pure(Effect_applicativeEffect)(f_S_25))(a_S_26)
       end
     end
   }
@@ -124,14 +125,15 @@ M.Golden_CharLiterals_Test_show1 = M.Data_Show_show({
   end
 })
 return (function()
-  local _ = M.Effect_Console_foreign.log(M.Golden_CharLiterals_Test_show("\n"))()
-  local _ = M.Effect_Console_foreign.log(M.Golden_CharLiterals_Test_show("\t"))()
-  local _ = M.Effect_Console_foreign.log(M.Golden_CharLiterals_Test_show("\r"))()
-  local _ = M.Effect_Console_foreign.log(M.Golden_CharLiterals_Test_show("\'"))()
-  local _ = M.Effect_Console_foreign.log(M.Golden_CharLiterals_Test_show("\\"))()
-  local _ = M.Effect_Console_foreign.log(M.Golden_CharLiterals_Test_show("a"))()
-  local _ = M.Effect_Console_foreign.log(M.Golden_CharLiterals_Test_show1(M.Data_Eq_foreign.eqCharImpl("\n")("\n")))()
-  return M.Effect_Console_foreign.log(M.Golden_CharLiterals_Test_show1((function(  )
+  local Effect_Console_foreign, Golden_CharLiterals_Test_show, Golden_CharLiterals_Test_show1 = M.Effect_Console_foreign, M.Golden_CharLiterals_Test_show, M.Golden_CharLiterals_Test_show1
+  local _ = Effect_Console_foreign.log(Golden_CharLiterals_Test_show("\n"))()
+  local _ = Effect_Console_foreign.log(Golden_CharLiterals_Test_show("\t"))()
+  local _ = Effect_Console_foreign.log(Golden_CharLiterals_Test_show("\r"))()
+  local _ = Effect_Console_foreign.log(Golden_CharLiterals_Test_show("\'"))()
+  local _ = Effect_Console_foreign.log(Golden_CharLiterals_Test_show("\\"))()
+  local _ = Effect_Console_foreign.log(Golden_CharLiterals_Test_show("a"))()
+  local _ = Effect_Console_foreign.log(Golden_CharLiterals_Test_show1(M.Data_Eq_foreign.eqCharImpl("\n")("\n")))()
+  return Effect_Console_foreign.log(Golden_CharLiterals_Test_show1((function()
     if "Data.Ordering∷Ordering.LT" == (M.Data_Ord_foreign.ordCharImpl({
       ["$ctor"] = "Data.Ordering∷Ordering.LT"
     })({ ["$ctor"] = "Data.Ordering∷Ordering.EQ" })({

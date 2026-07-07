@@ -77,7 +77,8 @@ M.Effect_Lazy_functorEffect = PSLUA_runtime_lazy("functorEffect")(function()
   return {
     map = function(f_S_239)
       return function(a_S_240)
-        return (M.Effect_applicativeEffect.Apply0()).apply(M.Control_Applicative_pure(M.Effect_applicativeEffect)(f_S_239))(a_S_240)
+        local Effect_applicativeEffect = M.Effect_applicativeEffect
+        return (Effect_applicativeEffect.Apply0()).apply(M.Control_Applicative_pure(Effect_applicativeEffect)(f_S_239))(a_S_240)
       end
     end
   }
@@ -149,7 +150,8 @@ return (function()
     tailRecM = function(f_S_11)
       return function(a_S_12)
         return function()
-          local r_S_16 = M.Control_Bind_bind(M.Effect_bindEffect)(f_S_11(a_S_12))(M.Effect_Ref_foreign._new)()
+          local Effect_Ref_foreign = M.Effect_Ref_foreign
+          local r_S_16 = M.Control_Bind_bind(M.Effect_bindEffect)(f_S_11(a_S_12))(Effect_Ref_foreign._new)()
           local _ = M.Effect_foreign.untilE(function()
             local v0_S_17 = M.Effect_Ref_foreign.read(r_S_16)()
             return (function()
@@ -174,7 +176,7 @@ return (function()
                 return error("No patterns matched")
               end
             end
-          end))(M.Effect_Ref_foreign.read(r_S_16))()
+          end))(Effect_Ref_foreign.read(r_S_16))()
         end
       end
     end,

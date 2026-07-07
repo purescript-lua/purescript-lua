@@ -44,7 +44,8 @@ M.Data_HeytingAlgebra_heytingAlgebraBoolean = {
   tt = true,
   implies = function(a)
     return function(b)
-      return M.Data_HeytingAlgebra_heytingAlgebraBoolean.disj(M.Data_HeytingAlgebra_heytingAlgebraBoolean._not_(a))(b)
+      local Data_HeytingAlgebra_heytingAlgebraBoolean = M.Data_HeytingAlgebra_heytingAlgebraBoolean
+      return Data_HeytingAlgebra_heytingAlgebraBoolean.disj(Data_HeytingAlgebra_heytingAlgebraBoolean._not_(a))(b)
     end
   end,
   conj = M.Data_HeytingAlgebra_foreign.boolConj,
@@ -61,9 +62,10 @@ M.Data_Eq_eqRowCons_S_w = function( dictEqRecord
     eqRecord = function()
       return function(ra)
         return function(rb)
-          local key = dictIsSymbol.reflectSymbol(M.Type_Proxy_Proxy)
+          local Type_Proxy_Proxy = M.Type_Proxy_Proxy
+          local key = dictIsSymbol.reflectSymbol(Type_Proxy_Proxy)
           local get = M.Record_Unsafe_foreign.unsafeGet(key)
-          return M.Data_HeytingAlgebra_heytingAlgebraBoolean.conj(M.Data_Eq_eq(dictEq)(get(ra))(get(rb)))(M.Data_Eq_eqRecord(dictEqRecord)(M.Type_Proxy_Proxy)(ra)(rb))
+          return M.Data_HeytingAlgebra_heytingAlgebraBoolean.conj(M.Data_Eq_eq(dictEq)(get(ra))(get(rb)))(M.Data_Eq_eqRecord(dictEqRecord)(Type_Proxy_Proxy)(ra)(rb))
         end
       end
     end
@@ -97,7 +99,8 @@ M.Effect_Lazy_functorEffect = PSLUA_runtime_lazy("functorEffect")(function()
   return {
     map = function(f_S_54)
       return function(a_S_55)
-        return (M.Effect_applicativeEffect.Apply0()).apply(M.Control_Applicative_pure(M.Effect_applicativeEffect)(f_S_54))(a_S_55)
+        local Effect_applicativeEffect = M.Effect_applicativeEffect
+        return (Effect_applicativeEffect.Apply0()).apply(M.Control_Applicative_pure(Effect_applicativeEffect)(f_S_54))(a_S_55)
       end
     end
   }
@@ -195,8 +198,9 @@ M.Golden_BugListGenericEq_Test_eqList = function(dictEq)
                   return M.Data_Eq_Generic_genericEqPrime(M.Data_Eq_Generic_genericEqConstructor({
                     genericEqPrime = function(v_S_21)
                       return function(v1_S_22)
+                        local Data_Eq_eqRowCons_S_w = M.Data_Eq_eqRowCons_S_w
                         return M.Data_Eq_eq({
-                          eq = M.Data_Eq_eqRecord(M.Data_Eq_eqRowCons_S_w(M.Data_Eq_eqRowCons_S_w({
+                          eq = M.Data_Eq_eqRecord(Data_Eq_eqRowCons_S_w(Data_Eq_eqRowCons_S_w({
                             eqRecord = function()
                               return function()
                                 return function() return true end
@@ -231,7 +235,8 @@ M.Golden_BugListGenericEq_Test_cons_S_w = function(head, tail)
   return M.Golden_BugListGenericEq_Test_Cons({ head = head, tail = tail })
 end
 return (function()
-  local _ = M.Golden_BugListGenericEq_Test_logShow(M.Golden_BugListGenericEq_Test_eq(M.Golden_BugListGenericEq_Test_Nil)(M.Golden_BugListGenericEq_Test_Nil))()
-  local _ = M.Golden_BugListGenericEq_Test_logShow(M.Golden_BugListGenericEq_Test_eq(M.Golden_BugListGenericEq_Test_cons_S_w(1, M.Golden_BugListGenericEq_Test_cons_S_w(2, M.Golden_BugListGenericEq_Test_Nil)))(M.Golden_BugListGenericEq_Test_cons_S_w(1, M.Golden_BugListGenericEq_Test_cons_S_w(2, M.Golden_BugListGenericEq_Test_Nil))))()
-  return M.Golden_BugListGenericEq_Test_logShow(M.Golden_BugListGenericEq_Test_eq(M.Golden_BugListGenericEq_Test_cons_S_w(1, M.Golden_BugListGenericEq_Test_Nil))(M.Golden_BugListGenericEq_Test_cons_S_w(2, M.Golden_BugListGenericEq_Test_Nil)))()
+  local Golden_BugListGenericEq_Test_Nil, Golden_BugListGenericEq_Test_cons_S_w, Golden_BugListGenericEq_Test_eq, Golden_BugListGenericEq_Test_logShow = M.Golden_BugListGenericEq_Test_Nil, M.Golden_BugListGenericEq_Test_cons_S_w, M.Golden_BugListGenericEq_Test_eq, M.Golden_BugListGenericEq_Test_logShow
+  local _ = Golden_BugListGenericEq_Test_logShow(Golden_BugListGenericEq_Test_eq(Golden_BugListGenericEq_Test_Nil)(Golden_BugListGenericEq_Test_Nil))()
+  local _ = Golden_BugListGenericEq_Test_logShow(Golden_BugListGenericEq_Test_eq(Golden_BugListGenericEq_Test_cons_S_w(1, Golden_BugListGenericEq_Test_cons_S_w(2, Golden_BugListGenericEq_Test_Nil)))(Golden_BugListGenericEq_Test_cons_S_w(1, Golden_BugListGenericEq_Test_cons_S_w(2, Golden_BugListGenericEq_Test_Nil))))()
+  return Golden_BugListGenericEq_Test_logShow(Golden_BugListGenericEq_Test_eq(Golden_BugListGenericEq_Test_cons_S_w(1, Golden_BugListGenericEq_Test_Nil))(Golden_BugListGenericEq_Test_cons_S_w(2, Golden_BugListGenericEq_Test_Nil)))()
 end)()

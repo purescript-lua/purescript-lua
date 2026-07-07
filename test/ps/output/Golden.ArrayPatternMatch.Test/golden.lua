@@ -62,7 +62,8 @@ M.Effect_Lazy_functorEffect = PSLUA_runtime_lazy("functorEffect")(function()
   return {
     map = function(f_S_28)
       return function(a_S_29)
-        return (M.Effect_applicativeEffect.Apply0()).apply(M.Control_Applicative_pure(M.Effect_applicativeEffect)(f_S_28))(a_S_29)
+        local Effect_applicativeEffect = M.Effect_applicativeEffect
+        return (Effect_applicativeEffect.Apply0()).apply(M.Control_Applicative_pure(Effect_applicativeEffect)(f_S_28))(a_S_29)
       end
     end
   }
@@ -85,7 +86,8 @@ M.Effect_Lazy_applyEffect = PSLUA_runtime_lazy("applyEffect")(function()
   }
 end)
 M.Golden_ArrayPatternMatch_Test_negate = function(a_S_86)
-  return M.Data_Ring_ringInt.sub((M.Data_Ring_ringInt.Semiring0()).zero)(a_S_86)
+  local Data_Ring_ringInt = M.Data_Ring_ringInt
+  return Data_Ring_ringInt.sub((Data_Ring_ringInt.Semiring0()).zero)(a_S_86)
 end
 M.Golden_ArrayPatternMatch_Test_discard = M.Control_Bind_bind(M.Effect_bindEffect)
 M.Golden_ArrayPatternMatch_Test_logShow = function(a_S_2)
@@ -106,17 +108,18 @@ M.Golden_ArrayPatternMatch_Test_firstTwo = function(v)
   end
 end
 return (function()
-  local _ = M.Golden_ArrayPatternMatch_Test_logShow(M.Golden_ArrayPatternMatch_Test_firstTwo({
+  local Golden_ArrayPatternMatch_Test_logShow, Golden_ArrayPatternMatch_Test_firstTwo = M.Golden_ArrayPatternMatch_Test_logShow, M.Golden_ArrayPatternMatch_Test_firstTwo
+  local _ = Golden_ArrayPatternMatch_Test_logShow(Golden_ArrayPatternMatch_Test_firstTwo({
     [1] = 10,
     [2] = 20
   }))()
-  local _ = M.Golden_ArrayPatternMatch_Test_logShow(M.Golden_ArrayPatternMatch_Test_firstTwo({
+  local _ = Golden_ArrayPatternMatch_Test_logShow(Golden_ArrayPatternMatch_Test_firstTwo({
     [1] = 1,
     [2] = 2,
     [3] = 3
   }))()
-  local _ = M.Golden_ArrayPatternMatch_Test_logShow(M.Golden_ArrayPatternMatch_Test_firstTwo({}))()
-  return M.Golden_ArrayPatternMatch_Test_logShow(M.Golden_ArrayPatternMatch_Test_lastOfThree({
+  local _ = Golden_ArrayPatternMatch_Test_logShow(Golden_ArrayPatternMatch_Test_firstTwo({}))()
+  return Golden_ArrayPatternMatch_Test_logShow(M.Golden_ArrayPatternMatch_Test_lastOfThree({
     [1] = 7,
     [2] = 8,
     [3] = 9

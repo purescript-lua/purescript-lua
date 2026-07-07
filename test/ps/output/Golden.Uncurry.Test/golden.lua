@@ -77,7 +77,8 @@ M.Effect_Lazy_functorEffect = PSLUA_runtime_lazy("functorEffect")(function()
   return {
     map = function(f_S_26)
       return function(a_S_27)
-        return (M.Effect_applicativeEffect.Apply0()).apply(M.Control_Applicative_pure(M.Effect_applicativeEffect)(f_S_26))(a_S_27)
+        local Effect_applicativeEffect = M.Effect_applicativeEffect
+        return (Effect_applicativeEffect.Apply0()).apply(M.Control_Applicative_pure(Effect_applicativeEffect)(f_S_26))(a_S_27)
       end
     end
   }
@@ -109,11 +110,12 @@ end
 M.Golden_Uncurry_Test_sumTo = function(m)
   local go_S_w
   go_S_w = function(acc, n)
+    local Data_Eq_foreign, Data_Ring_foreign, Data_Semiring_foreign = M.Data_Eq_foreign, M.Data_Ring_foreign, M.Data_Semiring_foreign
     while true do
-      if M.Data_Eq_foreign.eqIntImpl(n)(0) then
+      if Data_Eq_foreign.eqIntImpl(n)(0) then
         return acc
       else
-        acc, n = M.Data_Semiring_foreign.intAdd(acc)(n), M.Data_Ring_foreign.intSub(n)(1)
+        acc, n = Data_Semiring_foreign.intAdd(acc)(n), Data_Ring_foreign.intSub(n)(1)
       end
     end
   end
@@ -145,10 +147,12 @@ M.Golden_Uncurry_Test_evenSteps = function(evenSteps_S_p1)
 end
 M.Golden_Uncurry_Test_alwaysFirst_S_w = function(x) return x end
 M.Golden_Uncurry_Test_adderOf_S_w = function(x, y)
-  return M.Data_Semiring_foreign.intAdd(M.Data_Semiring_foreign.intAdd(x)(y))
+  local Data_Semiring_foreign = M.Data_Semiring_foreign
+  return Data_Semiring_foreign.intAdd(Data_Semiring_foreign.intAdd(x)(y))
 end
 M.Golden_Uncurry_Test_add3_S_w = function(x, y, z)
-  return M.Data_Semiring_foreign.intAdd(M.Data_Semiring_foreign.intAdd(x)(y))(z)
+  local Data_Semiring_foreign = M.Data_Semiring_foreign
+  return Data_Semiring_foreign.intAdd(Data_Semiring_foreign.intAdd(x)(y))(z)
 end
 M.Golden_Uncurry_Test_add3 = function(add3_S_p1)
   return function(add3_S_p2)
@@ -159,10 +163,11 @@ M.Golden_Uncurry_Test_add3 = function(add3_S_p1)
 end
 M.Golden_Uncurry_Test_inc = M.Golden_Uncurry_Test_add3(1)(0)
 return (function()
-  local _ = M.Golden_Uncurry_Test_logShow(M.Golden_Uncurry_Test_add3_S_w(1, 2, 3))()
-  local _ = M.Golden_Uncurry_Test_logShow(M.Golden_Uncurry_Test_add3_S_w(4, 5, 6))()
-  local _ = M.Golden_Uncurry_Test_logShow(M.Golden_Uncurry_Test_add3_S_w(10, 1, 2))()
-  local _ = M.Golden_Uncurry_Test_logShow(M.Golden_Uncurry_Test_inc(41))()
+  local Golden_Uncurry_Test_logShow, Golden_Uncurry_Test_add3_S_w, Golden_Uncurry_Test_adderOf_S_w, Golden_Uncurry_Test_alwaysFirst_S_w, Golden_Uncurry_Test_sumTo = M.Golden_Uncurry_Test_logShow, M.Golden_Uncurry_Test_add3_S_w, M.Golden_Uncurry_Test_adderOf_S_w, M.Golden_Uncurry_Test_alwaysFirst_S_w, M.Golden_Uncurry_Test_sumTo
+  local _ = Golden_Uncurry_Test_logShow(Golden_Uncurry_Test_add3_S_w(1, 2, 3))()
+  local _ = Golden_Uncurry_Test_logShow(Golden_Uncurry_Test_add3_S_w(4, 5, 6))()
+  local _ = Golden_Uncurry_Test_logShow(Golden_Uncurry_Test_add3_S_w(10, 1, 2))()
+  local _ = Golden_Uncurry_Test_logShow(M.Golden_Uncurry_Test_inc(41))()
   local _ = M.Effect_Console_logShow_S_w({
     show = M.Data_Show_foreign.showArrayImpl(M.Data_Show_show(M.Data_Show_showInt))
   }, M.Data_Functor_foreign.arrayMap(M.Golden_Uncurry_Test_add3(1)(2))({
@@ -170,12 +175,12 @@ return (function()
     [2] = 2,
     [3] = 3
   }))()
-  local _ = M.Golden_Uncurry_Test_logShow(M.Golden_Uncurry_Test_evenSteps_S_w(0, 10))()
-  local _ = M.Golden_Uncurry_Test_logShow(M.Golden_Uncurry_Test_oddSteps_S_w(0, 7))()
-  local _ = M.Golden_Uncurry_Test_logShow(M.Golden_Uncurry_Test_sumTo(10))()
-  local _ = M.Golden_Uncurry_Test_logShow(M.Golden_Uncurry_Test_sumTo(100))()
-  local _ = M.Golden_Uncurry_Test_logShow(M.Golden_Uncurry_Test_adderOf_S_w(1, 2)(3))()
-  local _ = M.Golden_Uncurry_Test_logShow(M.Golden_Uncurry_Test_adderOf_S_w(2, 3)(4))()
-  local _ = M.Golden_Uncurry_Test_logShow(M.Golden_Uncurry_Test_alwaysFirst_S_w(7, 8))()
-  return M.Golden_Uncurry_Test_logShow(M.Golden_Uncurry_Test_alwaysFirst_S_w(9, 10))()
+  local _ = Golden_Uncurry_Test_logShow(M.Golden_Uncurry_Test_evenSteps_S_w(0, 10))()
+  local _ = Golden_Uncurry_Test_logShow(M.Golden_Uncurry_Test_oddSteps_S_w(0, 7))()
+  local _ = Golden_Uncurry_Test_logShow(Golden_Uncurry_Test_sumTo(10))()
+  local _ = Golden_Uncurry_Test_logShow(Golden_Uncurry_Test_sumTo(100))()
+  local _ = Golden_Uncurry_Test_logShow(Golden_Uncurry_Test_adderOf_S_w(1, 2)(3))()
+  local _ = Golden_Uncurry_Test_logShow(Golden_Uncurry_Test_adderOf_S_w(2, 3)(4))()
+  local _ = Golden_Uncurry_Test_logShow(Golden_Uncurry_Test_alwaysFirst_S_w(7, 8))()
+  return Golden_Uncurry_Test_logShow(Golden_Uncurry_Test_alwaysFirst_S_w(9, 10))()
 end)()

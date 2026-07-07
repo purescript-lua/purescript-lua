@@ -113,16 +113,18 @@ M.Control_Monad_Writer_Trans_applicativeWriterT_S_w = function( dictMonoid
 end
 M.Golden_LongWriterBind_Test_discard = M.Control_Bind_bind(M.Control_Monad_Writer_Trans_bindWriterT_S_w(M.Data_Semigroup_semigroupArray, M.Data_Identity_bindIdentity))
 M.Golden_LongWriterBind_Test_tell = (function()
+  local Control_Monad_Writer_Trans_compose = M.Control_Monad_Writer_Trans_compose
   local dictMonad_S_478 = {
     Applicative0 = function() return M.Data_Identity_applicativeIdentity end,
     Bind1 = function() return M.Data_Identity_bindIdentity end
   }
-  return M.Control_Monad_Writer_Trans_compose(function(x_S_467_S_479)
+  return Control_Monad_Writer_Trans_compose(function(x_S_467_S_479)
     return x_S_467_S_479
-  end)(M.Control_Monad_Writer_Trans_compose(M.Control_Applicative_pure(dictMonad_S_478.Applicative0()))(M.Data_Tuple_Tuple(M.Data_Unit_foreign.unit)))
+  end)(Control_Monad_Writer_Trans_compose(M.Control_Applicative_pure(dictMonad_S_478.Applicative0()))(M.Data_Tuple_Tuple(M.Data_Unit_foreign.unit)))
 end)()
 M.Golden_LongWriterBind_Test_go = (function()
-  local _S_kont482 = M.Golden_LongWriterBind_Test_discard(M.Golden_LongWriterBind_Test_tell({
+  local Golden_LongWriterBind_Test_discard, Golden_LongWriterBind_Test_tell = M.Golden_LongWriterBind_Test_discard, M.Golden_LongWriterBind_Test_tell
+  local _S_kont482 = Golden_LongWriterBind_Test_discard(Golden_LongWriterBind_Test_tell({
     [1] = 161
   }))(function()
     return M.Golden_LongWriterBind_Test_discard(M.Golden_LongWriterBind_Test_tell({
@@ -283,7 +285,7 @@ M.Golden_LongWriterBind_Test_go = (function()
       end)
     end)
   end)
-  local _S_kont483 = M.Golden_LongWriterBind_Test_discard(M.Golden_LongWriterBind_Test_tell({
+  local _S_kont483 = Golden_LongWriterBind_Test_discard(Golden_LongWriterBind_Test_tell({
     [1] = 121
   }))(function()
     return M.Golden_LongWriterBind_Test_discard(M.Golden_LongWriterBind_Test_tell({
@@ -444,7 +446,7 @@ M.Golden_LongWriterBind_Test_go = (function()
       end)
     end)
   end)
-  local _S_kont484 = M.Golden_LongWriterBind_Test_discard(M.Golden_LongWriterBind_Test_tell({
+  local _S_kont484 = Golden_LongWriterBind_Test_discard(Golden_LongWriterBind_Test_tell({
     [1] = 81
   }))(function()
     return M.Golden_LongWriterBind_Test_discard(M.Golden_LongWriterBind_Test_tell({
@@ -605,7 +607,7 @@ M.Golden_LongWriterBind_Test_go = (function()
       end)
     end)
   end)
-  local _S_kont485 = M.Golden_LongWriterBind_Test_discard(M.Golden_LongWriterBind_Test_tell({
+  local _S_kont485 = Golden_LongWriterBind_Test_discard(Golden_LongWriterBind_Test_tell({
     [1] = 41
   }))(function()
     return M.Golden_LongWriterBind_Test_discard(M.Golden_LongWriterBind_Test_tell({
@@ -766,7 +768,7 @@ M.Golden_LongWriterBind_Test_go = (function()
       end)
     end)
   end)
-  return M.Golden_LongWriterBind_Test_discard(M.Golden_LongWriterBind_Test_tell({
+  return Golden_LongWriterBind_Test_discard(Golden_LongWriterBind_Test_tell({
     [1] = 1
   }))(function()
     return M.Golden_LongWriterBind_Test_discard(M.Golden_LongWriterBind_Test_tell({

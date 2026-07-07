@@ -59,7 +59,8 @@ M.Effect_Lazy_functorEffect = PSLUA_runtime_lazy("functorEffect")(function()
   return {
     map = function(f_S_28)
       return function(a_S_29)
-        return (M.Effect_applicativeEffect.Apply0()).apply(M.Control_Applicative_pure(M.Effect_applicativeEffect)(f_S_28))(a_S_29)
+        local Effect_applicativeEffect = M.Effect_applicativeEffect
+        return (Effect_applicativeEffect.Apply0()).apply(M.Control_Applicative_pure(Effect_applicativeEffect)(f_S_28))(a_S_29)
       end
     end
   }
@@ -107,8 +108,9 @@ M.Golden_FloatIn_Test_pick_S_w = function(useIt, n)
   end
 end
 return (function()
-  local _ = M.Golden_FloatIn_Test_logShow(M.Golden_FloatIn_Test_pick_S_w(true, 3))()
-  local _ = M.Golden_FloatIn_Test_logShow(M.Golden_FloatIn_Test_pick_S_w(false, 3))()
-  local _ = M.Golden_FloatIn_Test_logShow(M.Golden_FloatIn_Test_pickShared_S_w(true, 3))()
-  return M.Golden_FloatIn_Test_logShow(M.Golden_FloatIn_Test_pickShared_S_w(false, 3))()
+  local Golden_FloatIn_Test_logShow, Golden_FloatIn_Test_pickShared_S_w, Golden_FloatIn_Test_pick_S_w = M.Golden_FloatIn_Test_logShow, M.Golden_FloatIn_Test_pickShared_S_w, M.Golden_FloatIn_Test_pick_S_w
+  local _ = Golden_FloatIn_Test_logShow(Golden_FloatIn_Test_pick_S_w(true, 3))()
+  local _ = Golden_FloatIn_Test_logShow(Golden_FloatIn_Test_pick_S_w(false, 3))()
+  local _ = Golden_FloatIn_Test_logShow(Golden_FloatIn_Test_pickShared_S_w(true, 3))()
+  return Golden_FloatIn_Test_logShow(Golden_FloatIn_Test_pickShared_S_w(false, 3))()
 end)()

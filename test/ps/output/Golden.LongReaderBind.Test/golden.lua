@@ -69,10 +69,11 @@ M.Control_Monad_Reader_Trans_bindReaderT = function(dictBind)
   }
 end
 M.Control_Monad_Reader_Trans_applicativeReaderT = function(dictApplicative)
+  local Control_Monad_Reader_Trans_compose = M.Control_Monad_Reader_Trans_compose
   return {
-    pure = M.Control_Monad_Reader_Trans_compose(function(x_S_460)
+    pure = Control_Monad_Reader_Trans_compose(function(x_S_460)
       return x_S_460
-    end)(M.Control_Monad_Reader_Trans_compose(function(a_S_306)
+    end)(Control_Monad_Reader_Trans_compose(function(a_S_306)
       return function() return a_S_306 end
     end)(M.Control_Applicative_pure(dictApplicative))),
     Apply0 = function()
@@ -131,7 +132,8 @@ M.Golden_LongReaderBind_Test_go = (function()
                                                                                 return M.Golden_LongReaderBind_Test_bind(M.Golden_LongReaderBind_Test_ask)(function(  )
                                                                                   return M.Golden_LongReaderBind_Test_bind(M.Golden_LongReaderBind_Test_ask)(function(  )
                                                                                     return M.Golden_LongReaderBind_Test_bind(M.Golden_LongReaderBind_Test_ask)(function( x200 )
-                                                                                      return M.Control_Applicative_pure(M.Control_Monad_Reader_Trans_applicativeReaderT(M.Data_Identity_applicativeIdentity))(M.Data_Semiring_foreign.intAdd(M.Data_Semiring_foreign.intAdd(x1_S_470)(x100_S_471))(x200))
+                                                                                      local Data_Semiring_foreign = M.Data_Semiring_foreign
+                                                                                      return M.Control_Applicative_pure(M.Control_Monad_Reader_Trans_applicativeReaderT(M.Data_Identity_applicativeIdentity))(Data_Semiring_foreign.intAdd(Data_Semiring_foreign.intAdd(x1_S_470)(x100_S_471))(x200))
                                                                                     end)
                                                                                   end)
                                                                                 end)

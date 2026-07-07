@@ -10,7 +10,8 @@ M.Golden_ForeignSharing_Test_sharedToken = function()
   return M.Golden_ForeignSharing_Token_foreign.token
 end
 return M.Effect_Console_foreign.log((function()
-  if M.Golden_ForeignSharing_Test_foreign.same(M.Golden_ForeignSharing_Test_sharedToken(0))(M.Golden_ForeignSharing_Test_sharedToken(1)) then
+  local Golden_ForeignSharing_Test_sharedToken = M.Golden_ForeignSharing_Test_sharedToken
+  if M.Golden_ForeignSharing_Test_foreign.same(Golden_ForeignSharing_Test_sharedToken(0))(Golden_ForeignSharing_Test_sharedToken(1)) then
     return "shared"
   else
     return "fresh"
