@@ -54,24 +54,24 @@ UberModule
         ]
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Control.Apply", qnameName = Name "apply" }, Abs Nothing
-        ( ParamNamed Nothing ( Name "dict" ) )
+        { qnameModuleName = ModuleName "Control.Apply", qnameName = Name "apply" }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "dict" ) :| [] )
         ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) ) ( PropName "apply" ) )
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Control.Applicative", qnameName = Name "pure"
-        }, Abs Nothing
-        ( ParamNamed Nothing ( Name "dict" ) )
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "dict" ) :| [] )
         ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) ) ( PropName "pure" ) )
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Control.Bind", qnameName = Name "bind" }, Abs Nothing
-        ( ParamNamed Nothing ( Name "dict" ) )
+        { qnameModuleName = ModuleName "Control.Bind", qnameName = Name "bind" }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "dict" ) :| [] )
         ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) ) ( PropName "bind" ) )
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Data.Foldable", qnameName = Name "foldr" }, Abs Nothing
-        ( ParamNamed Nothing ( Name "dict" ) )
+        { qnameModuleName = ModuleName "Data.Foldable", qnameName = Name "foldr" }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "dict" ) :| [] )
         ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) ) ( PropName "foldr" ) )
       ), RecursiveGroup
       (
@@ -87,10 +87,10 @@ UberModule
               ( Ref Nothing ( Imported ( ModuleName "Data.Foldable" ) ( Name "foreign" ) ) )
               ( PropName "foldlArray" )
             ),
-            ( PropName "foldMap", Abs Nothing
-              ( ParamNamed Nothing ( Name "dictMonoid" ) )
-              ( Abs Nothing
-                ( ParamNamed Nothing ( Name "f$884" ) )
+            ( PropName "foldMap", AbsN Nothing
+              ( ParamNamed Nothing ( Name "dictMonoid" ) :| [] )
+              ( AbsN Nothing
+                ( ParamNamed Nothing ( Name "f$884" ) :| [] )
                 ( AppN Nothing
                   ( AppN Nothing
                     ( AppN Nothing
@@ -99,10 +99,10 @@ UberModule
                         ( Imported ( ModuleName "Data.Foldable" ) ( Name "foldableArray" ) ) :| []
                       )
                     )
-                    ( Abs Nothing
-                      ( ParamNamed Nothing ( Name "x$885" ) )
-                      ( Abs Nothing
-                        ( ParamNamed Nothing ( Name "acc$886" ) )
+                    ( AbsN Nothing
+                      ( ParamNamed Nothing ( Name "x$885" ) :| [] )
+                      ( AbsN Nothing
+                        ( ParamNamed Nothing ( Name "acc$886" ) :| [] )
                         ( AppN Nothing
                           ( AppN Nothing
                             ( ObjectProp Nothing
@@ -142,10 +142,12 @@ UberModule
           { qnameModuleName = ModuleName "Effect", qnameName = Name "monadEffect"
           }, LiteralObject Nothing
           [
-            ( PropName "Applicative0", Abs Nothing ( ParamUnused Nothing )
+            ( PropName "Applicative0", AbsN Nothing
+              ( ParamUnused Nothing :| [] )
               ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "applicativeEffect" ) ) )
             ),
-            ( PropName "Bind1", Abs Nothing ( ParamUnused Nothing )
+            ( PropName "Bind1", AbsN Nothing
+              ( ParamUnused Nothing :| [] )
               ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "bindEffect" ) ) )
             )
           ]
@@ -159,7 +161,8 @@ UberModule
                 ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "foreign" ) ) )
                 ( PropName "bindE" )
               ),
-              ( PropName "Apply0", Abs Nothing ( ParamUnused Nothing )
+              ( PropName "Apply0", AbsN Nothing
+                ( ParamUnused Nothing :| [] )
                 ( AppN Nothing
                   ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "Lazy_applyEffect" ) ) )
                   ( LiteralInt Nothing 0 :| [] )
@@ -175,7 +178,8 @@ UberModule
                 ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "foreign" ) ) )
                 ( PropName "pureE" )
               ),
-              ( PropName "Apply0", Abs Nothing ( ParamUnused Nothing )
+              ( PropName "Apply0", AbsN Nothing
+                ( ParamUnused Nothing :| [] )
                 ( AppN Nothing
                   ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "Lazy_applyEffect" ) ) )
                   ( LiteralInt Nothing 0 :| [] )
@@ -190,13 +194,14 @@ UberModule
               ( Ref Nothing ( Local ( Name "PSLUA_runtime_lazy" ) ) )
               ( LiteralString Nothing "functorEffect" :| [] )
             )
-            ( Abs Nothing ( ParamUnused Nothing )
+            ( AbsN Nothing
+              ( ParamUnused Nothing :| [] )
               ( LiteralObject Nothing
                 [
-                  ( PropName "map", Abs Nothing
-                    ( ParamNamed Nothing ( Name "f$707" ) )
-                    ( Abs Nothing
-                      ( ParamNamed Nothing ( Name "a$708" ) )
+                  ( PropName "map", AbsN Nothing
+                    ( ParamNamed Nothing ( Name "f$707" ) :| [] )
+                    ( AbsN Nothing
+                      ( ParamNamed Nothing ( Name "a$708" ) :| [] )
                       ( AppN Nothing
                         ( AppN Nothing
                           ( AppN Nothing
@@ -245,7 +250,8 @@ UberModule
               ( Ref Nothing ( Local ( Name "PSLUA_runtime_lazy" ) ) )
               ( LiteralString Nothing "applyEffect" :| [] )
             )
-            ( Abs Nothing ( ParamUnused Nothing )
+            ( AbsN Nothing
+              ( ParamUnused Nothing :| [] )
               ( LiteralObject Nothing
                 [
                   ( PropName "apply", Let Nothing
@@ -265,24 +271,24 @@ UberModule
                         )
                       ) :| []
                     )
-                    ( Abs Nothing
-                      ( ParamNamed Nothing ( Name "f$689" ) )
-                      ( Abs Nothing
-                        ( ParamNamed Nothing ( Name "a$690" ) )
+                    ( AbsN Nothing
+                      ( ParamNamed Nothing ( Name "f$689" ) :| [] )
+                      ( AbsN Nothing
+                        ( ParamNamed Nothing ( Name "a$690" ) :| [] )
                         ( AppN Nothing
                           ( AppN Nothing
                             ( Ref Nothing ( Local ( Name "bind$687" ) ) )
                             ( Ref Nothing ( Local ( Name "f$689" ) ) :| [] )
                           )
-                          ( Abs Nothing
-                            ( ParamNamed Nothing ( Name "f'$691" ) )
+                          ( AbsN Nothing
+                            ( ParamNamed Nothing ( Name "f'$691" ) :| [] )
                             ( AppN Nothing
                               ( AppN Nothing
                                 ( Ref Nothing ( Local ( Name "bind$687" ) ) )
                                 ( Ref Nothing ( Local ( Name "a$690" ) ) :| [] )
                               )
-                              ( Abs Nothing
-                                ( ParamNamed Nothing ( Name "a'$692" ) )
+                              ( AbsN Nothing
+                                ( ParamNamed Nothing ( Name "a'$692" ) :| [] )
                                 ( AppN Nothing
                                   ( AppN Nothing
                                     ( Ref Nothing
@@ -321,7 +327,8 @@ UberModule
                       )
                     )
                   ),
-                  ( PropName "Functor0", Abs Nothing ( ParamUnused Nothing )
+                  ( PropName "Functor0", AbsN Nothing
+                    ( ParamUnused Nothing :| [] )
                     ( AppN Nothing
                       ( Ref Nothing
                         ( Imported ( ModuleName "Effect" ) ( Name "Lazy_functorEffect" ) )
@@ -336,22 +343,20 @@ UberModule
         ]
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "logShow" }, Abs Nothing
-        ( ParamNamed Nothing ( Name "dictShow" ) )
-        ( Abs Nothing
-          ( ParamNamed Nothing ( Name "a" ) )
+        { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "logShow$w"
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "dictShow" ) :| [ ParamNamed Nothing ( Name "a" ) ] )
+        ( AppN Nothing
+          ( ObjectProp ( Just Always )
+            ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
+            ( PropName "log" )
+          )
           ( AppN Nothing
-            ( ObjectProp ( Just Always )
-              ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
-              ( PropName "log" )
+            ( ObjectProp Nothing
+              ( Ref Nothing ( Local ( Name "dictShow" ) ) )
+              ( PropName "show" )
             )
-            ( AppN Nothing
-              ( ObjectProp Nothing
-                ( Ref Nothing ( Local ( Name "dictShow" ) ) )
-                ( PropName "show" )
-              )
-              ( Ref Nothing ( Local ( Name "a" ) ) :| [] ) :| []
-            )
+            ( Ref Nothing ( Local ( Name "a" ) ) :| [] ) :| []
           )
         )
       )
@@ -370,7 +375,8 @@ UberModule
             ]
           ) :| []
         )
-        ( Abs Nothing ( ParamUnused Nothing )
+        ( AbsN Nothing
+          ( ParamUnused Nothing :| [] )
           ( Let Nothing
             ( Standalone
               ( Nothing, Name "_", AppN Nothing
@@ -385,8 +391,8 @@ UberModule
                           ( Imported ( ModuleName "Data.Foldable" ) ( Name "foldableArray" ) ) :| []
                         )
                       )
-                      ( Abs Nothing
-                        ( ParamNamed Nothing ( Name "x$907" ) )
+                      ( AbsN Nothing
+                        ( ParamNamed Nothing ( Name "x$907" ) :| [] )
                         ( AppN Nothing
                           ( Let Nothing
                             ( Standalone
@@ -405,10 +411,10 @@ UberModule
                                 )
                               ) :| []
                             )
-                            ( Abs Nothing
-                              ( ParamNamed Nothing ( Name "a$893" ) )
-                              ( Abs Nothing
-                                ( ParamNamed Nothing ( Name "b$894" ) )
+                            ( AbsN Nothing
+                              ( ParamNamed Nothing ( Name "a$893" ) :| [] )
+                              ( AbsN Nothing
+                                ( ParamNamed Nothing ( Name "b$894" ) :| [] )
                                 ( AppN Nothing
                                   ( AppN Nothing
                                     ( AppN Nothing
@@ -434,9 +440,10 @@ UberModule
                                           )
                                           ( PropName "map" )
                                         )
-                                        ( Abs Nothing ( ParamUnused Nothing )
-                                          ( Abs Nothing
-                                            ( ParamNamed Nothing ( Name "x$901" ) )
+                                        ( AbsN Nothing
+                                          ( ParamUnused Nothing :| [] )
+                                          ( AbsN Nothing
+                                            ( ParamNamed Nothing ( Name "x$901" ) :| [] )
                                             ( Ref Nothing ( Local ( Name "x$901" ) ) )
                                           ) :| []
                                         )
@@ -450,19 +457,18 @@ UberModule
                             )
                           )
                           ( AppN Nothing
-                            ( AppN Nothing
-                              ( Ref Nothing
-                                ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow" ) )
-                              )
-                              ( LiteralObject Nothing
-                                [
-                                  ( PropName "show", Abs Nothing ( ParamUnused Nothing )
-                                    ( LiteralString Nothing "unit" )
-                                  )
-                                ] :| []
-                              )
+                            ( Ref Nothing
+                              ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow$w" ) )
                             )
-                            ( Ref Nothing ( Local ( Name "x$907" ) ) :| [] ) :| []
+                            ( LiteralObject Nothing
+                              [
+                                ( PropName "show", AbsN Nothing
+                                  ( ParamUnused Nothing :| [] )
+                                  ( LiteralString Nothing "unit" )
+                                )
+                              ] :|
+                              [ Ref Nothing ( Local ( Name "x$907" ) ) ]
+                            ) :| []
                           )
                         ) :| []
                       )
@@ -489,57 +495,62 @@ UberModule
             )
             ( AppN Nothing
               ( AppN Nothing
-                ( AppN Nothing
-                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow" ) ) )
-                  ( LiteralObject Nothing
-                    [
-                      ( PropName "show", ObjectProp ( Just Always )
-                        ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
-                        ( PropName "showIntImpl" )
-                      )
-                    ] :| []
-                  )
-                )
-                ( AppN Nothing
-                  ( AppN Nothing
+                ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow$w" ) ) )
+                ( LiteralObject Nothing
+                  [
+                    ( PropName "show", ObjectProp ( Just Always )
+                      ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
+                      ( PropName "showIntImpl" )
+                    )
+                  ] :|
+                  [ AppN Nothing
                     ( AppN Nothing
+                      ( AppN Nothing
+                        ( ObjectProp Nothing
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Data.Foldable" ) ( Name "foldableArray" ) )
+                          )
+                          ( PropName "foldl" )
+                        )
+                        ( AbsN Nothing
+                          ( ParamNamed Nothing ( Name "c$372$881" ) :| [] )
+                          ( AbsN Nothing
+                            ( ParamUnused Nothing :| [] )
+                            ( AppN Nothing
+                              ( AppN Nothing
+                                ( ObjectProp Nothing
+                                  ( Ref Nothing
+                                    ( Imported
+                                      ( ModuleName "Data.Semiring" )
+                                      ( Name "semiringInt" )
+                                    )
+                                  )
+                                  ( PropName "add" )
+                                )
+                                ( ObjectProp Nothing
+                                  ( Ref Nothing
+                                    ( Imported
+                                      ( ModuleName "Data.Semiring" )
+                                      ( Name "semiringInt" )
+                                    )
+                                  )
+                                  ( PropName "one" ) :| []
+                                )
+                              )
+                              ( Ref Nothing ( Local ( Name "c$372$881" ) ) :| [] )
+                            )
+                          ) :| []
+                        )
+                      )
                       ( ObjectProp Nothing
                         ( Ref Nothing
-                          ( Imported ( ModuleName "Data.Foldable" ) ( Name "foldableArray" ) )
+                          ( Imported ( ModuleName "Data.Semiring" ) ( Name "semiringInt" ) )
                         )
-                        ( PropName "foldl" )
-                      )
-                      ( Abs Nothing
-                        ( ParamNamed Nothing ( Name "c$372$881" ) )
-                        ( Abs Nothing ( ParamUnused Nothing )
-                          ( AppN Nothing
-                            ( AppN Nothing
-                              ( ObjectProp Nothing
-                                ( Ref Nothing
-                                  ( Imported ( ModuleName "Data.Semiring" ) ( Name "semiringInt" ) )
-                                )
-                                ( PropName "add" )
-                              )
-                              ( ObjectProp Nothing
-                                ( Ref Nothing
-                                  ( Imported ( ModuleName "Data.Semiring" ) ( Name "semiringInt" ) )
-                                )
-                                ( PropName "one" ) :| []
-                              )
-                            )
-                            ( Ref Nothing ( Local ( Name "c$372$881" ) ) :| [] )
-                          )
-                        ) :| []
+                        ( PropName "zero" ) :| []
                       )
                     )
-                    ( ObjectProp Nothing
-                      ( Ref Nothing
-                        ( Imported ( ModuleName "Data.Semiring" ) ( Name "semiringInt" ) )
-                      )
-                      ( PropName "zero" ) :| []
-                    )
-                  )
-                  ( Ref Nothing ( Local ( Name "arr$0" ) ) :| [] ) :| []
+                    ( Ref Nothing ( Local ( Name "arr$0" ) ) :| [] )
+                  ]
                 )
               )
               ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )

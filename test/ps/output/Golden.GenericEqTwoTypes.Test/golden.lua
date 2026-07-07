@@ -54,24 +54,21 @@ M.Data_HeytingAlgebra_heytingAlgebraBoolean = {
 M.Data_Eq_eqRecord = function(dict) return dict.eqRecord end
 M.Data_Eq_eqInt = { eq = M.Data_Eq_foreign.eqIntImpl }
 M.Data_Eq_eq = function(dict) return dict.eq end
-M.Data_Eq_eqRowCons = function(dictEqRecord)
-  return function()
-    return function(dictIsSymbol)
-      return function(dictEq)
-        return {
-          eqRecord = function()
-            return function(ra)
-              return function(rb)
-                local key = dictIsSymbol.reflectSymbol(M.Type_Proxy_Proxy)
-                local get = M.Record_Unsafe_foreign.unsafeGet(key)
-                return M.Data_HeytingAlgebra_heytingAlgebraBoolean.conj(M.Data_Eq_eq(dictEq)(get(ra))(get(rb)))(M.Data_Eq_eqRecord(dictEqRecord)(M.Type_Proxy_Proxy)(ra)(rb))
-              end
-            end
-          end
-        }
+M.Data_Eq_eqRowCons_S_w = function( dictEqRecord
+, eqRowCons_S_u2
+, dictIsSymbol
+, dictEq )
+  return {
+    eqRecord = function()
+      return function(ra)
+        return function(rb)
+          local key = dictIsSymbol.reflectSymbol(M.Type_Proxy_Proxy)
+          local get = M.Record_Unsafe_foreign.unsafeGet(key)
+          return M.Data_HeytingAlgebra_heytingAlgebraBoolean.conj(M.Data_Eq_eq(dictEq)(get(ra))(get(rb)))(M.Data_Eq_eqRecord(dictEqRecord)(M.Type_Proxy_Proxy)(ra)(rb))
+        end
       end
     end
-  end
+  }
 end
 M.Control_Applicative_pure = function(dict) return dict.pure end
 M.Control_Bind_bind = function(dict) return dict.bind end
@@ -175,11 +172,15 @@ end
 M.Golden_GenericEqTwoTypes_Test_eqRec = function(dictEqRecord_S_193)
   return { eq = M.Data_Eq_eqRecord(dictEqRecord_S_193)(M.Type_Proxy_Proxy) }
 end
-M.Golden_GenericEqTwoTypes_Test_eqRowCons = M.Data_Eq_eqRowCons({
-  eqRecord = function()
-    return function() return function() return true end end
+M.Golden_GenericEqTwoTypes_Test_eqRowCons = function(eqRowCons_S_p3_S_205)
+  return function(eqRowCons_S_p4_S_206)
+    return M.Data_Eq_eqRowCons_S_w({
+      eqRecord = function()
+        return function() return function() return true end end
+      end
+    }, nil, eqRowCons_S_p3_S_205, eqRowCons_S_p4_S_206)
   end
-})()
+end
 M.Golden_GenericEqTwoTypes_Test_discard = M.Control_Bind_bind(M.Effect_bindEffect)
 M.Golden_GenericEqTwoTypes_Test_logShow = function(a_S_2)
   return M.Effect_Console_foreign.log((function()
@@ -210,16 +211,12 @@ M.Golden_GenericEqTwoTypes_Test_Cons = function(value0)
     value0 = value0
   }
 end
-M.Golden_GenericEqTwoTypes_Test_node = function(left)
-  return function(value)
-    return function(right)
-      return M.Golden_GenericEqTwoTypes_Test_Node({
-        left = left,
-        value = value,
-        right = right
-      })
-    end
-  end
+M.Golden_GenericEqTwoTypes_Test_node_S_w = function(left, value, right)
+  return M.Golden_GenericEqTwoTypes_Test_Node({
+    left = left,
+    value = value,
+    right = right
+  })
 end
 M.Golden_GenericEqTwoTypes_Test_genericTree = {
   to = function(x)
@@ -265,13 +262,13 @@ M.Golden_GenericEqTwoTypes_Test_eqTree = function(dictEq)
   return {
     eq = function(x)
       return function(y)
-        return M.Data_Eq_Generic_genericEq(M.Golden_GenericEqTwoTypes_Test_genericTree)(M.Golden_GenericEqTwoTypes_Test_genericEqSum(M.Data_Eq_Generic_genericEqConstructor(M.Data_Eq_Generic_genericEqArgument(M.Golden_GenericEqTwoTypes_Test_eqRec(M.Data_Eq_eqRowCons(M.Data_Eq_eqRowCons(M.Golden_GenericEqTwoTypes_Test_eqRowCons({
+        return M.Data_Eq_Generic_genericEq(M.Golden_GenericEqTwoTypes_Test_genericTree)(M.Golden_GenericEqTwoTypes_Test_genericEqSum(M.Data_Eq_Generic_genericEqConstructor(M.Data_Eq_Generic_genericEqArgument(M.Golden_GenericEqTwoTypes_Test_eqRec(M.Data_Eq_eqRowCons_S_w(M.Data_Eq_eqRowCons_S_w(M.Golden_GenericEqTwoTypes_Test_eqRowCons({
           reflectSymbol = function() return "value" end
-        })(dictEq))()({
+        })(dictEq), nil, {
           reflectSymbol = function() return "right" end
-        })(M.Golden_GenericEqTwoTypes_Test_eqTree(dictEq)))()({
+        }, M.Golden_GenericEqTwoTypes_Test_eqTree(dictEq)), nil, {
           reflectSymbol = function() return "left" end
-        })(M.Golden_GenericEqTwoTypes_Test_eqTree(dictEq)))))))(x)(y)
+        }, M.Golden_GenericEqTwoTypes_Test_eqTree(dictEq)))))))(x)(y)
       end
     end
   }
@@ -281,24 +278,22 @@ M.Golden_GenericEqTwoTypes_Test_eqList = function(dictEq)
   return {
     eq = function(x)
       return function(y)
-        return M.Data_Eq_Generic_genericEq(M.Golden_GenericEqTwoTypes_Test_genericList)(M.Golden_GenericEqTwoTypes_Test_genericEqSum(M.Data_Eq_Generic_genericEqConstructor(M.Data_Eq_Generic_genericEqArgument(M.Golden_GenericEqTwoTypes_Test_eqRec(M.Data_Eq_eqRowCons(M.Golden_GenericEqTwoTypes_Test_eqRowCons({
+        return M.Data_Eq_Generic_genericEq(M.Golden_GenericEqTwoTypes_Test_genericList)(M.Golden_GenericEqTwoTypes_Test_genericEqSum(M.Data_Eq_Generic_genericEqConstructor(M.Data_Eq_Generic_genericEqArgument(M.Golden_GenericEqTwoTypes_Test_eqRec(M.Data_Eq_eqRowCons_S_w(M.Golden_GenericEqTwoTypes_Test_eqRowCons({
           reflectSymbol = function() return "tail" end
-        })(M.Golden_GenericEqTwoTypes_Test_eqList(dictEq)))()({
+        })(M.Golden_GenericEqTwoTypes_Test_eqList(dictEq)), nil, {
           reflectSymbol = function() return "head" end
-        })(dictEq))))))(x)(y)
+        }, dictEq))))))(x)(y)
       end
     end
   }
 end
 M.Golden_GenericEqTwoTypes_Test_eq1 = M.Data_Eq_eq(M.Golden_GenericEqTwoTypes_Test_eqList(M.Data_Eq_eqInt))
-M.Golden_GenericEqTwoTypes_Test_cons = function(head)
-  return function(tail)
-    return M.Golden_GenericEqTwoTypes_Test_Cons({ head = head, tail = tail })
-  end
+M.Golden_GenericEqTwoTypes_Test_cons_S_w = function(head, tail)
+  return M.Golden_GenericEqTwoTypes_Test_Cons({ head = head, tail = tail })
 end
 return (function()
-  local _ = M.Golden_GenericEqTwoTypes_Test_logShow(M.Golden_GenericEqTwoTypes_Test_eq1(M.Golden_GenericEqTwoTypes_Test_cons(1)(M.Golden_GenericEqTwoTypes_Test_cons(2)(M.Golden_GenericEqTwoTypes_Test_Nil)))(M.Golden_GenericEqTwoTypes_Test_cons(1)(M.Golden_GenericEqTwoTypes_Test_cons(2)(M.Golden_GenericEqTwoTypes_Test_Nil))))()
-  local _ = M.Golden_GenericEqTwoTypes_Test_logShow(M.Golden_GenericEqTwoTypes_Test_eq1(M.Golden_GenericEqTwoTypes_Test_cons(1)(M.Golden_GenericEqTwoTypes_Test_Nil))(M.Golden_GenericEqTwoTypes_Test_cons(2)(M.Golden_GenericEqTwoTypes_Test_Nil)))()
-  local _ = M.Golden_GenericEqTwoTypes_Test_logShow(M.Golden_GenericEqTwoTypes_Test_eq(M.Golden_GenericEqTwoTypes_Test_node(M.Golden_GenericEqTwoTypes_Test_Leaf)(1)(M.Golden_GenericEqTwoTypes_Test_node(M.Golden_GenericEqTwoTypes_Test_Leaf)(2)(M.Golden_GenericEqTwoTypes_Test_Leaf)))(M.Golden_GenericEqTwoTypes_Test_node(M.Golden_GenericEqTwoTypes_Test_Leaf)(1)(M.Golden_GenericEqTwoTypes_Test_node(M.Golden_GenericEqTwoTypes_Test_Leaf)(2)(M.Golden_GenericEqTwoTypes_Test_Leaf))))()
-  return M.Golden_GenericEqTwoTypes_Test_logShow(M.Golden_GenericEqTwoTypes_Test_eq(M.Golden_GenericEqTwoTypes_Test_node(M.Golden_GenericEqTwoTypes_Test_Leaf)(1)(M.Golden_GenericEqTwoTypes_Test_Leaf))(M.Golden_GenericEqTwoTypes_Test_node(M.Golden_GenericEqTwoTypes_Test_Leaf)(2)(M.Golden_GenericEqTwoTypes_Test_Leaf)))()
+  local _ = M.Golden_GenericEqTwoTypes_Test_logShow(M.Golden_GenericEqTwoTypes_Test_eq1(M.Golden_GenericEqTwoTypes_Test_cons_S_w(1, M.Golden_GenericEqTwoTypes_Test_cons_S_w(2, M.Golden_GenericEqTwoTypes_Test_Nil)))(M.Golden_GenericEqTwoTypes_Test_cons_S_w(1, M.Golden_GenericEqTwoTypes_Test_cons_S_w(2, M.Golden_GenericEqTwoTypes_Test_Nil))))()
+  local _ = M.Golden_GenericEqTwoTypes_Test_logShow(M.Golden_GenericEqTwoTypes_Test_eq1(M.Golden_GenericEqTwoTypes_Test_cons_S_w(1, M.Golden_GenericEqTwoTypes_Test_Nil))(M.Golden_GenericEqTwoTypes_Test_cons_S_w(2, M.Golden_GenericEqTwoTypes_Test_Nil)))()
+  local _ = M.Golden_GenericEqTwoTypes_Test_logShow(M.Golden_GenericEqTwoTypes_Test_eq(M.Golden_GenericEqTwoTypes_Test_node_S_w(M.Golden_GenericEqTwoTypes_Test_Leaf, 1, M.Golden_GenericEqTwoTypes_Test_node_S_w(M.Golden_GenericEqTwoTypes_Test_Leaf, 2, M.Golden_GenericEqTwoTypes_Test_Leaf)))(M.Golden_GenericEqTwoTypes_Test_node_S_w(M.Golden_GenericEqTwoTypes_Test_Leaf, 1, M.Golden_GenericEqTwoTypes_Test_node_S_w(M.Golden_GenericEqTwoTypes_Test_Leaf, 2, M.Golden_GenericEqTwoTypes_Test_Leaf))))()
+  return M.Golden_GenericEqTwoTypes_Test_logShow(M.Golden_GenericEqTwoTypes_Test_eq(M.Golden_GenericEqTwoTypes_Test_node_S_w(M.Golden_GenericEqTwoTypes_Test_Leaf, 1, M.Golden_GenericEqTwoTypes_Test_Leaf))(M.Golden_GenericEqTwoTypes_Test_node_S_w(M.Golden_GenericEqTwoTypes_Test_Leaf, 2, M.Golden_GenericEqTwoTypes_Test_Leaf)))()
 end)()

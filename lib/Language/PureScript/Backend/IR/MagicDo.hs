@@ -70,6 +70,7 @@ import Language.PureScript.Backend.IR.Types
   , noAnn
   , rewriteExpTopDownM
   , substituteMoveM
+  , pattern Abs
   , pattern App
   )
 

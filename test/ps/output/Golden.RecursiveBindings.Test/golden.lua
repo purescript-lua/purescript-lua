@@ -51,10 +51,8 @@ return {
     local a_S_6
     b_S_5 = function() return a_S_6(z_S_4) end
     a_S_6 = function() return b_S_5(z_S_4) end
-    local f_S_7 = function()
-      return function(k_S_13) return a_S_6(k_S_13) end
-    end
-    local y_S_8 = f_S_7(z_S_4)(z_S_4)
-    return f_S_7(f_S_7(y_S_8)(y_S_8))(f_S_7(y_S_8)(0))
+    local f_S_7_S_w = function(f_S_7_S_u1, k_S_13) return a_S_6(k_S_13) end
+    local y_S_8 = f_S_7_S_w(z_S_4, z_S_4)
+    return f_S_7_S_w(f_S_7_S_w(y_S_8, y_S_8), f_S_7_S_w(y_S_8, 0))
   end)()
 }

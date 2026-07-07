@@ -53,6 +53,10 @@ exp =
       , Gen.subtermM exp \e → (`IR.abstraction` e) <$> parameter
       )
     ,
+      ( 2
+      , Gen.subtermM exp \e → (`IR.abstractionN` e) <$> parameters
+      )
+    ,
       ( 6
       , Gen.subtermM exp \e →
           (`IR.lets` e) <$> Gen.nonEmpty (Range.linear 1 5) binding
@@ -95,6 +99,7 @@ scopedExpIn scope =
       )
     , (5, genAbs)
     , (4, genRedex)
+    , (2, genRedexN)
     , (4, genLet)
     ,
       ( 2
@@ -124,6 +129,21 @@ scopedExpIn scope =
           IR.ParamUnused _ → scope
     body ← scopedExpIn scope'
     pure (param, body)
+  -- An exactly-saturated application of an n-ary lambda — the only shape
+  -- a multi-parameter 'AbsN' may be applied in ('WellApplied', see
+  -- Note [n-ary abstraction]). Generated as a redex so the generic
+  -- application case above cannot pair the lambda with a wrong argument
+  -- count.
+  genRedexN = do
+    names ← Gen.nonEmpty (Range.linear 2 3) name
+    let scope' = foldr Set.insert scope (toList names)
+    body ← scopedExpIn scope'
+    args ← forM names \_nm → scopedExpIn scope
+    pure
+      ( IR.applicationN
+          (IR.abstractionN (IR.paramNamed <$> names) body)
+          args
+      )
   -- A Let with 1–3 groupings. The scope threads sequentially, following
   -- Note [Sequential scoping of Let bindings]. Names come from the same
   -- small pool as everywhere else, so shadowing and parallel duplicates
@@ -224,6 +244,16 @@ parameter =
     [ (1, pure (IR.ParamUnused noAnn))
     , (9, IR.ParamNamed noAnn <$> name)
     ]
+
+{- | A multi-parameter list for an 'AbsN': named parameters with an
+optional trailing 'ParamUnused' run — the only well-formed placement
+(Note [n-ary abstraction]).
+-}
+parameters ∷ MonadGen m ⇒ m (NonEmpty (IR.Parameter IR.Ann))
+parameters = do
+  named ← Gen.nonEmpty (Range.linear 2 3) (IR.paramNamed <$> name)
+  unusedCount ← Gen.int (Range.linear 0 1)
+  pure (NE.appendList named (replicate unusedCount IR.paramUnused))
 
 qualified ∷ MonadGen m ⇒ m a → m (IR.Qualified a)
 qualified q =

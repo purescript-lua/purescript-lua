@@ -1,20 +1,23 @@
 UberModule
   { uberModuleBindings = [], uberModuleForeigns = [], uberModuleExports =
     [
-      ( Name "apply", Abs Nothing
-        ( ParamNamed Nothing ( Name "f1$0" ) )
-        ( Abs Nothing
-          ( ParamNamed Nothing ( Name "x$1" ) )
+      ( Name "apply", AbsN Nothing
+        ( ParamNamed Nothing ( Name "f1$0" ) :| [] )
+        ( AbsN Nothing
+          ( ParamNamed Nothing ( Name "x$1" ) :| [] )
           ( AppN Nothing
             ( Ref Nothing ( Local ( Name "f1$0" ) ) )
             ( Ref Nothing ( Local ( Name "x$1" ) ) :| [] )
           )
         )
       ),
-      ( Name "f", Abs Nothing ( ParamUnused Nothing )
-        ( Abs Nothing ( ParamUnused Nothing )
-          ( Abs Nothing ( ParamUnused Nothing )
-            ( Abs Nothing ( ParamUnused Nothing ) ( LiteralString Nothing "ok" ) )
+      ( Name "f", AbsN Nothing
+        ( ParamUnused Nothing :| [] )
+        ( AbsN Nothing
+          ( ParamUnused Nothing :| [] )
+          ( AbsN Nothing
+            ( ParamUnused Nothing :| [] )
+            ( AbsN Nothing ( ParamUnused Nothing :| [] ) ( LiteralString Nothing "ok" ) )
           )
         )
       )

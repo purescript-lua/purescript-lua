@@ -21,6 +21,7 @@ import Language.PureScript.Backend.IR.Types
   , RawExp (..)
   , abstraction
   , application
+  , applicationN
   , countFreeRefs
   , eq
   , literalInt
@@ -81,6 +82,26 @@ spec = describe "FlattenDeepBinds" do
       kontNames flat `shouldSatisfy` (not . null)
       countFreeRefs flat `shouldBe` countFreeRefs e
 
+    -- After uncurrying, a saturated CPS step is one n-ary call
+    -- @w(action, \x -> rest)@; the chain must flatten exactly like its
+    -- curried @w action (\x -> rest)@ ancestor.
+    it "flattens a chain of n-ary worker-call steps" do
+      let e = naryChainExpr 200
+          flat = chainExpr (flattenDeepBinds (chainModuleOf e))
+      kontNames flat `shouldSatisfy` (not . null)
+      countFreeRefs flat `shouldBe` countFreeRefs e
+      maxAbsDepth flat `shouldSatisfy` (< maxAbsDepth e)
+
+    it "preserves the n-ary call shape when rebuilding steps" do
+      -- Every rebuilt step must stay one two-argument call w(a, k):
+      -- splitting it into w(a)(k) denotes a different program
+      -- (Note [n-ary application]).
+      let flat =
+            chainExpr (flattenDeepBinds (chainModuleOf (naryChainExpr 200)))
+          arities = workerCallArities flat
+      length arities `shouldBe` 200
+      arities `shouldSatisfy` all (== 2)
+
     -- A real `do` block interleaves statement-only lines (a `discard`, here a
     -- second head). The chain must flatten as one, not split into sub-threshold
     -- fragments at each interleaved head.
@@ -127,6 +148,16 @@ spec = describe "FlattenDeepBinds" do
 
     it "sequentialises a deep right-nested (=<<) spine" do
       let e = bindFlippedChainExpr 200
+          flat = chainExpr (flattenDeepBinds (chainModuleOf e))
+      tmpNames flat `shouldSatisfy` (not . null)
+      countFreeRefs flat `shouldBe` countFreeRefs e
+      maxSpineDepth flat `shouldSatisfy` (< maxSpineDepth e)
+
+    -- After uncurrying, an applicative spine runs through argument
+    -- positions of n-ary worker calls; its depth must be measured and
+    -- sealed exactly like the curried apply(…)(…) spine.
+    it "sequentialises a deep spine of n-ary calls" do
+      let e = narySpineExpr 200
           flat = chainExpr (flattenDeepBinds (chainModuleOf e))
       tmpNames flat `shouldSatisfy` (not . null)
       countFreeRefs flat `shouldBe` countFreeRefs e
@@ -234,6 +265,30 @@ chainExprWith hd n = go 1
 
 chainExpr' ∷ Int → Exp
 chainExpr' = chainExprWith bindHead
+
+-- | The n-ary head: a saturated CPS combinator's uncurried worker.
+workerHead ∷ Exp
+workerHead = refImported testModule (Name "withInc$w")
+
+{- | Like 'chainExprWith', but each step is one n-ary worker call
+@w(a_i, \x_i -> rest)@ — the shape a saturated two-argument CPS step
+takes after uncurrying.
+-}
+naryChainExpr ∷ Int → Exp
+naryChainExpr n = go 1
+ where
+  go ∷ Int → Exp
+  go i
+    | i > n = eq (refLocal (xName 1)) (refLocal (xName n))
+    | otherwise =
+        applicationN
+          workerHead
+          (action i :| [abstraction (paramNamed (xName i)) (go (i + 1))])
+
+  action ∷ Int → Exp
+  action i
+    | i <= 1 = literalInt 0
+    | otherwise = eq (refLocal (xName (i - 1))) (literalInt (fromIntegral i))
 
 chainModule ∷ Int → UberModule
 chainModule = chainModuleOf . chainExpr'
@@ -371,6 +426,15 @@ bindFlippedChainExpr n = go 1
           (application bindFlippedHead (literalInt (fromIntegral i)))
           (go (i + 1))
 
+{- | A deep spine of n-ary calls, depth running through the first argument
+position: @w(w(… w(x1, 2) …, n-1), n)@.
+-}
+narySpineExpr ∷ Int → Exp
+narySpineExpr n = foldl' step (refLocal (xName 1)) [2 .. n]
+ where
+  step ∷ Exp → Int → Exp
+  step acc i = applicationN workerHead (acc :| [literalInt (fromIntegral i)])
+
 -- | A deep spine, randomly left- or right-nested, always above the threshold.
 genDeepSpineExpr ∷ Gen Exp
 genDeepSpineExpr = do
@@ -388,11 +452,11 @@ genSpineExpr = do
 --------------------------------------------------------------------------------
 -- Measures --------------------------------------------------------------------
 
--- | The longest root-to-leaf path through 'Abs' binders.
+-- | The longest root-to-leaf path through 'AbsN' binders.
 maxAbsDepth ∷ Exp → Int
 maxAbsDepth e = here + foldl' max 0 (maxAbsDepth <$> toListOf subexpressions e)
  where
-  here = case e of Abs {} → 1; _ → 0
+  here = case e of AbsN {} → 1; _ → 0
 
 {- | The deepest contiguous chain of 'App' nodes anywhere in the expression —
 the parse nesting Strategy B flattens (mirrors the pass's own @spineDepth@).
@@ -403,8 +467,17 @@ maxSpineDepth e =
  where
   spineDepthAt ∷ Exp → Int
   spineDepthAt = \case
-    App _ann f a → 1 + max (spineDepthAt f) (spineDepthAt a)
+    AppN _ann f args →
+      1 + foldl' max (spineDepthAt f) (spineDepthAt <$> toList args)
     _ → 0
+
+-- | Argument counts of every call whose head is 'workerHead'.
+workerCallArities ∷ Exp → [Int]
+workerCallArities e =
+  [ length args
+  | AppN _ann hd args ← universeOf subexpressions e
+  , hd == workerHead
+  ]
 
 -- | Occurrences of the @bind@ head reference.
 countBinds ∷ Exp → Natural

@@ -17,134 +17,116 @@ UberModule
         [ FieldName "value0" ]
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Data.Maybe", qnameName = Name "maybe" }, Abs Nothing
-        ( ParamNamed Nothing ( Name "v" ) )
-        ( Abs Nothing
-          ( ParamNamed Nothing ( Name "v1" ) )
-          ( Abs Nothing
-            ( ParamNamed Nothing ( Name "v2" ) )
-            ( IfThenElse Nothing
-              ( Eq Nothing
-                ( LiteralString Nothing "Data.Maybe∷Maybe.Nothing" )
-                ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v2" ) ) ) )
-              )
-              ( Ref Nothing ( Local ( Name "v" ) ) )
-              ( IfThenElse Nothing
-                ( Eq Nothing
-                  ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
-                  ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v2" ) ) ) )
-                )
-                ( AppN Nothing
-                  ( Ref Nothing ( Local ( Name "v1" ) ) )
-                  ( ObjectProp Nothing
-                    ( Ref Nothing ( Local ( Name "v2" ) ) )
-                    ( PropName "value0" ) :| []
-                  )
-                )
-                ( Exception Nothing "No patterns matched" )
+        { qnameModuleName = ModuleName "Data.Maybe", qnameName = Name "maybe$w" }, AbsN Nothing
+        ( ParamNamed Nothing
+          ( Name "v" ) :|
+          [ ParamNamed Nothing ( Name "v1" ), ParamNamed Nothing ( Name "v2" ) ]
+        )
+        ( IfThenElse Nothing
+          ( Eq Nothing
+            ( LiteralString Nothing "Data.Maybe∷Maybe.Nothing" )
+            ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v2" ) ) ) )
+          )
+          ( Ref Nothing ( Local ( Name "v" ) ) )
+          ( IfThenElse Nothing
+            ( Eq Nothing
+              ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
+              ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v2" ) ) ) )
+            )
+            ( AppN Nothing
+              ( Ref Nothing ( Local ( Name "v1" ) ) )
+              ( ObjectProp Nothing
+                ( Ref Nothing ( Local ( Name "v2" ) ) )
+                ( PropName "value0" ) :| []
               )
             )
+            ( Exception Nothing "No patterns matched" )
           )
         )
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.MaybeChainModule.Test", qnameName = Name "identity"
-        }, Abs Nothing
-        ( ParamNamed Nothing ( Name "x$254" ) )
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "x$254" ) :| [] )
         ( Ref Nothing ( Local ( Name "x$254" ) ) )
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Golden.MaybeChainModule.Test", qnameName = Name "map"
-        }, Abs Nothing
-        ( ParamNamed Nothing ( Name "v$251" ) )
-        ( Abs Nothing
-          ( ParamNamed Nothing ( Name "v1$252" ) )
-          ( IfThenElse Nothing
-            ( Eq Nothing
-              ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
-              ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v1$252" ) ) ) )
-            )
-            ( AppN Nothing
-              ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Just" ) ) )
-              ( AppN Nothing
-                ( Ref Nothing ( Local ( Name "v$251" ) ) )
-                ( ObjectProp Nothing
-                  ( Ref Nothing ( Local ( Name "v1$252" ) ) )
-                  ( PropName "value0" ) :| []
-                ) :| []
-              )
-            )
-            ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) )
+        { qnameModuleName = ModuleName "Golden.MaybeChainModule.Test", qnameName = Name "map$w"
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "v$251" ) :| [ ParamNamed Nothing ( Name "v1$252" ) ] )
+        ( IfThenElse Nothing
+          ( Eq Nothing
+            ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
+            ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v1$252" ) ) ) )
           )
+          ( AppN Nothing
+            ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Just" ) ) )
+            ( AppN Nothing
+              ( Ref Nothing ( Local ( Name "v$251" ) ) )
+              ( ObjectProp Nothing
+                ( Ref Nothing ( Local ( Name "v1$252" ) ) )
+                ( PropName "value0" ) :| []
+              ) :| []
+            )
+          )
+          ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) )
         )
       )
     ], uberModuleForeigns = [], uberModuleExports =
     [
       ( Name "chainedNothing", AppN Nothing
-        ( AppN Nothing
-          ( AppN Nothing
-            ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "maybe" ) ) )
-            ( LiteralInt Nothing 0 :| [] )
-          )
-          ( Ref Nothing
-            ( Imported ( ModuleName "Golden.MaybeChainModule.Test" ) ( Name "identity" ) ) :| []
-          )
-        )
-        ( AppN Nothing
-          ( AppN Nothing
-            ( AppN Nothing
-              ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "maybe" ) ) )
-              ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) :| [] )
+        ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "maybe$w" ) ) )
+        ( LiteralInt Nothing 0 :|
+          [ Ref Nothing
+            ( Imported
+              ( ModuleName "Golden.MaybeChainModule.Test" )
+              ( Name "identity" )
+            ), AppN Nothing
+            ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "maybe$w" ) ) )
+            ( Ref Nothing
+              ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) :|
+              [ Ref Nothing
+                ( Imported ( ModuleName "Data.Maybe" ) ( Name "Just" ) ), AppN Nothing
+                ( Ref Nothing
+                  ( Imported ( ModuleName "Golden.MaybeChainModule.Test" ) ( Name "map$w" ) )
+                )
+                ( AbsN Nothing
+                  ( ParamNamed Nothing ( Name "x$1" ) :| [] )
+                  ( Ref Nothing ( Local ( Name "x$1" ) ) ) :|
+                  [ Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) ]
+                )
+              ]
             )
-            ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Just" ) ) :| [] )
-          )
-          ( AppN Nothing
-            ( AppN Nothing
-              ( Ref Nothing
-                ( Imported ( ModuleName "Golden.MaybeChainModule.Test" ) ( Name "map" ) )
-              )
-              ( Abs Nothing
-                ( ParamNamed Nothing ( Name "x$1" ) )
-                ( Ref Nothing ( Local ( Name "x$1" ) ) ) :| []
-              )
-            )
-            ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) :| [] ) :| []
-          ) :| []
+          ]
         )
       ),
       ( Name "chainedJust", AppN Nothing
-        ( AppN Nothing
-          ( AppN Nothing
-            ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "maybe" ) ) )
-            ( LiteralInt Nothing 0 :| [] )
-          )
-          ( Ref Nothing
-            ( Imported ( ModuleName "Golden.MaybeChainModule.Test" ) ( Name "identity" ) ) :| []
-          )
-        )
-        ( AppN Nothing
-          ( AppN Nothing
-            ( AppN Nothing
-              ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "maybe" ) ) )
-              ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) :| [] )
+        ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "maybe$w" ) ) )
+        ( LiteralInt Nothing 0 :|
+          [ Ref Nothing
+            ( Imported
+              ( ModuleName "Golden.MaybeChainModule.Test" )
+              ( Name "identity" )
+            ), AppN Nothing
+            ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "maybe$w" ) ) )
+            ( Ref Nothing
+              ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) :|
+              [ Ref Nothing
+                ( Imported ( ModuleName "Data.Maybe" ) ( Name "Just" ) ), AppN Nothing
+                ( Ref Nothing
+                  ( Imported ( ModuleName "Golden.MaybeChainModule.Test" ) ( Name "map$w" ) )
+                )
+                ( AbsN Nothing
+                  ( ParamNamed Nothing ( Name "x$0" ) :| [] )
+                  ( Ref Nothing ( Local ( Name "x$0" ) ) ) :|
+                  [ AppN Nothing
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Just" ) ) )
+                    ( LiteralInt Nothing 42 :| [] )
+                  ]
+                )
+              ]
             )
-            ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Just" ) ) :| [] )
-          )
-          ( AppN Nothing
-            ( AppN Nothing
-              ( Ref Nothing
-                ( Imported ( ModuleName "Golden.MaybeChainModule.Test" ) ( Name "map" ) )
-              )
-              ( Abs Nothing
-                ( ParamNamed Nothing ( Name "x$0" ) )
-                ( Ref Nothing ( Local ( Name "x$0" ) ) ) :| []
-              )
-            )
-            ( AppN Nothing
-              ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Just" ) ) )
-              ( LiteralInt Nothing 42 :| [] ) :| []
-            ) :| []
-          ) :| []
+          ]
         )
       )
     ]

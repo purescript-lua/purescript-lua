@@ -68,9 +68,13 @@ import Language.PureScript.Backend.IR.Types (WasRewritten (..))
   * 'WellScoped' — every local reference resolves to an enclosing binder;
   * 'UniqueBinders' — within one top-level site no local binder name is
     bound twice (the discard binder @_@ exempt);
-  * 'WellApplied' — no literal lambda is applied to more than one argument
-    in a single call (Note [n-ary application]). Ensured by any pass that
-    introduces multi-argument 'AppN' nodes.
+  * 'WellApplied' — every application of a literal lambda passes exactly
+    as many arguments as the lambda binds parameters, and every 'AbsN'
+    keeps its 'ParamUnused' parameters in a trailing run
+    (Note [n-ary application], Note [n-ary abstraction]). Holds
+    trivially while all nodes are unary; a pass that introduces
+    multi-argument 'AppN' or multi-parameter 'AbsN' nodes must uphold
+    it.
 
 'UniqueBinders' is the global-uniqueness condition (GUC): a local
 reference resolves to its binder unambiguously by name.

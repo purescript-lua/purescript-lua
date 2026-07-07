@@ -39,6 +39,25 @@ spec = describe "Lua.fromUberModule" do
     rendered `shouldSatisfy` Text.isInfixOf "f(a, b, c)"
     rendered `shouldSatisfy` (not . Text.isInfixOf "f(a)(b)(c)")
 
+  it "emits one n-ary Lua function for a multi-parameter AbsN" do
+    rendered ← compileExportedExpr naryAbs
+    -- One function binding both parameters, not a curried chain.
+    rendered `shouldSatisfy` Text.isInfixOf "function(a, b)"
+    rendered `shouldSatisfy` (not . Text.isInfixOf "function(a)")
+
+  it "drops the trailing run of unused AbsN parameters" do
+    rendered ← compileExportedExpr naryAbsTrailingUnused
+    rendered `shouldSatisfy` Text.isInfixOf "function(a)"
+    rendered `shouldSatisfy` (not . Text.isInfixOf "function(a,")
+
+  it "elides the trailing run of Prim.undefined arguments" do
+    rendered ← compileExportedExpr (naryCallOn [ref "a", primUndefined])
+    rendered `shouldSatisfy` Text.isInfixOf "f(a)"
+
+  it "lowers a non-trailing Prim.undefined argument to nil" do
+    rendered ← compileExportedExpr (naryCallOn [primUndefined, ref "b"])
+    rendered `shouldSatisfy` Text.isInfixOf "f(nil, b)"
+
 compileExportedExpr ∷ IR.Exp → IO Text
 compileExportedExpr expr = do
   foreignPath ← Tagged <$> getCurrentDir
@@ -99,13 +118,39 @@ absWithIfBody =
 
 -- @f(a, b, c)@: one call, three arguments, head is a plain reference.
 naryCall ∷ IR.Exp
-naryCall =
-  IR.AppN
+naryCall = naryCallOn [ref "a", ref "b", ref "c"]
+
+naryCallOn ∷ [IR.Exp] → IR.Exp
+naryCallOn = \case
+  arg : args → IR.AppN IR.noAnn (ref "f") (arg :| args)
+  [] → error "naryCallOn: needs at least one argument"
+
+ref ∷ Text → IR.Exp
+ref = IR.Ref IR.noAnn . IR.Local . IR.Name
+
+primUndefined ∷ IR.Exp
+primUndefined =
+  IR.Ref IR.noAnn (IR.Imported (IR.ModuleName "Prim") (IR.Name "undefined"))
+
+-- @function(a, b) return a end@: one function, two parameters.
+naryAbs ∷ IR.Exp
+naryAbs =
+  IR.AbsN
     IR.noAnn
-    (localRef "f")
-    (localRef "a" :| [localRef "b", localRef "c"])
- where
-  localRef = IR.Ref IR.noAnn . IR.Local . IR.Name
+    ( IR.ParamNamed IR.noAnn (IR.Name "a")
+        :| [IR.ParamNamed IR.noAnn (IR.Name "b")]
+    )
+    (ref "a")
+
+-- @function(a) return a end@: the trailing unused parameters are dropped.
+naryAbsTrailingUnused ∷ IR.Exp
+naryAbsTrailingUnused =
+  IR.AbsN
+    IR.noAnn
+    ( IR.ParamNamed IR.noAnn (IR.Name "a")
+        :| [IR.ParamUnused IR.noAnn, IR.ParamUnused IR.noAnn]
+    )
+    (ref "a")
 
 ctorExpr ∷ IR.AlgebraicType → IR.Exp
 ctorExpr algebraicTy =

@@ -17,6 +17,7 @@ import Data.Map qualified as Map
 import Data.MonoidMap (MonoidMap)
 import Data.MonoidMap qualified as MMap
 import Data.Set qualified as Set
+import Data.Traversable (mapAccumM)
 import Language.PureScript.Backend.IR.Inliner qualified as Inliner
 import Language.PureScript.Backend.IR.Names
   ( CtorName (renderCtorName)
@@ -98,7 +99,7 @@ data RawExp ann
   | ArrayIndex ann (RawExp ann) Natural
   | ObjectProp ann (RawExp ann) PropName
   | ObjectUpdate ann (RawExp ann) (NonEmpty (PropName, RawExp ann))
-  | Abs ann (Parameter ann) (RawExp ann)
+  | AbsN ann (NonEmpty (Parameter ann)) (RawExp ann)
   | AppN ann (RawExp ann) (NonEmpty (RawExp ann))
   | Ref ann (Qualified Name)
   | Let ann (NonEmpty (Grouping (ann, Name, RawExp ann))) (RawExp ann)
@@ -118,11 +119,14 @@ exactly as CoreFn produces it.
 Translation and every existing rewrite rule build and match the unary
 singleton through the 'App' pattern synonym below, so they are oblivious
 to genuinely n-ary calls. A multi-argument node is introduced only by a
-pass that can prove the callee consumes every argument (lifting the
-uncurried @*.Uncurried@ wrappers to direct calls). The linter's
-'Language.PureScript.Backend.IR.Linter.OverApplied' invariant rejects the
-one ill-formed shape such a pass must never emit: a literal lambda applied
-to more arguments than it binds.
+pass that can prove the callee consumes every argument in one call:
+today the uncurrying worker/wrapper split
+("Language.PureScript.Backend.IR.Uncurry"), and eventually the lifting
+of the uncurried @*.Uncurried@ wrappers to direct calls. The linter's
+'Language.PureScript.Backend.IR.Linter.lintWellApplied' invariant rejects
+the ill-formed shapes such a pass must never emit: a literal lambda
+applied to a number of arguments different from the number of parameters
+it binds.
 -}
 
 {- | The unary application @f a@ — the singleton 'AppN'. As a constructor
@@ -132,6 +136,46 @@ later alternative. Every unary rule keeps using it unchanged.
 -}
 pattern App ∷ ann → RawExp ann → RawExp ann → RawExp ann
 pattern App ann f a = AppN ann f (a :| [])
+
+{- Note [n-ary abstraction]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The definition-side counterpart of Note [n-ary application].
+'AbsN (p₁ :| [p₂, …, pₙ]) body' is a single Lua function
+@function(p₁, p₂, …, pₙ)@. The parameter list is not a flattened lambda
+chain: 'AbsN [p, q] b' (one function of two parameters, both bound at
+one call) and 'AbsN [p] (AbsN [q] b)' (a function returning a closure)
+denote different programs, for the same reason as on the application
+side: Lua fills missing arguments with nil instead of currying.
+Currying therefore stays expressed by nesting, exactly as CoreFn
+produces it.
+
+Translation and every existing rewrite rule build and match the unary
+singleton through the 'Abs' pattern synonym below. A multi-parameter
+node is introduced only by a pass that guarantees every application of
+it is saturated (the worker half of the uncurrying worker/wrapper
+split). Two well-formedness conditions accompany the node, both checked
+by 'Language.PureScript.Backend.IR.Linter.lintWellApplied':
+
+  * a literal 'AbsN' head is applied to exactly as many arguments as it
+    binds parameters (see Note [n-ary application]);
+
+  * 'ParamUnused' occurs only as a trailing run of the parameter list.
+    The Lua backend must drop unused parameters (see
+    Note [Nullary functions and Prim.undefined] in
+    "Language.PureScript.Backend.Lua"), and dropping a non-trailing one
+    would shift every parameter after it. Producers uphold this by
+    construction; dead-code elimination blanks only a dead /suffix/ of
+    an 'AbsN' parameter list.
+-}
+
+{- | The unary abstraction @λp. body@ — the singleton 'AbsN'. As a
+constructor it builds the one-parameter function; as a pattern it
+matches exactly the one-parameter functions, leaving genuinely n-ary
+nodes to fall through to a later alternative. Every unary rule keeps
+using it unchanged.
+-}
+pattern Abs ∷ ann → Parameter ann → RawExp ann → RawExp ann
+pattern Abs ann param body = AbsN ann (param :| []) body
 
 {- Note [Sequential scoping of Let bindings]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -228,7 +272,7 @@ getAnn = \case
   ArrayIndex ann _ _ → ann
   ObjectProp ann _ _ → ann
   ObjectUpdate ann _ _ → ann
-  Abs ann _ _ → ann
+  AbsN ann _ _ → ann
   AppN ann _ _ → ann
   Ref ann _ → ann
   Let ann _ _ → ann
@@ -258,7 +302,7 @@ setAnn ann = \case
   ArrayIndex _ e i → ArrayIndex ann e i
   ObjectProp _ e prop → ObjectProp ann e prop
   ObjectUpdate _ e patches → ObjectUpdate ann e patches
-  Abs _ param body → Abs ann param body
+  AbsN _ params body → AbsN ann params body
   AppN _ f args → AppN ann f args
   Ref _ qname → Ref ann qname
   Let _ binds body → Let ann binds body
@@ -326,6 +370,9 @@ ctor = Ctor noAnn
 
 abstraction ∷ Parameter Ann → Exp → Exp
 abstraction = Abs noAnn
+
+abstractionN ∷ NonEmpty (Parameter Ann) → Exp → Exp
+abstractionN = AbsN noAnn
 
 identity ∷ Exp
 identity =
@@ -449,8 +496,8 @@ subexpressions go = \case
     ObjectUpdate ann <$> go a <*> traverse (traverse go) ps
   AppN ann f args →
     AppN ann <$> go f <*> traverse go args
-  Abs ann arg a →
-    Abs ann arg <$> go a
+  AbsN ann params a →
+    AbsN ann params <$> go a
   Let ann bs body →
     Let ann
       <$> traverse (traverse (\(a, n, expr) → (a,n,) <$> go expr)) bs
@@ -561,11 +608,12 @@ countFreeRefs = fmap getSum . MMap.toMap . countFreeRefs' mempty
         Local name
           | Set.member name bound → mempty
         _ → MMap.singleton qname (Sum 1)
-    Abs _ann param body →
-      case param of
-        ParamNamed _paramAnn name →
-          countFreeRefs' (Set.insert name bound) body
-        ParamUnused _paramAnn → countFreeRefs' bound body
+    AbsN _ann params body →
+      countFreeRefs' (foldl' bindParam bound params) body
+     where
+      bindParam names = \case
+        ParamNamed _paramAnn name → Set.insert name names
+        ParamUnused _paramAnn → names
     -- See Note [Sequential scoping of Let bindings]
     Let _ann binds body → fold (countsInBody : countsInBinds)
      where
@@ -633,19 +681,16 @@ alphaEq = go 0 Map.empty Map.empty
           (Just levelL, Just levelR) → levelL == levelR
           (Nothing, Nothing) → nameL == nameR
           _ → False
-    (Abs annL paramL bodyL, Abs annR paramR bodyR) →
-      annL == annR && case (paramL, paramR) of
-        (ParamUnused paL, ParamUnused paR) →
-          paL == paR && go lvl scopeL scopeR bodyL bodyR
-        (ParamNamed paL nameL, ParamNamed paR nameR) →
-          paL == paR
-            && go
-              (lvl + 1)
-              (bindLevel nameL lvl scopeL)
-              (bindLevel nameR lvl scopeR)
-              bodyL
-              bodyR
-        _ → False
+    (AbsN annL paramsL bodyL, AbsN annR paramsR bodyR) →
+      annL == annR
+        && goAbs
+          lvl
+          scopeL
+          scopeR
+          (toList paramsL)
+          (toList paramsR)
+          bodyL
+          bodyR
     (Let annL bindsL bodyL, Let annR bindsR bodyR) →
       annL == annR
         && goLet lvl scopeL scopeR (toList bindsL) (toList bindsR) bodyL bodyR
@@ -684,6 +729,35 @@ alphaEq = go 0 Map.empty Map.empty
     -- Imported/mismatched-qualifier refs, terminals and pairs of
     -- different constructors:
     _ → exprL == exprR
+
+  -- Parameters are compared positionally, binding levels in lockstep;
+  -- a length mismatch falls through to False.
+  goAbs
+    ∷ Eq ann
+    ⇒ Natural
+    → Map Name Natural
+    → Map Name Natural
+    → [Parameter ann]
+    → [Parameter ann]
+    → RawExp ann
+    → RawExp ann
+    → Bool
+  goAbs lvl scopeL scopeR paramsL paramsR bodyL bodyR =
+    case (paramsL, paramsR) of
+      ([], []) → go lvl scopeL scopeR bodyL bodyR
+      (ParamUnused paL : psL, ParamUnused paR : psR) →
+        paL == paR && goAbs lvl scopeL scopeR psL psR bodyL bodyR
+      (ParamNamed paL nameL : psL, ParamNamed paR nameR : psR) →
+        paL == paR
+          && goAbs
+            (lvl + 1)
+            (bindLevel nameL lvl scopeL)
+            (bindLevel nameR lvl scopeR)
+            psL
+            psR
+            bodyL
+            bodyR
+      _ → False
 
   goLet
     ∷ Eq ann
@@ -778,13 +852,15 @@ freshenBinders = go Map.empty
       , Just renamed ← Map.lookup name renames →
           pure (Ref ann (Local renamed))
       | otherwise → pure r
-    Abs ann param body →
-      case param of
-        ParamUnused _paramAnn → Abs ann param <$> go renames body
+    AbsN ann params body → do
+      (renames', params') ← mapAccumM freshenParam renames params
+      AbsN ann params' <$> go renames' body
+     where
+      freshenParam rs = \case
+        p@(ParamUnused _paramAnn) → pure (rs, p)
         ParamNamed paramAnn name → do
           name' ← freshNameFor name
-          Abs ann (ParamNamed paramAnn name')
-            <$> go (Map.insert name name' renames) body
+          pure (Map.insert name name' rs, ParamNamed paramAnn name')
     Let ann binds body → do
       -- Under unique binders no Let name can be referenced before it is
       -- bound, so all the groupings can enter the rename map up front.

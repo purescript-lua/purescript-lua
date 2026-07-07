@@ -1,0 +1,18 @@
+spec: curried_step
+runtime: LuaJIT 2.1.1741730670
+workload: n=100000 reps=2 result=5000050000
+aborts (distinct site -- reason):
+  Bench.CurriedStep.lua:10 -- NYI: bytecode FNEW
+  Bench.CurriedStep.lua:3 -- NYI: bytecode FNEW
+  Bench.CurriedStep.lua:7 -- NYI: bytecode FNEW
+bytecode end state (J*=compiled, I*=blacklisted):
+  Bench.CurriedStep.lua:10 IFUNCF
+  Bench.CurriedStep.lua:10 JFUNCF
+  Bench.CurriedStep.lua:15 IFUNCF
+  Bench.CurriedStep.lua:3 IFUNCF
+  Bench.CurriedStep.lua:3 JFUNCF
+  Bench.CurriedStep.lua:7 IFUNCF
+  Bench.CurriedStep.lua:7 JFUNCF
+  curried_step.lua:12 JFORI
+  curried_step.lua:12 JFORL
+counts: aborts=3 compiled=5 blacklisted=4

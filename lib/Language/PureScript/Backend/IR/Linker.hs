@@ -127,13 +127,14 @@ qualifyTopRefs moduleName = go
       Ref ann (Local refName)
         | isTopLevel refName →
             Ref ann (Imported moduleName refName)
-      Abs ann parameter body →
-        Abs ann parameter (go topNames' body)
+      AbsN ann parameters body →
+        AbsN ann parameters (go topNames' body)
        where
         topNames' ∷ Set Name =
-          case parameter of
-            ParamNamed _ann argName → Set.delete argName topNames
-            ParamUnused _ann → topNames
+          foldl' shadowParam topNames parameters
+        shadowParam names = \case
+          ParamNamed _ann argName → Set.delete argName names
+          ParamUnused _ann → names
       -- See Note [Sequential scoping of Let bindings]
       Let ann groupings body →
         Let ann groupings' (go topNamesAfterBinds body)

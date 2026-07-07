@@ -3,6 +3,7 @@ module Language.PureScript.Backend.IR.Optimizer where
 import Control.Monad.Writer.CPS (WriterT, runWriterT, tell)
 import Data.Foldable (foldrM)
 import Data.List qualified as List
+import Data.List.NonEmpty qualified as NE
 import Data.Map qualified as Map
 import Data.Set qualified as Set
 import Language.PureScript.Backend.IR.DCE (eliminateDeadCode)
@@ -42,13 +43,16 @@ import Language.PureScript.Backend.IR.Types
   , isNonRecursiveLiteral
   , lets
   , literalBool
+  , paramName
   , rewriteExpBottomUpM
   , setAnn
   , substituteCopyM
   , substituteMoveM
   , thenRewrite
+  , pattern Abs
   , pattern App
   )
+import Language.PureScript.Backend.IR.Uncurry (uncurryWorkerWrapper)
 import Language.PureScript.Backend.IR.Uniquify (uniquifyNames)
 
 optimizedUberModule ∷ UberModule → UberModule
@@ -79,6 +83,16 @@ optimizerPipeline neverNames =
     -- unblock even more optimizations, e.g. inline foreign bindings.
     RunPass mergeForeignsPass
   , RunFixpoint "optimize+dce-post-merge" (optimizePass :| [dcePass])
+  , -- Split curried bindings into n-ary workers and curried wrappers
+    -- and rewrite the saturated call sites to direct worker calls
+    -- (issue #24). Runs after the post-merge fixpoint, so manifest
+    -- arities are measured once inlining has settled. See
+    -- Language.PureScript.Backend.IR.Uncurry.
+    RunPass uncurryPass
+  , -- The post-uncurry fixpoint dead-code-eliminates wrappers with no
+    -- remaining references and reduces the n-ary redexes that pasting
+    -- a single-use worker into its one call site produces.
+    RunFixpoint "optimize+dce-post-uncurry" (optimizePass :| [dcePass])
   , -- Float a Let-bound value down into the single IfThenElse branch that
     -- uses it (issue #136). Runs after DCE (a dead binding is simply gone,
     -- never worth sinking) and outside any fixpoint: it preserves every
@@ -129,6 +143,13 @@ optimizerPipeline neverNames =
       , passEnsures = guc
       }
   mergeForeignsPass = gucPass "mergeForeigns" mergeForeignsIntoBindings
+  uncurryPass =
+    Pass
+      { passName = "uncurry"
+      , passRun = pure . uncurryWorkerWrapper neverNames
+      , passRequires = guc
+      , passEnsures = guc
+      }
   floatInPass = gucPass "float-in" floatIn
   magicDoPass =
     Pass
@@ -162,8 +183,12 @@ optimizerPipeline neverNames =
   wellScoped ∷ Set Invariant
   wellScoped = Set.singleton WellScoped
 
+  -- 'WellApplied' rides along with GUC at every boundary after the
+  -- entry pass: it holds trivially while all nodes are unary, and once
+  -- a pass introduces n-ary nodes, the pass that breaks their
+  -- well-formedness is blamed at its own boundary.
   guc ∷ Set Invariant
-  guc = Set.fromList [WellScoped, UniqueBinders]
+  guc = Set.fromList [WellScoped, UniqueBinders, WellApplied]
 
 mergeForeignsIntoBindings ∷ UberModule → UberModule
 mergeForeignsIntoBindings uberModule@UberModule {..} =
@@ -349,7 +374,6 @@ optimizedExpressionM =
     ( constantFolding
         `thenRewrite` reduceObjectProp
         `thenRewrite` betaReduce
-        `thenRewrite` betaReduceUnusedParams
         `thenRewrite` removeUnreachableThenBranch
         `thenRewrite` removeUnreachableElseBranch
         `thenRewrite` removeIfWithEqualBranches
@@ -432,20 +456,54 @@ expression. Because the guards match, it declines too, so the pair reaches a
 fixpoint in one bottom-up pass instead of oscillating.
 -}
 
--- (λx. M) N ===> M[x := N]
--- See Note [IR is assumed well-typed]
+{- | (λx₁ … xₙ. M) N₁ … Nₙ ===> M[x₁ := N₁, …, xₙ := Nₙ]
+
+Fires only at exact arity: any other argument count on a literal lambda
+head is ill-formed ('WellApplied', Note [n-ary abstraction]). The unary
+redex is the singleton case. Each pair reduces by the shared guard: the
+argument is substituted when trivial or used at most once, and bound by
+a 'Let' otherwise; an argument at a 'ParamUnused' position is dropped
+with its evaluation — the same call DCE makes when it drops an unused
+binding unconditionally. See Note [IR is assumed well-typed].
+-}
 betaReduce ∷ RewriteRuleM SupplyM Ann
 betaReduce = \case
-  App _ (Abs _ (ParamNamed paramAnn param) body) r
-    -- See Note [Beta reduction and local inlining share an inlining guard]
-    | isInlinableExpr r || countFreeRef (Local param) body <= 1 →
-        -- The λ is consumed by the rewrite, so the first inserted occurrence
-        -- of the argument may keep its binder names ('substituteMoveM').
-        Just <$> substituteMoveM (Local param) r body
-    | otherwise →
-        -- Bind the argument once; its evaluation now happens a single time.
-        pure . Just $ lets (Standalone (paramAnn, param, r) :| []) body
+  AppN _ (AbsN _ params body) args
+    | length args == length params
+    , -- Under GUC the parameters are pairwise-distinct binders. The rule
+      -- is also exercised standalone on non-GUC input, where a repeated
+      -- parameter name would let the first substitution steal the
+      -- occurrences belonging to the last same-named parameter (the one
+      -- Lua binds), so it declines rather than mis-substitute.
+      distinctParamNames params → do
+        (body', letBinds) ←
+          foldlM reduceOne (body, []) (NE.zip params args)
+        pure . Just $ case nonEmpty (reverse letBinds) of
+          Nothing → body'
+          Just binds → lets (Standalone <$> binds) body'
   _ → pure Nothing
+ where
+  reduceOne
+    ∷ (Exp, [(Ann, Name, Exp)])
+    → (Parameter Ann, Exp)
+    → SupplyM (Exp, [(Ann, Name, Exp)])
+  reduceOne (body, letBinds) (param, arg) = case param of
+    ParamUnused _ann → pure (body, letBinds)
+    ParamNamed paramAnn name
+      -- See Note [Beta reduction and local inlining share an inlining guard]
+      | isInlinableExpr arg || countFreeRef (Local name) body <= 1 →
+          -- The λ is consumed by the rewrite, so the first inserted
+          -- occurrence of the argument may keep its binder names
+          -- ('substituteMoveM').
+          (,letBinds) <$> substituteMoveM (Local name) arg body
+      | otherwise →
+          -- Bind the argument once; its evaluation happens a single time.
+          pure (body, (paramAnn, name, arg) : letBinds)
+
+  distinctParamNames ∷ NonEmpty (Parameter Ann) → Bool
+  distinctParamNames params = length names == length (ordNub names)
+   where
+    names = mapMaybe paramName (toList params)
 
 {- Note [Eta reduction is unsound]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -489,13 +547,6 @@ Reducing only special cases of M does not help either:
 
 Hence no eta reduction is performed at all.
 -}
-
-betaReduceUnusedParams ∷ Applicative m ⇒ RewriteRuleM m Ann
-betaReduceUnusedParams =
-  pure . \case
-    App _ (Abs _ (ParamUnused _) body) _arg →
-      Just body
-    _ → Nothing
 
 removeIfWithEqualBranches ∷ Applicative m ⇒ RewriteRuleM m Ann
 removeIfWithEqualBranches e =

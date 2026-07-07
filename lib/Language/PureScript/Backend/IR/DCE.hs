@@ -156,11 +156,16 @@ eliminateDeadCode uber@UberModule {..} =
     first deannotateExp . rewriteExpBottomUp \case
       -- Under GUC a dead binder is unreferenced by definition, so
       -- blanking its name touches no reference elsewhere (the hazard
-      -- behind issue #56). Requiring 'ParamNamed' keeps the rule
-      -- precise: an already-blank parameter is left alone.
-      Abs ann (ParamNamed pann@(paramId, _) _name) b
-        | not (paramId `member` reachableIds) →
-            Just (Abs ann (ParamUnused pann) b)
+      -- behind issue #56). Only a dead /suffix/ of the parameter list
+      -- is blanked: 'ParamUnused' must stay a trailing run
+      -- (Note [n-ary abstraction]), so a dead parameter followed by a
+      -- live one keeps its name. Firing only when a name was actually
+      -- blanked keeps the rule precise: an already-blank parameter is
+      -- left alone.
+      AbsN ann params b
+        | let params' = blankDeadSuffix params
+        , params' /= params →
+            Just (AbsN ann params' b)
       Let ann binds body
         -- Under GUC dropping a dead binder touches no reference
         -- elsewhere in the Let (later grouping RHSs or the body): a
@@ -190,6 +195,26 @@ eliminateDeadCode uber@UberModule {..} =
 
     members ∷ [Grouping ((Id, Ann), Name, AExp)] → Int
     members = length . (listGrouping =<<)
+
+    -- Right-to-left: blank dead named parameters until the first
+    -- parameter that must stay named (a live one, or an interior one
+    -- once the suffix is broken).
+    blankDeadSuffix
+      ∷ NonEmpty (Parameter (Id, Ann))
+      → NonEmpty (Parameter (Id, Ann))
+    blankDeadSuffix = NE.fromList . snd . foldr step (True, []) . toList
+     where
+      step
+        ∷ Parameter (Id, Ann)
+        → (Bool, [Parameter (Id, Ann)])
+        → (Bool, [Parameter (Id, Ann)])
+      step p (inSuffix, ps) = case p of
+        ParamNamed pann@(paramId, _ann) _name
+          | inSuffix && not (paramId `member` reachableIds) →
+              (True, ParamUnused pann : ps)
+        ParamUnused _pann
+          | inSuffix → (True, p : ps)
+        _ → (False, p : ps)
 
   reachableIds ∷ Set Id =
     Set.fromList
@@ -297,13 +322,17 @@ eliminateDeadCode uber@UberModule {..} =
   adjacencyListForExpr scope expr =
     mkNode (nodeId expr) (expressionDependsOnIds scope expr)
       `DL.cons` case expr of
-        Abs _ann param b →
-          case param of
-            ParamUnused _ann' → adjacencyListForExpr scope b
-            ParamNamed (paramId, _ann) name →
-              DL.cons
-                (mkNode paramId [])
-                (adjacencyListForExpr (addLocalToScope paramId name scope) b)
+        AbsN _ann params b →
+          paramNodes <> adjacencyListForExpr scopeWithParams b
+         where
+          (scopeWithParams, paramNodes) =
+            foldl' bindParam (scope, DL.empty) (toList params)
+          bindParam (sc, nodes) = \case
+            ParamUnused _ann' → (sc, nodes)
+            ParamNamed (paramId, _ann') name →
+              ( addLocalToScope paramId name sc
+              , DL.snoc nodes (mkNode paramId [])
+              )
         Let _ann groupings body →
           adjacencyListForExpr bodyScope body <> groupingsAdjacency
          where

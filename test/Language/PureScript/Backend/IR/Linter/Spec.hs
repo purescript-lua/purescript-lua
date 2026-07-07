@@ -21,12 +21,14 @@ import Language.PureScript.Backend.IR.Types
   ( Exp
   , Grouping (..)
   , abstraction
+  , abstractionN
   , application
   , applicationN
   , lets
   , literalInt
   , noAnn
   , paramNamed
+  , paramUnused
   , refLocal
   )
 import Language.PureScript.Names (runtimeLazyName)
@@ -144,7 +146,12 @@ spec = describe "IR Linter" do
 
   describe "WellApplied" do
     let x = Name "x"
+        y = Name "y"
         lam = abstraction (paramNamed x) (refLocal x)
+        lam2 =
+          abstractionN
+            (paramNamed x :| [paramNamed y])
+            (refLocal x)
         a = literalInt 1
         b = literalInt 2
         c = literalInt 3
@@ -157,21 +164,29 @@ spec = describe "IR Linter" do
         (inBinding (applicationN (refLocal (Name "f")) (a :| [b, c])))
         `shouldBe` []
 
+    it "accepts an exactly-saturated application of an n-ary lambda" do
+      lintWellApplied (inBinding (applicationN lam2 (a :| [b])))
+        `shouldBe` []
+
     it "flags a lambda applied to more than one argument in one call" do
       lintWellApplied (inBinding (applicationN lam (a :| [b])))
-        `shouldBe` [OverApplied (InBinding itQName) 2]
+        `shouldBe` [LambdaArityMismatch (InBinding itQName) 1 2]
+
+    it "flags an n-ary lambda applied to too few arguments in one call" do
+      -- Lua fills the missing parameter with nil instead of currying.
+      lintWellApplied (inBinding (application lam2 a))
+        `shouldBe` [LambdaArityMismatch (InBinding itQName) 2 1]
 
     it "flags a curried lambda applied to several arguments in one call" do
       -- \x → \y → x compiles to nested one-parameter Lua functions, so a
       -- single call passing two arguments to the outer one drops the
       -- second: currying must stay expressed by nesting, not a flat list.
-      let y = Name "y"
-          curried =
+      let curried =
             abstraction
               (paramNamed x)
               (abstraction (paramNamed y) (refLocal x))
       lintWellApplied (inBinding (applicationN curried (a :| [b])))
-        `shouldBe` [OverApplied (InBinding itQName) 2]
+        `shouldBe` [LambdaArityMismatch (InBinding itQName) 1 2]
 
     it "descends into call arguments to find nested over-applications" do
       -- A well-formed outer call whose second argument is itself an
@@ -179,4 +194,21 @@ spec = describe "IR Linter" do
       let nested = applicationN lam (a :| [b])
           outer = applicationN (refLocal (Name "g")) (a :| [nested])
       lintWellApplied (inBinding outer)
-        `shouldBe` [OverApplied (InBinding itQName) 2]
+        `shouldBe` [LambdaArityMismatch (InBinding itQName) 1 2]
+
+    it "accepts a trailing run of unused parameters" do
+      lintWellApplied
+        ( inBinding
+            ( abstractionN
+                (paramNamed x :| [paramUnused, paramUnused])
+                (refLocal x)
+            )
+        )
+        `shouldBe` []
+
+    it "flags a named parameter after an unused one" do
+      lintWellApplied
+        ( inBinding
+            (abstractionN (paramUnused :| [paramNamed x]) (refLocal x))
+        )
+        `shouldBe` [NonTrailingUnusedParam (InBinding itQName)]
