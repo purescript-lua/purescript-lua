@@ -17,6 +17,7 @@ import Language.PureScript.Backend.IR.Types
   , RewriteRule
   , WasRewritten (..)
   , abstraction
+  , abstractionN
   , alphaEq
   , application
   , applicationN
@@ -87,6 +88,19 @@ spec = describe "Types" do
             lets (Standalone (noAnn, x, refLocal x) :| []) (literalInt 0)
       countFreeRef (Local x) e === 1
 
+  test "countFreeRefs: every parameter of an n-ary lambda binds" do
+    let x = Name "x"
+        y = Name "y"
+        z = Name "z"
+        e =
+          abstractionN
+            (paramNamed x :| [paramUnused, paramNamed y])
+            ( application
+                (application (refLocal x) (refLocal y))
+                (refLocal z)
+            )
+    countFreeRefs e === Map.fromList [(Local z, 1)]
+
   describe "alphaEq" do
     let x = Name "x"
         y = Name "y"
@@ -148,6 +162,30 @@ spec = describe "Types" do
         (applicationN f (refLocal x :| [refLocal y]))
         (applicationN f (refLocal x :| [refLocal y]))
         === True
+
+    -- A flat parameter list is one Lua function, not a lambda chain, so
+    -- alphaEq must compare arity and bind parameters positionally.
+    test "distinguishes an n-ary lambda from the curried chain" do
+      alphaEq
+        (abstractionN (paramNamed x :| [paramNamed y]) (refLocal x))
+        (abstraction (paramNamed x) (abstraction (paramNamed y) (refLocal x)))
+        === False
+
+    test "identifies n-ary lambdas differing only in binder names" do
+      let a = Name "a"
+          b = Name "b"
+      alphaEq
+        (abstractionN (paramNamed x :| [paramNamed y]) (refLocal y))
+        (abstractionN (paramNamed a :| [paramNamed b]) (refLocal b))
+        === True
+
+    test "distinguishes n-ary lambdas bound to different parameters" do
+      let a = Name "a"
+          b = Name "b"
+      alphaEq
+        (abstractionN (paramNamed x :| [paramNamed y]) (refLocal y))
+        (abstractionN (paramNamed a :| [paramNamed b]) (refLocal a))
+        === False
 
     -- See Note [Sequential scoping of Let bindings]: a Standalone RHS
     -- does not see its own binder, so both references below are free

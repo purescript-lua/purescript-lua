@@ -3,10 +3,10 @@ UberModule
     [ Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.NameShadowing.Test", qnameName = Name "f"
-        }, Abs Nothing
-        ( ParamNamed Nothing ( Name "v" ) )
-        ( Abs Nothing
-          ( ParamNamed Nothing ( Name "v1" ) )
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "v" ) :| [] )
+        ( AbsN Nothing
+          ( ParamNamed Nothing ( Name "v1" ) :| [] )
           ( IfThenElse Nothing
             ( Eq Nothing ( LiteralInt Nothing 1 ) ( Ref Nothing ( Local ( Name "v" ) ) ) )
             ( LiteralInt Nothing 1 )
@@ -20,10 +20,10 @@ UberModule
       )
     ], uberModuleForeigns = [], uberModuleExports =
     [
-      ( Name "b", Abs Nothing
-        ( ParamNamed Nothing ( Name "x$0" ) )
-        ( Abs Nothing
-          ( ParamNamed Nothing ( Name "x1$1" ) )
+      ( Name "b", AbsN Nothing
+        ( ParamNamed Nothing ( Name "x$0" ) :| [] )
+        ( AbsN Nothing
+          ( ParamNamed Nothing ( Name "x1$1" ) :| [] )
           ( AppN Nothing
             ( AppN Nothing
               ( Ref Nothing ( Imported ( ModuleName "Golden.NameShadowing.Test" ) ( Name "f" ) ) )
@@ -49,10 +49,10 @@ UberModule
           )
         )
       ),
-      ( Name "c", Abs Nothing
-        ( ParamNamed Nothing ( Name "x$3" ) )
-        ( Abs Nothing
-          ( ParamNamed Nothing ( Name "x1$4" ) )
+      ( Name "c", AbsN Nothing
+        ( ParamNamed Nothing ( Name "x$3" ) :| [] )
+        ( AbsN Nothing
+          ( ParamNamed Nothing ( Name "x1$4" ) :| [] )
           ( AppN Nothing
             ( AppN Nothing
               ( Ref Nothing ( Imported ( ModuleName "Golden.NameShadowing.Test" ) ( Name "f" ) ) )

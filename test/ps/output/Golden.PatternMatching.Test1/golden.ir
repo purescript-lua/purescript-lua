@@ -24,8 +24,8 @@ UberModule
         ( CtorName "Not" )
         [ FieldName "value0" ]
       ),
-      ( Name "pat", Abs Nothing
-        ( ParamNamed Nothing ( Name "e$2" ) )
+      ( Name "pat", AbsN Nothing
+        ( ParamNamed Nothing ( Name "e$2" ) :| [] )
         ( IfThenElse Nothing
           ( Eq Nothing
             ( LiteralString Nothing "Golden.PatternMatching.Test1∷E.Not" )
@@ -147,12 +147,12 @@ UberModule
         ( CtorName "T" )
         [ FieldName "value0", FieldName "value1" ]
       ),
-      ( Name "fst", Abs Nothing
-        ( ParamNamed Nothing ( Name "v$0" ) )
+      ( Name "fst", AbsN Nothing
+        ( ParamNamed Nothing ( Name "v$0" ) :| [] )
         ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "v$0" ) ) ) ( PropName "value0" ) )
       ),
-      ( Name "snd", Abs Nothing
-        ( ParamNamed Nothing ( Name "v$3" ) )
+      ( Name "snd", AbsN Nothing
+        ( ParamNamed Nothing ( Name "v$3" ) :| [] )
         ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "v$3" ) ) ) ( PropName "value1" ) )
       )
     ]

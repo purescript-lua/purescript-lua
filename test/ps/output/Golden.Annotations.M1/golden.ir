@@ -9,8 +9,8 @@ UberModule
       )
     ], uberModuleForeigns = [], uberModuleExports =
     [
-      ( Name "inlineMe", Abs ( Just Always )
-        ( ParamNamed Nothing ( Name "v$0" ) )
+      ( Name "inlineMe", AbsN ( Just Always )
+        ( ParamNamed Nothing ( Name "v$0" ) :| [] )
         ( IfThenElse Nothing
           ( Eq Nothing ( LiteralInt Nothing 1 ) ( Ref Nothing ( Local ( Name "v$0" ) ) ) )
           ( LiteralInt Nothing 2 )

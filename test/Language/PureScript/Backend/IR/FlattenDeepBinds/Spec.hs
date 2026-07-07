@@ -388,11 +388,11 @@ genSpineExpr = do
 --------------------------------------------------------------------------------
 -- Measures --------------------------------------------------------------------
 
--- | The longest root-to-leaf path through 'Abs' binders.
+-- | The longest root-to-leaf path through 'AbsN' binders.
 maxAbsDepth ∷ Exp → Int
 maxAbsDepth e = here + foldl' max 0 (maxAbsDepth <$> toListOf subexpressions e)
  where
-  here = case e of Abs {} → 1; _ → 0
+  here = case e of AbsN {} → 1; _ → 0
 
 {- | The deepest contiguous chain of 'App' nodes anywhere in the expression —
 the parse nesting Strategy B flattens (mirrors the pass's own @spineDepth@).

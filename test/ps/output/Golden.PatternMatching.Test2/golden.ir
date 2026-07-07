@@ -4,8 +4,8 @@ UberModule
       (
         ( QName
           { qnameModuleName = ModuleName "Golden.PatternMatching.Test2", qnameName = Name "bat"
-          }, Abs Nothing
-          ( ParamNamed Nothing ( Name "n" ) )
+          }, AbsN Nothing
+          ( ParamNamed Nothing ( Name "n" ) :| [] )
           ( IfThenElse Nothing
             ( Eq Nothing
               ( LiteralString Nothing "Golden.PatternMatching.Test1∷N.Zero" )
@@ -56,8 +56,8 @@ UberModule
         ( CtorName "Mul" )
         [ FieldName "value0", FieldName "value1" ]
       ),
-      ( Name "pat", Abs Nothing
-        ( ParamNamed Nothing ( Name "e$0" ) )
+      ( Name "pat", AbsN Nothing
+        ( ParamNamed Nothing ( Name "e$0" ) :| [] )
         ( IfThenElse Nothing
           ( Eq Nothing
             ( LiteralString Nothing "Golden.PatternMatching.Test2∷N.Add" )

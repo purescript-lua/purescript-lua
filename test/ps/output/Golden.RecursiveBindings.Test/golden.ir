@@ -4,8 +4,8 @@ UberModule
       ( Name "letRec", Let Nothing
         ( RecursiveGroup
           (
-            ( Nothing, Name "yes$0", Abs Nothing
-              ( ParamNamed Nothing ( Name "v$2" ) )
+            ( Nothing, Name "yes$0", AbsN Nothing
+              ( ParamNamed Nothing ( Name "v$2" ) :| [] )
               ( IfThenElse Nothing
                 ( Ref Nothing ( Local ( Name "v$2" ) ) )
                 ( AppN Nothing
@@ -25,8 +25,8 @@ UberModule
               )
             ) :|
             [
-              ( Nothing, Name "no$1", Abs Nothing
-                ( ParamNamed Nothing ( Name "v0$3" ) )
+              ( Nothing, Name "no$1", AbsN Nothing
+                ( ParamNamed Nothing ( Name "v0$3" ) :| [] )
                 ( IfThenElse Nothing
                   ( Ref Nothing ( Local ( Name "v0$3" ) ) )
                   ( AppN Nothing
@@ -56,8 +56,8 @@ UberModule
       ( Name "whereRec", Let Nothing
         ( RecursiveGroup
           (
-            ( Nothing, Name "yes$14", Abs Nothing
-              ( ParamNamed Nothing ( Name "v$16" ) )
+            ( Nothing, Name "yes$14", AbsN Nothing
+              ( ParamNamed Nothing ( Name "v$16" ) :| [] )
               ( IfThenElse Nothing
                 ( Ref Nothing ( Local ( Name "v$16" ) ) )
                 ( AppN Nothing
@@ -77,8 +77,8 @@ UberModule
               )
             ) :|
             [
-              ( Nothing, Name "no$15", Abs Nothing
-                ( ParamNamed Nothing ( Name "v0$17" ) )
+              ( Nothing, Name "no$15", AbsN Nothing
+                ( ParamNamed Nothing ( Name "v0$17" ) :| [] )
                 ( IfThenElse Nothing
                   ( Ref Nothing ( Local ( Name "v0$17" ) ) )
                   ( AppN Nothing
@@ -110,14 +110,16 @@ UberModule
           ( Nothing, Name "z$4", LiteralInt Nothing 1 ) :|
           [ RecursiveGroup
             (
-              ( Nothing, Name "b$5", Abs Nothing ( ParamUnused Nothing )
+              ( Nothing, Name "b$5", AbsN Nothing
+                ( ParamUnused Nothing :| [] )
                 ( AppN Nothing
                   ( Ref Nothing ( Local ( Name "a$6" ) ) )
                   ( Ref Nothing ( Local ( Name "z$4" ) ) :| [] )
                 )
               ) :|
               [
-                ( Nothing, Name "a$6", Abs Nothing ( ParamUnused Nothing )
+                ( Nothing, Name "a$6", AbsN Nothing
+                  ( ParamUnused Nothing :| [] )
                   ( AppN Nothing
                     ( Ref Nothing ( Local ( Name "b$5" ) ) )
                     ( Ref Nothing ( Local ( Name "z$4" ) ) :| [] )
@@ -125,9 +127,10 @@ UberModule
                 )
               ]
             ), Standalone
-            ( Nothing, Name "f$7", Abs Nothing ( ParamUnused Nothing )
-              ( Abs Nothing
-                ( ParamNamed Nothing ( Name "k$13" ) )
+            ( Nothing, Name "f$7", AbsN Nothing
+              ( ParamUnused Nothing :| [] )
+              ( AbsN Nothing
+                ( ParamNamed Nothing ( Name "k$13" ) :| [] )
                 ( AppN Nothing
                   ( Ref Nothing ( Local ( Name "a$6" ) ) )
                   ( Ref Nothing ( Local ( Name "k$13" ) ) :| [] )

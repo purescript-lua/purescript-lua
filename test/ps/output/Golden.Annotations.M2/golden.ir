@@ -9,8 +9,8 @@ UberModule
       )
     ], uberModuleForeigns = [], uberModuleExports =
     [
-      ( Name "inlineIntoMe", Abs Nothing
-        ( ParamNamed Nothing ( Name "i$0" ) )
+      ( Name "inlineIntoMe", AbsN Nothing
+        ( ParamNamed Nothing ( Name "i$0" ) :| [] )
         ( Let Nothing
           ( Standalone
             ( Nothing, Name "v$2", Let Nothing

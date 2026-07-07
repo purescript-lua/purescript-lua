@@ -24,15 +24,15 @@ UberModule
         ( Ref Nothing ( Imported ( ModuleName "Golden.RecordsUpdate.Test" ) ( Name "r" ) ) )
         ( ( PropName "x", LiteralInt Nothing 2 ) :| [] )
       ),
-      ( Name "test2", Abs Nothing
-        ( ParamNamed Nothing ( Name "v$1" ) )
+      ( Name "test2", AbsN Nothing
+        ( ParamNamed Nothing ( Name "v$1" ) :| [] )
         ( ObjectUpdate Nothing
           ( Ref Nothing ( Local ( Name "v$1" ) ) )
           ( ( PropName "y", LiteralBool Nothing False ) :| [] )
         )
       ),
-      ( Name "test3", Abs Nothing
-        ( ParamNamed Nothing ( Name "v$2" ) )
+      ( Name "test3", AbsN Nothing
+        ( ParamNamed Nothing ( Name "v$2" ) :| [] )
         ( ObjectUpdate Nothing
           ( Ref Nothing ( Local ( Name "v$2" ) ) )
           (
@@ -43,8 +43,8 @@ UberModule
           )
         )
       ),
-      ( Name "test4", Abs Nothing
-        ( ParamNamed Nothing ( Name "v$3" ) )
+      ( Name "test4", AbsN Nothing
+        ( ParamNamed Nothing ( Name "v$3" ) :| [] )
         ( ObjectUpdate Nothing
           ( Ref Nothing ( Local ( Name "v$3" ) ) )
           ( ( PropName "x", LiteralInt Nothing 1 ) :| [] )

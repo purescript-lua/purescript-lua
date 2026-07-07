@@ -47,6 +47,7 @@ import Language.PureScript.Backend.IR.Types
   , substituteCopyM
   , substituteMoveM
   , thenRewrite
+  , pattern Abs
   , pattern App
   )
 import Language.PureScript.Backend.IR.Uniquify (uniquifyNames)
@@ -162,8 +163,12 @@ optimizerPipeline neverNames =
   wellScoped ∷ Set Invariant
   wellScoped = Set.singleton WellScoped
 
+  -- 'WellApplied' rides along with GUC at every boundary after the
+  -- entry pass: it holds trivially while all nodes are unary, and once
+  -- a pass introduces n-ary nodes, the pass that breaks their
+  -- well-formedness is blamed at its own boundary.
   guc ∷ Set Invariant
-  guc = Set.fromList [WellScoped, UniqueBinders]
+  guc = Set.fromList [WellScoped, UniqueBinders, WellApplied]
 
 mergeForeignsIntoBindings ∷ UberModule → UberModule
 mergeForeignsIntoBindings uberModule@UberModule {..} =

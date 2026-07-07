@@ -45,13 +45,13 @@ UberModule
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Control.Applicative", qnameName = Name "pure"
-        }, Abs Nothing
-        ( ParamNamed Nothing ( Name "dict" ) )
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "dict" ) :| [] )
         ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) ) ( PropName "pure" ) )
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Control.Bind", qnameName = Name "bind" }, Abs Nothing
-        ( ParamNamed Nothing ( Name "dict" ) )
+        { qnameModuleName = ModuleName "Control.Bind", qnameName = Name "bind" }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "dict" ) :| [] )
         ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) ) ( PropName "bind" ) )
       ), RecursiveGroup
       (
@@ -59,10 +59,12 @@ UberModule
           { qnameModuleName = ModuleName "Effect", qnameName = Name "monadEffect"
           }, LiteralObject Nothing
           [
-            ( PropName "Applicative0", Abs Nothing ( ParamUnused Nothing )
+            ( PropName "Applicative0", AbsN Nothing
+              ( ParamUnused Nothing :| [] )
               ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "applicativeEffect" ) ) )
             ),
-            ( PropName "Bind1", Abs Nothing ( ParamUnused Nothing )
+            ( PropName "Bind1", AbsN Nothing
+              ( ParamUnused Nothing :| [] )
               ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "bindEffect" ) ) )
             )
           ]
@@ -76,7 +78,8 @@ UberModule
                 ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "foreign" ) ) )
                 ( PropName "bindE" )
               ),
-              ( PropName "Apply0", Abs Nothing ( ParamUnused Nothing )
+              ( PropName "Apply0", AbsN Nothing
+                ( ParamUnused Nothing :| [] )
                 ( AppN Nothing
                   ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "Lazy_applyEffect" ) ) )
                   ( LiteralInt Nothing 0 :| [] )
@@ -92,7 +95,8 @@ UberModule
                 ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "foreign" ) ) )
                 ( PropName "pureE" )
               ),
-              ( PropName "Apply0", Abs Nothing ( ParamUnused Nothing )
+              ( PropName "Apply0", AbsN Nothing
+                ( ParamUnused Nothing :| [] )
                 ( AppN Nothing
                   ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "Lazy_applyEffect" ) ) )
                   ( LiteralInt Nothing 0 :| [] )
@@ -107,13 +111,14 @@ UberModule
               ( Ref Nothing ( Local ( Name "PSLUA_runtime_lazy" ) ) )
               ( LiteralString Nothing "functorEffect" :| [] )
             )
-            ( Abs Nothing ( ParamUnused Nothing )
+            ( AbsN Nothing
+              ( ParamUnused Nothing :| [] )
               ( LiteralObject Nothing
                 [
-                  ( PropName "map", Abs Nothing
-                    ( ParamNamed Nothing ( Name "f$239" ) )
-                    ( Abs Nothing
-                      ( ParamNamed Nothing ( Name "a$240" ) )
+                  ( PropName "map", AbsN Nothing
+                    ( ParamNamed Nothing ( Name "f$239" ) :| [] )
+                    ( AbsN Nothing
+                      ( ParamNamed Nothing ( Name "a$240" ) :| [] )
                       ( AppN Nothing
                         ( AppN Nothing
                           ( ObjectProp Nothing
@@ -160,7 +165,8 @@ UberModule
               ( Ref Nothing ( Local ( Name "PSLUA_runtime_lazy" ) ) )
               ( LiteralString Nothing "applyEffect" :| [] )
             )
-            ( Abs Nothing ( ParamUnused Nothing )
+            ( AbsN Nothing
+              ( ParamUnused Nothing :| [] )
               ( LiteralObject Nothing
                 [
                   ( PropName "apply", Let Nothing
@@ -180,24 +186,24 @@ UberModule
                         )
                       ) :| []
                     )
-                    ( Abs Nothing
-                      ( ParamNamed Nothing ( Name "f$221" ) )
-                      ( Abs Nothing
-                        ( ParamNamed Nothing ( Name "a$222" ) )
+                    ( AbsN Nothing
+                      ( ParamNamed Nothing ( Name "f$221" ) :| [] )
+                      ( AbsN Nothing
+                        ( ParamNamed Nothing ( Name "a$222" ) :| [] )
                         ( AppN Nothing
                           ( AppN Nothing
                             ( Ref Nothing ( Local ( Name "bind$219" ) ) )
                             ( Ref Nothing ( Local ( Name "f$221" ) ) :| [] )
                           )
-                          ( Abs Nothing
-                            ( ParamNamed Nothing ( Name "f'$223" ) )
+                          ( AbsN Nothing
+                            ( ParamNamed Nothing ( Name "f'$223" ) :| [] )
                             ( AppN Nothing
                               ( AppN Nothing
                                 ( Ref Nothing ( Local ( Name "bind$219" ) ) )
                                 ( Ref Nothing ( Local ( Name "a$222" ) ) :| [] )
                               )
-                              ( Abs Nothing
-                                ( ParamNamed Nothing ( Name "a'$224" ) )
+                              ( AbsN Nothing
+                                ( ParamNamed Nothing ( Name "a'$224" ) :| [] )
                                 ( AppN Nothing
                                   ( AppN Nothing
                                     ( Ref Nothing
@@ -236,7 +242,8 @@ UberModule
                       )
                     )
                   ),
-                  ( PropName "Functor0", Abs Nothing ( ParamUnused Nothing )
+                  ( PropName "Functor0", AbsN Nothing
+                    ( ParamUnused Nothing :| [] )
                     ( AppN Nothing
                       ( Ref Nothing
                         ( Imported ( ModuleName "Effect" ) ( Name "Lazy_functorEffect" ) )
@@ -270,8 +277,8 @@ UberModule
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.TailRecM2Shadow.Test", qnameName = Name "sumFrom"
-        }, Abs Nothing
-        ( ParamNamed Nothing ( Name "dictMonadRec" ) )
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "dictMonadRec" ) :| [] )
         ( Let Nothing
           ( Standalone
             ( Nothing, Name "pure", AppN Nothing
@@ -291,18 +298,18 @@ UberModule
               )
             ) :| []
           )
-          ( Abs Nothing
-            ( ParamNamed Nothing ( Name "b" ) )
-            ( Abs Nothing
-              ( ParamNamed Nothing ( Name "n" ) )
+          ( AbsN Nothing
+            ( ParamNamed Nothing ( Name "b" ) :| [] )
+            ( AbsN Nothing
+              ( ParamNamed Nothing ( Name "n" ) :| [] )
               ( AppN Nothing
                 ( AppN Nothing
                   ( ObjectProp Nothing
                     ( Ref Nothing ( Local ( Name "dictMonadRec" ) ) )
                     ( PropName "tailRecM" )
                   )
-                  ( Abs Nothing
-                    ( ParamNamed Nothing ( Name "o$450" ) )
+                  ( AbsN Nothing
+                    ( ParamNamed Nothing ( Name "o$450" ) :| [] )
                     ( AppN Nothing
                       ( Let Nothing
                         ( Standalone
@@ -311,8 +318,8 @@ UberModule
                             ( PropName "a" )
                           ) :| []
                         )
-                        ( Abs Nothing
-                          ( ParamNamed Nothing ( Name "i$2" ) )
+                        ( AbsN Nothing
+                          ( ParamNamed Nothing ( Name "i$2" ) :| [] )
                           ( IfThenElse Nothing
                             ( IfThenElse Nothing
                               ( Eq Nothing
@@ -440,7 +447,8 @@ UberModule
       ( Name "sumFrom", Ref Nothing
         ( Imported ( ModuleName "Golden.TailRecM2Shadow.Test" ) ( Name "sumFrom" ) )
       ),
-      ( Name "main", Abs Nothing ( ParamUnused Nothing )
+      ( Name "main", AbsN Nothing
+        ( ParamUnused Nothing :| [] )
         ( Let Nothing
           ( Standalone
             ( Nothing, Name "r$0", AppN Nothing
@@ -452,11 +460,12 @@ UberModule
                     )
                     ( LiteralObject Nothing
                       [
-                        ( PropName "tailRecM", Abs Nothing
-                          ( ParamNamed Nothing ( Name "f$11" ) )
-                          ( Abs Nothing
-                            ( ParamNamed Nothing ( Name "a$12" ) )
-                            ( Abs Nothing ( ParamUnused Nothing )
+                        ( PropName "tailRecM", AbsN Nothing
+                          ( ParamNamed Nothing ( Name "f$11" ) :| [] )
+                          ( AbsN Nothing
+                            ( ParamNamed Nothing ( Name "a$12" ) :| [] )
+                            ( AbsN Nothing
+                              ( ParamUnused Nothing :| [] )
                               ( Let Nothing
                                 ( Standalone
                                   ( Nothing, Name "r$16", AppN Nothing
@@ -504,7 +513,8 @@ UberModule
                                           )
                                           ( PropName "untilE" )
                                         )
-                                        ( Abs Nothing ( ParamUnused Nothing )
+                                        ( AbsN Nothing
+                                          ( ParamUnused Nothing :| [] )
                                           ( Let Nothing
                                             ( Standalone
                                               ( Nothing, Name "v0$17", AppN Nothing
@@ -536,7 +546,8 @@ UberModule
                                                     ( Ref Nothing ( Local ( Name "v0$17" ) ) )
                                                   )
                                                 )
-                                                ( Abs Nothing ( ParamUnused Nothing )
+                                                ( AbsN Nothing
+                                                  ( ParamUnused Nothing :| [] )
                                                   ( Let Nothing
                                                     ( Standalone
                                                       ( Nothing, Name "e$19", AppN Nothing
@@ -665,9 +676,10 @@ UberModule
                                           )
                                           ( PropName "_unsafePartial" )
                                         )
-                                        ( Abs Nothing ( ParamUnused Nothing )
-                                          ( Abs Nothing
-                                            ( ParamNamed Nothing ( Name "v$9$20" ) )
+                                        ( AbsN Nothing
+                                          ( ParamUnused Nothing :| [] )
+                                          ( AbsN Nothing
+                                            ( ParamNamed Nothing ( Name "v$9$20" ) :| [] )
                                             ( IfThenElse Nothing
                                               ( Eq Nothing
                                                 ( LiteralString Nothing "Control.Monad.Rec.Class∷Step.Done" )
@@ -706,7 +718,8 @@ UberModule
                             )
                           )
                         ),
-                        ( PropName "Monad0", Abs Nothing ( ParamUnused Nothing )
+                        ( PropName "Monad0", AbsN Nothing
+                          ( ParamUnused Nothing :| [] )
                           ( Ref Nothing
                             ( Imported ( ModuleName "Effect" ) ( Name "monadEffect" ) )
                           )

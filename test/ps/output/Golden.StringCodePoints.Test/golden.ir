@@ -130,12 +130,12 @@ UberModule
         { qnameModuleName = ModuleName "Control.Semigroupoid", qnameName = Name "semigroupoidFn"
         }, LiteralObject Nothing
         [
-          ( PropName "compose", Abs Nothing
-            ( ParamNamed Nothing ( Name "f" ) )
-            ( Abs Nothing
-              ( ParamNamed Nothing ( Name "g" ) )
-              ( Abs Nothing
-                ( ParamNamed Nothing ( Name "x" ) )
+          ( PropName "compose", AbsN Nothing
+            ( ParamNamed Nothing ( Name "f" ) :| [] )
+            ( AbsN Nothing
+              ( ParamNamed Nothing ( Name "g" ) :| [] )
+              ( AbsN Nothing
+                ( ParamNamed Nothing ( Name "x" ) :| [] )
                 ( AppN Nothing
                   ( Ref Nothing ( Local ( Name "f" ) ) )
                   ( AppN Nothing
@@ -150,8 +150,8 @@ UberModule
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Control.Semigroupoid", qnameName = Name "compose"
-        }, Abs Nothing
-        ( ParamNamed Nothing ( Name "dict" ) )
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "dict" ) :| [] )
         ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) ) ( PropName "compose" ) )
       ), RecursiveGroup
       (
@@ -161,10 +161,10 @@ UberModule
           [
             ( PropName "ff", LiteralBool Nothing False ),
             ( PropName "tt", LiteralBool Nothing True ),
-            ( PropName "implies", Abs Nothing
-              ( ParamNamed Nothing ( Name "a" ) )
-              ( Abs Nothing
-                ( ParamNamed Nothing ( Name "b" ) )
+            ( PropName "implies", AbsN Nothing
+              ( ParamNamed Nothing ( Name "a" ) :| [] )
+              ( AbsN Nothing
+                ( ParamNamed Nothing ( Name "b" ) :| [] )
                 ( AppN Nothing
                   ( AppN Nothing
                     ( ObjectProp Nothing
@@ -210,8 +210,8 @@ UberModule
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Data.HeytingAlgebra", qnameName = Name "conj"
-        }, Abs Nothing
-        ( ParamNamed Nothing ( Name "dict" ) )
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "dict" ) :| [] )
         ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) ) ( PropName "conj" ) )
       ), Standalone
       ( QName
@@ -224,8 +224,8 @@ UberModule
         ]
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Data.Eq", qnameName = Name "eq" }, Abs Nothing
-        ( ParamNamed Nothing ( Name "dict" ) )
+        { qnameModuleName = ModuleName "Data.Eq", qnameName = Name "eq" }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "dict" ) :| [] )
         ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) ) ( PropName "eq" ) )
       ), Standalone
       ( QName
@@ -239,8 +239,8 @@ UberModule
         ]
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Data.Semigroup", qnameName = Name "append" }, Abs Nothing
-        ( ParamNamed Nothing ( Name "dict" ) )
+        { qnameModuleName = ModuleName "Data.Semigroup", qnameName = Name "append" }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "dict" ) :| [] )
         ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) ) ( PropName "append" ) )
       ), Standalone
       ( QName
@@ -254,8 +254,8 @@ UberModule
         ]
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Data.Show", qnameName = Name "show" }, Abs Nothing
-        ( ParamNamed Nothing ( Name "dict" ) )
+        { qnameModuleName = ModuleName "Data.Show", qnameName = Name "show" }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "dict" ) :| [] )
         ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) ) ( PropName "show" ) )
       ), Standalone
       ( QName
@@ -296,13 +296,13 @@ UberModule
         ]
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Data.Semiring", qnameName = Name "add" }, Abs Nothing
-        ( ParamNamed Nothing ( Name "dict" ) )
+        { qnameModuleName = ModuleName "Data.Semiring", qnameName = Name "add" }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "dict" ) :| [] )
         ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) ) ( PropName "add" ) )
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Data.Ring", qnameName = Name "sub" }, Abs Nothing
-        ( ParamNamed Nothing ( Name "dict" ) )
+        { qnameModuleName = ModuleName "Data.Ring", qnameName = Name "sub" }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "dict" ) :| [] )
         ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) ) ( PropName "sub" ) )
       ), Standalone
       ( QName
@@ -313,7 +313,8 @@ UberModule
             ( Ref Nothing ( Imported ( ModuleName "Data.Ring" ) ( Name "foreign" ) ) )
             ( PropName "intSub" )
           ),
-          ( PropName "Semiring0", Abs Nothing ( ParamUnused Nothing )
+          ( PropName "Semiring0", AbsN Nothing
+            ( ParamUnused Nothing :| [] )
             ( Ref Nothing ( Imported ( ModuleName "Data.Semiring" ) ( Name "semiringInt" ) ) )
           )
         ]
@@ -335,7 +336,8 @@ UberModule
             )
             ( Ref Nothing ( Imported ( ModuleName "Data.Ordering" ) ( Name "GT" ) ) :| [] )
           ),
-          ( PropName "Eq0", Abs Nothing ( ParamUnused Nothing )
+          ( PropName "Eq0", AbsN Nothing
+            ( ParamUnused Nothing :| [] )
             ( Ref Nothing ( Imported ( ModuleName "Data.Eq" ) ( Name "eqInt" ) ) )
           )
         ]
@@ -357,7 +359,8 @@ UberModule
             )
             ( Ref Nothing ( Imported ( ModuleName "Data.Ordering" ) ( Name "GT" ) ) :| [] )
           ),
-          ( PropName "Eq0", Abs Nothing ( ParamUnused Nothing )
+          ( PropName "Eq0", AbsN Nothing
+            ( ParamUnused Nothing :| [] )
             ( LiteralObject Nothing
               [
                 ( PropName "eq", ObjectProp ( Just Always )
@@ -370,18 +373,18 @@ UberModule
         ]
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Data.Ord", qnameName = Name "compare" }, Abs Nothing
-        ( ParamNamed Nothing ( Name "dict" ) )
+        { qnameModuleName = ModuleName "Data.Ord", qnameName = Name "compare" }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "dict" ) :| [] )
         ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) ) ( PropName "compare" ) )
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Data.Ord", qnameName = Name "greaterThanOrEq"
-        }, Abs Nothing
-        ( ParamNamed Nothing ( Name "dictOrd" ) )
-        ( Abs Nothing
-          ( ParamNamed Nothing ( Name "a1" ) )
-          ( Abs Nothing
-            ( ParamNamed Nothing ( Name "a2" ) )
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "dictOrd" ) :| [] )
+        ( AbsN Nothing
+          ( ParamNamed Nothing ( Name "a1" ) :| [] )
+          ( AbsN Nothing
+            ( ParamNamed Nothing ( Name "a2" ) :| [] )
             ( IfThenElse Nothing
               ( Eq Nothing
                 ( LiteralString Nothing "Data.Ordering∷Ordering.LT" )
@@ -403,12 +406,12 @@ UberModule
         )
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Data.Ord", qnameName = Name "lessThan" }, Abs Nothing
-        ( ParamNamed Nothing ( Name "dictOrd" ) )
-        ( Abs Nothing
-          ( ParamNamed Nothing ( Name "a1" ) )
-          ( Abs Nothing
-            ( ParamNamed Nothing ( Name "a2" ) )
+        { qnameModuleName = ModuleName "Data.Ord", qnameName = Name "lessThan" }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "dictOrd" ) :| [] )
+        ( AbsN Nothing
+          ( ParamNamed Nothing ( Name "a1" ) :| [] )
+          ( AbsN Nothing
+            ( ParamNamed Nothing ( Name "a2" ) :| [] )
             ( IfThenElse Nothing
               ( Eq Nothing
                 ( LiteralString Nothing "Data.Ordering∷Ordering.LT" )
@@ -430,12 +433,12 @@ UberModule
         )
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Data.Ord", qnameName = Name "lessThanOrEq" }, Abs Nothing
-        ( ParamNamed Nothing ( Name "dictOrd" ) )
-        ( Abs Nothing
-          ( ParamNamed Nothing ( Name "a1" ) )
-          ( Abs Nothing
-            ( ParamNamed Nothing ( Name "a2" ) )
+        { qnameModuleName = ModuleName "Data.Ord", qnameName = Name "lessThanOrEq" }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "dictOrd" ) :| [] )
+        ( AbsN Nothing
+          ( ParamNamed Nothing ( Name "a1" ) :| [] )
+          ( AbsN Nothing
+            ( ParamNamed Nothing ( Name "a2" ) :| [] )
             ( IfThenElse Nothing
               ( Eq Nothing
                 ( LiteralString Nothing "Data.Ordering∷Ordering.GT" )
@@ -457,24 +460,24 @@ UberModule
         )
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Data.Functor", qnameName = Name "map" }, Abs Nothing
-        ( ParamNamed Nothing ( Name "dict" ) )
+        { qnameModuleName = ModuleName "Data.Functor", qnameName = Name "map" }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "dict" ) :| [] )
         ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) ) ( PropName "map" ) )
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Control.Applicative", qnameName = Name "pure"
-        }, Abs Nothing
-        ( ParamNamed Nothing ( Name "dict" ) )
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "dict" ) :| [] )
         ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) ) ( PropName "pure" ) )
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Control.Bind", qnameName = Name "bind" }, Abs Nothing
-        ( ParamNamed Nothing ( Name "dict" ) )
+        { qnameModuleName = ModuleName "Control.Bind", qnameName = Name "bind" }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "dict" ) :| [] )
         ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) ) ( PropName "bind" ) )
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Data.Bounded", qnameName = Name "top" }, Abs Nothing
-        ( ParamNamed Nothing ( Name "dict" ) )
+        { qnameModuleName = ModuleName "Data.Bounded", qnameName = Name "top" }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "dict" ) :| [] )
         ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) ) ( PropName "top" ) )
       ), Standalone
       ( QName
@@ -489,14 +492,15 @@ UberModule
             ( Ref Nothing ( Imported ( ModuleName "Data.Bounded" ) ( Name "foreign" ) ) )
             ( PropName "bottomChar" )
           ),
-          ( PropName "Ord0", Abs Nothing ( ParamUnused Nothing )
+          ( PropName "Ord0", AbsN Nothing
+            ( ParamUnused Nothing :| [] )
             ( Ref Nothing ( Imported ( ModuleName "Data.Ord" ) ( Name "ordChar" ) ) )
           )
         ]
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Data.Bounded", qnameName = Name "bottom" }, Abs Nothing
-        ( ParamNamed Nothing ( Name "dict" ) )
+        { qnameModuleName = ModuleName "Data.Bounded", qnameName = Name "bottom" }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "dict" ) :| [] )
         ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) ) ( PropName "bottom" ) )
       ), Standalone
       ( QName
@@ -515,10 +519,12 @@ UberModule
             ( Ref Nothing ( Imported ( ModuleName "Data.EuclideanRing" ) ( Name "foreign" ) ) )
             ( PropName "intMod" )
           ),
-          ( PropName "CommutativeRing0", Abs Nothing ( ParamUnused Nothing )
+          ( PropName "CommutativeRing0", AbsN Nothing
+            ( ParamUnused Nothing :| [] )
             ( LiteralObject Nothing
               [
-                ( PropName "Ring0", Abs Nothing ( ParamUnused Nothing )
+                ( PropName "Ring0", AbsN Nothing
+                  ( ParamUnused Nothing :| [] )
                   ( Ref Nothing ( Imported ( ModuleName "Data.Ring" ) ( Name "ringInt" ) ) )
                 )
               ]
@@ -549,12 +555,12 @@ UberModule
         [ FieldName "value0" ]
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Data.Maybe", qnameName = Name "showMaybe" }, Abs Nothing
-        ( ParamNamed Nothing ( Name "dictShow" ) )
+        { qnameModuleName = ModuleName "Data.Maybe", qnameName = Name "showMaybe" }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "dictShow" ) :| [] )
         ( LiteralObject Nothing
           [
-            ( PropName "show", Abs Nothing
-              ( ParamNamed Nothing ( Name "v" ) )
+            ( PropName "show", AbsN Nothing
+              ( ParamNamed Nothing ( Name "v" ) :| [] )
               ( IfThenElse Nothing
                 ( Eq Nothing
                   ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
@@ -599,10 +605,10 @@ UberModule
         { qnameModuleName = ModuleName "Data.Maybe", qnameName = Name "functorMaybe"
         }, LiteralObject Nothing
         [
-          ( PropName "map", Abs Nothing
-            ( ParamNamed Nothing ( Name "v" ) )
-            ( Abs Nothing
-              ( ParamNamed Nothing ( Name "v1" ) )
+          ( PropName "map", AbsN Nothing
+            ( ParamNamed Nothing ( Name "v" ) :| [] )
+            ( AbsN Nothing
+              ( ParamNamed Nothing ( Name "v1" ) :| [] )
               ( IfThenElse Nothing
                 ( Eq Nothing
                   ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
@@ -625,10 +631,10 @@ UberModule
         ]
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Data.Maybe", qnameName = Name "fromJust"
-        }, Abs Nothing ( ParamUnused Nothing )
-        ( Abs Nothing
-          ( ParamNamed Nothing ( Name "v" ) )
+        { qnameModuleName = ModuleName "Data.Maybe", qnameName = Name "fromJust" }, AbsN Nothing
+        ( ParamUnused Nothing :| [] )
+        ( AbsN Nothing
+          ( ParamNamed Nothing ( Name "v" ) :| [] )
           ( IfThenElse Nothing
             ( Eq Nothing
               ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
@@ -644,10 +650,12 @@ UberModule
           { qnameModuleName = ModuleName "Effect", qnameName = Name "monadEffect"
           }, LiteralObject Nothing
           [
-            ( PropName "Applicative0", Abs Nothing ( ParamUnused Nothing )
+            ( PropName "Applicative0", AbsN Nothing
+              ( ParamUnused Nothing :| [] )
               ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "applicativeEffect" ) ) )
             ),
-            ( PropName "Bind1", Abs Nothing ( ParamUnused Nothing )
+            ( PropName "Bind1", AbsN Nothing
+              ( ParamUnused Nothing :| [] )
               ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "bindEffect" ) ) )
             )
           ]
@@ -661,7 +669,8 @@ UberModule
                 ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "foreign" ) ) )
                 ( PropName "bindE" )
               ),
-              ( PropName "Apply0", Abs Nothing ( ParamUnused Nothing )
+              ( PropName "Apply0", AbsN Nothing
+                ( ParamUnused Nothing :| [] )
                 ( AppN Nothing
                   ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "Lazy_applyEffect" ) ) )
                   ( LiteralInt Nothing 0 :| [] )
@@ -677,7 +686,8 @@ UberModule
                 ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "foreign" ) ) )
                 ( PropName "pureE" )
               ),
-              ( PropName "Apply0", Abs Nothing ( ParamUnused Nothing )
+              ( PropName "Apply0", AbsN Nothing
+                ( ParamUnused Nothing :| [] )
                 ( AppN Nothing
                   ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "Lazy_applyEffect" ) ) )
                   ( LiteralInt Nothing 0 :| [] )
@@ -692,13 +702,14 @@ UberModule
               ( Ref Nothing ( Local ( Name "PSLUA_runtime_lazy" ) ) )
               ( LiteralString Nothing "functorEffect" :| [] )
             )
-            ( Abs Nothing ( ParamUnused Nothing )
+            ( AbsN Nothing
+              ( ParamUnused Nothing :| [] )
               ( LiteralObject Nothing
                 [
-                  ( PropName "map", Abs Nothing
-                    ( ParamNamed Nothing ( Name "f$997" ) )
-                    ( Abs Nothing
-                      ( ParamNamed Nothing ( Name "a$998" ) )
+                  ( PropName "map", AbsN Nothing
+                    ( ParamNamed Nothing ( Name "f$997" ) :| [] )
+                    ( AbsN Nothing
+                      ( ParamNamed Nothing ( Name "a$998" ) :| [] )
                       ( AppN Nothing
                         ( AppN Nothing
                           ( ObjectProp Nothing
@@ -745,7 +756,8 @@ UberModule
               ( Ref Nothing ( Local ( Name "PSLUA_runtime_lazy" ) ) )
               ( LiteralString Nothing "applyEffect" :| [] )
             )
-            ( Abs Nothing ( ParamUnused Nothing )
+            ( AbsN Nothing
+              ( ParamUnused Nothing :| [] )
               ( LiteralObject Nothing
                 [
                   ( PropName "apply", Let Nothing
@@ -765,24 +777,24 @@ UberModule
                         )
                       ) :| []
                     )
-                    ( Abs Nothing
-                      ( ParamNamed Nothing ( Name "f$1318" ) )
-                      ( Abs Nothing
-                        ( ParamNamed Nothing ( Name "a$1319" ) )
+                    ( AbsN Nothing
+                      ( ParamNamed Nothing ( Name "f$1318" ) :| [] )
+                      ( AbsN Nothing
+                        ( ParamNamed Nothing ( Name "a$1319" ) :| [] )
                         ( AppN Nothing
                           ( AppN Nothing
                             ( Ref Nothing ( Local ( Name "bind$1317" ) ) )
                             ( Ref Nothing ( Local ( Name "f$1318" ) ) :| [] )
                           )
-                          ( Abs Nothing
-                            ( ParamNamed Nothing ( Name "f'$1320" ) )
+                          ( AbsN Nothing
+                            ( ParamNamed Nothing ( Name "f'$1320" ) :| [] )
                             ( AppN Nothing
                               ( AppN Nothing
                                 ( Ref Nothing ( Local ( Name "bind$1317" ) ) )
                                 ( Ref Nothing ( Local ( Name "a$1319" ) ) :| [] )
                               )
-                              ( Abs Nothing
-                                ( ParamNamed Nothing ( Name "a'$1321" ) )
+                              ( AbsN Nothing
+                                ( ParamNamed Nothing ( Name "a'$1321" ) :| [] )
                                 ( AppN Nothing
                                   ( AppN Nothing
                                     ( Ref Nothing
@@ -821,7 +833,8 @@ UberModule
                       )
                     )
                   ),
-                  ( PropName "Functor0", Abs Nothing ( ParamUnused Nothing )
+                  ( PropName "Functor0", AbsN Nothing
+                    ( ParamUnused Nothing :| [] )
                     ( AppN Nothing
                       ( Ref Nothing
                         ( Imported ( ModuleName "Effect" ) ( Name "Lazy_functorEffect" ) )
@@ -851,22 +864,22 @@ UberModule
         ( Ref Nothing ( Imported ( ModuleName "Data.Bounded" ) ( Name "boundedChar" ) ) :| [] )
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Data.Enum", qnameName = Name "toEnum" }, Abs Nothing
-        ( ParamNamed Nothing ( Name "dict" ) )
+        { qnameModuleName = ModuleName "Data.Enum", qnameName = Name "toEnum" }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "dict" ) :| [] )
         ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) ) ( PropName "toEnum" ) )
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Data.Enum", qnameName = Name "fromEnum" }, Abs Nothing
-        ( ParamNamed Nothing ( Name "dict" ) )
+        { qnameModuleName = ModuleName "Data.Enum", qnameName = Name "fromEnum" }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "dict" ) :| [] )
         ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) ) ( PropName "fromEnum" ) )
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Data.Enum", qnameName = Name "defaultSucc" }, Abs Nothing
-        ( ParamNamed Nothing ( Name "toEnum'" ) )
-        ( Abs Nothing
-          ( ParamNamed Nothing ( Name "fromEnum'" ) )
-          ( Abs Nothing
-            ( ParamNamed Nothing ( Name "a" ) )
+        { qnameModuleName = ModuleName "Data.Enum", qnameName = Name "defaultSucc" }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "toEnum'" ) :| [] )
+        ( AbsN Nothing
+          ( ParamNamed Nothing ( Name "fromEnum'" ) :| [] )
+          ( AbsN Nothing
+            ( ParamNamed Nothing ( Name "a" ) :| [] )
             ( AppN Nothing
               ( Ref Nothing ( Local ( Name "toEnum'" ) ) )
               ( AppN Nothing
@@ -889,12 +902,12 @@ UberModule
         )
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Data.Enum", qnameName = Name "defaultPred" }, Abs Nothing
-        ( ParamNamed Nothing ( Name "toEnum'" ) )
-        ( Abs Nothing
-          ( ParamNamed Nothing ( Name "fromEnum'" ) )
-          ( Abs Nothing
-            ( ParamNamed Nothing ( Name "a" ) )
+        { qnameModuleName = ModuleName "Data.Enum", qnameName = Name "defaultPred" }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "toEnum'" ) :| [] )
+        ( AbsN Nothing
+          ( ParamNamed Nothing ( Name "fromEnum'" ) :| [] )
+          ( AbsN Nothing
+            ( ParamNamed Nothing ( Name "a" ) :| [] )
             ( AppN Nothing
               ( Ref Nothing ( Local ( Name "toEnum'" ) ) )
               ( AppN Nothing
@@ -912,8 +925,8 @@ UberModule
         )
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Data.Enum", qnameName = Name "charToEnum" }, Abs Nothing
-        ( ParamNamed Nothing ( Name "v" ) )
+        { qnameModuleName = ModuleName "Data.Enum", qnameName = Name "charToEnum" }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "v" ) :| [] )
         ( IfThenElse Nothing
           ( AppN Nothing
             ( AppN Nothing
@@ -1007,10 +1020,12 @@ UberModule
             ( Ref Nothing ( Imported ( ModuleName "Data.Enum" ) ( Name "foreign" ) ) )
             ( PropName "toCharCode" )
           ),
-          ( PropName "Bounded0", Abs Nothing ( ParamUnused Nothing )
+          ( PropName "Bounded0", AbsN Nothing
+            ( ParamUnused Nothing :| [] )
             ( Ref Nothing ( Imported ( ModuleName "Data.Bounded" ) ( Name "boundedChar" ) ) )
           ),
-          ( PropName "Enum1", Abs Nothing ( ParamUnused Nothing )
+          ( PropName "Enum1", AbsN Nothing
+            ( ParamUnused Nothing :| [] )
             ( LiteralObject Nothing
               [
                 ( PropName "succ", AppN Nothing
@@ -1037,7 +1052,8 @@ UberModule
                     ( PropName "toCharCode" ) :| []
                   )
                 ),
-                ( PropName "Ord0", Abs Nothing ( ParamUnused Nothing )
+                ( PropName "Ord0", AbsN Nothing
+                  ( ParamUnused Nothing :| [] )
                   ( Ref Nothing ( Imported ( ModuleName "Data.Ord" ) ( Name "ordChar" ) ) )
                 )
               ]
@@ -1112,8 +1128,8 @@ UberModule
           ( Ref Nothing ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "foreign" ) ) )
           ( PropName "_unsafeCodePointAt0" )
         )
-        ( Abs Nothing
-          ( ParamNamed Nothing ( Name "s$27" ) )
+        ( AbsN Nothing
+          ( ParamNamed Nothing ( Name "s$27" ) :| [] )
           ( Let Nothing
             ( Standalone
               ( Nothing, Name "cu0$28", AppN Nothing
@@ -1322,8 +1338,8 @@ UberModule
             ( PropName "singleton" ) :| []
           )
         )
-        ( Abs Nothing
-          ( ParamNamed Nothing ( Name "x$62" ) )
+        ( AbsN Nothing
+          ( ParamNamed Nothing ( Name "x$62" ) :| [] )
           ( Let Nothing
             ( Standalone
               ( Nothing, Name "v$63", AppN Nothing
@@ -1407,8 +1423,8 @@ UberModule
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Data.String.CodePoints", qnameName = Name "singletonFallback"
-        }, Abs Nothing
-        ( ParamNamed Nothing ( Name "v" ) )
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "v" ) :| [] )
         ( IfThenElse Nothing
           ( AppN Nothing
             ( AppN Nothing
@@ -1521,10 +1537,10 @@ UberModule
         { qnameModuleName = ModuleName "Data.String.CodePoints", qnameName = Name "ordCodePoint"
         }, LiteralObject Nothing
         [
-          ( PropName "compare", Abs Nothing
-            ( ParamNamed Nothing ( Name "x" ) )
-            ( Abs Nothing
-              ( ParamNamed Nothing ( Name "y" ) )
+          ( PropName "compare", AbsN Nothing
+            ( ParamNamed Nothing ( Name "x" ) :| [] )
+            ( AbsN Nothing
+              ( ParamNamed Nothing ( Name "y" ) :| [] )
               ( AppN Nothing
                 ( AppN Nothing
                   ( AppN Nothing
@@ -1537,13 +1553,14 @@ UberModule
               )
             )
           ),
-          ( PropName "Eq0", Abs Nothing ( ParamUnused Nothing )
+          ( PropName "Eq0", AbsN Nothing
+            ( ParamUnused Nothing :| [] )
             ( LiteralObject Nothing
               [
-                ( PropName "eq", Abs Nothing
-                  ( ParamNamed Nothing ( Name "x$20" ) )
-                  ( Abs Nothing
-                    ( ParamNamed Nothing ( Name "y$21" ) )
+                ( PropName "eq", AbsN Nothing
+                  ( ParamNamed Nothing ( Name "x$20" ) :| [] )
+                  ( AbsN Nothing
+                    ( ParamNamed Nothing ( Name "y$21" ) :| [] )
                     ( AppN Nothing
                       ( AppN Nothing
                         ( Ref Nothing
@@ -1563,8 +1580,8 @@ UberModule
       (
         ( QName
           { qnameModuleName = ModuleName "Data.String.CodePoints", qnameName = Name "uncons"
-          }, Abs Nothing
-          ( ParamNamed Nothing ( Name "s" ) )
+          }, AbsN Nothing
+          ( ParamNamed Nothing ( Name "s" ) :| [] )
           ( IfThenElse Nothing
             ( AppN Nothing
               ( AppN Nothing
@@ -1612,10 +1629,10 @@ UberModule
         [
           ( QName
             { qnameModuleName = ModuleName "Data.String.CodePoints", qnameName = Name "takeFallback"
-            }, Abs Nothing
-            ( ParamNamed Nothing ( Name "v" ) )
-            ( Abs Nothing
-              ( ParamNamed Nothing ( Name "v1" ) )
+            }, AbsN Nothing
+            ( ParamNamed Nothing ( Name "v" ) :| [] )
+            ( AbsN Nothing
+              ( ParamNamed Nothing ( Name "v1" ) :| [] )
               ( IfThenElse Nothing
                 ( AppN Nothing
                   ( AppN Nothing
@@ -1697,10 +1714,10 @@ UberModule
           ),
           ( QName
             { qnameModuleName = ModuleName "Data.String.CodePoints", qnameName = Name "take"
-            }, Abs Nothing
-            ( ParamNamed Nothing ( Name "n" ) )
-            ( Abs Nothing
-              ( ParamNamed Nothing ( Name "s" ) )
+            }, AbsN Nothing
+            ( ParamNamed Nothing ( Name "n" ) :| [] )
+            ( AbsN Nothing
+              ( ParamNamed Nothing ( Name "s" ) :| [] )
               ( AppN Nothing
                 ( AppN Nothing
                   ( AppN Nothing
@@ -1725,10 +1742,10 @@ UberModule
           ),
           ( QName
             { qnameModuleName = ModuleName "Data.String.CodePoints", qnameName = Name "drop"
-            }, Abs Nothing
-            ( ParamNamed Nothing ( Name "n" ) )
-            ( Abs Nothing
-              ( ParamNamed Nothing ( Name "s" ) )
+            }, AbsN Nothing
+            ( ParamNamed Nothing ( Name "n" ) :| [] )
+            ( AbsN Nothing
+              ( ParamNamed Nothing ( Name "s" ) :| [] )
               ( AppN Nothing
                 ( AppN Nothing
                   ( ObjectProp ( Just Always )
@@ -1769,8 +1786,8 @@ UberModule
             ( Ref Nothing ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "foreign" ) ) )
             ( PropName "_toCodePointArray" )
           )
-          ( Abs Nothing
-            ( ParamNamed Nothing ( Name "s$10" ) )
+          ( AbsN Nothing
+            ( ParamNamed Nothing ( Name "s$10" ) :| [] )
             ( AppN Nothing
               ( AppN Nothing
                 ( AppN Nothing
@@ -1783,8 +1800,8 @@ UberModule
                           )
                           ( PropName "unfoldrArrayImpl" )
                         )
-                        ( Abs Nothing
-                          ( ParamNamed Nothing ( Name "v2$1313$1335" ) )
+                        ( AbsN Nothing
+                          ( ParamNamed Nothing ( Name "v2$1313$1335" ) :| [] )
                           ( IfThenElse Nothing
                             ( Eq Nothing
                               ( LiteralString Nothing "Data.Maybe∷Maybe.Nothing" )
@@ -1811,7 +1828,8 @@ UberModule
                           )
                           ( PropName "_unsafePartial" )
                         )
-                        ( Abs Nothing ( ParamUnused Nothing )
+                        ( AbsN Nothing
+                          ( ParamUnused Nothing :| [] )
                           ( AppN Nothing
                             ( Ref Nothing
                               ( Imported ( ModuleName "Data.Maybe" ) ( Name "fromJust" ) )
@@ -1823,24 +1841,24 @@ UberModule
                         ) :| []
                       )
                     )
-                    ( Abs Nothing
-                      ( ParamNamed Nothing ( Name "v$1333" ) )
+                    ( AbsN Nothing
+                      ( ParamNamed Nothing ( Name "v$1333" ) :| [] )
                       ( ObjectProp Nothing
                         ( Ref Nothing ( Local ( Name "v$1333" ) ) )
                         ( PropName "value0" )
                       ) :| []
                     )
                   )
-                  ( Abs Nothing
-                    ( ParamNamed Nothing ( Name "v$1334" ) )
+                  ( AbsN Nothing
+                    ( ParamNamed Nothing ( Name "v$1334" ) :| [] )
                     ( ObjectProp Nothing
                       ( Ref Nothing ( Local ( Name "v$1334" ) ) )
                       ( PropName "value1" )
                     ) :| []
                   )
                 )
-                ( Abs Nothing
-                  ( ParamNamed Nothing ( Name "s$11" ) )
+                ( AbsN Nothing
+                  ( ParamNamed Nothing ( Name "s$11" ) :| [] )
                   ( AppN Nothing
                     ( AppN Nothing
                       ( AppN Nothing
@@ -1849,8 +1867,8 @@ UberModule
                           ( Imported ( ModuleName "Data.Maybe" ) ( Name "functorMaybe" ) ) :| []
                         )
                       )
-                      ( Abs Nothing
-                        ( ParamNamed Nothing ( Name "v$12" ) )
+                      ( AbsN Nothing
+                        ( ParamNamed Nothing ( Name "v$12" ) :| [] )
                         ( AppN Nothing
                           ( AppN Nothing
                             ( Ctor Nothing ProductType
@@ -1891,10 +1909,10 @@ UberModule
       (
         ( QName
           { qnameModuleName = ModuleName "Data.String.CodePoints", qnameName = Name "codePointAtFallback"
-          }, Abs Nothing
-          ( ParamNamed Nothing ( Name "n" ) )
-          ( Abs Nothing
-            ( ParamNamed Nothing ( Name "s" ) )
+          }, AbsN Nothing
+          ( ParamNamed Nothing ( Name "n" ) :| [] )
+          ( AbsN Nothing
+            ( ParamNamed Nothing ( Name "s" ) :| [] )
             ( Let Nothing
               ( Standalone
                 ( Nothing, Name "v", AppN Nothing
@@ -1964,10 +1982,10 @@ UberModule
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Data.String.CodePoints", qnameName = Name "codePointAt"
-        }, Abs Nothing
-        ( ParamNamed Nothing ( Name "v" ) )
-        ( Abs Nothing
-          ( ParamNamed Nothing ( Name "v1" ) )
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "v" ) :| [] )
+        ( AbsN Nothing
+          ( ParamNamed Nothing ( Name "v1" ) :| [] )
           ( IfThenElse Nothing
             ( AppN Nothing
               ( AppN Nothing
@@ -2113,12 +2131,12 @@ UberModule
               )
               ( LiteralInt Nothing 1 :| [] )
             ),
-            ( PropName "fromEnum", Abs Nothing
-              ( ParamNamed Nothing ( Name "v" ) )
+            ( PropName "fromEnum", AbsN Nothing
+              ( ParamNamed Nothing ( Name "v" ) :| [] )
               ( Ref Nothing ( Local ( Name "v" ) ) )
             ),
-            ( PropName "toEnum", Abs Nothing
-              ( ParamNamed Nothing ( Name "n0" ) )
+            ( PropName "toEnum", AbsN Nothing
+              ( ParamNamed Nothing ( Name "n0" ) :| [] )
               ( IfThenElse Nothing
                 ( AppN Nothing
                   ( AppN Nothing
@@ -2157,12 +2175,14 @@ UberModule
                 ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) )
               )
             ),
-            ( PropName "Bounded0", Abs Nothing ( ParamUnused Nothing )
+            ( PropName "Bounded0", AbsN Nothing
+              ( ParamUnused Nothing :| [] )
               ( LiteralObject Nothing
                 [
                   ( PropName "bottom", LiteralInt Nothing 0 ),
                   ( PropName "top", LiteralInt Nothing 1114111 ),
-                  ( PropName "Ord0", Abs Nothing ( ParamUnused Nothing )
+                  ( PropName "Ord0", AbsN Nothing
+                    ( ParamUnused Nothing :| [] )
                     ( Ref Nothing
                       ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "ordCodePoint" ) )
                     )
@@ -2170,7 +2190,8 @@ UberModule
                 ]
               )
             ),
-            ( PropName "Enum1", Abs Nothing ( ParamUnused Nothing )
+            ( PropName "Enum1", AbsN Nothing
+              ( ParamUnused Nothing :| [] )
               ( AppN Nothing
                 ( Ref Nothing
                   ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "Lazy_enumCodePoint" ) )
@@ -2188,7 +2209,8 @@ UberModule
               ( Ref Nothing ( Local ( Name "PSLUA_runtime_lazy" ) ) )
               ( LiteralString Nothing "enumCodePoint" :| [] )
             )
-            ( Abs Nothing ( ParamUnused Nothing )
+            ( AbsN Nothing
+              ( ParamUnused Nothing :| [] )
               ( LiteralObject Nothing
                 [
                   ( PropName "succ", AppN Nothing
@@ -2241,7 +2263,8 @@ UberModule
                       ) :| []
                     )
                   ),
-                  ( PropName "Ord0", Abs Nothing ( ParamUnused Nothing )
+                  ( PropName "Ord0", AbsN Nothing
+                    ( ParamUnused Nothing :| [] )
                     ( Ref Nothing
                       ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "ordCodePoint" ) )
                     )
@@ -2253,10 +2276,10 @@ UberModule
         ]
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "logShow" }, Abs Nothing
-        ( ParamNamed Nothing ( Name "dictShow" ) )
-        ( Abs Nothing
-          ( ParamNamed Nothing ( Name "a" ) )
+        { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "logShow" }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "dictShow" ) :| [] )
+        ( AbsN Nothing
+          ( ParamNamed Nothing ( Name "a" ) :| [] )
           ( AppN Nothing
             ( ObjectProp ( Just Always )
               ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
@@ -2351,7 +2374,8 @@ UberModule
               ( Ref Nothing ( Imported ( ModuleName "Partial.Unsafe" ) ( Name "foreign" ) ) )
               ( PropName "_unsafePartial" )
             )
-            ( Abs Nothing ( ParamUnused Nothing )
+            ( AbsN Nothing
+              ( ParamUnused Nothing :| [] )
               ( AppN Nothing
                 ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "fromJust" ) ) )
                 ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
@@ -2403,7 +2427,8 @@ UberModule
       ( Name "codes", Ref Nothing
         ( Imported ( ModuleName "Golden.StringCodePoints.Test" ) ( Name "codes" ) )
       ),
-      ( Name "main", Abs Nothing ( ParamUnused Nothing )
+      ( Name "main", AbsN Nothing
+        ( ParamUnused Nothing :| [] )
         ( Let Nothing
           ( Standalone
             ( Nothing, Name "_", AppN Nothing
@@ -2636,8 +2661,8 @@ UberModule
                             ) :| []
                           )
                         )
-                        ( Abs Nothing
-                          ( ParamNamed Nothing ( Name "v$0" ) )
+                        ( AbsN Nothing
+                          ( ParamNamed Nothing ( Name "v$0" ) :| [] )
                           ( ObjectProp Nothing
                             ( Ref Nothing ( Local ( Name "v$0" ) ) )
                             ( PropName "head" )
@@ -2689,8 +2714,8 @@ UberModule
                             ) :| []
                           )
                         )
-                        ( Abs Nothing
-                          ( ParamNamed Nothing ( Name "v0$1" ) )
+                        ( AbsN Nothing
+                          ( ParamNamed Nothing ( Name "v0$1" ) :| [] )
                           ( ObjectProp Nothing
                             ( Ref Nothing ( Local ( Name "v0$1" ) ) )
                             ( PropName "tail" )
@@ -2714,8 +2739,8 @@ UberModule
                     ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow" ) ) )
                     ( LiteralObject Nothing
                       [
-                        ( PropName "show", Abs Nothing
-                          ( ParamNamed Nothing ( Name "v$1235" ) )
+                        ( PropName "show", AbsN Nothing
+                          ( ParamNamed Nothing ( Name "v$1235" ) :| [] )
                           ( IfThenElse Nothing
                             ( Ref Nothing ( Local ( Name "v$1235" ) ) )
                             ( LiteralString Nothing "true" )

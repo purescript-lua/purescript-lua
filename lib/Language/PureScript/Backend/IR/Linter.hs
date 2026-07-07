@@ -54,13 +54,21 @@ data Violation
     (see 'discardName').
     -}
     RefToDiscard Site
-  | {- | A literal lambda applied to more than one argument in a single
-    call ('WellApplied'). A lambda compiles to a one-parameter Lua
-    function (Note [n-ary application]), so every argument past the first
-    would be silently dropped. The 'Natural' is the offending call's
+  | {- | A literal lambda applied, in a single call, to a number of
+    arguments different from the number of parameters it binds
+    ('WellApplied'). A lambda compiles to a Lua function of exactly its
+    parameter count (Note [n-ary abstraction]), so surplus arguments are
+    silently dropped and missing ones read as nil instead of currying.
+    Carries the lambda's parameter count and the offending call's
     argument count.
     -}
-    OverApplied Site Natural
+    LambdaArityMismatch Site Natural Natural
+  | {- | An 'AbsN' parameter list with a 'ParamUnused' in non-trailing
+    position ('WellApplied'). The Lua backend drops unused parameters,
+    which is arity-preserving only for a trailing run
+    (Note [n-ary abstraction]).
+    -}
+    NonTrailingUnusedParam Site
   deriving stock (Eq, Show)
 
 -- | The top-level entry of the module a violation was found in.
@@ -91,17 +99,22 @@ lintUniqueBinders = overSites \site e →
   (DuplicateBinder site <$> duplicateBinders e)
     <> [RefToDiscard site | hasRefToDiscard e]
 
-{- | Check the @WellApplied@ invariant: no literal lambda is applied to
-more than one argument in a single call. A lambda compiles to a
-one-parameter Lua function, so a multi-argument 'AppN' onto a lambda head
-drops every argument past the first (Note [n-ary application]). A
-well-formed multi-argument call always has a non-lambda head — a reference
-to an n-ary foreign function. An empty result means the module holds the
-invariant.
+{- | Check the @WellApplied@ invariant — the well-formedness conditions
+of the n-ary nodes (Note [n-ary abstraction]):
+
+  * every 'AppN' with a literal lambda head passes exactly as many
+    arguments as the lambda binds parameters — anything else silently
+    drops arguments or nil-fills parameters instead of currying;
+
+  * every 'AbsN' keeps its 'ParamUnused' parameters in a trailing run,
+    so the Lua backend can drop them without shifting the rest.
+
+An empty result means the module holds the invariant.
 -}
 lintWellApplied ∷ UberModule → [Violation]
 lintWellApplied = overSites \site e →
-  OverApplied site <$> overApplications e
+  (uncurry (LambdaArityMismatch site) <$> lambdaArityMismatches e)
+    <> [NonTrailingUnusedParam site | hasNonTrailingUnusedParam e]
 
 {- | Run a per-site check over every top-level binding, foreign binding,
 and export of the module.
@@ -133,7 +146,8 @@ unboundLocals = go (Set.singleton (Name runtimeLazyName))
     Ref _ (Local nm)
       | Set.member nm scope → []
       | otherwise → [nm]
-    Abs _ param body → go (bindName (paramName param) scope) body
+    AbsN _ params body →
+      go (foldl' (\sc p → bindName (paramName p) sc) scope (toList params)) body
     Let _ binds body →
       let (bodyScope, errs) = foldl' letGrouping (scope, []) (toList binds)
        in errs <> go bodyScope body
@@ -176,7 +190,7 @@ duplicateBinders e =
  where
   binders ∷ Exp → [Name]
   binders = \case
-    Abs _ param _ → maybeToList (paramName param)
+    AbsN _ params _ → mapMaybe paramName (toList params)
     Let _ binds _ → bindingNames =<< toList binds
     _ → []
 
@@ -191,13 +205,28 @@ hasRefToDiscard e =
     | Ref _ (Local nm) ← toListOf (cosmosOf subexpressions) e
     ]
 
-{- | The argument count of every 'AppN' that applies a literal lambda to
-more than one argument. Each such node is a miscompile: the lambda is a
-one-parameter Lua function, so its surplus arguments are dropped.
+{- | The (parameter count, argument count) of every 'AppN' that applies a
+literal lambda to a number of arguments different from its parameter
+count. Each such node is a miscompile: the lambda is a Lua function of
+exactly its parameter count, so surplus arguments are dropped and
+missing parameters read as nil.
 -}
-overApplications ∷ Exp → [Natural]
-overApplications e =
-  [ fromIntegral (length args)
-  | AppN _ (Abs {}) args ← toListOf (cosmosOf subexpressions) e
-  , length args > (1 ∷ Int)
+lambdaArityMismatches ∷ Exp → [(Natural, Natural)]
+lambdaArityMismatches e =
+  [ (fromIntegral (length params), fromIntegral (length args))
+  | AppN _ (AbsN _ params _) args ← toListOf (cosmosOf subexpressions) e
+  , length args /= length params
   ]
+
+{- | Whether any 'AbsN' of the expression binds a named parameter after
+an unused one. Reported as a single violation per site, like
+'RefToDiscard'.
+-}
+hasNonTrailingUnusedParam ∷ Exp → Bool
+hasNonTrailingUnusedParam e =
+  or
+    [ any (isJust . paramName) fromFirstUnused
+    | AbsN _ params _ ← toListOf (cosmosOf subexpressions) e
+    , let (_named, fromFirstUnused) =
+            break (isNothing . paramName) (toList params)
+    ]

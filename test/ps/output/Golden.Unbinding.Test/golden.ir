@@ -3,8 +3,9 @@ UberModule
     [ Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.Unbinding.Test", qnameName = Name "f"
-        }, Abs Nothing ( ParamUnused Nothing )
-        ( Abs Nothing ( ParamUnused Nothing ) ( LiteralInt Nothing 3 ) )
+        }, AbsN Nothing
+        ( ParamUnused Nothing :| [] )
+        ( AbsN Nothing ( ParamUnused Nothing :| [] ) ( LiteralInt Nothing 3 ) )
       )
     ], uberModuleForeigns = [], uberModuleExports =
     [

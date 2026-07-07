@@ -52,8 +52,8 @@ collectBoundNames ∷ Exp → Set Name
 collectBoundNames =
   (`execAccum` Set.empty) . transformMOf subexpressions \e →
     case e of
-      IR.Abs _ann (IR.ParamNamed _paramAnn name) _body →
-        e <$ add (Set.singleton name)
+      IR.AbsN _ann params _body →
+        e <$ add (Set.fromList (mapMaybe IR.paramName (toList params)))
       IR.Let _ann groupings _body →
         e <$ add do
           Set.fromList

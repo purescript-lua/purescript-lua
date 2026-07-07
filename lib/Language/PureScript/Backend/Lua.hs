@@ -214,23 +214,31 @@ fromIR foreigns topLevelNames modname ir = case ir of
     pure . Right $
       Lua.functionCall (Lua.varName Fixture.objectUpdateName) [obj, vals]
   -- See Note [Nullary functions and Prim.undefined]
-  IR.Abs _ann param expr → do
+  IR.AbsN _ann params expr → do
     body ← go expr
-    let luaParams = case param of
-          IR.ParamUnused _ann → []
-          IR.ParamNamed _ann name → [ParamNamed (fromName name)]
+    let luaParams =
+          -- The trailing run of unused parameters is dropped; a
+          -- non-trailing 'ParamUnused' cannot occur
+          -- (Note [n-ary abstraction] in ...Backend.IR.Types).
+          [ ParamNamed (fromName name)
+          | IR.ParamNamed _pann name ←
+              List.dropWhileEnd isUnusedParam (toList params)
+          ]
     pure . Right $ case body of
       Left chunk → Lua.functionDef luaParams chunk
       Right e → Lua.functionDef luaParams [Lua.return e]
   IR.AppN _ann fn args → do
     e ← goExp fn
-    Right . Lua.functionCall e <$> case args of
-      -- See Note [Nullary functions and Prim.undefined]. PS sometimes inserts
-      -- a synthetic unused argument "Prim.undefined", which is elided here so
-      -- a nullary function is emitted as f() rather than f(nil).
-      IR.Ref _ann (IR.Imported (IR.ModuleName "Prim") (IR.Name "undefined")) :| [] →
-        pure []
-      _ → traverse goExp (toList args)
+    -- See Note [Nullary functions and Prim.undefined]. PS inserts a
+    -- synthetic unused argument "Prim.undefined" to force a thunk. The
+    -- trailing run of such arguments is elided (the nullary call
+    -- included, so it is emitted as f() rather than f(nil)), mirroring
+    -- the dropped trailing run of unused parameters above. A
+    -- non-trailing one can only face an unused (named-dummy) parameter
+    -- of an uncurried worker, so it lowers to an explicit nil.
+    let keptArgs = List.dropWhileEnd isPrimUndefined (toList args)
+    Right . Lua.functionCall e <$> for keptArgs \arg →
+      if isPrimUndefined arg then pure Lua.Nil else goExp arg
   IR.Ref _ann qualifiedName →
     case qualifiedName of
       IR.Local name
@@ -330,3 +338,13 @@ keyCtor = Lua.String "$ctor"
 
 qualifyName ∷ ModuleName → Lua.Name → Lua.Name
 qualifyName modname = Name.join2 (fromModuleName modname)
+
+isUnusedParam ∷ IR.Parameter ann → Bool
+isUnusedParam = isNothing . IR.paramName
+
+-- | The synthetic argument PureScript passes to force a thunk.
+isPrimUndefined ∷ IR.Exp → Bool
+isPrimUndefined = \case
+  IR.Ref _ann (IR.Imported (IR.ModuleName "Prim") (IR.Name "undefined")) →
+    True
+  _ → False

@@ -156,6 +156,7 @@ import Language.PureScript.Backend.IR.Types
   , refLocal
   , rewriteExpTopDownM
   , substituteCopyM
+  , pattern Abs
   , pattern App
   )
 

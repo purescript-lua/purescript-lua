@@ -1,8 +1,8 @@
 UberModule
   { uberModuleBindings = [], uberModuleForeigns = [], uberModuleExports =
     [
-      ( Name "g", Abs Nothing
-        ( ParamNamed Nothing ( Name "x$0" ) )
+      ( Name "g", AbsN Nothing
+        ( ParamNamed Nothing ( Name "x$0" ) :| [] )
         ( IfThenElse Nothing
           ( Eq Nothing ( LiteralInt Nothing 42 ) ( Ref Nothing ( Local ( Name "x$0" ) ) ) )
           ( LiteralInt Nothing 42 )

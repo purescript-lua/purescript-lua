@@ -72,12 +72,18 @@ uniquifyNamesInExpr e =
  where
   go ∷ RenamesInScope → Exp → State (Set Name) Exp
   go scope = \case
-    Abs ann param body →
-      case param of
-        ParamUnused _ann → Abs ann param <$> go scope body
-        ParamNamed paramAnn name → do
-          (name', scope') ← bindName scope name
-          Abs ann (ParamNamed paramAnn name') <$> go scope' body
+    AbsN ann params body → do
+      (scope', reverse → params') ←
+        foldlM
+          ( \(sc, ps) param → case param of
+              ParamUnused _ann → pure (sc, param : ps)
+              ParamNamed paramAnn name → do
+                (name', sc') ← bindName sc name
+                pure (sc', ParamNamed paramAnn name' : ps)
+          )
+          (scope, [])
+          (toList params)
+      AbsN ann (NE.fromList params') <$> go scope' body
     Ref ann qname →
       pure case qname of
         Local lname

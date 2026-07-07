@@ -45,10 +45,10 @@ UberModule
           [
             ( PropName "ff", LiteralBool Nothing False ),
             ( PropName "tt", LiteralBool Nothing True ),
-            ( PropName "implies", Abs Nothing
-              ( ParamNamed Nothing ( Name "a" ) )
-              ( Abs Nothing
-                ( ParamNamed Nothing ( Name "b" ) )
+            ( PropName "implies", AbsN Nothing
+              ( ParamNamed Nothing ( Name "a" ) :| [] )
+              ( AbsN Nothing
+                ( ParamNamed Nothing ( Name "b" ) :| [] )
                 ( AppN Nothing
                   ( AppN Nothing
                     ( ObjectProp Nothing
@@ -93,8 +93,8 @@ UberModule
         ) :| []
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Data.Eq", qnameName = Name "eqRecord" }, Abs Nothing
-        ( ParamNamed Nothing ( Name "dict" ) )
+        { qnameModuleName = ModuleName "Data.Eq", qnameName = Name "eqRecord" }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "dict" ) :| [] )
         ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) ) ( PropName "eqRecord" ) )
       ), Standalone
       ( QName
@@ -107,25 +107,27 @@ UberModule
         ]
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Data.Eq", qnameName = Name "eq" }, Abs Nothing
-        ( ParamNamed Nothing ( Name "dict" ) )
+        { qnameModuleName = ModuleName "Data.Eq", qnameName = Name "eq" }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "dict" ) :| [] )
         ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) ) ( PropName "eq" ) )
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Data.Eq", qnameName = Name "eqRowCons" }, Abs Nothing
-        ( ParamNamed Nothing ( Name "dictEqRecord" ) )
-        ( Abs Nothing ( ParamUnused Nothing )
-          ( Abs Nothing
-            ( ParamNamed Nothing ( Name "dictIsSymbol" ) )
-            ( Abs Nothing
-              ( ParamNamed Nothing ( Name "dictEq" ) )
+        { qnameModuleName = ModuleName "Data.Eq", qnameName = Name "eqRowCons" }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "dictEqRecord" ) :| [] )
+        ( AbsN Nothing
+          ( ParamUnused Nothing :| [] )
+          ( AbsN Nothing
+            ( ParamNamed Nothing ( Name "dictIsSymbol" ) :| [] )
+            ( AbsN Nothing
+              ( ParamNamed Nothing ( Name "dictEq" ) :| [] )
               ( LiteralObject Nothing
                 [
-                  ( PropName "eqRecord", Abs Nothing ( ParamUnused Nothing )
-                    ( Abs Nothing
-                      ( ParamNamed Nothing ( Name "ra" ) )
-                      ( Abs Nothing
-                        ( ParamNamed Nothing ( Name "rb" ) )
+                  ( PropName "eqRecord", AbsN Nothing
+                    ( ParamUnused Nothing :| [] )
+                    ( AbsN Nothing
+                      ( ParamNamed Nothing ( Name "ra" ) :| [] )
+                      ( AbsN Nothing
+                        ( ParamNamed Nothing ( Name "rb" ) :| [] )
                         ( Let Nothing
                           ( Standalone
                             ( Nothing, Name "key", AppN Nothing
@@ -209,13 +211,13 @@ UberModule
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Control.Applicative", qnameName = Name "pure"
-        }, Abs Nothing
-        ( ParamNamed Nothing ( Name "dict" ) )
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "dict" ) :| [] )
         ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) ) ( PropName "pure" ) )
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Control.Bind", qnameName = Name "bind" }, Abs Nothing
-        ( ParamNamed Nothing ( Name "dict" ) )
+        { qnameModuleName = ModuleName "Control.Bind", qnameName = Name "bind" }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "dict" ) :| [] )
         ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) ) ( PropName "bind" ) )
       ), Standalone
       ( QName
@@ -243,14 +245,14 @@ UberModule
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Data.Eq.Generic", qnameName = Name "genericEqArgument"
-        }, Abs Nothing
-        ( ParamNamed Nothing ( Name "dictEq" ) )
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "dictEq" ) :| [] )
         ( LiteralObject Nothing
           [
-            ( PropName "genericEq'", Abs Nothing
-              ( ParamNamed Nothing ( Name "v" ) )
-              ( Abs Nothing
-                ( ParamNamed Nothing ( Name "v1" ) )
+            ( PropName "genericEq'", AbsN Nothing
+              ( ParamNamed Nothing ( Name "v" ) :| [] )
+              ( AbsN Nothing
+                ( ParamNamed Nothing ( Name "v1" ) :| [] )
                 ( AppN Nothing
                   ( AppN Nothing
                     ( AppN Nothing
@@ -268,20 +270,20 @@ UberModule
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Data.Eq.Generic", qnameName = Name "genericEq'"
-        }, Abs Nothing
-        ( ParamNamed Nothing ( Name "dict" ) )
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "dict" ) :| [] )
         ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) ) ( PropName "genericEq'" ) )
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Data.Eq.Generic", qnameName = Name "genericEqConstructor"
-        }, Abs Nothing
-        ( ParamNamed Nothing ( Name "dictGenericEq" ) )
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "dictGenericEq" ) :| [] )
         ( LiteralObject Nothing
           [
-            ( PropName "genericEq'", Abs Nothing
-              ( ParamNamed Nothing ( Name "v" ) )
-              ( Abs Nothing
-                ( ParamNamed Nothing ( Name "v1" ) )
+            ( PropName "genericEq'", AbsN Nothing
+              ( ParamNamed Nothing ( Name "v" ) :| [] )
+              ( AbsN Nothing
+                ( ParamNamed Nothing ( Name "v1" ) :| [] )
                 ( AppN Nothing
                   ( AppN Nothing
                     ( AppN Nothing
@@ -301,8 +303,8 @@ UberModule
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Data.Eq.Generic", qnameName = Name "genericEq"
-        }, Abs Nothing
-        ( ParamNamed Nothing ( Name "dictGeneric" ) )
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "dictGeneric" ) :| [] )
         ( Let Nothing
           ( Standalone
             ( Nothing, Name "from", ObjectProp Nothing
@@ -310,12 +312,12 @@ UberModule
               ( PropName "from" )
             ) :| []
           )
-          ( Abs Nothing
-            ( ParamNamed Nothing ( Name "dictGenericEq" ) )
-            ( Abs Nothing
-              ( ParamNamed Nothing ( Name "x" ) )
-              ( Abs Nothing
-                ( ParamNamed Nothing ( Name "y" ) )
+          ( AbsN Nothing
+            ( ParamNamed Nothing ( Name "dictGenericEq" ) :| [] )
+            ( AbsN Nothing
+              ( ParamNamed Nothing ( Name "x" ) :| [] )
+              ( AbsN Nothing
+                ( ParamNamed Nothing ( Name "y" ) :| [] )
                 ( AppN Nothing
                   ( AppN Nothing
                     ( AppN Nothing
@@ -344,10 +346,12 @@ UberModule
           { qnameModuleName = ModuleName "Effect", qnameName = Name "monadEffect"
           }, LiteralObject Nothing
           [
-            ( PropName "Applicative0", Abs Nothing ( ParamUnused Nothing )
+            ( PropName "Applicative0", AbsN Nothing
+              ( ParamUnused Nothing :| [] )
               ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "applicativeEffect" ) ) )
             ),
-            ( PropName "Bind1", Abs Nothing ( ParamUnused Nothing )
+            ( PropName "Bind1", AbsN Nothing
+              ( ParamUnused Nothing :| [] )
               ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "bindEffect" ) ) )
             )
           ]
@@ -361,7 +365,8 @@ UberModule
                 ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "foreign" ) ) )
                 ( PropName "bindE" )
               ),
-              ( PropName "Apply0", Abs Nothing ( ParamUnused Nothing )
+              ( PropName "Apply0", AbsN Nothing
+                ( ParamUnused Nothing :| [] )
                 ( AppN Nothing
                   ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "Lazy_applyEffect" ) ) )
                   ( LiteralInt Nothing 0 :| [] )
@@ -377,7 +382,8 @@ UberModule
                 ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "foreign" ) ) )
                 ( PropName "pureE" )
               ),
-              ( PropName "Apply0", Abs Nothing ( ParamUnused Nothing )
+              ( PropName "Apply0", AbsN Nothing
+                ( ParamUnused Nothing :| [] )
                 ( AppN Nothing
                   ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "Lazy_applyEffect" ) ) )
                   ( LiteralInt Nothing 0 :| [] )
@@ -392,13 +398,14 @@ UberModule
               ( Ref Nothing ( Local ( Name "PSLUA_runtime_lazy" ) ) )
               ( LiteralString Nothing "functorEffect" :| [] )
             )
-            ( Abs Nothing ( ParamUnused Nothing )
+            ( AbsN Nothing
+              ( ParamUnused Nothing :| [] )
               ( LiteralObject Nothing
                 [
-                  ( PropName "map", Abs Nothing
-                    ( ParamNamed Nothing ( Name "f$42" ) )
-                    ( Abs Nothing
-                      ( ParamNamed Nothing ( Name "a$43" ) )
+                  ( PropName "map", AbsN Nothing
+                    ( ParamNamed Nothing ( Name "f$42" ) :| [] )
+                    ( AbsN Nothing
+                      ( ParamNamed Nothing ( Name "a$43" ) :| [] )
                       ( AppN Nothing
                         ( AppN Nothing
                           ( ObjectProp Nothing
@@ -445,7 +452,8 @@ UberModule
               ( Ref Nothing ( Local ( Name "PSLUA_runtime_lazy" ) ) )
               ( LiteralString Nothing "applyEffect" :| [] )
             )
-            ( Abs Nothing ( ParamUnused Nothing )
+            ( AbsN Nothing
+              ( ParamUnused Nothing :| [] )
               ( LiteralObject Nothing
                 [
                   ( PropName "apply", Let Nothing
@@ -465,24 +473,24 @@ UberModule
                         )
                       ) :| []
                     )
-                    ( Abs Nothing
-                      ( ParamNamed Nothing ( Name "f$23" ) )
-                      ( Abs Nothing
-                        ( ParamNamed Nothing ( Name "a$24" ) )
+                    ( AbsN Nothing
+                      ( ParamNamed Nothing ( Name "f$23" ) :| [] )
+                      ( AbsN Nothing
+                        ( ParamNamed Nothing ( Name "a$24" ) :| [] )
                         ( AppN Nothing
                           ( AppN Nothing
                             ( Ref Nothing ( Local ( Name "bind$21" ) ) )
                             ( Ref Nothing ( Local ( Name "f$23" ) ) :| [] )
                           )
-                          ( Abs Nothing
-                            ( ParamNamed Nothing ( Name "f'$25" ) )
+                          ( AbsN Nothing
+                            ( ParamNamed Nothing ( Name "f'$25" ) :| [] )
                             ( AppN Nothing
                               ( AppN Nothing
                                 ( Ref Nothing ( Local ( Name "bind$21" ) ) )
                                 ( Ref Nothing ( Local ( Name "a$24" ) ) :| [] )
                               )
-                              ( Abs Nothing
-                                ( ParamNamed Nothing ( Name "a'$26" ) )
+                              ( AbsN Nothing
+                                ( ParamNamed Nothing ( Name "a'$26" ) :| [] )
                                 ( AppN Nothing
                                   ( AppN Nothing
                                     ( Ref Nothing
@@ -521,7 +529,8 @@ UberModule
                       )
                     )
                   ),
-                  ( PropName "Functor0", Abs Nothing ( ParamUnused Nothing )
+                  ( PropName "Functor0", AbsN Nothing
+                    ( ParamUnused Nothing :| [] )
                     ( AppN Nothing
                       ( Ref Nothing
                         ( Imported ( ModuleName "Effect" ) ( Name "Lazy_functorEffect" ) )
@@ -537,14 +546,14 @@ UberModule
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.GenericEqTwoTypes.Test", qnameName = Name "genericEqSum"
-        }, Abs Nothing
-        ( ParamNamed Nothing ( Name "dictGenericEq1$5" ) )
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "dictGenericEq1$5" ) :| [] )
         ( LiteralObject Nothing
           [
-            ( PropName "genericEq'", Abs Nothing
-              ( ParamNamed Nothing ( Name "v$7" ) )
-              ( Abs Nothing
-                ( ParamNamed Nothing ( Name "v1$8" ) )
+            ( PropName "genericEq'", AbsN Nothing
+              ( ParamNamed Nothing ( Name "v$7" ) :| [] )
+              ( AbsN Nothing
+                ( ParamNamed Nothing ( Name "v1$8" ) :| [] )
                 ( IfThenElse Nothing
                   ( Eq Nothing
                     ( LiteralString Nothing "Data.Generic.Rep∷Sum.Inl" )
@@ -570,8 +579,11 @@ UberModule
                             )
                             ( LiteralObject Nothing
                               [
-                                ( PropName "genericEq'", Abs Nothing ( ParamUnused Nothing )
-                                  ( Abs Nothing ( ParamUnused Nothing ) ( LiteralBool Nothing True ) )
+                                ( PropName "genericEq'", AbsN Nothing
+                                  ( ParamUnused Nothing :| [] )
+                                  ( AbsN Nothing
+                                    ( ParamUnused Nothing :| [] ) ( LiteralBool Nothing True )
+                                  )
                                 )
                               ] :| []
                             ) :| []
@@ -626,8 +638,8 @@ UberModule
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.GenericEqTwoTypes.Test", qnameName = Name "eqRec"
-        }, Abs Nothing
-        ( ParamNamed Nothing ( Name "dictEqRecord$193" ) )
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "dictEqRecord$193" ) :| [] )
         ( LiteralObject Nothing
           [
             ( PropName "eq", AppN Nothing
@@ -647,9 +659,11 @@ UberModule
           ( Ref Nothing ( Imported ( ModuleName "Data.Eq" ) ( Name "eqRowCons" ) ) )
           ( LiteralObject Nothing
             [
-              ( PropName "eqRecord", Abs Nothing ( ParamUnused Nothing )
-                ( Abs Nothing ( ParamUnused Nothing )
-                  ( Abs Nothing ( ParamUnused Nothing ) ( LiteralBool Nothing True ) )
+              ( PropName "eqRecord", AbsN Nothing
+                ( ParamUnused Nothing :| [] )
+                ( AbsN Nothing
+                  ( ParamUnused Nothing :| [] )
+                  ( AbsN Nothing ( ParamUnused Nothing :| [] ) ( LiteralBool Nothing True ) )
                 )
               )
             ] :| []
@@ -665,8 +679,8 @@ UberModule
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.GenericEqTwoTypes.Test", qnameName = Name "logShow"
-        }, Abs Nothing
-        ( ParamNamed Nothing ( Name "a$2" ) )
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "a$2" ) :| [] )
         ( AppN Nothing
           ( ObjectProp ( Just Always )
             ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
@@ -715,12 +729,12 @@ UberModule
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.GenericEqTwoTypes.Test", qnameName = Name "node"
-        }, Abs Nothing
-        ( ParamNamed Nothing ( Name "left" ) )
-        ( Abs Nothing
-          ( ParamNamed Nothing ( Name "value" ) )
-          ( Abs Nothing
-            ( ParamNamed Nothing ( Name "right" ) )
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "left" ) :| [] )
+        ( AbsN Nothing
+          ( ParamNamed Nothing ( Name "value" ) :| [] )
+          ( AbsN Nothing
+            ( ParamNamed Nothing ( Name "right" ) :| [] )
             ( AppN Nothing
               ( Ref Nothing
                 ( Imported ( ModuleName "Golden.GenericEqTwoTypes.Test" ) ( Name "Node" ) )
@@ -740,8 +754,8 @@ UberModule
         { qnameModuleName = ModuleName "Golden.GenericEqTwoTypes.Test", qnameName = Name "genericTree"
         }, LiteralObject Nothing
         [
-          ( PropName "to", Abs Nothing
-            ( ParamNamed Nothing ( Name "x" ) )
+          ( PropName "to", AbsN Nothing
+            ( ParamNamed Nothing ( Name "x" ) :| [] )
             ( IfThenElse Nothing
               ( Eq Nothing
                 ( LiteralString Nothing "Data.Generic.Rep∷Sum.Inl" )
@@ -768,8 +782,8 @@ UberModule
               )
             )
           ),
-          ( PropName "from", Abs Nothing
-            ( ParamNamed Nothing ( Name "x0" ) )
+          ( PropName "from", AbsN Nothing
+            ( ParamNamed Nothing ( Name "x0" ) :| [] )
             ( IfThenElse Nothing
               ( Eq Nothing
                 ( LiteralString Nothing "Golden.GenericEqTwoTypes.Test∷Tree.Leaf" )
@@ -803,8 +817,8 @@ UberModule
         { qnameModuleName = ModuleName "Golden.GenericEqTwoTypes.Test", qnameName = Name "genericList"
         }, LiteralObject Nothing
         [
-          ( PropName "to", Abs Nothing
-            ( ParamNamed Nothing ( Name "x" ) )
+          ( PropName "to", AbsN Nothing
+            ( ParamNamed Nothing ( Name "x" ) :| [] )
             ( IfThenElse Nothing
               ( Eq Nothing
                 ( LiteralString Nothing "Data.Generic.Rep∷Sum.Inl" )
@@ -831,8 +845,8 @@ UberModule
               )
             )
           ),
-          ( PropName "from", Abs Nothing
-            ( ParamNamed Nothing ( Name "x0" ) )
+          ( PropName "from", AbsN Nothing
+            ( ParamNamed Nothing ( Name "x0" ) :| [] )
             ( IfThenElse Nothing
               ( Eq Nothing
                 ( LiteralString Nothing "Golden.GenericEqTwoTypes.Test∷List.Nil" )
@@ -865,14 +879,14 @@ UberModule
       (
         ( QName
           { qnameModuleName = ModuleName "Golden.GenericEqTwoTypes.Test", qnameName = Name "eqTree"
-          }, Abs Nothing
-          ( ParamNamed Nothing ( Name "dictEq" ) )
+          }, AbsN Nothing
+          ( ParamNamed Nothing ( Name "dictEq" ) :| [] )
           ( LiteralObject Nothing
             [
-              ( PropName "eq", Abs Nothing
-                ( ParamNamed Nothing ( Name "x" ) )
-                ( Abs Nothing
-                  ( ParamNamed Nothing ( Name "y" ) )
+              ( PropName "eq", AbsN Nothing
+                ( ParamNamed Nothing ( Name "x" ) :| [] )
+                ( AbsN Nothing
+                  ( ParamNamed Nothing ( Name "y" ) :| [] )
                   ( AppN Nothing
                     ( AppN Nothing
                       ( AppN Nothing
@@ -942,7 +956,8 @@ UberModule
                                                     )
                                                     ( LiteralObject Nothing
                                                       [
-                                                        ( PropName "reflectSymbol", Abs Nothing ( ParamUnused Nothing )
+                                                        ( PropName "reflectSymbol", AbsN Nothing
+                                                          ( ParamUnused Nothing :| [] )
                                                           ( LiteralString Nothing "value" )
                                                         )
                                                       ] :| []
@@ -962,7 +977,8 @@ UberModule
                                             )
                                             ( LiteralObject Nothing
                                               [
-                                                ( PropName "reflectSymbol", Abs Nothing ( ParamUnused Nothing )
+                                                ( PropName "reflectSymbol", AbsN Nothing
+                                                  ( ParamUnused Nothing :| [] )
                                                   ( LiteralString Nothing "right" )
                                                 )
                                               ] :| []
@@ -988,7 +1004,8 @@ UberModule
                                     )
                                     ( LiteralObject Nothing
                                       [
-                                        ( PropName "reflectSymbol", Abs Nothing ( ParamUnused Nothing )
+                                        ( PropName "reflectSymbol", AbsN Nothing
+                                          ( ParamUnused Nothing :| [] )
                                           ( LiteralString Nothing "left" )
                                         )
                                       ] :| []
@@ -1033,14 +1050,14 @@ UberModule
       (
         ( QName
           { qnameModuleName = ModuleName "Golden.GenericEqTwoTypes.Test", qnameName = Name "eqList"
-          }, Abs Nothing
-          ( ParamNamed Nothing ( Name "dictEq" ) )
+          }, AbsN Nothing
+          ( ParamNamed Nothing ( Name "dictEq" ) :| [] )
           ( LiteralObject Nothing
             [
-              ( PropName "eq", Abs Nothing
-                ( ParamNamed Nothing ( Name "x" ) )
-                ( Abs Nothing
-                  ( ParamNamed Nothing ( Name "y" ) )
+              ( PropName "eq", AbsN Nothing
+                ( ParamNamed Nothing ( Name "x" ) :| [] )
+                ( AbsN Nothing
+                  ( ParamNamed Nothing ( Name "y" ) :| [] )
                   ( AppN Nothing
                     ( AppN Nothing
                       ( AppN Nothing
@@ -1100,7 +1117,8 @@ UberModule
                                             )
                                             ( LiteralObject Nothing
                                               [
-                                                ( PropName "reflectSymbol", Abs Nothing ( ParamUnused Nothing )
+                                                ( PropName "reflectSymbol", AbsN Nothing
+                                                  ( ParamUnused Nothing :| [] )
                                                   ( LiteralString Nothing "tail" )
                                                 )
                                               ] :| []
@@ -1126,7 +1144,8 @@ UberModule
                                     )
                                     ( LiteralObject Nothing
                                       [
-                                        ( PropName "reflectSymbol", Abs Nothing ( ParamUnused Nothing )
+                                        ( PropName "reflectSymbol", AbsN Nothing
+                                          ( ParamUnused Nothing :| [] )
                                           ( LiteralString Nothing "head" )
                                         )
                                       ] :| []
@@ -1162,10 +1181,10 @@ UberModule
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.GenericEqTwoTypes.Test", qnameName = Name "cons"
-        }, Abs Nothing
-        ( ParamNamed Nothing ( Name "head" ) )
-        ( Abs Nothing
-          ( ParamNamed Nothing ( Name "tail" ) )
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "head" ) :| [] )
+        ( AbsN Nothing
+          ( ParamNamed Nothing ( Name "tail" ) :| [] )
           ( AppN Nothing
             ( Ref Nothing
               ( Imported ( ModuleName "Golden.GenericEqTwoTypes.Test" ) ( Name "Cons" ) )
@@ -1199,7 +1218,8 @@ UberModule
       ( Name "node", Ref Nothing
         ( Imported ( ModuleName "Golden.GenericEqTwoTypes.Test" ) ( Name "node" ) )
       ),
-      ( Name "main", Abs Nothing ( ParamUnused Nothing )
+      ( Name "main", AbsN Nothing
+        ( ParamUnused Nothing :| [] )
         ( Let Nothing
           ( Standalone
             ( Nothing, Name "_", AppN Nothing

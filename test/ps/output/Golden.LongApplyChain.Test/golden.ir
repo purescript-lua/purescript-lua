@@ -20,13 +20,13 @@ UberModule
         [ ( Nothing, Name "log" ) ]
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Data.Show", qnameName = Name "show" }, Abs Nothing
-        ( ParamNamed Nothing ( Name "dict" ) )
+        { qnameModuleName = ModuleName "Data.Show", qnameName = Name "show" }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "dict" ) :| [] )
         ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) ) ( PropName "show" ) )
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Data.Functor", qnameName = Name "map" }, Abs Nothing
-        ( ParamNamed Nothing ( Name "dict" ) )
+        { qnameModuleName = ModuleName "Data.Functor", qnameName = Name "map" }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "dict" ) :| [] )
         ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) ) ( PropName "map" ) )
       ), Standalone
       ( QName
@@ -48,10 +48,10 @@ UberModule
         { qnameModuleName = ModuleName "Data.Maybe", qnameName = Name "functorMaybe"
         }, LiteralObject Nothing
         [
-          ( PropName "map", Abs Nothing
-            ( ParamNamed Nothing ( Name "v" ) )
-            ( Abs Nothing
-              ( ParamNamed Nothing ( Name "v1" ) )
+          ( PropName "map", AbsN Nothing
+            ( ParamNamed Nothing ( Name "v" ) :| [] )
+            ( AbsN Nothing
+              ( ParamNamed Nothing ( Name "v1" ) :| [] )
               ( IfThenElse Nothing
                 ( Eq Nothing
                   ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
@@ -77,10 +77,10 @@ UberModule
         { qnameModuleName = ModuleName "Data.Maybe", qnameName = Name "applyMaybe"
         }, LiteralObject Nothing
         [
-          ( PropName "apply", Abs Nothing
-            ( ParamNamed Nothing ( Name "v" ) )
-            ( Abs Nothing
-              ( ParamNamed Nothing ( Name "v1" ) )
+          ( PropName "apply", AbsN Nothing
+            ( ParamNamed Nothing ( Name "v" ) :| [] )
+            ( AbsN Nothing
+              ( ParamNamed Nothing ( Name "v1" ) :| [] )
               ( IfThenElse Nothing
                 ( Eq Nothing
                   ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
@@ -112,17 +112,18 @@ UberModule
               )
             )
           ),
-          ( PropName "Functor0", Abs Nothing ( ParamUnused Nothing )
+          ( PropName "Functor0", AbsN Nothing
+            ( ParamUnused Nothing :| [] )
             ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "functorMaybe" ) ) )
           )
         ]
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.LongApplyChain.Test", qnameName = Name "applySecond"
-        }, Abs Nothing
-        ( ParamNamed Nothing ( Name "a$131" ) )
-        ( Abs Nothing
-          ( ParamNamed Nothing ( Name "b$132" ) )
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "a$131" ) :| [] )
+        ( AbsN Nothing
+          ( ParamNamed Nothing ( Name "b$132" ) :| [] )
           ( AppN Nothing
             ( AppN Nothing
               ( ObjectProp Nothing
@@ -145,9 +146,10 @@ UberModule
                       ) :| []
                     )
                   )
-                  ( Abs Nothing ( ParamUnused Nothing )
-                    ( Abs Nothing
-                      ( ParamNamed Nothing ( Name "x$281" ) )
+                  ( AbsN Nothing
+                    ( ParamUnused Nothing :| [] )
+                    ( AbsN Nothing
+                      ( ParamNamed Nothing ( Name "x$281" ) :| [] )
                       ( Ref Nothing ( Local ( Name "x$281" ) ) )
                     ) :| []
                   )
@@ -5442,8 +5444,8 @@ UberModule
             ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "show" ) ) )
             ( LiteralObject Nothing
               [
-                ( PropName "show", Abs Nothing
-                  ( ParamNamed Nothing ( Name "v$20$287" ) )
+                ( PropName "show", AbsN Nothing
+                  ( ParamNamed Nothing ( Name "v$20$287" ) :| [] )
                   ( IfThenElse Nothing
                     ( Eq Nothing
                       ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )

@@ -15,8 +15,8 @@ UberModule
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.RecGroupOrder.Test", qnameName = Name "store"
-        }, Abs Nothing
-        ( ParamNamed Nothing ( Name "f" ) )
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "f" ) :| [] )
         ( LiteralObject Nothing
           [
             ( PropName "run", Ref Nothing ( Local ( Name "f" ) ) ),
@@ -37,12 +37,14 @@ UberModule
                 ( Ref Nothing ( Local ( Name "PSLUA_runtime_lazy" ) ) )
                 ( LiteralString Nothing "record" :| [] )
               )
-              ( Abs Nothing ( ParamUnused Nothing )
+              ( AbsN Nothing
+                ( ParamUnused Nothing :| [] )
                 ( AppN Nothing
                   ( Ref Nothing
                     ( Imported ( ModuleName "Golden.RecGroupOrder.Test" ) ( Name "store" ) )
                   )
-                  ( Abs Nothing ( ParamUnused Nothing )
+                  ( AbsN Nothing
+                    ( ParamUnused Nothing :| [] )
                     ( ObjectProp Nothing
                       ( AppN Nothing
                         ( Ref Nothing ( Local ( Name "Lazy_record$0" ) ) )

@@ -15,16 +15,16 @@ UberModule
         ( Ref Nothing ( Imported ( ModuleName "Golden.RecordsAccess.Test" ) ( Name "r" ) ) )
         ( PropName "x" )
       ),
-      ( Name "test2", Abs Nothing
-        ( ParamNamed Nothing ( Name "v$0" ) )
+      ( Name "test2", AbsN Nothing
+        ( ParamNamed Nothing ( Name "v$0" ) :| [] )
         ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "v$0" ) ) ) ( PropName "x" ) )
       ),
-      ( Name "test3", Abs Nothing
-        ( ParamNamed Nothing ( Name "v$1" ) )
+      ( Name "test3", AbsN Nothing
+        ( ParamNamed Nothing ( Name "v$1" ) :| [] )
         ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "v$1" ) ) ) ( PropName "x" ) )
       ),
-      ( Name "test4", Abs Nothing
-        ( ParamNamed Nothing ( Name "v$3" ) )
+      ( Name "test4", AbsN Nothing
+        ( ParamNamed Nothing ( Name "v$3" ) :| [] )
         ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "v$3" ) ) ) ( PropName "x" ) )
       )
     ]

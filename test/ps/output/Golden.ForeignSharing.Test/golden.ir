@@ -21,7 +21,8 @@ UberModule
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.ForeignSharing.Test", qnameName = Name "sharedToken"
-        }, Abs Nothing ( ParamUnused Nothing )
+        }, AbsN Nothing
+        ( ParamUnused Nothing :| [] )
         ( ObjectProp ( Just Always )
           ( Ref Nothing
             ( Imported ( ModuleName "Golden.ForeignSharing.Token" ) ( Name "foreign" ) )
