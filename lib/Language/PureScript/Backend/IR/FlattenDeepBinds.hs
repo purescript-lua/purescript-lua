@@ -136,6 +136,7 @@ module Language.PureScript.Backend.IR.FlattenDeepBinds
   ) where
 
 import Data.List qualified as List
+import Data.List.NonEmpty qualified as NE
 import Data.Map.Strict qualified as Map
 import Data.Set qualified as Set
 import Language.PureScript.Backend.IR.Linker (UberModule (..))
@@ -203,11 +204,13 @@ flattenRule expr
 --------------------------------------------------------------------------------
 -- Strategy A: continuation lambda-lifting -------------------------------------
 
-{- | One step of a continuation chain: @f action (\param -> …)@. Fields: the
-head, the continuation parameter, and the action — all kept verbatim (only the
-continuation /structure/ is rewritten).
+{- | One step of a continuation chain: @f action (\param -> …)@ or its n-ary
+call shape @f(action, \param -> …)@. Fields: a rebuild closure that
+reconstructs the step node verbatim around a rewritten continuation body —
+preserving the call shape, which distinguishes programs
+(Note [n-ary application]) — and the continuation parameter.
 -}
-data Step = Step Exp (Parameter Ann) Exp
+data Step = Step (Exp → Exp) (Parameter Ann)
 
 {- | Peel a maximal prefix of @f action (\param -> rest)@ steps, returning them
 together with the first expression that is not such a step (the chain's final
@@ -222,12 +225,25 @@ peelChain = go
     Just (step, rest) → first (step :) (go rest)
     Nothing → ([], expr)
 
--- | Recognise @f action (\param -> rest)@ as a step plus its continuation body.
+{- | Recognise @f action (\param -> rest)@ — through either call shape, the
+curried @(f action) (\param -> rest)@ or the n-ary @f(action, \param ->
+rest)@ of an uncurried worker — as a step plus its continuation body.
+Recognition is purely structural: any head applied to exactly two operands
+of which the trailing one is a lambda is a step, regardless of the monad or
+combinator.
+-}
 asStep ∷ Exp → Maybe (Step, Exp)
-asStep expr = case spine expr of
-  (hd, [action, k])
-    | Abs _ann param rest ← k →
-        Just (Step hd param action, rest)
+asStep expr = case expr of
+  App ann fa (Abs annK param rest)
+    | (_hd, [_action]) ← spine fa →
+        Just (Step (App ann fa . Abs annK param) param, rest)
+  AppN ann hd (action :| [Abs annK param rest]) →
+    Just
+      ( Step
+          (\rest' → AppN ann hd (action :| [Abs annK param rest']))
+          param
+      , rest
+      )
   _ → Nothing
 
 {- | Lambda-lift a recognised chain into a flat @let@ of @$kontN@ helpers.
@@ -260,7 +276,7 @@ lambdaLift steps finalAction =
   bindOrder =
     Map.fromList
       [ (name, i)
-      | (i, Step _ (ParamNamed _ name) _) ← zip [0 ..] steps
+      | (i, Step _ (ParamNamed _ name)) ← zip [0 ..] steps
       ]
   chainBound ∷ Set Name
   chainBound = Map.keysSet bindOrder
@@ -308,14 +324,15 @@ lambdaLift steps finalAction =
       b' ← substituteCopyM (Local name) (refLocal name') b
       pure (freshNames <> [name'], b')
 
--- | Rebuild a segment's nested @f action (\param -> …)@ wrapping a tail.
+{- | Rebuild a segment's nested steps wrapping a tail, each step through its
+own rebuild closure so the original call shapes survive verbatim.
+-}
 buildSteps ∷ [Step] → Exp → Exp
 buildSteps steps tailExp =
   foldr step tailExp steps
  where
   step ∷ Step → Exp → Exp
-  step (Step hd param action) rest =
-    App noAnn (App noAnn hd action) (Abs noAnn param rest)
+  step (Step rebuild _param) = rebuild
 
 -- | @\\p1 -> \\p2 -> … -> body@ (p1 outermost).
 curryAbs ∷ [Name] → Exp → Exp
@@ -329,40 +346,54 @@ applyToVars = foldl' \f p → App noAnn f (refLocal p)
 --------------------------------------------------------------------------------
 -- Strategy B: application-spine sequentialisation -----------------------------
 
-{- | Length of the longest contiguous chain of strict 'App' nodes reachable from
-this expression — the parse nesting Strategy B can flatten. Counts both the
-callee and the argument side of each 'App' (Lua nests both @f(…)@ and its
-argument) and stops at every non-'App' node: 'Abs' bodies and branch positions
-are deferred (and handled by Strategy A or a later descent), and other
-constructs carry their own depth that 'sequentialiseSpine' leaves in place.
+{- | Length of the longest contiguous chain of strict 'AppN' nodes reachable
+from this expression — the parse nesting Strategy B can flatten. Counts the
+callee and every argument side of each call (Lua nests @f(…)@ and each of
+its arguments) and stops at every non-application node: 'AbsN' bodies and
+branch positions are deferred (and handled by Strategy A or a later
+descent), and other constructs carry their own depth that
+'sequentialiseSpine' leaves in place.
 -}
 spineDepth ∷ RawExp ann → Int
 spineDepth = \case
-  App _ann f a → 1 + max (spineDepth f) (spineDepth a)
+  AppN _ann f args →
+    1 + foldl' max (spineDepth f) (spineDepth <$> args)
   _ → 0
 
-{- | One 'App' node on a spine's deepest path, holding the off-path operand
-verbatim. 'rebuildFrame' reattaches it to the deep child.
+{- | One 'AppN' node on a spine's deepest path, holding the off-path operands
+verbatim. 'rebuildFrame' reattaches them around the deep child.
 -}
 data Frame
-  = -- | @App deep sibling@ — the deep child is the callee.
-    OnCallee Ann Exp
-  | -- | @App sibling deep@ — the deep child is the argument.
-    OnArg Ann Exp
+  = -- | @deep(args…)@ — the deep child is the callee.
+    OnCallee Ann (NonEmpty Exp)
+  | -- | @callee(before…, deep, after…)@ — the deep child is one argument.
+    OnArg Ann Exp [Exp] [Exp]
 
 rebuildFrame ∷ Frame → Exp → Exp
-rebuildFrame (OnCallee ann sibling) deep = App ann deep sibling
-rebuildFrame (OnArg ann sibling) deep = App ann sibling deep
+rebuildFrame (OnCallee ann args) deep = AppN ann deep args
+rebuildFrame (OnArg ann callee before after) deep =
+  AppN ann callee (NE.prependList before (deep :| after))
 
 {- | Peel the deepest contiguous application path, outermost frame first, down
-to the innermost non-'App' base. Following the deeper child at each node makes
-@length (fst (decompose e)) == 'spineDepth' e@.
+to the innermost non-application base. Following the deepest child at each
+node makes @length (fst (decompose e)) == 'spineDepth' e@.
 -}
 decompose ∷ Exp → ([Frame], Exp)
 decompose = \case
-  App ann f a
-    | spineDepth f >= spineDepth a → first (OnCallee ann a :) (decompose f)
-    | otherwise → first (OnArg ann f :) (decompose a)
+  AppN ann f args
+    | fDepth >= foldl' max 0 argDepths →
+        first (OnCallee ann args :) (decompose f)
+    | otherwise →
+        first (OnArg ann f before after :) (decompose deep)
+   where
+    fDepth = spineDepth f
+    argDepths = spineDepth <$> toList args
+    deepIndex =
+      fromMaybe 0 (List.elemIndex (foldl' max 0 argDepths) argDepths)
+    (before, deep, after) = case splitAt deepIndex (toList args) of
+      (bs, d : as) → (bs, d, as)
+      -- Unreachable: 'deepIndex' points into 'args'.
+      (bs, []) → (bs, error "decompose: empty deep argument", [])
   base → ([], base)
 
 {- | Sequentialise a deep strict-application spine: rebuild its deepest path
@@ -405,12 +436,16 @@ letHelpers ∷ [Grouping (Ann, Name, Exp)] → Exp → Exp
 letHelpers [] body = body
 letHelpers (h : hs) body = Let noAnn (h :| hs) body
 
--- | Unwind an application into its head and arguments (left to right).
+{- | Unwind an application into its head and operands (left to right),
+through both call shapes. The result deliberately flattens the shape
+distinction of Note [n-ary application], so it is only for /counting/
+operands ('asStep'), never for rebuilding.
+-}
 spine ∷ Exp → (Exp, [Exp])
 spine = go []
  where
   go ∷ [Exp] → Exp → (Exp, [Exp])
-  go acc (App _ann f a) = go (a : acc) f
+  go acc (AppN _ann f args) = go (toList args <> acc) f
   go acc h = (h, acc)
 
 freshKontName ∷ SupplyM Name
