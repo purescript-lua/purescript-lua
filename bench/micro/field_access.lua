@@ -3,7 +3,6 @@
 -- into a local once. Both variants call uncurried so the difference is the
 -- field lookups alone.
 return {
-  name = "field_access",
   n = 1e7,
   variants = {
     {

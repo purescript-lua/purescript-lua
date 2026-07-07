@@ -61,3 +61,18 @@ blacklist draws on an entropy-seeded PRNG, so counts jitter across runs
 while the final opcode state and the abort-site set do not. Blacklisting is
 never logged by `-jv`/`-jdump`; the post-hoc opcode read is the only stable
 way to observe it.
+
+Both reports record the LuaJIT version (`runtime:` header line): the abort
+reasons, the NYI set, and the opcode families are properties of a specific
+LuaJIT snapshot, so a toolchain bump that moves the counters shows up in
+the golden diff as an attributable header change, not a mystery regression.
+
+Two caveats about golden stability. The trace reports pin source *lines* of
+both the linked artifact and the macro spec file itself, so any edit to
+`bench/macro/*.lua` — comments included — legitimately moves the goldens;
+rerun `./bench/ci --accept` and review the diff. And one residual
+nondeterminism channel exists: LuaJIT's hot-counters live in a small hashed
+table keyed by bytecode address, so a rare cross-process aliasing change
+can alter trace formation order. `./bench/ci` generates every report twice
+and compares, precisely so that this manifests as a distinct "reports
+differ between runs" failure rather than a confusing golden mismatch.

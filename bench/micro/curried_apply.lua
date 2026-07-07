@@ -3,7 +3,6 @@
 -- the loop never gets JIT-compiled. The uncurried variant compiles to a
 -- single trace.
 return {
-  name = "curried",
   n = 2e7,
   variants = {
     {

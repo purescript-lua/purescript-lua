@@ -3,6 +3,7 @@
 -- os.clock() measures CPU time, not wall time. For these CPU-bound loops
 -- that is the right metric (time the process spends scheduled out does not
 -- pollute samples), but it would silently under-report anything I/O-bound.
+-- luacheck: read globals jit
 local M = {}
 
 -- Runs fn(n) once untimed (lets LuaJIT compile traces: a loop becomes a
@@ -12,6 +13,7 @@ local M = {}
 -- cannot move the headline number.
 function M.measure(fn, n, samples)
   samples = samples or 5
+  assert(samples >= 1, "samples must be >= 1")
   local checksum = fn(n)
   local times = {}
   for s = 1, samples do
@@ -46,7 +48,7 @@ end
 
 function M.report(bench_name, variant_name, n, r)
   io.write(string.format(
-    "%-12s %-8s %-12s n=%-9.0f median=%8.4fs min=%8.4fs max=%8.4fs result=%s\n",
+    "%-13s %-8s %-12s n=%-9.0f median=%8.4fs min=%8.4fs max=%8.4fs result=%s\n",
     bench_name,
     variant_name,
     M.runtime_tag(),

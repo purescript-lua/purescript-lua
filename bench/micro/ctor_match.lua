@@ -2,7 +2,6 @@
 -- tag and the payload in the table's hash part, keyed by long strings,
 -- versus an array-part encoding with a small-integer tag.
 return {
-  name = "ctor_match",
   n = 2e6,
   variants = {
     {

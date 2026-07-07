@@ -28,7 +28,6 @@ M.Data_Ord_greaterThanOrEq = function(dictOrd)
 end
 
 return {
-  name = "dict_gte",
   n = 5e6,
   variants = {
     {

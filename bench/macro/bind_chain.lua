@@ -3,7 +3,6 @@
 -- hot loop here, so this also exercises what happens to a caller loop whose
 -- callee cannot be traced.
 return {
-  name = "bind_chain",
   artifact = "Bench.BindChain",
   n = 1e6,
   drive = function(mod, n)

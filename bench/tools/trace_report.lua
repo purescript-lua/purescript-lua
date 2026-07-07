@@ -13,46 +13,45 @@
 --     post-hoc read is the only stable way to observe it.
 --
 -- usage: luajit trace_report.lua <bench/macro/NAME.lua>
+-- luacheck: read globals jit
 local jutil = require("jit.util")
 local vmdef = require("jit.vmdef")
-local band = require("bit").band
-
-local function bcname(op)
-  return (vmdef.bcnames:sub(op * 6 + 1, op * 6 + 6):gsub("%s+$", ""))
-end
-
-local function basename(source)
-  return (source:gsub("^@", ""):gsub("^.*/", ""))
-end
+local here = arg[0]:match("^(.*)/[^/]+$") or "."
+local bc = dofile(here .. "/bc_lib.lua")
 
 local function location(func, pc)
   local info = jutil.funcinfo(func, pc)
-  return basename(info.source), info.currentline or 0
+  return bc.basename(info.source), info.currentline or 0
 end
 
--- The J*/I* opcode families observable after a run. FORI has a J form only
--- (trace entry at a loop start); the interpreted-fallback forms exist for
--- hot-countable spots: loops and function entries.
-local COMPILED = {
-  JFORI = true,
-  JFORL = true,
-  JITERL = true,
-  JLOOP = true,
-  JFUNCF = true,
-  JFUNCV = true,
-}
-local BLACKLISTED = {
-  IFORL = true,
-  IITERL = true,
-  ILOOP = true,
-  IFUNCF = true,
-  IFUNCV = true,
-}
+-- The J*/I* rewrite families, derived from vmdef.bcnames so a LuaJIT bump
+-- that adds a hot-countable pair shows up instead of being silently
+-- skipped: an opcode named J<X> or I<X> where X is itself an opcode is a
+-- rewrite form of X. (FORI has a J form only — the trace entry at a loop
+-- start; the I* fallbacks exist for hot-countable spots: loops and
+-- function entries.)
+local COMPILED, BLACKLISTED = {}, {}
+do
+  local names = {}
+  for op = 0, #vmdef.bcnames / 6 - 1 do
+    names[bc.bcname(op)] = true
+  end
+  for name in pairs(names) do
+    local prefix, base = name:sub(1, 1), name:sub(2)
+    if names[base] then
+      if prefix == "J" then
+        COMPILED[name] = true
+      elseif prefix == "I" then
+        BLACKLISTED[name] = true
+      end
+    end
+  end
+end
 
 local spec_path = assert(arg[1], "usage: trace_report.lua <macro.lua>")
+local spec_name = spec_path:match("([^/]+)%.lua$")
 local spec_chunk = assert(loadfile(spec_path))
 local spec = spec_chunk()
-local here = arg[0]:match("^(.*)/[^/]+$") or "."
 local artifact_path = here .. "/../_build/" .. spec.artifact .. ".lua"
 local artifact_chunk = assert(loadfile(artifact_path))
 local mod = artifact_chunk()
@@ -73,10 +72,21 @@ local function on_trace(what, _tr, func, pc, code, extra)
       return
     end
     if type(extra) == "number" and msg:find("bytecode") then
-      extra = bcname(extra)
+      extra = bc.bcname(extra)
     elseif type(extra) == "function" then
-      local file, line = location(extra)
-      extra = file .. ":" .. line
+      -- Builtins carry no source (funcinfo gives ffid/addr instead), so
+      -- fall back the way jit/dump.lua's fmtfunc does.
+      local info = jutil.funcinfo(extra)
+      if info.source then
+        local file, line = location(extra)
+        extra = file .. ":" .. line
+      elseif info.ffid then
+        extra = vmdef.ffnames[info.ffid]
+      elseif info.addr then
+        extra = string.format("C:%x", info.addr)
+      else
+        extra = "(?)"
+      end
     end
     reason = msg:find("%%") and string.format(msg, extra) or msg
   end
@@ -93,34 +103,14 @@ end
 jit.attach(on_trace)
 
 local states = {}
-local function walk(proto)
-  local pc = 0
-  while true do
-    local ins = jutil.funcbc(proto, pc)
-    if not ins then
-      break
-    end
-    local op = bcname(band(ins, 0xff))
-    if COMPILED[op] or BLACKLISTED[op] then
-      local file, line = location(proto, pc)
-      states[string.format("%s:%d %s", file, line, op)] = op
-    end
-    pc = pc + 1
-  end
-  if jutil.funcinfo(proto).children then
-    for n = -1, -1e9, -1 do
-      local k = jutil.funck(proto, n)
-      if not k then
-        break
-      end
-      if type(k) == "proto" then
-        walk(k)
-      end
-    end
+local function visit(proto, pc, op)
+  if COMPILED[op] or BLACKLISTED[op] then
+    local file, line = location(proto, pc)
+    states[string.format("%s:%d %s", file, line, op)] = op
   end
 end
-walk(artifact_chunk)
-walk(spec_chunk)
+bc.walk(artifact_chunk, visit)
+bc.walk(spec_chunk, visit)
 
 local function sorted_keys(set)
   local keys = {}
@@ -131,7 +121,8 @@ local function sorted_keys(set)
   return keys
 end
 
-io.write("spec: ", spec.name, "\n")
+io.write("spec: ", spec_name, "\n")
+io.write("runtime: ", jit.version, "\n")
 io.write(string.format("workload: n=%.0f reps=2 result=%s\n", spec.n, tostring(checksum)))
 io.write("aborts (distinct site -- reason):\n")
 local abort_keys = sorted_keys(aborts)

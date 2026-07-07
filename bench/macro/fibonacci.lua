@@ -2,7 +2,6 @@
 -- Golden.Fibonacci.Test golden, linked as a module so the driver can call
 -- it without going through stdout.
 return {
-  name = "fibonacci",
   artifact = "Bench.Fib",
   n = 30,
   drive = function(mod, n)

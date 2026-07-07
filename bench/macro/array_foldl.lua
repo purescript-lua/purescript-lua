@@ -3,7 +3,6 @@
 -- the tracer aborts on FNEW and blacklists the loop. The ideal variant does
 -- the same work — build the array, fold it — with an uncurried step.
 return {
-  name = "array_foldl",
   artifact = "Bench.ArrayFoldl",
   n = 5e6,
   drive = function(mod, n)

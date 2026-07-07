@@ -264,6 +264,11 @@ luacParse src =
     (code, out) ← readProcessInterleaved (proc "luac" ["-p", toFilePath file])
     pure (code, decodeUtf8 out)
 
+{- | Corefn files that participate in golden tests: only Golden.* modules.
+Other modules compiled from test/ps/src pass through uncollected —
+bench/link relies on this to link the Bench.* corefns without them
+entering the suite.
+-}
 collectGoldenCorefns ∷ MonadIO m ⇒ Path Rel Dir → m [Path Abs File]
 collectGoldenCorefns = walkDirAccum
   Nothing -- Descend into every directory
