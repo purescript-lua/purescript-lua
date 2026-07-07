@@ -32,47 +32,47 @@ UberModule
       ( Name "main", Let Nothing
         ( RecursiveGroup
           (
-            ( Nothing, Name "Lazy_record$0", App Nothing
-              ( App Nothing
+            ( Nothing, Name "Lazy_record$0", AppN Nothing
+              ( AppN Nothing
                 ( Ref Nothing ( Local ( Name "PSLUA_runtime_lazy" ) ) )
-                ( LiteralString Nothing "record" )
+                ( LiteralString Nothing "record" :| [] )
               )
               ( Abs Nothing ( ParamUnused Nothing )
-                ( App Nothing
+                ( AppN Nothing
                   ( Ref Nothing
                     ( Imported ( ModuleName "Golden.RecGroupOrder.Test" ) ( Name "store" ) )
                   )
                   ( Abs Nothing ( ParamUnused Nothing )
                     ( ObjectProp Nothing
-                      ( App Nothing
+                      ( AppN Nothing
                         ( Ref Nothing ( Local ( Name "Lazy_record$0" ) ) )
-                        ( LiteralInt Nothing 0 )
+                        ( LiteralInt Nothing 0 :| [] )
                       )
                       ( PropName "tag" )
-                    )
+                    ) :| []
                   )
-                )
+                ) :| []
               )
             ) :|
             [
-              ( Nothing, Name "record$1", App Nothing
+              ( Nothing, Name "record$1", AppN Nothing
                 ( Ref Nothing ( Local ( Name "Lazy_record$0" ) ) )
-                ( LiteralInt Nothing 0 )
+                ( LiteralInt Nothing 0 :| [] )
               )
             ]
           ) :| []
         )
-        ( App Nothing
+        ( AppN Nothing
           ( ObjectProp ( Just Always )
             ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
             ( PropName "log" )
           )
-          ( App Nothing
+          ( AppN Nothing
             ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "record$1" ) ) ) ( PropName "run" ) )
             ( ObjectProp ( Just Always )
               ( Ref Nothing ( Imported ( ModuleName "Data.Unit" ) ( Name "foreign" ) ) )
-              ( PropName "unit" )
-            )
+              ( PropName "unit" ) :| []
+            ) :| []
           )
         )
       )

@@ -99,12 +99,39 @@ data RawExp ann
   | ObjectProp ann (RawExp ann) PropName
   | ObjectUpdate ann (RawExp ann) (NonEmpty (PropName, RawExp ann))
   | Abs ann (Parameter ann) (RawExp ann)
-  | App ann (RawExp ann) (RawExp ann)
+  | AppN ann (RawExp ann) (NonEmpty (RawExp ann))
   | Ref ann (Qualified Name)
   | Let ann (NonEmpty (Grouping (ann, Name, RawExp ann))) (RawExp ann)
   | IfThenElse ann (RawExp ann) (RawExp ann) (RawExp ann)
   | Exception ann Text
   | ForeignImport ann ModuleName FilePath [(ann, Name)]
+
+{- Note [n-ary application]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+'AppN f (a₁ :| [a₂, …, aₙ])' is a single Lua call @f(a₁, a₂, …, aₙ)@. The
+argument list is not a flattened application spine: 'AppN f [a, b]' (one
+call, @f(a, b)@) and 'AppN (AppN f [a]) [b]' (two calls, @f(a)(b)@) denote
+different programs, because Lua silently drops surplus arguments and fills
+missing ones with nil. Currying therefore stays expressed by nesting,
+exactly as CoreFn produces it.
+
+Translation and every existing rewrite rule build and match the unary
+singleton through the 'App' pattern synonym below, so they are oblivious
+to genuinely n-ary calls. A multi-argument node is introduced only by a
+pass that can prove the callee consumes every argument (lifting the
+uncurried @*.Uncurried@ wrappers to direct calls). The linter's
+'Language.PureScript.Backend.IR.Linter.OverApplied' invariant rejects the
+one ill-formed shape such a pass must never emit: a literal lambda applied
+to more arguments than it binds.
+-}
+
+{- | The unary application @f a@ — the singleton 'AppN'. As a constructor
+it builds the one-argument call; as a pattern it matches exactly the
+one-argument calls, leaving genuinely n-ary nodes to fall through to a
+later alternative. Every unary rule keeps using it unchanged.
+-}
+pattern App ∷ ann → RawExp ann → RawExp ann → RawExp ann
+pattern App ann f a = AppN ann f (a :| [])
 
 {- Note [Sequential scoping of Let bindings]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -202,7 +229,7 @@ getAnn = \case
   ObjectProp ann _ _ → ann
   ObjectUpdate ann _ _ → ann
   Abs ann _ _ → ann
-  App ann _ _ → ann
+  AppN ann _ _ → ann
   Ref ann _ → ann
   Let ann _ _ → ann
   IfThenElse ann _ _ _ → ann
@@ -232,7 +259,7 @@ setAnn ann = \case
   ObjectProp _ e prop → ObjectProp ann e prop
   ObjectUpdate _ e patches → ObjectUpdate ann e patches
   Abs _ param body → Abs ann param body
-  App _ f arg → App ann f arg
+  AppN _ f args → AppN ann f args
   Ref _ qname → Ref ann qname
   Let _ binds body → Let ann binds body
   IfThenElse _ cond th el → IfThenElse ann cond th el
@@ -310,6 +337,9 @@ lets = Let noAnn
 
 application ∷ Exp → Exp → Exp
 application = App noAnn
+
+applicationN ∷ Exp → NonEmpty Exp → Exp
+applicationN = AppN noAnn
 
 paramNamed ∷ Name → Parameter Ann
 paramNamed = ParamNamed noAnn
@@ -417,8 +447,8 @@ subexpressions go = \case
     ObjectProp ann <$> go a <*> pure prp
   ObjectUpdate ann a ps →
     ObjectUpdate ann <$> go a <*> traverse (traverse go) ps
-  App ann a b →
-    App ann <$> go a <*> go b
+  AppN ann f args →
+    AppN ann <$> go f <*> traverse go args
   Abs ann arg a →
     Abs ann arg <$> go a
   Let ann bs body →
@@ -619,8 +649,11 @@ alphaEq = go 0 Map.empty Map.empty
     (Let annL bindsL bodyL, Let annR bindsR bodyR) →
       annL == annR
         && goLet lvl scopeL scopeR (toList bindsL) (toList bindsR) bodyL bodyR
-    (App annL fL aL, App annR fR aR) →
-      annL == annR && go lvl scopeL scopeR fL fR && go lvl scopeL scopeR aL aR
+    (AppN annL fL argsL, AppN annR fR argsR) →
+      annL == annR
+        && length argsL == length argsR
+        && go lvl scopeL scopeR fL fR
+        && and (zipWith (go lvl scopeL scopeR) (toList argsL) (toList argsR))
     (LiteralArray annL asL, LiteralArray annR asR) →
       annL == annR
         && length asL == length asR

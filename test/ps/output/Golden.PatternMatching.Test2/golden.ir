@@ -17,11 +17,14 @@ UberModule
                 ( LiteralString Nothing "Golden.PatternMatching.Test1∷N.Succ" )
                 ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "n" ) ) ) )
               )
-              ( App Nothing
+              ( AppN Nothing
                 ( Ref Nothing
                   ( Imported ( ModuleName "Golden.PatternMatching.Test2" ) ( Name "bat" ) )
                 )
-                ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "n" ) ) ) ( PropName "value0" ) )
+                ( ObjectProp Nothing
+                  ( Ref Nothing ( Local ( Name "n" ) ) )
+                  ( PropName "value0" ) :| []
+                )
               )
               ( Exception Nothing "No patterns matched" )
             )

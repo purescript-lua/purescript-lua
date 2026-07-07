@@ -54,6 +54,7 @@ import Language.PureScript.Backend.IR.Linker (UberModule)
 import Language.PureScript.Backend.IR.Linter
   ( Violation
   , lintUniqueBinders
+  , lintWellApplied
   , lintWellScoped
   )
 import Language.PureScript.Backend.IR.Supply (SupplyM)
@@ -66,12 +67,15 @@ import Language.PureScript.Backend.IR.Types (WasRewritten (..))
 
   * 'WellScoped' — every local reference resolves to an enclosing binder;
   * 'UniqueBinders' — within one top-level site no local binder name is
-    bound twice (the discard binder @_@ exempt).
+    bound twice (the discard binder @_@ exempt);
+  * 'WellApplied' — no literal lambda is applied to more than one argument
+    in a single call (Note [n-ary application]). Ensured by any pass that
+    introduces multi-argument 'AppN' nodes.
 
 'UniqueBinders' is the global-uniqueness condition (GUC): a local
 reference resolves to its binder unambiguously by name.
 -}
-data Invariant = WellScoped | UniqueBinders
+data Invariant = WellScoped | UniqueBinders | WellApplied
   deriving stock (Eq, Ord, Show)
 
 data Pass = Pass
@@ -216,6 +220,7 @@ runStepsChecked steps uber0 = runExceptT (foldlM (flip runStep) uber0 steps)
       ( \case
           WellScoped → lintWellScoped u
           UniqueBinders → lintUniqueBinders u
+          WellApplied → lintWellApplied u
       )
       (Set.toList invariants)
 

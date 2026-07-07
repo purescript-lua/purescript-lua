@@ -222,14 +222,15 @@ fromIR foreigns topLevelNames modname ir = case ir of
     pure . Right $ case body of
       Left chunk → Lua.functionDef luaParams chunk
       Right e → Lua.functionDef luaParams [Lua.return e]
-  IR.App _ann expr arg → do
-    e ← goExp expr
-    Right . Lua.functionCall e <$> case arg of
+  IR.AppN _ann fn args → do
+    e ← goExp fn
+    Right . Lua.functionCall e <$> case args of
       -- See Note [Nullary functions and Prim.undefined]. PS sometimes inserts
-      -- a synthetic unused argument "Prim.undefined", which is elided here.
-      IR.Ref _ann (IR.Imported (IR.ModuleName "Prim") (IR.Name "undefined")) →
+      -- a synthetic unused argument "Prim.undefined", which is elided here so
+      -- a nullary function is emitted as f() rather than f(nil).
+      IR.Ref _ann (IR.Imported (IR.ModuleName "Prim") (IR.Name "undefined")) :| [] →
         pure []
-      _ → (: []) <$> goExp arg
+      _ → traverse goExp (toList args)
   IR.Ref _ann qualifiedName →
     case qualifiedName of
       IR.Local name

@@ -33,9 +33,9 @@ UberModule
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.RecDataDefs.Test", qnameName = Name "ab"
-        }, App Nothing
+        }, AppN Nothing
         ( Ref Nothing ( Imported ( ModuleName "Golden.RecDataDefs.Test" ) ( Name "AB" ) ) )
-        ( Ref Nothing ( Imported ( ModuleName "Golden.RecDataDefs.Test" ) ( Name "B" ) ) )
+        ( Ref Nothing ( Imported ( ModuleName "Golden.RecDataDefs.Test" ) ( Name "B" ) ) :| [] )
       )
     ], uberModuleForeigns = [], uberModuleExports =
     [
@@ -52,9 +52,9 @@ UberModule
       ( Name "ab", Ref Nothing
         ( Imported ( ModuleName "Golden.RecDataDefs.Test" ) ( Name "ab" ) )
       ),
-      ( Name "ba", App Nothing
+      ( Name "ba", AppN Nothing
         ( Ref Nothing ( Imported ( ModuleName "Golden.RecDataDefs.Test" ) ( Name "BA" ) ) )
-        ( Ref Nothing ( Imported ( ModuleName "Golden.RecDataDefs.Test" ) ( Name "ab" ) ) )
+        ( Ref Nothing ( Imported ( ModuleName "Golden.RecDataDefs.Test" ) ( Name "ab" ) ) :| [] )
       )
     ]
   }

@@ -7,6 +7,7 @@ import Language.PureScript.Backend.IR.Linter
   ( Site (..)
   , Violation (..)
   , lintUniqueBinders
+  , lintWellApplied
   , lintWellScoped
   , unboundLocals
   )
@@ -21,6 +22,7 @@ import Language.PureScript.Backend.IR.Types
   , Grouping (..)
   , abstraction
   , application
+  , applicationN
   , lets
   , literalInt
   , noAnn
@@ -139,3 +141,42 @@ spec = describe "IR Linter" do
             (application (refLocal discardName) (refLocal discardName))
         )
         `shouldBe` [RefToDiscard (InBinding itQName)]
+
+  describe "WellApplied" do
+    let x = Name "x"
+        lam = abstraction (paramNamed x) (refLocal x)
+        a = literalInt 1
+        b = literalInt 2
+        c = literalInt 3
+
+    it "accepts a single-argument application of a lambda" do
+      lintWellApplied (inBinding (application lam a)) `shouldBe` []
+
+    it "accepts a multi-argument call with a non-lambda head" do
+      lintWellApplied
+        (inBinding (applicationN (refLocal (Name "f")) (a :| [b, c])))
+        `shouldBe` []
+
+    it "flags a lambda applied to more than one argument in one call" do
+      lintWellApplied (inBinding (applicationN lam (a :| [b])))
+        `shouldBe` [OverApplied (InBinding itQName) 2]
+
+    it "flags a curried lambda applied to several arguments in one call" do
+      -- \x → \y → x compiles to nested one-parameter Lua functions, so a
+      -- single call passing two arguments to the outer one drops the
+      -- second: currying must stay expressed by nesting, not a flat list.
+      let y = Name "y"
+          curried =
+            abstraction
+              (paramNamed x)
+              (abstraction (paramNamed y) (refLocal x))
+      lintWellApplied (inBinding (applicationN curried (a :| [b])))
+        `shouldBe` [OverApplied (InBinding itQName) 2]
+
+    it "descends into call arguments to find nested over-applications" do
+      -- A well-formed outer call whose second argument is itself an
+      -- over-application: every argument must be visited.
+      let nested = applicationN lam (a :| [b])
+          outer = applicationN (refLocal (Name "g")) (a :| [nested])
+      lintWellApplied (inBinding outer)
+        `shouldBe` [OverApplied (InBinding itQName) 2]

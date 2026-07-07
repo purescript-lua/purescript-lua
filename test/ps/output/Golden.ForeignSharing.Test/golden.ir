@@ -31,36 +31,36 @@ UberModule
       )
     ], uberModuleForeigns = [], uberModuleExports =
     [
-      ( Name "main", App Nothing
+      ( Name "main", AppN Nothing
         ( ObjectProp ( Just Always )
           ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
           ( PropName "log" )
         )
         ( IfThenElse Nothing
-          ( App Nothing
-            ( App Nothing
+          ( AppN Nothing
+            ( AppN Nothing
               ( ObjectProp ( Just Always )
                 ( Ref Nothing
                   ( Imported ( ModuleName "Golden.ForeignSharing.Test" ) ( Name "foreign" ) )
                 )
                 ( PropName "same" )
               )
-              ( App Nothing
+              ( AppN Nothing
                 ( Ref Nothing
                   ( Imported ( ModuleName "Golden.ForeignSharing.Test" ) ( Name "sharedToken" ) )
                 )
-                ( LiteralInt Nothing 0 )
+                ( LiteralInt Nothing 0 :| [] ) :| []
               )
             )
-            ( App Nothing
+            ( AppN Nothing
               ( Ref Nothing
                 ( Imported ( ModuleName "Golden.ForeignSharing.Test" ) ( Name "sharedToken" ) )
               )
-              ( LiteralInt Nothing 1 )
+              ( LiteralInt Nothing 1 :| [] ) :| []
             )
           )
           ( LiteralString Nothing "shared" )
-          ( LiteralString Nothing "fresh" )
+          ( LiteralString Nothing "fresh" ) :| []
         )
       )
     ]

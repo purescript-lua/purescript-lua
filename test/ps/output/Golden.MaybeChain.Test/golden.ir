@@ -63,11 +63,11 @@ UberModule
                   ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
                   ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v2" ) ) ) )
                 )
-                ( App Nothing
+                ( AppN Nothing
                   ( Ref Nothing ( Local ( Name "v1" ) ) )
                   ( ObjectProp Nothing
                     ( Ref Nothing ( Local ( Name "v2" ) ) )
-                    ( PropName "value0" )
+                    ( PropName "value0" ) :| []
                   )
                 )
                 ( Exception Nothing "No patterns matched" )
@@ -99,9 +99,9 @@ UberModule
                 ( PropName "bindE" )
               ),
               ( PropName "Apply0", Abs Nothing ( ParamUnused Nothing )
-                ( App Nothing
+                ( AppN Nothing
                   ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "Lazy_applyEffect" ) ) )
-                  ( LiteralInt Nothing 0 )
+                  ( LiteralInt Nothing 0 :| [] )
                 )
               )
             ]
@@ -115,19 +115,19 @@ UberModule
                 ( PropName "pureE" )
               ),
               ( PropName "Apply0", Abs Nothing ( ParamUnused Nothing )
-                ( App Nothing
+                ( AppN Nothing
                   ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "Lazy_applyEffect" ) ) )
-                  ( LiteralInt Nothing 0 )
+                  ( LiteralInt Nothing 0 :| [] )
                 )
               )
             ]
           ),
           ( QName
             { qnameModuleName = ModuleName "Effect", qnameName = Name "Lazy_functorEffect"
-            }, App Nothing
-            ( App Nothing
+            }, AppN Nothing
+            ( AppN Nothing
               ( Ref Nothing ( Local ( Name "PSLUA_runtime_lazy" ) ) )
-              ( LiteralString Nothing "functorEffect" )
+              ( LiteralString Nothing "functorEffect" :| [] )
             )
             ( Abs Nothing ( ParamUnused Nothing )
               ( LiteralObject Nothing
@@ -136,10 +136,10 @@ UberModule
                     ( ParamNamed Nothing ( Name "f$121" ) )
                     ( Abs Nothing
                       ( ParamNamed Nothing ( Name "a$122" ) )
-                      ( App Nothing
-                        ( App Nothing
+                      ( AppN Nothing
+                        ( AppN Nothing
                           ( ObjectProp Nothing
-                            ( App Nothing
+                            ( AppN Nothing
                               ( ObjectProp Nothing
                                 ( Ref Nothing
                                   ( Imported ( ModuleName "Effect" ) ( Name "applicativeEffect" ) )
@@ -147,53 +147,58 @@ UberModule
                                 ( PropName "Apply0" )
                               )
                               ( Ref Nothing
-                                ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) )
+                                ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| []
                               )
                             )
                             ( PropName "apply" )
                           )
-                          ( App Nothing
-                            ( App Nothing
+                          ( AppN Nothing
+                            ( AppN Nothing
                               ( Ref Nothing
                                 ( Imported ( ModuleName "Control.Applicative" ) ( Name "pure" ) )
                               )
                               ( Ref Nothing
-                                ( Imported ( ModuleName "Effect" ) ( Name "applicativeEffect" ) )
+                                ( Imported
+                                  ( ModuleName "Effect" )
+                                  ( Name "applicativeEffect" )
+                                ) :| []
                               )
                             )
-                            ( Ref Nothing ( Local ( Name "f$121" ) ) )
+                            ( Ref Nothing ( Local ( Name "f$121" ) ) :| [] ) :| []
                           )
                         )
-                        ( Ref Nothing ( Local ( Name "a$122" ) ) )
+                        ( Ref Nothing ( Local ( Name "a$122" ) ) :| [] )
                       )
                     )
                   )
                 ]
-              )
+              ) :| []
             )
           ),
           ( QName
             { qnameModuleName = ModuleName "Effect", qnameName = Name "Lazy_applyEffect"
-            }, App Nothing
-            ( App Nothing
+            }, AppN Nothing
+            ( AppN Nothing
               ( Ref Nothing ( Local ( Name "PSLUA_runtime_lazy" ) ) )
-              ( LiteralString Nothing "applyEffect" )
+              ( LiteralString Nothing "applyEffect" :| [] )
             )
             ( Abs Nothing ( ParamUnused Nothing )
               ( LiteralObject Nothing
                 [
                   ( PropName "apply", Let Nothing
                     ( Standalone
-                      ( Nothing, Name "bind$101", App Nothing
+                      ( Nothing, Name "bind$101", AppN Nothing
                         ( Ref Nothing ( Imported ( ModuleName "Control.Bind" ) ( Name "bind" ) ) )
-                        ( App Nothing
+                        ( AppN Nothing
                           ( ObjectProp Nothing
                             ( Ref Nothing
                               ( Imported ( ModuleName "Effect" ) ( Name "monadEffect" ) )
                             )
                             ( PropName "Bind1" )
                           )
-                          ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) )
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| []
+                          ) :| []
                         )
                       ) :| []
                     )
@@ -201,29 +206,29 @@ UberModule
                       ( ParamNamed Nothing ( Name "f$103" ) )
                       ( Abs Nothing
                         ( ParamNamed Nothing ( Name "a$104" ) )
-                        ( App Nothing
-                          ( App Nothing
+                        ( AppN Nothing
+                          ( AppN Nothing
                             ( Ref Nothing ( Local ( Name "bind$101" ) ) )
-                            ( Ref Nothing ( Local ( Name "f$103" ) ) )
+                            ( Ref Nothing ( Local ( Name "f$103" ) ) :| [] )
                           )
                           ( Abs Nothing
                             ( ParamNamed Nothing ( Name "f'$105" ) )
-                            ( App Nothing
-                              ( App Nothing
+                            ( AppN Nothing
+                              ( AppN Nothing
                                 ( Ref Nothing ( Local ( Name "bind$101" ) ) )
-                                ( Ref Nothing ( Local ( Name "a$104" ) ) )
+                                ( Ref Nothing ( Local ( Name "a$104" ) ) :| [] )
                               )
                               ( Abs Nothing
                                 ( ParamNamed Nothing ( Name "a'$106" ) )
-                                ( App Nothing
-                                  ( App Nothing
+                                ( AppN Nothing
+                                  ( AppN Nothing
                                     ( Ref Nothing
                                       ( Imported
                                         ( ModuleName "Control.Applicative" )
                                         ( Name "pure" )
                                       )
                                     )
-                                    ( App Nothing
+                                    ( AppN Nothing
                                       ( ObjectProp Nothing
                                         ( Ref Nothing
                                           ( Imported
@@ -234,32 +239,35 @@ UberModule
                                         ( PropName "Applicative0" )
                                       )
                                       ( Ref Nothing
-                                        ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) )
-                                      )
+                                        ( Imported
+                                          ( ModuleName "Prim" )
+                                          ( Name "undefined" )
+                                        ) :| []
+                                      ) :| []
                                     )
                                   )
-                                  ( App Nothing
+                                  ( AppN Nothing
                                     ( Ref Nothing ( Local ( Name "f'$105" ) ) )
-                                    ( Ref Nothing ( Local ( Name "a'$106" ) ) )
+                                    ( Ref Nothing ( Local ( Name "a'$106" ) ) :| [] ) :| []
                                   )
-                                )
+                                ) :| []
                               )
-                            )
+                            ) :| []
                           )
                         )
                       )
                     )
                   ),
                   ( PropName "Functor0", Abs Nothing ( ParamUnused Nothing )
-                    ( App Nothing
+                    ( AppN Nothing
                       ( Ref Nothing
                         ( Imported ( ModuleName "Effect" ) ( Name "Lazy_functorEffect" ) )
                       )
-                      ( LiteralInt Nothing 0 )
+                      ( LiteralInt Nothing 0 :| [] )
                     )
                   )
                 ]
-              )
+              ) :| []
             )
           )
         ]
@@ -268,17 +276,17 @@ UberModule
         { qnameModuleName = ModuleName "Golden.MaybeChain.Test", qnameName = Name "logShow"
         }, Abs Nothing
         ( ParamNamed Nothing ( Name "a$4" ) )
-        ( App Nothing
+        ( AppN Nothing
           ( ObjectProp ( Just Always )
             ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
             ( PropName "log" )
           )
-          ( App Nothing
+          ( AppN Nothing
             ( ObjectProp ( Just Always )
               ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
               ( PropName "showIntImpl" )
             )
-            ( Ref Nothing ( Local ( Name "a$4" ) ) )
+            ( Ref Nothing ( Local ( Name "a$4" ) ) :| [] ) :| []
           )
         )
       ), Standalone
@@ -299,14 +307,14 @@ UberModule
               ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
               ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v1$276" ) ) ) )
             )
-            ( App Nothing
+            ( AppN Nothing
               ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Just" ) ) )
-              ( App Nothing
+              ( AppN Nothing
                 ( Ref Nothing ( Local ( Name "v$275" ) ) )
                 ( ObjectProp Nothing
                   ( Ref Nothing ( Local ( Name "v1$276" ) ) )
-                  ( PropName "value0" )
-                )
+                  ( PropName "value0" ) :| []
+                ) :| []
               )
             )
             ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) )
@@ -318,89 +326,95 @@ UberModule
       ( Name "main", Abs Nothing ( ParamUnused Nothing )
         ( Let Nothing
           ( Standalone
-            ( Nothing, Name "_", App Nothing
-              ( App Nothing
+            ( Nothing, Name "_", AppN Nothing
+              ( AppN Nothing
                 ( Ref Nothing
                   ( Imported ( ModuleName "Golden.MaybeChain.Test" ) ( Name "logShow" ) )
                 )
-                ( App Nothing
-                  ( App Nothing
-                    ( App Nothing
+                ( AppN Nothing
+                  ( AppN Nothing
+                    ( AppN Nothing
                       ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "maybe" ) ) )
-                      ( LiteralInt Nothing 0 )
+                      ( LiteralInt Nothing 0 :| [] )
                     )
                     ( Ref Nothing
-                      ( Imported ( ModuleName "Golden.MaybeChain.Test" ) ( Name "identity" ) )
+                      ( Imported ( ModuleName "Golden.MaybeChain.Test" ) ( Name "identity" ) ) :| []
                     )
                   )
-                  ( App Nothing
-                    ( App Nothing
-                      ( App Nothing
+                  ( AppN Nothing
+                    ( AppN Nothing
+                      ( AppN Nothing
                         ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "maybe" ) ) )
-                        ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) )
+                        ( Ref Nothing
+                          ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) :| []
+                        )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Just" ) ) )
+                      ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Just" ) ) :| [] )
                     )
-                    ( App Nothing
-                      ( App Nothing
+                    ( AppN Nothing
+                      ( AppN Nothing
                         ( Ref Nothing
                           ( Imported ( ModuleName "Golden.MaybeChain.Test" ) ( Name "map" ) )
                         )
                         ( Abs Nothing
                           ( ParamNamed Nothing ( Name "x$0" ) )
-                          ( Ref Nothing ( Local ( Name "x$0" ) ) )
+                          ( Ref Nothing ( Local ( Name "x$0" ) ) ) :| []
                         )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) )
-                    )
-                  )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) :| []
+                      ) :| []
+                    ) :| []
+                  ) :| []
                 )
               )
-              ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) )
+              ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
             ) :| []
           )
-          ( App Nothing
-            ( App Nothing
+          ( AppN Nothing
+            ( AppN Nothing
               ( Ref Nothing
                 ( Imported ( ModuleName "Golden.MaybeChain.Test" ) ( Name "logShow" ) )
               )
-              ( App Nothing
-                ( App Nothing
-                  ( App Nothing
+              ( AppN Nothing
+                ( AppN Nothing
+                  ( AppN Nothing
                     ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "maybe" ) ) )
-                    ( LiteralInt Nothing 0 )
+                    ( LiteralInt Nothing 0 :| [] )
                   )
                   ( Ref Nothing
-                    ( Imported ( ModuleName "Golden.MaybeChain.Test" ) ( Name "identity" ) )
+                    ( Imported ( ModuleName "Golden.MaybeChain.Test" ) ( Name "identity" ) ) :| []
                   )
                 )
-                ( App Nothing
-                  ( App Nothing
-                    ( App Nothing
+                ( AppN Nothing
+                  ( AppN Nothing
+                    ( AppN Nothing
                       ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "maybe" ) ) )
-                      ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) :| []
+                      )
                     )
-                    ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Just" ) ) )
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Just" ) ) :| [] )
                   )
-                  ( App Nothing
-                    ( App Nothing
+                  ( AppN Nothing
+                    ( AppN Nothing
                       ( Ref Nothing
                         ( Imported ( ModuleName "Golden.MaybeChain.Test" ) ( Name "map" ) )
                       )
                       ( Abs Nothing
                         ( ParamNamed Nothing ( Name "x0$1" ) )
-                        ( Ref Nothing ( Local ( Name "x0$1" ) ) )
+                        ( Ref Nothing ( Local ( Name "x0$1" ) ) ) :| []
                       )
                     )
-                    ( App Nothing
+                    ( AppN Nothing
                       ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Just" ) ) )
-                      ( LiteralInt Nothing 42 )
-                    )
-                  )
-                )
+                      ( LiteralInt Nothing 42 :| [] ) :| []
+                    ) :| []
+                  ) :| []
+                ) :| []
               )
             )
-            ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) )
+            ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
           )
         )
       )

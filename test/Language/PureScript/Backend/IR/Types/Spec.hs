@@ -19,6 +19,7 @@ import Language.PureScript.Backend.IR.Types
   , abstraction
   , alphaEq
   , application
+  , applicationN
   , countFreeRef
   , countFreeRefs
   , eq
@@ -131,6 +132,22 @@ spec = describe "Types" do
 
     test "distinguishes free references by name" do
       alphaEq (refLocal x) (refLocal y) === False
+
+    -- A flat argument list is one Lua call, not an application spine, so
+    -- alphaEq must compare arity and pair arguments up positionally.
+    test "distinguishes n-ary calls by argument count" do
+      let f = refLocal (Name "f")
+      alphaEq
+        (applicationN f (refLocal x :| [refLocal y]))
+        (application f (refLocal x))
+        === False
+
+    test "identifies n-ary calls with matching head and arguments" do
+      let f = refLocal (Name "f")
+      alphaEq
+        (applicationN f (refLocal x :| [refLocal y]))
+        (applicationN f (refLocal x :| [refLocal y]))
+        === True
 
     -- See Note [Sequential scoping of Let bindings]: a Standalone RHS
     -- does not see its own binder, so both references below are free

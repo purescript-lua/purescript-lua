@@ -5,9 +5,9 @@ UberModule
         ( ParamNamed Nothing ( Name "f1$0" ) )
         ( Abs Nothing
           ( ParamNamed Nothing ( Name "x$1" ) )
-          ( App Nothing
+          ( AppN Nothing
             ( Ref Nothing ( Local ( Name "f1$0" ) ) )
-            ( Ref Nothing ( Local ( Name "x$1" ) ) )
+            ( Ref Nothing ( Local ( Name "x$1" ) ) :| [] )
           )
         )
       ),
