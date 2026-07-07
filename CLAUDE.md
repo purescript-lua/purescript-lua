@@ -190,6 +190,9 @@ PureScript Source → CoreFn → IR → Lua → Optimized Lua
      - Case-of-case transformation
    - **Inliner** (`IR.Inliner`): Marks expressions for inlining
    - **Dead Code Elimination** (`IR.DCE`): Removes unused bindings
+   - **Uncurrying** (`IR.Uncurry`): Splits curried bindings into n-ary
+     workers plus curried wrappers and rewrites saturated call sites to
+     direct worker calls
 
 4. **Linking** (`Language.PureScript.Backend.IR.Linker`)
    - Creates an "UberModule" containing all reachable code

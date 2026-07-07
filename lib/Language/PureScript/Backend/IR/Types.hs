@@ -119,8 +119,10 @@ exactly as CoreFn produces it.
 Translation and every existing rewrite rule build and match the unary
 singleton through the 'App' pattern synonym below, so they are oblivious
 to genuinely n-ary calls. A multi-argument node is introduced only by a
-pass that can prove the callee consumes every argument (lifting the
-uncurried @*.Uncurried@ wrappers to direct calls). The linter's
+pass that can prove the callee consumes every argument in one call:
+today the uncurrying worker/wrapper split
+("Language.PureScript.Backend.IR.Uncurry"), and eventually the lifting
+of the uncurried @*.Uncurried@ wrappers to direct calls. The linter's
 'Language.PureScript.Backend.IR.Linter.lintWellApplied' invariant rejects
 the ill-formed shapes such a pass must never emit: a literal lambda
 applied to a number of arguments different from the number of parameters
