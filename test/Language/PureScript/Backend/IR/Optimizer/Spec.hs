@@ -4,6 +4,7 @@ import Data.Map qualified as Map
 import Data.Text qualified as Text
 import Hedgehog (PropertyT, annotateShow, diff, forAll, (===))
 import Hedgehog.Gen qualified as Gen
+import Hedgehog.Range qualified as Range
 import Language.PureScript.Backend.IR.Gen qualified as Gen
 import Language.PureScript.Backend.IR.Inliner (Annotation (Always, Never))
 import Language.PureScript.Backend.IR.Linker (LinkMode (..))
@@ -14,10 +15,13 @@ import Language.PureScript.Backend.IR.Linter
   , unboundLocals
   )
 import Language.PureScript.Backend.IR.Names
-  ( Name (..)
+  ( CtorName (..)
+  , FieldName (..)
+  , Name (..)
   , PropName (..)
   , QName (..)
   , Qualified (Local)
+  , TyName (..)
   , moduleNameFromString
   )
 import Language.PureScript.Backend.IR.Optimizer
@@ -28,7 +32,8 @@ import Language.PureScript.Backend.IR.Optimizer
   )
 import Language.PureScript.Backend.IR.Supply (runSupply)
 import Language.PureScript.Backend.IR.Types
-  ( Exp
+  ( AlgebraicType (ProductType, SumType)
+  , Exp
   , Grouping (..)
   , Module (..)
   , RawExp (..)
@@ -38,6 +43,9 @@ import Language.PureScript.Backend.IR.Types
   , application
   , applicationN
   , countFreeRef
+  , ctor
+  , ctorId
+  , dataArgumentByIndex
   , eq
   , getAnn
   , ifThenElse
@@ -46,6 +54,7 @@ import Language.PureScript.Backend.IR.Types
   , literalBool
   , literalInt
   , literalObject
+  , literalString
   , noAnn
   , objectProp
   , objectUpdate
@@ -53,6 +62,7 @@ import Language.PureScript.Backend.IR.Types
   , paramUnused
   , refImported
   , refLocal
+  , reflectCtor
   , setAnn
   )
 import Test.Hspec
@@ -307,6 +317,113 @@ spec = describe "IR Optimizer" do
             ]
       annotateShow optimized
       addKept === [QName mainModule (Name "add")]
+
+  describe "folds case-of-known-constructor (#177)" do
+    let maybeMod = moduleNameFromString "Data.Maybe"
+        maybeTy = TyName "Maybe"
+        justName = CtorName "Just"
+        justCtor = ctor SumType maybeMod maybeTy justName [FieldName "value0"]
+        just = application justCtor
+        justTag = ctorId maybeMod maybeTy justName
+
+        tupleMod = moduleNameFromString "Data.Tuple"
+        tupleTy = TyName "Tuple"
+        tupleName = CtorName "Tuple"
+        tupleCtor =
+          ctor
+            ProductType
+            tupleMod
+            tupleTy
+            tupleName
+            [FieldName "value0", FieldName "value1"]
+        tuple a = application (application tupleCtor a)
+
+    it "reduces a saturated sum-type tag read to the tag string" do
+      optimizedExpression (reflectCtor (just (literalInt 1)))
+        `shouldBe` literalString justTag
+
+    it "reduces a field read to the constructor argument" do
+      optimizedExpression (dataArgumentByIndex 0 (just (literalInt 7)))
+        `shouldBe` literalInt 7
+
+    it "reads the second field of a saturated product application" do
+      optimizedExpression
+        (dataArgumentByIndex 1 (tuple (literalInt 1) (literalInt 2)))
+        `shouldBe` literalInt 2
+
+    it "collapses a tag-equality test into its result" do
+      -- The payoff cascade: the folded tag meets the surrounding Eq and
+      -- constant folding reduces the whole decision-tree test.
+      let original = eq (reflectCtor (just (literalInt 1))) (literalString justTag)
+      optimizedExpression original `shouldBe` literalBool True
+
+    it "declines a partially applied constructor" do
+      -- One argument against a two-field constructor: still a function,
+      -- so the field read must not fire.
+      let original = dataArgumentByIndex 0 (application tupleCtor (literalInt 1))
+      optimizedExpression original `shouldBe` original
+
+    it "declines a product-type tag read" do
+      -- Product constructors carry no $ctor row at runtime, so folding
+      -- the tag would invent a value the runtime reads as nil.
+      let original = reflectCtor (tuple (literalInt 1) (literalInt 2))
+      optimizedExpression original `shouldBe` original
+
+    it "drops the discarded arguments of a field read" do
+      -- Only the read field survives; the sibling is gone, not Let-bound.
+      optimizedExpression
+        (dataArgumentByIndex 0 (tuple (refLocal (Name "a")) (refLocal (Name "b"))))
+        `shouldBe` refLocal (Name "a")
+
+    -- A discarded field can hold a `Just Always`-annotated accessor (see
+    -- the record-projection block); the fold must take the read node's
+    -- own annotation, never the argument's, or the result becomes
+    -- unconditionally inlinable and duplicates across use sites.
+    let dictModule = moduleNameFromString "Dict"
+        accessor =
+          ObjectProp
+            (Just Always)
+            (refImported dictModule (Name "foreign"))
+            (PropName "value0")
+
+    it "does not leak the kept argument's annotation" do
+      let original = dataArgumentByIndex 0 (just accessor)
+      getAnn (optimizedExpression original) `shouldBe` Nothing
+
+    it "keeps the read node's own annotation on the folded field" do
+      let original = DataArgumentByIndex (Just Never) 0 (just accessor)
+      getAnn (optimizedExpression original) `shouldBe` Just Never
+
+    -- Randomized discard-semantics stress (the issue's explicit ask):
+    -- across arbitrary arity, algebraic type, and argument content, a
+    -- field read folds to exactly its argument with the siblings gone
+    -- (no residue), and a sum-type tag read folds to the tag string.
+    let trivialArg = Gen.choice [Gen.scalarExp, refLocal <$> Gen.name]
+
+    prop "folds a saturated field read to its argument at any arity" do
+      before ← forAll (Gen.list (Range.linear 0 3) trivialArg)
+      kept ← forAll trivialArg
+      after ← forAll (Gen.list (Range.linear 0 3) trivialArg)
+      algTy ← forAll (Gen.element [SumType, ProductType])
+      modName ← forAll Gen.moduleName
+      ty ← forAll Gen.tyName
+      cn ← forAll Gen.ctorName
+      let args = before <> [kept] <> after
+          fields = FieldName . show <$> [1 .. length args]
+          app = foldl' application (ctor algTy modName ty cn fields) args
+          index = fromIntegral (length before)
+      -- Equality to the kept argument alone proves the siblings are
+      -- dropped, not Let-bound or duplicated.
+      optimizedExpression (dataArgumentByIndex index app) === kept
+
+    prop "folds a saturated sum-type tag read to the tag string" do
+      args ← forAll (Gen.list (Range.linear 0 5) trivialArg)
+      modName ← forAll Gen.moduleName
+      ty ← forAll Gen.tyName
+      cn ← forAll Gen.ctorName
+      let fields = FieldName . show <$> [1 .. length args]
+          app = foldl' application (ctor SumType modName ty cn fields) args
+      optimizedExpression (reflectCtor app) === literalString (ctorId modName ty cn)
 
   describe "inlines expressions" do
     test "inlines literals" do
@@ -656,6 +773,65 @@ spec = describe "IR Optimizer" do
               { uberModuleForeigns = []
               , uberModuleBindings = []
               , uberModuleExports = [(Name "main", literalInt 1)]
+              }
+      annotateShow original
+      optimizedUberModule original === expected
+
+    -- The constructor twin of the record-projection test above (#177):
+    -- inlining a saturated constructor into its field read forms the
+    -- redex mid-fixpoint, the fold takes the argument, and DCE drops the
+    -- emptied binding.
+    test "constructor field read after inlining" do
+      name ← forAll Gen.name
+      let uberName = moduleNameFromString "Main"
+          linkMode = LinkAsModule uberName
+          mkUber = Linker.makeUberModule linkMode . pure . wrapInModule
+          boxCtor =
+            ctor
+              ProductType
+              uberName
+              (TyName "Box")
+              (CtorName "Box")
+              [FieldName "value0"]
+          original =
+            mkUber $
+              let1
+                name
+                (application boxCtor (literalInt 1))
+                (dataArgumentByIndex 0 (refLocal name))
+          expected =
+            Linker.UberModule
+              { uberModuleForeigns = []
+              , uberModuleBindings = []
+              , uberModuleExports = [(Name "main", literalInt 1)]
+              }
+      annotateShow original
+      optimizedUberModule original === expected
+
+    -- The tag twin: a single-use scrutinee lets inlining bring the
+    -- constructor to the tag read, which folds to the tag string and
+    -- collapses the surrounding equality — the payoff cascade end to end.
+    test "constructor tag read after inlining" do
+      name ← forAll Gen.name
+      let uberName = moduleNameFromString "Main"
+          linkMode = LinkAsModule uberName
+          mkUber = Linker.makeUberModule linkMode . pure . wrapInModule
+          maybeTy = TyName "Maybe"
+          justName = CtorName "Just"
+          justCtor =
+            ctor SumType uberName maybeTy justName [FieldName "value0"]
+          tag = ctorId uberName maybeTy justName
+          original =
+            mkUber $
+              let1
+                name
+                (application justCtor (literalInt 1))
+                (eq (reflectCtor (refLocal name)) (literalString tag))
+          expected =
+            Linker.UberModule
+              { uberModuleForeigns = []
+              , uberModuleBindings = []
+              , uberModuleExports = [(Name "main", literalBool True)]
               }
       annotateShow original
       optimizedUberModule original === expected
