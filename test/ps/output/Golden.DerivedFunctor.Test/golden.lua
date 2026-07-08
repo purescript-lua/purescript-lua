@@ -56,7 +56,8 @@ M.Effect_Lazy_functorEffect = PSLUA_runtime_lazy("functorEffect")(function()
   return {
     map = function(f_S_31)
       return function(a_S_32)
-        return (M.Effect_applicativeEffect.Apply0()).apply(M.Control_Applicative_pure(M.Effect_applicativeEffect)(f_S_31))(a_S_32)
+        local Effect_applicativeEffect = M.Effect_applicativeEffect
+        return (Effect_applicativeEffect.Apply0()).apply(M.Control_Applicative_pure(Effect_applicativeEffect)(f_S_31))(a_S_32)
       end
     end
   }
@@ -156,13 +157,14 @@ M.Golden_DerivedFunctor_Test_fromRight_S_w = function(fallback, v)
   end
 end
 return (function()
-  local _ = M.Golden_DerivedFunctor_Test_logShow(M.Golden_DerivedFunctor_Test_fromRight_S_w(0, M.Golden_DerivedFunctor_Test_map1(function( v_S_0 )
+  local Golden_DerivedFunctor_Test_Leaf, Golden_DerivedFunctor_Test_Node, Golden_DerivedFunctor_Test_logShow, Golden_DerivedFunctor_Test_fromRight_S_w, Golden_DerivedFunctor_Test_map1 = M.Golden_DerivedFunctor_Test_Leaf, M.Golden_DerivedFunctor_Test_Node, M.Golden_DerivedFunctor_Test_logShow, M.Golden_DerivedFunctor_Test_fromRight_S_w, M.Golden_DerivedFunctor_Test_map1
+  local _ = Golden_DerivedFunctor_Test_logShow(Golden_DerivedFunctor_Test_fromRight_S_w(0, Golden_DerivedFunctor_Test_map1(function( v_S_0 )
     return M.Golden_DerivedFunctor_Test_add(v_S_0)(1)
   end)(M.Golden_DerivedFunctor_Test_Right(41))))()
-  local _ = M.Golden_DerivedFunctor_Test_logShow(M.Golden_DerivedFunctor_Test_fromRight_S_w(7, M.Golden_DerivedFunctor_Test_map1(function( v0_S_1 )
+  local _ = Golden_DerivedFunctor_Test_logShow(Golden_DerivedFunctor_Test_fromRight_S_w(7, Golden_DerivedFunctor_Test_map1(function( v0_S_1 )
     return M.Golden_DerivedFunctor_Test_add(v0_S_1)(1)
   end)(M.Golden_DerivedFunctor_Test_Left("no"))))()
-  return M.Golden_DerivedFunctor_Test_logShow(M.Golden_DerivedFunctor_Test_sumTree(M.Data_Functor_map(M.Golden_DerivedFunctor_Test_functorTree)(function( v1_S_2 )
+  return Golden_DerivedFunctor_Test_logShow(M.Golden_DerivedFunctor_Test_sumTree(M.Data_Functor_map(M.Golden_DerivedFunctor_Test_functorTree)(function( v1_S_2 )
     return M.Data_Semiring_semiringInt.mul(v1_S_2)(2)
-  end)(M.Golden_DerivedFunctor_Test_Node(M.Golden_DerivedFunctor_Test_Node(M.Golden_DerivedFunctor_Test_Leaf)(1)(M.Golden_DerivedFunctor_Test_Leaf))(2)(M.Golden_DerivedFunctor_Test_Node(M.Golden_DerivedFunctor_Test_Leaf)(3)(M.Golden_DerivedFunctor_Test_Leaf)))))()
+  end)(Golden_DerivedFunctor_Test_Node(Golden_DerivedFunctor_Test_Node(Golden_DerivedFunctor_Test_Leaf)(1)(Golden_DerivedFunctor_Test_Leaf))(2)(Golden_DerivedFunctor_Test_Node(Golden_DerivedFunctor_Test_Leaf)(3)(Golden_DerivedFunctor_Test_Leaf)))))()
 end)()

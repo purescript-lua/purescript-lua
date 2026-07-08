@@ -96,7 +96,8 @@ M.Control_Monad_Except_Trans_functorExceptT = function(dictFunctor)
   return {
     map = function(f)
       return function(v_S_542)
-        return M.Data_Functor_map(dictFunctor)(M.Data_Functor_map({
+        local Data_Functor_map = M.Data_Functor_map
+        return Data_Functor_map(dictFunctor)(Data_Functor_map({
           map = function(f_S_551)
             return function(m_S_552)
               if "Data.Either∷Either.Left" == m_S_552["$ctor"] then
@@ -152,10 +153,11 @@ M.Control_Monad_Except_Trans_applyExceptT = function(dictMonad)
   }
 end
 M.Control_Monad_Except_Trans_applicativeExceptT = function(dictMonad)
+  local Control_Monad_Except_Trans_compose = M.Control_Monad_Except_Trans_compose
   return {
-    pure = M.Control_Monad_Except_Trans_compose(function(x_S_543)
+    pure = Control_Monad_Except_Trans_compose(function(x_S_543)
       return x_S_543
-    end)(M.Control_Monad_Except_Trans_compose(M.Control_Applicative_pure(dictMonad.Applicative0()))(M.Data_Either_Right)),
+    end)(Control_Monad_Except_Trans_compose(M.Control_Applicative_pure(dictMonad.Applicative0()))(M.Data_Either_Right)),
     Apply0 = function()
       return M.Control_Monad_Except_Trans_applyExceptT(dictMonad)
     end

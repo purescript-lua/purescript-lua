@@ -92,7 +92,8 @@ M.Effect_Lazy_functorEffect = PSLUA_runtime_lazy("functorEffect")(function()
   return {
     map = function(f_S_28)
       return function(a_S_29)
-        return (M.Effect_applicativeEffect.Apply0()).apply(M.Control_Applicative_pure(M.Effect_applicativeEffect)(f_S_28))(a_S_29)
+        local Effect_applicativeEffect = M.Effect_applicativeEffect
+        return (Effect_applicativeEffect.Apply0()).apply(M.Control_Applicative_pure(Effect_applicativeEffect)(f_S_28))(a_S_29)
       end
     end
   }
@@ -121,11 +122,12 @@ M.Golden_Loopification_Test_logShow = function(a_S_2)
   return M.Effect_Console_foreign.log(M.Data_Show_foreign.showIntImpl(a_S_2))
 end
 M.Golden_Loopification_Test_sumTo_S_w = function(acc, n)
+  local Data_Ring_foreign, Golden_Loopification_Test_add, Golden_Loopification_Test_eq = M.Data_Ring_foreign, M.Golden_Loopification_Test_add, M.Golden_Loopification_Test_eq
   while true do
-    if M.Golden_Loopification_Test_eq(n)(0) then
+    if Golden_Loopification_Test_eq(n)(0) then
       return acc
     else
-      acc, n = M.Golden_Loopification_Test_add(acc)(n), M.Data_Ring_foreign.intSub(n)(1)
+      acc, n = Golden_Loopification_Test_add(acc)(n), Data_Ring_foreign.intSub(n)(1)
     end
   end
 end
@@ -137,11 +139,12 @@ end
 M.Golden_Loopification_Test_sumSquares = function(m)
   local go_S_w
   go_S_w = function(acc, n)
+    local Data_Ring_foreign, Data_Semiring_semiringInt, Golden_Loopification_Test_add, Golden_Loopification_Test_eq = M.Data_Ring_foreign, M.Data_Semiring_semiringInt, M.Golden_Loopification_Test_add, M.Golden_Loopification_Test_eq
     while true do
-      if M.Golden_Loopification_Test_eq(n)(0) then
+      if Golden_Loopification_Test_eq(n)(0) then
         return acc
       else
-        acc, n = M.Golden_Loopification_Test_add(acc)(M.Data_Semiring_semiringInt.mul(n)(n)), M.Data_Ring_foreign.intSub(n)(1)
+        acc, n = Golden_Loopification_Test_add(acc)(Data_Semiring_semiringInt.mul(n)(n)), Data_Ring_foreign.intSub(n)(1)
       end
     end
   end
@@ -162,24 +165,26 @@ M.Golden_Loopification_Test_sumCPS = function(sumCPS_S_p1)
   end
 end
 M.Golden_Loopification_Test_mc91 = function(n)
+  local Data_Ord_compare, Data_Ord_ordInt, Data_Ring_foreign, Golden_Loopification_Test_add, Golden_Loopification_Test_mc91 = M.Data_Ord_compare, M.Data_Ord_ordInt, M.Data_Ring_foreign, M.Golden_Loopification_Test_add, M.Golden_Loopification_Test_mc91
   while true do
     if (function()
-      if "Data.Ordering∷Ordering.GT" == (M.Data_Ord_compare(M.Data_Ord_ordInt)(n)(100))["$ctor"] then
+      if "Data.Ordering∷Ordering.GT" == (Data_Ord_compare(Data_Ord_ordInt)(n)(100))["$ctor"] then
         return true
       else
         return false
       end
     end)() then
-      return M.Data_Ring_foreign.intSub(n)(10)
+      return Data_Ring_foreign.intSub(n)(10)
     else
-      n = M.Golden_Loopification_Test_mc91(M.Golden_Loopification_Test_add(n)(11))
+      n = Golden_Loopification_Test_mc91(Golden_Loopification_Test_add(n)(11))
     end
   end
 end
 M.Golden_Loopification_Test_countdown = function(n)
+  local Data_Ord_compare, Data_Ord_ordInt, Data_Ring_foreign = M.Data_Ord_compare, M.Data_Ord_ordInt, M.Data_Ring_foreign
   while true do
     if (function()
-      if "Data.Ordering∷Ordering.GT" == (M.Data_Ord_compare(M.Data_Ord_ordInt)(n)(0))["$ctor"] then
+      if "Data.Ordering∷Ordering.GT" == (Data_Ord_compare(Data_Ord_ordInt)(n)(0))["$ctor"] then
         return false
       else
         return true
@@ -187,16 +192,17 @@ M.Golden_Loopification_Test_countdown = function(n)
     end)() then
       return 0
     else
-      n = M.Data_Ring_foreign.intSub(n)(1)
+      n = Data_Ring_foreign.intSub(n)(1)
     end
   end
 end
 M.Golden_Loopification_Test_countDrop_S_w = function(n)
+  local Data_Ring_foreign, Golden_Loopification_Test_eq = M.Data_Ring_foreign, M.Golden_Loopification_Test_eq
   while true do
-    if M.Golden_Loopification_Test_eq(n)(0) then
+    if Golden_Loopification_Test_eq(n)(0) then
       return 0
     else
-      n = M.Data_Ring_foreign.intSub(n)(1)
+      n = Data_Ring_foreign.intSub(n)(1)
     end
   end
 end
@@ -206,12 +212,13 @@ M.Golden_Loopification_Test_countDrop = function(countDrop_S_p1)
   end
 end
 return (function()
-  local _ = M.Golden_Loopification_Test_logShow(M.Golden_Loopification_Test_countdown(5))()
-  local _ = M.Golden_Loopification_Test_logShow(M.Golden_Loopification_Test_sumTo_S_w(0, 10))()
-  local _ = M.Golden_Loopification_Test_logShow(M.Golden_Loopification_Test_sumSquares(4))()
-  local _ = M.Golden_Loopification_Test_logShow(M.Golden_Loopification_Test_mc91(1))()
-  local _ = M.Golden_Loopification_Test_logShow(M.Golden_Loopification_Test_sumCPS_S_w(5, function( x_S_193 )
+  local Golden_Loopification_Test_logShow = M.Golden_Loopification_Test_logShow
+  local _ = Golden_Loopification_Test_logShow(M.Golden_Loopification_Test_countdown(5))()
+  local _ = Golden_Loopification_Test_logShow(M.Golden_Loopification_Test_sumTo_S_w(0, 10))()
+  local _ = Golden_Loopification_Test_logShow(M.Golden_Loopification_Test_sumSquares(4))()
+  local _ = Golden_Loopification_Test_logShow(M.Golden_Loopification_Test_mc91(1))()
+  local _ = Golden_Loopification_Test_logShow(M.Golden_Loopification_Test_sumCPS_S_w(5, function( x_S_193 )
     return x_S_193
   end))()
-  return M.Golden_Loopification_Test_logShow(M.Golden_Loopification_Test_countDrop_S_w(3, 99))()
+  return Golden_Loopification_Test_logShow(M.Golden_Loopification_Test_countDrop_S_w(3, 99))()
 end)()

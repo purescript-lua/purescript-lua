@@ -58,7 +58,8 @@ M.Effect_Lazy_functorEffect = PSLUA_runtime_lazy("functorEffect")(function()
   return {
     map = function(f_S_121)
       return function(a_S_122)
-        return (M.Effect_applicativeEffect.Apply0()).apply(M.Control_Applicative_pure(M.Effect_applicativeEffect)(f_S_121))(a_S_122)
+        local Effect_applicativeEffect = M.Effect_applicativeEffect
+        return (Effect_applicativeEffect.Apply0()).apply(M.Control_Applicative_pure(Effect_applicativeEffect)(f_S_121))(a_S_122)
       end
     end
   }
@@ -92,10 +93,11 @@ M.Golden_MaybeChain_Test_map_S_w = function(v_S_275, v1_S_276)
   end
 end
 return (function()
-  local _ = M.Golden_MaybeChain_Test_logShow(M.Data_Maybe_maybe_S_w(0, M.Golden_MaybeChain_Test_identity, M.Data_Maybe_maybe_S_w(M.Data_Maybe_Nothing, M.Data_Maybe_Just, M.Golden_MaybeChain_Test_map_S_w(function( x_S_0 )
+  local Data_Maybe_maybe_S_w, Data_Maybe_Just, Data_Maybe_Nothing, Golden_MaybeChain_Test_identity, Golden_MaybeChain_Test_logShow, Golden_MaybeChain_Test_map_S_w = M.Data_Maybe_maybe_S_w, M.Data_Maybe_Just, M.Data_Maybe_Nothing, M.Golden_MaybeChain_Test_identity, M.Golden_MaybeChain_Test_logShow, M.Golden_MaybeChain_Test_map_S_w
+  local _ = Golden_MaybeChain_Test_logShow(Data_Maybe_maybe_S_w(0, Golden_MaybeChain_Test_identity, Data_Maybe_maybe_S_w(Data_Maybe_Nothing, Data_Maybe_Just, Golden_MaybeChain_Test_map_S_w(function( x_S_0 )
     return x_S_0
-  end, M.Data_Maybe_Nothing))))()
-  return M.Golden_MaybeChain_Test_logShow(M.Data_Maybe_maybe_S_w(0, M.Golden_MaybeChain_Test_identity, M.Data_Maybe_maybe_S_w(M.Data_Maybe_Nothing, M.Data_Maybe_Just, M.Golden_MaybeChain_Test_map_S_w(function( x0_S_1 )
+  end, Data_Maybe_Nothing))))()
+  return Golden_MaybeChain_Test_logShow(Data_Maybe_maybe_S_w(0, Golden_MaybeChain_Test_identity, Data_Maybe_maybe_S_w(Data_Maybe_Nothing, Data_Maybe_Just, Golden_MaybeChain_Test_map_S_w(function( x0_S_1 )
     return x0_S_1
-  end, M.Data_Maybe_Just(42)))))()
+  end, Data_Maybe_Just(42)))))()
 end)()

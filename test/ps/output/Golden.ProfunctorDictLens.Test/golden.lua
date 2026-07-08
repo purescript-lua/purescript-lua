@@ -55,7 +55,8 @@ M.Data_Profunctor_profunctorFn = {
   dimap = function(a2b)
     return function(c2d)
       return function(b2c)
-        return M.Data_Profunctor_composeFlipped(a2b)(M.Data_Profunctor_composeFlipped(b2c)(c2d))
+        local Data_Profunctor_composeFlipped = M.Data_Profunctor_composeFlipped
+        return Data_Profunctor_composeFlipped(a2b)(Data_Profunctor_composeFlipped(b2c)(c2d))
       end
     end
   end
@@ -77,7 +78,8 @@ M.Effect_Lazy_functorEffect = PSLUA_runtime_lazy("functorEffect")(function()
   return {
     map = function(f_S_111)
       return function(a_S_112)
-        return (M.Effect_applicativeEffect.Apply0()).apply(M.Control_Applicative_pure(M.Effect_applicativeEffect)(f_S_111))(a_S_112)
+        local Effect_applicativeEffect = M.Effect_applicativeEffect
+        return (Effect_applicativeEffect.Apply0()).apply(M.Control_Applicative_pure(Effect_applicativeEffect)(f_S_111))(a_S_112)
       end
     end
   }
@@ -110,13 +112,14 @@ M.Golden_ProfunctorDictLens_Test__Wrapped = function(dictProfunctor)
 end
 M.Golden_ProfunctorDictLens_Test__Wrapped1 = M.Golden_ProfunctorDictLens_Test__Wrapped(M.Data_Profunctor_profunctorFn)
 return (function()
-  local _ = M.Golden_ProfunctorDictLens_Test_logShow(M.Golden_ProfunctorDictLens_Test_unwrap(M.Golden_ProfunctorDictLens_Test__Wrapped1(function( v_S_0 )
+  local Golden_ProfunctorDictLens_Test_logShow, Golden_ProfunctorDictLens_Test_unwrap, Golden_ProfunctorDictLens_Test__Wrapped1 = M.Golden_ProfunctorDictLens_Test_logShow, M.Golden_ProfunctorDictLens_Test_unwrap, M.Golden_ProfunctorDictLens_Test__Wrapped1
+  local _ = Golden_ProfunctorDictLens_Test_logShow(Golden_ProfunctorDictLens_Test_unwrap(Golden_ProfunctorDictLens_Test__Wrapped1(function( v_S_0 )
     return M.Data_Semiring_semiringInt.add(v_S_0)(1)
   end)(10)))()
-  local _ = M.Golden_ProfunctorDictLens_Test_logShow(M.Golden_ProfunctorDictLens_Test_unwrap(M.Golden_ProfunctorDictLens_Test__Wrapped1(function( v0_S_1 )
+  local _ = Golden_ProfunctorDictLens_Test_logShow(Golden_ProfunctorDictLens_Test_unwrap(Golden_ProfunctorDictLens_Test__Wrapped1(function( v0_S_1 )
     return M.Data_Semiring_semiringInt.mul(v0_S_1)(2)
   end)(10)))()
-  return M.Golden_ProfunctorDictLens_Test_logShow(M.Golden_ProfunctorDictLens_Test_unwrap(M.Data_Profunctor_dimap(M.Data_Profunctor_profunctorFn)(M.Data_Newtype_unwrap())(M.Unsafe_Coerce_foreign.unsafeCoerce)(function( v1_S_2 )
+  return Golden_ProfunctorDictLens_Test_logShow(Golden_ProfunctorDictLens_Test_unwrap(M.Data_Profunctor_dimap(M.Data_Profunctor_profunctorFn)(M.Data_Newtype_unwrap())(M.Unsafe_Coerce_foreign.unsafeCoerce)(function( v1_S_2 )
     return M.Data_Ring_foreign.intSub(v1_S_2)(5)
   end)(10)))()
 end)()

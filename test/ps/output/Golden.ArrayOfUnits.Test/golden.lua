@@ -93,7 +93,8 @@ M.Effect_Lazy_functorEffect = PSLUA_runtime_lazy("functorEffect")(function()
   return {
     map = function(f_S_707)
       return function(a_S_708)
-        return M.Control_Apply_apply(M.Effect_applicativeEffect.Apply0())(M.Control_Applicative_pure(M.Effect_applicativeEffect)(f_S_707))(a_S_708)
+        local Effect_applicativeEffect = M.Effect_applicativeEffect
+        return M.Control_Apply_apply(Effect_applicativeEffect.Apply0())(M.Control_Applicative_pure(Effect_applicativeEffect)(f_S_707))(a_S_708)
       end
     end
   }
@@ -119,13 +120,15 @@ M.Effect_Console_logShow_S_w = function(dictShow, a)
   return M.Effect_Console_foreign.log(dictShow.show(a))
 end
 return (function()
+  local Data_Unit_foreign = M.Data_Unit_foreign
   local arr_S_0 = {
-    [1] = M.Data_Unit_foreign.unit,
-    [2] = M.Data_Unit_foreign.unit,
-    [3] = M.Data_Unit_foreign.unit
+    [1] = Data_Unit_foreign.unit,
+    [2] = Data_Unit_foreign.unit,
+    [3] = Data_Unit_foreign.unit
   }
   return function()
-    local _ = M.Data_Foldable_foldr(M.Data_Foldable_foldableArray)(function( x_S_907 )
+    local Data_Foldable_foldableArray = M.Data_Foldable_foldableArray
+    local _ = M.Data_Foldable_foldr(Data_Foldable_foldableArray)(function( x_S_907 )
       return (function()
         local dictApply_S_892 = M.Effect_applicativeEffect.Apply0()
         return function(a_S_893)
@@ -141,9 +144,10 @@ return (function()
     end)(M.Control_Applicative_pure(M.Effect_applicativeEffect)(M.Data_Unit_foreign.unit))(arr_S_0)()
     return M.Effect_Console_logShow_S_w({
       show = M.Data_Show_foreign.showIntImpl
-    }, M.Data_Foldable_foldableArray.foldl(function(c_S_372_S_881)
+    }, Data_Foldable_foldableArray.foldl(function(c_S_372_S_881)
       return function()
-        return M.Data_Semiring_semiringInt.add(M.Data_Semiring_semiringInt.one)(c_S_372_S_881)
+        local Data_Semiring_semiringInt = M.Data_Semiring_semiringInt
+        return Data_Semiring_semiringInt.add(Data_Semiring_semiringInt.one)(c_S_372_S_881)
       end
     end)(M.Data_Semiring_semiringInt.zero)(arr_S_0))()
   end
