@@ -28,7 +28,8 @@ import Language.PureScript.Backend.IR.Pass
   )
 import Language.PureScript.Backend.IR.Supply (SupplyM, runSupply)
 import Language.PureScript.Backend.IR.Types
-  ( Ann
+  ( AlgebraicType (SumType)
+  , Ann
   , Exp
   , Grouping (..)
   , Parameter (..)
@@ -38,6 +39,7 @@ import Language.PureScript.Backend.IR.Types
   , alphaEq
   , countFreeRef
   , countFreeRefs
+  , ctorId
   , getAnn
   , isForeignImport
   , isNonRecursiveLiteral
@@ -49,8 +51,7 @@ import Language.PureScript.Backend.IR.Types
   , substituteCopyM
   , substituteMoveM
   , thenRewrite
-  , pattern Abs
-  , pattern App
+  , unwindApp
   )
 import Language.PureScript.Backend.IR.Uncurry (uncurryWorkerWrapper)
 import Language.PureScript.Backend.IR.Uniquify (uniquifyNames)
@@ -373,6 +374,7 @@ optimizedExpressionM =
   rewriteExpBottomUpM
     ( constantFolding
         `thenRewrite` reduceObjectProp
+        `thenRewrite` reduceKnownConstructor
         `thenRewrite` betaReduce
         `thenRewrite` removeUnreachableThenBranch
         `thenRewrite` removeUnreachableElseBranch
@@ -437,6 +439,52 @@ reduceObjectProp =
       Just case List.lookup prop (toList patches) of
         Just patched → setAnn ann patched
         Nothing → ObjectProp ann obj prop
+    _ → Nothing
+
+{- | Case-of-known-constructor for algebraic types (issue #177), the
+'reduceObjectProp' twin for data constructors:
+
+  * @ReflectCtor (K a₁ … aₙ)@ — a tag read over a saturated /sum-type/
+    constructor application — folds to @K@'s tag string. The surrounding
+    equality test then meets 'constantFolding' and
+    'removeUnreachableThenBranch' / 'removeUnreachableElseBranch', which
+    collapse the decision tree to its live branch.
+  * @DataArgumentByIndex i (K a₁ … aₙ)@ — a field read — folds to @aᵢ@.
+
+A constructor application is the curried unary-'App' spine
+@App (… (App (Ctor …) a₁) …) aₙ@ that translation and the pattern
+matcher build. The fold fires only when the spine is /saturated/ (as
+many arguments as the constructor declares fields), so a partial
+application — still a function — is left alone.
+
+'ReflectCtor' folds for 'SumType' only: product constructors omit the
+@$ctor@ tag row in the generated Lua (see the @Ctor@ case of
+'Language.PureScript.Backend.Lua.fromIR'), so reducing a product-type
+tag read to a string would invent a value the runtime reads as @nil@.
+Field reads fold for either shape, since @valueᵢ@ rows exist for both.
+
+Discarded arguments are dropped, not evaluated — the discipline
+'reduceObjectProp' applies to discarded record fields and DCE applies to
+unused bindings. A dropped argument cannot skip an 'Effect': effects are
+unrun thunks here, run only when applied, so an effect that must run is
+the /kept/ argument (the field a match actually binds), never a dropped
+one; the only casualties are the pure divergence or partiality that DCE
+already elides. The folded value takes the read node's own annotation,
+not the argument's, for the reason spelled out on 'reduceObjectProp'.
+-}
+reduceKnownConstructor ∷ Applicative m ⇒ RewriteRuleM m Ann
+reduceKnownConstructor =
+  pure . \case
+    ReflectCtor ann scrutinee
+      | (Ctor _ SumType modName tyName ctorName fields, args) ←
+          unwindApp scrutinee
+      , length args == length fields →
+          Just $ LiteralString ann (ctorId modName tyName ctorName)
+    DataArgumentByIndex ann index scrutinee
+      | (Ctor _ _ _ _ _ fields, args) ← unwindApp scrutinee
+      , length args == length fields
+      , Just arg ← viaNonEmpty head (List.genericDrop index args) →
+          Just (setAnn ann arg)
     _ → Nothing
 
 {- Note [Beta reduction and local inlining share an inlining guard]

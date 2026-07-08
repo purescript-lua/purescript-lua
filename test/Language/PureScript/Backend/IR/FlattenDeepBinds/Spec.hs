@@ -30,7 +30,6 @@ import Language.PureScript.Backend.IR.Types
   , refImported
   , refLocal
   , subexpressions
-  , pattern App
   )
 import Test.Hspec (Spec, describe, it, shouldBe, shouldSatisfy)
 import Test.Hspec.Hedgehog.Extended (prop)

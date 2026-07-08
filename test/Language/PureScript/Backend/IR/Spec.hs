@@ -479,7 +479,7 @@ spec = describe "IR representation" do
 
   describe "collectDataDeclarations" do
     it "classifies data types regardless of constructor order" do
-      let ctor tyName ctorName =
+      let cfnCtor tyName ctorName =
             Cfn.Constructor
               ann
               (PS.ProperName tyName)
@@ -492,9 +492,9 @@ spec = describe "IR representation" do
           cfnMod =
             cfnModule
               { Cfn.moduleBindings =
-                  [ bind "A" (ctor "T" "A")
-                  , bind "C" (ctor "U" "C")
-                  , bind "B" (ctor "T" "B")
+                  [ bind "A" (cfnCtor "T" "A")
+                  , bind "C" (cfnCtor "U" "C")
+                  , bind "B" (cfnCtor "T" "B")
                   ]
               }
       collectDataDeclarations (Map.singleton (PS.ModuleName "M") cfnMod)

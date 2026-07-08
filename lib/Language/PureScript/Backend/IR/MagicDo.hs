@@ -70,6 +70,7 @@ import Language.PureScript.Backend.IR.Types
   , noAnn
   , rewriteExpTopDownM
   , substituteMoveM
+  , unwindApp
   , pattern Abs
   , pattern App
   )
@@ -185,7 +186,7 @@ aliases, projecting fields out of literal dictionaries, and beta-reducing — an
 match once it is exposed as @bind dict action continuation@.
 -}
 classify ∷ (QName → Maybe Exp) → Exp → SupplyM (Maybe Node)
-classify resolve = go maxHops . spine
+classify resolve = go maxHops . unwindApp
  where
   go ∷ Int → (Exp, [Exp]) → SupplyM (Maybe Node)
   go fuel (hd, args)
@@ -228,7 +229,7 @@ classify resolve = go maxHops . spine
 
   -- Re-attach trailing arguments after a head reduction.
   reSpine ∷ Exp → [Exp] → (Exp, [Exp])
-  reSpine hd' extra = let (h, a) = spine hd' in (h, a <> extra)
+  reSpine hd' extra = let (h, a) = unwindApp hd' in (h, a <> extra)
 
 {- | Does the expression ultimately denote the given instance, possibly through
 module-local aliases?
@@ -249,14 +250,6 @@ isBindDict resolve dict =
 
 --------------------------------------------------------------------------------
 -- Helpers ---------------------------------------------------------------------
-
--- | Unwind an application into its head and arguments (left to right).
-spine ∷ Exp → (Exp, [Exp])
-spine = go []
- where
-  go ∷ [Exp] → Exp → (Exp, [Exp])
-  go acc (App _ f a) = go (a : acc) f
-  go acc h = (h, acc)
 
 {- | Run an Effect/ST computation: apply the thunk to no arguments. The
 synthetic @Prim.undefined@ argument is erased to an empty argument list by

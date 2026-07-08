@@ -327,6 +327,10 @@ eliminateDeadCode uber@UberModule {..} =
          where
           (scopeWithParams, paramNodes) =
             foldl' bindParam (scope, DL.empty) (toList params)
+          bindParam
+            ∷ (Scope, DList Node)
+            → Parameter (Id, b)
+            → (Scope, DList Node)
           bindParam (sc, nodes) = \case
             ParamUnused _ann' → (sc, nodes)
             ParamNamed (paramId, _ann') name →

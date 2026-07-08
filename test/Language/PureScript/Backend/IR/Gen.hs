@@ -61,7 +61,31 @@ exp =
       , Gen.subtermM exp \e →
           (`IR.lets` e) <$> Gen.nonEmpty (Range.linear 1 5) binding
       )
+    , (3, genCtorApp)
+    , (2, IR.reflectCtor <$> genCtorApp)
+    ,
+      ( 2
+      , IR.dataArgumentByIndex
+          <$> Gen.integral (Range.linear 0 3)
+          <*> genCtorApp
+      )
     ]
+ where
+  -- A saturated constructor application: exactly one argument per field
+  -- (nullary ctor ⇒ a bare 'Ctor'). This is the shape the #177
+  -- case-of-known-constructor fold matches on, so the fold-firing input
+  -- reaches the 'exp'-based suites too.
+  genCtorApp = do
+    fields ← Gen.list (Range.linear 0 3) fieldName
+    ctorExp ←
+      IR.ctor
+        <$> Gen.enumBounded
+        <*> moduleName
+        <*> tyName
+        <*> ctorName
+        <*> pure fields
+    args ← forM fields \_field → exp
+    pure (foldl' IR.application ctorExp args)
 
 {- | A generation-time scope: the local names with an enclosing binder.
 Lets 'scopedExp' emit only references that resolve to a binder.
@@ -108,9 +132,33 @@ scopedExpIn scope =
             (Range.linear 1 4)
             ((,) <$> genPropName <*> scopedExpIn scope)
       )
+    , (3, genCtorApp)
+    , (2, IR.reflectCtor <$> genCtorApp)
+    ,
+      ( 2
+      , IR.dataArgumentByIndex
+          <$> Gen.integral (Range.linear 0 3)
+          <*> genCtorApp
+      )
     ]
  where
   scopedRef = IR.refLocal <$> Gen.element (Set.toList scope)
+  -- A saturated constructor application: exactly one argument per field
+  -- (nullary ctor ⇒ a bare 'Ctor'). A 'Ctor' node binds nothing and
+  -- references no 'Scope' entry, so every argument just reuses the
+  -- incoming scope — the same category as application / if / object.
+  -- This is the shape the #177 case-of-known-constructor fold matches on.
+  genCtorApp = do
+    fields ← Gen.list (Range.linear 0 3) fieldName
+    ctorExp ←
+      IR.ctor
+        <$> Gen.enumBounded
+        <*> moduleName
+        <*> tyName
+        <*> ctorName
+        <*> pure fields
+    args ← forM fields \_field → scopedExpIn scope
+    pure (foldl' IR.application ctorExp args)
   genAbs = do
     (param, body) ← genBinderBody
     pure (IR.abstraction param body)

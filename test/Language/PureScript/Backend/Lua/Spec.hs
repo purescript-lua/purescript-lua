@@ -1,7 +1,6 @@
 module Language.PureScript.Backend.Lua.Spec where
 
 import Control.Monad.Oops (Variant)
-import Control.Monad.Trans.Except (ExceptT, runExceptT)
 import Data.Tagged (Tagged (..))
 import Data.Text qualified as Text
 import Language.PureScript.Backend.IR qualified as IR

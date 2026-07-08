@@ -94,6 +94,10 @@
 # - ignore: {name: Use let}
 # - ignore: {name: Use const, within: SpecialModule} # Only within certain modules
 
+# Keep `\_whatIsBeingDiscarded → …` over `const …`: the named-but-ignored
+# binder documents *what* is being discarded, which `const` erases.
+- ignore: {name: Use const}
+
 # Define some custom infix operators
 # - fixity: infixr 3 ~^#^~
 
