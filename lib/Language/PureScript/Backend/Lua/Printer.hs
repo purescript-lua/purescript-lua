@@ -47,6 +47,7 @@ printStatements statements =
     statements
     (fmap Just (drop 1 statements) <> [Nothing])
  where
+  separator ∷ Maybe (Annotated Comments StatementF) → ADoc
   separator = \case
     Just (Ann next) | startsWithOpenParen next → ";"
     _ → mempty

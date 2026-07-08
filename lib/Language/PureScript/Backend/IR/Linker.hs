@@ -132,6 +132,7 @@ qualifyTopRefs moduleName = go
        where
         topNames' ∷ Set Name =
           foldl' shadowParam topNames parameters
+        shadowParam ∷ Set Name → Parameter ann → Set Name
         shadowParam names = \case
           ParamNamed _ann argName → Set.delete argName names
           ParamUnused _ann → names

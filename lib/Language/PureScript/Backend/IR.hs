@@ -191,6 +191,7 @@ collectDataDeclarations cfnModules =
   -- A type is a product type iff it has exactly one constructor. Grouping the
   -- constructors by type first makes this independent of the order in which
   -- they appear in the module bindings.
+  classify ∷ Map k a → (AlgebraicType, Map k a)
   classify ctors =
     (if Map.size ctors == 1 then ProductType else SumType, ctors)
 
