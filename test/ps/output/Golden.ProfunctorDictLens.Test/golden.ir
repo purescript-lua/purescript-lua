@@ -8,18 +8,6 @@ UberModule
         [ ( Nothing, Name "showIntImpl" ) ]
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Data.Semiring", qnameName = Name "foreign"
-        }, ForeignImport Nothing
-        ( ModuleName "Data.Semiring" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Semiring.purs"
-        [ ( Nothing, Name "intAdd" ), ( Nothing, Name "intMul" ) ]
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Data.Ring", qnameName = Name "foreign"
-        }, ForeignImport Nothing
-        ( ModuleName "Data.Ring" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Ring.purs"
-        [ ( Nothing, Name "intSub" ) ]
-      ), Standalone
-      ( QName
         { qnameModuleName = ModuleName "Unsafe.Coerce", qnameName = Name "foreign"
         }, ForeignImport Nothing
         ( ModuleName "Unsafe.Coerce" ) ".spago/p/unsafe-coerce/7a4c95f14b8118d9fb052e130d6e862fa3f5166a/src/Unsafe/Coerce.purs"
@@ -41,14 +29,26 @@ UberModule
         { qnameModuleName = ModuleName "Data.Semiring", qnameName = Name "semiringInt"
         }, LiteralObject Nothing
         [
-          ( PropName "add", ObjectProp ( Just Always )
-            ( Ref Nothing ( Imported ( ModuleName "Data.Semiring" ) ( Name "foreign" ) ) )
-            ( PropName "intAdd" )
+          ( PropName "add", AbsN ( Just Always )
+            ( ParamNamed Nothing ( Name "x$279" ) :| [] )
+            ( AbsN Nothing
+              ( ParamNamed Nothing ( Name "y$280" ) :| [] )
+              ( PrimBinOp Nothing PrimAdd
+                ( Ref Nothing ( Local ( Name "x$279" ) ) )
+                ( Ref Nothing ( Local ( Name "y$280" ) ) )
+              )
+            )
           ),
           ( PropName "zero", LiteralInt Nothing 0 ),
-          ( PropName "mul", ObjectProp ( Just Always )
-            ( Ref Nothing ( Imported ( ModuleName "Data.Semiring" ) ( Name "foreign" ) ) )
-            ( PropName "intMul" )
+          ( PropName "mul", AbsN ( Just Always )
+            ( ParamNamed Nothing ( Name "x$277" ) :| [] )
+            ( AbsN Nothing
+              ( ParamNamed Nothing ( Name "y$278" ) :| [] )
+              ( PrimBinOp Nothing PrimMul
+                ( Ref Nothing ( Local ( Name "x$277" ) ) )
+                ( Ref Nothing ( Local ( Name "y$278" ) ) )
+              )
+            )
           ),
           ( PropName "one", LiteralInt Nothing 1 )
         ]
@@ -79,12 +79,12 @@ UberModule
         ( AbsN Nothing
           ( ParamNamed Nothing ( Name "g$264" ) :| [] )
           ( AbsN Nothing
-            ( ParamNamed Nothing ( Name "x$274" ) :| [] )
+            ( ParamNamed Nothing ( Name "x$309" ) :| [] )
             ( AppN Nothing
               ( Ref Nothing ( Local ( Name "g$264" ) ) )
               ( AppN Nothing
                 ( Ref Nothing ( Local ( Name "f$263" ) ) )
-                ( Ref Nothing ( Local ( Name "x$274" ) ) :| [] ) :| []
+                ( Ref Nothing ( Local ( Name "x$309" ) ) :| [] ) :| []
               )
             )
           )
@@ -528,17 +528,9 @@ UberModule
                     )
                     ( AbsN Nothing
                       ( ParamNamed Nothing ( Name "v1$2" ) :| [] )
-                      ( AppN Nothing
-                        ( AppN Nothing
-                          ( ObjectProp ( Just Always )
-                            ( Ref Nothing
-                              ( Imported ( ModuleName "Data.Ring" ) ( Name "foreign" ) )
-                            )
-                            ( PropName "intSub" )
-                          )
-                          ( Ref Nothing ( Local ( Name "v1$2" ) ) :| [] )
-                        )
-                        ( LiteralInt Nothing 5 :| [] )
+                      ( PrimBinOp Nothing PrimSub
+                        ( Ref Nothing ( Local ( Name "v1$2" ) ) )
+                        ( LiteralInt Nothing 5 )
                       ) :| []
                     )
                   )

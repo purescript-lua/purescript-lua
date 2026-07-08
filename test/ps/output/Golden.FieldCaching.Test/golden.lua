@@ -17,38 +17,7 @@ local function PSLUA_runtime_lazy(name)
   end
 end
 local M = {}
-M.Data_Eq_foreign = (function()
-  local refEq = function(r1) return function(r2) return r1 == r2 end end
-  return { eqIntImpl = refEq }
-end)()
 M.Data_Show_foreign = { showIntImpl = function(n) return tostring(n) end }
-M.Data_Semiring_foreign = {
-  intAdd = function(x) return function(y) return x + y end end,
-  intMul = function(x) return function(y) return x * y end end
-}
-M.Data_Ring_foreign = {
-  intSub = function(x) return function(y) return x - y end end
-}
-M.Data_Ord_foreign = (function()
-  local unsafeCoerceImpl = function(lt)
-    return function(eq)
-      return function(gt)
-        return function(x)
-          return function(y)
-            if x < y then
-              return lt
-            elseif x == y then
-              return eq
-            else
-              return gt
-            end
-          end
-        end
-      end
-    end
-  end
-  return { ordIntImpl = unsafeCoerceImpl }
-end)()
 M.Effect_foreign = {
   pureE = function(a) return function() return a end end,
   bindE = function(a)
@@ -59,9 +28,13 @@ M.Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
 }
 M.Data_Semiring_semiringInt = {
-  add = M.Data_Semiring_foreign.intAdd,
+  add = function(x_S_192)
+    return function(y_S_193) return x_S_192 + y_S_193 end
+  end,
   zero = 0,
-  mul = M.Data_Semiring_foreign.intMul,
+  mul = function(x_S_190)
+    return function(y_S_191) return x_S_190 * y_S_191 end
+  end,
   one = 1
 }
 M.Control_Applicative_pure = function(dict) return dict.pure end
@@ -106,6 +79,9 @@ M.Effect_Lazy_applyEffect = PSLUA_runtime_lazy("applyEffect")(function()
   }
 end)
 M.Golden_FieldCaching_Test_add = M.Data_Semiring_semiringInt.add
+M.Golden_FieldCaching_Test_sub_S_w = function(x_S_188_S_219, y_S_189_S_220)
+  return x_S_188_S_219 - y_S_189_S_220
+end
 M.Golden_FieldCaching_Test_discard = M.Control_Bind_bind(M.Effect_bindEffect)
 M.Golden_FieldCaching_Test_logShow = function(a_S_2)
   return M.Effect_Console_foreign.log(M.Data_Show_foreign.showIntImpl(a_S_2))
@@ -114,12 +90,12 @@ M.Golden_FieldCaching_Test_weigh = function(x)
   return M.Golden_FieldCaching_Test_add(M.Data_Semiring_semiringInt.mul(x)(2))(1)
 end
 M.Golden_FieldCaching_Test_sumLoop_S_w = function(acc, n)
-  local Data_Eq_foreign, Data_Ring_foreign, Golden_FieldCaching_Test_add, Golden_FieldCaching_Test_weigh = M.Data_Eq_foreign, M.Data_Ring_foreign, M.Golden_FieldCaching_Test_add, M.Golden_FieldCaching_Test_weigh
+  local Golden_FieldCaching_Test_add, Golden_FieldCaching_Test_sub_S_w, Golden_FieldCaching_Test_weigh = M.Golden_FieldCaching_Test_add, M.Golden_FieldCaching_Test_sub_S_w, M.Golden_FieldCaching_Test_weigh
   while true do
-    if Data_Eq_foreign.eqIntImpl(n)(0) then
+    if n == 0 then
       return acc
     else
-      acc, n = Golden_FieldCaching_Test_add(acc)(Golden_FieldCaching_Test_weigh(n)), Data_Ring_foreign.intSub(n)(1)
+      acc, n = Golden_FieldCaching_Test_add(acc)(Golden_FieldCaching_Test_weigh(n)), Golden_FieldCaching_Test_sub_S_w(n, 1)
     end
   end
 end
@@ -137,11 +113,15 @@ M.Golden_FieldCaching_Test_pair = function(n)
 end
 M.Golden_FieldCaching_Test_fibby = function(n)
   if (function()
-    if "Data.Ordering∷Ordering.LT" == (M.Data_Ord_foreign.ordIntImpl({
-      ["$ctor"] = "Data.Ordering∷Ordering.LT"
-    })({ ["$ctor"] = "Data.Ordering∷Ordering.EQ" })({
-      ["$ctor"] = "Data.Ordering∷Ordering.GT"
-    })(n)(2))["$ctor"] then
+    if "Data.Ordering∷Ordering.LT" == ((function()
+      if n < 2 then
+        return { ["$ctor"] = "Data.Ordering∷Ordering.LT" }
+      elseif n == 2 then
+        return { ["$ctor"] = "Data.Ordering∷Ordering.EQ" }
+      else
+        return { ["$ctor"] = "Data.Ordering∷Ordering.GT" }
+      end
+    end)())["$ctor"] then
       return true
     else
       return false
@@ -149,7 +129,7 @@ M.Golden_FieldCaching_Test_fibby = function(n)
   end)() then
     return n
   else
-    return M.Golden_FieldCaching_Test_add(M.Golden_FieldCaching_Test_weigh(M.Data_Ring_foreign.intSub(n)(1)))(M.Golden_FieldCaching_Test_weigh(M.Data_Ring_foreign.intSub(n)(2)))
+    return M.Golden_FieldCaching_Test_add(M.Golden_FieldCaching_Test_weigh(M.Golden_FieldCaching_Test_sub_S_w(n, 1)))(M.Golden_FieldCaching_Test_weigh(M.Golden_FieldCaching_Test_sub_S_w(n, 2)))
   end
 end
 M.Golden_FieldCaching_Test_apply2 = function(f) return f(2) end

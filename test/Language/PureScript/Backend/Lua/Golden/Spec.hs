@@ -16,6 +16,7 @@ import Language.PureScript.Backend.IR.Linker qualified as IR
 import Language.PureScript.Backend.IR.Linker qualified as Linker
 import Language.PureScript.Backend.IR.Optimizer (optimizedUberModuleChecked)
 import Language.PureScript.Backend.Lua qualified as Lua
+import Language.PureScript.Backend.Lua.ForeignLift qualified as ForeignLift
 import Language.PureScript.Backend.Lua.Optimizer (optimizeChunk)
 import Language.PureScript.Backend.Lua.Parser qualified as Parser
 import Language.PureScript.Backend.Lua.Printer qualified as Printer
@@ -289,10 +290,19 @@ compileCorefn outputDir uberModuleName = do
     forM (toList cfnModules) $
       either (fail . show) (pure . snd) . (`IR.mkModule` dataDecls)
   let uberModule = Linker.makeUberModule (LinkAsModule uberModuleName) modules
+  -- Lift the allowlisted foreign exports to IR primops (issue #178) exactly
+  -- as Backend.compileModules does, so the .ir goldens reflect the same
+  -- pipeline. Foreign paths recorded in the CoreFn are relative to test/ps
+  -- (the spago build dir), so resolve them from there, mirroring compileIr.
+  liftedModule ← liftIO $ withCurrentDir [reldir|test/ps|] do
+    foreignPath ← Tagged <$> makeAbsolute [reldir|foreign|]
+    ForeignLift.liftForeigns foreignPath uberModule
+      & handleForeignLiftError
+      & Oops.runOops
   -- The checked runner lints every pass boundary (including every fixpoint
   -- iteration), so each golden module doubles as a scope-invariant test of
   -- the whole pipeline.
-  either (fail . show) pure (optimizedUberModuleChecked uberModule)
+  either (fail . show) pure (optimizedUberModuleChecked liftedModule)
 
 compileIr ∷ (MonadIO m, MonadMask m) ⇒ AppOrModule → IR.UberModule → m Text
 compileIr appOrModule uberModule = withCurrentDir [reldir|test/ps|] do
@@ -340,3 +350,8 @@ handleLuaError
   ∷ ExceptT (Oops.Variant (Lua.Error ': e)) IO a
   → ExceptT (Oops.Variant e) IO a
 handleLuaError = Oops.catch \(e ∷ Lua.Error) → die $ show e
+
+handleForeignLiftError
+  ∷ ExceptT (Oops.Variant (ForeignLift.Error ': e)) IO a
+  → ExceptT (Oops.Variant e) IO a
+handleForeignLiftError = Oops.catch \(e ∷ ForeignLift.Error) → die $ show e

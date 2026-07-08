@@ -13,6 +13,7 @@ import Language.PureScript.Backend.IR.Types.Spec qualified as Types
 import Language.PureScript.Backend.IR.Uncurry.Spec qualified as IRUncurry
 import Language.PureScript.Backend.IR.Uniquify.Spec qualified as IRUniquify
 import Language.PureScript.Backend.Lua.Differential.Spec qualified as LuaDifferential
+import Language.PureScript.Backend.Lua.ForeignLift.Spec qualified as ForeignLift
 import Language.PureScript.Backend.Lua.Golden.Spec qualified as Golden
 import Language.PureScript.Backend.Lua.Linker.Foreign.Spec qualified as LuaLinkerForeign
 import Language.PureScript.Backend.Lua.Localize.Spec qualified as LuaLocalize
@@ -49,6 +50,7 @@ main = hspec do
   Printer.spec
   Run.spec
   LuaLinkerForeign.spec
+  ForeignLift.spec
   NestingCheck.spec
   FlattenDeepBinds.spec
   FloatIn.spec

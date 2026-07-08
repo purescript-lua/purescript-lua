@@ -17,18 +17,6 @@ local function PSLUA_runtime_lazy(name)
   end
 end
 local M = {}
-M.Data_HeytingAlgebra_foreign = {
-  boolConj = function(b1) return function(b2) return b1 and b2 end end,
-  boolDisj = function(b1) return function(b2) return b1 or b2 end end,
-  boolNot = function(b) return not(b) end
-}
-M.Data_Eq_foreign = (function()
-  local refEq = function(r1) return function(r2) return r1 == r2 end end
-  return { eqIntImpl = refEq, eqCharImpl = refEq, eqStringImpl = refEq }
-end)()
-M.Data_Semigroup_foreign = {
-  concatString = function(s1) return function(s2) return s1 .. s2 end end
-}
 M.Data_Show_foreign = {
   showIntImpl = function(n) return tostring(n) end,
   showArrayImpl = function(f)
@@ -40,33 +28,6 @@ M.Data_Show_foreign = {
     end
   end
 }
-M.Data_Semiring_foreign = {
-  intAdd = function(x) return function(y) return x + y end end,
-  intMul = function(x) return function(y) return x * y end end
-}
-M.Data_Ring_foreign = {
-  intSub = function(x) return function(y) return x - y end end
-}
-M.Data_Ord_foreign = (function()
-  local unsafeCoerceImpl = function(lt)
-    return function(eq)
-      return function(gt)
-        return function(x)
-          return function(y)
-            if x < y then
-              return lt
-            elseif x == y then
-              return eq
-            else
-              return gt
-            end
-          end
-        end
-      end
-    end
-  end
-  return { ordIntImpl = unsafeCoerceImpl, ordCharImpl = unsafeCoerceImpl }
-end)()
 M.Data_Functor_foreign = {
   arrayMap = function(f)
     return function(arr)
@@ -310,15 +271,25 @@ M.Data_HeytingAlgebra_heytingAlgebraBoolean = {
       return Data_HeytingAlgebra_heytingAlgebraBoolean.disj(Data_HeytingAlgebra_heytingAlgebraBoolean._not_(a))(b)
     end
   end,
-  conj = M.Data_HeytingAlgebra_foreign.boolConj,
-  disj = M.Data_HeytingAlgebra_foreign.boolDisj,
-  _not_ = M.Data_HeytingAlgebra_foreign.boolNot
+  conj = function(b1_S_1339)
+    return function(b2_S_1340) return b1_S_1339 and b2_S_1340 end
+  end,
+  disj = function(b1_S_1337)
+    return function(b2_S_1338) return b1_S_1337 or b2_S_1338 end
+  end,
+  _not_ = function(b_S_1336) return not(b_S_1336) end
 }
 M.Data_HeytingAlgebra_conj = function(dict) return dict.conj end
-M.Data_Eq_eqInt = { eq = M.Data_Eq_foreign.eqIntImpl }
+M.Data_Eq_eqInt = {
+  eq = function(r1_S_1332)
+    return function(r2_S_1333) return r1_S_1332 == r2_S_1333 end
+  end
+}
 M.Data_Eq_eq = function(dict) return dict.eq end
 M.Data_Semigroup_semigroupString = {
-  append = M.Data_Semigroup_foreign.concatString
+  append = function(s1_S_1324)
+    return function(s2_S_1325) return s1_S_1324 .. s2_S_1325 end
+  end
 }
 M.Data_Semigroup_append = function(dict) return dict.append end
 M.Data_Show_showInt = { show = M.Data_Show_foreign.showIntImpl }
@@ -327,24 +298,56 @@ M.Data_Ordering_LT = { ["$ctor"] = "Data.Ordering∷Ordering.LT" }
 M.Data_Ordering_GT = { ["$ctor"] = "Data.Ordering∷Ordering.GT" }
 M.Data_Ordering_EQ = { ["$ctor"] = "Data.Ordering∷Ordering.EQ" }
 M.Data_Semiring_semiringInt = {
-  add = M.Data_Semiring_foreign.intAdd,
+  add = function(x_S_1322)
+    return function(y_S_1323) return x_S_1322 + y_S_1323 end
+  end,
   zero = 0,
-  mul = M.Data_Semiring_foreign.intMul,
+  mul = function(x_S_1320)
+    return function(y_S_1321) return x_S_1320 * y_S_1321 end
+  end,
   one = 1
 }
 M.Data_Semiring_add = function(dict) return dict.add end
 M.Data_Ring_sub = function(dict) return dict.sub end
 M.Data_Ring_ringInt = {
-  sub = M.Data_Ring_foreign.intSub,
+  sub = function(x_S_1318)
+    return function(y_S_1319) return x_S_1318 - y_S_1319 end
+  end,
   Semiring0 = function() return M.Data_Semiring_semiringInt end
 }
 M.Data_Ord_ordInt = {
-  compare = M.Data_Ord_foreign.ordIntImpl(M.Data_Ordering_LT)(M.Data_Ordering_EQ)(M.Data_Ordering_GT),
+  compare = function(x_S_1316)
+    return function(y_S_1317)
+      if x_S_1316 < y_S_1317 then
+        return M.Data_Ordering_LT
+      elseif x_S_1316 == y_S_1317 then
+        return M.Data_Ordering_EQ
+      else
+        return M.Data_Ordering_GT
+      end
+    end
+  end,
   Eq0 = function() return M.Data_Eq_eqInt end
 }
 M.Data_Ord_ordChar = {
-  compare = M.Data_Ord_foreign.ordCharImpl(M.Data_Ordering_LT)(M.Data_Ordering_EQ)(M.Data_Ordering_GT),
-  Eq0 = function() return { eq = M.Data_Eq_foreign.eqCharImpl } end
+  compare = function(x_S_1311)
+    return function(y_S_1312)
+      if x_S_1311 < y_S_1312 then
+        return M.Data_Ordering_LT
+      elseif x_S_1311 == y_S_1312 then
+        return M.Data_Ordering_EQ
+      else
+        return M.Data_Ordering_GT
+      end
+    end
+  end,
+  Eq0 = function()
+    return {
+      eq = function(r1_S_1328)
+        return function(r2_S_1329) return r1_S_1328 == r2_S_1329 end
+      end
+    }
+  end
 }
 M.Data_Ord_compare = function(dict) return dict.compare end
 M.Data_Ord_greaterThanOrEq_S_w = function(dictOrd, a1, a2)
@@ -449,12 +452,12 @@ end)
 M.Effect_Lazy_applyEffect = PSLUA_runtime_lazy("applyEffect")(function()
   return {
     apply = (function()
-      local bind_S_1317 = M.Control_Bind_bind(M.Effect_monadEffect.Bind1())
-      return function(f_S_1318)
-        return function(a_S_1319)
-          return bind_S_1317(f_S_1318)(function(fPrime_S_1320)
-            return bind_S_1317(a_S_1319)(function(aPrime_S_1321)
-              return M.Control_Applicative_pure(M.Effect_monadEffect.Applicative0())(fPrime_S_1320(aPrime_S_1321))
+      local bind_S_1350 = M.Control_Bind_bind(M.Effect_monadEffect.Bind1())
+      return function(f_S_1351)
+        return function(a_S_1352)
+          return bind_S_1350(f_S_1351)(function(fPrime_S_1353)
+            return bind_S_1350(a_S_1352)(function(aPrime_S_1354)
+              return M.Control_Applicative_pure(M.Effect_monadEffect.Applicative0())(fPrime_S_1353(aPrime_S_1354))
             end)
           end)
         end
@@ -508,17 +511,17 @@ M.Data_String_CodePoints_add = M.Data_Semiring_add(M.Data_Semiring_semiringInt)
 M.Data_String_CodePoints_sub = M.Data_Ring_sub(M.Data_Ring_ringInt)
 M.Data_String_CodePoints_append = M.Data_Semigroup_append(M.Data_Semigroup_semigroupString)
 M.Data_String_CodePoints_conj = M.Data_HeytingAlgebra_conj(M.Data_HeytingAlgebra_heytingAlgebraBoolean)
-M.Data_String_CodePoints_lessThanOrEq = function(lessThanOrEq_S_p2_S_1337)
-  return function(lessThanOrEq_S_p3_S_1338)
-    return M.Data_Ord_lessThanOrEq_S_w(M.Data_Ord_ordInt, lessThanOrEq_S_p2_S_1337, lessThanOrEq_S_p3_S_1338)
+M.Data_String_CodePoints_lessThanOrEq = function(lessThanOrEq_S_p2_S_1372)
+  return function(lessThanOrEq_S_p3_S_1373)
+    return M.Data_Ord_lessThanOrEq_S_w(M.Data_Ord_ordInt, lessThanOrEq_S_p2_S_1372, lessThanOrEq_S_p3_S_1373)
   end
 end
 M.Data_String_CodePoints_fromEnum = M.Data_Enum_fromEnum(M.Data_Enum_boundedEnumChar)
 M.Data_String_CodePoints_compose = M.Control_Semigroupoid_compose(M.Control_Semigroupoid_semigroupoidFn)
 M.Data_String_CodePoints_eq = M.Data_Eq_eq(M.Data_Eq_eqInt)
-M.Data_String_CodePoints_lessThan = function(lessThan_S_p2_S_1340)
-  return function(lessThan_S_p3_S_1341)
-    return M.Data_Ord_lessThan_S_w(M.Data_Ord_ordInt, lessThan_S_p2_S_1340, lessThan_S_p3_S_1341)
+M.Data_String_CodePoints_lessThan = function(lessThan_S_p2_S_1375)
+  return function(lessThan_S_p3_S_1376)
+    return M.Data_Ord_lessThan_S_w(M.Data_Ord_ordInt, lessThan_S_p2_S_1375, lessThan_S_p3_S_1376)
   end
 end
 M.Data_String_CodePoints_unsafeCodePointAt0 = M.Data_String_CodePoints_foreign._unsafeCodePointAt0(function( s_S_27 )
@@ -612,18 +615,18 @@ M.Data_String_CodePoints_drop_S_w = function(n, s)
   return Data_String_CodeUnits_foreign.drop(Data_String_CodeUnits_foreign.length(M.Data_String_CodePoints_take_S_w(n, s)))(s)
 end
 M.Data_String_CodePoints_toCodePointArray = M.Data_String_CodePoints_foreign._toCodePointArray(function( s_S_10 )
-  return M.Data_Unfoldable_foreign.unfoldrArrayImpl(function(v2_S_1313_S_1335)
-    if "Data.Maybe∷Maybe.Nothing" == v2_S_1313_S_1335["$ctor"] then
+  return M.Data_Unfoldable_foreign.unfoldrArrayImpl(function(v2_S_1346_S_1370)
+    if "Data.Maybe∷Maybe.Nothing" == v2_S_1346_S_1370["$ctor"] then
       return true
-    elseif "Data.Maybe∷Maybe.Just" == v2_S_1313_S_1335["$ctor"] then
+    elseif "Data.Maybe∷Maybe.Just" == v2_S_1346_S_1370["$ctor"] then
       return false
     else
       return error("No patterns matched")
     end
   end)(M.Partial_Unsafe_foreign._unsafePartial(function()
     return M.Data_Maybe_fromJust()
-  end))(function(v_S_1333) return v_S_1333.value0 end)(function(v_S_1334)
-    return v_S_1334.value1
+  end))(function(v_S_1368) return v_S_1368.value0 end)(function(v_S_1369)
+    return v_S_1369.value1
   end)(function(s_S_11)
     return M.Data_Functor_map(M.Data_Maybe_functorMaybe)(function(v_S_12)
       return (function(value0)
@@ -747,7 +750,11 @@ return (function()
       end
     end
   }, M.Data_Eq_eq({
-    eq = M.Data_Eq_foreign.eqStringImpl
+    eq = function(r1_S_1326_S_1364)
+      return function(r2_S_1327_S_1365)
+        return r1_S_1326_S_1364 == r2_S_1327_S_1365
+      end
+    end
   })(M.Data_String_CodePoints_foreign._fromCodePointArray(M.Data_String_CodePoints_singletonFallback)(Data_String_CodePoints_toCodePointArray("aéЯ𝐀z")))("aéЯ𝐀z"))()
   return Golden_StringCodePoints_Test_logShow(Golden_StringCodePoints_Test_codes(M.Data_String_CodePoints_singleton(M.Golden_StringCodePoints_Test_cp(119808))))()
 end)()

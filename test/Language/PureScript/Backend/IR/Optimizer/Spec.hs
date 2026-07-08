@@ -36,6 +36,7 @@ import Language.PureScript.Backend.IR.Types
   , Exp
   , Grouping (..)
   , Module (..)
+  , PrimOp (..)
   , RawExp (..)
   , abstraction
   , abstractionN
@@ -53,6 +54,7 @@ import Language.PureScript.Backend.IR.Types
   , isLiteral
   , lets
   , literalBool
+  , literalFloat
   , literalInt
   , literalObject
   , literalString
@@ -61,6 +63,8 @@ import Language.PureScript.Backend.IR.Types
   , objectUpdate
   , paramNamed
   , paramUnused
+  , primBinOp
+  , primNot
   , refImported
   , refLocal
   , reflectCtor
@@ -426,6 +430,90 @@ spec = describe "IR Optimizer" do
       let fields = FieldName . show <$> [1 .. length args]
           app = foldl' application (ctor SumType modName ty cn fields) args
       optimizedExpression (reflectCtor app) === literalString (ctorId modName ty cn)
+
+  -- See Note [Folding primops follows Lua 5.1] in the optimizer.
+  describe "folds primops (#178)" do
+    it "folds integer arithmetic exactly" do
+      optimizedExpression (primBinOp PrimAdd (literalInt 2) (literalInt 3))
+        `shouldBe` literalInt 5
+      optimizedExpression (primBinOp PrimSub (literalInt 2) (literalInt 3))
+        `shouldBe` literalInt (-1)
+      optimizedExpression (primBinOp PrimMul (literalInt 6) (literalInt 7))
+        `shouldBe` literalInt 42
+
+    it "bails on integer results beyond ±2^53" do
+      let big = 2 ^ (53 ∷ Int)
+          original = primBinOp PrimAdd (literalInt big) (literalInt 1)
+      optimizedExpression original `shouldBe` original
+
+    it "folds integer modulo with the sign of the divisor (Lua 5.1)" do
+      optimizedExpression (primBinOp PrimMod (literalInt 7) (literalInt 3))
+        `shouldBe` literalInt 1
+      -- Sign follows the divisor, unlike C's % and Haskell's rem.
+      optimizedExpression (primBinOp PrimMod (literalInt (-5)) (literalInt 3))
+        `shouldBe` literalInt 1
+      optimizedExpression (primBinOp PrimMod (literalInt 5) (literalInt (-3)))
+        `shouldBe` literalInt (-1)
+
+    it "leaves modulo by zero to the runtime" do
+      let original = primBinOp PrimMod (literalInt 5) (literalInt 0)
+      optimizedExpression original `shouldBe` original
+
+    it "folds float arithmetic in double semantics" do
+      optimizedExpression (primBinOp PrimAdd (literalFloat 1.5) (literalFloat 2.0))
+        `shouldBe` literalFloat 3.5
+      optimizedExpression (primBinOp PrimDiv (literalFloat 5.0) (literalFloat 2.0))
+        `shouldBe` literalFloat 2.5
+
+    it "leaves a non-finite float result to the runtime" do
+      let original = primBinOp PrimDiv (literalFloat 1.0) (literalFloat 0.0)
+      optimizedExpression original `shouldBe` original
+
+    it "folds string concatenation" do
+      optimizedExpression
+        (primBinOp PrimConcat (literalString "foo") (literalString "bar"))
+        `shouldBe` literalString "foobar"
+
+    it "folds numeric comparisons" do
+      optimizedExpression (primBinOp PrimLt (literalInt 2) (literalInt 3))
+        `shouldBe` literalBool True
+      optimizedExpression (primBinOp PrimGe (literalInt 3) (literalInt 3))
+        `shouldBe` literalBool True
+      optimizedExpression (primBinOp PrimGt (literalFloat 1.0) (literalFloat 2.0))
+        `shouldBe` literalBool False
+
+    it "does not fold string comparisons (bytes vs Text)" do
+      let original = primBinOp PrimLt (literalString "a") (literalString "b")
+      optimizedExpression original `shouldBe` original
+
+    it "folds boolean and/or and not" do
+      optimizedExpression (primBinOp PrimAnd (literalBool True) (literalBool False))
+        `shouldBe` literalBool False
+      optimizedExpression (primBinOp PrimOr (literalBool True) (literalBool False))
+        `shouldBe` literalBool True
+      optimizedExpression (primNot (literalBool True))
+        `shouldBe` literalBool False
+
+    it "collapses a known-boolean operand of and/or (short-circuit)" do
+      let x = refLocal (Name "x")
+      optimizedExpression (primBinOp PrimAnd (literalBool True) x) `shouldBe` x
+      optimizedExpression (primBinOp PrimAnd (literalBool False) x)
+        `shouldBe` literalBool False
+      optimizedExpression (primBinOp PrimOr (literalBool True) x)
+        `shouldBe` literalBool True
+      optimizedExpression (primBinOp PrimOr (literalBool False) x) `shouldBe` x
+
+    it "folds bottom-up through nested primops" do
+      let original =
+            primBinOp
+              PrimAdd
+              (primBinOp PrimMul (literalInt 2) (literalInt 3))
+              (literalInt 4)
+      optimizedExpression original `shouldBe` literalInt 10
+
+    it "leaves a primop over non-literals alone" do
+      let original = primBinOp PrimAdd (refLocal (Name "x")) (literalInt 1)
+      optimizedExpression original `shouldBe` original
 
   describe "inlines expressions" do
     test "inlines literals" do

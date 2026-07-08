@@ -20,15 +20,6 @@ local M = {}
 M.Record_Unsafe_foreign = {
   unsafeGet = function(l) return function(r) return r[l] end end
 }
-M.Data_HeytingAlgebra_foreign = {
-  boolConj = function(b1) return function(b2) return b1 and b2 end end,
-  boolDisj = function(b1) return function(b2) return b1 or b2 end end,
-  boolNot = function(b) return not(b) end
-}
-M.Data_Eq_foreign = (function()
-  local refEq = function(r1) return function(r2) return r1 == r2 end end
-  return { eqIntImpl = refEq }
-end)()
 M.Effect_foreign = {
   pureE = function(a) return function() return a end end,
   bindE = function(a)
@@ -48,9 +39,13 @@ M.Data_HeytingAlgebra_heytingAlgebraBoolean = {
       return Data_HeytingAlgebra_heytingAlgebraBoolean.disj(Data_HeytingAlgebra_heytingAlgebraBoolean._not_(a))(b)
     end
   end,
-  conj = M.Data_HeytingAlgebra_foreign.boolConj,
-  disj = M.Data_HeytingAlgebra_foreign.boolDisj,
-  _not_ = M.Data_HeytingAlgebra_foreign.boolNot
+  conj = function(b1_S_232)
+    return function(b2_S_233) return b1_S_232 and b2_S_233 end
+  end,
+  disj = function(b1_S_230)
+    return function(b2_S_231) return b1_S_230 or b2_S_231 end
+  end,
+  _not_ = function(b_S_229) return not(b_S_229) end
 }
 M.Data_Eq_eqRecord = function(dict) return dict.eqRecord end
 M.Data_Eq_eq = function(dict) return dict.eq end
@@ -229,7 +224,9 @@ M.Golden_BugListGenericEq_Test_eqList = function(dictEq)
   }
 end
 M.Golden_BugListGenericEq_Test_eq = M.Data_Eq_eq(M.Golden_BugListGenericEq_Test_eqList({
-  eq = M.Data_Eq_foreign.eqIntImpl
+  eq = function(r1_S_225_S_238)
+    return function(r2_S_226_S_239) return r1_S_225_S_238 == r2_S_226_S_239 end
+  end
 }))
 M.Golden_BugListGenericEq_Test_cons_S_w = function(head, tail)
   return M.Golden_BugListGenericEq_Test_Cons({ head = head, tail = tail })

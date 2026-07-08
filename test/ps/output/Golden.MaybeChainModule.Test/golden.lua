@@ -12,10 +12,10 @@ M.Data_Maybe_maybe_S_w = function(v, v1, v2)
     return error("No patterns matched")
   end
 end
-M.Golden_MaybeChainModule_Test_identity = function(x_S_254) return x_S_254 end
-M.Golden_MaybeChainModule_Test_map_S_w = function(v_S_251, v1_S_252)
-  if "Data.Maybe∷Maybe.Just" == v1_S_252["$ctor"] then
-    return M.Data_Maybe_Just(v_S_251(v1_S_252.value0))
+M.Golden_MaybeChainModule_Test_identity = function(x_S_287) return x_S_287 end
+M.Golden_MaybeChainModule_Test_map_S_w = function(v_S_284, v1_S_285)
+  if "Data.Maybe∷Maybe.Just" == v1_S_285["$ctor"] then
+    return M.Data_Maybe_Just(v_S_284(v1_S_285.value0))
   else
     return M.Data_Maybe_Nothing
   end

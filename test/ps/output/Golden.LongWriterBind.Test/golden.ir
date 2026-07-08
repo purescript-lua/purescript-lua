@@ -128,12 +128,12 @@ UberModule
             ( LiteralObject Nothing
               [
                 ( PropName "map", AbsN Nothing
-                  ( ParamNamed Nothing ( Name "f$468" ) :| [] )
+                  ( ParamNamed Nothing ( Name "f$501" ) :| [] )
                   ( AbsN Nothing
-                    ( ParamNamed Nothing ( Name "m$469" ) :| [] )
+                    ( ParamNamed Nothing ( Name "m$502" ) :| [] )
                     ( AppN Nothing
-                      ( Ref Nothing ( Local ( Name "f$468" ) ) )
-                      ( Ref Nothing ( Local ( Name "m$469" ) ) :| [] )
+                      ( Ref Nothing ( Local ( Name "f$501" ) ) )
+                      ( Ref Nothing ( Local ( Name "m$502" ) ) :| [] )
                     )
                   )
                 )
@@ -167,8 +167,8 @@ UberModule
         }, LiteralObject Nothing
         [
           ( PropName "pure", AbsN Nothing
-            ( ParamNamed Nothing ( Name "x$470" ) :| [] )
-            ( Ref Nothing ( Local ( Name "x$470" ) ) )
+            ( ParamNamed Nothing ( Name "x$503" ) :| [] )
+            ( Ref Nothing ( Local ( Name "x$503" ) ) )
           ),
           ( PropName "Apply0", AbsN Nothing
             ( ParamUnused Nothing :| [] )
@@ -278,9 +278,9 @@ UberModule
                 ( LiteralObject Nothing
                   [
                     ( PropName "map", AbsN Nothing
-                      ( ParamNamed Nothing ( Name "f$463" ) :| [] )
+                      ( ParamNamed Nothing ( Name "f$496" ) :| [] )
                       ( AbsN Nothing
-                        ( ParamNamed Nothing ( Name "v$466" ) :| [] )
+                        ( ParamNamed Nothing ( Name "v$499" ) :| [] )
                         ( AppN Nothing
                           ( AppN Nothing
                             ( AppN Nothing
@@ -290,28 +290,28 @@ UberModule
                               ( Ref Nothing ( Local ( Name "Functor0" ) ) :| [] )
                             )
                             ( AbsN Nothing
-                              ( ParamNamed Nothing ( Name "v$464" ) :| [] )
+                              ( ParamNamed Nothing ( Name "v$497" ) :| [] )
                               ( AppN Nothing
                                 ( AppN Nothing
                                   ( Ref Nothing
                                     ( Imported ( ModuleName "Data.Tuple" ) ( Name "Tuple" ) )
                                   )
                                   ( AppN Nothing
-                                    ( Ref Nothing ( Local ( Name "f$463" ) ) )
+                                    ( Ref Nothing ( Local ( Name "f$496" ) ) )
                                     ( ObjectProp Nothing
-                                      ( Ref Nothing ( Local ( Name "v$464" ) ) )
+                                      ( Ref Nothing ( Local ( Name "v$497" ) ) )
                                       ( PropName "value0" ) :| []
                                     ) :| []
                                   )
                                 )
                                 ( ObjectProp Nothing
-                                  ( Ref Nothing ( Local ( Name "v$464" ) ) )
+                                  ( Ref Nothing ( Local ( Name "v$497" ) ) )
                                   ( PropName "value1" ) :| []
                                 )
                               ) :| []
                             )
                           )
-                          ( Ref Nothing ( Local ( Name "v$466" ) ) :| [] )
+                          ( Ref Nothing ( Local ( Name "v$499" ) ) :| [] )
                         )
                       )
                     )
@@ -507,7 +507,7 @@ UberModule
         }, ObjectProp Nothing
         ( Let Nothing
           ( Standalone
-            ( Nothing, Name "dictMonad$478", LiteralObject Nothing
+            ( Nothing, Name "dictMonad$511", LiteralObject Nothing
               [
                 ( PropName "Applicative0", AbsN Nothing
                   ( ParamUnused Nothing :| [] )
@@ -532,8 +532,8 @@ UberModule
                     ( Imported ( ModuleName "Control.Monad.Writer.Trans" ) ( Name "compose" ) )
                   )
                   ( AbsN Nothing
-                    ( ParamNamed Nothing ( Name "x$467$479" ) :| [] )
-                    ( Ref Nothing ( Local ( Name "x$467$479" ) ) ) :| []
+                    ( ParamNamed Nothing ( Name "x$500$512" ) :| [] )
+                    ( Ref Nothing ( Local ( Name "x$500$512" ) ) ) :| []
                   )
                 )
                 ( AppN Nothing
@@ -547,7 +547,7 @@ UberModule
                       )
                       ( AppN Nothing
                         ( ObjectProp Nothing
-                          ( Ref Nothing ( Local ( Name "dictMonad$478" ) ) )
+                          ( Ref Nothing ( Local ( Name "dictMonad$511" ) ) )
                           ( PropName "Applicative0" )
                         )
                         ( Ref Nothing
@@ -594,7 +594,7 @@ UberModule
                           ( Imported ( ModuleName "Data.Monoid" ) ( Name "monoidArray" ) ) :|
                           [ AppN Nothing
                             ( ObjectProp Nothing
-                              ( Ref Nothing ( Local ( Name "dictMonad$478" ) ) )
+                              ( Ref Nothing ( Local ( Name "dictMonad$511" ) ) )
                               ( PropName "Applicative0" )
                             )
                             ( Ref Nothing
@@ -625,7 +625,7 @@ UberModule
                           ) :|
                           [ AppN Nothing
                             ( ObjectProp Nothing
-                              ( Ref Nothing ( Local ( Name "dictMonad$478" ) ) )
+                              ( Ref Nothing ( Local ( Name "dictMonad$511" ) ) )
                               ( PropName "Bind1" )
                             )
                             ( Ref Nothing
@@ -647,7 +647,7 @@ UberModule
         { qnameModuleName = ModuleName "Golden.LongWriterBind.Test", qnameName = Name "go"
         }, Let Nothing
         ( Standalone
-          ( Nothing, Name "$kont482", AppN Nothing
+          ( Nothing, Name "$kont515", AppN Nothing
             ( AppN Nothing
               ( Ref Nothing
                 ( Imported ( ModuleName "Golden.LongWriterBind.Test" ) ( Name "discard" ) )
@@ -1609,7 +1609,7 @@ UberModule
             )
           ) :|
           [ Standalone
-            ( Nothing, Name "$kont483", AppN Nothing
+            ( Nothing, Name "$kont516", AppN Nothing
               ( AppN Nothing
                 ( Ref Nothing
                   ( Imported ( ModuleName "Golden.LongWriterBind.Test" ) ( Name "discard" ) )
@@ -2466,7 +2466,7 @@ UberModule
                                                                                                                                                                             ( ParamUnused Nothing :| [] )
                                                                                                                                                                             ( Ref Nothing
                                                                                                                                                                               ( Local
-                                                                                                                                                                                ( Name "$kont482" )
+                                                                                                                                                                                ( Name "$kont515" )
                                                                                                                                                                               )
                                                                                                                                                                             ) :| []
                                                                                                                                                                           )
@@ -2549,7 +2549,7 @@ UberModule
                 ) :| []
               )
             ), Standalone
-            ( Nothing, Name "$kont484", AppN Nothing
+            ( Nothing, Name "$kont517", AppN Nothing
               ( AppN Nothing
                 ( Ref Nothing
                   ( Imported ( ModuleName "Golden.LongWriterBind.Test" ) ( Name "discard" ) )
@@ -3404,7 +3404,7 @@ UberModule
                                                                                                                                                                             ( ParamUnused Nothing :| [] )
                                                                                                                                                                             ( Ref Nothing
                                                                                                                                                                               ( Local
-                                                                                                                                                                                ( Name "$kont483" )
+                                                                                                                                                                                ( Name "$kont516" )
                                                                                                                                                                               )
                                                                                                                                                                             ) :| []
                                                                                                                                                                           )
@@ -3487,7 +3487,7 @@ UberModule
                 ) :| []
               )
             ), Standalone
-            ( Nothing, Name "$kont485", AppN Nothing
+            ( Nothing, Name "$kont518", AppN Nothing
               ( AppN Nothing
                 ( Ref Nothing
                   ( Imported ( ModuleName "Golden.LongWriterBind.Test" ) ( Name "discard" ) )
@@ -4342,7 +4342,7 @@ UberModule
                                                                                                                                                                             ( ParamUnused Nothing :| [] )
                                                                                                                                                                             ( Ref Nothing
                                                                                                                                                                               ( Local
-                                                                                                                                                                                ( Name "$kont484" )
+                                                                                                                                                                                ( Name "$kont517" )
                                                                                                                                                                               )
                                                                                                                                                                             ) :| []
                                                                                                                                                                           )
@@ -5274,7 +5274,7 @@ UberModule
                                                                                                                                                                         ( ParamUnused Nothing :| [] )
                                                                                                                                                                         ( Ref Nothing
                                                                                                                                                                           ( Local
-                                                                                                                                                                            ( Name "$kont485" )
+                                                                                                                                                                            ( Name "$kont518" )
                                                                                                                                                                           )
                                                                                                                                                                         ) :| []
                                                                                                                                                                       )
@@ -5378,8 +5378,8 @@ UberModule
               )
             )
             ( AbsN Nothing
-              ( ParamNamed Nothing ( Name "v$39$461" ) :| [] )
-              ( Ref Nothing ( Local ( Name "v$39$461" ) ) ) :| []
+              ( ParamNamed Nothing ( Name "v$39$494" ) :| [] )
+              ( Ref Nothing ( Local ( Name "v$39$494" ) ) ) :| []
             )
           )
           ( Ref Nothing
