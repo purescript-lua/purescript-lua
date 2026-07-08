@@ -43,6 +43,7 @@ import Language.PureScript.Backend.IR.Types
   , application
   , applicationN
   , countFreeRef
+  , countFreeRefs
   , ctor
   , ctorId
   , dataArgumentByIndex
@@ -65,6 +66,7 @@ import Language.PureScript.Backend.IR.Types
   , reflectCtor
   , setAnn
   )
+import Language.PureScript.Backend.IR.Uniquify (uniquifyNamesInExpr)
 import Test.Hspec
   ( Spec
   , SpecWith
@@ -1006,6 +1008,20 @@ spec = describe "IR Optimizer" do
       lintWellScoped optimized === []
       -- The full pipeline ends GUC-clean, not merely well-scoped:
       lintUniqueBinders optimized === []
+
+    -- Soundness of a single bottom-up 'optimizedExpression' pass over
+    -- generated input — which, since the shared generator emits
+    -- 'ReflectCtor' / 'DataArgumentByIndex' over saturated constructor
+    -- applications, actually fires the #177 case-of-known-constructor fold.
+    prop "optimizedExpression stays sound over generated expressions" do
+      e ← forAll (uniquifyNamesInExpr <$> Gen.scopedExp)
+      let once = optimizedExpression e
+      -- Never introduces a free reference; may drop them (the #177 fold,
+      -- DCE, beta, and unreachable-branch removal all shrink the ref set),
+      -- so this is a subset check, not FloatIn's equality.
+      Map.isSubmapOfBy (<=) (countFreeRefs once) (countFreeRefs e) === True
+      -- Stays well-scoped.
+      unboundLocals once === []
 
 --------------------------------------------------------------------------------
 -- Helpers ---------------------------------------------------------------------
