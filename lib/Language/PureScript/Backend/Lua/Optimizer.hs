@@ -59,6 +59,7 @@ rewriteRulesInOrder ∷ [RewriteRule]
 rewriteRulesInOrder =
   [ reduceTableDefinitionAccessor
   , foldFieldProjectionThroughScopeCall
+  , foldNotEqual
   ]
 
 type RewriteRule = Exp → Exp
@@ -174,3 +175,16 @@ foldFieldProjectionThroughScopeCall original
     Local {} → False
     CallStatement {} → False
     Break → False
+
+{- | Rewrites @not (a == b)@ to @a ~= b@ and @not (a ~= b)@ to @a == b@.
+Lua's @~=@ is exactly the negation of @==@, so the rewrite is
+unconditional. The IR emits the @not (==)@ shape when it lowers a
+'Language.PureScript.Backend.IR.Types.PrimNot' over an 'Eq' — from the
+boolean-if simplification of a comparison (issue #178) or a lifted @/=@ —
+and this peephole restores the operator luacheck expects.
+-}
+foldNotEqual ∷ RewriteRule
+foldNotEqual = \case
+  UnOp Lua.LogicalNot (Ann (BinOp Lua.EqualTo a b)) → BinOp Lua.NotEqualTo a b
+  UnOp Lua.LogicalNot (Ann (BinOp Lua.NotEqualTo a b)) → BinOp Lua.EqualTo a b
+  e → e

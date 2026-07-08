@@ -18,13 +18,6 @@ local function PSLUA_runtime_lazy(name)
 end
 local M = {}
 M.Data_Show_foreign = { showIntImpl = function(n) return tostring(n) end }
-M.Data_Semiring_foreign = {
-  intAdd = function(x) return function(y) return x + y end end,
-  intMul = function(x) return function(y) return x * y end end
-}
-M.Data_Ring_foreign = {
-  intSub = function(x) return function(y) return x - y end end
-}
 M.Effect_foreign = {
   pureE = function(a) return function() return a end end,
   bindE = function(a)
@@ -35,13 +28,19 @@ M.Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
 }
 M.Data_Semiring_semiringInt = {
-  add = M.Data_Semiring_foreign.intAdd,
+  add = function(x_S_196)
+    return function(y_S_197) return x_S_196 + y_S_197 end
+  end,
   zero = 0,
-  mul = M.Data_Semiring_foreign.intMul,
+  mul = function(x_S_194)
+    return function(y_S_195) return x_S_194 * y_S_195 end
+  end,
   one = 1
 }
 M.Data_Ring_ringInt = {
-  sub = M.Data_Ring_foreign.intSub,
+  sub = function(x_S_192)
+    return function(y_S_193) return x_S_192 - y_S_193 end
+  end,
   Semiring0 = function() return M.Data_Semiring_semiringInt end
 }
 M.Control_Applicative_pure = function(dict) return dict.pure end

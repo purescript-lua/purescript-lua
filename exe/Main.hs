@@ -12,6 +12,7 @@ import Language.PureScript.Backend.IR.Pass
   , renderPassCheckFailure
   )
 import Language.PureScript.Backend.Lua qualified as Lua
+import Language.PureScript.Backend.Lua.ForeignLift qualified as ForeignLift
 import Language.PureScript.Backend.Lua.Printer qualified as Printer
 import Language.PureScript.Backend.Lua.Run qualified as Run
 import Language.PureScript.Backend.Output (withOutputFile)
@@ -60,6 +61,7 @@ main = Utf8.withUtf8 do
       & handleModuleDecodingError
       & handleCoreFnError
       & handlePassCheckFailure
+      & handleForeignLiftError
       & handleLuaError
       & Oops.runOops
 
@@ -123,6 +125,12 @@ handlePassCheckFailure
   → ExceptT (Oops.Variant e) IO a
 handlePassCheckFailure =
   Oops.catch (die . toString . renderPassCheckFailure)
+
+handleForeignLiftError
+  ∷ ExceptT (Oops.Variant (ForeignLift.Error ': e)) IO a
+  → ExceptT (Oops.Variant e) IO a
+handleForeignLiftError =
+  Oops.catch \(e ∷ ForeignLift.Error) → die $ "Foreign lift error:\n" <> show e
 
 handleLuaError
   ∷ ExceptT (Oops.Variant (Lua.Error ': e)) IO a

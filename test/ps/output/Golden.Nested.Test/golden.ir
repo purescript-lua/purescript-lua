@@ -5,12 +5,7 @@ UberModule
         { qnameModuleName = ModuleName "Golden.Nested.Test", qnameName = Name "isZero"
         }, AbsN Nothing
         ( ParamNamed Nothing ( Name "v" ) :| [] )
-        ( IfThenElse Nothing
-          ( Eq Nothing
-            ( LiteralInt Nothing 0 )
-            ( Ref Nothing ( Local ( Name "v" ) ) )
-          ) ( LiteralBool Nothing True ) ( LiteralBool Nothing False )
-        )
+        ( Eq Nothing ( LiteralInt Nothing 0 ) ( Ref Nothing ( Local ( Name "v" ) ) ) )
       )
     ], uberModuleForeigns = [], uberModuleExports =
     [

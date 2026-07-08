@@ -1,48 +1,26 @@
 local M = {}
 M.Data_Show_foreign = { showIntImpl = function(n) return tostring(n) end }
-M.Data_Semiring_foreign = {
-  intAdd = function(x) return function(y) return x + y end end
-}
-M.Data_Ord_foreign = (function()
-  local unsafeCoerceImpl = function(lt)
-    return function(eq)
-      return function(gt)
-        return function(x)
-          return function(y)
-            if x < y then
-              return lt
-            elseif x == y then
-              return eq
-            else
-              return gt
-            end
-          end
-        end
-      end
-    end
-  end
-  return { ordIntImpl = unsafeCoerceImpl }
-end)()
 M.Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
 }
+M.Golden_LongCallbackChain_Test_add_S_w = function(x_S_189_S_215, y_S_190_S_216)
+  return x_S_189_S_215 + y_S_190_S_216
+end
 M.Golden_LongCallbackChain_Test_withInc_S_w = function(n, k)
-  local Data_Semiring_foreign, Data_Ord_foreign = M.Data_Semiring_foreign, M.Data_Ord_foreign
+  local Golden_LongCallbackChain_Test_add_S_w = M.Golden_LongCallbackChain_Test_add_S_w
   while true do
-    if (function()
-      if "Data.Ordering∷Ordering.LT" == (Data_Ord_foreign.ordIntImpl({
-        ["$ctor"] = "Data.Ordering∷Ordering.LT"
-      })({ ["$ctor"] = "Data.Ordering∷Ordering.EQ" })({
-        ["$ctor"] = "Data.Ordering∷Ordering.GT"
-      })(n)(0))["$ctor"] then
-        return true
+    if "Data.Ordering∷Ordering.LT" == ((function()
+      if n < 0 then
+        return { ["$ctor"] = "Data.Ordering∷Ordering.LT" }
+      elseif n == 0 then
+        return { ["$ctor"] = "Data.Ordering∷Ordering.EQ" }
       else
-        return false
+        return { ["$ctor"] = "Data.Ordering∷Ordering.GT" }
       end
-    end)() then
-      n, k = Data_Semiring_foreign.intAdd(n)(1), k
+    end)())["$ctor"] then
+      n, k = Golden_LongCallbackChain_Test_add_S_w(n, 1), k
     else
-      return k(Data_Semiring_foreign.intAdd(n)(1))
+      return k(Golden_LongCallbackChain_Test_add_S_w(n, 1))
     end
   end
 end
@@ -52,8 +30,8 @@ M.Golden_LongCallbackChain_Test_withInc = function(withInc_S_p1)
   end
 end
 M.Golden_LongCallbackChain_Test_compute = (function()
-  local _S_kont182 = function(x280_S_183)
-    return M.Golden_LongCallbackChain_Test_withInc_S_w(x280_S_183, function( x281 )
+  local _S_kont227 = function(x280_S_228)
+    return M.Golden_LongCallbackChain_Test_withInc_S_w(x280_S_228, function( x281 )
       return M.Golden_LongCallbackChain_Test_withInc_S_w(x281, function(x282)
         return M.Golden_LongCallbackChain_Test_withInc_S_w(x282, function(x283)
           return M.Golden_LongCallbackChain_Test_withInc_S_w(x283, function( x284 )
@@ -95,8 +73,8 @@ M.Golden_LongCallbackChain_Test_compute = (function()
       end)
     end)
   end
-  local _S_kont184 = function(x240_S_185)
-    return M.Golden_LongCallbackChain_Test_withInc_S_w(x240_S_185, function( x241 )
+  local _S_kont229 = function(x240_S_230)
+    return M.Golden_LongCallbackChain_Test_withInc_S_w(x240_S_230, function( x241 )
       return M.Golden_LongCallbackChain_Test_withInc_S_w(x241, function(x242)
         return M.Golden_LongCallbackChain_Test_withInc_S_w(x242, function(x243)
           return M.Golden_LongCallbackChain_Test_withInc_S_w(x243, function( x244 )
@@ -136,7 +114,7 @@ M.Golden_LongCallbackChain_Test_compute = (function()
                                                                               return M.Golden_LongCallbackChain_Test_withInc_S_w(x277, function( x278 )
                                                                                 return M.Golden_LongCallbackChain_Test_withInc_S_w(x278, function( x279 )
                                                                                   return M.Golden_LongCallbackChain_Test_withInc_S_w(x279, function( x280 )
-                                                                                    return _S_kont182(x280)
+                                                                                    return _S_kont227(x280)
                                                                                   end)
                                                                                 end)
                                                                               end)
@@ -178,8 +156,8 @@ M.Golden_LongCallbackChain_Test_compute = (function()
       end)
     end)
   end
-  local _S_kont186 = function(x200_S_187)
-    return M.Golden_LongCallbackChain_Test_withInc_S_w(x200_S_187, function( x201 )
+  local _S_kont231 = function(x200_S_232)
+    return M.Golden_LongCallbackChain_Test_withInc_S_w(x200_S_232, function( x201 )
       return M.Golden_LongCallbackChain_Test_withInc_S_w(x201, function(x202)
         return M.Golden_LongCallbackChain_Test_withInc_S_w(x202, function(x203)
           return M.Golden_LongCallbackChain_Test_withInc_S_w(x203, function( x204 )
@@ -219,7 +197,7 @@ M.Golden_LongCallbackChain_Test_compute = (function()
                                                                               return M.Golden_LongCallbackChain_Test_withInc_S_w(x237, function( x238 )
                                                                                 return M.Golden_LongCallbackChain_Test_withInc_S_w(x238, function( x239 )
                                                                                   return M.Golden_LongCallbackChain_Test_withInc_S_w(x239, function( x240 )
-                                                                                    return _S_kont184(x240)
+                                                                                    return _S_kont229(x240)
                                                                                   end)
                                                                                 end)
                                                                               end)
@@ -261,8 +239,8 @@ M.Golden_LongCallbackChain_Test_compute = (function()
       end)
     end)
   end
-  local _S_kont188 = function(x160_S_189)
-    return M.Golden_LongCallbackChain_Test_withInc_S_w(x160_S_189, function( x161 )
+  local _S_kont233 = function(x160_S_234)
+    return M.Golden_LongCallbackChain_Test_withInc_S_w(x160_S_234, function( x161 )
       return M.Golden_LongCallbackChain_Test_withInc_S_w(x161, function(x162)
         return M.Golden_LongCallbackChain_Test_withInc_S_w(x162, function(x163)
           return M.Golden_LongCallbackChain_Test_withInc_S_w(x163, function( x164 )
@@ -302,7 +280,7 @@ M.Golden_LongCallbackChain_Test_compute = (function()
                                                                               return M.Golden_LongCallbackChain_Test_withInc_S_w(x197, function( x198 )
                                                                                 return M.Golden_LongCallbackChain_Test_withInc_S_w(x198, function( x199 )
                                                                                   return M.Golden_LongCallbackChain_Test_withInc_S_w(x199, function( x200 )
-                                                                                    return _S_kont186(x200)
+                                                                                    return _S_kont231(x200)
                                                                                   end)
                                                                                 end)
                                                                               end)
@@ -344,8 +322,8 @@ M.Golden_LongCallbackChain_Test_compute = (function()
       end)
     end)
   end
-  local _S_kont190 = function(x120_S_191)
-    return M.Golden_LongCallbackChain_Test_withInc_S_w(x120_S_191, function( x121 )
+  local _S_kont235 = function(x120_S_236)
+    return M.Golden_LongCallbackChain_Test_withInc_S_w(x120_S_236, function( x121 )
       return M.Golden_LongCallbackChain_Test_withInc_S_w(x121, function(x122)
         return M.Golden_LongCallbackChain_Test_withInc_S_w(x122, function(x123)
           return M.Golden_LongCallbackChain_Test_withInc_S_w(x123, function( x124 )
@@ -385,7 +363,7 @@ M.Golden_LongCallbackChain_Test_compute = (function()
                                                                               return M.Golden_LongCallbackChain_Test_withInc_S_w(x157, function( x158 )
                                                                                 return M.Golden_LongCallbackChain_Test_withInc_S_w(x158, function( x159 )
                                                                                   return M.Golden_LongCallbackChain_Test_withInc_S_w(x159, function( x160 )
-                                                                                    return _S_kont188(x160)
+                                                                                    return _S_kont233(x160)
                                                                                   end)
                                                                                 end)
                                                                               end)
@@ -427,8 +405,8 @@ M.Golden_LongCallbackChain_Test_compute = (function()
       end)
     end)
   end
-  local _S_kont192 = function(x80_S_193)
-    return M.Golden_LongCallbackChain_Test_withInc_S_w(x80_S_193, function(x81)
+  local _S_kont237 = function(x80_S_238)
+    return M.Golden_LongCallbackChain_Test_withInc_S_w(x80_S_238, function(x81)
       return M.Golden_LongCallbackChain_Test_withInc_S_w(x81, function(x82)
         return M.Golden_LongCallbackChain_Test_withInc_S_w(x82, function(x83)
           return M.Golden_LongCallbackChain_Test_withInc_S_w(x83, function(x84)
@@ -468,7 +446,7 @@ M.Golden_LongCallbackChain_Test_compute = (function()
                                                                               return M.Golden_LongCallbackChain_Test_withInc_S_w(x117, function( x118 )
                                                                                 return M.Golden_LongCallbackChain_Test_withInc_S_w(x118, function( x119 )
                                                                                   return M.Golden_LongCallbackChain_Test_withInc_S_w(x119, function( x120 )
-                                                                                    return _S_kont190(x120)
+                                                                                    return _S_kont235(x120)
                                                                                   end)
                                                                                 end)
                                                                               end)
@@ -510,8 +488,8 @@ M.Golden_LongCallbackChain_Test_compute = (function()
       end)
     end)
   end
-  local _S_kont194 = function(x40_S_195)
-    return M.Golden_LongCallbackChain_Test_withInc_S_w(x40_S_195, function(x41)
+  local _S_kont239 = function(x40_S_240)
+    return M.Golden_LongCallbackChain_Test_withInc_S_w(x40_S_240, function(x41)
       return M.Golden_LongCallbackChain_Test_withInc_S_w(x41, function(x42)
         return M.Golden_LongCallbackChain_Test_withInc_S_w(x42, function(x43)
           return M.Golden_LongCallbackChain_Test_withInc_S_w(x43, function(x44)
@@ -551,7 +529,7 @@ M.Golden_LongCallbackChain_Test_compute = (function()
                                                                               return M.Golden_LongCallbackChain_Test_withInc_S_w(x77, function( x78 )
                                                                                 return M.Golden_LongCallbackChain_Test_withInc_S_w(x78, function( x79 )
                                                                                   return M.Golden_LongCallbackChain_Test_withInc_S_w(x79, function( x80 )
-                                                                                    return _S_kont192(x80)
+                                                                                    return _S_kont237(x80)
                                                                                   end)
                                                                                 end)
                                                                               end)
@@ -633,7 +611,7 @@ M.Golden_LongCallbackChain_Test_compute = (function()
                                                                             return M.Golden_LongCallbackChain_Test_withInc_S_w(x37, function( x38 )
                                                                               return M.Golden_LongCallbackChain_Test_withInc_S_w(x38, function( x39 )
                                                                                 return M.Golden_LongCallbackChain_Test_withInc_S_w(x39, function( x40 )
-                                                                                  return _S_kont194(x40)
+                                                                                  return _S_kont239(x40)
                                                                                 end)
                                                                               end)
                                                                             end)

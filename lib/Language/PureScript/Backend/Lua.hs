@@ -188,6 +188,11 @@ fromIR foreigns topLevelNames modname ir = case ir of
     Right . (`Lua.varField` Lua.unsafeName ("value" <> show i)) <$> goExp e
   IR.Eq _ann l r →
     Right <$> liftA2 Lua.equalTo (goExp l) (goExp r)
+  -- See Note [IR primops]: lowering is the identity onto the Lua operator.
+  IR.PrimBinOp _ann op l r →
+    Right <$> liftA2 (Lua.binOp (luaBinaryOp op)) (goExp l) (goExp r)
+  IR.PrimNot _ann e →
+    Right . Lua.logicalNot <$> goExp e
   IR.Ctor _ann algebraicTy ctorModName ctorTyName ctorName fieldNames →
     pure . Right $ foldr wrap value args
    where
@@ -347,6 +352,22 @@ keyCtor = Lua.String "$ctor"
 
 --------------------------------------------------------------------------------
 -- Helpers ---------------------------------------------------------------------
+
+-- | The Lua binary operator each 'IR.PrimBinOp' lowers to. See Note [IR primops].
+luaBinaryOp ∷ IR.PrimOp → Lua.BinaryOp
+luaBinaryOp = \case
+  IR.PrimAdd → Lua.Add
+  IR.PrimSub → Lua.Sub
+  IR.PrimMul → Lua.Mul
+  IR.PrimDiv → Lua.FloatDiv
+  IR.PrimMod → Lua.Mod
+  IR.PrimConcat → Lua.Concat
+  IR.PrimLt → Lua.LessThan
+  IR.PrimLe → Lua.LessThanOrEqualTo
+  IR.PrimGt → Lua.GreaterThan
+  IR.PrimGe → Lua.GreaterThanOrEqualTo
+  IR.PrimAnd → Lua.And
+  IR.PrimOr → Lua.Or
 
 qualifyName ∷ ModuleName → Lua.Name → Lua.Name
 qualifyName modname = Name.join2 (fromModuleName modname)

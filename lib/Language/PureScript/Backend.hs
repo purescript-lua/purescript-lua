@@ -12,6 +12,7 @@ import Language.PureScript.Backend.IR.Optimizer
   )
 import Language.PureScript.Backend.IR.Pass (PassCheckFailure)
 import Language.PureScript.Backend.Lua qualified as Lua
+import Language.PureScript.Backend.Lua.ForeignLift qualified as ForeignLift
 import Language.PureScript.Backend.Lua.NestingCheck (exceedsNestingLimit)
 import Language.PureScript.Backend.Lua.Optimizer (optimizeChunk)
 import Language.PureScript.Backend.Lua.Types qualified as Lua
@@ -31,6 +32,7 @@ compileModules
                     , CoreFn.ModuleDecodingErr
                     , IR.CoreFnError
                     , PassCheckFailure
+                    , ForeignLift.Error
                     , Lua.Error
                     ]
   ⇒ Tagged "output" (SomeBase Dir)
@@ -46,10 +48,14 @@ compileModules outputDir foreignDir lintIR appOrModule = do
     Oops.hoistEither $ IR.mkModule cfnModule dataDecls
   let (needsRuntimeLazys, irModules) = unzip irResults
   let linkedModule = Linker.makeUberModule (linkerMode appOrModule) irModules
+  -- Lift the allowlisted foreign exports to IR primops before optimizing, so
+  -- the whole pipeline can see through them (issue #178). DCE later prunes the
+  -- foreign source rows thus lifted away.
+  liftedModule ← ForeignLift.liftForeigns foreignDir linkedModule
   uberModule ←
     if untag lintIR
-      then Oops.hoistEither (optimizedUberModuleChecked linkedModule)
-      else pure (optimizedUberModule linkedModule)
+      then Oops.hoistEither (optimizedUberModuleChecked liftedModule)
+      else pure (optimizedUberModule liftedModule)
   -- See Note [The PSLUA_runtime_lazy coupling] in Language.PureScript.Names
   let needsRuntimeLazy = Tagged (any untag needsRuntimeLazys)
   chunk ← Lua.fromUberModule foreignDir needsRuntimeLazy appOrModule uberModule

@@ -17,10 +17,6 @@ local function PSLUA_runtime_lazy(name)
   end
 end
 local M = {}
-M.Data_Eq_foreign = (function()
-  local refEq = function(r1) return function(r2) return r1 == r2 end end
-  return { eqIntImpl = refEq }
-end)()
 M.Data_Show_foreign = {
   showIntImpl = function(n) return tostring(n) end,
   showArrayImpl = function(f)
@@ -31,12 +27,6 @@ M.Data_Show_foreign = {
       return "[" .. table.concat(ss, ",") .. "]"
     end
   end
-}
-M.Data_Semiring_foreign = {
-  intAdd = function(x) return function(y) return x + y end end
-}
-M.Data_Ring_foreign = {
-  intSub = function(x) return function(y) return x - y end end
 }
 M.Data_Functor_foreign = {
   arrayMap = function(f)
@@ -103,29 +93,38 @@ end)
 M.Effect_Console_logShow_S_w = function(dictShow, a)
   return M.Effect_Console_foreign.log(M.Data_Show_show(dictShow)(a))
 end
+M.Golden_Uncurry_Test_eq_S_w = function(r1_S_201_S_218, r2_S_202_S_219)
+  return r1_S_201_S_218 == r2_S_202_S_219
+end
+M.Golden_Uncurry_Test_add_S_w = function(x_S_191_S_220, y_S_192_S_221)
+  return x_S_191_S_220 + y_S_192_S_221
+end
+M.Golden_Uncurry_Test_sub_S_w = function(x_S_187_S_213, y_S_188_S_214)
+  return x_S_187_S_213 - y_S_188_S_214
+end
 M.Golden_Uncurry_Test_discard = M.Control_Bind_bind(M.Effect_bindEffect)
-M.Golden_Uncurry_Test_logShow = function(logShow_S_p2_S_188)
-  return M.Effect_Console_logShow_S_w(M.Data_Show_showInt, logShow_S_p2_S_188)
+M.Golden_Uncurry_Test_logShow = function(logShow_S_p2_S_231)
+  return M.Effect_Console_logShow_S_w(M.Data_Show_showInt, logShow_S_p2_S_231)
 end
 M.Golden_Uncurry_Test_sumTo = function(m)
   local go_S_w
   go_S_w = function(acc, n)
-    local Data_Eq_foreign, Data_Ring_foreign, Data_Semiring_foreign = M.Data_Eq_foreign, M.Data_Ring_foreign, M.Data_Semiring_foreign
+    local Golden_Uncurry_Test_add_S_w, Golden_Uncurry_Test_eq_S_w, Golden_Uncurry_Test_sub_S_w = M.Golden_Uncurry_Test_add_S_w, M.Golden_Uncurry_Test_eq_S_w, M.Golden_Uncurry_Test_sub_S_w
     while true do
-      if Data_Eq_foreign.eqIntImpl(n)(0) then
+      if Golden_Uncurry_Test_eq_S_w(n, 0) then
         return acc
       else
-        acc, n = Data_Semiring_foreign.intAdd(acc)(n), Data_Ring_foreign.intSub(n)(1)
+        acc, n = Golden_Uncurry_Test_add_S_w(acc, n), Golden_Uncurry_Test_sub_S_w(n, 1)
       end
     end
   end
   return go_S_w(0, m)
 end
 M.Golden_Uncurry_Test_oddSteps_S_w = function(acc, n)
-  if M.Data_Eq_foreign.eqIntImpl(n)(0) then
+  if M.Golden_Uncurry_Test_eq_S_w(n, 0) then
     return acc
   else
-    return M.Golden_Uncurry_Test_evenSteps_S_w(M.Data_Semiring_foreign.intAdd(acc)(1), M.Data_Ring_foreign.intSub(n)(1))
+    return M.Golden_Uncurry_Test_evenSteps_S_w(M.Golden_Uncurry_Test_add_S_w(acc, 1), M.Golden_Uncurry_Test_sub_S_w(n, 1))
   end
 end
 M.Golden_Uncurry_Test_oddSteps = function(oddSteps_S_p1)
@@ -134,10 +133,10 @@ M.Golden_Uncurry_Test_oddSteps = function(oddSteps_S_p1)
   end
 end
 M.Golden_Uncurry_Test_evenSteps_S_w = function(acc, n)
-  if M.Data_Eq_foreign.eqIntImpl(n)(0) then
+  if M.Golden_Uncurry_Test_eq_S_w(n, 0) then
     return acc
   else
-    return M.Golden_Uncurry_Test_oddSteps_S_w(M.Data_Semiring_foreign.intAdd(acc)(1), M.Data_Ring_foreign.intSub(n)(1))
+    return M.Golden_Uncurry_Test_oddSteps_S_w(M.Golden_Uncurry_Test_add_S_w(acc, 1), M.Golden_Uncurry_Test_sub_S_w(n, 1))
   end
 end
 M.Golden_Uncurry_Test_evenSteps = function(evenSteps_S_p1)
@@ -147,12 +146,14 @@ M.Golden_Uncurry_Test_evenSteps = function(evenSteps_S_p1)
 end
 M.Golden_Uncurry_Test_alwaysFirst_S_w = function(x) return x end
 M.Golden_Uncurry_Test_adderOf_S_w = function(x, y)
-  local Data_Semiring_foreign = M.Data_Semiring_foreign
-  return Data_Semiring_foreign.intAdd(Data_Semiring_foreign.intAdd(x)(y))
+  return function(add_S_p2_S_229)
+    local Golden_Uncurry_Test_add_S_w = M.Golden_Uncurry_Test_add_S_w
+    return Golden_Uncurry_Test_add_S_w(Golden_Uncurry_Test_add_S_w(x, y), add_S_p2_S_229)
+  end
 end
 M.Golden_Uncurry_Test_add3_S_w = function(x, y, z)
-  local Data_Semiring_foreign = M.Data_Semiring_foreign
-  return Data_Semiring_foreign.intAdd(Data_Semiring_foreign.intAdd(x)(y))(z)
+  local Golden_Uncurry_Test_add_S_w = M.Golden_Uncurry_Test_add_S_w
+  return Golden_Uncurry_Test_add_S_w(Golden_Uncurry_Test_add_S_w(x, y), z)
 end
 M.Golden_Uncurry_Test_add3 = function(add3_S_p1)
   return function(add3_S_p2)

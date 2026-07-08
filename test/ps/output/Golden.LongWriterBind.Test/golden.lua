@@ -42,8 +42,8 @@ M.Data_Identity_applyIdentity = {
   apply = function(v) return function(v1) return v(v1) end end,
   Functor0 = function()
     return {
-      map = function(f_S_468)
-        return function(m_S_469) return f_S_468(m_S_469) end
+      map = function(f_S_501)
+        return function(m_S_502) return f_S_501(m_S_502) end
       end
     }
   end
@@ -53,7 +53,7 @@ M.Data_Identity_bindIdentity = {
   Apply0 = function() return M.Data_Identity_applyIdentity end
 }
 M.Data_Identity_applicativeIdentity = {
-  pure = function(x_S_470) return x_S_470 end,
+  pure = function(x_S_503) return x_S_503 end,
   Apply0 = function() return M.Data_Identity_applyIdentity end
 }
 M.Control_Monad_Writer_Trans_compose = M.Control_Semigroupoid_compose(M.Control_Semigroupoid_semigroupoidFn)
@@ -72,11 +72,11 @@ M.Control_Monad_Writer_Trans_applyWriterT_S_w = function( dictSemigroup
     end,
     Functor0 = function()
       return {
-        map = function(f_S_463)
-          return function(v_S_466)
-            return M.Data_Functor_map(Functor0)(function(v_S_464)
-              return M.Data_Tuple_Tuple(f_S_463(v_S_464.value0))(v_S_464.value1)
-            end)(v_S_466)
+        map = function(f_S_496)
+          return function(v_S_499)
+            return M.Data_Functor_map(Functor0)(function(v_S_497)
+              return M.Data_Tuple_Tuple(f_S_496(v_S_497.value0))(v_S_497.value1)
+            end)(v_S_499)
           end
         end
       }
@@ -114,17 +114,17 @@ end
 M.Golden_LongWriterBind_Test_discard = M.Control_Bind_bind(M.Control_Monad_Writer_Trans_bindWriterT_S_w(M.Data_Semigroup_semigroupArray, M.Data_Identity_bindIdentity))
 M.Golden_LongWriterBind_Test_tell = (function()
   local Control_Monad_Writer_Trans_compose = M.Control_Monad_Writer_Trans_compose
-  local dictMonad_S_478 = {
+  local dictMonad_S_511 = {
     Applicative0 = function() return M.Data_Identity_applicativeIdentity end,
     Bind1 = function() return M.Data_Identity_bindIdentity end
   }
-  return Control_Monad_Writer_Trans_compose(function(x_S_467_S_479)
-    return x_S_467_S_479
-  end)(Control_Monad_Writer_Trans_compose(M.Control_Applicative_pure(dictMonad_S_478.Applicative0()))(M.Data_Tuple_Tuple(M.Data_Unit_foreign.unit)))
+  return Control_Monad_Writer_Trans_compose(function(x_S_500_S_512)
+    return x_S_500_S_512
+  end)(Control_Monad_Writer_Trans_compose(M.Control_Applicative_pure(dictMonad_S_511.Applicative0()))(M.Data_Tuple_Tuple(M.Data_Unit_foreign.unit)))
 end)()
 M.Golden_LongWriterBind_Test_go = (function()
   local Golden_LongWriterBind_Test_discard, Golden_LongWriterBind_Test_tell = M.Golden_LongWriterBind_Test_discard, M.Golden_LongWriterBind_Test_tell
-  local _S_kont482 = Golden_LongWriterBind_Test_discard(Golden_LongWriterBind_Test_tell({
+  local _S_kont515 = Golden_LongWriterBind_Test_discard(Golden_LongWriterBind_Test_tell({
     [1] = 161
   }))(function()
     return M.Golden_LongWriterBind_Test_discard(M.Golden_LongWriterBind_Test_tell({
@@ -285,7 +285,7 @@ M.Golden_LongWriterBind_Test_go = (function()
       end)
     end)
   end)
-  local _S_kont483 = Golden_LongWriterBind_Test_discard(Golden_LongWriterBind_Test_tell({
+  local _S_kont516 = Golden_LongWriterBind_Test_discard(Golden_LongWriterBind_Test_tell({
     [1] = 121
   }))(function()
     return M.Golden_LongWriterBind_Test_discard(M.Golden_LongWriterBind_Test_tell({
@@ -405,7 +405,7 @@ M.Golden_LongWriterBind_Test_go = (function()
                                                                                 return M.Golden_LongWriterBind_Test_discard(M.Golden_LongWriterBind_Test_tell({
                                                                                   [1] = 160
                                                                                 }))(function(  )
-                                                                                  return _S_kont482
+                                                                                  return _S_kont515
                                                                                 end)
                                                                               end)
                                                                             end)
@@ -446,7 +446,7 @@ M.Golden_LongWriterBind_Test_go = (function()
       end)
     end)
   end)
-  local _S_kont484 = Golden_LongWriterBind_Test_discard(Golden_LongWriterBind_Test_tell({
+  local _S_kont517 = Golden_LongWriterBind_Test_discard(Golden_LongWriterBind_Test_tell({
     [1] = 81
   }))(function()
     return M.Golden_LongWriterBind_Test_discard(M.Golden_LongWriterBind_Test_tell({
@@ -566,7 +566,7 @@ M.Golden_LongWriterBind_Test_go = (function()
                                                                                 return M.Golden_LongWriterBind_Test_discard(M.Golden_LongWriterBind_Test_tell({
                                                                                   [1] = 120
                                                                                 }))(function(  )
-                                                                                  return _S_kont483
+                                                                                  return _S_kont516
                                                                                 end)
                                                                               end)
                                                                             end)
@@ -607,7 +607,7 @@ M.Golden_LongWriterBind_Test_go = (function()
       end)
     end)
   end)
-  local _S_kont485 = Golden_LongWriterBind_Test_discard(Golden_LongWriterBind_Test_tell({
+  local _S_kont518 = Golden_LongWriterBind_Test_discard(Golden_LongWriterBind_Test_tell({
     [1] = 41
   }))(function()
     return M.Golden_LongWriterBind_Test_discard(M.Golden_LongWriterBind_Test_tell({
@@ -727,7 +727,7 @@ M.Golden_LongWriterBind_Test_go = (function()
                                                                                 return M.Golden_LongWriterBind_Test_discard(M.Golden_LongWriterBind_Test_tell({
                                                                                   [1] = 80
                                                                                 }))(function(  )
-                                                                                  return _S_kont484
+                                                                                  return _S_kont517
                                                                                 end)
                                                                               end)
                                                                             end)
@@ -888,7 +888,7 @@ M.Golden_LongWriterBind_Test_go = (function()
                                                                                 return M.Golden_LongWriterBind_Test_discard(M.Golden_LongWriterBind_Test_tell({
                                                                                   [1] = 40
                                                                                 }))(function(  )
-                                                                                  return _S_kont485
+                                                                                  return _S_kont518
                                                                                 end)
                                                                               end)
                                                                             end)
@@ -930,7 +930,7 @@ M.Golden_LongWriterBind_Test_go = (function()
     end)
   end)
 end)()
-M.Golden_LongWriterBind_Test_compute = (M.Control_Semigroupoid_compose(M.Control_Semigroupoid_semigroupoidFn)(M.Unsafe_Coerce_foreign.unsafeCoerce)(function( v_S_39_S_461 )
-  return v_S_39_S_461
+M.Golden_LongWriterBind_Test_compute = (M.Control_Semigroupoid_compose(M.Control_Semigroupoid_semigroupoidFn)(M.Unsafe_Coerce_foreign.unsafeCoerce)(function( v_S_39_S_494 )
+  return v_S_39_S_494
 end)(M.Golden_LongWriterBind_Test_go)).value0
 return M.Effect_Console_foreign.log(M.Data_Show_foreign.showIntImpl(M.Golden_LongWriterBind_Test_compute))()

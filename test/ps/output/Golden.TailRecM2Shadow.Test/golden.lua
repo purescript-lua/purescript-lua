@@ -18,29 +18,6 @@ local function PSLUA_runtime_lazy(name)
 end
 local M = {}
 M.Data_Show_foreign = { showIntImpl = function(n) return tostring(n) end }
-M.Data_Semiring_foreign = {
-  intAdd = function(x) return function(y) return x + y end end
-}
-M.Data_Ord_foreign = (function()
-  local unsafeCoerceImpl = function(lt)
-    return function(eq)
-      return function(gt)
-        return function(x)
-          return function(y)
-            if x < y then
-              return lt
-            elseif x == y then
-              return eq
-            else
-              return gt
-            end
-          end
-        end
-      end
-    end
-  end
-  return { ordIntImpl = unsafeCoerceImpl }
-end)()
 M.Effect_foreign = {
   pureE = function(a) return function() return a end end,
   bindE = function(a)
@@ -103,44 +80,45 @@ end)
 M.Effect_functorEffect = M.Effect_Lazy_functorEffect(0)
 M.Control_Monad_Rec_Class_bind = M.Control_Bind_bind(M.Effect_bindEffect)
 M.Control_Monad_Rec_Class_pure = M.Control_Applicative_pure(M.Effect_applicativeEffect)
+M.Golden_TailRecM2Shadow_Test_add_S_w = function(x_S_457_S_491, y_S_458_S_492)
+  return x_S_457_S_491 + y_S_458_S_492
+end
 M.Golden_TailRecM2Shadow_Test_sumFrom = function(dictMonadRec)
   local pure = M.Control_Applicative_pure((dictMonadRec.Monad0()).Applicative0())
   return function(b)
     return function(n)
-      return dictMonadRec.tailRecM(function(o_S_450)
+      return dictMonadRec.tailRecM(function(o_S_483)
         return (function()
-          local acc_S_1 = o_S_450.a
+          local acc_S_1 = o_S_483.a
           return function(i_S_2)
-            if (function()
-              if "Data.Ordering∷Ordering.LT" == (M.Data_Ord_foreign.ordIntImpl({
-                ["$ctor"] = "Data.Ordering∷Ordering.LT"
-              })({ ["$ctor"] = "Data.Ordering∷Ordering.EQ" })({
-                ["$ctor"] = "Data.Ordering∷Ordering.GT"
-              })(i_S_2)(n))["$ctor"] then
-                return false
+            if "Data.Ordering∷Ordering.LT" == ((function()
+              if i_S_2 < n then
+                return { ["$ctor"] = "Data.Ordering∷Ordering.LT" }
+              elseif i_S_2 == n then
+                return { ["$ctor"] = "Data.Ordering∷Ordering.EQ" }
               else
-                return true
+                return { ["$ctor"] = "Data.Ordering∷Ordering.GT" }
               end
-            end)() then
-              return pure((function(value0)
-                return {
-                  ["$ctor"] = "Control.Monad.Rec.Class∷Step.Done",
-                  value0 = value0
-                }
-              end)(acc_S_1))
-            else
+            end)())["$ctor"] then
               return pure((function(value0)
                 return {
                   ["$ctor"] = "Control.Monad.Rec.Class∷Step.Loop",
                   value0 = value0
                 }
               end)({
-                a = M.Data_Semiring_foreign.intAdd(acc_S_1)(i_S_2),
-                b = M.Data_Semiring_foreign.intAdd(i_S_2)(1)
+                a = M.Golden_TailRecM2Shadow_Test_add_S_w(acc_S_1, i_S_2),
+                b = M.Golden_TailRecM2Shadow_Test_add_S_w(i_S_2, 1)
               }))
+            else
+              return pure((function(value0)
+                return {
+                  ["$ctor"] = "Control.Monad.Rec.Class∷Step.Done",
+                  value0 = value0
+                }
+              end)(acc_S_1))
             end
           end
-        end)()(o_S_450.b)
+        end)()(o_S_483.b)
       end)({ a = b, b = 0 })
     end
   end

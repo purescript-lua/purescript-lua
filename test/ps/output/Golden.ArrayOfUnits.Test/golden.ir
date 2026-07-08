@@ -14,12 +14,6 @@ UberModule
         [ ( Nothing, Name "showIntImpl" ) ]
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Data.Semiring", qnameName = Name "foreign"
-        }, ForeignImport Nothing
-        ( ModuleName "Data.Semiring" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Semiring.purs"
-        [ ( Nothing, Name "intAdd" ), ( Nothing, Name "intMul" ) ]
-      ), Standalone
-      ( QName
         { qnameModuleName = ModuleName "Data.Foldable", qnameName = Name "foreign"
         }, ForeignImport Nothing
         ( ModuleName "Data.Foldable" ) ".spago/p/foldable-traversable/78a544dc337809cd3cd4db4d6cb526de9a99a320/src/Data/Foldable.purs"
@@ -41,14 +35,26 @@ UberModule
         { qnameModuleName = ModuleName "Data.Semiring", qnameName = Name "semiringInt"
         }, LiteralObject Nothing
         [
-          ( PropName "add", ObjectProp ( Just Always )
-            ( Ref Nothing ( Imported ( ModuleName "Data.Semiring" ) ( Name "foreign" ) ) )
-            ( PropName "intAdd" )
+          ( PropName "add", AbsN ( Just Always )
+            ( ParamNamed Nothing ( Name "x$895" ) :| [] )
+            ( AbsN Nothing
+              ( ParamNamed Nothing ( Name "y$896" ) :| [] )
+              ( PrimBinOp Nothing PrimAdd
+                ( Ref Nothing ( Local ( Name "x$895" ) ) )
+                ( Ref Nothing ( Local ( Name "y$896" ) ) )
+              )
+            )
           ),
           ( PropName "zero", LiteralInt Nothing 0 ),
-          ( PropName "mul", ObjectProp ( Just Always )
-            ( Ref Nothing ( Imported ( ModuleName "Data.Semiring" ) ( Name "foreign" ) ) )
-            ( PropName "intMul" )
+          ( PropName "mul", AbsN ( Just Always )
+            ( ParamNamed Nothing ( Name "x$893" ) :| [] )
+            ( AbsN Nothing
+              ( ParamNamed Nothing ( Name "y$894" ) :| [] )
+              ( PrimBinOp Nothing PrimMul
+                ( Ref Nothing ( Local ( Name "x$893" ) ) )
+                ( Ref Nothing ( Local ( Name "y$894" ) ) )
+              )
+            )
           ),
           ( PropName "one", LiteralInt Nothing 1 )
         ]
@@ -90,7 +96,7 @@ UberModule
             ( PropName "foldMap", AbsN Nothing
               ( ParamNamed Nothing ( Name "dictMonoid" ) :| [] )
               ( AbsN Nothing
-                ( ParamNamed Nothing ( Name "f$884" ) :| [] )
+                ( ParamNamed Nothing ( Name "f$917" ) :| [] )
                 ( AppN Nothing
                   ( AppN Nothing
                     ( AppN Nothing
@@ -100,9 +106,9 @@ UberModule
                       )
                     )
                     ( AbsN Nothing
-                      ( ParamNamed Nothing ( Name "x$885" ) :| [] )
+                      ( ParamNamed Nothing ( Name "x$918" ) :| [] )
                       ( AbsN Nothing
-                        ( ParamNamed Nothing ( Name "acc$886" ) :| [] )
+                        ( ParamNamed Nothing ( Name "acc$919" ) :| [] )
                         ( AppN Nothing
                           ( AppN Nothing
                             ( ObjectProp Nothing
@@ -118,11 +124,11 @@ UberModule
                               ( PropName "append" )
                             )
                             ( AppN Nothing
-                              ( Ref Nothing ( Local ( Name "f$884" ) ) )
-                              ( Ref Nothing ( Local ( Name "x$885" ) ) :| [] ) :| []
+                              ( Ref Nothing ( Local ( Name "f$917" ) ) )
+                              ( Ref Nothing ( Local ( Name "x$918" ) ) :| [] ) :| []
                             )
                           )
-                          ( Ref Nothing ( Local ( Name "acc$886" ) ) :| [] )
+                          ( Ref Nothing ( Local ( Name "acc$919" ) ) :| [] )
                         )
                       ) :| []
                     )
@@ -392,11 +398,11 @@ UberModule
                         )
                       )
                       ( AbsN Nothing
-                        ( ParamNamed Nothing ( Name "x$907" ) :| [] )
+                        ( ParamNamed Nothing ( Name "x$940" ) :| [] )
                         ( AppN Nothing
                           ( Let Nothing
                             ( Standalone
-                              ( Nothing, Name "dictApply$892", AppN Nothing
+                              ( Nothing, Name "dictApply$925", AppN Nothing
                                 ( ObjectProp Nothing
                                   ( Ref Nothing
                                     ( Imported
@@ -412,23 +418,23 @@ UberModule
                               ) :| []
                             )
                             ( AbsN Nothing
-                              ( ParamNamed Nothing ( Name "a$893" ) :| [] )
+                              ( ParamNamed Nothing ( Name "a$926" ) :| [] )
                               ( AbsN Nothing
-                                ( ParamNamed Nothing ( Name "b$894" ) :| [] )
+                                ( ParamNamed Nothing ( Name "b$927" ) :| [] )
                                 ( AppN Nothing
                                   ( AppN Nothing
                                     ( AppN Nothing
                                       ( Ref Nothing
                                         ( Imported ( ModuleName "Control.Apply" ) ( Name "apply" ) )
                                       )
-                                      ( Ref Nothing ( Local ( Name "dictApply$892" ) ) :| [] )
+                                      ( Ref Nothing ( Local ( Name "dictApply$925" ) ) :| [] )
                                     )
                                     ( AppN Nothing
                                       ( AppN Nothing
                                         ( ObjectProp Nothing
                                           ( AppN Nothing
                                             ( ObjectProp Nothing
-                                              ( Ref Nothing ( Local ( Name "dictApply$892" ) ) )
+                                              ( Ref Nothing ( Local ( Name "dictApply$925" ) ) )
                                               ( PropName "Functor0" )
                                             )
                                             ( Ref Nothing
@@ -443,15 +449,15 @@ UberModule
                                         ( AbsN Nothing
                                           ( ParamUnused Nothing :| [] )
                                           ( AbsN Nothing
-                                            ( ParamNamed Nothing ( Name "x$901" ) :| [] )
-                                            ( Ref Nothing ( Local ( Name "x$901" ) ) )
+                                            ( ParamNamed Nothing ( Name "x$934" ) :| [] )
+                                            ( Ref Nothing ( Local ( Name "x$934" ) ) )
                                           ) :| []
                                         )
                                       )
-                                      ( Ref Nothing ( Local ( Name "a$893" ) ) :| [] ) :| []
+                                      ( Ref Nothing ( Local ( Name "a$926" ) ) :| [] ) :| []
                                     )
                                   )
-                                  ( Ref Nothing ( Local ( Name "b$894" ) ) :| [] )
+                                  ( Ref Nothing ( Local ( Name "b$927" ) ) :| [] )
                                 )
                               )
                             )
@@ -467,7 +473,7 @@ UberModule
                                   ( LiteralString Nothing "unit" )
                                 )
                               ] :|
-                              [ Ref Nothing ( Local ( Name "x$907" ) ) ]
+                              [ Ref Nothing ( Local ( Name "x$940" ) ) ]
                             ) :| []
                           )
                         ) :| []
@@ -513,7 +519,7 @@ UberModule
                           ( PropName "foldl" )
                         )
                         ( AbsN Nothing
-                          ( ParamNamed Nothing ( Name "c$372$881" ) :| [] )
+                          ( ParamNamed Nothing ( Name "c$372$914" ) :| [] )
                           ( AbsN Nothing
                             ( ParamUnused Nothing :| [] )
                             ( AppN Nothing
@@ -537,7 +543,7 @@ UberModule
                                   ( PropName "one" ) :| []
                                 )
                               )
-                              ( Ref Nothing ( Local ( Name "c$372$881" ) ) :| [] )
+                              ( Ref Nothing ( Local ( Name "c$372$914" ) ) :| [] )
                             )
                           ) :| []
                         )

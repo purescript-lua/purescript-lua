@@ -18,13 +18,6 @@ local function PSLUA_runtime_lazy(name)
 end
 local M = {}
 M.Data_Show_foreign = { showIntImpl = function(n) return tostring(n) end }
-M.Data_Semiring_foreign = {
-  intAdd = function(x) return function(y) return x + y end end,
-  intMul = function(x) return function(y) return x * y end end
-}
-M.Data_Ring_foreign = {
-  intSub = function(x) return function(y) return x - y end end
-}
 M.Unsafe_Coerce_foreign = { unsafeCoerce = function(x) return x end }
 M.Effect_foreign = {
   pureE = function(a) return function() return a end end,
@@ -36,9 +29,13 @@ M.Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
 }
 M.Data_Semiring_semiringInt = {
-  add = M.Data_Semiring_foreign.intAdd,
+  add = function(x_S_279)
+    return function(y_S_280) return x_S_279 + y_S_280 end
+  end,
   zero = 0,
-  mul = M.Data_Semiring_foreign.intMul,
+  mul = function(x_S_277)
+    return function(y_S_278) return x_S_277 * y_S_278 end
+  end,
   one = 1
 }
 M.Control_Applicative_pure = function(dict) return dict.pure end
@@ -48,7 +45,7 @@ M.Data_Newtype_unwrap = function()
 end
 M.Data_Profunctor_composeFlipped = function(f_S_263)
   return function(g_S_264)
-    return function(x_S_274) return g_S_264(f_S_263(x_S_274)) end
+    return function(x_S_309) return g_S_264(f_S_263(x_S_309)) end
   end
 end
 M.Data_Profunctor_profunctorFn = {
@@ -120,6 +117,6 @@ return (function()
     return M.Data_Semiring_semiringInt.mul(v0_S_1)(2)
   end)(10)))()
   return Golden_ProfunctorDictLens_Test_logShow(Golden_ProfunctorDictLens_Test_unwrap(M.Data_Profunctor_dimap(M.Data_Profunctor_profunctorFn)(M.Data_Newtype_unwrap())(M.Unsafe_Coerce_foreign.unsafeCoerce)(function( v1_S_2 )
-    return M.Data_Ring_foreign.intSub(v1_S_2)(5)
+    return v1_S_2 - 5
   end)(10)))()
 end)()

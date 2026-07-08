@@ -17,10 +17,6 @@ local function PSLUA_runtime_lazy(name)
   end
 end
 local M = {}
-M.Data_Eq_foreign = (function()
-  local refEq = function(r1) return function(r2) return r1 == r2 end end
-  return { eqCharImpl = refEq }
-end)()
 M.Data_Show_foreign = {
   showCharImpl = function(n)
     local code = n:byte()
@@ -38,26 +34,6 @@ M.Data_Show_foreign = {
     return "'" .. n .. "'"
   end
 }
-M.Data_Ord_foreign = (function()
-  local unsafeCoerceImpl = function(lt)
-    return function(eq)
-      return function(gt)
-        return function(x)
-          return function(y)
-            if x < y then
-              return lt
-            elseif x == y then
-              return eq
-            else
-              return gt
-            end
-          end
-        end
-      end
-    end
-  end
-  return { ordCharImpl = unsafeCoerceImpl }
-end)()
 M.Effect_foreign = {
   pureE = function(a) return function() return a end end,
   bindE = function(a)
@@ -132,16 +108,12 @@ return (function()
   local _ = Effect_Console_foreign.log(Golden_CharLiterals_Test_show("\'"))()
   local _ = Effect_Console_foreign.log(Golden_CharLiterals_Test_show("\\"))()
   local _ = Effect_Console_foreign.log(Golden_CharLiterals_Test_show("a"))()
-  local _ = Effect_Console_foreign.log(Golden_CharLiterals_Test_show1(M.Data_Eq_foreign.eqCharImpl("\n")("\n")))()
-  return Effect_Console_foreign.log(Golden_CharLiterals_Test_show1((function()
-    if "Data.Ordering∷Ordering.LT" == (M.Data_Ord_foreign.ordCharImpl({
-      ["$ctor"] = "Data.Ordering∷Ordering.LT"
-    })({ ["$ctor"] = "Data.Ordering∷Ordering.EQ" })({
-      ["$ctor"] = "Data.Ordering∷Ordering.GT"
-    })("\t")("\n"))["$ctor"] then
-      return true
+  local _ = Effect_Console_foreign.log(Golden_CharLiterals_Test_show1(true))()
+  return Effect_Console_foreign.log(Golden_CharLiterals_Test_show1("Data.Ordering∷Ordering.LT" == ((function(  )
+    if "\t" < "\n" then
+      return { ["$ctor"] = "Data.Ordering∷Ordering.LT" }
     else
-      return false
+      return { ["$ctor"] = "Data.Ordering∷Ordering.GT" }
     end
-  end)()))()
+  end)())["$ctor"]))()
 end)()

@@ -8,22 +8,19 @@ UberModule
         [ ( Nothing, Name "showIntImpl" ) ]
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Data.Semiring", qnameName = Name "foreign"
-        }, ForeignImport Nothing
-        ( ModuleName "Data.Semiring" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Semiring.purs"
-        [ ( Nothing, Name "intAdd" ) ]
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Data.Ring", qnameName = Name "foreign"
-        }, ForeignImport Nothing
-        ( ModuleName "Data.Ring" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Ring.purs"
-        [ ( Nothing, Name "intSub" ) ]
-      ), Standalone
-      ( QName
         { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "foreign"
         }, ForeignImport Nothing
         ( ModuleName "Effect.Console" ) ".spago/p/console/f82835a0b873aafe6bd7b14dd30cc150553d4ab9/src/Effect/Console.purs"
         [ ( Nothing, Name "log" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.Fibonacci.Test", qnameName = Name "sub$w"
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "x$185$208" ) :| [ ParamNamed Nothing ( Name "y$186$209" ) ] )
+        ( PrimBinOp Nothing PrimSub
+          ( Ref Nothing ( Local ( Name "x$185$208" ) ) )
+          ( Ref Nothing ( Local ( Name "y$186$209" ) ) )
+        )
       ), RecursiveGroup
       (
         ( QName
@@ -36,28 +33,16 @@ UberModule
             ( IfThenElse Nothing
               ( Eq Nothing ( LiteralInt Nothing 1 ) ( Ref Nothing ( Local ( Name "v" ) ) ) )
               ( LiteralInt Nothing 1 )
-              ( AppN Nothing
+              ( PrimBinOp Nothing PrimAdd
                 ( AppN Nothing
-                  ( ObjectProp ( Just Always )
-                    ( Ref Nothing ( Imported ( ModuleName "Data.Semiring" ) ( Name "foreign" ) ) )
-                    ( PropName "intAdd" )
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Golden.Fibonacci.Test" ) ( Name "fib" ) )
                   )
                   ( AppN Nothing
                     ( Ref Nothing
-                      ( Imported ( ModuleName "Golden.Fibonacci.Test" ) ( Name "fib" ) )
+                      ( Imported ( ModuleName "Golden.Fibonacci.Test" ) ( Name "sub$w" ) )
                     )
-                    ( AppN Nothing
-                      ( AppN Nothing
-                        ( ObjectProp ( Just Always )
-                          ( Ref Nothing
-                            ( Imported ( ModuleName "Data.Ring" ) ( Name "foreign" ) )
-                          )
-                          ( PropName "intSub" )
-                        )
-                        ( Ref Nothing ( Local ( Name "v" ) ) :| [] )
-                      )
-                      ( LiteralInt Nothing 1 :| [] ) :| []
-                    ) :| []
+                    ( Ref Nothing ( Local ( Name "v" ) ) :| [ LiteralInt Nothing 1 ] ) :| []
                   )
                 )
                 ( AppN Nothing
@@ -65,15 +50,11 @@ UberModule
                     ( Imported ( ModuleName "Golden.Fibonacci.Test" ) ( Name "fib" ) )
                   )
                   ( AppN Nothing
-                    ( AppN Nothing
-                      ( ObjectProp ( Just Always )
-                        ( Ref Nothing ( Imported ( ModuleName "Data.Ring" ) ( Name "foreign" ) ) )
-                        ( PropName "intSub" )
-                      )
-                      ( Ref Nothing ( Local ( Name "v" ) ) :| [] )
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Golden.Fibonacci.Test" ) ( Name "sub$w" ) )
                     )
-                    ( LiteralInt Nothing 2 :| [] ) :| []
-                  ) :| []
+                    ( Ref Nothing ( Local ( Name "v" ) ) :| [ LiteralInt Nothing 2 ] ) :| []
+                  )
                 )
               )
             )

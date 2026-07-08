@@ -2,34 +2,10 @@ UberModule
   { uberModuleBindings =
     [ Standalone
       ( QName
-        { qnameModuleName = ModuleName "Data.Eq", qnameName = Name "foreign"
-        }, ForeignImport Nothing
-        ( ModuleName "Data.Eq" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Eq.purs"
-        [ ( Nothing, Name "eqIntImpl" ) ]
-      ), Standalone
-      ( QName
         { qnameModuleName = ModuleName "Data.Show", qnameName = Name "foreign"
         }, ForeignImport Nothing
         ( ModuleName "Data.Show" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Show.purs"
         [ ( Nothing, Name "showIntImpl" ) ]
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Data.Semiring", qnameName = Name "foreign"
-        }, ForeignImport Nothing
-        ( ModuleName "Data.Semiring" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Semiring.purs"
-        [ ( Nothing, Name "intAdd" ), ( Nothing, Name "intMul" ) ]
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Data.Ring", qnameName = Name "foreign"
-        }, ForeignImport Nothing
-        ( ModuleName "Data.Ring" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Ring.purs"
-        [ ( Nothing, Name "intSub" ) ]
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Data.Ord", qnameName = Name "foreign"
-        }, ForeignImport Nothing
-        ( ModuleName "Data.Ord" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Ord.purs"
-        [ ( Nothing, Name "ordIntImpl" ) ]
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Effect", qnameName = Name "foreign"
@@ -47,14 +23,26 @@ UberModule
         { qnameModuleName = ModuleName "Data.Semiring", qnameName = Name "semiringInt"
         }, LiteralObject Nothing
         [
-          ( PropName "add", ObjectProp ( Just Always )
-            ( Ref Nothing ( Imported ( ModuleName "Data.Semiring" ) ( Name "foreign" ) ) )
-            ( PropName "intAdd" )
+          ( PropName "add", AbsN ( Just Always )
+            ( ParamNamed Nothing ( Name "x$192" ) :| [] )
+            ( AbsN Nothing
+              ( ParamNamed Nothing ( Name "y$193" ) :| [] )
+              ( PrimBinOp Nothing PrimAdd
+                ( Ref Nothing ( Local ( Name "x$192" ) ) )
+                ( Ref Nothing ( Local ( Name "y$193" ) ) )
+              )
+            )
           ),
           ( PropName "zero", LiteralInt Nothing 0 ),
-          ( PropName "mul", ObjectProp ( Just Always )
-            ( Ref Nothing ( Imported ( ModuleName "Data.Semiring" ) ( Name "foreign" ) ) )
-            ( PropName "intMul" )
+          ( PropName "mul", AbsN ( Just Always )
+            ( ParamNamed Nothing ( Name "x$190" ) :| [] )
+            ( AbsN Nothing
+              ( ParamNamed Nothing ( Name "y$191" ) :| [] )
+              ( PrimBinOp Nothing PrimMul
+                ( Ref Nothing ( Local ( Name "x$190" ) ) )
+                ( Ref Nothing ( Local ( Name "y$191" ) ) )
+              )
+            )
           ),
           ( PropName "one", LiteralInt Nothing 1 )
         ]
@@ -280,6 +268,15 @@ UberModule
         ( PropName "add" )
       ), Standalone
       ( QName
+        { qnameModuleName = ModuleName "Golden.FieldCaching.Test", qnameName = Name "sub$w"
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "x$188$219" ) :| [ ParamNamed Nothing ( Name "y$189$220" ) ] )
+        ( PrimBinOp Nothing PrimSub
+          ( Ref Nothing ( Local ( Name "x$188$219" ) ) )
+          ( Ref Nothing ( Local ( Name "y$189$220" ) ) )
+        )
+      ), Standalone
+      ( QName
         { qnameModuleName = ModuleName "Golden.FieldCaching.Test", qnameName = Name "discard"
         }, AppN Nothing
         ( Ref Nothing ( Imported ( ModuleName "Control.Bind" ) ( Name "bind" ) ) )
@@ -332,16 +329,7 @@ UberModule
           }, AbsN Nothing
           ( ParamNamed Nothing ( Name "acc" ) :| [ ParamNamed Nothing ( Name "n" ) ] )
           ( IfThenElse Nothing
-            ( AppN Nothing
-              ( AppN Nothing
-                ( ObjectProp ( Just Always )
-                  ( Ref Nothing ( Imported ( ModuleName "Data.Eq" ) ( Name "foreign" ) ) )
-                  ( PropName "eqIntImpl" )
-                )
-                ( Ref Nothing ( Local ( Name "n" ) ) :| [] )
-              )
-              ( LiteralInt Nothing 0 :| [] )
-            )
+            ( Eq Nothing ( Ref Nothing ( Local ( Name "n" ) ) ) ( LiteralInt Nothing 0 ) )
             ( Ref Nothing ( Local ( Name "acc" ) ) )
             ( AppN Nothing
               ( Ref Nothing
@@ -361,14 +349,10 @@ UberModule
                   ( Ref Nothing ( Local ( Name "n" ) ) :| [] ) :| []
                 ) :|
                 [ AppN Nothing
-                  ( AppN Nothing
-                    ( ObjectProp ( Just Always )
-                      ( Ref Nothing ( Imported ( ModuleName "Data.Ring" ) ( Name "foreign" ) ) )
-                      ( PropName "intSub" )
-                    )
-                    ( Ref Nothing ( Local ( Name "n" ) ) :| [] )
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Golden.FieldCaching.Test" ) ( Name "sub$w" ) )
                   )
-                  ( LiteralInt Nothing 1 :| [] )
+                  ( Ref Nothing ( Local ( Name "n" ) ) :| [ LiteralInt Nothing 1 ] )
                 ]
               )
             )
@@ -436,45 +420,34 @@ UberModule
         }, AbsN Nothing
         ( ParamNamed Nothing ( Name "n" ) :| [] )
         ( IfThenElse Nothing
-          ( IfThenElse Nothing
-            ( Eq Nothing
-              ( LiteralString Nothing "Data.Ordering∷Ordering.LT" )
-              ( ReflectCtor Nothing
-                ( AppN Nothing
-                  ( AppN Nothing
-                    ( AppN Nothing
-                      ( AppN Nothing
-                        ( AppN Nothing
-                          ( ObjectProp ( Just Always )
-                            ( Ref Nothing
-                              ( Imported ( ModuleName "Data.Ord" ) ( Name "foreign" ) )
-                            )
-                            ( PropName "ordIntImpl" )
-                          )
-                          ( Ctor Nothing SumType
-                            ( ModuleName "Data.Ordering" )
-                            ( TyName "Ordering" )
-                            ( CtorName "LT" ) [] :| []
-                          )
-                        )
-                        ( Ctor Nothing SumType
-                          ( ModuleName "Data.Ordering" )
-                          ( TyName "Ordering" )
-                          ( CtorName "EQ" ) [] :| []
-                        )
-                      )
-                      ( Ctor Nothing SumType
-                        ( ModuleName "Data.Ordering" )
-                        ( TyName "Ordering" )
-                        ( CtorName "GT" ) [] :| []
-                      )
-                    )
-                    ( Ref Nothing ( Local ( Name "n" ) ) :| [] )
+          ( Eq Nothing
+            ( LiteralString Nothing "Data.Ordering∷Ordering.LT" )
+            ( ReflectCtor Nothing
+              ( IfThenElse Nothing
+                ( PrimBinOp Nothing PrimLt
+                  ( Ref Nothing ( Local ( Name "n" ) ) )
+                  ( LiteralInt Nothing 2 )
+                )
+                ( Ctor Nothing SumType
+                  ( ModuleName "Data.Ordering" )
+                  ( TyName "Ordering" )
+                  ( CtorName "LT" ) []
+                )
+                ( IfThenElse Nothing
+                  ( Eq Nothing ( Ref Nothing ( Local ( Name "n" ) ) ) ( LiteralInt Nothing 2 ) )
+                  ( Ctor Nothing SumType
+                    ( ModuleName "Data.Ordering" )
+                    ( TyName "Ordering" )
+                    ( CtorName "EQ" ) []
                   )
-                  ( LiteralInt Nothing 2 :| [] )
+                  ( Ctor Nothing SumType
+                    ( ModuleName "Data.Ordering" )
+                    ( TyName "Ordering" )
+                    ( CtorName "GT" ) []
+                  )
                 )
               )
-            ) ( LiteralBool Nothing True ) ( LiteralBool Nothing False )
+            )
           )
           ( Ref Nothing ( Local ( Name "n" ) ) )
           ( AppN Nothing
@@ -485,14 +458,10 @@ UberModule
                   ( Imported ( ModuleName "Golden.FieldCaching.Test" ) ( Name "weigh" ) )
                 )
                 ( AppN Nothing
-                  ( AppN Nothing
-                    ( ObjectProp ( Just Always )
-                      ( Ref Nothing ( Imported ( ModuleName "Data.Ring" ) ( Name "foreign" ) ) )
-                      ( PropName "intSub" )
-                    )
-                    ( Ref Nothing ( Local ( Name "n" ) ) :| [] )
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Golden.FieldCaching.Test" ) ( Name "sub$w" ) )
                   )
-                  ( LiteralInt Nothing 1 :| [] ) :| []
+                  ( Ref Nothing ( Local ( Name "n" ) ) :| [ LiteralInt Nothing 1 ] ) :| []
                 ) :| []
               )
             )
@@ -501,14 +470,10 @@ UberModule
                 ( Imported ( ModuleName "Golden.FieldCaching.Test" ) ( Name "weigh" ) )
               )
               ( AppN Nothing
-                ( AppN Nothing
-                  ( ObjectProp ( Just Always )
-                    ( Ref Nothing ( Imported ( ModuleName "Data.Ring" ) ( Name "foreign" ) ) )
-                    ( PropName "intSub" )
-                  )
-                  ( Ref Nothing ( Local ( Name "n" ) ) :| [] )
+                ( Ref Nothing
+                  ( Imported ( ModuleName "Golden.FieldCaching.Test" ) ( Name "sub$w" ) )
                 )
-                ( LiteralInt Nothing 2 :| [] ) :| []
+                ( Ref Nothing ( Local ( Name "n" ) ) :| [ LiteralInt Nothing 2 ] ) :| []
               ) :| []
             )
           )

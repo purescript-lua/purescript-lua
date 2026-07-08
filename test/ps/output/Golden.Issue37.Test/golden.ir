@@ -230,10 +230,10 @@ UberModule
       ( QName
         { qnameModuleName = ModuleName "Golden.Issue37.Test", qnameName = Name "discard"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "dictBind$17$186" ) :| [] )
+        ( ParamNamed Nothing ( Name "dictBind$17$219" ) :| [] )
         ( AppN Nothing
           ( Ref Nothing ( Imported ( ModuleName "Control.Bind" ) ( Name "bind" ) ) )
-          ( Ref Nothing ( Local ( Name "dictBind$17$186" ) ) :| [] )
+          ( Ref Nothing ( Local ( Name "dictBind$17$219" ) ) :| [] )
         )
       )
     ], uberModuleForeigns = [], uberModuleExports =
@@ -289,7 +289,7 @@ UberModule
                         [ AppN Nothing
                           ( Let Nothing
                             ( Standalone
-                              ( Nothing, Name "Bind1$183", AppN Nothing
+                              ( Nothing, Name "Bind1$216", AppN Nothing
                                 ( ObjectProp Nothing
                                   ( Ref Nothing
                                     ( Imported ( ModuleName "Effect" ) ( Name "monadEffect" ) )
@@ -301,19 +301,19 @@ UberModule
                                 )
                               ) :|
                               [ Standalone
-                                ( Nothing, Name "discard1$184", AppN Nothing
+                                ( Nothing, Name "discard1$217", AppN Nothing
                                   ( Ref Nothing
                                     ( Imported
                                       ( ModuleName "Golden.Issue37.Test" )
                                       ( Name "discard" )
                                     )
                                   )
-                                  ( Ref Nothing ( Local ( Name "Bind1$183" ) ) :| [] )
+                                  ( Ref Nothing ( Local ( Name "Bind1$216" ) ) :| [] )
                                 )
                               ]
                             )
                             ( AbsN Nothing
-                              ( ParamNamed Nothing ( Name "fn1$185" ) :| [] )
+                              ( ParamNamed Nothing ( Name "fn1$218" ) :| [] )
                               ( AppN Nothing
                                 ( AppN Nothing
                                   ( AppN Nothing
@@ -338,25 +338,25 @@ UberModule
                                       ) :| []
                                     )
                                   )
-                                  ( Ref Nothing ( Local ( Name "fn1$185" ) ) :| [] )
+                                  ( Ref Nothing ( Local ( Name "fn1$218" ) ) :| [] )
                                 )
                                 ( AbsN Nothing
                                   ( ParamUnused Nothing :| [] )
                                   ( AppN Nothing
                                     ( AppN Nothing
-                                      ( Ref Nothing ( Local ( Name "discard1$184" ) ) )
-                                      ( Ref Nothing ( Local ( Name "fn1$185" ) ) :| [] )
+                                      ( Ref Nothing ( Local ( Name "discard1$217" ) ) )
+                                      ( Ref Nothing ( Local ( Name "fn1$218" ) ) :| [] )
                                     )
                                     ( AbsN Nothing
                                       ( ParamUnused Nothing :| [] )
                                       ( AppN Nothing
                                         ( AppN Nothing
-                                          ( Ref Nothing ( Local ( Name "discard1$184" ) ) )
-                                          ( Ref Nothing ( Local ( Name "fn1$185" ) ) :| [] )
+                                          ( Ref Nothing ( Local ( Name "discard1$217" ) ) )
+                                          ( Ref Nothing ( Local ( Name "fn1$218" ) ) :| [] )
                                         )
                                         ( AbsN Nothing
                                           ( ParamUnused Nothing :| [] )
-                                          ( Ref Nothing ( Local ( Name "fn1$185" ) ) ) :| []
+                                          ( Ref Nothing ( Local ( Name "fn1$218" ) ) ) :| []
                                         )
                                       ) :| []
                                     )

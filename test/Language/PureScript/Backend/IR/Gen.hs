@@ -69,6 +69,16 @@ exp =
           <$> Gen.integral (Range.linear 0 3)
           <*> genCtorApp
       )
+    , -- Primops (issue #178): operands are arbitrary (possibly ill-typed)
+      -- expressions — constant folding simply declines unless they are the
+      -- matching literals, which is exactly the robustness worth fuzzing.
+
+      ( 2
+      , do
+          op ← Gen.enumBounded
+          Gen.subterm2 exp exp (IR.primBinOp op)
+      )
+    , (1, Gen.subtermM exp (pure . IR.primNot))
     ]
  where
   -- A saturated constructor application: exactly one argument per field
@@ -140,6 +150,16 @@ scopedExpIn scope =
           <$> Gen.integral (Range.linear 0 3)
           <*> genCtorApp
       )
+    , -- Primops (issue #178). See the note in 'exp'; here the operands
+      -- are scoped subterms so the well-scopedness/GUC properties fuzz
+      -- constant folding over them.
+
+      ( 2
+      , do
+          op ← Gen.enumBounded
+          IR.primBinOp op <$> scopedExpIn scope <*> scopedExpIn scope
+      )
+    , (1, IR.primNot <$> scopedExpIn scope)
     ]
  where
   scopedRef = IR.refLocal <$> Gen.element (Set.toList scope)

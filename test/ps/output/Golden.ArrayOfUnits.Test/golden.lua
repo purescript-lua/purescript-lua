@@ -19,10 +19,6 @@ end
 local M = {}
 M.Data_Unit_foreign = { unit = {} }
 M.Data_Show_foreign = { showIntImpl = function(n) return tostring(n) end }
-M.Data_Semiring_foreign = {
-  intAdd = function(x) return function(y) return x + y end end,
-  intMul = function(x) return function(y) return x * y end end
-}
 M.Data_Foldable_foreign = {
   foldrArray = function(f)
     return function(init)
@@ -55,9 +51,13 @@ M.Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
 }
 M.Data_Semiring_semiringInt = {
-  add = M.Data_Semiring_foreign.intAdd,
+  add = function(x_S_895)
+    return function(y_S_896) return x_S_895 + y_S_896 end
+  end,
   zero = 0,
-  mul = M.Data_Semiring_foreign.intMul,
+  mul = function(x_S_893)
+    return function(y_S_894) return x_S_893 * y_S_894 end
+  end,
   one = 1
 }
 M.Control_Apply_apply = function(dict) return dict.apply end
@@ -68,10 +68,10 @@ M.Data_Foldable_foldableArray = {
   foldr = M.Data_Foldable_foreign.foldrArray,
   foldl = M.Data_Foldable_foreign.foldlArray,
   foldMap = function(dictMonoid)
-    return function(f_S_884)
-      return M.Data_Foldable_foldr(M.Data_Foldable_foldableArray)(function( x_S_885 )
-        return function(acc_S_886)
-          return (dictMonoid.Semigroup0()).append(f_S_884(x_S_885))(acc_S_886)
+    return function(f_S_917)
+      return M.Data_Foldable_foldr(M.Data_Foldable_foldableArray)(function( x_S_918 )
+        return function(acc_S_919)
+          return (dictMonoid.Semigroup0()).append(f_S_917(x_S_918))(acc_S_919)
         end
       end)(dictMonoid.mempty)
     end
@@ -128,26 +128,26 @@ return (function()
   }
   return function()
     local Data_Foldable_foldableArray = M.Data_Foldable_foldableArray
-    local _ = M.Data_Foldable_foldr(Data_Foldable_foldableArray)(function( x_S_907 )
+    local _ = M.Data_Foldable_foldr(Data_Foldable_foldableArray)(function( x_S_940 )
       return (function()
-        local dictApply_S_892 = M.Effect_applicativeEffect.Apply0()
-        return function(a_S_893)
-          return function(b_S_894)
-            return M.Control_Apply_apply(dictApply_S_892)((dictApply_S_892.Functor0()).map(function(  )
-              return function(x_S_901) return x_S_901 end
-            end)(a_S_893))(b_S_894)
+        local dictApply_S_925 = M.Effect_applicativeEffect.Apply0()
+        return function(a_S_926)
+          return function(b_S_927)
+            return M.Control_Apply_apply(dictApply_S_925)((dictApply_S_925.Functor0()).map(function(  )
+              return function(x_S_934) return x_S_934 end
+            end)(a_S_926))(b_S_927)
           end
         end
       end)()(M.Effect_Console_logShow_S_w({
         show = function() return "unit" end
-      }, x_S_907))
+      }, x_S_940))
     end)(M.Control_Applicative_pure(M.Effect_applicativeEffect)(M.Data_Unit_foreign.unit))(arr_S_0)()
     return M.Effect_Console_logShow_S_w({
       show = M.Data_Show_foreign.showIntImpl
-    }, Data_Foldable_foldableArray.foldl(function(c_S_372_S_881)
+    }, Data_Foldable_foldableArray.foldl(function(c_S_372_S_914)
       return function()
         local Data_Semiring_semiringInt = M.Data_Semiring_semiringInt
-        return Data_Semiring_semiringInt.add(Data_Semiring_semiringInt.one)(c_S_372_S_881)
+        return Data_Semiring_semiringInt.add(Data_Semiring_semiringInt.one)(c_S_372_S_914)
       end
     end)(M.Data_Semiring_semiringInt.zero)(arr_S_0))()
   end

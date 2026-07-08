@@ -2,22 +2,10 @@ UberModule
   { uberModuleBindings =
     [ Standalone
       ( QName
-        { qnameModuleName = ModuleName "Data.Eq", qnameName = Name "foreign"
-        }, ForeignImport Nothing
-        ( ModuleName "Data.Eq" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Eq.purs"
-        [ ( Nothing, Name "eqCharImpl" ) ]
-      ), Standalone
-      ( QName
         { qnameModuleName = ModuleName "Data.Show", qnameName = Name "foreign"
         }, ForeignImport Nothing
         ( ModuleName "Data.Show" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Show.purs"
         [ ( Nothing, Name "showCharImpl" ) ]
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Data.Ord", qnameName = Name "foreign"
-        }, ForeignImport Nothing
-        ( ModuleName "Data.Ord" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Ord.purs"
-        [ ( Nothing, Name "ordCharImpl" ) ]
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Effect", qnameName = Name "foreign"
@@ -399,16 +387,7 @@ UberModule
                     ( Ref Nothing
                       ( Imported ( ModuleName "Golden.CharLiterals.Test" ) ( Name "show1" ) )
                     )
-                    ( AppN Nothing
-                      ( AppN Nothing
-                        ( ObjectProp ( Just Always )
-                          ( Ref Nothing ( Imported ( ModuleName "Data.Eq" ) ( Name "foreign" ) ) )
-                          ( PropName "eqCharImpl" )
-                        )
-                        ( LiteralChar Nothing ' ' :| [] )
-                      )
-                      ( LiteralChar Nothing ' ' :| [] ) :| []
-                    ) :| []
+                    ( LiteralBool Nothing True :| [] ) :| []
                   )
                 )
                 ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
@@ -425,45 +404,26 @@ UberModule
                 ( Ref Nothing
                   ( Imported ( ModuleName "Golden.CharLiterals.Test" ) ( Name "show1" ) )
                 )
-                ( IfThenElse Nothing
-                  ( Eq Nothing
-                    ( LiteralString Nothing "Data.Ordering∷Ordering.LT" )
-                    ( ReflectCtor Nothing
-                      ( AppN Nothing
-                        ( AppN Nothing
-                          ( AppN Nothing
-                            ( AppN Nothing
-                              ( AppN Nothing
-                                ( ObjectProp ( Just Always )
-                                  ( Ref Nothing
-                                    ( Imported ( ModuleName "Data.Ord" ) ( Name "foreign" ) )
-                                  )
-                                  ( PropName "ordCharImpl" )
-                                )
-                                ( Ctor Nothing SumType
-                                  ( ModuleName "Data.Ordering" )
-                                  ( TyName "Ordering" )
-                                  ( CtorName "LT" ) [] :| []
-                                )
-                              )
-                              ( Ctor Nothing SumType
-                                ( ModuleName "Data.Ordering" )
-                                ( TyName "Ordering" )
-                                ( CtorName "EQ" ) [] :| []
-                              )
-                            )
-                            ( Ctor Nothing SumType
-                              ( ModuleName "Data.Ordering" )
-                              ( TyName "Ordering" )
-                              ( CtorName "GT" ) [] :| []
-                            )
-                          )
-                          ( LiteralChar Nothing '\x9' :| [] )
-                        )
-                        ( LiteralChar Nothing ' ' :| [] )
+                ( Eq Nothing
+                  ( LiteralString Nothing "Data.Ordering∷Ordering.LT" )
+                  ( ReflectCtor Nothing
+                    ( IfThenElse Nothing
+                      ( PrimBinOp Nothing PrimLt
+                        ( LiteralChar Nothing '\x9' )
+                        ( LiteralChar Nothing ' ' )
+                      )
+                      ( Ctor Nothing SumType
+                        ( ModuleName "Data.Ordering" )
+                        ( TyName "Ordering" )
+                        ( CtorName "LT" ) []
+                      )
+                      ( Ctor Nothing SumType
+                        ( ModuleName "Data.Ordering" )
+                        ( TyName "Ordering" )
+                        ( CtorName "GT" ) []
                       )
                     )
-                  ) ( LiteralBool Nothing True ) ( LiteralBool Nothing False ) :| []
+                  ) :| []
                 ) :| []
               )
             )
