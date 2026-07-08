@@ -91,28 +91,15 @@ M.Golden_TailRecM2Shadow_Test_sumFrom = function(dictMonadRec)
         return (function()
           local acc_S_1 = o_S_483.a
           return function(i_S_2)
-            if (function()
-              if "Data.Ordering∷Ordering.LT" == ((function()
-                if i_S_2 < n then
-                  return { ["$ctor"] = "Data.Ordering∷Ordering.LT" }
-                elseif i_S_2 == n then
-                  return { ["$ctor"] = "Data.Ordering∷Ordering.EQ" }
-                else
-                  return { ["$ctor"] = "Data.Ordering∷Ordering.GT" }
-                end
-              end)())["$ctor"] then
-                return false
+            if "Data.Ordering∷Ordering.LT" == ((function()
+              if i_S_2 < n then
+                return { ["$ctor"] = "Data.Ordering∷Ordering.LT" }
+              elseif i_S_2 == n then
+                return { ["$ctor"] = "Data.Ordering∷Ordering.EQ" }
               else
-                return true
+                return { ["$ctor"] = "Data.Ordering∷Ordering.GT" }
               end
-            end)() then
-              return pure((function(value0)
-                return {
-                  ["$ctor"] = "Control.Monad.Rec.Class∷Step.Done",
-                  value0 = value0
-                }
-              end)(acc_S_1))
-            else
+            end)())["$ctor"] then
               return pure((function(value0)
                 return {
                   ["$ctor"] = "Control.Monad.Rec.Class∷Step.Loop",
@@ -122,6 +109,13 @@ M.Golden_TailRecM2Shadow_Test_sumFrom = function(dictMonadRec)
                 a = M.Golden_TailRecM2Shadow_Test_add_S_w(acc_S_1, i_S_2),
                 b = M.Golden_TailRecM2Shadow_Test_add_S_w(i_S_2, 1)
               }))
+            else
+              return pure((function(value0)
+                return {
+                  ["$ctor"] = "Control.Monad.Rec.Class∷Step.Done",
+                  value0 = value0
+                }
+              end)(acc_S_1))
             end
           end
         end)()(o_S_483.b)

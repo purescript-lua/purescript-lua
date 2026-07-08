@@ -404,28 +404,26 @@ UberModule
                 ( Ref Nothing
                   ( Imported ( ModuleName "Golden.CharLiterals.Test" ) ( Name "show1" ) )
                 )
-                ( IfThenElse Nothing
-                  ( Eq Nothing
-                    ( LiteralString Nothing "Data.Ordering∷Ordering.LT" )
-                    ( ReflectCtor Nothing
-                      ( IfThenElse Nothing
-                        ( PrimBinOp Nothing PrimLt
-                          ( LiteralChar Nothing '\x9' )
-                          ( LiteralChar Nothing ' ' )
-                        )
-                        ( Ctor Nothing SumType
-                          ( ModuleName "Data.Ordering" )
-                          ( TyName "Ordering" )
-                          ( CtorName "LT" ) []
-                        )
-                        ( Ctor Nothing SumType
-                          ( ModuleName "Data.Ordering" )
-                          ( TyName "Ordering" )
-                          ( CtorName "GT" ) []
-                        )
+                ( Eq Nothing
+                  ( LiteralString Nothing "Data.Ordering∷Ordering.LT" )
+                  ( ReflectCtor Nothing
+                    ( IfThenElse Nothing
+                      ( PrimBinOp Nothing PrimLt
+                        ( LiteralChar Nothing '\x9' )
+                        ( LiteralChar Nothing ' ' )
+                      )
+                      ( Ctor Nothing SumType
+                        ( ModuleName "Data.Ordering" )
+                        ( TyName "Ordering" )
+                        ( CtorName "LT" ) []
+                      )
+                      ( Ctor Nothing SumType
+                        ( ModuleName "Data.Ordering" )
+                        ( TyName "Ordering" )
+                        ( CtorName "GT" ) []
                       )
                     )
-                  ) ( LiteralBool Nothing True ) ( LiteralBool Nothing False ) :| []
+                  ) :| []
                 ) :| []
               )
             )

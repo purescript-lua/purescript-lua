@@ -28,39 +28,34 @@ UberModule
           }, AbsN Nothing
           ( ParamNamed Nothing ( Name "n" ) :| [ ParamNamed Nothing ( Name "k" ) ] )
           ( IfThenElse Nothing
-            ( IfThenElse Nothing
-              ( Eq Nothing
-                ( LiteralString Nothing "Data.Ordering∷Ordering.LT" )
-                ( ReflectCtor Nothing
+            ( Eq Nothing
+              ( LiteralString Nothing "Data.Ordering∷Ordering.LT" )
+              ( ReflectCtor Nothing
+                ( IfThenElse Nothing
+                  ( PrimBinOp Nothing PrimLt
+                    ( Ref Nothing ( Local ( Name "n" ) ) )
+                    ( LiteralInt Nothing 0 )
+                  )
+                  ( Ctor Nothing SumType
+                    ( ModuleName "Data.Ordering" )
+                    ( TyName "Ordering" )
+                    ( CtorName "LT" ) []
+                  )
                   ( IfThenElse Nothing
-                    ( PrimBinOp Nothing PrimLt
-                      ( Ref Nothing ( Local ( Name "n" ) ) )
-                      ( LiteralInt Nothing 0 )
+                    ( Eq Nothing ( Ref Nothing ( Local ( Name "n" ) ) ) ( LiteralInt Nothing 0 ) )
+                    ( Ctor Nothing SumType
+                      ( ModuleName "Data.Ordering" )
+                      ( TyName "Ordering" )
+                      ( CtorName "EQ" ) []
                     )
                     ( Ctor Nothing SumType
                       ( ModuleName "Data.Ordering" )
                       ( TyName "Ordering" )
-                      ( CtorName "LT" ) []
-                    )
-                    ( IfThenElse Nothing
-                      ( Eq Nothing
-                        ( Ref Nothing ( Local ( Name "n" ) ) )
-                        ( LiteralInt Nothing 0 )
-                      )
-                      ( Ctor Nothing SumType
-                        ( ModuleName "Data.Ordering" )
-                        ( TyName "Ordering" )
-                        ( CtorName "EQ" ) []
-                      )
-                      ( Ctor Nothing SumType
-                        ( ModuleName "Data.Ordering" )
-                        ( TyName "Ordering" )
-                        ( CtorName "GT" ) []
-                      )
+                      ( CtorName "GT" ) []
                     )
                   )
                 )
-              ) ( LiteralBool Nothing True ) ( LiteralBool Nothing False )
+              )
             )
             ( AppN Nothing
               ( Ref Nothing

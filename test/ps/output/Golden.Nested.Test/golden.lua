@@ -1,7 +1,5 @@
 local M = {}
-M.Golden_Nested_Test_isZero = function(v)
-  if 0 == v then return true else return false end
-end
+M.Golden_Nested_Test_isZero = function(v) return 0 == v end
 return {
   isZero = M.Golden_Nested_Test_isZero,
   main = (function()

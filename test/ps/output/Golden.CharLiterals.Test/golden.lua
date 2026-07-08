@@ -109,17 +109,11 @@ return (function()
   local _ = Effect_Console_foreign.log(Golden_CharLiterals_Test_show("\\"))()
   local _ = Effect_Console_foreign.log(Golden_CharLiterals_Test_show("a"))()
   local _ = Effect_Console_foreign.log(Golden_CharLiterals_Test_show1(true))()
-  return Effect_Console_foreign.log(Golden_CharLiterals_Test_show1((function()
-    if "Data.Ordering∷Ordering.LT" == ((function()
-      if "\t" < "\n" then
-        return { ["$ctor"] = "Data.Ordering∷Ordering.LT" }
-      else
-        return { ["$ctor"] = "Data.Ordering∷Ordering.GT" }
-      end
-    end)())["$ctor"] then
-      return true
+  return Effect_Console_foreign.log(Golden_CharLiterals_Test_show1("Data.Ordering∷Ordering.LT" == ((function(  )
+    if "\t" < "\n" then
+      return { ["$ctor"] = "Data.Ordering∷Ordering.LT" }
     else
-      return false
+      return { ["$ctor"] = "Data.Ordering∷Ordering.GT" }
     end
-  end)()))()
+  end)())["$ctor"]))()
 end)()

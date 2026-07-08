@@ -112,21 +112,15 @@ M.Golden_FieldCaching_Test_pair = function(n)
   return Golden_FieldCaching_Test_add(Golden_FieldCaching_Test_weigh(n))(Golden_FieldCaching_Test_weigh(Golden_FieldCaching_Test_add(n)(1)))
 end
 M.Golden_FieldCaching_Test_fibby = function(n)
-  if (function()
-    if "Data.Ordering∷Ordering.LT" == ((function()
-      if n < 2 then
-        return { ["$ctor"] = "Data.Ordering∷Ordering.LT" }
-      elseif n == 2 then
-        return { ["$ctor"] = "Data.Ordering∷Ordering.EQ" }
-      else
-        return { ["$ctor"] = "Data.Ordering∷Ordering.GT" }
-      end
-    end)())["$ctor"] then
-      return true
+  if "Data.Ordering∷Ordering.LT" == ((function()
+    if n < 2 then
+      return { ["$ctor"] = "Data.Ordering∷Ordering.LT" }
+    elseif n == 2 then
+      return { ["$ctor"] = "Data.Ordering∷Ordering.EQ" }
     else
-      return false
+      return { ["$ctor"] = "Data.Ordering∷Ordering.GT" }
     end
-  end)() then
+  end)())["$ctor"] then
     return n
   else
     return M.Golden_FieldCaching_Test_add(M.Golden_FieldCaching_Test_weigh(M.Golden_FieldCaching_Test_sub_S_w(n, 1)))(M.Golden_FieldCaching_Test_weigh(M.Golden_FieldCaching_Test_sub_S_w(n, 2)))

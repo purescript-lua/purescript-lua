@@ -556,24 +556,20 @@ UberModule
           }, AbsN Nothing
           ( ParamNamed Nothing ( Name "n" ) :| [] )
           ( IfThenElse Nothing
-            ( IfThenElse Nothing
-              ( Eq Nothing
-                ( LiteralString Nothing "Data.Ordering∷Ordering.GT" )
-                ( ReflectCtor Nothing
+            ( Eq Nothing
+              ( LiteralString Nothing "Data.Ordering∷Ordering.GT" )
+              ( ReflectCtor Nothing
+                ( AppN Nothing
                   ( AppN Nothing
                     ( AppN Nothing
-                      ( AppN Nothing
-                        ( Ref Nothing ( Imported ( ModuleName "Data.Ord" ) ( Name "compare" ) ) )
-                        ( Ref Nothing
-                          ( Imported ( ModuleName "Data.Ord" ) ( Name "ordInt" ) ) :| []
-                        )
-                      )
-                      ( Ref Nothing ( Local ( Name "n" ) ) :| [] )
+                      ( Ref Nothing ( Imported ( ModuleName "Data.Ord" ) ( Name "compare" ) ) )
+                      ( Ref Nothing ( Imported ( ModuleName "Data.Ord" ) ( Name "ordInt" ) ) :| [] )
                     )
-                    ( LiteralInt Nothing 100 :| [] )
+                    ( Ref Nothing ( Local ( Name "n" ) ) :| [] )
                   )
+                  ( LiteralInt Nothing 100 :| [] )
                 )
-              ) ( LiteralBool Nothing True ) ( LiteralBool Nothing False )
+              )
             )
             ( AppN Nothing
               ( Ref Nothing
@@ -609,26 +605,21 @@ UberModule
           }, AbsN Nothing
           ( ParamNamed Nothing ( Name "n" ) :| [] )
           ( IfThenElse Nothing
-            ( IfThenElse Nothing
-              ( Eq Nothing
-                ( LiteralString Nothing "Data.Ordering∷Ordering.GT" )
-                ( ReflectCtor Nothing
+            ( Eq Nothing
+              ( LiteralString Nothing "Data.Ordering∷Ordering.GT" )
+              ( ReflectCtor Nothing
+                ( AppN Nothing
                   ( AppN Nothing
                     ( AppN Nothing
-                      ( AppN Nothing
-                        ( Ref Nothing ( Imported ( ModuleName "Data.Ord" ) ( Name "compare" ) ) )
-                        ( Ref Nothing
-                          ( Imported ( ModuleName "Data.Ord" ) ( Name "ordInt" ) ) :| []
-                        )
-                      )
-                      ( Ref Nothing ( Local ( Name "n" ) ) :| [] )
+                      ( Ref Nothing ( Imported ( ModuleName "Data.Ord" ) ( Name "compare" ) ) )
+                      ( Ref Nothing ( Imported ( ModuleName "Data.Ord" ) ( Name "ordInt" ) ) :| [] )
                     )
-                    ( LiteralInt Nothing 0 :| [] )
+                    ( Ref Nothing ( Local ( Name "n" ) ) :| [] )
                   )
+                  ( LiteralInt Nothing 0 :| [] )
                 )
-              ) ( LiteralBool Nothing False ) ( LiteralBool Nothing True )
+              )
             )
-            ( LiteralInt Nothing 0 )
             ( AppN Nothing
               ( Ref Nothing
                 ( Imported ( ModuleName "Golden.Loopification.Test" ) ( Name "countdown" ) )
@@ -640,6 +631,7 @@ UberModule
                 ( Ref Nothing ( Local ( Name "n" ) ) :| [ LiteralInt Nothing 1 ] ) :| []
               )
             )
+            ( LiteralInt Nothing 0 )
           )
         ) :| []
       ), RecursiveGroup

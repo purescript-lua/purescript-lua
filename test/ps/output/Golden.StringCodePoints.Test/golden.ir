@@ -408,7 +408,7 @@ UberModule
           ( Name "dictOrd" ) :|
           [ ParamNamed Nothing ( Name "a1" ), ParamNamed Nothing ( Name "a2" ) ]
         )
-        ( IfThenElse Nothing
+        ( PrimNot Nothing
           ( Eq Nothing
             ( LiteralString Nothing "Data.Ordering∷Ordering.LT" )
             ( ReflectCtor Nothing
@@ -423,7 +423,7 @@ UberModule
                 ( Ref Nothing ( Local ( Name "a2" ) ) :| [] )
               )
             )
-          ) ( LiteralBool Nothing False ) ( LiteralBool Nothing True )
+          )
         )
       ), Standalone
       ( QName
@@ -432,22 +432,20 @@ UberModule
           ( Name "dictOrd" ) :|
           [ ParamNamed Nothing ( Name "a1" ), ParamNamed Nothing ( Name "a2" ) ]
         )
-        ( IfThenElse Nothing
-          ( Eq Nothing
-            ( LiteralString Nothing "Data.Ordering∷Ordering.LT" )
-            ( ReflectCtor Nothing
+        ( Eq Nothing
+          ( LiteralString Nothing "Data.Ordering∷Ordering.LT" )
+          ( ReflectCtor Nothing
+            ( AppN Nothing
               ( AppN Nothing
                 ( AppN Nothing
-                  ( AppN Nothing
-                    ( Ref Nothing ( Imported ( ModuleName "Data.Ord" ) ( Name "compare" ) ) )
-                    ( Ref Nothing ( Local ( Name "dictOrd" ) ) :| [] )
-                  )
-                  ( Ref Nothing ( Local ( Name "a1" ) ) :| [] )
+                  ( Ref Nothing ( Imported ( ModuleName "Data.Ord" ) ( Name "compare" ) ) )
+                  ( Ref Nothing ( Local ( Name "dictOrd" ) ) :| [] )
                 )
-                ( Ref Nothing ( Local ( Name "a2" ) ) :| [] )
+                ( Ref Nothing ( Local ( Name "a1" ) ) :| [] )
               )
+              ( Ref Nothing ( Local ( Name "a2" ) ) :| [] )
             )
-          ) ( LiteralBool Nothing True ) ( LiteralBool Nothing False )
+          )
         )
       ), Standalone
       ( QName
@@ -457,7 +455,7 @@ UberModule
           ( Name "dictOrd" ) :|
           [ ParamNamed Nothing ( Name "a1" ), ParamNamed Nothing ( Name "a2" ) ]
         )
-        ( IfThenElse Nothing
+        ( PrimNot Nothing
           ( Eq Nothing
             ( LiteralString Nothing "Data.Ordering∷Ordering.GT" )
             ( ReflectCtor Nothing
@@ -472,7 +470,7 @@ UberModule
                 ( Ref Nothing ( Local ( Name "a2" ) ) :| [] )
               )
             )
-          ) ( LiteralBool Nothing False ) ( LiteralBool Nothing True )
+          )
         )
       ), Standalone
       ( QName
@@ -1220,37 +1218,30 @@ UberModule
                     ) :| []
                   )
                 )
-                ( IfThenElse Nothing
-                  ( Eq Nothing
-                    ( LiteralString Nothing "Data.Ordering∷Ordering.GT" )
-                    ( ReflectCtor Nothing
+                ( Eq Nothing
+                  ( LiteralString Nothing "Data.Ordering∷Ordering.GT" )
+                  ( ReflectCtor Nothing
+                    ( AppN Nothing
                       ( AppN Nothing
                         ( AppN Nothing
-                          ( AppN Nothing
-                            ( Ref Nothing
-                              ( Imported ( ModuleName "Data.Ord" ) ( Name "compare" ) )
-                            )
-                            ( Ref Nothing
-                              ( Imported ( ModuleName "Data.Ord" ) ( Name "ordInt" ) ) :| []
-                            )
-                          )
-                          ( AppN Nothing
-                            ( ObjectProp ( Just Always )
-                              ( Ref Nothing
-                                ( Imported
-                                  ( ModuleName "Data.String.CodeUnits" )
-                                  ( Name "foreign" )
-                                )
-                              )
-                              ( PropName "length" )
-                            )
-                            ( Ref Nothing ( Local ( Name "s$27" ) ) :| [] ) :| []
+                          ( Ref Nothing ( Imported ( ModuleName "Data.Ord" ) ( Name "compare" ) ) )
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Data.Ord" ) ( Name "ordInt" ) ) :| []
                           )
                         )
-                        ( LiteralInt Nothing 1 :| [] )
+                        ( AppN Nothing
+                          ( ObjectProp ( Just Always )
+                            ( Ref Nothing
+                              ( Imported ( ModuleName "Data.String.CodeUnits" ) ( Name "foreign" ) )
+                            )
+                            ( PropName "length" )
+                          )
+                          ( Ref Nothing ( Local ( Name "s$27" ) ) :| [] ) :| []
+                        )
                       )
+                      ( LiteralInt Nothing 1 :| [] )
                     )
-                  ) ( LiteralBool Nothing True ) ( LiteralBool Nothing False ) :| []
+                  ) :| []
                 )
               )
               ( Let Nothing

@@ -351,25 +351,13 @@ M.Data_Ord_ordChar = {
 }
 M.Data_Ord_compare = function(dict) return dict.compare end
 M.Data_Ord_greaterThanOrEq_S_w = function(dictOrd, a1, a2)
-  if "Data.Ordering∷Ordering.LT" == (M.Data_Ord_compare(dictOrd)(a1)(a2))["$ctor"] then
-    return false
-  else
-    return true
-  end
+  return "Data.Ordering∷Ordering.LT" ~= (M.Data_Ord_compare(dictOrd)(a1)(a2))["$ctor"]
 end
 M.Data_Ord_lessThan_S_w = function(dictOrd, a1, a2)
-  if "Data.Ordering∷Ordering.LT" == (M.Data_Ord_compare(dictOrd)(a1)(a2))["$ctor"] then
-    return true
-  else
-    return false
-  end
+  return "Data.Ordering∷Ordering.LT" == (M.Data_Ord_compare(dictOrd)(a1)(a2))["$ctor"]
 end
 M.Data_Ord_lessThanOrEq_S_w = function(dictOrd, a1, a2)
-  if "Data.Ordering∷Ordering.GT" == (M.Data_Ord_compare(dictOrd)(a1)(a2))["$ctor"] then
-    return false
-  else
-    return true
-  end
+  return "Data.Ordering∷Ordering.GT" ~= (M.Data_Ord_compare(dictOrd)(a1)(a2))["$ctor"]
 end
 M.Data_Functor_map = function(dict) return dict.map end
 M.Control_Applicative_pure = function(dict) return dict.pure end
@@ -527,13 +515,7 @@ end
 M.Data_String_CodePoints_unsafeCodePointAt0 = M.Data_String_CodePoints_foreign._unsafeCodePointAt0(function( s_S_27 )
   local Data_String_CodePoints_conj, Data_String_CodePoints_lessThanOrEq = M.Data_String_CodePoints_conj, M.Data_String_CodePoints_lessThanOrEq
   local cu0_S_28 = M.Data_String_CodePoints_fromEnum(M.Data_String_Unsafe_foreign.charAt(0)(s_S_27))
-  if Data_String_CodePoints_conj(Data_String_CodePoints_conj(Data_String_CodePoints_lessThanOrEq(55296)(cu0_S_28))(Data_String_CodePoints_lessThanOrEq(cu0_S_28)(56319)))((function(  )
-    if "Data.Ordering∷Ordering.GT" == (M.Data_Ord_compare(M.Data_Ord_ordInt)(M.Data_String_CodeUnits_foreign.length(s_S_27))(1))["$ctor"] then
-      return true
-    else
-      return false
-    end
-  end)()) then
+  if Data_String_CodePoints_conj(Data_String_CodePoints_conj(Data_String_CodePoints_lessThanOrEq(55296)(cu0_S_28))(Data_String_CodePoints_lessThanOrEq(cu0_S_28)(56319)))("Data.Ordering∷Ordering.GT" == (M.Data_Ord_compare(M.Data_Ord_ordInt)(M.Data_String_CodeUnits_foreign.length(s_S_27))(1))["$ctor"]) then
     local cu1_S_30 = M.Data_String_CodePoints_fromEnum(M.Data_String_Unsafe_foreign.charAt(1)(s_S_27))
     if Data_String_CodePoints_conj(Data_String_CodePoints_lessThanOrEq(56320)(cu1_S_30))(Data_String_CodePoints_lessThanOrEq(cu1_S_30)(57343)) then
       return M.Data_String_CodePoints_add(M.Data_String_CodePoints_add(M.Data_Semiring_semiringInt.mul(M.Data_String_CodePoints_sub(cu0_S_28)(55296))(1024))(M.Data_String_CodePoints_sub(cu1_S_30)(56320)))(65536)

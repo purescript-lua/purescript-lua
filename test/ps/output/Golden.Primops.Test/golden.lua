@@ -126,16 +126,10 @@ end
 M.Golden_Primops_Test_sumTo_S_w = function(acc, n)
   local Data_Ord_compare, Data_Ord_ordInt = M.Data_Ord_compare, M.Data_Ord_ordInt
   while true do
-    if (function()
-      if "Data.Ordering∷Ordering.GT" == (Data_Ord_compare(Data_Ord_ordInt)(n)(0))["$ctor"] then
-        return false
-      else
-        return true
-      end
-    end)() then
-      return acc
-    else
+    if "Data.Ordering∷Ordering.GT" == (Data_Ord_compare(Data_Ord_ordInt)(n)(0))["$ctor"] then
       acc, n = acc + n, n - 1
+    else
+      return acc
     end
   end
 end
@@ -149,13 +143,7 @@ return (function()
   local _ = Effect_Console_logShow_S_w({
     show = M.Data_Show_foreign.showIntImpl
   }, M.Golden_Primops_Test_sumTo_S_w(0, 5))()
-  local _ = Golden_Primops_Test_logShow((function()
-    if "Data.Ordering∷Ordering.LT" == (Data_Ord_compare(Data_Ord_ordInt)(7)(3))["$ctor"] then
-      return false
-    else
-      return true
-    end
-  end)())()
+  local _ = Golden_Primops_Test_logShow("Data.Ordering∷Ordering.LT" ~= (Data_Ord_compare(Data_Ord_ordInt)(7)(3))["$ctor"])()
   local _ = Golden_Primops_Test_logShow(M.Data_Eq_eqInt.eq(3)(3))()
   local _ = Effect_Console_logShow_S_w({
     show = function(v_S_116)

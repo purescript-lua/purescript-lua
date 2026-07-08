@@ -50,6 +50,7 @@ import Language.PureScript.Backend.IR.Types
   , literalInt
   , literalString
   , paramName
+  , primNot
   , rewriteExpBottomUpM
   , setAnn
   , substituteCopyM
@@ -383,6 +384,8 @@ optimizedExpressionM =
         `thenRewrite` removeUnreachableThenBranch
         `thenRewrite` removeUnreachableElseBranch
         `thenRewrite` removeIfWithEqualBranches
+        `thenRewrite` flipNegatedIf
+        `thenRewrite` reduceBooleanIf
         `thenRewrite` inlineLocalBindings
     )
 
@@ -501,10 +504,14 @@ foldPrimBinOp op l r = case (op, l, r) of
   isFinite ∷ Double → Bool
   isFinite d = not (isNaN d || isInfinite d)
 
--- | Fold logical @not@ over a boolean literal. See Note [IR primops].
+{- | Fold logical @not@ over a boolean literal, and eliminate a double
+negation (@not (not e)@ ⟶ @e@, sound since @e@ is a 'Bool'). See
+Note [IR primops].
+-}
 foldPrimNot ∷ Exp → Maybe Exp
 foldPrimNot = \case
   LiteralBool _ b → Just (literalBool (not b))
+  PrimNot _ e → Just e
   _ → Nothing
 
 {- | Folds a record projection into the record constructor:
@@ -703,6 +710,43 @@ removeIfWithEqualBranches e =
       -- the same value.
       | thenBranch `alphaEq` elseBranch →
           Just thenBranch
+    _ → Nothing
+
+{- | Drop a negated condition by swapping the branches:
+@if not p then a else b@ ⟶ @if p then b else a@. Runs before
+'reduceBooleanIf' so that @if not p then False else True@ normalises to
+@p@ rather than stalling at @not (not p)@. Strictly removes one 'PrimNot'
+from the condition, so it terminates. See Note [IR is assumed
+well-typed].
+-}
+flipNegatedIf ∷ Applicative m ⇒ RewriteRuleM m Ann
+flipNegatedIf =
+  pure . \case
+    IfThenElse ann (PrimNot _ cond) thenBranch elseBranch →
+      Just (IfThenElse ann cond elseBranch thenBranch)
+    _ → Nothing
+
+{- | Collapse an if whose branches are the two boolean literals to the
+condition or its negation:
+
+  * @if p then True else False@ ⟶ @p@;
+  * @if p then False else True@ ⟶ @not p@ (a 'PrimNot' — a node the IR
+    only gained with the primops of issue #178).
+
+Every 'Ord' comparison and @/=@ decays to this shape: their 'case' over
+the result compiles to a two-way boolean decision tree, so once the
+foreign comparison bodies lift to primops (#178) it is the dominant
+residual. @p@ is a 'Bool' evaluated once with pure literal branches, so
+the rewrite is semantics-preserving (see Note [IR is assumed
+well-typed]).
+-}
+reduceBooleanIf ∷ Applicative m ⇒ RewriteRuleM m Ann
+reduceBooleanIf =
+  pure . \case
+    IfThenElse _ cond (LiteralBool _ True) (LiteralBool _ False) →
+      Just cond
+    IfThenElse _ cond (LiteralBool _ False) (LiteralBool _ True) →
+      Just (primNot cond)
     _ → Nothing
 
 removeUnreachableThenBranch ∷ Applicative m ⇒ RewriteRuleM m Ann

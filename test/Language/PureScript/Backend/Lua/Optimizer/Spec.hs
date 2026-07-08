@@ -5,6 +5,7 @@ module Language.PureScript.Backend.Lua.Optimizer.Spec where
 import Language.PureScript.Backend.Lua.Name (name)
 import Language.PureScript.Backend.Lua.Optimizer
   ( foldFieldProjectionThroughScopeCall
+  , foldNotEqual
   , reduceTableDefinitionAccessor
   , rewriteExpWithRule
   )
@@ -182,3 +183,22 @@ spec = describe "Lua AST Optimizer" do
               )
       assertEqual (toString $ pShow original) expected $
         rewriteExpWithRule foldFieldProjectionThroughScopeCall original
+
+  describe "foldNotEqual" do
+    it "rewrites not (a == b) to a ~= b" do
+      let original ∷ Lua.Exp =
+            Lua.logicalNot
+              (Lua.equalTo (Lua.varName [name|a|]) (Lua.varName [name|b|]))
+      assertEqual
+        (toString $ pShow original)
+        (Lua.notEqualTo (Lua.varName [name|a|]) (Lua.varName [name|b|]))
+        $ rewriteExpWithRule foldNotEqual original
+
+    it "rewrites not (a ~= b) to a == b" do
+      let original ∷ Lua.Exp =
+            Lua.logicalNot
+              (Lua.notEqualTo (Lua.varName [name|a|]) (Lua.varName [name|b|]))
+      assertEqual
+        (toString $ pShow original)
+        (Lua.equalTo (Lua.varName [name|a|]) (Lua.varName [name|b|]))
+        $ rewriteExpWithRule foldNotEqual original

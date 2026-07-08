@@ -515,6 +515,41 @@ spec = describe "IR Optimizer" do
       let original = primBinOp PrimAdd (refLocal (Name "x")) (literalInt 1)
       optimizedExpression original `shouldBe` original
 
+  describe "simplifies boolean ifs (#178)" do
+    let cond = primBinOp PrimLt (refLocal (Name "a")) (refLocal (Name "b"))
+
+    it "reduces if p then True else False to p" do
+      optimizedExpression (ifThenElse cond (literalBool True) (literalBool False))
+        `shouldBe` cond
+
+    it "reduces if p then False else True to not p" do
+      optimizedExpression (ifThenElse cond (literalBool False) (literalBool True))
+        `shouldBe` primNot cond
+
+    it "flips a negated condition, swapping the branches" do
+      let a = refLocal (Name "a")
+          b = refLocal (Name "b")
+      optimizedExpression (ifThenElse (primNot (refLocal (Name "p"))) a b)
+        `shouldBe` ifThenElse (refLocal (Name "p")) b a
+
+    it "normalises if not p then False else True to p (flip then reduce)" do
+      optimizedExpression
+        (ifThenElse (primNot cond) (literalBool False) (literalBool True))
+        `shouldBe` cond
+
+    it "normalises if not p then True else False to not p" do
+      optimizedExpression
+        (ifThenElse (primNot cond) (literalBool True) (literalBool False))
+        `shouldBe` primNot cond
+
+    it "eliminates a double negation" do
+      optimizedExpression (primNot (primNot cond)) `shouldBe` cond
+
+    it "still collapses a literal condition through the unreachable rule" do
+      optimizedExpression
+        (ifThenElse (literalBool True) (literalBool False) (literalBool True))
+        `shouldBe` literalBool False
+
   describe "inlines expressions" do
     test "inlines literals" do
       name ← forAll Gen.name

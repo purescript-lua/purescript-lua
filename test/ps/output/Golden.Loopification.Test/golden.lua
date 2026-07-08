@@ -153,13 +153,7 @@ end
 M.Golden_Loopification_Test_mc91 = function(n)
   local Data_Ord_compare, Data_Ord_ordInt, Golden_Loopification_Test_add, Golden_Loopification_Test_mc91, Golden_Loopification_Test_sub_S_w = M.Data_Ord_compare, M.Data_Ord_ordInt, M.Golden_Loopification_Test_add, M.Golden_Loopification_Test_mc91, M.Golden_Loopification_Test_sub_S_w
   while true do
-    if (function()
-      if "Data.Ordering∷Ordering.GT" == (Data_Ord_compare(Data_Ord_ordInt)(n)(100))["$ctor"] then
-        return true
-      else
-        return false
-      end
-    end)() then
+    if "Data.Ordering∷Ordering.GT" == (Data_Ord_compare(Data_Ord_ordInt)(n)(100))["$ctor"] then
       return Golden_Loopification_Test_sub_S_w(n, 10)
     else
       n = Golden_Loopification_Test_mc91(Golden_Loopification_Test_add(n)(11))
@@ -169,16 +163,10 @@ end
 M.Golden_Loopification_Test_countdown = function(n)
   local Data_Ord_compare, Data_Ord_ordInt, Golden_Loopification_Test_sub_S_w = M.Data_Ord_compare, M.Data_Ord_ordInt, M.Golden_Loopification_Test_sub_S_w
   while true do
-    if (function()
-      if "Data.Ordering∷Ordering.GT" == (Data_Ord_compare(Data_Ord_ordInt)(n)(0))["$ctor"] then
-        return false
-      else
-        return true
-      end
-    end)() then
-      return 0
-    else
+    if "Data.Ordering∷Ordering.GT" == (Data_Ord_compare(Data_Ord_ordInt)(n)(0))["$ctor"] then
       n = Golden_Loopification_Test_sub_S_w(n, 1)
+    else
+      return 0
     end
   end
 end

@@ -318,50 +318,36 @@ UberModule
                         ( AbsN Nothing
                           ( ParamNamed Nothing ( Name "i$2" ) :| [] )
                           ( IfThenElse Nothing
-                            ( IfThenElse Nothing
-                              ( Eq Nothing
-                                ( LiteralString Nothing "Data.Ordering∷Ordering.LT" )
-                                ( ReflectCtor Nothing
+                            ( Eq Nothing
+                              ( LiteralString Nothing "Data.Ordering∷Ordering.LT" )
+                              ( ReflectCtor Nothing
+                                ( IfThenElse Nothing
+                                  ( PrimBinOp Nothing PrimLt
+                                    ( Ref Nothing ( Local ( Name "i$2" ) ) )
+                                    ( Ref Nothing ( Local ( Name "n" ) ) )
+                                  )
+                                  ( Ctor Nothing SumType
+                                    ( ModuleName "Data.Ordering" )
+                                    ( TyName "Ordering" )
+                                    ( CtorName "LT" ) []
+                                  )
                                   ( IfThenElse Nothing
-                                    ( PrimBinOp Nothing PrimLt
+                                    ( Eq Nothing
                                       ( Ref Nothing ( Local ( Name "i$2" ) ) )
                                       ( Ref Nothing ( Local ( Name "n" ) ) )
                                     )
                                     ( Ctor Nothing SumType
                                       ( ModuleName "Data.Ordering" )
                                       ( TyName "Ordering" )
-                                      ( CtorName "LT" ) []
+                                      ( CtorName "EQ" ) []
                                     )
-                                    ( IfThenElse Nothing
-                                      ( Eq Nothing
-                                        ( Ref Nothing ( Local ( Name "i$2" ) ) )
-                                        ( Ref Nothing ( Local ( Name "n" ) ) )
-                                      )
-                                      ( Ctor Nothing SumType
-                                        ( ModuleName "Data.Ordering" )
-                                        ( TyName "Ordering" )
-                                        ( CtorName "EQ" ) []
-                                      )
-                                      ( Ctor Nothing SumType
-                                        ( ModuleName "Data.Ordering" )
-                                        ( TyName "Ordering" )
-                                        ( CtorName "GT" ) []
-                                      )
+                                    ( Ctor Nothing SumType
+                                      ( ModuleName "Data.Ordering" )
+                                      ( TyName "Ordering" )
+                                      ( CtorName "GT" ) []
                                     )
                                   )
                                 )
-                              ) ( LiteralBool Nothing False ) ( LiteralBool Nothing True )
-                            )
-                            ( AppN Nothing
-                              ( Ref Nothing ( Local ( Name "pure" ) ) )
-                              ( AppN Nothing
-                                ( Ctor Nothing SumType
-                                  ( ModuleName "Control.Monad.Rec.Class" )
-                                  ( TyName "Step" )
-                                  ( CtorName "Done" )
-                                  [ FieldName "value0" ]
-                                )
-                                ( Ref Nothing ( Local ( Name "acc$1" ) ) :| [] ) :| []
                               )
                             )
                             ( AppN Nothing
@@ -401,6 +387,18 @@ UberModule
                                     )
                                   ] :| []
                                 ) :| []
+                              )
+                            )
+                            ( AppN Nothing
+                              ( Ref Nothing ( Local ( Name "pure" ) ) )
+                              ( AppN Nothing
+                                ( Ctor Nothing SumType
+                                  ( ModuleName "Control.Monad.Rec.Class" )
+                                  ( TyName "Step" )
+                                  ( CtorName "Done" )
+                                  [ FieldName "value0" ]
+                                )
+                                ( Ref Nothing ( Local ( Name "acc$1" ) ) :| [] ) :| []
                               )
                             )
                           )

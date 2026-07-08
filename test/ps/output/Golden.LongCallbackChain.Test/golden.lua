@@ -9,21 +9,15 @@ end
 M.Golden_LongCallbackChain_Test_withInc_S_w = function(n, k)
   local Golden_LongCallbackChain_Test_add_S_w = M.Golden_LongCallbackChain_Test_add_S_w
   while true do
-    if (function()
-      if "Data.Ordering∷Ordering.LT" == ((function()
-        if n < 0 then
-          return { ["$ctor"] = "Data.Ordering∷Ordering.LT" }
-        elseif n == 0 then
-          return { ["$ctor"] = "Data.Ordering∷Ordering.EQ" }
-        else
-          return { ["$ctor"] = "Data.Ordering∷Ordering.GT" }
-        end
-      end)())["$ctor"] then
-        return true
+    if "Data.Ordering∷Ordering.LT" == ((function()
+      if n < 0 then
+        return { ["$ctor"] = "Data.Ordering∷Ordering.LT" }
+      elseif n == 0 then
+        return { ["$ctor"] = "Data.Ordering∷Ordering.EQ" }
       else
-        return false
+        return { ["$ctor"] = "Data.Ordering∷Ordering.GT" }
       end
-    end)() then
+    end)())["$ctor"] then
       n, k = Golden_LongCallbackChain_Test_add_S_w(n, 1), k
     else
       return k(Golden_LongCallbackChain_Test_add_S_w(n, 1))
