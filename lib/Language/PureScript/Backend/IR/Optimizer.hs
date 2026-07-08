@@ -33,6 +33,7 @@ import Language.PureScript.Backend.IR.Types
   , Exp
   , Grouping (..)
   , Parameter (..)
+  , PrimOp (..)
   , RawExp (..)
   , RewriteRuleM
   , WasRewritten (..)
@@ -45,6 +46,9 @@ import Language.PureScript.Backend.IR.Types
   , isNonRecursiveLiteral
   , lets
   , literalBool
+  , literalFloat
+  , literalInt
+  , literalString
   , paramName
   , rewriteExpBottomUpM
   , setAnn
@@ -407,7 +411,101 @@ constantFolding =
       Just $ literalBool $ a == b
     Eq _ (LiteralString _ a) (LiteralString _ b) →
       Just $ literalBool $ a == b
+    -- See Note [IR primops] and Note [Folding primops follows Lua 5.1]
+    PrimBinOp _ op a b → foldPrimBinOp op a b
+    PrimNot _ a → foldPrimNot a
     _ → Nothing
+
+{- Note [Folding primops follows Lua 5.1]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The primop folds must reproduce the /target/ semantics (Lua 5.1, where
+every number is an IEEE double), not the host's, or a folded literal
+would evaluate differently from the code it replaced (see Note [IR
+primops]). The per-operator caveats:
+
+  * Integer @+@/@-@/@*@ fold with exact integer arithmetic, but only
+    while every operand and the result stay within ±2^53. Past that a
+    Lua double cannot represent consecutive integers, so the exact
+    compile-time value and the runtime double value could disagree; the
+    fold bails rather than argue with the printer over literal forms.
+  * Integer @%@ is @a - floor(a/b)*b@ in Lua 5.1 — its sign follows the
+    divisor, which coincides with Haskell's 'mod' (not 'rem', and not
+    C's @%@). Undefined at @b == 0@ (the runtime yields NaN), left to the
+    runtime.
+  * Float @+@/@-@/@*@//@/@ fold in double semantics, but only to a
+    /finite/ result: Lua has no inf/nan numeric literal (the printer
+    emits @math.huge@ / @(0/0)@ expressions), so @1.0 / 0.0@ is left to
+    the runtime rather than folded to a non-literal shape.
+  * @..@ folds string with string only. Lua coerces a number operand on
+    concat with a version- and build-dependent format, so a number is
+    never reproduced at compile time.
+  * Comparisons fold on two numbers (int or finite float); strings and
+    chars are left alone, because Lua orders strings by bytes while the
+    IR literal carries semantic 'Text'.
+  * @and@/@or@ fold when both operands are boolean, and additionally
+    collapse a known-boolean first operand (@true and b == b@,
+    @false or b == b@, and the two annihilators): sound because Lua
+    @and@/@or@ short-circuit, so dropping the second operand is exactly
+    what the runtime does.
+-}
+
+-- | The IEEE-double exactness ceiling; integer folds bail beyond it.
+maxSafeInteger ∷ Integer
+maxSafeInteger = 2 ^ (53 ∷ Int)
+
+{- | Fold a binary primop over literal operands, or 'Nothing' when a
+rule declines. See Note [Folding primops follows Lua 5.1].
+-}
+foldPrimBinOp ∷ PrimOp → Exp → Exp → Maybe Exp
+foldPrimBinOp op l r = case (op, l, r) of
+  (PrimAdd, LiteralInt _ a, LiteralInt _ b) → intFold a b (a + b)
+  (PrimSub, LiteralInt _ a, LiteralInt _ b) → intFold a b (a - b)
+  (PrimMul, LiteralInt _ a, LiteralInt _ b) → intFold a b (a * b)
+  (PrimMod, LiteralInt _ a, LiteralInt _ b)
+    | b /= 0 → intFold a b (a `mod` b)
+  (PrimAdd, LiteralFloat _ a, LiteralFloat _ b) → floatFold (a + b)
+  (PrimSub, LiteralFloat _ a, LiteralFloat _ b) → floatFold (a - b)
+  (PrimMul, LiteralFloat _ a, LiteralFloat _ b) → floatFold (a * b)
+  (PrimDiv, LiteralFloat _ a, LiteralFloat _ b) → floatFold (a / b)
+  (PrimConcat, LiteralString _ a, LiteralString _ b) →
+    Just (literalString (a <> b))
+  (PrimLt, _, _) → literalBool . (== LT) <$> numericCompare l r
+  (PrimLe, _, _) → literalBool . (/= GT) <$> numericCompare l r
+  (PrimGt, _, _) → literalBool . (== GT) <$> numericCompare l r
+  (PrimGe, _, _) → literalBool . (/= LT) <$> numericCompare l r
+  (PrimAnd, LiteralBool _ a, LiteralBool _ b) → Just (literalBool (a && b))
+  (PrimAnd, LiteralBool _ True, b) → Just b
+  (PrimAnd, LiteralBool _ False, _) → Just (literalBool False)
+  (PrimOr, LiteralBool _ a, LiteralBool _ b) → Just (literalBool (a || b))
+  (PrimOr, LiteralBool _ True, _) → Just (literalBool True)
+  (PrimOr, LiteralBool _ False, b) → Just b
+  _ → Nothing
+ where
+  intFold ∷ Integer → Integer → Integer → Maybe Exp
+  intFold a b result
+    | all ((<= maxSafeInteger) . abs) [a, b, result] = Just (literalInt result)
+    | otherwise = Nothing
+
+  floatFold ∷ Double → Maybe Exp
+  floatFold result
+    | isFinite result = Just (literalFloat result)
+    | otherwise = Nothing
+
+  numericCompare ∷ Exp → Exp → Maybe Ordering
+  numericCompare a b = case (a, b) of
+    (LiteralInt _ x, LiteralInt _ y) → Just (compare x y)
+    (LiteralFloat _ x, LiteralFloat _ y)
+      | isFinite x, isFinite y → Just (compare x y)
+    _ → Nothing
+
+  isFinite ∷ Double → Bool
+  isFinite d = not (isNaN d || isInfinite d)
+
+-- | Fold logical @not@ over a boolean literal. See Note [IR primops].
+foldPrimNot ∷ Exp → Maybe Exp
+foldPrimNot = \case
+  LiteralBool _ b → Just (literalBool (not b))
+  _ → Nothing
 
 {- | Folds a record projection into the record constructor:
 @{ foo: 1, bar: 2 }.foo@ becomes @1@, and a projection through a record

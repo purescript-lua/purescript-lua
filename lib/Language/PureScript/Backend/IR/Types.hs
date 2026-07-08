@@ -83,6 +83,72 @@ paramName ∷ Parameter ann → Maybe Name
 paramName (ParamUnused _ann) = Nothing
 paramName (ParamNamed _ann name) = Just name
 
+{- | A binary primitive operation, defined as the Lua operator of the same
+name so that lowering is the identity (see Note [IR primops]). Every
+operator here is binary; the sole unary primop, logical @not@, is its own
+'PrimNot' node.
+-}
+data PrimOp
+  = -- | @+@
+    PrimAdd
+  | -- | @-@
+    PrimSub
+  | -- | @*@
+    PrimMul
+  | -- | @/@ (Lua float division)
+    PrimDiv
+  | -- | @%@ (Lua 5.1 modulo, sign of the divisor)
+    PrimMod
+  | -- | @..@ (string concatenation)
+    PrimConcat
+  | -- | @<@
+    PrimLt
+  | -- | @<=@
+    PrimLe
+  | -- | @>@
+    PrimGt
+  | -- | @>=@
+    PrimGe
+  | -- | @and@
+    PrimAnd
+  | -- | @or@
+    PrimOr
+  deriving stock (Generic, Eq, Ord, Show, Enum, Bounded)
+
+{- Note [IR primops]
+~~~~~~~~~~~~~~~~~~~~~
+'PrimBinOp' and 'PrimNot' are the pure Lua scalar operators lifted into
+the IR (issue #178). Their reason to exist is that hot polymorphic code
+bottoms out in opaque curried foreigns — @intAdd@, @ordIntImpl@,
+@refEq@, @boolConj@ — that the optimizer cannot see through: to the IR a
+foreign body is text. Lifting that text's pure return-tree subset to
+these nodes (see the foreign lifter,
+"Language.PureScript.Backend.Lua.ForeignLift") lets the existing rules —
+beta reduction, case-of-known-constructor (issue #177), inlining, and
+the constant folding below — finish the specialization, collapsing a
+dictionary chain like @greaterThanOrEq(ordInt)(a)(b)@ to @not (a < b)@.
+
+Each node /is/ the corresponding Lua operator, so two directions are
+correct by construction:
+
+  * lowering ('Language.PureScript.Backend.Lua.fromIR') maps the node
+    straight onto the Lua 'Language.PureScript.Backend.Lua.Types.BinOp' /
+    'Language.PureScript.Backend.Lua.Types.UnOp' of the same name — an
+    identity;
+  * lifting maps that same Lua operator onto the node — semantics
+    preserving because it is the inverse of lowering.
+
+Equality is deliberately /not/ a primop: it already exists as the 'Eq'
+node, and the lifter maps @==@ onto it (and @~=@ onto @not (a == b)@).
+
+The correctness burden falls only on rules that /compute/ over primops —
+the constant folding in
+"Language.PureScript.Backend.IR.Optimizer" — which must follow the
+target's semantics (Lua 5.1: every number is an IEEE double), not the
+host's. See the folding rules there for the per-operator caveats
+(integer range, division by zero, the modulo sign, concat typing).
+-}
+
 data RawExp ann
   = LiteralInt ann Integer
   | LiteralFloat ann Double
@@ -94,6 +160,10 @@ data RawExp ann
   | Ctor ann AlgebraicType ModuleName TyName CtorName [FieldName]
   | ReflectCtor ann (RawExp ann)
   | Eq ann (RawExp ann) (RawExp ann)
+  | -- | See Note [IR primops]
+    PrimBinOp ann PrimOp (RawExp ann) (RawExp ann)
+  | -- | See Note [IR primops]
+    PrimNot ann (RawExp ann)
   | DataArgumentByIndex ann Natural (RawExp ann)
   | ArrayLength ann (RawExp ann)
   | ArrayIndex ann (RawExp ann) Natural
@@ -280,6 +350,8 @@ getAnn = \case
   Ctor ann _ _ _ _ _ → ann
   ReflectCtor ann _ → ann
   Eq ann _ _ → ann
+  PrimBinOp ann _ _ _ → ann
+  PrimNot ann _ → ann
   DataArgumentByIndex ann _ _ → ann
   ArrayLength ann _ → ann
   ArrayIndex ann _ _ → ann
@@ -310,6 +382,8 @@ setAnn ann = \case
     Ctor ann algTy modName tyName ctorName fields
   ReflectCtor _ e → ReflectCtor ann e
   Eq _ l r → Eq ann l r
+  PrimBinOp _ op l r → PrimBinOp ann op l r
+  PrimNot _ e → PrimNot ann e
   DataArgumentByIndex _ i e → DataArgumentByIndex ann i e
   ArrayLength _ e → ArrayLength ann e
   ArrayIndex _ e i → ArrayIndex ann e i
@@ -428,6 +502,12 @@ exception = Exception noAnn
 eq ∷ Exp → Exp → Exp
 eq = Eq noAnn
 
+primBinOp ∷ PrimOp → Exp → Exp → Exp
+primBinOp = PrimBinOp noAnn
+
+primNot ∷ Exp → Exp
+primNot = PrimNot noAnn
+
 arrayLength ∷ Exp → Exp
 arrayLength = ArrayLength noAnn
 
@@ -499,6 +579,10 @@ subexpressions go = \case
     DataArgumentByIndex ann idx <$> go a
   Eq ann a b →
     Eq ann <$> go a <*> go b
+  PrimBinOp ann op a b →
+    PrimBinOp ann op <$> go a <*> go b
+  PrimNot ann a →
+    PrimNot ann <$> go a
   ArrayLength ann a →
     ArrayLength ann <$> go a
   ArrayIndex ann a idx →
@@ -727,6 +811,13 @@ alphaEq = go 0 Map.empty Map.empty
       annL == annR && go lvl scopeL scopeR aL aR
     (Eq annL aL bL, Eq annR aR bR) →
       annL == annR && go lvl scopeL scopeR aL aR && go lvl scopeL scopeR bL bR
+    (PrimBinOp annL opL aL bL, PrimBinOp annR opR aR bR) →
+      annL == annR
+        && opL == opR
+        && go lvl scopeL scopeR aL aR
+        && go lvl scopeL scopeR bL bR
+    (PrimNot annL aL, PrimNot annR aR) →
+      annL == annR && go lvl scopeL scopeR aL aR
     (DataArgumentByIndex annL iL aL, DataArgumentByIndex annR iR aR) →
       annL == annR && iL == iR && go lvl scopeL scopeR aL aR
     (ArrayLength annL aL, ArrayLength annR aR) →
