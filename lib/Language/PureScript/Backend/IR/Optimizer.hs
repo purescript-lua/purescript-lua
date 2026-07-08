@@ -51,8 +51,7 @@ import Language.PureScript.Backend.IR.Types
   , substituteCopyM
   , substituteMoveM
   , thenRewrite
-  , pattern Abs
-  , pattern App
+  , unwindApp
   )
 import Language.PureScript.Backend.IR.Uncurry (uncurryWorkerWrapper)
 import Language.PureScript.Backend.IR.Uniquify (uniquifyNames)
@@ -487,19 +486,6 @@ reduceKnownConstructor =
       , Just arg ← viaNonEmpty head (List.genericDrop index args) →
           Just (setAnn ann arg)
     _ → Nothing
-
-{- | Peel a curried unary-application spine into its head and its
-arguments, first-applied first: @App (App f a₁) a₂@ becomes
-@(f, [a₁, a₂])@. A genuinely n-ary 'AppN' node is not a spine link and
-stays in the head — constructor applications are curried today (see
-Note [n-ary application]).
--}
-unwindApp ∷ RawExp ann → (RawExp ann, [RawExp ann])
-unwindApp = go []
- where
-  go acc = \case
-    App _ f a → go (a : acc) f
-    e → (e, acc)
 
 {- Note [Beta reduction and local inlining share an inlining guard]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -110,8 +110,8 @@ import Language.PureScript.Backend.IR.Types
   , rewrittenIf
   , setAnn
   , subexpressions
+  , unwindApp
   , pattern Abs
-  , pattern App
   )
 
 {- | Split every qualifying binding into worker and wrapper and rewrite
@@ -359,16 +359,12 @@ taken: 'AppN' argument lists are not spines (Note [n-ary application]).
 -}
 saturatedSite
   ∷ Map (Qualified Name) Int → Exp → Maybe (Qualified Name, [Exp])
-saturatedSite arities e = case unwind e [] of
+saturatedSite arities e = case unwindApp e of
   (Ref _ann q, args)
     | Just arity ← Map.lookup q arities
     , length args == arity →
         Just (q, args)
   _ → Nothing
- where
-  unwind ∷ Exp → [Exp] → (Exp, [Exp])
-  unwind (App _ann fn a) acc = unwind fn (a : acc)
-  unwind hd acc = (hd, acc)
 
 {- | Count the saturated sites of each candidate within one expression.
 Absent keys have no sites.

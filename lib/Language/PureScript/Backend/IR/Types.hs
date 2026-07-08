@@ -137,6 +137,19 @@ later alternative. Every unary rule keeps using it unchanged.
 pattern App ∷ ann → RawExp ann → RawExp ann → RawExp ann
 pattern App ann f a = AppN ann f (a :| [])
 
+{- | Peel a curried unary-'App' spine into its head and its arguments,
+first-applied first: @App (App f a₁) a₂@ becomes @(f, [a₁, a₂])@. A
+genuinely n-ary 'AppN' node is not a spine link and stays in the head
+(see Note [n-ary application]).
+-}
+unwindApp ∷ ∀ ann. RawExp ann → (RawExp ann, [RawExp ann])
+unwindApp = go []
+ where
+  go ∷ [RawExp ann] → RawExp ann → (RawExp ann, [RawExp ann])
+  go acc = \case
+    App _ f a → go (a : acc) f
+    e → (e, acc)
+
 {- Note [n-ary abstraction]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 The definition-side counterpart of Note [n-ary application].
@@ -611,6 +624,7 @@ countFreeRefs = fmap getSum . MMap.toMap . countFreeRefs' mempty
     AbsN _ann params body →
       countFreeRefs' (foldl' bindParam bound params) body
      where
+      bindParam ∷ Set Name → Parameter ann → Set Name
       bindParam names = \case
         ParamNamed _paramAnn name → Set.insert name names
         ParamUnused _paramAnn → names
@@ -856,6 +870,10 @@ freshenBinders = go Map.empty
       (renames', params') ← mapAccumM freshenParam renames params
       AbsN ann params' <$> go renames' body
      where
+      freshenParam
+        ∷ Map Name Name
+        → Parameter ann
+        → SupplyM (Map Name Name, Parameter ann)
       freshenParam rs = \case
         p@(ParamUnused _paramAnn) → pure (rs, p)
         ParamNamed paramAnn name → do
