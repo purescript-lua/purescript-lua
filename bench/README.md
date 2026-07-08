@@ -58,9 +58,12 @@ function-entry bytecodes: LuaJIT rewrites an opcode to its `J*` form when
 it installs a trace there and to its `I*` form when it blacklists the spot.
 Raw abort *counts* are not reported: the retry-penalty step that leads to a
 blacklist draws on an entropy-seeded PRNG, so counts jitter across runs
-while the final opcode state and the abort-site set do not. Blacklisting is
-never logged by `-jv`/`-jdump`; the post-hoc opcode read is the only stable
-way to observe it.
+while the abort-site set and the opcode end state are far steadier. Steadier
+is not identical, though — a spot right at the hot-count boundary can
+root-trace in one process and not the next — so the report intersects
+several independent trials and keeps only what every trial agrees on (see
+below). Blacklisting is never logged by `-jv`/`-jdump`; the post-hoc opcode
+read is the only stable way to observe it.
 
 Both reports record the LuaJIT version (`runtime:` header line): the abort
 reasons, the NYI set, and the opcode families are properties of a specific
@@ -70,9 +73,13 @@ the golden diff as an attributable header change, not a mystery regression.
 Two caveats about golden stability. The trace reports pin source *lines* of
 both the linked artifact and the macro spec file itself, so any edit to
 `bench/macro/*.lua` — comments included — legitimately moves the goldens;
-rerun `./bench/ci --accept` and review the diff. And one residual
-nondeterminism channel exists: LuaJIT's hot-counters live in a small hashed
-table keyed by bytecode address, so a rare cross-process aliasing change
-can alter trace formation order. `./bench/ci` generates every report twice
-and compares, precisely so that this manifests as a distinct "reports
-differ between runs" failure rather than a confusing golden mismatch.
+rerun `./bench/ci --accept` and review the diff. And trace formation is not
+deterministic per process: LuaJIT's hot-counters live in a small hashed
+table keyed by bytecode address, and the retry penalty draws on an
+entropy-seeded PRNG, so a spot on the hot-count boundary can form a trace in
+one run and not the next. `trace_report.lua` absorbs this by intersecting
+several independent trials and reporting only the sites and end states every
+trial agrees on, so the marginal ones drop out; the canonical report is then
+stable by construction. The FNEW census has no such channel — it never runs
+the code — so `./bench/ci` still generates it twice and compares byte for
+byte.

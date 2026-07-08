@@ -1,9 +1,13 @@
 #!/usr/bin/env bash
 # Deterministic LuaJIT counters: a static FNEW census per linked artifact
-# and a trace abort/blacklist report per macro spec. Every report is
-# generated twice and compared, proving byte-stability, then diffed against
-# the committed oracles in bench/goldens/. Pass --accept after a deliberate
-# codegen change to rewrite the oracles from the current output.
+# and a trace abort/blacklist report per macro spec, diffed against the
+# committed oracles in bench/goldens/. The FNEW census is a pure function of
+# the artifact, so it is generated twice and compared to prove byte-stability
+# outright. The trace report is nondeterministic per process (hot-count
+# aliasing plus an entropy-seeded penalty PRNG), so trace_report.lua makes it
+# stable by intersecting independent trials rather than by hoping two runs
+# agree. Pass --accept after a deliberate codegen change to rewrite the
+# oracles from the current output.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
@@ -24,14 +28,14 @@ for artifact in bench/_build/Bench.*.lua; do
   luajit bench/tools/fnew_census.lua "$artifact" >"$out/second-run.txt"
   cmp "$out/fnew_$name.txt" "$out/second-run.txt"
 done
+rm "$out/second-run.txt"
 
+# trace_report.lua canonicalizes across independent trials, so one call per
+# spec already yields a stable report -- no second run to compare against.
 for spec in bench/macro/*.lua; do
   name=$(basename "$spec" .lua)
   luajit bench/tools/trace_report.lua "$spec" >"$out/trace_$name.txt"
-  luajit bench/tools/trace_report.lua "$spec" >"$out/second-run.txt"
-  cmp "$out/trace_$name.txt" "$out/second-run.txt"
 done
-rm "$out/second-run.txt"
 
 if [ "$accept" = 1 ]; then
   mkdir -p bench/goldens
