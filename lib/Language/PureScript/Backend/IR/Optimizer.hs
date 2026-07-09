@@ -727,7 +727,15 @@ propagateKnownCtorThroughLet = \case
       ReflectCtor _ (Ref _ (Local n)) | n == name, SumType ← algTy → False
       ObjectProp _ (Ref _ (Local n)) prop
         | n == name, isJust (fieldIndex fields prop) → False
-      DataArgumentByIndex _ _ (Ref _ (Local n)) | n == name → False
+      -- An out-of-range index reads no existing field, so it is not a
+      -- foldable eliminating read: it falls through to the whole-value read
+      -- below, forcing the rule to decline (as 'reduceKnownConstructor'
+      -- does), rather than minting a fresh field-binder the argument list
+      -- cannot bind. Well-typed input never indexes past the arity; the
+      -- guard keeps the rule sound on the non-GUC / generated input
+      -- 'optimizedExpression' also runs on.
+      DataArgumentByIndex _ i (Ref _ (Local n))
+        | n == name, i < fromIntegral (length fields) → False
       Ref _ (Local n) | n == name → True
       other → any go (toListOf subexpressions other)
 

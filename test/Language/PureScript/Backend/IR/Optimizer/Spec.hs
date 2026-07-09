@@ -592,15 +592,19 @@ spec = describe "IR Optimizer" do
                     (objectProp (refLocal (Name "v")) value0)
                 )
                 (objectProp (refLocal (Name "v")) value0)
+          -- The field-binder's name is whatever the fresh-name supply draws;
+          -- compare up to alpha-equivalence so the test pins the structure --
+          -- one field-binder bound once, read twice -- not the incidental name.
           field = Name "$field0"
-      optimizedExpression original
-        `shouldBe` let1
-          field
-          nonTrivial
-          ( application
-              (application (refImported m (Name "pair")) (refLocal field))
-              (refLocal field)
-          )
+          expected =
+            let1
+              field
+              nonTrivial
+              ( application
+                  (application (refImported m (Name "pair")) (refLocal field))
+                  (refLocal field)
+              )
+      optimizedExpression original `shouldSatisfy` alphaEq expected
 
     it "declines when the binder is read as a whole value" do
       -- v flows into a function as a whole value, so it cannot be dropped
@@ -676,6 +680,30 @@ spec = describe "IR Optimizer" do
       countFreeRef (Local (Name "v")) optimized === 0
       Map.isSubmapOfBy (<=) (countFreeRefs optimized) (countFreeRefs original)
         === True
+
+    prop "declines an out-of-range field read, staying well-scoped" do
+      -- A DataArgumentByIndex past the constructor's arity reads no existing
+      -- field: folding it would mint a fresh field-binder the (saturated)
+      -- argument list cannot bind, then drop the ctor binding, stranding both.
+      -- The rule must decline and leave the term well-scoped. Well-typed CoreFn
+      -- never indexes past the arity, so the shape is fuzzed structurally --
+      -- the arity is random and the index may exceed it -- and the oracle is
+      -- well-scopedness (a stranded binder shows up as an unbound local). This
+      -- is the guard the reviewer had to point out by hand; the property now
+      -- exercises it.
+      arity ← forAll (Gen.int (Range.linear 0 3))
+      index ← forAll (Gen.integral (Range.linear 0 5))
+      let fields =
+            [FieldName (Text.pack ("value" <> show k)) | k ← [0 .. arity - 1]]
+          ctorApp =
+            foldl'
+              application
+              (ctor SumType m (TyName "T") (CtorName "K") fields)
+              (replicate arity (literalInt 1))
+          original =
+            let1 (Name "v") ctorApp $
+              dataArgumentByIndex index (refLocal (Name "v"))
+      unboundLocals (optimizedExpression original) === []
 
   -- See Note [Folding primops follows Lua 5.1] in the optimizer.
   describe "folds primops (#178)" do
