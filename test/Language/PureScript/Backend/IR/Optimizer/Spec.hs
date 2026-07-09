@@ -705,6 +705,40 @@ spec = describe "IR Optimizer" do
               dataArgumentByIndex index (refLocal (Name "v"))
       unboundLocals (optimizedExpression original) === []
 
+  describe "does not duplicate a binding a sibling grouping reads" do
+    let m = moduleNameFromString "M"
+
+    prop "keeps a non-trivial binding a later grouping's RHS references" do
+      -- Regression: 'inlineLocalBinding' counted a binder's uses in the Let
+      -- body only, missing a later grouping's RHS -- which sequential scoping
+      -- lets name an earlier binder (Note [Sequential scoping of Let
+      -- bindings]). A non-trivial binding read once in the body and once in a
+      -- sibling RHS was then inlined into the body, evaluating its RHS a second
+      -- time and duplicating any effect it performs (e.g. allocating a fresh
+      -- mutable Ref, splitting one cell into two). Only the payload is random;
+      -- the RHS is an application (never inlinable) whose free references a
+      -- second copy would multiply, so the free-reference multiset must not
+      -- grow (as with FloatIn and the #177 fold, optimization only shrinks it).
+      payload ← forAll Gen.scalarExp
+      let rhs = application (refImported m (Name "mk")) payload
+          original =
+            lets
+              ( Standalone (noAnn, Name "r", rhs)
+                  :| [ Standalone
+                         ( noAnn
+                         , Name "s"
+                         , application
+                             (refImported m (Name "use"))
+                             (refLocal (Name "r"))
+                         )
+                     ]
+              )
+              (application (refImported m (Name "consume")) (refLocal (Name "r")))
+          optimized = optimizedExpression original
+      annotateShow optimized
+      Map.isSubmapOfBy (<=) (countFreeRefs optimized) (countFreeRefs original)
+        === True
+
   -- See Note [Folding primops follows Lua 5.1] in the optimizer.
   describe "folds primops (#178)" do
     it "folds integer arithmetic exactly" do

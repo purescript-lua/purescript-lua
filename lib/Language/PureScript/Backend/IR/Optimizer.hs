@@ -954,7 +954,19 @@ removeUnreachableElseBranch e = pure case e of
 inlineLocalBindings ∷ RewriteRuleM SupplyM Ann
 inlineLocalBindings = \case
   Let ann groupings body → do
-    (body', inlined) ← foldrM inlineLocalBinding (body, Unmodified) groupings
+    -- References a binder receives from the RHSs of the Let's groupings.
+    -- Sequential scoping lets a later grouping name an earlier binder
+    -- (Note [Sequential scoping of Let bindings]), and inlining touches only
+    -- the body, so 'inlineLocalBinding' needs this to avoid pasting a second
+    -- copy of a binding a sibling still references (see there).
+    let siblingRhsRefs ∷ Qualified Name → Natural
+        siblingRhsRefs name =
+          sum
+            [ countFreeRef name rhs
+            | (_ann, _n, rhs) ← listGrouping =<< toList groupings
+            ]
+    (body', inlined) ←
+      foldrM (inlineLocalBinding siblingRhsRefs) (body, Unmodified) groupings
     pure case inlined of
       Rewritten → Just (Let ann groupings body')
       Unmodified → Nothing
@@ -978,17 +990,28 @@ a same-named reference in the RHS would be a duplicate binder upstream
 input, where the rule must decline rather than loop or capture.
 -}
 inlineLocalBinding
-  ∷ Grouping (Ann, Name, Exp)
+  ∷ (Qualified Name → Natural)
+  -- ^ Occurrences a binder receives from the Let's grouping RHSs
+  → Grouping (Ann, Name, Exp)
   → (Exp, WasRewritten)
   → SupplyM (Exp, WasRewritten)
-inlineLocalBinding grouping (body, inlined) =
+inlineLocalBinding siblingRhsRefs grouping (body, inlined) =
   case grouping of
     RecursiveGroup _grp → pure (body, inlined) -- Not inlining recursive bindings
     Standalone (_ann, Local → name, inlinee)
       | occurrences > 0
       , countFreeRef name inlinee == 0 -- no self-reference, see above
-      , -- See Note [Beta reduction and local inlining share an inlining guard]
-        isInlinableExpr inlinee || occurrences == 1 →
+      , -- See Note [Beta reduction and local inlining share an inlining guard].
+        -- A non-trivial inlinee a sibling grouping's RHS also references must
+        -- not be inlined: substitution reaches only the body, so the sibling
+        -- keeps its reference to the surviving binding, and a second copy in
+        -- the body would evaluate the RHS twice -- duplicating any effect it
+        -- performs (e.g. allocating a fresh mutable Ref, splitting one cell
+        -- into two). 'occurrences' counts only the body, so the sibling RHSs
+        -- are checked separately (own RHS contributes nothing, by the
+        -- self-reference guard above).
+        isInlinableExpr inlinee
+          || (occurrences == 1 && siblingRhsRefs name == 0) →
           -- The binding survives until DCE drops it, so the inserted copy
           -- must not reuse its binder names ('substituteCopyM').
           (,Rewritten) <$> substituteCopyM name inlinee body
