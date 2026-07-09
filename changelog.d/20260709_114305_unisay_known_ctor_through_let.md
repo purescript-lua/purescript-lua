@@ -17,5 +17,5 @@
   so it is the enabler that makes dictionary-method inlining (#180) pay off. The
   rule declines when the binder is read as a whole value, which dropping it
   would dangle and keeping it would duplicate the arguments. Standalone impact
-  is near zero, since the shape appears once #180 inlines a method, so no golden
-  moves.
+  is near zero: the shape only shows up once #180 inlines a dictionary method,
+  so on its own this pass leaves generated code essentially unchanged.
