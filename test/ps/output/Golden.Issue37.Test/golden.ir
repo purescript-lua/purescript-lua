@@ -320,23 +320,7 @@ UberModule
                                     ( Ref Nothing
                                       ( Imported ( ModuleName "Control.Bind" ) ( Name "bind" ) )
                                     )
-                                    ( AppN Nothing
-                                      ( ObjectProp Nothing
-                                        ( Ref Nothing
-                                          ( Imported
-                                            ( ModuleName "Effect" )
-                                            ( Name "monadEffect" )
-                                          )
-                                        )
-                                        ( PropName "Bind1" )
-                                      )
-                                      ( Ref Nothing
-                                        ( Imported
-                                          ( ModuleName "Prim" )
-                                          ( Name "undefined" )
-                                        ) :| []
-                                      ) :| []
-                                    )
+                                    ( Ref Nothing ( Local ( Name "Bind1$216" ) ) :| [] )
                                   )
                                   ( Ref Nothing ( Local ( Name "fn1$218" ) ) :| [] )
                                 )

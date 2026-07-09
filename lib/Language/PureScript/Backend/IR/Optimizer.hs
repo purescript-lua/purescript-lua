@@ -954,7 +954,22 @@ removeUnreachableElseBranch e = pure case e of
 inlineLocalBindings ∷ RewriteRuleM SupplyM Ann
 inlineLocalBindings = \case
   Let ann groupings body → do
-    (body', inlined) ← foldrM inlineLocalBinding (body, Unmodified) groupings
+    -- How many times each binder is referenced by the RHSs of the Let's
+    -- groupings. Sequential scoping lets a later grouping name an earlier
+    -- binder (Note [Sequential scoping of Let bindings]), and inlining touches
+    -- only the body, so 'inlineLocalBinding' consults this to avoid pasting a
+    -- second copy of a binding a sibling still references (see there). Counted
+    -- once and shared across the fold — the RHSs are invariant across it — and
+    -- lazy, so a Let whose bindings never reach the check pays nothing.
+    let rhsRefCounts ∷ Map (Qualified Name) Natural
+        rhsRefCounts =
+          Map.unionsWith
+            (+)
+            [ countFreeRefs rhs
+            | (_ann, _n, rhs) ← listGrouping =<< toList groupings
+            ]
+    (body', inlined) ←
+      foldrM (inlineLocalBinding rhsRefCounts) (body, Unmodified) groupings
     pure case inlined of
       Rewritten → Just (Let ann groupings body')
       Unmodified → Nothing
@@ -978,17 +993,29 @@ a same-named reference in the RHS would be a duplicate binder upstream
 input, where the rule must decline rather than loop or capture.
 -}
 inlineLocalBinding
-  ∷ Grouping (Ann, Name, Exp)
+  ∷ Map (Qualified Name) Natural
+  -- ^ How many times each binder is referenced by the Let's grouping RHSs
+  → Grouping (Ann, Name, Exp)
   → (Exp, WasRewritten)
   → SupplyM (Exp, WasRewritten)
-inlineLocalBinding grouping (body, inlined) =
+inlineLocalBinding rhsRefCounts grouping (body, inlined) =
   case grouping of
     RecursiveGroup _grp → pure (body, inlined) -- Not inlining recursive bindings
     Standalone (_ann, Local → name, inlinee)
       | occurrences > 0
       , countFreeRef name inlinee == 0 -- no self-reference, see above
-      , -- See Note [Beta reduction and local inlining share an inlining guard]
-        isInlinableExpr inlinee || occurrences == 1 →
+      , -- See Note [Beta reduction and local inlining share an inlining guard].
+        -- A non-trivial inlinee a sibling grouping's RHS also references must
+        -- not be inlined: substitution reaches only the body, so the sibling
+        -- keeps its reference to the surviving binding, and a second copy in
+        -- the body would evaluate the RHS twice -- duplicating any effect it
+        -- performs (e.g. allocating a fresh mutable Ref, splitting one cell
+        -- into two). 'occurrences' counts only the body, so the grouping RHSs
+        -- are checked separately: absence from 'rhsRefCounts' means no sibling
+        -- names it (the count map records no zero entries, and the binding's
+        -- own RHS is excluded by the self-reference guard above).
+        isInlinableExpr inlinee
+          || (occurrences == 1 && name `Map.notMember` rhsRefCounts) →
           -- The binding survives until DCE drops it, so the inserted copy
           -- must not reuse its binder names ('substituteCopyM').
           (,Rewritten) <$> substituteCopyM name inlinee body

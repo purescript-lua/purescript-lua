@@ -80,7 +80,7 @@ return {
             local Bind1_S_216 = M.Effect_monadEffect.Bind1()
             local discard1_S_217 = M.Golden_Issue37_Test_discard(Bind1_S_216)
             return function(fn1_S_218)
-              return M.Control_Bind_bind(M.Effect_monadEffect.Bind1())(fn1_S_218)(function(  )
+              return M.Control_Bind_bind(Bind1_S_216)(fn1_S_218)(function()
                 return discard1_S_217(fn1_S_218)(function()
                   return discard1_S_217(fn1_S_218)(function()
                     return fn1_S_218
