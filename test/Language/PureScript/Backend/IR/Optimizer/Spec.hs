@@ -431,6 +431,104 @@ spec = describe "IR Optimizer" do
           app = foldl' application (ctor SumType modName ty cn fields) args
       optimizedExpression (reflectCtor app) === literalString (ctorId modName ty cn)
 
+  describe "folds ObjectProp field reads over a known constructor (#213)" do
+    let maybeMod = moduleNameFromString "Data.Maybe"
+        maybeTy = TyName "Maybe"
+        justName = CtorName "Just"
+        justCtor = ctor SumType maybeMod maybeTy justName [FieldName "value0"]
+        just = application justCtor
+
+        tupleMod = moduleNameFromString "Data.Tuple"
+        tupleTy = TyName "Tuple"
+        tupleName = CtorName "Tuple"
+        tupleCtor =
+          ctor
+            ProductType
+            tupleMod
+            tupleTy
+            tupleName
+            [FieldName "value0", FieldName "value1"]
+        tuple a = application (application tupleCtor a)
+
+        value0 = PropName "value0"
+        value1 = PropName "value1"
+
+    it "reads a field off a saturated sum-type constructor" do
+      optimizedExpression (objectProp (just (literalInt 7)) value0)
+        `shouldBe` literalInt 7
+
+    it "reads the second field of a saturated product application" do
+      optimizedExpression
+        (objectProp (tuple (literalInt 1) (literalInt 2)) value1)
+        `shouldBe` literalInt 2
+
+    it "feeds the folded field into sibling rules in one pass" do
+      -- The read payload meets the surrounding Eq and constant folding
+      -- collapses the whole test, the same cascade the record-literal and
+      -- DataArgumentByIndex folds unlock.
+      let original = eq (objectProp (just (literalInt 1)) value0) (literalInt 1)
+      optimizedExpression original `shouldBe` literalBool True
+
+    it "declines a partially applied constructor" do
+      -- One argument against a two-field constructor: still a function, so
+      -- the field read must not fire.
+      let original = objectProp (application tupleCtor (literalInt 1)) value0
+      optimizedExpression original `shouldBe` original
+
+    it "declines when the projected field is absent" do
+      -- Unreachable for well-typed IR (value1 off a one-field constructor);
+      -- the rule must decline rather than invent a value.
+      let original = objectProp (just (literalInt 7)) value1
+      optimizedExpression original `shouldBe` original
+
+    it "drops the discarded arguments of a field read" do
+      -- Only the read field survives; the sibling is gone, not Let-bound.
+      optimizedExpression
+        (objectProp (tuple (refLocal (Name "a")) (refLocal (Name "b"))) value0)
+        `shouldBe` refLocal (Name "a")
+
+    -- A discarded field can hold a `Just Always`-annotated accessor; the
+    -- fold must take the read node's own annotation, never the argument's,
+    -- or the result becomes unconditionally inlinable and duplicates across
+    -- use sites (the leak care of reduceObjectProp).
+    let dictModule = moduleNameFromString "Dict"
+        accessor =
+          ObjectProp
+            (Just Always)
+            (refImported dictModule (Name "foreign"))
+            value0
+
+    it "does not leak the kept argument's annotation" do
+      let original = objectProp (just accessor) value0
+      getAnn (optimizedExpression original) `shouldBe` Nothing
+
+    it "keeps the read node's own annotation on the folded field" do
+      let original = ObjectProp (Just Never) (just accessor) value0
+      getAnn (optimizedExpression original) `shouldBe` Just Never
+
+    -- Randomized discard-semantics stress (the issue's explicit ask):
+    -- across arbitrary arity, algebraic type, and argument content, a
+    -- record-projection field read folds to exactly its argument with the
+    -- siblings gone (no residue).
+    let trivialArg = Gen.choice [Gen.scalarExp, refLocal <$> Gen.name]
+
+    prop "folds a saturated field read to its argument at any arity" do
+      before ← forAll (Gen.list (Range.linear 0 3) trivialArg)
+      kept ← forAll trivialArg
+      after ← forAll (Gen.list (Range.linear 0 3) trivialArg)
+      algTy ← forAll (Gen.element [SumType, ProductType])
+      modName ← forAll Gen.moduleName
+      ty ← forAll Gen.tyName
+      cn ← forAll Gen.ctorName
+      let args = before <> [kept] <> after
+          index = length before
+          fields = [FieldName ("value" <> show i) | i ← [0 .. length args - 1]]
+          app = foldl' application (ctor algTy modName ty cn fields) args
+      -- Name-based lookup, unlike the index-based DataArgumentByIndex fold:
+      -- the projection reads value<index>, the label of the kept field.
+      optimizedExpression (objectProp app (PropName ("value" <> show index)))
+        === kept
+
   -- See Note [Folding primops follows Lua 5.1] in the optimizer.
   describe "folds primops (#178)" do
     it "folds integer arithmetic exactly" do
