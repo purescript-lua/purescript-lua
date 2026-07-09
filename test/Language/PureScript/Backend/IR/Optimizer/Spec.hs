@@ -529,6 +529,182 @@ spec = describe "IR Optimizer" do
       optimizedExpression (objectProp app (PropName ("value" <> show index)))
         === kept
 
+  describe "propagates a known constructor through a let (#214)" do
+    let m = moduleNameFromString "M"
+        maybeMod = moduleNameFromString "Data.Maybe"
+        maybeTy = TyName "Maybe"
+        justName = CtorName "Just"
+        nothingName = CtorName "Nothing"
+        justCtor = ctor SumType maybeMod maybeTy justName [FieldName "value0"]
+        nothingCtor = ctor SumType maybeMod maybeTy nothingName []
+        just = application justCtor
+        justTag = ctorId maybeMod maybeTy justName
+        nothingTag = ctorId maybeMod maybeTy nothingName
+        value0 = PropName "value0"
+
+        tupleMod = moduleNameFromString "Data.Tuple"
+        tupleTy = TyName "Tuple"
+        tupleCtor =
+          ctor
+            ProductType
+            tupleMod
+            tupleTy
+            (CtorName "Tuple")
+            [FieldName "value0", FieldName "value1"]
+
+        -- An application: re-evaluating it would repeat the work, so it is
+        -- the shape the field-binder must not duplicate.
+        nonTrivial = application (refImported m (Name "g")) (literalInt 1)
+
+        here = refLocal (Name "here")
+        gone = refLocal (Name "gone")
+
+    it "folds a tag read through the let and collapses to the live branch" do
+      -- The key unlock: with the tag folded the surrounding Eq/if meets
+      -- constant folding and the unreachable-branch rules.
+      let original =
+            let1 (Name "v") nothingCtor $
+              ifThenElse
+                (eq (literalString nothingTag) (reflectCtor (refLocal (Name "v"))))
+                here
+                gone
+      optimizedExpression original `shouldBe` here
+
+    it "drops the constructor payload when only the tag is read" do
+      -- The payload is never read, so it is discarded with the binding,
+      -- the same licence the in-place fold has for a field read's siblings.
+      let original =
+            let1 (Name "v") (just nonTrivial) $
+              ifThenElse
+                (eq (literalString justTag) (reflectCtor (refLocal (Name "v"))))
+                here
+                gone
+      optimizedExpression original `shouldBe` here
+
+    it "binds a field read at several sites once (no duplication)" do
+      -- v.value0 read twice with a non-trivial argument: the argument is
+      -- bound to one field-binder read twice, never copied to each site.
+      let original =
+            let1 (Name "v") (just nonTrivial) $
+              application
+                ( application
+                    (refImported m (Name "pair"))
+                    (objectProp (refLocal (Name "v")) value0)
+                )
+                (objectProp (refLocal (Name "v")) value0)
+          -- The field-binder's name is whatever the fresh-name supply draws;
+          -- compare up to alpha-equivalence so the test pins the structure --
+          -- one field-binder bound once, read twice -- not the incidental name.
+          field = Name "$field0"
+          expected =
+            let1
+              field
+              nonTrivial
+              ( application
+                  (application (refImported m (Name "pair")) (refLocal field))
+                  (refLocal field)
+              )
+      optimizedExpression original `shouldSatisfy` alphaEq expected
+
+    it "declines when the binder is read as a whole value" do
+      -- v flows into a function as a whole value, so it cannot be dropped
+      -- (nor is it inlinable, so the binding survives untouched).
+      let original =
+            let1 (Name "v") (just (literalInt 1)) $
+              application
+                (application (refImported m (Name "pair")) (refLocal (Name "v")))
+                (refLocal (Name "v"))
+      optimizedExpression original `shouldBe` original
+
+    it "declines a partially applied constructor binding" do
+      -- Tuple has two fields; one argument leaves it a function, so the
+      -- binding is not a saturated constructor.
+      let original =
+            let1 (Name "v") (application tupleCtor (literalInt 1)) $
+              eq
+                (dataArgumentByIndex 0 (refLocal (Name "v")))
+                (dataArgumentByIndex 0 (refLocal (Name "v")))
+      optimizedExpression original `shouldBe` original
+
+    it "collapses an inlined-method match to straight-line code" do
+      -- End to end through the checked pipeline: it runs DCE (so the
+      -- field-binder inlines and the dropped binding disappears) and lints
+      -- every pass's contract, so a GUC or scoping violation from folding
+      -- through the Let would fail here rather than pass silently. 'main' is
+      -- exported twice so it is not itself inlined away, leaving its
+      -- optimized body to inspect (mirrors the leak-guard test above).
+      let mainMod = moduleNameFromString "Main"
+          body =
+            let1 (Name "v") (just (literalInt 1)) $
+              ifThenElse
+                (eq (literalString justTag) (reflectCtor (refLocal (Name "v"))))
+                ( application
+                    (refImported mainMod (Name "use"))
+                    (objectProp (refLocal (Name "v")) value0)
+                )
+                nothingCtor
+      optimized ←
+        either (fail . show) pure . optimizedUberModuleChecked $
+          Linker.UberModule
+            { uberModuleForeigns = []
+            , uberModuleBindings =
+                [Standalone (QName mainMod (Name "main"), body)]
+            , uberModuleExports =
+                [ (Name "r1", refImported mainMod (Name "main"))
+                , (Name "r2", refImported mainMod (Name "main"))
+                ]
+            }
+      let mainBody =
+            [ e
+            | Standalone (QName _ (Name "main"), e) ←
+                Linker.uberModuleBindings optimized
+            ]
+      mainBody
+        `shouldBe` [application (refImported mainMod (Name "use")) (literalInt 1)]
+
+    prop "eliminates the binding without growing the reference multiset" do
+      -- Across scalar payloads, folding drops v (proof the rule fired: with
+      -- the constructor Let-bound, nothing else can) and never invents or
+      -- multiplies a free reference.
+      payload ← forAll Gen.scalarExp
+      let original =
+            let1 (Name "v") (just payload) $
+              ifThenElse
+                (eq (literalString justTag) (reflectCtor (refLocal (Name "v"))))
+                ( application
+                    (refImported m (Name "use"))
+                    (objectProp (refLocal (Name "v")) value0)
+                )
+                gone
+          optimized = optimizedExpression original
+      countFreeRef (Local (Name "v")) optimized === 0
+      Map.isSubmapOfBy (<=) (countFreeRefs optimized) (countFreeRefs original)
+        === True
+
+    prop "declines an out-of-range field read, staying well-scoped" do
+      -- A DataArgumentByIndex past the constructor's arity reads no existing
+      -- field: folding it would mint a fresh field-binder the (saturated)
+      -- argument list cannot bind, then drop the ctor binding, stranding both.
+      -- The rule must decline and leave the term well-scoped. Well-typed CoreFn
+      -- never indexes past the arity, so the shape is fuzzed structurally --
+      -- the arity is random and the index may exceed it -- and the oracle is
+      -- well-scopedness (a stranded binder shows up as an unbound local). This
+      -- is the guard the reviewer had to point out by hand; the property now
+      -- exercises it.
+      arity ← forAll (Gen.int (Range.linear 0 3))
+      index ← forAll (Gen.integral (Range.linear 0 5))
+      let fields =
+            [FieldName (Text.pack ("value" <> show k)) | k ← [0 .. arity - 1]]
+          ctorApp =
+            foldl'
+              application
+              (ctor SumType m (TyName "T") (CtorName "K") fields)
+              (replicate arity (literalInt 1))
+          original =
+            let1 (Name "v") ctorApp $
+              dataArgumentByIndex index (refLocal (Name "v"))
+      unboundLocals (optimizedExpression original) === []
+
   -- See Note [Folding primops follows Lua 5.1] in the optimizer.
   describe "folds primops (#178)" do
     it "folds integer arithmetic exactly" do

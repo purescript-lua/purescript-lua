@@ -1,5 +1,6 @@
 module Language.PureScript.Backend.IR.Optimizer where
 
+import Control.Lens (over, toListOf)
 import Control.Monad.Writer.CPS (WriterT, runWriterT, tell)
 import Data.Foldable (foldrM)
 import Data.List qualified as List
@@ -13,7 +14,9 @@ import Language.PureScript.Backend.IR.Inliner (Annotation (..))
 import Language.PureScript.Backend.IR.Linker (UberModule (..))
 import Language.PureScript.Backend.IR.MagicDo (magicDo)
 import Language.PureScript.Backend.IR.Names
-  ( Name (..)
+  ( FieldName
+  , Name (..)
+  , PropName
   , QName
   , Qualified (Local)
   , qualifiedQName
@@ -28,7 +31,7 @@ import Language.PureScript.Backend.IR.Pass
   , runSteps
   , runStepsChecked
   )
-import Language.PureScript.Backend.IR.Supply (SupplyM, runSupply)
+import Language.PureScript.Backend.IR.Supply (SupplyM, freshName, runSupply)
 import Language.PureScript.Backend.IR.Types
   ( AlgebraicType (SumType)
   , Ann
@@ -47,6 +50,7 @@ import Language.PureScript.Backend.IR.Types
   , isForeignImport
   , isNonRecursiveLiteral
   , lets
+  , listGrouping
   , literalBool
   , literalFloat
   , literalInt
@@ -55,6 +59,7 @@ import Language.PureScript.Backend.IR.Types
   , primNot
   , rewriteExpBottomUpM
   , setAnn
+  , subexpressions
   , substituteCopyM
   , substituteMoveM
   , thenRewrite
@@ -382,6 +387,7 @@ optimizedExpressionM =
     ( constantFolding
         `thenRewrite` reduceObjectProp
         `thenRewrite` reduceKnownConstructor
+        `thenRewrite` propagateKnownCtorThroughLet
         `thenRewrite` betaReduce
         `thenRewrite` removeUnreachableThenBranch
         `thenRewrite` removeUnreachableElseBranch
@@ -606,6 +612,171 @@ reduceKnownConstructor =
             (zip (renderFieldName <$> fields) args) →
           Just (setAnn ann arg)
     _ → Nothing
+
+{- | Case-of-known-constructor through a let-bound scrutinee (issue #214).
+
+'reduceKnownConstructor' only fires on a constructor that is in place, and a
+scrutinee read more than once is never in place: 'betaReduce' Let-binds a
+non-trivial argument rather than substitute it (Note [Beta reduction and
+local inlining share an inlining guard]), and a dictionary method reads its
+scrutinee several times — a tag test, a payload read, a fallthrough tag
+test. So an inlined and beta-reduced method lands on
+
+> let v = Just (x + 1) in
+>   if justTag == ReflectCtor v then … v.value0 …
+>   else if nothingTag == ReflectCtor v then Nothing else …
+
+and nothing folds: the rules see @ReflectCtor (Ref v)@ and
+@ObjectProp (Ref v) "value0"@, never the constructor.
+
+This propagates a known constructor from a 'Standalone' Let binding into the
+binder's reads. When the RHS is a saturated 'Ctor' application and the binder
+is read /only/ through constructor-eliminating reads:
+
+  * each @ReflectCtor v@ becomes the tag string (sum types only, as in
+    'reduceKnownConstructor');
+  * each field read (@ObjectProp v "valueᵢ"@, @DataArgumentByIndex i v@)
+    becomes a fresh field-binder @fᵢ@ bound once to the iᵗʰ argument — GHC's
+    case-binder to field-binder split, so an argument read at several sites
+    is evaluated once, not duplicated (the discipline 'betaReduce' keeps);
+  * the @v@ binding is dropped, its unread arguments discarded with the same
+    licence 'reduceKnownConstructor' drops a field read's siblings.
+
+Trivial and dead field-binders then inline or DCE away, and the folded reads
+let the surrounding @Eq@ / @if@ meet 'constantFolding' and
+'removeUnreachable*', collapsing the decision tree to its live arm.
+
+The rule declines when the binder is read as a whole value — a sibling RHS,
+or a non-eliminating position such as an argument to a function. Dropping it
+would dangle the reference, and keeping it while binding the fields would
+duplicate the arguments. A product-type @ReflectCtor@ read has no tag row to
+fold to, so it too leaves a whole-value read and the rule declines. GUC keeps
+the fresh field-binders unique and the binder resolved by name.
+-}
+propagateKnownCtorThroughLet ∷ RewriteRuleM SupplyM Ann
+propagateKnownCtorThroughLet = \case
+  Let ann groupings body
+    | Just (before, (name, algTy, fields, args, tag), after) ←
+        findCtorBinding (toList groupings)
+    , all ((== 0) . countFreeRefGrouping name) (before <> after)
+    , countFreeRef (Local name) body > 0
+    , not (hasWholeValueRead name algTy fields body) → do
+        let readIndices = readFieldIndices name fields body
+        freshFields ←
+          Map.fromList
+            <$> traverse
+              (\i → (i,) <$> freshName "$field")
+              (toList readIndices)
+        let body' = foldCtorReads name algTy tag fields freshFields body
+            fieldBinds =
+              [ Standalone (Nothing, f, arg)
+              | (i, f) ← Map.toAscList freshFields
+              , Just arg ← [args !!? fromIntegral i]
+              ]
+        pure . Just $ case nonEmpty (before <> fieldBinds <> after) of
+          Nothing → body'
+          Just gs → Let ann gs body'
+  _ → pure Nothing
+ where
+  -- The first Standalone binding whose RHS is a saturated constructor
+  -- application, split out from its siblings.
+  findCtorBinding
+    ∷ [Grouping (Ann, Name, Exp)]
+    → Maybe
+        ( [Grouping (Ann, Name, Exp)]
+        , (Name, AlgebraicType, [FieldName], [Exp], Text)
+        , [Grouping (Ann, Name, Exp)]
+        )
+  findCtorBinding = go []
+   where
+    go
+      ∷ [Grouping (Ann, Name, Exp)]
+      → [Grouping (Ann, Name, Exp)]
+      → Maybe
+          ( [Grouping (Ann, Name, Exp)]
+          , (Name, AlgebraicType, [FieldName], [Exp], Text)
+          , [Grouping (Ann, Name, Exp)]
+          )
+    go _before [] = Nothing
+    go before (grouping : after) = case grouping of
+      Standalone (_bAnn, name, rhs)
+        | (Ctor _ algTy modName tyName ctorName fields, args) ← unwindApp rhs
+        , length args == length fields
+        , -- A self-referencing RHS cannot arise under GUC (a Standalone RHS
+          -- does not see its own binder), but 'optimizedExpression' also runs
+          -- on non-GUC input; dropping the binding would then dangle the
+          -- field-binder that copied the reference (cf. 'inlineLocalBinding').
+          countFreeRef (Local name) rhs == 0 →
+            Just
+              ( reverse before
+              , (name, algTy, fields, args, ctorId modName tyName ctorName)
+              , after
+              )
+      _ → go (grouping : before) after
+
+  countFreeRefGrouping ∷ Name → Grouping (Ann, Name, Exp) → Natural
+  countFreeRefGrouping name grouping =
+    sum [countFreeRef (Local name) e | (_ann, _n, e) ← listGrouping grouping]
+
+  -- True when some @Ref name@ is reached other than through a foldable
+  -- eliminating read — the residue that would dangle if the binding dropped.
+  hasWholeValueRead ∷ Name → AlgebraicType → [FieldName] → Exp → Bool
+  hasWholeValueRead name algTy fields = go
+   where
+    go = \case
+      ReflectCtor _ (Ref _ (Local n)) | n == name, SumType ← algTy → False
+      ObjectProp _ (Ref _ (Local n)) prop
+        | n == name, isJust (fieldIndex fields prop) → False
+      -- An out-of-range index reads no existing field, so it is not a
+      -- foldable eliminating read: it falls through to the whole-value read
+      -- below, forcing the rule to decline (as 'reduceKnownConstructor'
+      -- does), rather than minting a fresh field-binder the argument list
+      -- cannot bind. Well-typed input never indexes past the arity; the
+      -- guard keeps the rule sound on the non-GUC / generated input
+      -- 'optimizedExpression' also runs on.
+      DataArgumentByIndex _ i (Ref _ (Local n))
+        | n == name, i < fromIntegral (length fields) → False
+      Ref _ (Local n) | n == name → True
+      other → any go (toListOf subexpressions other)
+
+  readFieldIndices ∷ Name → [FieldName] → Exp → Set Natural
+  readFieldIndices name fields = go
+   where
+    go e = self e <> foldMap go (toListOf subexpressions e)
+    self = \case
+      ObjectProp _ (Ref _ (Local n)) prop
+        | n == name, Just i ← fieldIndex fields prop → Set.singleton i
+      DataArgumentByIndex _ i (Ref _ (Local n)) | n == name → Set.singleton i
+      _ → mempty
+
+  foldCtorReads
+    ∷ Name
+    → AlgebraicType
+    → Text
+    → [FieldName]
+    → Map Natural Name
+    → Exp
+    → Exp
+  foldCtorReads name algTy tag fields freshFields = go
+   where
+    go = \case
+      ReflectCtor rcAnn (Ref _ (Local n))
+        | n == name, SumType ← algTy → LiteralString rcAnn tag
+      ObjectProp opAnn (Ref _ (Local n)) prop
+        | n == name
+        , Just i ← fieldIndex fields prop
+        , Just f ← Map.lookup i freshFields →
+            Ref opAnn (Local f)
+      DataArgumentByIndex daAnn i (Ref _ (Local n))
+        | n == name
+        , Just f ← Map.lookup i freshFields →
+            Ref daAnn (Local f)
+      other → over subexpressions go other
+
+  fieldIndex ∷ [FieldName] → PropName → Maybe Natural
+  fieldIndex fields prop =
+    fromIntegral
+      <$> List.findIndex ((renderPropName prop ==) . renderFieldName) fields
 
 {- Note [Beta reduction and local inlining share an inlining guard]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
