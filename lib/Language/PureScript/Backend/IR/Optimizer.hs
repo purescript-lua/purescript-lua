@@ -17,6 +17,8 @@ import Language.PureScript.Backend.IR.Names
   , QName
   , Qualified (Local)
   , qualifiedQName
+  , renderFieldName
+  , renderPropName
   )
 import Language.PureScript.Backend.IR.Pass
   ( Invariant (..)
@@ -555,6 +557,11 @@ reduceObjectProp =
     'removeUnreachableThenBranch' / 'removeUnreachableElseBranch', which
     collapse the decision tree to its live branch.
   * @DataArgumentByIndex i (K a₁ … aₙ)@ — a field read — folds to @aᵢ@.
+  * @ObjectProp (K a₁ … aₙ) "valueᵢ"@ — the record-projection field read the
+    pattern matcher actually emits (issue #213) — folds to @aᵢ@. The label
+    maps to its position through the constructor's declared @[FieldName]@
+    (@value0@, @value1@, … — the row keys the Lua backend gives a @Ctor@), so
+    a projection whose label is not one of them is declined.
 
 A constructor application is the curried unary-'App' spine
 @App (… (App (Ctor …) a₁) …) aₙ@ that translation and the pattern
@@ -589,6 +596,14 @@ reduceKnownConstructor =
       | (Ctor _ _ _ _ _ fields, args) ← unwindApp scrutinee
       , length args == length fields
       , Just arg ← viaNonEmpty head (List.genericDrop index args) →
+          Just (setAnn ann arg)
+    ObjectProp ann scrutinee prop
+      | (Ctor _ _ _ _ _ fields, args) ← unwindApp scrutinee
+      , length args == length fields
+      , Just arg ←
+          List.lookup
+            (renderPropName prop)
+            (zip (renderFieldName <$> fields) args) →
           Just (setAnn ann arg)
     _ → Nothing
 
