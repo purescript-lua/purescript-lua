@@ -39,20 +39,20 @@ UberModule
               )
               ( AbsN Nothing
                 ( ParamUnused Nothing :| [] )
-                ( AppN Nothing
-                  ( Ref Nothing
-                    ( Imported ( ModuleName "Golden.RecGroupOrder.Test" ) ( Name "store" ) )
-                  )
-                  ( AbsN Nothing
-                    ( ParamUnused Nothing :| [] )
-                    ( ObjectProp Nothing
-                      ( AppN Nothing
-                        ( Ref Nothing ( Local ( Name "Lazy_record$0" ) ) )
-                        ( LiteralInt Nothing 0 :| [] )
+                ( LiteralObject Nothing
+                  [
+                    ( PropName "run", AbsN Nothing
+                      ( ParamUnused Nothing :| [] )
+                      ( ObjectProp Nothing
+                        ( AppN Nothing
+                          ( Ref Nothing ( Local ( Name "Lazy_record$0" ) ) )
+                          ( LiteralInt Nothing 0 :| [] )
+                        )
+                        ( PropName "tag" )
                       )
-                      ( PropName "tag" )
-                    ) :| []
-                  )
+                    ),
+                    ( PropName "tag", LiteralString Nothing "ok!" )
+                  ]
                 ) :| []
               )
             ) :|

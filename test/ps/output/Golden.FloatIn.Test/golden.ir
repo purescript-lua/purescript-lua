@@ -14,12 +14,6 @@ UberModule
         [ ( Nothing, Name "showIntImpl" ) ]
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Effect", qnameName = Name "foreign"
-        }, ForeignImport Nothing
-        ( ModuleName "Effect" ) ".spago/p/effect/82bac3dff904fa34534c4f5b9deeb5da359471c8/src/Effect.purs"
-        [ ( Nothing, Name "pureE" ), ( Nothing, Name "bindE" ) ]
-      ), Standalone
-      ( QName
         { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "foreign"
         }, ForeignImport Nothing
         ( ModuleName "Effect.Console" ) ".spago/p/console/f82835a0b873aafe6bd7b14dd30cc150553d4ab9/src/Effect/Console.purs"
@@ -30,278 +24,6 @@ UberModule
         }, ForeignImport Nothing
         ( ModuleName "Golden.FloatIn.Test" ) "src/Golden/FloatIn/Test.purs"
         [ ( Nothing, Name "tick" ) ]
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Data.Semiring", qnameName = Name "semiringInt"
-        }, LiteralObject Nothing
-        [
-          ( PropName "add", AbsN ( Just Always )
-            ( ParamNamed Nothing ( Name "x$192" ) :| [] )
-            ( AbsN Nothing
-              ( ParamNamed Nothing ( Name "y$193" ) :| [] )
-              ( PrimBinOp Nothing PrimAdd
-                ( Ref Nothing ( Local ( Name "x$192" ) ) )
-                ( Ref Nothing ( Local ( Name "y$193" ) ) )
-              )
-            )
-          ),
-          ( PropName "zero", LiteralInt Nothing 0 ),
-          ( PropName "mul", AbsN ( Just Always )
-            ( ParamNamed Nothing ( Name "x$190" ) :| [] )
-            ( AbsN Nothing
-              ( ParamNamed Nothing ( Name "y$191" ) :| [] )
-              ( PrimBinOp Nothing PrimMul
-                ( Ref Nothing ( Local ( Name "x$190" ) ) )
-                ( Ref Nothing ( Local ( Name "y$191" ) ) )
-              )
-            )
-          ),
-          ( PropName "one", LiteralInt Nothing 1 )
-        ]
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Control.Applicative", qnameName = Name "pure"
-        }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "dict" ) :| [] )
-        ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) ) ( PropName "pure" ) )
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Control.Bind", qnameName = Name "bind" }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "dict" ) :| [] )
-        ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) ) ( PropName "bind" ) )
-      ), RecursiveGroup
-      (
-        ( QName
-          { qnameModuleName = ModuleName "Effect", qnameName = Name "monadEffect"
-          }, LiteralObject Nothing
-          [
-            ( PropName "Applicative0", AbsN Nothing
-              ( ParamUnused Nothing :| [] )
-              ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "applicativeEffect" ) ) )
-            ),
-            ( PropName "Bind1", AbsN Nothing
-              ( ParamUnused Nothing :| [] )
-              ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "bindEffect" ) ) )
-            )
-          ]
-        ) :|
-        [
-          ( QName
-            { qnameModuleName = ModuleName "Effect", qnameName = Name "bindEffect"
-            }, LiteralObject Nothing
-            [
-              ( PropName "bind", ObjectProp ( Just Always )
-                ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "foreign" ) ) )
-                ( PropName "bindE" )
-              ),
-              ( PropName "Apply0", AbsN Nothing
-                ( ParamUnused Nothing :| [] )
-                ( AppN Nothing
-                  ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "Lazy_applyEffect" ) ) )
-                  ( LiteralInt Nothing 0 :| [] )
-                )
-              )
-            ]
-          ),
-          ( QName
-            { qnameModuleName = ModuleName "Effect", qnameName = Name "applicativeEffect"
-            }, LiteralObject Nothing
-            [
-              ( PropName "pure", ObjectProp ( Just Always )
-                ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "foreign" ) ) )
-                ( PropName "pureE" )
-              ),
-              ( PropName "Apply0", AbsN Nothing
-                ( ParamUnused Nothing :| [] )
-                ( AppN Nothing
-                  ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "Lazy_applyEffect" ) ) )
-                  ( LiteralInt Nothing 0 :| [] )
-                )
-              )
-            ]
-          ),
-          ( QName
-            { qnameModuleName = ModuleName "Effect", qnameName = Name "Lazy_functorEffect"
-            }, AppN Nothing
-            ( AppN Nothing
-              ( Ref Nothing ( Local ( Name "PSLUA_runtime_lazy" ) ) )
-              ( LiteralString Nothing "functorEffect" :| [] )
-            )
-            ( AbsN Nothing
-              ( ParamUnused Nothing :| [] )
-              ( LiteralObject Nothing
-                [
-                  ( PropName "map", AbsN Nothing
-                    ( ParamNamed Nothing ( Name "f$28" ) :| [] )
-                    ( AbsN Nothing
-                      ( ParamNamed Nothing ( Name "a$29" ) :| [] )
-                      ( AppN Nothing
-                        ( AppN Nothing
-                          ( ObjectProp Nothing
-                            ( AppN Nothing
-                              ( ObjectProp Nothing
-                                ( Ref Nothing
-                                  ( Imported ( ModuleName "Effect" ) ( Name "applicativeEffect" ) )
-                                )
-                                ( PropName "Apply0" )
-                              )
-                              ( Ref Nothing
-                                ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| []
-                              )
-                            )
-                            ( PropName "apply" )
-                          )
-                          ( AppN Nothing
-                            ( AppN Nothing
-                              ( Ref Nothing
-                                ( Imported ( ModuleName "Control.Applicative" ) ( Name "pure" ) )
-                              )
-                              ( Ref Nothing
-                                ( Imported
-                                  ( ModuleName "Effect" )
-                                  ( Name "applicativeEffect" )
-                                ) :| []
-                              )
-                            )
-                            ( Ref Nothing ( Local ( Name "f$28" ) ) :| [] ) :| []
-                          )
-                        )
-                        ( Ref Nothing ( Local ( Name "a$29" ) ) :| [] )
-                      )
-                    )
-                  )
-                ]
-              ) :| []
-            )
-          ),
-          ( QName
-            { qnameModuleName = ModuleName "Effect", qnameName = Name "Lazy_applyEffect"
-            }, AppN Nothing
-            ( AppN Nothing
-              ( Ref Nothing ( Local ( Name "PSLUA_runtime_lazy" ) ) )
-              ( LiteralString Nothing "applyEffect" :| [] )
-            )
-            ( AbsN Nothing
-              ( ParamUnused Nothing :| [] )
-              ( LiteralObject Nothing
-                [
-                  ( PropName "apply", Let Nothing
-                    ( Standalone
-                      ( Nothing, Name "bind$7", AppN Nothing
-                        ( Ref Nothing ( Imported ( ModuleName "Control.Bind" ) ( Name "bind" ) ) )
-                        ( AppN Nothing
-                          ( ObjectProp Nothing
-                            ( Ref Nothing
-                              ( Imported ( ModuleName "Effect" ) ( Name "monadEffect" ) )
-                            )
-                            ( PropName "Bind1" )
-                          )
-                          ( Ref Nothing
-                            ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| []
-                          ) :| []
-                        )
-                      ) :| []
-                    )
-                    ( AbsN Nothing
-                      ( ParamNamed Nothing ( Name "f$9" ) :| [] )
-                      ( AbsN Nothing
-                        ( ParamNamed Nothing ( Name "a$10" ) :| [] )
-                        ( AppN Nothing
-                          ( AppN Nothing
-                            ( Ref Nothing ( Local ( Name "bind$7" ) ) )
-                            ( Ref Nothing ( Local ( Name "f$9" ) ) :| [] )
-                          )
-                          ( AbsN Nothing
-                            ( ParamNamed Nothing ( Name "f'$11" ) :| [] )
-                            ( AppN Nothing
-                              ( AppN Nothing
-                                ( Ref Nothing ( Local ( Name "bind$7" ) ) )
-                                ( Ref Nothing ( Local ( Name "a$10" ) ) :| [] )
-                              )
-                              ( AbsN Nothing
-                                ( ParamNamed Nothing ( Name "a'$12" ) :| [] )
-                                ( AppN Nothing
-                                  ( AppN Nothing
-                                    ( Ref Nothing
-                                      ( Imported
-                                        ( ModuleName "Control.Applicative" )
-                                        ( Name "pure" )
-                                      )
-                                    )
-                                    ( AppN Nothing
-                                      ( ObjectProp Nothing
-                                        ( Ref Nothing
-                                          ( Imported
-                                            ( ModuleName "Effect" )
-                                            ( Name "monadEffect" )
-                                          )
-                                        )
-                                        ( PropName "Applicative0" )
-                                      )
-                                      ( Ref Nothing
-                                        ( Imported
-                                          ( ModuleName "Prim" )
-                                          ( Name "undefined" )
-                                        ) :| []
-                                      ) :| []
-                                    )
-                                  )
-                                  ( AppN Nothing
-                                    ( Ref Nothing ( Local ( Name "f'$11" ) ) )
-                                    ( Ref Nothing ( Local ( Name "a'$12" ) ) :| [] ) :| []
-                                  )
-                                ) :| []
-                              )
-                            ) :| []
-                          )
-                        )
-                      )
-                    )
-                  ),
-                  ( PropName "Functor0", AbsN Nothing
-                    ( ParamUnused Nothing :| [] )
-                    ( AppN Nothing
-                      ( Ref Nothing
-                        ( Imported ( ModuleName "Effect" ) ( Name "Lazy_functorEffect" ) )
-                      )
-                      ( LiteralInt Nothing 0 :| [] )
-                    )
-                  )
-                ]
-              ) :| []
-            )
-          )
-        ]
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Golden.FloatIn.Test", qnameName = Name "add"
-        }, ObjectProp Nothing
-        ( Ref Nothing ( Imported ( ModuleName "Data.Semiring" ) ( Name "semiringInt" ) ) )
-        ( PropName "add" )
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Golden.FloatIn.Test", qnameName = Name "discard"
-        }, AppN Nothing
-        ( Ref Nothing ( Imported ( ModuleName "Control.Bind" ) ( Name "bind" ) ) )
-        ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "bindEffect" ) ) :| [] )
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Golden.FloatIn.Test", qnameName = Name "logShow"
-        }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "a$2" ) :| [] )
-        ( AppN Nothing
-          ( ObjectProp ( Just Always )
-            ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
-            ( PropName "log" )
-          )
-          ( AppN Nothing
-            ( ObjectProp ( Just Always )
-              ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
-              ( PropName "showIntImpl" )
-            )
-            ( Ref Nothing ( Local ( Name "a$2" ) ) :| [] ) :| []
-          )
-        )
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.FloatIn.Test", qnameName = Name "pickShared$w"
@@ -325,26 +47,18 @@ UberModule
               ( Standalone
                 ( Nothing, Name "f", AbsN Nothing
                   ( ParamUnused Nothing :| [] )
-                  ( AppN Nothing
-                    ( AppN Nothing
-                      ( Ref Nothing
-                        ( Imported ( ModuleName "Golden.FloatIn.Test" ) ( Name "add" ) )
-                      )
-                      ( Ref Nothing ( Local ( Name "shared" ) ) :| [] )
-                    )
-                    ( Ref Nothing ( Local ( Name "shared" ) ) :| [] )
+                  ( PrimBinOp Nothing PrimAdd
+                    ( Ref Nothing ( Local ( Name "shared" ) ) )
+                    ( Ref Nothing ( Local ( Name "shared" ) ) )
                   )
                 ) :| []
               )
-              ( AppN Nothing
+              ( PrimBinOp Nothing PrimAdd
                 ( AppN Nothing
-                  ( Ref Nothing ( Imported ( ModuleName "Golden.FloatIn.Test" ) ( Name "add" ) ) )
-                  ( AppN Nothing
-                    ( Ref Nothing ( Local ( Name "f" ) ) )
-                    ( ObjectProp ( Just Always )
-                      ( Ref Nothing ( Imported ( ModuleName "Data.Unit" ) ( Name "foreign" ) ) )
-                      ( PropName "unit" ) :| []
-                    ) :| []
+                  ( Ref Nothing ( Local ( Name "f" ) ) )
+                  ( ObjectProp ( Just Always )
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Unit" ) ( Name "foreign" ) ) )
+                    ( PropName "unit" ) :| []
                   )
                 )
                 ( AppN Nothing
@@ -352,7 +66,7 @@ UberModule
                   ( ObjectProp ( Just Always )
                     ( Ref Nothing ( Imported ( ModuleName "Data.Unit" ) ( Name "foreign" ) ) )
                     ( PropName "unit" ) :| []
-                  ) :| []
+                  )
                 )
               )
             )
@@ -364,23 +78,12 @@ UberModule
         { qnameModuleName = ModuleName "Golden.FloatIn.Test", qnameName = Name "expensive"
         }, AbsN Nothing
         ( ParamNamed Nothing ( Name "x" ) :| [] )
-        ( AppN Nothing
-          ( AppN Nothing
-            ( Ref Nothing ( Imported ( ModuleName "Golden.FloatIn.Test" ) ( Name "add" ) ) )
-            ( AppN Nothing
-              ( AppN Nothing
-                ( ObjectProp Nothing
-                  ( Ref Nothing
-                    ( Imported ( ModuleName "Data.Semiring" ) ( Name "semiringInt" ) )
-                  )
-                  ( PropName "mul" )
-                )
-                ( Ref Nothing ( Local ( Name "x" ) ) :| [] )
-              )
-              ( Ref Nothing ( Local ( Name "x" ) ) :| [] ) :| []
-            )
+        ( PrimBinOp Nothing PrimAdd
+          ( PrimBinOp Nothing PrimMul
+            ( Ref Nothing ( Local ( Name "x" ) ) )
+            ( Ref Nothing ( Local ( Name "x" ) ) )
           )
-          ( LiteralInt Nothing 1 :| [] )
+          ( LiteralInt Nothing 1 )
         )
       ), Standalone
       ( QName
@@ -391,19 +94,17 @@ UberModule
           ( Ref Nothing ( Local ( Name "useIt" ) ) )
           ( Let Nothing
             ( Standalone
-              ( Nothing, Name "shared", AppN Nothing
-                ( Ref Nothing
-                  ( Imported ( ModuleName "Golden.FloatIn.Test" ) ( Name "expensive" ) )
+              ( Nothing, Name "shared", PrimBinOp Nothing PrimAdd
+                ( PrimBinOp Nothing PrimMul
+                  ( Ref Nothing ( Local ( Name "n" ) ) )
+                  ( Ref Nothing ( Local ( Name "n" ) ) )
                 )
-                ( Ref Nothing ( Local ( Name "n" ) ) :| [] )
+                ( LiteralInt Nothing 1 )
               ) :| []
             )
-            ( AppN Nothing
-              ( AppN Nothing
-                ( Ref Nothing ( Imported ( ModuleName "Golden.FloatIn.Test" ) ( Name "add" ) ) )
-                ( Ref Nothing ( Local ( Name "shared" ) ) :| [] )
-              )
-              ( Ref Nothing ( Local ( Name "shared" ) ) :| [] )
+            ( PrimBinOp Nothing PrimAdd
+              ( Ref Nothing ( Local ( Name "shared" ) ) )
+              ( Ref Nothing ( Local ( Name "shared" ) ) )
             )
           )
           ( LiteralInt Nothing 0 )
@@ -452,60 +153,90 @@ UberModule
           ( Standalone
             ( Nothing, Name "_", AppN Nothing
               ( AppN Nothing
-                ( Ref Nothing
-                  ( Imported ( ModuleName "Golden.FloatIn.Test" ) ( Name "logShow" ) )
+                ( ObjectProp ( Just Always )
+                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
+                  ( PropName "log" )
                 )
                 ( AppN Nothing
-                  ( Ref Nothing
-                    ( Imported ( ModuleName "Golden.FloatIn.Test" ) ( Name "pick$w" ) )
-                  )
-                  ( LiteralBool Nothing True :| [ LiteralInt Nothing 3 ] ) :| []
-                )
-              )
-              ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
-            ) :|
-            [ Standalone
-              ( Nothing, Name "_", AppN Nothing
-                ( AppN Nothing
-                  ( Ref Nothing
-                    ( Imported ( ModuleName "Golden.FloatIn.Test" ) ( Name "logShow" ) )
+                  ( ObjectProp ( Just Always )
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
+                    ( PropName "showIntImpl" )
                   )
                   ( AppN Nothing
                     ( Ref Nothing
                       ( Imported ( ModuleName "Golden.FloatIn.Test" ) ( Name "pick$w" ) )
                     )
-                    ( LiteralBool Nothing False :| [ LiteralInt Nothing 3 ] ) :| []
+                    ( LiteralBool Nothing True :| [ LiteralInt Nothing 3 ] ) :| []
+                  ) :| []
+                )
+              )
+              ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+            ) :|
+            [ Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( ObjectProp ( Just Always )
+                    ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
+                    ( PropName "log" )
+                  )
+                  ( AppN Nothing
+                    ( ObjectProp ( Just Always )
+                      ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
+                      ( PropName "showIntImpl" )
+                    )
+                    ( AppN Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Golden.FloatIn.Test" ) ( Name "pick$w" ) )
+                      )
+                      ( LiteralBool Nothing False :| [ LiteralInt Nothing 3 ] ) :| []
+                    ) :| []
                   )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
-                  ( Ref Nothing
-                    ( Imported ( ModuleName "Golden.FloatIn.Test" ) ( Name "logShow" ) )
+                  ( ObjectProp ( Just Always )
+                    ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
+                    ( PropName "log" )
                   )
                   ( AppN Nothing
-                    ( Ref Nothing
-                      ( Imported ( ModuleName "Golden.FloatIn.Test" ) ( Name "pickShared$w" ) )
+                    ( ObjectProp ( Just Always )
+                      ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
+                      ( PropName "showIntImpl" )
                     )
-                    ( LiteralBool Nothing True :| [ LiteralInt Nothing 3 ] ) :| []
+                    ( AppN Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Golden.FloatIn.Test" ) ( Name "pickShared$w" ) )
+                      )
+                      ( LiteralBool Nothing True :| [ LiteralInt Nothing 3 ] ) :| []
+                    ) :| []
                   )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               )
             ]
           )
           ( AppN Nothing
             ( AppN Nothing
-              ( Ref Nothing ( Imported ( ModuleName "Golden.FloatIn.Test" ) ( Name "logShow" ) ) )
+              ( ObjectProp ( Just Always )
+                ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
+                ( PropName "log" )
+              )
               ( AppN Nothing
-                ( Ref Nothing
-                  ( Imported ( ModuleName "Golden.FloatIn.Test" ) ( Name "pickShared$w" ) )
+                ( ObjectProp ( Just Always )
+                  ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
+                  ( PropName "showIntImpl" )
                 )
-                ( LiteralBool Nothing False :| [ LiteralInt Nothing 3 ] ) :| []
+                ( AppN Nothing
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Golden.FloatIn.Test" ) ( Name "pickShared$w" ) )
+                  )
+                  ( LiteralBool Nothing False :| [ LiteralInt Nothing 3 ] ) :| []
+                ) :| []
               )
             )
-            ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+            ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
           )
         )
       )

@@ -30,55 +30,6 @@ UberModule
         }, ForeignImport Nothing
         ( ModuleName "Effect.Console" ) ".spago/p/console/f82835a0b873aafe6bd7b14dd30cc150553d4ab9/src/Effect/Console.purs"
         [ ( Nothing, Name "log" ) ]
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Data.Semiring", qnameName = Name "semiringInt"
-        }, LiteralObject Nothing
-        [
-          ( PropName "add", AbsN ( Just Always )
-            ( ParamNamed Nothing ( Name "x$895" ) :| [] )
-            ( AbsN Nothing
-              ( ParamNamed Nothing ( Name "y$896" ) :| [] )
-              ( PrimBinOp Nothing PrimAdd
-                ( Ref Nothing ( Local ( Name "x$895" ) ) )
-                ( Ref Nothing ( Local ( Name "y$896" ) ) )
-              )
-            )
-          ),
-          ( PropName "zero", LiteralInt Nothing 0 ),
-          ( PropName "mul", AbsN ( Just Always )
-            ( ParamNamed Nothing ( Name "x$893" ) :| [] )
-            ( AbsN Nothing
-              ( ParamNamed Nothing ( Name "y$894" ) :| [] )
-              ( PrimBinOp Nothing PrimMul
-                ( Ref Nothing ( Local ( Name "x$893" ) ) )
-                ( Ref Nothing ( Local ( Name "y$894" ) ) )
-              )
-            )
-          ),
-          ( PropName "one", LiteralInt Nothing 1 )
-        ]
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Control.Apply", qnameName = Name "apply" }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "dict" ) :| [] )
-        ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) ) ( PropName "apply" ) )
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Control.Applicative", qnameName = Name "pure"
-        }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "dict" ) :| [] )
-        ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) ) ( PropName "pure" ) )
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Control.Bind", qnameName = Name "bind" }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "dict" ) :| [] )
-        ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) ) ( PropName "bind" ) )
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Data.Foldable", qnameName = Name "foldr" }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "dict" ) :| [] )
-        ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) ) ( PropName "foldr" ) )
       ), RecursiveGroup
       (
         ( QName
@@ -99,11 +50,11 @@ UberModule
                 ( ParamNamed Nothing ( Name "f$917" ) :| [] )
                 ( AppN Nothing
                   ( AppN Nothing
-                    ( AppN Nothing
-                      ( Ref Nothing ( Imported ( ModuleName "Data.Foldable" ) ( Name "foldr" ) ) )
+                    ( ObjectProp Nothing
                       ( Ref Nothing
-                        ( Imported ( ModuleName "Data.Foldable" ) ( Name "foldableArray" ) ) :| []
+                        ( Imported ( ModuleName "Data.Foldable" ) ( Name "foldableArray" ) )
                       )
+                      ( PropName "foldr" )
                     )
                     ( AbsN Nothing
                       ( ParamNamed Nothing ( Name "x$918" ) :| [] )
@@ -210,10 +161,7 @@ UberModule
                       ( ParamNamed Nothing ( Name "a$708" ) :| [] )
                       ( AppN Nothing
                         ( AppN Nothing
-                          ( AppN Nothing
-                            ( Ref Nothing
-                              ( Imported ( ModuleName "Control.Apply" ) ( Name "apply" ) )
-                            )
+                          ( ObjectProp Nothing
                             ( AppN Nothing
                               ( ObjectProp Nothing
                                 ( Ref Nothing
@@ -223,20 +171,16 @@ UberModule
                               )
                               ( Ref Nothing
                                 ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| []
-                              ) :| []
+                              )
                             )
+                            ( PropName "apply" )
                           )
                           ( AppN Nothing
-                            ( AppN Nothing
+                            ( ObjectProp Nothing
                               ( Ref Nothing
-                                ( Imported ( ModuleName "Control.Applicative" ) ( Name "pure" ) )
+                                ( Imported ( ModuleName "Effect" ) ( Name "applicativeEffect" ) )
                               )
-                              ( Ref Nothing
-                                ( Imported
-                                  ( ModuleName "Effect" )
-                                  ( Name "applicativeEffect" )
-                                ) :| []
-                              )
+                              ( PropName "pure" )
                             )
                             ( Ref Nothing ( Local ( Name "f$707" ) ) :| [] ) :| []
                           )
@@ -262,8 +206,7 @@ UberModule
                 [
                   ( PropName "apply", Let Nothing
                     ( Standalone
-                      ( Nothing, Name "bind$687", AppN Nothing
-                        ( Ref Nothing ( Imported ( ModuleName "Control.Bind" ) ( Name "bind" ) ) )
+                      ( Nothing, Name "bind$687", ObjectProp Nothing
                         ( AppN Nothing
                           ( ObjectProp Nothing
                             ( Ref Nothing
@@ -273,8 +216,9 @@ UberModule
                           )
                           ( Ref Nothing
                             ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| []
-                          ) :| []
+                          )
                         )
+                        ( PropName "bind" )
                       ) :| []
                     )
                     ( AbsN Nothing
@@ -296,13 +240,7 @@ UberModule
                               ( AbsN Nothing
                                 ( ParamNamed Nothing ( Name "a'$692" ) :| [] )
                                 ( AppN Nothing
-                                  ( AppN Nothing
-                                    ( Ref Nothing
-                                      ( Imported
-                                        ( ModuleName "Control.Applicative" )
-                                        ( Name "pure" )
-                                      )
-                                    )
+                                  ( ObjectProp Nothing
                                     ( AppN Nothing
                                       ( ObjectProp Nothing
                                         ( Ref Nothing
@@ -318,8 +256,9 @@ UberModule
                                           ( ModuleName "Prim" )
                                           ( Name "undefined" )
                                         ) :| []
-                                      ) :| []
+                                      )
                                     )
+                                    ( PropName "pure" )
                                   )
                                   ( AppN Nothing
                                     ( Ref Nothing ( Local ( Name "f'$691" ) ) )
@@ -389,13 +328,11 @@ UberModule
                 ( AppN Nothing
                   ( AppN Nothing
                     ( AppN Nothing
-                      ( AppN Nothing
+                      ( ObjectProp Nothing
                         ( Ref Nothing
-                          ( Imported ( ModuleName "Data.Foldable" ) ( Name "foldr" ) )
+                          ( Imported ( ModuleName "Data.Foldable" ) ( Name "foldableArray" ) )
                         )
-                        ( Ref Nothing
-                          ( Imported ( ModuleName "Data.Foldable" ) ( Name "foldableArray" ) ) :| []
-                        )
+                        ( PropName "foldr" )
                       )
                       ( AbsN Nothing
                         ( ParamNamed Nothing ( Name "x$940" ) :| [] )
@@ -423,11 +360,9 @@ UberModule
                                 ( ParamNamed Nothing ( Name "b$927" ) :| [] )
                                 ( AppN Nothing
                                   ( AppN Nothing
-                                    ( AppN Nothing
-                                      ( Ref Nothing
-                                        ( Imported ( ModuleName "Control.Apply" ) ( Name "apply" ) )
-                                      )
-                                      ( Ref Nothing ( Local ( Name "dictApply$925" ) ) :| [] )
+                                    ( ObjectProp Nothing
+                                      ( Ref Nothing ( Local ( Name "dictApply$925" ) ) )
+                                      ( PropName "apply" )
                                     )
                                     ( AppN Nothing
                                       ( AppN Nothing
@@ -480,13 +415,11 @@ UberModule
                       )
                     )
                     ( AppN Nothing
-                      ( AppN Nothing
+                      ( ObjectProp Nothing
                         ( Ref Nothing
-                          ( Imported ( ModuleName "Control.Applicative" ) ( Name "pure" ) )
+                          ( Imported ( ModuleName "Effect" ) ( Name "applicativeEffect" ) )
                         )
-                        ( Ref Nothing
-                          ( Imported ( ModuleName "Effect" ) ( Name "applicativeEffect" ) ) :| []
-                        )
+                        ( PropName "pure" )
                       )
                       ( ObjectProp ( Just Always )
                         ( Ref Nothing ( Imported ( ModuleName "Data.Unit" ) ( Name "foreign" ) ) )
@@ -496,7 +429,7 @@ UberModule
                   )
                   ( Ref Nothing ( Local ( Name "arr$0" ) ) :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ) :| []
             )
             ( AppN Nothing
@@ -522,44 +455,20 @@ UberModule
                           ( ParamNamed Nothing ( Name "c$372$914" ) :| [] )
                           ( AbsN Nothing
                             ( ParamUnused Nothing :| [] )
-                            ( AppN Nothing
-                              ( AppN Nothing
-                                ( ObjectProp Nothing
-                                  ( Ref Nothing
-                                    ( Imported
-                                      ( ModuleName "Data.Semiring" )
-                                      ( Name "semiringInt" )
-                                    )
-                                  )
-                                  ( PropName "add" )
-                                )
-                                ( ObjectProp Nothing
-                                  ( Ref Nothing
-                                    ( Imported
-                                      ( ModuleName "Data.Semiring" )
-                                      ( Name "semiringInt" )
-                                    )
-                                  )
-                                  ( PropName "one" ) :| []
-                                )
-                              )
-                              ( Ref Nothing ( Local ( Name "c$372$914" ) ) :| [] )
+                            ( PrimBinOp Nothing PrimAdd
+                              ( LiteralInt Nothing 1 )
+                              ( Ref Nothing ( Local ( Name "c$372$914" ) ) )
                             )
                           ) :| []
                         )
                       )
-                      ( ObjectProp Nothing
-                        ( Ref Nothing
-                          ( Imported ( ModuleName "Data.Semiring" ) ( Name "semiringInt" ) )
-                        )
-                        ( PropName "zero" ) :| []
-                      )
+                      ( LiteralInt Nothing 0 :| [] )
                     )
                     ( Ref Nothing ( Local ( Name "arr$0" ) ) :| [] )
                   ]
                 )
               )
-              ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+              ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
             )
           )
         )

@@ -1,21 +1,3 @@
-local function PSLUA_runtime_lazy(name)
-  return function(init)
-    local state = 0
-    local val = nil
-    return function()
-      if state == 2 then
-        return val
-      elseif state == 1 then
-        return error(name .. " was needed before it finished initializing")
-      else
-        state = 1
-        val = init()
-        state = 2
-        return val
-      end
-    end
-  end
-end
 local M = {}
 M.Data_Show_foreign = {
   showCharImpl = function(n)
@@ -34,86 +16,33 @@ M.Data_Show_foreign = {
     return "'" .. n .. "'"
   end
 }
-M.Effect_foreign = {
-  pureE = function(a) return function() return a end end,
-  bindE = function(a)
-    return function(f) return function() return f(a())() end end
-  end
-}
 M.Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
 }
-M.Data_Show_show = function(dict) return dict.show end
-M.Control_Applicative_pure = function(dict) return dict.pure end
-M.Control_Bind_bind = function(dict) return dict.bind end
-M.Effect_monadEffect = {
-  Applicative0 = function() return M.Effect_applicativeEffect end,
-  Bind1 = function() return M.Effect_bindEffect end
-}
-M.Effect_bindEffect = {
-  bind = M.Effect_foreign.bindE,
-  Apply0 = function() return M.Effect_Lazy_applyEffect(0) end
-}
-M.Effect_applicativeEffect = {
-  pure = M.Effect_foreign.pureE,
-  Apply0 = function() return M.Effect_Lazy_applyEffect(0) end
-}
-M.Effect_Lazy_functorEffect = PSLUA_runtime_lazy("functorEffect")(function()
-  return {
-    map = function(f_S_25)
-      return function(a_S_26)
-        local Effect_applicativeEffect = M.Effect_applicativeEffect
-        return (Effect_applicativeEffect.Apply0()).apply(M.Control_Applicative_pure(Effect_applicativeEffect)(f_S_25))(a_S_26)
-      end
-    end
-  }
-end)
-M.Effect_Lazy_applyEffect = PSLUA_runtime_lazy("applyEffect")(function()
-  return {
-    apply = (function()
-      local bind_S_4 = M.Control_Bind_bind(M.Effect_monadEffect.Bind1())
-      return function(f_S_6)
-        return function(a_S_7)
-          return bind_S_4(f_S_6)(function(fPrime_S_8)
-            return bind_S_4(a_S_7)(function(aPrime_S_9)
-              return M.Control_Applicative_pure(M.Effect_monadEffect.Applicative0())(fPrime_S_8(aPrime_S_9))
-            end)
-          end)
-        end
-      end
-    end)(),
-    Functor0 = function() return M.Effect_Lazy_functorEffect(0) end
-  }
-end)
-M.Golden_CharLiterals_Test_discard = M.Control_Bind_bind(M.Effect_bindEffect)
-M.Golden_CharLiterals_Test_show = M.Data_Show_show({
-  show = M.Data_Show_foreign.showCharImpl
-})
-M.Golden_CharLiterals_Test_show1 = M.Data_Show_show({
-  show = function(v_S_111)
-    if v_S_111 then
-      return "true"
-    elseif false == v_S_111 then
-      return "false"
-    else
-      return error("No patterns matched")
-    end
-  end
-})
+M.Golden_CharLiterals_Test_show = M.Data_Show_foreign.showCharImpl
 return (function()
-  local Effect_Console_foreign, Golden_CharLiterals_Test_show, Golden_CharLiterals_Test_show1 = M.Effect_Console_foreign, M.Golden_CharLiterals_Test_show, M.Golden_CharLiterals_Test_show1
+  local Effect_Console_foreign, Golden_CharLiterals_Test_show = M.Effect_Console_foreign, M.Golden_CharLiterals_Test_show
   local _ = Effect_Console_foreign.log(Golden_CharLiterals_Test_show("\n"))()
   local _ = Effect_Console_foreign.log(Golden_CharLiterals_Test_show("\t"))()
   local _ = Effect_Console_foreign.log(Golden_CharLiterals_Test_show("\r"))()
   local _ = Effect_Console_foreign.log(Golden_CharLiterals_Test_show("\'"))()
   local _ = Effect_Console_foreign.log(Golden_CharLiterals_Test_show("\\"))()
   local _ = Effect_Console_foreign.log(Golden_CharLiterals_Test_show("a"))()
-  local _ = Effect_Console_foreign.log(Golden_CharLiterals_Test_show1(true))()
-  return Effect_Console_foreign.log(Golden_CharLiterals_Test_show1("Data.Ordering∷Ordering.LT" == ((function(  )
-    if "\t" < "\n" then
-      return { ["$ctor"] = "Data.Ordering∷Ordering.LT" }
+  local _ = Effect_Console_foreign.log("true")()
+  return Effect_Console_foreign.log((function()
+    local v_S_111_S_230 = "Data.Ordering∷Ordering.LT" == (function()
+      if "\t" < "\n" then
+        return "Data.Ordering∷Ordering.LT"
+      else
+        return "Data.Ordering∷Ordering.GT"
+      end
+    end)()
+    if v_S_111_S_230 then
+      return "true"
+    elseif false == v_S_111_S_230 then
+      return "false"
     else
-      return { ["$ctor"] = "Data.Ordering∷Ordering.GT" }
+      return error("No patterns matched")
     end
-  end)())["$ctor"]))()
+  end)())()
 end)()

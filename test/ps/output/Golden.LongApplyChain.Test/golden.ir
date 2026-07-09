@@ -14,16 +14,6 @@ UberModule
         [ ( Nothing, Name "log" ) ]
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Data.Show", qnameName = Name "show" }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "dict" ) :| [] )
-        ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) ) ( PropName "show" ) )
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Data.Functor", qnameName = Name "map" }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "dict" ) :| [] )
-        ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) ) ( PropName "map" ) )
-      ), Standalone
-      ( QName
         { qnameModuleName = ModuleName "Data.Maybe", qnameName = Name "append$w" }, AbsN Nothing
         ( ParamNamed Nothing
           ( Name "s1$295$314" ) :|
@@ -50,114 +40,63 @@ UberModule
         [ FieldName "value0" ]
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Data.Maybe", qnameName = Name "functorMaybe"
-        }, LiteralObject Nothing
-        [
-          ( PropName "map", AbsN Nothing
-            ( ParamNamed Nothing ( Name "v" ) :| [] )
-            ( AbsN Nothing
-              ( ParamNamed Nothing ( Name "v1" ) :| [] )
-              ( IfThenElse Nothing
+        { qnameModuleName = ModuleName "Golden.LongApplyChain.Test", qnameName = Name "applySecond$w"
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "a$131" ) :| [ ParamNamed Nothing ( Name "b$132" ) ] )
+        ( AppN Nothing
+          ( Let Nothing
+            ( Standalone
+              ( Nothing, Name "v$323", IfThenElse Nothing
                 ( Eq Nothing
                   ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
-                  ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v1" ) ) ) )
+                  ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "a$131" ) ) ) )
                 )
                 ( AppN Nothing
                   ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Just" ) ) )
-                  ( AppN Nothing
-                    ( Ref Nothing ( Local ( Name "v" ) ) )
-                    ( ObjectProp Nothing
-                      ( Ref Nothing ( Local ( Name "v1" ) ) )
-                      ( PropName "value0" ) :| []
-                    ) :| []
+                  ( AbsN Nothing
+                    ( ParamNamed Nothing ( Name "x$316" ) :| [] )
+                    ( Ref Nothing ( Local ( Name "x$316" ) ) ) :| []
                   )
                 )
                 ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) )
-              )
+              ) :| []
             )
-          )
-        ]
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Data.Maybe", qnameName = Name "applyMaybe"
-        }, LiteralObject Nothing
-        [
-          ( PropName "apply", AbsN Nothing
-            ( ParamNamed Nothing ( Name "v" ) :| [] )
             ( AbsN Nothing
-              ( ParamNamed Nothing ( Name "v1" ) :| [] )
+              ( ParamNamed Nothing ( Name "v1$324" ) :| [] )
               ( IfThenElse Nothing
                 ( Eq Nothing
                   ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
-                  ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v" ) ) ) )
+                  ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v$323" ) ) ) )
                 )
-                ( AppN Nothing
+                ( IfThenElse Nothing
+                  ( Eq Nothing
+                    ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
+                    ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v1$324" ) ) ) )
+                  )
                   ( AppN Nothing
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Just" ) ) )
                     ( AppN Nothing
-                      ( Ref Nothing ( Imported ( ModuleName "Data.Functor" ) ( Name "map" ) ) )
-                      ( Ref Nothing
-                        ( Imported ( ModuleName "Data.Maybe" ) ( Name "functorMaybe" ) ) :| []
+                      ( ObjectProp Nothing
+                        ( Ref Nothing ( Local ( Name "v$323" ) ) )
+                        ( PropName "value0" )
                       )
-                    )
-                    ( ObjectProp Nothing
-                      ( Ref Nothing ( Local ( Name "v" ) ) )
-                      ( PropName "value0" ) :| []
+                      ( ObjectProp Nothing
+                        ( Ref Nothing ( Local ( Name "v1$324" ) ) )
+                        ( PropName "value0" ) :| []
+                      ) :| []
                     )
                   )
-                  ( Ref Nothing ( Local ( Name "v1" ) ) :| [] )
+                  ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) )
                 )
                 ( IfThenElse Nothing
                   ( Eq Nothing
                     ( LiteralString Nothing "Data.Maybe∷Maybe.Nothing" )
-                    ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v" ) ) ) )
+                    ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v$323" ) ) ) )
                   )
                   ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) )
                   ( Exception Nothing "No patterns matched" )
                 )
               )
-            )
-          ),
-          ( PropName "Functor0", AbsN Nothing
-            ( ParamUnused Nothing :| [] )
-            ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "functorMaybe" ) ) )
-          )
-        ]
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Golden.LongApplyChain.Test", qnameName = Name "applySecond$w"
-        }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "a$131" ) :| [ ParamNamed Nothing ( Name "b$132" ) ] )
-        ( AppN Nothing
-          ( AppN Nothing
-            ( ObjectProp Nothing
-              ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "applyMaybe" ) ) )
-              ( PropName "apply" )
-            )
-            ( AppN Nothing
-              ( AppN Nothing
-                ( AppN Nothing
-                  ( Ref Nothing ( Imported ( ModuleName "Data.Functor" ) ( Name "map" ) ) )
-                  ( AppN Nothing
-                    ( ObjectProp Nothing
-                      ( Ref Nothing
-                        ( Imported ( ModuleName "Data.Maybe" ) ( Name "applyMaybe" ) )
-                      )
-                      ( PropName "Functor0" )
-                    )
-                    ( Ref Nothing
-                      ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| []
-                    ) :| []
-                  )
-                )
-                ( AbsN Nothing
-                  ( ParamUnused Nothing :| [] )
-                  ( AbsN Nothing
-                    ( ParamNamed Nothing ( Name "x$316" ) :| [] )
-                    ( Ref Nothing ( Local ( Name "x$316" ) ) )
-                  ) :| []
-                )
-              )
-              ( Ref Nothing ( Local ( Name "a$131" ) ) :| [] ) :| []
             )
           )
           ( Ref Nothing ( Local ( Name "b$132" ) ) :| [] )
@@ -167,7 +106,7 @@ UberModule
         { qnameModuleName = ModuleName "Golden.LongApplyChain.Test", qnameName = Name "compute"
         }, Let Nothing
         ( Standalone
-          ( Nothing, Name "$tmp323", AppN Nothing
+          ( Nothing, Name "$tmp336", AppN Nothing
             ( Ref Nothing
               ( Imported ( ModuleName "Golden.LongApplyChain.Test" ) ( Name "applySecond$w" ) )
             )
@@ -777,7 +716,7 @@ UberModule
             )
           ) :|
           [ Standalone
-            ( Nothing, Name "$tmp324", AppN Nothing
+            ( Nothing, Name "$tmp337", AppN Nothing
               ( Ref Nothing
                 ( Imported ( ModuleName "Golden.LongApplyChain.Test" ) ( Name "applySecond$w" ) )
               )
@@ -1053,7 +992,7 @@ UberModule
                                                                                             )
                                                                                             ( Ref Nothing
                                                                                               ( Local
-                                                                                                ( Name "$tmp323" )
+                                                                                                ( Name "$tmp336" )
                                                                                               ) :|
                                                                                               [ AppN Nothing
                                                                                                 ( Ref Nothing
@@ -1407,7 +1346,7 @@ UberModule
                 ]
               )
             ), Standalone
-            ( Nothing, Name "$tmp325", AppN Nothing
+            ( Nothing, Name "$tmp338", AppN Nothing
               ( Ref Nothing
                 ( Imported ( ModuleName "Golden.LongApplyChain.Test" ) ( Name "applySecond$w" ) )
               )
@@ -1683,7 +1622,7 @@ UberModule
                                                                                             )
                                                                                             ( Ref Nothing
                                                                                               ( Local
-                                                                                                ( Name "$tmp324" )
+                                                                                                ( Name "$tmp337" )
                                                                                               ) :|
                                                                                               [ AppN Nothing
                                                                                                 ( Ref Nothing
@@ -2037,7 +1976,7 @@ UberModule
                 ]
               )
             ), Standalone
-            ( Nothing, Name "$tmp326", AppN Nothing
+            ( Nothing, Name "$tmp339", AppN Nothing
               ( Ref Nothing
                 ( Imported ( ModuleName "Golden.LongApplyChain.Test" ) ( Name "applySecond$w" ) )
               )
@@ -2313,7 +2252,7 @@ UberModule
                                                                                             )
                                                                                             ( Ref Nothing
                                                                                               ( Local
-                                                                                                ( Name "$tmp325" )
+                                                                                                ( Name "$tmp338" )
                                                                                               ) :|
                                                                                               [ AppN Nothing
                                                                                                 ( Ref Nothing
@@ -2667,7 +2606,7 @@ UberModule
                 ]
               )
             ), Standalone
-            ( Nothing, Name "$tmp327", AppN Nothing
+            ( Nothing, Name "$tmp340", AppN Nothing
               ( Ref Nothing
                 ( Imported ( ModuleName "Golden.LongApplyChain.Test" ) ( Name "applySecond$w" ) )
               )
@@ -2943,7 +2882,7 @@ UberModule
                                                                                             )
                                                                                             ( Ref Nothing
                                                                                               ( Local
-                                                                                                ( Name "$tmp326" )
+                                                                                                ( Name "$tmp339" )
                                                                                               ) :|
                                                                                               [ AppN Nothing
                                                                                                 ( Ref Nothing
@@ -3297,7 +3236,7 @@ UberModule
                 ]
               )
             ), Standalone
-            ( Nothing, Name "$tmp328", AppN Nothing
+            ( Nothing, Name "$tmp341", AppN Nothing
               ( Ref Nothing
                 ( Imported ( ModuleName "Golden.LongApplyChain.Test" ) ( Name "applySecond$w" ) )
               )
@@ -3573,7 +3512,7 @@ UberModule
                                                                                             )
                                                                                             ( Ref Nothing
                                                                                               ( Local
-                                                                                                ( Name "$tmp327" )
+                                                                                                ( Name "$tmp340" )
                                                                                               ) :|
                                                                                               [ AppN Nothing
                                                                                                 ( Ref Nothing
@@ -3927,7 +3866,7 @@ UberModule
                 ]
               )
             ), Standalone
-            ( Nothing, Name "$tmp329", AppN Nothing
+            ( Nothing, Name "$tmp342", AppN Nothing
               ( Ref Nothing
                 ( Imported ( ModuleName "Golden.LongApplyChain.Test" ) ( Name "applySecond$w" ) )
               )
@@ -4203,7 +4142,7 @@ UberModule
                                                                                             )
                                                                                             ( Ref Nothing
                                                                                               ( Local
-                                                                                                ( Name "$tmp328" )
+                                                                                                ( Name "$tmp341" )
                                                                                               ) :|
                                                                                               [ AppN Nothing
                                                                                                 ( Ref Nothing
@@ -4688,7 +4627,7 @@ UberModule
                                                   )
                                                 )
                                                 ( Ref Nothing
-                                                  ( Local ( Name "$tmp329" ) ) :|
+                                                  ( Local ( Name "$tmp342" ) ) :|
                                                   [ AppN Nothing
                                                     ( Ref Nothing
                                                       ( Imported
@@ -4842,65 +4781,47 @@ UberModule
           ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
           ( PropName "log" )
         )
-        ( AppN Nothing
-          ( AppN Nothing
-            ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "show" ) ) )
-            ( LiteralObject Nothing
-              [
-                ( PropName "show", AbsN Nothing
-                  ( ParamNamed Nothing ( Name "v$20$322" ) :| [] )
-                  ( IfThenElse Nothing
-                    ( Eq Nothing
-                      ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
-                      ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v$20$322" ) ) ) )
-                    )
-                    ( AppN Nothing
-                      ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "append$w" ) ) )
-                      ( LiteralString Nothing "(Just " :|
-                        [ AppN Nothing
-                          ( Ref Nothing
-                            ( Imported ( ModuleName "Data.Maybe" ) ( Name "append$w" ) )
-                          )
-                          ( AppN Nothing
-                            ( AppN Nothing
-                              ( Ref Nothing
-                                ( Imported ( ModuleName "Data.Show" ) ( Name "show" ) )
-                              )
-                              ( LiteralObject Nothing
-                                [
-                                  ( PropName "show", ObjectProp ( Just Always )
-                                    ( Ref Nothing
-                                      ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) )
-                                    )
-                                    ( PropName "showIntImpl" )
-                                  )
-                                ] :| []
-                              )
-                            )
-                            ( ObjectProp Nothing
-                              ( Ref Nothing ( Local ( Name "v$20$322" ) ) )
-                              ( PropName "value0" ) :| []
-                            ) :|
-                            [ LiteralString Nothing ")" ]
-                          )
-                        ]
-                      )
-                    )
-                    ( IfThenElse Nothing
-                      ( Eq Nothing
-                        ( LiteralString Nothing "Data.Maybe∷Maybe.Nothing" )
-                        ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v$20$322" ) ) ) )
-                      )
-                      ( LiteralString Nothing "Nothing" )
-                      ( Exception Nothing "No patterns matched" )
-                    )
-                  )
-                )
-              ] :| []
+        ( IfThenElse Nothing
+          ( Eq Nothing
+            ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
+            ( ReflectCtor Nothing
+              ( Ref Nothing
+                ( Imported ( ModuleName "Golden.LongApplyChain.Test" ) ( Name "compute" ) )
+              )
             )
           )
-          ( Ref Nothing
-            ( Imported ( ModuleName "Golden.LongApplyChain.Test" ) ( Name "compute" ) ) :| []
+          ( AppN Nothing
+            ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "append$w" ) ) )
+            ( LiteralString Nothing "(Just " :|
+              [ AppN Nothing
+                ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "append$w" ) ) )
+                ( AppN Nothing
+                  ( ObjectProp Nothing
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
+                    ( PropName "showIntImpl" )
+                  )
+                  ( ObjectProp Nothing
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Golden.LongApplyChain.Test" ) ( Name "compute" ) )
+                    )
+                    ( PropName "value0" ) :| []
+                  ) :|
+                  [ LiteralString Nothing ")" ]
+                )
+              ]
+            )
+          )
+          ( IfThenElse Nothing
+            ( Eq Nothing
+              ( LiteralString Nothing "Data.Maybe∷Maybe.Nothing" )
+              ( ReflectCtor Nothing
+                ( Ref Nothing
+                  ( Imported ( ModuleName "Golden.LongApplyChain.Test" ) ( Name "compute" ) )
+                )
+              )
+            )
+            ( LiteralString Nothing "Nothing" )
+            ( Exception Nothing "No patterns matched" )
           ) :| []
         )
       )

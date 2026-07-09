@@ -25,7 +25,8 @@ import Language.PureScript.Backend.IR.Names
   , moduleNameFromString
   )
 import Language.PureScript.Backend.IR.Optimizer
-  ( optimizeModule
+  ( CallSiteInlining (SkipCallSites)
+  , optimizeModule
   , optimizedExpression
   , optimizedUberModule
   , optimizedUberModuleChecked
@@ -705,6 +706,59 @@ spec = describe "IR Optimizer" do
               dataArgumentByIndex index (refLocal (Name "v"))
       unboundLocals (optimizedExpression original) === []
 
+    it "resolves a let-bound constructor worker reference, then folds (#180)" do
+      -- A user-written `Just x` compiles to `App (Ref Data.Maybe.Just) x`: a
+      -- reference to the top-level constructor worker, whose RHS is a bare
+      -- 'Ctor' node rather than a lambda, so 'inlineSaturatedCall' leaves it in
+      -- place (pasting it would only rebuild the same value the reference
+      -- already denotes, more deeply nested). Unless the fold resolves the
+      -- reference through the inline environment, the tag test an inlined bind
+      -- introduces never folds and the collapsed monadic chain stays a
+      -- deeply-nested if/let tree that overflows Lua's parser-nesting cap
+      -- (issue #180 -- the shape 'Golden.LongEitherBind' exercises end to end).
+      --
+      -- The worker is referenced twice (the export 'mkJust' keeps a second
+      -- use) so whole-binding inlining cannot fold it away as used-once and
+      -- hand the direct-'Ctor' path a constructor node -- which would mask the
+      -- reference resolution this test pins. Runs through the checked pipeline
+      -- (which populates the environment from the module's own bindings), with
+      -- 'main' exported twice so it is not inlined away, leaving its body to
+      -- inspect. Without the resolution the body is the whole undecided
+      -- if/let; with it, the live branch.
+      let mainMod = moduleNameFromString "Main"
+          body =
+            let1
+              (Name "v")
+              (application (refImported maybeMod (Name "Just")) (literalInt 1))
+              $ ifThenElse
+                (eq (literalString justTag) (reflectCtor (refLocal (Name "v"))))
+                ( application
+                    (refImported mainMod (Name "use"))
+                    (objectProp (refLocal (Name "v")) value0)
+                )
+                nothingCtor
+      optimized ←
+        either (fail . show) pure . optimizedUberModuleChecked $
+          Linker.UberModule
+            { uberModuleForeigns = []
+            , uberModuleBindings =
+                [ Standalone (QName maybeMod (Name "Just"), justCtor)
+                , Standalone (QName mainMod (Name "main"), body)
+                ]
+            , uberModuleExports =
+                [ (Name "r1", refImported mainMod (Name "main"))
+                , (Name "r2", refImported mainMod (Name "main"))
+                , (Name "mkJust", refImported maybeMod (Name "Just"))
+                ]
+            }
+      let mainBody =
+            [ e
+            | Standalone (QName _ (Name "main"), e) ←
+                Linker.uberModuleBindings optimized
+            ]
+      mainBody
+        `shouldBe` [application (refImported mainMod (Name "use")) (literalInt 1)]
+
   describe "does not duplicate a binding a sibling grouping reads" do
     let m = moduleNameFromString "M"
 
@@ -1156,7 +1210,7 @@ spec = describe "IR Optimizer" do
               , uberModuleExports =
                   [(Name "main", refImported main' (Name "y"))]
               }
-          optimized = fst (runSupply (optimizeModule mempty original))
+          optimized = fst (runSupply (optimizeModule SkipCallSites mempty original))
       Linker.uberModuleBindings optimized `shouldBe` []
       Linker.uberModuleExports optimized `shouldBe` [(Name "main", xExpr)]
 

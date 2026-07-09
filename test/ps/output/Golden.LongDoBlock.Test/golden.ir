@@ -2,236 +2,10 @@ UberModule
   { uberModuleBindings =
     [ Standalone
       ( QName
-        { qnameModuleName = ModuleName "Effect", qnameName = Name "foreign"
-        }, ForeignImport Nothing
-        ( ModuleName "Effect" ) ".spago/p/effect/82bac3dff904fa34534c4f5b9deeb5da359471c8/src/Effect.purs"
-        [ ( Nothing, Name "pureE" ), ( Nothing, Name "bindE" ) ]
-      ), Standalone
-      ( QName
         { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "foreign"
         }, ForeignImport Nothing
         ( ModuleName "Effect.Console" ) ".spago/p/console/f82835a0b873aafe6bd7b14dd30cc150553d4ab9/src/Effect/Console.purs"
         [ ( Nothing, Name "log" ) ]
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Control.Applicative", qnameName = Name "pure"
-        }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "dict" ) :| [] )
-        ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) ) ( PropName "pure" ) )
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Control.Bind", qnameName = Name "bind" }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "dict" ) :| [] )
-        ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) ) ( PropName "bind" ) )
-      ), RecursiveGroup
-      (
-        ( QName
-          { qnameModuleName = ModuleName "Effect", qnameName = Name "monadEffect"
-          }, LiteralObject Nothing
-          [
-            ( PropName "Applicative0", AbsN Nothing
-              ( ParamUnused Nothing :| [] )
-              ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "applicativeEffect" ) ) )
-            ),
-            ( PropName "Bind1", AbsN Nothing
-              ( ParamUnused Nothing :| [] )
-              ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "bindEffect" ) ) )
-            )
-          ]
-        ) :|
-        [
-          ( QName
-            { qnameModuleName = ModuleName "Effect", qnameName = Name "bindEffect"
-            }, LiteralObject Nothing
-            [
-              ( PropName "bind", ObjectProp ( Just Always )
-                ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "foreign" ) ) )
-                ( PropName "bindE" )
-              ),
-              ( PropName "Apply0", AbsN Nothing
-                ( ParamUnused Nothing :| [] )
-                ( AppN Nothing
-                  ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "Lazy_applyEffect" ) ) )
-                  ( LiteralInt Nothing 0 :| [] )
-                )
-              )
-            ]
-          ),
-          ( QName
-            { qnameModuleName = ModuleName "Effect", qnameName = Name "applicativeEffect"
-            }, LiteralObject Nothing
-            [
-              ( PropName "pure", ObjectProp ( Just Always )
-                ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "foreign" ) ) )
-                ( PropName "pureE" )
-              ),
-              ( PropName "Apply0", AbsN Nothing
-                ( ParamUnused Nothing :| [] )
-                ( AppN Nothing
-                  ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "Lazy_applyEffect" ) ) )
-                  ( LiteralInt Nothing 0 :| [] )
-                )
-              )
-            ]
-          ),
-          ( QName
-            { qnameModuleName = ModuleName "Effect", qnameName = Name "Lazy_functorEffect"
-            }, AppN Nothing
-            ( AppN Nothing
-              ( Ref Nothing ( Local ( Name "PSLUA_runtime_lazy" ) ) )
-              ( LiteralString Nothing "functorEffect" :| [] )
-            )
-            ( AbsN Nothing
-              ( ParamUnused Nothing :| [] )
-              ( LiteralObject Nothing
-                [
-                  ( PropName "map", AbsN Nothing
-                    ( ParamNamed Nothing ( Name "f$25" ) :| [] )
-                    ( AbsN Nothing
-                      ( ParamNamed Nothing ( Name "a$26" ) :| [] )
-                      ( AppN Nothing
-                        ( AppN Nothing
-                          ( ObjectProp Nothing
-                            ( AppN Nothing
-                              ( ObjectProp Nothing
-                                ( Ref Nothing
-                                  ( Imported ( ModuleName "Effect" ) ( Name "applicativeEffect" ) )
-                                )
-                                ( PropName "Apply0" )
-                              )
-                              ( Ref Nothing
-                                ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| []
-                              )
-                            )
-                            ( PropName "apply" )
-                          )
-                          ( AppN Nothing
-                            ( AppN Nothing
-                              ( Ref Nothing
-                                ( Imported ( ModuleName "Control.Applicative" ) ( Name "pure" ) )
-                              )
-                              ( Ref Nothing
-                                ( Imported
-                                  ( ModuleName "Effect" )
-                                  ( Name "applicativeEffect" )
-                                ) :| []
-                              )
-                            )
-                            ( Ref Nothing ( Local ( Name "f$25" ) ) :| [] ) :| []
-                          )
-                        )
-                        ( Ref Nothing ( Local ( Name "a$26" ) ) :| [] )
-                      )
-                    )
-                  )
-                ]
-              ) :| []
-            )
-          ),
-          ( QName
-            { qnameModuleName = ModuleName "Effect", qnameName = Name "Lazy_applyEffect"
-            }, AppN Nothing
-            ( AppN Nothing
-              ( Ref Nothing ( Local ( Name "PSLUA_runtime_lazy" ) ) )
-              ( LiteralString Nothing "applyEffect" :| [] )
-            )
-            ( AbsN Nothing
-              ( ParamUnused Nothing :| [] )
-              ( LiteralObject Nothing
-                [
-                  ( PropName "apply", Let Nothing
-                    ( Standalone
-                      ( Nothing, Name "bind$4", AppN Nothing
-                        ( Ref Nothing ( Imported ( ModuleName "Control.Bind" ) ( Name "bind" ) ) )
-                        ( AppN Nothing
-                          ( ObjectProp Nothing
-                            ( Ref Nothing
-                              ( Imported ( ModuleName "Effect" ) ( Name "monadEffect" ) )
-                            )
-                            ( PropName "Bind1" )
-                          )
-                          ( Ref Nothing
-                            ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| []
-                          ) :| []
-                        )
-                      ) :| []
-                    )
-                    ( AbsN Nothing
-                      ( ParamNamed Nothing ( Name "f$6" ) :| [] )
-                      ( AbsN Nothing
-                        ( ParamNamed Nothing ( Name "a$7" ) :| [] )
-                        ( AppN Nothing
-                          ( AppN Nothing
-                            ( Ref Nothing ( Local ( Name "bind$4" ) ) )
-                            ( Ref Nothing ( Local ( Name "f$6" ) ) :| [] )
-                          )
-                          ( AbsN Nothing
-                            ( ParamNamed Nothing ( Name "f'$8" ) :| [] )
-                            ( AppN Nothing
-                              ( AppN Nothing
-                                ( Ref Nothing ( Local ( Name "bind$4" ) ) )
-                                ( Ref Nothing ( Local ( Name "a$7" ) ) :| [] )
-                              )
-                              ( AbsN Nothing
-                                ( ParamNamed Nothing ( Name "a'$9" ) :| [] )
-                                ( AppN Nothing
-                                  ( AppN Nothing
-                                    ( Ref Nothing
-                                      ( Imported
-                                        ( ModuleName "Control.Applicative" )
-                                        ( Name "pure" )
-                                      )
-                                    )
-                                    ( AppN Nothing
-                                      ( ObjectProp Nothing
-                                        ( Ref Nothing
-                                          ( Imported
-                                            ( ModuleName "Effect" )
-                                            ( Name "monadEffect" )
-                                          )
-                                        )
-                                        ( PropName "Applicative0" )
-                                      )
-                                      ( Ref Nothing
-                                        ( Imported
-                                          ( ModuleName "Prim" )
-                                          ( Name "undefined" )
-                                        ) :| []
-                                      ) :| []
-                                    )
-                                  )
-                                  ( AppN Nothing
-                                    ( Ref Nothing ( Local ( Name "f'$8" ) ) )
-                                    ( Ref Nothing ( Local ( Name "a'$9" ) ) :| [] ) :| []
-                                  )
-                                ) :| []
-                              )
-                            ) :| []
-                          )
-                        )
-                      )
-                    )
-                  ),
-                  ( PropName "Functor0", AbsN Nothing
-                    ( ParamUnused Nothing :| [] )
-                    ( AppN Nothing
-                      ( Ref Nothing
-                        ( Imported ( ModuleName "Effect" ) ( Name "Lazy_functorEffect" ) )
-                      )
-                      ( LiteralInt Nothing 0 :| [] )
-                    )
-                  )
-                ]
-              ) :| []
-            )
-          )
-        ]
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Golden.LongDoBlock.Test", qnameName = Name "discard"
-        }, AppN Nothing
-        ( Ref Nothing ( Imported ( ModuleName "Control.Bind" ) ( Name "bind" ) ) )
-        ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "bindEffect" ) ) :| [] )
       )
     ], uberModuleForeigns = [], uberModuleExports =
     [
@@ -247,7 +21,7 @@ UberModule
                 )
                 ( LiteralString Nothing "1" :| [] )
               )
-              ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+              ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
             ) :|
             [ Standalone
               ( Nothing, Name "_", AppN Nothing
@@ -258,7 +32,7 @@ UberModule
                   )
                   ( LiteralString Nothing "2" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -268,7 +42,7 @@ UberModule
                   )
                   ( LiteralString Nothing "3" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -278,7 +52,7 @@ UberModule
                   )
                   ( LiteralString Nothing "4" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -288,7 +62,7 @@ UberModule
                   )
                   ( LiteralString Nothing "5" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -298,7 +72,7 @@ UberModule
                   )
                   ( LiteralString Nothing "6" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -308,7 +82,7 @@ UberModule
                   )
                   ( LiteralString Nothing "7" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -318,7 +92,7 @@ UberModule
                   )
                   ( LiteralString Nothing "8" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -328,7 +102,7 @@ UberModule
                   )
                   ( LiteralString Nothing "9" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -338,7 +112,7 @@ UberModule
                   )
                   ( LiteralString Nothing "10" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -348,7 +122,7 @@ UberModule
                   )
                   ( LiteralString Nothing "11" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -358,7 +132,7 @@ UberModule
                   )
                   ( LiteralString Nothing "12" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -368,7 +142,7 @@ UberModule
                   )
                   ( LiteralString Nothing "13" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -378,7 +152,7 @@ UberModule
                   )
                   ( LiteralString Nothing "14" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -388,7 +162,7 @@ UberModule
                   )
                   ( LiteralString Nothing "15" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -398,7 +172,7 @@ UberModule
                   )
                   ( LiteralString Nothing "16" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -408,7 +182,7 @@ UberModule
                   )
                   ( LiteralString Nothing "17" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -418,7 +192,7 @@ UberModule
                   )
                   ( LiteralString Nothing "18" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -428,7 +202,7 @@ UberModule
                   )
                   ( LiteralString Nothing "19" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -438,7 +212,7 @@ UberModule
                   )
                   ( LiteralString Nothing "20" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -448,7 +222,7 @@ UberModule
                   )
                   ( LiteralString Nothing "21" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -458,7 +232,7 @@ UberModule
                   )
                   ( LiteralString Nothing "22" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -468,7 +242,7 @@ UberModule
                   )
                   ( LiteralString Nothing "23" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -478,7 +252,7 @@ UberModule
                   )
                   ( LiteralString Nothing "24" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -488,7 +262,7 @@ UberModule
                   )
                   ( LiteralString Nothing "25" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -498,7 +272,7 @@ UberModule
                   )
                   ( LiteralString Nothing "26" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -508,7 +282,7 @@ UberModule
                   )
                   ( LiteralString Nothing "27" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -518,7 +292,7 @@ UberModule
                   )
                   ( LiteralString Nothing "28" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -528,7 +302,7 @@ UberModule
                   )
                   ( LiteralString Nothing "29" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -538,7 +312,7 @@ UberModule
                   )
                   ( LiteralString Nothing "30" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -548,7 +322,7 @@ UberModule
                   )
                   ( LiteralString Nothing "31" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -558,7 +332,7 @@ UberModule
                   )
                   ( LiteralString Nothing "32" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -568,7 +342,7 @@ UberModule
                   )
                   ( LiteralString Nothing "33" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -578,7 +352,7 @@ UberModule
                   )
                   ( LiteralString Nothing "34" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -588,7 +362,7 @@ UberModule
                   )
                   ( LiteralString Nothing "35" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -598,7 +372,7 @@ UberModule
                   )
                   ( LiteralString Nothing "36" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -608,7 +382,7 @@ UberModule
                   )
                   ( LiteralString Nothing "37" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -618,7 +392,7 @@ UberModule
                   )
                   ( LiteralString Nothing "38" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -628,7 +402,7 @@ UberModule
                   )
                   ( LiteralString Nothing "39" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -638,7 +412,7 @@ UberModule
                   )
                   ( LiteralString Nothing "40" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -648,7 +422,7 @@ UberModule
                   )
                   ( LiteralString Nothing "41" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -658,7 +432,7 @@ UberModule
                   )
                   ( LiteralString Nothing "42" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -668,7 +442,7 @@ UberModule
                   )
                   ( LiteralString Nothing "43" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -678,7 +452,7 @@ UberModule
                   )
                   ( LiteralString Nothing "44" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -688,7 +462,7 @@ UberModule
                   )
                   ( LiteralString Nothing "45" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -698,7 +472,7 @@ UberModule
                   )
                   ( LiteralString Nothing "46" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -708,7 +482,7 @@ UberModule
                   )
                   ( LiteralString Nothing "47" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -718,7 +492,7 @@ UberModule
                   )
                   ( LiteralString Nothing "48" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -728,7 +502,7 @@ UberModule
                   )
                   ( LiteralString Nothing "49" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -738,7 +512,7 @@ UberModule
                   )
                   ( LiteralString Nothing "50" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -748,7 +522,7 @@ UberModule
                   )
                   ( LiteralString Nothing "51" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -758,7 +532,7 @@ UberModule
                   )
                   ( LiteralString Nothing "52" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -768,7 +542,7 @@ UberModule
                   )
                   ( LiteralString Nothing "53" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -778,7 +552,7 @@ UberModule
                   )
                   ( LiteralString Nothing "54" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -788,7 +562,7 @@ UberModule
                   )
                   ( LiteralString Nothing "55" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -798,7 +572,7 @@ UberModule
                   )
                   ( LiteralString Nothing "56" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -808,7 +582,7 @@ UberModule
                   )
                   ( LiteralString Nothing "57" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -818,7 +592,7 @@ UberModule
                   )
                   ( LiteralString Nothing "58" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -828,7 +602,7 @@ UberModule
                   )
                   ( LiteralString Nothing "59" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -838,7 +612,7 @@ UberModule
                   )
                   ( LiteralString Nothing "60" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -848,7 +622,7 @@ UberModule
                   )
                   ( LiteralString Nothing "61" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -858,7 +632,7 @@ UberModule
                   )
                   ( LiteralString Nothing "62" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -868,7 +642,7 @@ UberModule
                   )
                   ( LiteralString Nothing "63" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -878,7 +652,7 @@ UberModule
                   )
                   ( LiteralString Nothing "64" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -888,7 +662,7 @@ UberModule
                   )
                   ( LiteralString Nothing "65" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -898,7 +672,7 @@ UberModule
                   )
                   ( LiteralString Nothing "66" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -908,7 +682,7 @@ UberModule
                   )
                   ( LiteralString Nothing "67" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -918,7 +692,7 @@ UberModule
                   )
                   ( LiteralString Nothing "68" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -928,7 +702,7 @@ UberModule
                   )
                   ( LiteralString Nothing "69" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -938,7 +712,7 @@ UberModule
                   )
                   ( LiteralString Nothing "70" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -948,7 +722,7 @@ UberModule
                   )
                   ( LiteralString Nothing "71" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -958,7 +732,7 @@ UberModule
                   )
                   ( LiteralString Nothing "72" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -968,7 +742,7 @@ UberModule
                   )
                   ( LiteralString Nothing "73" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -978,7 +752,7 @@ UberModule
                   )
                   ( LiteralString Nothing "74" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -988,7 +762,7 @@ UberModule
                   )
                   ( LiteralString Nothing "75" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -998,7 +772,7 @@ UberModule
                   )
                   ( LiteralString Nothing "76" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1008,7 +782,7 @@ UberModule
                   )
                   ( LiteralString Nothing "77" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1018,7 +792,7 @@ UberModule
                   )
                   ( LiteralString Nothing "78" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1028,7 +802,7 @@ UberModule
                   )
                   ( LiteralString Nothing "79" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1038,7 +812,7 @@ UberModule
                   )
                   ( LiteralString Nothing "80" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1048,7 +822,7 @@ UberModule
                   )
                   ( LiteralString Nothing "81" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1058,7 +832,7 @@ UberModule
                   )
                   ( LiteralString Nothing "82" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1068,7 +842,7 @@ UberModule
                   )
                   ( LiteralString Nothing "83" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1078,7 +852,7 @@ UberModule
                   )
                   ( LiteralString Nothing "84" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1088,7 +862,7 @@ UberModule
                   )
                   ( LiteralString Nothing "85" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1098,7 +872,7 @@ UberModule
                   )
                   ( LiteralString Nothing "86" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1108,7 +882,7 @@ UberModule
                   )
                   ( LiteralString Nothing "87" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1118,7 +892,7 @@ UberModule
                   )
                   ( LiteralString Nothing "88" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1128,7 +902,7 @@ UberModule
                   )
                   ( LiteralString Nothing "89" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1138,7 +912,7 @@ UberModule
                   )
                   ( LiteralString Nothing "90" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1148,7 +922,7 @@ UberModule
                   )
                   ( LiteralString Nothing "91" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1158,7 +932,7 @@ UberModule
                   )
                   ( LiteralString Nothing "92" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1168,7 +942,7 @@ UberModule
                   )
                   ( LiteralString Nothing "93" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1178,7 +952,7 @@ UberModule
                   )
                   ( LiteralString Nothing "94" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1188,7 +962,7 @@ UberModule
                   )
                   ( LiteralString Nothing "95" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1198,7 +972,7 @@ UberModule
                   )
                   ( LiteralString Nothing "96" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1208,7 +982,7 @@ UberModule
                   )
                   ( LiteralString Nothing "97" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1218,7 +992,7 @@ UberModule
                   )
                   ( LiteralString Nothing "98" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1228,7 +1002,7 @@ UberModule
                   )
                   ( LiteralString Nothing "99" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1238,7 +1012,7 @@ UberModule
                   )
                   ( LiteralString Nothing "100" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1248,7 +1022,7 @@ UberModule
                   )
                   ( LiteralString Nothing "101" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1258,7 +1032,7 @@ UberModule
                   )
                   ( LiteralString Nothing "102" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1268,7 +1042,7 @@ UberModule
                   )
                   ( LiteralString Nothing "103" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1278,7 +1052,7 @@ UberModule
                   )
                   ( LiteralString Nothing "104" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1288,7 +1062,7 @@ UberModule
                   )
                   ( LiteralString Nothing "105" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1298,7 +1072,7 @@ UberModule
                   )
                   ( LiteralString Nothing "106" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1308,7 +1082,7 @@ UberModule
                   )
                   ( LiteralString Nothing "107" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1318,7 +1092,7 @@ UberModule
                   )
                   ( LiteralString Nothing "108" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1328,7 +1102,7 @@ UberModule
                   )
                   ( LiteralString Nothing "109" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1338,7 +1112,7 @@ UberModule
                   )
                   ( LiteralString Nothing "110" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1348,7 +1122,7 @@ UberModule
                   )
                   ( LiteralString Nothing "111" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1358,7 +1132,7 @@ UberModule
                   )
                   ( LiteralString Nothing "112" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1368,7 +1142,7 @@ UberModule
                   )
                   ( LiteralString Nothing "113" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1378,7 +1152,7 @@ UberModule
                   )
                   ( LiteralString Nothing "114" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1388,7 +1162,7 @@ UberModule
                   )
                   ( LiteralString Nothing "115" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1398,7 +1172,7 @@ UberModule
                   )
                   ( LiteralString Nothing "116" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1408,7 +1182,7 @@ UberModule
                   )
                   ( LiteralString Nothing "117" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1418,7 +1192,7 @@ UberModule
                   )
                   ( LiteralString Nothing "118" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1428,7 +1202,7 @@ UberModule
                   )
                   ( LiteralString Nothing "119" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1438,7 +1212,7 @@ UberModule
                   )
                   ( LiteralString Nothing "120" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1448,7 +1222,7 @@ UberModule
                   )
                   ( LiteralString Nothing "121" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1458,7 +1232,7 @@ UberModule
                   )
                   ( LiteralString Nothing "122" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1468,7 +1242,7 @@ UberModule
                   )
                   ( LiteralString Nothing "123" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1478,7 +1252,7 @@ UberModule
                   )
                   ( LiteralString Nothing "124" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1488,7 +1262,7 @@ UberModule
                   )
                   ( LiteralString Nothing "125" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1498,7 +1272,7 @@ UberModule
                   )
                   ( LiteralString Nothing "126" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1508,7 +1282,7 @@ UberModule
                   )
                   ( LiteralString Nothing "127" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1518,7 +1292,7 @@ UberModule
                   )
                   ( LiteralString Nothing "128" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1528,7 +1302,7 @@ UberModule
                   )
                   ( LiteralString Nothing "129" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1538,7 +1312,7 @@ UberModule
                   )
                   ( LiteralString Nothing "130" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1548,7 +1322,7 @@ UberModule
                   )
                   ( LiteralString Nothing "131" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1558,7 +1332,7 @@ UberModule
                   )
                   ( LiteralString Nothing "132" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1568,7 +1342,7 @@ UberModule
                   )
                   ( LiteralString Nothing "133" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1578,7 +1352,7 @@ UberModule
                   )
                   ( LiteralString Nothing "134" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1588,7 +1362,7 @@ UberModule
                   )
                   ( LiteralString Nothing "135" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1598,7 +1372,7 @@ UberModule
                   )
                   ( LiteralString Nothing "136" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1608,7 +1382,7 @@ UberModule
                   )
                   ( LiteralString Nothing "137" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1618,7 +1392,7 @@ UberModule
                   )
                   ( LiteralString Nothing "138" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1628,7 +1402,7 @@ UberModule
                   )
                   ( LiteralString Nothing "139" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1638,7 +1412,7 @@ UberModule
                   )
                   ( LiteralString Nothing "140" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1648,7 +1422,7 @@ UberModule
                   )
                   ( LiteralString Nothing "141" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1658,7 +1432,7 @@ UberModule
                   )
                   ( LiteralString Nothing "142" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1668,7 +1442,7 @@ UberModule
                   )
                   ( LiteralString Nothing "143" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1678,7 +1452,7 @@ UberModule
                   )
                   ( LiteralString Nothing "144" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1688,7 +1462,7 @@ UberModule
                   )
                   ( LiteralString Nothing "145" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1698,7 +1472,7 @@ UberModule
                   )
                   ( LiteralString Nothing "146" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1708,7 +1482,7 @@ UberModule
                   )
                   ( LiteralString Nothing "147" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1718,7 +1492,7 @@ UberModule
                   )
                   ( LiteralString Nothing "148" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1728,7 +1502,7 @@ UberModule
                   )
                   ( LiteralString Nothing "149" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
@@ -1738,7 +1512,7 @@ UberModule
                   )
                   ( LiteralString Nothing "150" :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               )
             ]
           )
@@ -1757,7 +1531,7 @@ UberModule
                       )
                       ( LiteralString Nothing "151" :| [] )
                     )
-                    ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                    ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
                   ) :|
                   [ Standalone
                     ( Nothing, Name "_", AppN Nothing
@@ -1770,7 +1544,9 @@ UberModule
                         )
                         ( LiteralString Nothing "152" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -1782,7 +1558,9 @@ UberModule
                         )
                         ( LiteralString Nothing "153" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -1794,7 +1572,9 @@ UberModule
                         )
                         ( LiteralString Nothing "154" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -1806,7 +1586,9 @@ UberModule
                         )
                         ( LiteralString Nothing "155" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -1818,7 +1600,9 @@ UberModule
                         )
                         ( LiteralString Nothing "156" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -1830,7 +1614,9 @@ UberModule
                         )
                         ( LiteralString Nothing "157" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -1842,7 +1628,9 @@ UberModule
                         )
                         ( LiteralString Nothing "158" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -1854,7 +1642,9 @@ UberModule
                         )
                         ( LiteralString Nothing "159" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -1866,7 +1656,9 @@ UberModule
                         )
                         ( LiteralString Nothing "160" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -1878,7 +1670,9 @@ UberModule
                         )
                         ( LiteralString Nothing "161" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -1890,7 +1684,9 @@ UberModule
                         )
                         ( LiteralString Nothing "162" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -1902,7 +1698,9 @@ UberModule
                         )
                         ( LiteralString Nothing "163" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -1914,7 +1712,9 @@ UberModule
                         )
                         ( LiteralString Nothing "164" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -1926,7 +1726,9 @@ UberModule
                         )
                         ( LiteralString Nothing "165" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -1938,7 +1740,9 @@ UberModule
                         )
                         ( LiteralString Nothing "166" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -1950,7 +1754,9 @@ UberModule
                         )
                         ( LiteralString Nothing "167" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -1962,7 +1768,9 @@ UberModule
                         )
                         ( LiteralString Nothing "168" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -1974,7 +1782,9 @@ UberModule
                         )
                         ( LiteralString Nothing "169" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -1986,7 +1796,9 @@ UberModule
                         )
                         ( LiteralString Nothing "170" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -1998,7 +1810,9 @@ UberModule
                         )
                         ( LiteralString Nothing "171" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2010,7 +1824,9 @@ UberModule
                         )
                         ( LiteralString Nothing "172" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2022,7 +1838,9 @@ UberModule
                         )
                         ( LiteralString Nothing "173" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2034,7 +1852,9 @@ UberModule
                         )
                         ( LiteralString Nothing "174" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2046,7 +1866,9 @@ UberModule
                         )
                         ( LiteralString Nothing "175" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2058,7 +1880,9 @@ UberModule
                         )
                         ( LiteralString Nothing "176" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2070,7 +1894,9 @@ UberModule
                         )
                         ( LiteralString Nothing "177" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2082,7 +1908,9 @@ UberModule
                         )
                         ( LiteralString Nothing "178" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2094,7 +1922,9 @@ UberModule
                         )
                         ( LiteralString Nothing "179" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2106,7 +1936,9 @@ UberModule
                         )
                         ( LiteralString Nothing "180" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2118,7 +1950,9 @@ UberModule
                         )
                         ( LiteralString Nothing "181" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2130,7 +1964,9 @@ UberModule
                         )
                         ( LiteralString Nothing "182" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2142,7 +1978,9 @@ UberModule
                         )
                         ( LiteralString Nothing "183" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2154,7 +1992,9 @@ UberModule
                         )
                         ( LiteralString Nothing "184" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2166,7 +2006,9 @@ UberModule
                         )
                         ( LiteralString Nothing "185" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2178,7 +2020,9 @@ UberModule
                         )
                         ( LiteralString Nothing "186" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2190,7 +2034,9 @@ UberModule
                         )
                         ( LiteralString Nothing "187" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2202,7 +2048,9 @@ UberModule
                         )
                         ( LiteralString Nothing "188" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2214,7 +2062,9 @@ UberModule
                         )
                         ( LiteralString Nothing "189" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2226,7 +2076,9 @@ UberModule
                         )
                         ( LiteralString Nothing "190" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2238,7 +2090,9 @@ UberModule
                         )
                         ( LiteralString Nothing "191" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2250,7 +2104,9 @@ UberModule
                         )
                         ( LiteralString Nothing "192" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2262,7 +2118,9 @@ UberModule
                         )
                         ( LiteralString Nothing "193" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2274,7 +2132,9 @@ UberModule
                         )
                         ( LiteralString Nothing "194" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2286,7 +2146,9 @@ UberModule
                         )
                         ( LiteralString Nothing "195" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2298,7 +2160,9 @@ UberModule
                         )
                         ( LiteralString Nothing "196" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2310,7 +2174,9 @@ UberModule
                         )
                         ( LiteralString Nothing "197" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2322,7 +2188,9 @@ UberModule
                         )
                         ( LiteralString Nothing "198" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2334,7 +2202,9 @@ UberModule
                         )
                         ( LiteralString Nothing "199" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2346,7 +2216,9 @@ UberModule
                         )
                         ( LiteralString Nothing "200" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2358,7 +2230,9 @@ UberModule
                         )
                         ( LiteralString Nothing "201" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2370,7 +2244,9 @@ UberModule
                         )
                         ( LiteralString Nothing "202" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2382,7 +2258,9 @@ UberModule
                         )
                         ( LiteralString Nothing "203" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2394,7 +2272,9 @@ UberModule
                         )
                         ( LiteralString Nothing "204" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2406,7 +2286,9 @@ UberModule
                         )
                         ( LiteralString Nothing "205" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2418,7 +2300,9 @@ UberModule
                         )
                         ( LiteralString Nothing "206" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2430,7 +2314,9 @@ UberModule
                         )
                         ( LiteralString Nothing "207" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2442,7 +2328,9 @@ UberModule
                         )
                         ( LiteralString Nothing "208" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2454,7 +2342,9 @@ UberModule
                         )
                         ( LiteralString Nothing "209" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2466,7 +2356,9 @@ UberModule
                         )
                         ( LiteralString Nothing "210" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2478,7 +2370,9 @@ UberModule
                         )
                         ( LiteralString Nothing "211" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2490,7 +2384,9 @@ UberModule
                         )
                         ( LiteralString Nothing "212" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2502,7 +2398,9 @@ UberModule
                         )
                         ( LiteralString Nothing "213" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2514,7 +2412,9 @@ UberModule
                         )
                         ( LiteralString Nothing "214" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2526,7 +2426,9 @@ UberModule
                         )
                         ( LiteralString Nothing "215" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2538,7 +2440,9 @@ UberModule
                         )
                         ( LiteralString Nothing "216" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2550,7 +2454,9 @@ UberModule
                         )
                         ( LiteralString Nothing "217" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2562,7 +2468,9 @@ UberModule
                         )
                         ( LiteralString Nothing "218" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2574,7 +2482,9 @@ UberModule
                         )
                         ( LiteralString Nothing "219" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2586,7 +2496,9 @@ UberModule
                         )
                         ( LiteralString Nothing "220" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2598,7 +2510,9 @@ UberModule
                         )
                         ( LiteralString Nothing "221" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2610,7 +2524,9 @@ UberModule
                         )
                         ( LiteralString Nothing "222" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2622,7 +2538,9 @@ UberModule
                         )
                         ( LiteralString Nothing "223" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2634,7 +2552,9 @@ UberModule
                         )
                         ( LiteralString Nothing "224" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2646,7 +2566,9 @@ UberModule
                         )
                         ( LiteralString Nothing "225" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2658,7 +2580,9 @@ UberModule
                         )
                         ( LiteralString Nothing "226" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2670,7 +2594,9 @@ UberModule
                         )
                         ( LiteralString Nothing "227" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2682,7 +2608,9 @@ UberModule
                         )
                         ( LiteralString Nothing "228" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2694,7 +2622,9 @@ UberModule
                         )
                         ( LiteralString Nothing "229" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2706,7 +2636,9 @@ UberModule
                         )
                         ( LiteralString Nothing "230" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2718,7 +2650,9 @@ UberModule
                         )
                         ( LiteralString Nothing "231" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2730,7 +2664,9 @@ UberModule
                         )
                         ( LiteralString Nothing "232" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2742,7 +2678,9 @@ UberModule
                         )
                         ( LiteralString Nothing "233" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2754,7 +2692,9 @@ UberModule
                         )
                         ( LiteralString Nothing "234" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2766,7 +2706,9 @@ UberModule
                         )
                         ( LiteralString Nothing "235" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2778,7 +2720,9 @@ UberModule
                         )
                         ( LiteralString Nothing "236" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2790,7 +2734,9 @@ UberModule
                         )
                         ( LiteralString Nothing "237" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2802,7 +2748,9 @@ UberModule
                         )
                         ( LiteralString Nothing "238" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2814,7 +2762,9 @@ UberModule
                         )
                         ( LiteralString Nothing "239" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2826,7 +2776,9 @@ UberModule
                         )
                         ( LiteralString Nothing "240" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2838,7 +2790,9 @@ UberModule
                         )
                         ( LiteralString Nothing "241" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2850,7 +2804,9 @@ UberModule
                         )
                         ( LiteralString Nothing "242" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2862,7 +2818,9 @@ UberModule
                         )
                         ( LiteralString Nothing "243" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2874,7 +2832,9 @@ UberModule
                         )
                         ( LiteralString Nothing "244" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2886,7 +2846,9 @@ UberModule
                         )
                         ( LiteralString Nothing "245" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2898,7 +2860,9 @@ UberModule
                         )
                         ( LiteralString Nothing "246" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2910,7 +2874,9 @@ UberModule
                         )
                         ( LiteralString Nothing "247" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2922,7 +2888,9 @@ UberModule
                         )
                         ( LiteralString Nothing "248" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2934,7 +2902,9 @@ UberModule
                         )
                         ( LiteralString Nothing "249" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2946,7 +2916,9 @@ UberModule
                         )
                         ( LiteralString Nothing "250" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2958,7 +2930,9 @@ UberModule
                         )
                         ( LiteralString Nothing "251" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2970,7 +2944,9 @@ UberModule
                         )
                         ( LiteralString Nothing "252" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2982,7 +2958,9 @@ UberModule
                         )
                         ( LiteralString Nothing "253" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -2994,7 +2972,9 @@ UberModule
                         )
                         ( LiteralString Nothing "254" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -3006,7 +2986,9 @@ UberModule
                         )
                         ( LiteralString Nothing "255" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -3018,7 +3000,9 @@ UberModule
                         )
                         ( LiteralString Nothing "256" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -3030,7 +3014,9 @@ UberModule
                         )
                         ( LiteralString Nothing "257" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -3042,7 +3028,9 @@ UberModule
                         )
                         ( LiteralString Nothing "258" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -3054,7 +3042,9 @@ UberModule
                         )
                         ( LiteralString Nothing "259" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -3066,7 +3056,9 @@ UberModule
                         )
                         ( LiteralString Nothing "260" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -3078,7 +3070,9 @@ UberModule
                         )
                         ( LiteralString Nothing "261" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -3090,7 +3084,9 @@ UberModule
                         )
                         ( LiteralString Nothing "262" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -3102,7 +3098,9 @@ UberModule
                         )
                         ( LiteralString Nothing "263" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -3114,7 +3112,9 @@ UberModule
                         )
                         ( LiteralString Nothing "264" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -3126,7 +3126,9 @@ UberModule
                         )
                         ( LiteralString Nothing "265" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -3138,7 +3140,9 @@ UberModule
                         )
                         ( LiteralString Nothing "266" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -3150,7 +3154,9 @@ UberModule
                         )
                         ( LiteralString Nothing "267" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -3162,7 +3168,9 @@ UberModule
                         )
                         ( LiteralString Nothing "268" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -3174,7 +3182,9 @@ UberModule
                         )
                         ( LiteralString Nothing "269" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -3186,7 +3196,9 @@ UberModule
                         )
                         ( LiteralString Nothing "270" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -3198,7 +3210,9 @@ UberModule
                         )
                         ( LiteralString Nothing "271" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -3210,7 +3224,9 @@ UberModule
                         )
                         ( LiteralString Nothing "272" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -3222,7 +3238,9 @@ UberModule
                         )
                         ( LiteralString Nothing "273" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -3234,7 +3252,9 @@ UberModule
                         )
                         ( LiteralString Nothing "274" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -3246,7 +3266,9 @@ UberModule
                         )
                         ( LiteralString Nothing "275" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -3258,7 +3280,9 @@ UberModule
                         )
                         ( LiteralString Nothing "276" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -3270,7 +3294,9 @@ UberModule
                         )
                         ( LiteralString Nothing "277" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -3282,7 +3308,9 @@ UberModule
                         )
                         ( LiteralString Nothing "278" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -3294,7 +3322,9 @@ UberModule
                         )
                         ( LiteralString Nothing "279" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -3306,7 +3336,9 @@ UberModule
                         )
                         ( LiteralString Nothing "280" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -3318,7 +3350,9 @@ UberModule
                         )
                         ( LiteralString Nothing "281" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -3330,7 +3364,9 @@ UberModule
                         )
                         ( LiteralString Nothing "282" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -3342,7 +3378,9 @@ UberModule
                         )
                         ( LiteralString Nothing "283" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -3354,7 +3392,9 @@ UberModule
                         )
                         ( LiteralString Nothing "284" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -3366,7 +3406,9 @@ UberModule
                         )
                         ( LiteralString Nothing "285" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -3378,7 +3420,9 @@ UberModule
                         )
                         ( LiteralString Nothing "286" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -3390,7 +3434,9 @@ UberModule
                         )
                         ( LiteralString Nothing "287" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -3402,7 +3448,9 @@ UberModule
                         )
                         ( LiteralString Nothing "288" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -3414,7 +3462,9 @@ UberModule
                         )
                         ( LiteralString Nothing "289" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -3426,7 +3476,9 @@ UberModule
                         )
                         ( LiteralString Nothing "290" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -3438,7 +3490,9 @@ UberModule
                         )
                         ( LiteralString Nothing "291" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -3450,7 +3504,9 @@ UberModule
                         )
                         ( LiteralString Nothing "292" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -3462,7 +3518,9 @@ UberModule
                         )
                         ( LiteralString Nothing "293" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -3474,7 +3532,9 @@ UberModule
                         )
                         ( LiteralString Nothing "294" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -3486,7 +3546,9 @@ UberModule
                         )
                         ( LiteralString Nothing "295" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -3498,7 +3560,9 @@ UberModule
                         )
                         ( LiteralString Nothing "296" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -3510,7 +3574,9 @@ UberModule
                         )
                         ( LiteralString Nothing "297" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -3522,7 +3588,9 @@ UberModule
                         )
                         ( LiteralString Nothing "298" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     ), Standalone
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
@@ -3534,7 +3602,9 @@ UberModule
                         )
                         ( LiteralString Nothing "299" :| [] )
                       )
-                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
                     )
                   ]
                 )
@@ -3548,11 +3618,11 @@ UberModule
                     )
                     ( LiteralString Nothing "300" :| [] )
                   )
-                  ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                  ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
                 )
               )
             )
-            ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+            ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
           )
         )
       )

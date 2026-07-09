@@ -8,12 +8,6 @@ UberModule
         [ ( Nothing, Name "unsafeGet" ) ]
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Effect", qnameName = Name "foreign"
-        }, ForeignImport Nothing
-        ( ModuleName "Effect" ) ".spago/p/effect/82bac3dff904fa34534c4f5b9deeb5da359471c8/src/Effect.purs"
-        [ ( Nothing, Name "pureE" ), ( Nothing, Name "bindE" ) ]
-      ), Standalone
-      ( QName
         { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "foreign"
         }, ForeignImport Nothing
         ( ModuleName "Effect.Console" ) ".spago/p/console/f82835a0b873aafe6bd7b14dd30cc150553d4ab9/src/Effect/Console.purs"
@@ -93,16 +87,6 @@ UberModule
         ) :| []
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Data.Eq", qnameName = Name "eqRecord" }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "dict" ) :| [] )
-        ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) ) ( PropName "eqRecord" ) )
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Data.Eq", qnameName = Name "eq" }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "dict" ) :| [] )
-        ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) ) ( PropName "eq" ) )
-      ), Standalone
-      ( QName
         { qnameModuleName = ModuleName "Data.Eq", qnameName = Name "eqRowCons$w" }, AbsN Nothing
         ( ParamNamed Nothing
           ( Name "dictEqRecord" ) :|
@@ -156,9 +140,9 @@ UberModule
                         )
                         ( AppN Nothing
                           ( AppN Nothing
-                            ( AppN Nothing
-                              ( Ref Nothing ( Imported ( ModuleName "Data.Eq" ) ( Name "eq" ) ) )
-                              ( Ref Nothing ( Local ( Name "dictEq" ) ) :| [] )
+                            ( ObjectProp Nothing
+                              ( Ref Nothing ( Local ( Name "dictEq" ) ) )
+                              ( PropName "eq" )
                             )
                             ( AppN Nothing
                               ( Ref Nothing ( Local ( Name "get" ) ) )
@@ -174,11 +158,9 @@ UberModule
                       ( AppN Nothing
                         ( AppN Nothing
                           ( AppN Nothing
-                            ( AppN Nothing
-                              ( Ref Nothing
-                                ( Imported ( ModuleName "Data.Eq" ) ( Name "eqRecord" ) )
-                              )
-                              ( Ref Nothing ( Local ( Name "dictEqRecord" ) ) :| [] )
+                            ( ObjectProp Nothing
+                              ( Ref Nothing ( Local ( Name "dictEqRecord" ) ) )
+                              ( PropName "eqRecord" )
                             )
                             ( Ref Nothing
                               ( Imported ( ModuleName "Type.Proxy" ) ( Name "Proxy" ) ) :| []
@@ -194,279 +176,6 @@ UberModule
               )
             )
           ]
-        )
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Control.Applicative", qnameName = Name "pure"
-        }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "dict" ) :| [] )
-        ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) ) ( PropName "pure" ) )
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Control.Bind", qnameName = Name "bind" }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "dict" ) :| [] )
-        ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) ) ( PropName "bind" ) )
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Data.Eq.Generic", qnameName = Name "genericEq'"
-        }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "dict" ) :| [] )
-        ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) ) ( PropName "genericEq'" ) )
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Data.Eq.Generic", qnameName = Name "genericEqConstructor"
-        }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "dictGenericEq" ) :| [] )
-        ( LiteralObject Nothing
-          [
-            ( PropName "genericEq'", AbsN Nothing
-              ( ParamNamed Nothing ( Name "v" ) :| [] )
-              ( AbsN Nothing
-                ( ParamNamed Nothing ( Name "v1" ) :| [] )
-                ( AppN Nothing
-                  ( AppN Nothing
-                    ( AppN Nothing
-                      ( Ref Nothing
-                        ( Imported ( ModuleName "Data.Eq.Generic" ) ( Name "genericEq'" ) )
-                      )
-                      ( Ref Nothing ( Local ( Name "dictGenericEq" ) ) :| [] )
-                    )
-                    ( Ref Nothing ( Local ( Name "v" ) ) :| [] )
-                  )
-                  ( Ref Nothing ( Local ( Name "v1" ) ) :| [] )
-                )
-              )
-            )
-          ]
-        )
-      ), RecursiveGroup
-      (
-        ( QName
-          { qnameModuleName = ModuleName "Effect", qnameName = Name "monadEffect"
-          }, LiteralObject Nothing
-          [
-            ( PropName "Applicative0", AbsN Nothing
-              ( ParamUnused Nothing :| [] )
-              ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "applicativeEffect" ) ) )
-            ),
-            ( PropName "Bind1", AbsN Nothing
-              ( ParamUnused Nothing :| [] )
-              ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "bindEffect" ) ) )
-            )
-          ]
-        ) :|
-        [
-          ( QName
-            { qnameModuleName = ModuleName "Effect", qnameName = Name "bindEffect"
-            }, LiteralObject Nothing
-            [
-              ( PropName "bind", ObjectProp ( Just Always )
-                ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "foreign" ) ) )
-                ( PropName "bindE" )
-              ),
-              ( PropName "Apply0", AbsN Nothing
-                ( ParamUnused Nothing :| [] )
-                ( AppN Nothing
-                  ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "Lazy_applyEffect" ) ) )
-                  ( LiteralInt Nothing 0 :| [] )
-                )
-              )
-            ]
-          ),
-          ( QName
-            { qnameModuleName = ModuleName "Effect", qnameName = Name "applicativeEffect"
-            }, LiteralObject Nothing
-            [
-              ( PropName "pure", ObjectProp ( Just Always )
-                ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "foreign" ) ) )
-                ( PropName "pureE" )
-              ),
-              ( PropName "Apply0", AbsN Nothing
-                ( ParamUnused Nothing :| [] )
-                ( AppN Nothing
-                  ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "Lazy_applyEffect" ) ) )
-                  ( LiteralInt Nothing 0 :| [] )
-                )
-              )
-            ]
-          ),
-          ( QName
-            { qnameModuleName = ModuleName "Effect", qnameName = Name "Lazy_functorEffect"
-            }, AppN Nothing
-            ( AppN Nothing
-              ( Ref Nothing ( Local ( Name "PSLUA_runtime_lazy" ) ) )
-              ( LiteralString Nothing "functorEffect" :| [] )
-            )
-            ( AbsN Nothing
-              ( ParamUnused Nothing :| [] )
-              ( LiteralObject Nothing
-                [
-                  ( PropName "map", AbsN Nothing
-                    ( ParamNamed Nothing ( Name "f$54" ) :| [] )
-                    ( AbsN Nothing
-                      ( ParamNamed Nothing ( Name "a$55" ) :| [] )
-                      ( AppN Nothing
-                        ( AppN Nothing
-                          ( ObjectProp Nothing
-                            ( AppN Nothing
-                              ( ObjectProp Nothing
-                                ( Ref Nothing
-                                  ( Imported ( ModuleName "Effect" ) ( Name "applicativeEffect" ) )
-                                )
-                                ( PropName "Apply0" )
-                              )
-                              ( Ref Nothing
-                                ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| []
-                              )
-                            )
-                            ( PropName "apply" )
-                          )
-                          ( AppN Nothing
-                            ( AppN Nothing
-                              ( Ref Nothing
-                                ( Imported ( ModuleName "Control.Applicative" ) ( Name "pure" ) )
-                              )
-                              ( Ref Nothing
-                                ( Imported
-                                  ( ModuleName "Effect" )
-                                  ( Name "applicativeEffect" )
-                                ) :| []
-                              )
-                            )
-                            ( Ref Nothing ( Local ( Name "f$54" ) ) :| [] ) :| []
-                          )
-                        )
-                        ( Ref Nothing ( Local ( Name "a$55" ) ) :| [] )
-                      )
-                    )
-                  )
-                ]
-              ) :| []
-            )
-          ),
-          ( QName
-            { qnameModuleName = ModuleName "Effect", qnameName = Name "Lazy_applyEffect"
-            }, AppN Nothing
-            ( AppN Nothing
-              ( Ref Nothing ( Local ( Name "PSLUA_runtime_lazy" ) ) )
-              ( LiteralString Nothing "applyEffect" :| [] )
-            )
-            ( AbsN Nothing
-              ( ParamUnused Nothing :| [] )
-              ( LiteralObject Nothing
-                [
-                  ( PropName "apply", Let Nothing
-                    ( Standalone
-                      ( Nothing, Name "bind$33", AppN Nothing
-                        ( Ref Nothing ( Imported ( ModuleName "Control.Bind" ) ( Name "bind" ) ) )
-                        ( AppN Nothing
-                          ( ObjectProp Nothing
-                            ( Ref Nothing
-                              ( Imported ( ModuleName "Effect" ) ( Name "monadEffect" ) )
-                            )
-                            ( PropName "Bind1" )
-                          )
-                          ( Ref Nothing
-                            ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| []
-                          ) :| []
-                        )
-                      ) :| []
-                    )
-                    ( AbsN Nothing
-                      ( ParamNamed Nothing ( Name "f$35" ) :| [] )
-                      ( AbsN Nothing
-                        ( ParamNamed Nothing ( Name "a$36" ) :| [] )
-                        ( AppN Nothing
-                          ( AppN Nothing
-                            ( Ref Nothing ( Local ( Name "bind$33" ) ) )
-                            ( Ref Nothing ( Local ( Name "f$35" ) ) :| [] )
-                          )
-                          ( AbsN Nothing
-                            ( ParamNamed Nothing ( Name "f'$37" ) :| [] )
-                            ( AppN Nothing
-                              ( AppN Nothing
-                                ( Ref Nothing ( Local ( Name "bind$33" ) ) )
-                                ( Ref Nothing ( Local ( Name "a$36" ) ) :| [] )
-                              )
-                              ( AbsN Nothing
-                                ( ParamNamed Nothing ( Name "a'$38" ) :| [] )
-                                ( AppN Nothing
-                                  ( AppN Nothing
-                                    ( Ref Nothing
-                                      ( Imported
-                                        ( ModuleName "Control.Applicative" )
-                                        ( Name "pure" )
-                                      )
-                                    )
-                                    ( AppN Nothing
-                                      ( ObjectProp Nothing
-                                        ( Ref Nothing
-                                          ( Imported
-                                            ( ModuleName "Effect" )
-                                            ( Name "monadEffect" )
-                                          )
-                                        )
-                                        ( PropName "Applicative0" )
-                                      )
-                                      ( Ref Nothing
-                                        ( Imported
-                                          ( ModuleName "Prim" )
-                                          ( Name "undefined" )
-                                        ) :| []
-                                      ) :| []
-                                    )
-                                  )
-                                  ( AppN Nothing
-                                    ( Ref Nothing ( Local ( Name "f'$37" ) ) )
-                                    ( Ref Nothing ( Local ( Name "a'$38" ) ) :| [] ) :| []
-                                  )
-                                ) :| []
-                              )
-                            ) :| []
-                          )
-                        )
-                      )
-                    )
-                  ),
-                  ( PropName "Functor0", AbsN Nothing
-                    ( ParamUnused Nothing :| [] )
-                    ( AppN Nothing
-                      ( Ref Nothing
-                        ( Imported ( ModuleName "Effect" ) ( Name "Lazy_functorEffect" ) )
-                      )
-                      ( LiteralInt Nothing 0 :| [] )
-                    )
-                  )
-                ]
-              ) :| []
-            )
-          )
-        ]
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Golden.BugListGenericEq.Test", qnameName = Name "discard"
-        }, AppN Nothing
-        ( Ref Nothing ( Imported ( ModuleName "Control.Bind" ) ( Name "bind" ) ) )
-        ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "bindEffect" ) ) :| [] )
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Golden.BugListGenericEq.Test", qnameName = Name "logShow"
-        }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "a$2" ) :| [] )
-        ( AppN Nothing
-          ( ObjectProp ( Just Always )
-            ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
-            ( PropName "log" )
-          )
-          ( IfThenElse Nothing
-            ( Ref Nothing ( Local ( Name "a$2" ) ) )
-            ( LiteralString Nothing "true" )
-            ( IfThenElse Nothing
-              ( Eq Nothing ( LiteralBool Nothing False ) ( Ref Nothing ( Local ( Name "a$2" ) ) ) )
-              ( LiteralString Nothing "false" )
-              ( Exception Nothing "No patterns matched" )
-            ) :| []
-          )
         )
       ), Standalone
       ( QName
@@ -575,14 +284,50 @@ UberModule
                       ( AppN Nothing
                         ( Let Nothing
                           ( Standalone
-                            ( Nothing, Name "from$4", ObjectProp Nothing
-                              ( Ref Nothing
-                                ( Imported
-                                  ( ModuleName "Golden.BugListGenericEq.Test" )
-                                  ( Name "genericList" )
+                            ( Nothing, Name "from$4", AbsN Nothing
+                              ( ParamNamed Nothing ( Name "x0$248" ) :| [] )
+                              ( IfThenElse Nothing
+                                ( Eq Nothing
+                                  ( LiteralString Nothing "Golden.BugListGenericEq.Test∷List.Nil" )
+                                  ( ReflectCtor Nothing
+                                    ( Ref Nothing ( Local ( Name "x0$248" ) ) )
+                                  )
+                                )
+                                ( AppN Nothing
+                                  ( Ctor Nothing SumType
+                                    ( ModuleName "Data.Generic.Rep" )
+                                    ( TyName "Sum" )
+                                    ( CtorName "Inl" )
+                                    [ FieldName "value0" ]
+                                  )
+                                  ( Ctor Nothing ProductType
+                                    ( ModuleName "Data.Generic.Rep" )
+                                    ( TyName "NoArguments" )
+                                    ( CtorName "NoArguments" ) [] :| []
+                                  )
+                                )
+                                ( IfThenElse Nothing
+                                  ( Eq Nothing
+                                    ( LiteralString Nothing "Golden.BugListGenericEq.Test∷List.Cons" )
+                                    ( ReflectCtor Nothing
+                                      ( Ref Nothing ( Local ( Name "x0$248" ) ) )
+                                    )
+                                  )
+                                  ( AppN Nothing
+                                    ( Ctor Nothing SumType
+                                      ( ModuleName "Data.Generic.Rep" )
+                                      ( TyName "Sum" )
+                                      ( CtorName "Inr" )
+                                      [ FieldName "value0" ]
+                                    )
+                                    ( ObjectProp Nothing
+                                      ( Ref Nothing ( Local ( Name "x0$248" ) ) )
+                                      ( PropName "value0" ) :| []
+                                    )
+                                  )
+                                  ( Exception Nothing "No patterns matched" )
                                 )
                               )
-                              ( PropName "from" )
                             ) :| []
                           )
                           ( AbsN Nothing
@@ -593,14 +338,9 @@ UberModule
                                 ( ParamNamed Nothing ( Name "y$8" ) :| [] )
                                 ( AppN Nothing
                                   ( AppN Nothing
-                                    ( AppN Nothing
-                                      ( Ref Nothing
-                                        ( Imported
-                                          ( ModuleName "Data.Eq.Generic" )
-                                          ( Name "genericEq'" )
-                                        )
-                                      )
-                                      ( Ref Nothing ( Local ( Name "dictGenericEq$5" ) ) :| [] )
+                                    ( ObjectProp Nothing
+                                      ( Ref Nothing ( Local ( Name "dictGenericEq$5" ) ) )
+                                      ( PropName "genericEq'" )
                                     )
                                     ( AppN Nothing
                                       ( Ref Nothing ( Local ( Name "from$4" ) ) )
@@ -629,51 +369,11 @@ UberModule
                                       ( Ref Nothing ( Local ( Name "v$13" ) ) )
                                     )
                                   )
-                                  ( IfThenElse Nothing
-                                    ( Eq Nothing
-                                      ( LiteralString Nothing "Data.Generic.Rep∷Sum.Inl" )
-                                      ( ReflectCtor Nothing
-                                        ( Ref Nothing ( Local ( Name "v1$14" ) ) )
-                                      )
+                                  ( Eq Nothing
+                                    ( LiteralString Nothing "Data.Generic.Rep∷Sum.Inl" )
+                                    ( ReflectCtor Nothing
+                                      ( Ref Nothing ( Local ( Name "v1$14" ) ) )
                                     )
-                                    ( AppN Nothing
-                                      ( AppN Nothing
-                                        ( AppN Nothing
-                                          ( Ref Nothing
-                                            ( Imported
-                                              ( ModuleName "Data.Eq.Generic" )
-                                              ( Name "genericEq'" )
-                                            )
-                                          )
-                                          ( AppN Nothing
-                                            ( Ref Nothing
-                                              ( Imported
-                                                ( ModuleName "Data.Eq.Generic" )
-                                                ( Name "genericEqConstructor" )
-                                              )
-                                            )
-                                            ( LiteralObject Nothing
-                                              [
-                                                ( PropName "genericEq'", AbsN Nothing
-                                                  ( ParamUnused Nothing :| [] )
-                                                  ( AbsN Nothing
-                                                    ( ParamUnused Nothing :| [] ) ( LiteralBool Nothing True )
-                                                  )
-                                                )
-                                              ] :| []
-                                            ) :| []
-                                          )
-                                        )
-                                        ( ObjectProp Nothing
-                                          ( Ref Nothing ( Local ( Name "v$13" ) ) )
-                                          ( PropName "value0" ) :| []
-                                        )
-                                      )
-                                      ( ObjectProp Nothing
-                                        ( Ref Nothing ( Local ( Name "v1$14" ) ) )
-                                        ( PropName "value0" ) :| []
-                                      )
-                                    ) ( LiteralBool Nothing False )
                                   )
                                   ( IfThenElse Nothing
                                     ( Eq Nothing
@@ -692,133 +392,76 @@ UberModule
                                       ( AppN Nothing
                                         ( AppN Nothing
                                           ( AppN Nothing
-                                            ( Ref Nothing
-                                              ( Imported
-                                                ( ModuleName "Data.Eq.Generic" )
-                                                ( Name "genericEq'" )
-                                              )
-                                            )
-                                            ( AppN Nothing
-                                              ( Ref Nothing
-                                                ( Imported
-                                                  ( ModuleName "Data.Eq.Generic" )
-                                                  ( Name "genericEqConstructor" )
+                                            ( ObjectProp Nothing
+                                              ( AppN Nothing
+                                                ( Ref Nothing
+                                                  ( Imported
+                                                    ( ModuleName "Data.Eq" )
+                                                    ( Name "eqRowCons$w" )
+                                                  )
                                                 )
-                                              )
-                                              ( LiteralObject Nothing
-                                                [
-                                                  ( PropName "genericEq'", AbsN Nothing
-                                                    ( ParamNamed Nothing ( Name "v$21" ) :| [] )
-                                                    ( AbsN Nothing
-                                                      ( ParamNamed Nothing ( Name "v1$22" ) :| [] )
-                                                      ( AppN Nothing
-                                                        ( AppN Nothing
-                                                          ( AppN Nothing
-                                                            ( Ref Nothing
-                                                              ( Imported
-                                                                ( ModuleName "Data.Eq" )
-                                                                ( Name "eq" )
-                                                              )
-                                                            )
-                                                            ( LiteralObject Nothing
-                                                              [
-                                                                ( PropName "eq", AppN Nothing
-                                                                  ( AppN Nothing
-                                                                    ( Ref Nothing
-                                                                      ( Imported
-                                                                        ( ModuleName "Data.Eq" )
-                                                                        ( Name "eqRecord" )
-                                                                      )
-                                                                    )
-                                                                    ( AppN Nothing
-                                                                      ( Ref Nothing
-                                                                        ( Imported
-                                                                          ( ModuleName "Data.Eq" )
-                                                                          ( Name "eqRowCons$w" )
-                                                                        )
-                                                                      )
-                                                                      ( AppN Nothing
-                                                                        ( Ref Nothing
-                                                                          ( Imported
-                                                                            ( ModuleName "Data.Eq" )
-                                                                            ( Name "eqRowCons$w" )
-                                                                          )
-                                                                        )
-                                                                        ( LiteralObject Nothing
-                                                                          [
-                                                                            ( PropName "eqRecord", AbsN Nothing
-                                                                              ( ParamUnused Nothing :| [] )
-                                                                              ( AbsN Nothing
-                                                                                ( ParamUnused Nothing :| [] )
-                                                                                ( AbsN Nothing
-                                                                                  ( ParamUnused Nothing :| [] ) ( LiteralBool Nothing True )
-                                                                                )
-                                                                              )
-                                                                            )
-                                                                          ] :|
-                                                                          [ Ref Nothing
-                                                                            ( Imported
-                                                                              ( ModuleName "Prim" )
-                                                                              ( Name "undefined" )
-                                                                            ), LiteralObject Nothing
-                                                                            [
-                                                                              ( PropName "reflectSymbol", AbsN Nothing
-                                                                                ( ParamUnused Nothing :| [] )
-                                                                                ( LiteralString Nothing "tail" )
-                                                                              )
-                                                                            ], AppN Nothing
-                                                                            ( Ref Nothing
-                                                                              ( Imported
-                                                                                ( ModuleName "Golden.BugListGenericEq.Test" )
-                                                                                ( Name "eqList" )
-                                                                              )
-                                                                            )
-                                                                            ( Ref Nothing
-                                                                              ( Local
-                                                                                ( Name "dictEq" )
-                                                                              ) :| []
-                                                                            )
-                                                                          ]
-                                                                        ) :|
-                                                                        [ Ref Nothing
-                                                                          ( Imported
-                                                                            ( ModuleName "Prim" )
-                                                                            ( Name "undefined" )
-                                                                          ), LiteralObject Nothing
-                                                                          [
-                                                                            ( PropName "reflectSymbol", AbsN Nothing
-                                                                              ( ParamUnused Nothing :| [] )
-                                                                              ( LiteralString Nothing "head" )
-                                                                            )
-                                                                          ], Ref Nothing
-                                                                          ( Local
-                                                                            ( Name "dictEq" )
-                                                                          )
-                                                                        ]
-                                                                      ) :| []
-                                                                    )
-                                                                  )
-                                                                  ( Ref Nothing
-                                                                    ( Imported
-                                                                      ( ModuleName "Type.Proxy" )
-                                                                      ( Name "Proxy" )
-                                                                    ) :| []
-                                                                  )
-                                                                )
-                                                              ] :| []
-                                                            )
-                                                          )
-                                                          ( Ref Nothing
-                                                            ( Local ( Name "v$21" ) ) :| []
-                                                          )
-                                                        )
-                                                        ( Ref Nothing
-                                                          ( Local ( Name "v1$22" ) ) :| []
-                                                        )
-                                                      )
+                                                ( AppN Nothing
+                                                  ( Ref Nothing
+                                                    ( Imported
+                                                      ( ModuleName "Data.Eq" )
+                                                      ( Name "eqRowCons$w" )
                                                     )
                                                   )
-                                                ] :| []
+                                                  ( LiteralObject Nothing
+                                                    [
+                                                      ( PropName "eqRecord", AbsN Nothing
+                                                        ( ParamUnused Nothing :| [] )
+                                                        ( AbsN Nothing
+                                                          ( ParamUnused Nothing :| [] )
+                                                          ( AbsN Nothing
+                                                            ( ParamUnused Nothing :| [] ) ( LiteralBool Nothing True )
+                                                          )
+                                                        )
+                                                      )
+                                                    ] :|
+                                                    [ Ref Nothing
+                                                      ( Imported
+                                                        ( ModuleName "Prim" )
+                                                        ( Name "undefined" )
+                                                      ), LiteralObject Nothing
+                                                      [
+                                                        ( PropName "reflectSymbol", AbsN Nothing
+                                                          ( ParamUnused Nothing :| [] )
+                                                          ( LiteralString Nothing "tail" )
+                                                        )
+                                                      ], AppN Nothing
+                                                      ( Ref Nothing
+                                                        ( Imported
+                                                          ( ModuleName "Golden.BugListGenericEq.Test" )
+                                                          ( Name "eqList" )
+                                                        )
+                                                      )
+                                                      ( Ref Nothing
+                                                        ( Local ( Name "dictEq" ) ) :| []
+                                                      )
+                                                    ]
+                                                  ) :|
+                                                  [ Ref Nothing
+                                                    ( Imported
+                                                      ( ModuleName "Prim" )
+                                                      ( Name "undefined" )
+                                                    ), LiteralObject Nothing
+                                                    [
+                                                      ( PropName "reflectSymbol", AbsN Nothing
+                                                        ( ParamUnused Nothing :| [] )
+                                                        ( LiteralString Nothing "head" )
+                                                      )
+                                                    ], Ref Nothing
+                                                    ( Local ( Name "dictEq" ) )
+                                                  ]
+                                                )
+                                              )
+                                              ( PropName "eqRecord" )
+                                            )
+                                            ( Ref Nothing
+                                              ( Imported
+                                                ( ModuleName "Type.Proxy" )
+                                                ( Name "Proxy" )
                                               ) :| []
                                             )
                                           )
@@ -852,8 +495,7 @@ UberModule
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.BugListGenericEq.Test", qnameName = Name "eq"
-        }, AppN Nothing
-        ( Ref Nothing ( Imported ( ModuleName "Data.Eq" ) ( Name "eq" ) ) )
+        }, ObjectProp Nothing
         ( AppN Nothing
           ( Ref Nothing
             ( Imported ( ModuleName "Golden.BugListGenericEq.Test" ) ( Name "eqList" ) )
@@ -871,8 +513,9 @@ UberModule
                 )
               )
             ] :| []
-          ) :| []
+          )
         )
+        ( PropName "eq" )
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.BugListGenericEq.Test", qnameName = Name "cons$w"
@@ -918,14 +561,19 @@ UberModule
         ( Let Nothing
           ( Standalone
             ( Nothing, Name "_", AppN Nothing
-              ( AppN Nothing
-                ( Ref Nothing
-                  ( Imported ( ModuleName "Golden.BugListGenericEq.Test" ) ( Name "logShow" ) )
-                )
-                ( AppN Nothing
-                  ( AppN Nothing
-                    ( Ref Nothing
-                      ( Imported ( ModuleName "Golden.BugListGenericEq.Test" ) ( Name "eq" ) )
+              ( Let Nothing
+                ( Standalone
+                  ( Nothing, Name "a$2$269", AppN Nothing
+                    ( AppN Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Golden.BugListGenericEq.Test" ) ( Name "eq" ) )
+                      )
+                      ( Ref Nothing
+                        ( Imported
+                          ( ModuleName "Golden.BugListGenericEq.Test" )
+                          ( Name "Nil" )
+                        ) :| []
+                      )
                     )
                     ( Ref Nothing
                       ( Imported
@@ -933,24 +581,63 @@ UberModule
                         ( Name "Nil" )
                       ) :| []
                     )
-                  )
-                  ( Ref Nothing
-                    ( Imported ( ModuleName "Golden.BugListGenericEq.Test" ) ( Name "Nil" ) ) :| []
                   ) :| []
                 )
+                ( AppN Nothing
+                  ( ObjectProp ( Just Always )
+                    ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
+                    ( PropName "log" )
+                  )
+                  ( IfThenElse Nothing
+                    ( Ref Nothing ( Local ( Name "a$2$269" ) ) )
+                    ( LiteralString Nothing "true" )
+                    ( IfThenElse Nothing
+                      ( Eq Nothing ( LiteralBool Nothing False )
+                        ( Ref Nothing ( Local ( Name "a$2$269" ) ) )
+                      )
+                      ( LiteralString Nothing "false" )
+                      ( Exception Nothing "No patterns matched" )
+                    ) :| []
+                  )
+                )
               )
-              ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+              ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
             ) :|
             [ Standalone
               ( Nothing, Name "_", AppN Nothing
-                ( AppN Nothing
-                  ( Ref Nothing
-                    ( Imported ( ModuleName "Golden.BugListGenericEq.Test" ) ( Name "logShow" ) )
-                  )
-                  ( AppN Nothing
-                    ( AppN Nothing
-                      ( Ref Nothing
-                        ( Imported ( ModuleName "Golden.BugListGenericEq.Test" ) ( Name "eq" ) )
+                ( Let Nothing
+                  ( Standalone
+                    ( Nothing, Name "a$2$270", AppN Nothing
+                      ( AppN Nothing
+                        ( Ref Nothing
+                          ( Imported ( ModuleName "Golden.BugListGenericEq.Test" ) ( Name "eq" ) )
+                        )
+                        ( AppN Nothing
+                          ( Ref Nothing
+                            ( Imported
+                              ( ModuleName "Golden.BugListGenericEq.Test" )
+                              ( Name "cons$w" )
+                            )
+                          )
+                          ( LiteralInt Nothing 1 :|
+                            [ AppN Nothing
+                              ( Ref Nothing
+                                ( Imported
+                                  ( ModuleName "Golden.BugListGenericEq.Test" )
+                                  ( Name "cons$w" )
+                                )
+                              )
+                              ( LiteralInt Nothing 2 :|
+                                [ Ref Nothing
+                                  ( Imported
+                                    ( ModuleName "Golden.BugListGenericEq.Test" )
+                                    ( Name "Nil" )
+                                  )
+                                ]
+                              )
+                            ]
+                          ) :| []
+                        )
                       )
                       ( AppN Nothing
                         ( Ref Nothing
@@ -978,70 +665,82 @@ UberModule
                           ]
                         ) :| []
                       )
+                    ) :| []
+                  )
+                  ( AppN Nothing
+                    ( ObjectProp ( Just Always )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) )
+                      )
+                      ( PropName "log" )
+                    )
+                    ( IfThenElse Nothing
+                      ( Ref Nothing ( Local ( Name "a$2$270" ) ) )
+                      ( LiteralString Nothing "true" )
+                      ( IfThenElse Nothing
+                        ( Eq Nothing ( LiteralBool Nothing False )
+                          ( Ref Nothing ( Local ( Name "a$2$270" ) ) )
+                        )
+                        ( LiteralString Nothing "false" )
+                        ( Exception Nothing "No patterns matched" )
+                      ) :| []
+                    )
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              )
+            ]
+          )
+          ( AppN Nothing
+            ( Let Nothing
+              ( Standalone
+                ( Nothing, Name "a$2$271", AppN Nothing
+                  ( AppN Nothing
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Golden.BugListGenericEq.Test" ) ( Name "eq" ) )
                     )
                     ( AppN Nothing
                       ( Ref Nothing
                         ( Imported ( ModuleName "Golden.BugListGenericEq.Test" ) ( Name "cons$w" ) )
                       )
                       ( LiteralInt Nothing 1 :|
-                        [ AppN Nothing
-                          ( Ref Nothing
-                            ( Imported
-                              ( ModuleName "Golden.BugListGenericEq.Test" )
-                              ( Name "cons$w" )
-                            )
-                          )
-                          ( LiteralInt Nothing 2 :|
-                            [ Ref Nothing
-                              ( Imported
-                                ( ModuleName "Golden.BugListGenericEq.Test" )
-                                ( Name "Nil" )
-                              )
-                            ]
-                          )
+                        [ Ref Nothing
+                          ( Imported ( ModuleName "Golden.BugListGenericEq.Test" ) ( Name "Nil" ) )
                         ]
                       ) :| []
-                    ) :| []
-                  )
-                )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
-              )
-            ]
-          )
-          ( AppN Nothing
-            ( AppN Nothing
-              ( Ref Nothing
-                ( Imported ( ModuleName "Golden.BugListGenericEq.Test" ) ( Name "logShow" ) )
-              )
-              ( AppN Nothing
-                ( AppN Nothing
-                  ( Ref Nothing
-                    ( Imported ( ModuleName "Golden.BugListGenericEq.Test" ) ( Name "eq" ) )
+                    )
                   )
                   ( AppN Nothing
                     ( Ref Nothing
                       ( Imported ( ModuleName "Golden.BugListGenericEq.Test" ) ( Name "cons$w" ) )
                     )
-                    ( LiteralInt Nothing 1 :|
+                    ( LiteralInt Nothing 2 :|
                       [ Ref Nothing
                         ( Imported ( ModuleName "Golden.BugListGenericEq.Test" ) ( Name "Nil" ) )
                       ]
                     ) :| []
                   )
-                )
-                ( AppN Nothing
-                  ( Ref Nothing
-                    ( Imported ( ModuleName "Golden.BugListGenericEq.Test" ) ( Name "cons$w" ) )
-                  )
-                  ( LiteralInt Nothing 2 :|
-                    [ Ref Nothing
-                      ( Imported ( ModuleName "Golden.BugListGenericEq.Test" ) ( Name "Nil" ) )
-                    ]
-                  ) :| []
                 ) :| []
               )
+              ( AppN Nothing
+                ( ObjectProp ( Just Always )
+                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
+                  ( PropName "log" )
+                )
+                ( IfThenElse Nothing
+                  ( Ref Nothing ( Local ( Name "a$2$271" ) ) )
+                  ( LiteralString Nothing "true" )
+                  ( IfThenElse Nothing
+                    ( Eq Nothing ( LiteralBool Nothing False )
+                      ( Ref Nothing ( Local ( Name "a$2$271" ) ) )
+                    )
+                    ( LiteralString Nothing "false" )
+                    ( Exception Nothing "No patterns matched" )
+                  ) :| []
+                )
+              )
             )
-            ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+            ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
           )
         )
       ),

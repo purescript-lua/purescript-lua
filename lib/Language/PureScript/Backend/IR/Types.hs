@@ -22,7 +22,7 @@ import Language.PureScript.Backend.IR.Inliner qualified as Inliner
 import Language.PureScript.Backend.IR.Names
   ( CtorName (renderCtorName)
   , FieldName
-  , ModuleName
+  , ModuleName (ModuleName)
   , Name (Name, nameToText)
   , PropName
   , Qualified (..)
@@ -418,6 +418,37 @@ isRecursiveLiteral = \case
 isForeignImport ∷ RawExp ann → Bool
 isForeignImport = \case
   ForeignImport {} → True
+  _ → False
+
+{- | The synthetic argument magic-do applies a thunk to in order to /run/ it.
+
+A dedicated marker, distinct from the @Prim.undefined@ argument PureScript emits
+to force an ordinary nullary thunk (Note [Nullary functions and Prim.undefined]
+in 'Language.PureScript.Backend.Lua'). Both are ignored by the receiving
+'ParamUnused' and both are erased to an empty argument list by the Lua backend —
+but only this one marks an /effect run/. Giving magic-do its own token lets
+'isEffectRun' recognise exactly the effect runs magic-do introduces and not the
+coincidentally nullary thunks that share the @f Prim.undefined@ shape: a
+superclass-dictionary accessor or a newtype coercion (@runIdentity@) inlined off
+a non-Effect monad (@State@\/@Writer@). Conflating the two kept beta reduction
+from collapsing those pure thunks, bloating the output (issue #180). The @$@ in
+the name cannot collide with a PureScript identifier.
+-}
+pattern EffectRunArg ∷ ann → RawExp ann
+pattern EffectRunArg ann =
+  Ref ann (Imported (ModuleName "Prim") (Name "$magicDoRun"))
+
+{- | Recognise an Effect/ST statement as magic-do emits it: running a thunk, the
+application @m EffectRunArg@ (see 'Language.PureScript.Backend.IR.MagicDo'). Its
+side effect is observable and its statement sequencing is size-managed by
+magic-do's chunking, so passes that run after magic-do must leave it alone:
+dead-code elimination keeps it even when its binder is unreferenced, and beta
+reduction does not reduce through it (which would merge a chunk into its parent
+and overflow Lua's local-variable limit).
+-}
+isEffectRun ∷ RawExp ann → Bool
+isEffectRun = \case
+  AppN _ _ (EffectRunArg _ :| []) → True
   _ → False
 
 ctorId ∷ ModuleName → TyName → CtorName → Text

@@ -6,12 +6,9 @@ M.Golden_ForeignSharing_Token_foreign = { token = {} }
 M.Golden_ForeignSharing_Test_foreign = {
   same = function(a) return function(b) return rawequal(a, b) end end
 }
-M.Golden_ForeignSharing_Test_sharedToken = function()
-  return M.Golden_ForeignSharing_Token_foreign.token
-end
 return M.Effect_Console_foreign.log((function()
-  local Golden_ForeignSharing_Test_sharedToken = M.Golden_ForeignSharing_Test_sharedToken
-  if M.Golden_ForeignSharing_Test_foreign.same(Golden_ForeignSharing_Test_sharedToken(0))(Golden_ForeignSharing_Test_sharedToken(1)) then
+  local Golden_ForeignSharing_Token_foreign = M.Golden_ForeignSharing_Token_foreign
+  if M.Golden_ForeignSharing_Test_foreign.same(Golden_ForeignSharing_Token_foreign.token)(Golden_ForeignSharing_Token_foreign.token) then
     return "shared"
   else
     return "fresh"

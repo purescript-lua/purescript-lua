@@ -73,6 +73,7 @@ import Language.PureScript.Backend.IR.Types
   , unwindApp
   , pattern Abs
   , pattern App
+  , pattern EffectRunArg
   )
 
 -- | Flatten Effect/ST @do@ blocks in every binding and export of the module.
@@ -252,12 +253,13 @@ isBindDict resolve dict =
 -- Helpers ---------------------------------------------------------------------
 
 {- | Run an Effect/ST computation: apply the thunk to no arguments. The
-synthetic @Prim.undefined@ argument is erased to an empty argument list by
-the Lua code generator, so this emits @m()@.
+synthetic 'EffectRunArg' argument is erased to an empty argument list by the Lua
+code generator, so this emits @m()@. Unlike @Prim.undefined@ (the argument that
+forces an ordinary nullary thunk), 'EffectRunArg' marks this application as an
+effect run so 'isEffectRun' recognises it precisely (issue #180).
 -}
 runEffect ∷ Exp → Exp
-runEffect m =
-  App noAnn m (Ref noAnn (Imported (ModuleName "Prim") (Name "undefined")))
+runEffect m = App noAnn m (EffectRunArg noAnn)
 
 {- | Bound on alias/instance resolution to stay terminating on recursive
 bindings.

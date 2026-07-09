@@ -1,16 +1,7 @@
-local M = {}
-M.Golden_Values_Test_f = function() return true end
 return {
   a = 1,
   b = "b",
-  c = (function()
-    local v_S_6 = function() return 0 end
-    if M.Golden_Values_Test_f(2) then
-      if M.Golden_Values_Test_f(1) then return 42 else return v_S_6(true) end
-    else
-      return v_S_6(true)
-    end
-  end)(),
+  c = 42,
   J = function(value0)
     return { ["$ctor"] = "Golden.CaseStatements.Test∷M.J", value0 = value0 }
   end,

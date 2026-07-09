@@ -11,10 +11,7 @@ UberModule
       ( Name "r", Ref Nothing
         ( Imported ( ModuleName "Golden.RecordsAccess.Test" ) ( Name "r" ) )
       ),
-      ( Name "test1", ObjectProp Nothing
-        ( Ref Nothing ( Imported ( ModuleName "Golden.RecordsAccess.Test" ) ( Name "r" ) ) )
-        ( PropName "x" )
-      ),
+      ( Name "test1", LiteralInt Nothing 1 ),
       ( Name "test2", AbsN Nothing
         ( ParamNamed Nothing ( Name "v$0" ) :| [] )
         ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "v$0" ) ) ) ( PropName "x" ) )

@@ -1,21 +1,3 @@
-local function PSLUA_runtime_lazy(name)
-  return function(init)
-    local state = 0
-    local val = nil
-    return function()
-      if state == 2 then
-        return val
-      elseif state == 1 then
-        return error(name .. " was needed before it finished initializing")
-      else
-        state = 1
-        val = init()
-        state = 2
-        return val
-      end
-    end
-  end
-end
 local M = {}
 M.Data_Show_foreign = {
   showIntImpl = function(n) return tostring(n) end,
@@ -38,60 +20,12 @@ M.Data_Functor_foreign = {
     end
   end
 }
-M.Effect_foreign = {
-  pureE = function(a) return function() return a end end,
-  bindE = function(a)
-    return function(f) return function() return f(a())() end end
-  end
-}
 M.Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
 }
 M.Data_Show_showInt = { show = M.Data_Show_foreign.showIntImpl }
-M.Data_Show_show = function(dict) return dict.show end
-M.Control_Applicative_pure = function(dict) return dict.pure end
-M.Control_Bind_bind = function(dict) return dict.bind end
-M.Effect_monadEffect = {
-  Applicative0 = function() return M.Effect_applicativeEffect end,
-  Bind1 = function() return M.Effect_bindEffect end
-}
-M.Effect_bindEffect = {
-  bind = M.Effect_foreign.bindE,
-  Apply0 = function() return M.Effect_Lazy_applyEffect(0) end
-}
-M.Effect_applicativeEffect = {
-  pure = M.Effect_foreign.pureE,
-  Apply0 = function() return M.Effect_Lazy_applyEffect(0) end
-}
-M.Effect_Lazy_functorEffect = PSLUA_runtime_lazy("functorEffect")(function()
-  return {
-    map = function(f_S_26)
-      return function(a_S_27)
-        local Effect_applicativeEffect = M.Effect_applicativeEffect
-        return (Effect_applicativeEffect.Apply0()).apply(M.Control_Applicative_pure(Effect_applicativeEffect)(f_S_26))(a_S_27)
-      end
-    end
-  }
-end)
-M.Effect_Lazy_applyEffect = PSLUA_runtime_lazy("applyEffect")(function()
-  return {
-    apply = (function()
-      local bind_S_5 = M.Control_Bind_bind(M.Effect_monadEffect.Bind1())
-      return function(f_S_7)
-        return function(a_S_8)
-          return bind_S_5(f_S_7)(function(fPrime_S_9)
-            return bind_S_5(a_S_8)(function(aPrime_S_10)
-              return M.Control_Applicative_pure(M.Effect_monadEffect.Applicative0())(fPrime_S_9(aPrime_S_10))
-            end)
-          end)
-        end
-      end
-    end)(),
-    Functor0 = function() return M.Effect_Lazy_functorEffect(0) end
-  }
-end)
 M.Effect_Console_logShow_S_w = function(dictShow, a)
-  return M.Effect_Console_foreign.log(M.Data_Show_show(dictShow)(a))
+  return M.Effect_Console_foreign.log(dictShow.show(a))
 end
 M.Golden_Uncurry_Test_eq_S_w = function(r1_S_201_S_218, r2_S_202_S_219)
   return r1_S_201_S_218 == r2_S_202_S_219
@@ -101,10 +35,6 @@ M.Golden_Uncurry_Test_add_S_w = function(x_S_191_S_220, y_S_192_S_221)
 end
 M.Golden_Uncurry_Test_sub_S_w = function(x_S_187_S_213, y_S_188_S_214)
   return x_S_187_S_213 - y_S_188_S_214
-end
-M.Golden_Uncurry_Test_discard = M.Control_Bind_bind(M.Effect_bindEffect)
-M.Golden_Uncurry_Test_logShow = function(logShow_S_p2_S_231)
-  return M.Effect_Console_logShow_S_w(M.Data_Show_showInt, logShow_S_p2_S_231)
 end
 M.Golden_Uncurry_Test_sumTo = function(m)
   local go_S_w
@@ -162,26 +92,52 @@ M.Golden_Uncurry_Test_add3 = function(add3_S_p1)
     end
   end
 end
-M.Golden_Uncurry_Test_inc = M.Golden_Uncurry_Test_add3(1)(0)
+M.Golden_Uncurry_Test_inc = function(add3_S_p3_S_234)
+  return M.Golden_Uncurry_Test_add3_S_w(1, 0, add3_S_p3_S_234)
+end
 return (function()
-  local Golden_Uncurry_Test_logShow, Golden_Uncurry_Test_add3_S_w, Golden_Uncurry_Test_adderOf_S_w, Golden_Uncurry_Test_alwaysFirst_S_w, Golden_Uncurry_Test_sumTo = M.Golden_Uncurry_Test_logShow, M.Golden_Uncurry_Test_add3_S_w, M.Golden_Uncurry_Test_adderOf_S_w, M.Golden_Uncurry_Test_alwaysFirst_S_w, M.Golden_Uncurry_Test_sumTo
-  local _ = Golden_Uncurry_Test_logShow(Golden_Uncurry_Test_add3_S_w(1, 2, 3))()
-  local _ = Golden_Uncurry_Test_logShow(Golden_Uncurry_Test_add3_S_w(4, 5, 6))()
-  local _ = Golden_Uncurry_Test_logShow(Golden_Uncurry_Test_add3_S_w(10, 1, 2))()
-  local _ = Golden_Uncurry_Test_logShow(M.Golden_Uncurry_Test_inc(41))()
-  local _ = M.Effect_Console_logShow_S_w({
-    show = M.Data_Show_foreign.showArrayImpl(M.Data_Show_show(M.Data_Show_showInt))
-  }, M.Data_Functor_foreign.arrayMap(M.Golden_Uncurry_Test_add3(1)(2))({
-    [1] = 1,
-    [2] = 2,
-    [3] = 3
-  }))()
-  local _ = Golden_Uncurry_Test_logShow(M.Golden_Uncurry_Test_evenSteps_S_w(0, 10))()
-  local _ = Golden_Uncurry_Test_logShow(M.Golden_Uncurry_Test_oddSteps_S_w(0, 7))()
-  local _ = Golden_Uncurry_Test_logShow(Golden_Uncurry_Test_sumTo(10))()
-  local _ = Golden_Uncurry_Test_logShow(Golden_Uncurry_Test_sumTo(100))()
-  local _ = Golden_Uncurry_Test_logShow(Golden_Uncurry_Test_adderOf_S_w(1, 2)(3))()
-  local _ = Golden_Uncurry_Test_logShow(Golden_Uncurry_Test_adderOf_S_w(2, 3)(4))()
-  local _ = Golden_Uncurry_Test_logShow(Golden_Uncurry_Test_alwaysFirst_S_w(7, 8))()
-  return Golden_Uncurry_Test_logShow(Golden_Uncurry_Test_alwaysFirst_S_w(9, 10))()
+  local Effect_Console_logShow_S_w, Data_Show_showInt, Golden_Uncurry_Test_add3_S_w, Data_Show_foreign, Golden_Uncurry_Test_adderOf_S_w, Golden_Uncurry_Test_alwaysFirst_S_w = M.Effect_Console_logShow_S_w, M.Data_Show_showInt, M.Golden_Uncurry_Test_add3_S_w, M.Data_Show_foreign, M.Golden_Uncurry_Test_adderOf_S_w, M.Golden_Uncurry_Test_alwaysFirst_S_w
+  local _ = Effect_Console_logShow_S_w(Data_Show_showInt, Golden_Uncurry_Test_add3_S_w(1, 2, 3))()
+  local _ = Effect_Console_logShow_S_w(Data_Show_showInt, Golden_Uncurry_Test_add3_S_w(4, 5, 6))()
+  local _ = Effect_Console_logShow_S_w(Data_Show_showInt, Golden_Uncurry_Test_add3_S_w(10, 1, 2))()
+  local _ = Effect_Console_logShow_S_w(Data_Show_showInt, Golden_Uncurry_Test_add3_S_w(1, 0, 41))()
+  local _ = Effect_Console_logShow_S_w({
+    show = Data_Show_foreign.showArrayImpl(Data_Show_foreign.showIntImpl)
+  }, M.Data_Functor_foreign.arrayMap(function(add3_S_p3_S_247)
+    return M.Golden_Uncurry_Test_add3_S_w(1, 2, add3_S_p3_S_247)
+  end)({ [1] = 1, [2] = 2, [3] = 3 }))()
+  local _ = Effect_Console_logShow_S_w(Data_Show_showInt, M.Golden_Uncurry_Test_evenSteps_S_w(0, 10))()
+  local _ = Effect_Console_logShow_S_w(Data_Show_showInt, M.Golden_Uncurry_Test_oddSteps_S_w(0, 7))()
+  local _ = Effect_Console_logShow_S_w(Data_Show_showInt, (function()
+    local go_S_w_S_251
+    go_S_w_S_251 = function(acc_S_252, n_S_253)
+      local Golden_Uncurry_Test_add_S_w, Golden_Uncurry_Test_eq_S_w, Golden_Uncurry_Test_sub_S_w = M.Golden_Uncurry_Test_add_S_w, M.Golden_Uncurry_Test_eq_S_w, M.Golden_Uncurry_Test_sub_S_w
+      while true do
+        if Golden_Uncurry_Test_eq_S_w(n_S_253, 0) then
+          return acc_S_252
+        else
+          acc_S_252, n_S_253 = Golden_Uncurry_Test_add_S_w(acc_S_252, n_S_253), Golden_Uncurry_Test_sub_S_w(n_S_253, 1)
+        end
+      end
+    end
+    return go_S_w_S_251(0, 10)
+  end)())()
+  local _ = Effect_Console_logShow_S_w(Data_Show_showInt, (function()
+    local go_S_w_S_256
+    go_S_w_S_256 = function(acc_S_257, n_S_258)
+      local Golden_Uncurry_Test_add_S_w, Golden_Uncurry_Test_eq_S_w, Golden_Uncurry_Test_sub_S_w = M.Golden_Uncurry_Test_add_S_w, M.Golden_Uncurry_Test_eq_S_w, M.Golden_Uncurry_Test_sub_S_w
+      while true do
+        if Golden_Uncurry_Test_eq_S_w(n_S_258, 0) then
+          return acc_S_257
+        else
+          acc_S_257, n_S_258 = Golden_Uncurry_Test_add_S_w(acc_S_257, n_S_258), Golden_Uncurry_Test_sub_S_w(n_S_258, 1)
+        end
+      end
+    end
+    return go_S_w_S_256(0, 100)
+  end)())()
+  local _ = Effect_Console_logShow_S_w(Data_Show_showInt, Golden_Uncurry_Test_adderOf_S_w(1, 2)(3))()
+  local _ = Effect_Console_logShow_S_w(Data_Show_showInt, Golden_Uncurry_Test_adderOf_S_w(2, 3)(4))()
+  local _ = Effect_Console_logShow_S_w(Data_Show_showInt, Golden_Uncurry_Test_alwaysFirst_S_w(7, 8))()
+  return Effect_Console_logShow_S_w(Data_Show_showInt, Golden_Uncurry_Test_alwaysFirst_S_w(9, 10))()
 end)()

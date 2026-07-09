@@ -32,34 +32,6 @@ UberModule
         [ ( Nothing, Name "log" ) ]
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Control.Semigroupoid", qnameName = Name "semigroupoidFn"
-        }, LiteralObject Nothing
-        [
-          ( PropName "compose", AbsN Nothing
-            ( ParamNamed Nothing ( Name "f" ) :| [] )
-            ( AbsN Nothing
-              ( ParamNamed Nothing ( Name "g" ) :| [] )
-              ( AbsN Nothing
-                ( ParamNamed Nothing ( Name "x" ) :| [] )
-                ( AppN Nothing
-                  ( Ref Nothing ( Local ( Name "f" ) ) )
-                  ( AppN Nothing
-                    ( Ref Nothing ( Local ( Name "g" ) ) )
-                    ( Ref Nothing ( Local ( Name "x" ) ) :| [] ) :| []
-                  )
-                )
-              )
-            )
-          )
-        ]
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Control.Semigroupoid", qnameName = Name "compose"
-        }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "dict" ) :| [] )
-        ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) ) ( PropName "compose" ) )
-      ), Standalone
-      ( QName
         { qnameModuleName = ModuleName "Data.Semigroup", qnameName = Name "semigroupArray"
         }, LiteralObject Nothing
         [
@@ -68,27 +40,6 @@ UberModule
             ( PropName "concatArray" )
           )
         ]
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Data.Semigroup", qnameName = Name "append" }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "dict" ) :| [] )
-        ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) ) ( PropName "append" ) )
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Data.Functor", qnameName = Name "map" }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "dict" ) :| [] )
-        ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) ) ( PropName "map" ) )
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Control.Applicative", qnameName = Name "pure"
-        }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "dict" ) :| [] )
-        ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) ) ( PropName "pure" ) )
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Control.Bind", qnameName = Name "bind" }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "dict" ) :| [] )
-        ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) ) ( PropName "bind" ) )
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Data.Monoid", qnameName = Name "monoidArray"
@@ -177,14 +128,6 @@ UberModule
         ]
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Control.Monad.Writer.Trans", qnameName = Name "compose"
-        }, AppN Nothing
-        ( Ref Nothing ( Imported ( ModuleName "Control.Semigroupoid" ) ( Name "compose" ) ) )
-        ( Ref Nothing
-          ( Imported ( ModuleName "Control.Semigroupoid" ) ( Name "semigroupoidFn" ) ) :| []
-        )
-      ), Standalone
-      ( QName
         { qnameModuleName = ModuleName "Control.Monad.Writer.Trans", qnameName = Name "applyWriterT$w"
         }, AbsN Nothing
         ( ParamNamed Nothing
@@ -215,11 +158,9 @@ UberModule
                       )
                       ( AppN Nothing
                         ( AppN Nothing
-                          ( AppN Nothing
-                            ( Ref Nothing
-                              ( Imported ( ModuleName "Data.Functor" ) ( Name "map" ) )
-                            )
-                            ( Ref Nothing ( Local ( Name "Functor0" ) ) :| [] )
+                          ( ObjectProp Nothing
+                            ( Ref Nothing ( Local ( Name "Functor0" ) ) )
+                            ( PropName "map" )
                           )
                           ( AbsN Nothing
                             ( ParamNamed Nothing ( Name "v3$33" ) :| [] )
@@ -243,14 +184,9 @@ UberModule
                                 )
                                 ( AppN Nothing
                                   ( AppN Nothing
-                                    ( AppN Nothing
-                                      ( Ref Nothing
-                                        ( Imported
-                                          ( ModuleName "Data.Semigroup" )
-                                          ( Name "append" )
-                                        )
-                                      )
-                                      ( Ref Nothing ( Local ( Name "dictSemigroup" ) ) :| [] )
+                                    ( ObjectProp Nothing
+                                      ( Ref Nothing ( Local ( Name "dictSemigroup" ) ) )
+                                      ( PropName "append" )
                                     )
                                     ( ObjectProp Nothing
                                       ( Ref Nothing ( Local ( Name "v3$33" ) ) )
@@ -283,11 +219,9 @@ UberModule
                         ( ParamNamed Nothing ( Name "v$499" ) :| [] )
                         ( AppN Nothing
                           ( AppN Nothing
-                            ( AppN Nothing
-                              ( Ref Nothing
-                                ( Imported ( ModuleName "Data.Functor" ) ( Name "map" ) )
-                              )
-                              ( Ref Nothing ( Local ( Name "Functor0" ) ) :| [] )
+                            ( ObjectProp Nothing
+                              ( Ref Nothing ( Local ( Name "Functor0" ) ) )
+                              ( PropName "map" )
                             )
                             ( AbsN Nothing
                               ( ParamNamed Nothing ( Name "v$497" ) :| [] )
@@ -347,9 +281,9 @@ UberModule
                   ( ParamNamed Nothing ( Name "k" ) :| [] )
                   ( AppN Nothing
                     ( AppN Nothing
-                      ( AppN Nothing
-                        ( Ref Nothing ( Imported ( ModuleName "Control.Bind" ) ( Name "bind" ) ) )
-                        ( Ref Nothing ( Local ( Name "dictBind" ) ) :| [] )
+                      ( ObjectProp Nothing
+                        ( Ref Nothing ( Local ( Name "dictBind" ) ) )
+                        ( PropName "bind" )
                       )
                       ( Ref Nothing ( Local ( Name "v" ) ) :| [] )
                     )
@@ -357,10 +291,7 @@ UberModule
                       ( ParamNamed Nothing ( Name "v1" ) :| [] )
                       ( AppN Nothing
                         ( AppN Nothing
-                          ( AppN Nothing
-                            ( Ref Nothing
-                              ( Imported ( ModuleName "Data.Functor" ) ( Name "map" ) )
-                            )
+                          ( ObjectProp Nothing
                             ( AppN Nothing
                               ( ObjectProp Nothing
                                 ( Ref Nothing ( Local ( Name "Apply0" ) ) )
@@ -368,8 +299,9 @@ UberModule
                               )
                               ( Ref Nothing
                                 ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| []
-                              ) :| []
+                              )
                             )
+                            ( PropName "map" )
                           )
                           ( AbsN Nothing
                             ( ParamNamed Nothing ( Name "v3" ) :| [] )
@@ -385,11 +317,9 @@ UberModule
                               )
                               ( AppN Nothing
                                 ( AppN Nothing
-                                  ( AppN Nothing
-                                    ( Ref Nothing
-                                      ( Imported ( ModuleName "Data.Semigroup" ) ( Name "append" ) )
-                                    )
-                                    ( Ref Nothing ( Local ( Name "dictSemigroup" ) ) :| [] )
+                                  ( ObjectProp Nothing
+                                    ( Ref Nothing ( Local ( Name "dictSemigroup" ) ) )
+                                    ( PropName "append" )
                                   )
                                   ( ObjectProp Nothing
                                     ( Ref Nothing ( Local ( Name "v1" ) ) )
@@ -447,9 +377,9 @@ UberModule
             ( PropName "pure", AbsN Nothing
               ( ParamNamed Nothing ( Name "a" ) :| [] )
               ( AppN Nothing
-                ( AppN Nothing
-                  ( Ref Nothing ( Imported ( ModuleName "Control.Applicative" ) ( Name "pure" ) ) )
-                  ( Ref Nothing ( Local ( Name "dictApplicative" ) ) :| [] )
+                ( ObjectProp Nothing
+                  ( Ref Nothing ( Local ( Name "dictApplicative" ) ) )
+                  ( PropName "pure" )
                 )
                 ( AppN Nothing
                   ( AppN Nothing
@@ -490,8 +420,7 @@ UberModule
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.LongWriterBind.Test", qnameName = Name "discard"
-        }, AppN Nothing
-        ( Ref Nothing ( Imported ( ModuleName "Control.Bind" ) ( Name "bind" ) ) )
+        }, ObjectProp Nothing
         ( AppN Nothing
           ( Ref Nothing
             ( Imported ( ModuleName "Control.Monad.Writer.Trans" ) ( Name "bindWriterT$w" ) )
@@ -499,8 +428,9 @@ UberModule
           ( Ref Nothing
             ( Imported ( ModuleName "Data.Semigroup" ) ( Name "semigroupArray" ) ) :|
             [ Ref Nothing ( Imported ( ModuleName "Data.Identity" ) ( Name "bindIdentity" ) ) ]
-          ) :| []
+          )
         )
+        ( PropName "bind" )
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.LongWriterBind.Test", qnameName = Name "tell"
@@ -526,55 +456,35 @@ UberModule
           )
           ( LiteralObject Nothing
             [
-              ( PropName "tell", AppN Nothing
+              ( PropName "tell", AbsN Nothing
+                ( ParamNamed Nothing ( Name "x$532$535" ) :| [] )
                 ( AppN Nothing
-                  ( Ref Nothing
-                    ( Imported ( ModuleName "Control.Monad.Writer.Trans" ) ( Name "compose" ) )
-                  )
-                  ( AbsN Nothing
-                    ( ParamNamed Nothing ( Name "x$500$512" ) :| [] )
-                    ( Ref Nothing ( Local ( Name "x$500$512" ) ) ) :| []
-                  )
-                )
-                ( AppN Nothing
-                  ( AppN Nothing
-                    ( Ref Nothing
-                      ( Imported ( ModuleName "Control.Monad.Writer.Trans" ) ( Name "compose" ) )
-                    )
+                  ( ObjectProp Nothing
                     ( AppN Nothing
-                      ( Ref Nothing
-                        ( Imported ( ModuleName "Control.Applicative" ) ( Name "pure" ) )
+                      ( ObjectProp Nothing
+                        ( Ref Nothing ( Local ( Name "dictMonad$511" ) ) )
+                        ( PropName "Applicative0" )
                       )
-                      ( AppN Nothing
-                        ( ObjectProp Nothing
-                          ( Ref Nothing ( Local ( Name "dictMonad$511" ) ) )
-                          ( PropName "Applicative0" )
-                        )
-                        ( Ref Nothing
-                          ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| []
-                        ) :| []
-                      ) :| []
+                      ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
                     )
+                    ( PropName "pure" )
                   )
                   ( AppN Nothing
-                    ( Ref Nothing ( Imported ( ModuleName "Data.Tuple" ) ( Name "Tuple" ) ) )
-                    ( ObjectProp ( Just Always )
-                      ( Ref Nothing ( Imported ( ModuleName "Data.Unit" ) ( Name "foreign" ) ) )
-                      ( PropName "unit" ) :| []
-                    ) :| []
-                  ) :| []
+                    ( AppN Nothing
+                      ( Ref Nothing ( Imported ( ModuleName "Data.Tuple" ) ( Name "Tuple" ) ) )
+                      ( ObjectProp ( Just Always )
+                        ( Ref Nothing ( Imported ( ModuleName "Data.Unit" ) ( Name "foreign" ) ) )
+                        ( PropName "unit" ) :| []
+                      )
+                    )
+                    ( Ref Nothing ( Local ( Name "x$532$535" ) ) :| [] ) :| []
+                  )
                 )
               ),
               ( PropName "Semigroup0", AbsN Nothing
                 ( ParamUnused Nothing :| [] )
-                ( AppN Nothing
-                  ( ObjectProp Nothing
-                    ( Ref Nothing
-                      ( Imported ( ModuleName "Data.Monoid" ) ( Name "monoidArray" ) )
-                    )
-                    ( PropName "Semigroup0" )
-                  )
-                  ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+                ( Ref Nothing
+                  ( Imported ( ModuleName "Data.Semigroup" ) ( Name "semigroupArray" ) )
                 )
               ),
               ( PropName "Monad1", AbsN Nothing
@@ -613,16 +523,8 @@ UberModule
                             ( Name "bindWriterT$w" )
                           )
                         )
-                        ( AppN Nothing
-                          ( ObjectProp Nothing
-                            ( Ref Nothing
-                              ( Imported ( ModuleName "Data.Monoid" ) ( Name "monoidArray" ) )
-                            )
-                            ( PropName "Semigroup0" )
-                          )
-                          ( Ref Nothing
-                            ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| []
-                          ) :|
+                        ( Ref Nothing
+                          ( Imported ( ModuleName "Data.Semigroup" ) ( Name "semigroupArray" ) ) :|
                           [ AppN Nothing
                             ( ObjectProp Nothing
                               ( Ref Nothing ( Local ( Name "dictMonad$511" ) ) )
@@ -647,7 +549,7 @@ UberModule
         { qnameModuleName = ModuleName "Golden.LongWriterBind.Test", qnameName = Name "go"
         }, Let Nothing
         ( Standalone
-          ( Nothing, Name "$kont515", AppN Nothing
+          ( Nothing, Name "$kont539", AppN Nothing
             ( AppN Nothing
               ( Ref Nothing
                 ( Imported ( ModuleName "Golden.LongWriterBind.Test" ) ( Name "discard" ) )
@@ -1498,13 +1400,7 @@ UberModule
                                                                                                                                                                         ( AbsN Nothing
                                                                                                                                                                           ( ParamUnused Nothing :| [] )
                                                                                                                                                                           ( AppN Nothing
-                                                                                                                                                                            ( AppN Nothing
-                                                                                                                                                                              ( Ref Nothing
-                                                                                                                                                                                ( Imported
-                                                                                                                                                                                  ( ModuleName "Control.Applicative" )
-                                                                                                                                                                                  ( Name "pure" )
-                                                                                                                                                                                )
-                                                                                                                                                                              )
+                                                                                                                                                                            ( ObjectProp Nothing
                                                                                                                                                                               ( AppN Nothing
                                                                                                                                                                                 ( Ref Nothing
                                                                                                                                                                                   ( Imported
@@ -1523,8 +1419,9 @@ UberModule
                                                                                                                                                                                       ( Name "applicativeIdentity" )
                                                                                                                                                                                     )
                                                                                                                                                                                   ]
-                                                                                                                                                                                ) :| []
+                                                                                                                                                                                )
                                                                                                                                                                               )
+                                                                                                                                                                              ( PropName "pure" )
                                                                                                                                                                             )
                                                                                                                                                                             ( LiteralInt Nothing 42 :| [] )
                                                                                                                                                                           ) :| []
@@ -1609,7 +1506,7 @@ UberModule
             )
           ) :|
           [ Standalone
-            ( Nothing, Name "$kont516", AppN Nothing
+            ( Nothing, Name "$kont540", AppN Nothing
               ( AppN Nothing
                 ( Ref Nothing
                   ( Imported ( ModuleName "Golden.LongWriterBind.Test" ) ( Name "discard" ) )
@@ -2466,7 +2363,7 @@ UberModule
                                                                                                                                                                             ( ParamUnused Nothing :| [] )
                                                                                                                                                                             ( Ref Nothing
                                                                                                                                                                               ( Local
-                                                                                                                                                                                ( Name "$kont515" )
+                                                                                                                                                                                ( Name "$kont539" )
                                                                                                                                                                               )
                                                                                                                                                                             ) :| []
                                                                                                                                                                           )
@@ -2549,7 +2446,7 @@ UberModule
                 ) :| []
               )
             ), Standalone
-            ( Nothing, Name "$kont517", AppN Nothing
+            ( Nothing, Name "$kont541", AppN Nothing
               ( AppN Nothing
                 ( Ref Nothing
                   ( Imported ( ModuleName "Golden.LongWriterBind.Test" ) ( Name "discard" ) )
@@ -3404,7 +3301,7 @@ UberModule
                                                                                                                                                                             ( ParamUnused Nothing :| [] )
                                                                                                                                                                             ( Ref Nothing
                                                                                                                                                                               ( Local
-                                                                                                                                                                                ( Name "$kont516" )
+                                                                                                                                                                                ( Name "$kont540" )
                                                                                                                                                                               )
                                                                                                                                                                             ) :| []
                                                                                                                                                                           )
@@ -3487,7 +3384,7 @@ UberModule
                 ) :| []
               )
             ), Standalone
-            ( Nothing, Name "$kont518", AppN Nothing
+            ( Nothing, Name "$kont542", AppN Nothing
               ( AppN Nothing
                 ( Ref Nothing
                   ( Imported ( ModuleName "Golden.LongWriterBind.Test" ) ( Name "discard" ) )
@@ -4342,7 +4239,7 @@ UberModule
                                                                                                                                                                             ( ParamUnused Nothing :| [] )
                                                                                                                                                                             ( Ref Nothing
                                                                                                                                                                               ( Local
-                                                                                                                                                                                ( Name "$kont517" )
+                                                                                                                                                                                ( Name "$kont541" )
                                                                                                                                                                               )
                                                                                                                                                                             ) :| []
                                                                                                                                                                           )
@@ -5274,7 +5171,7 @@ UberModule
                                                                                                                                                                         ( ParamUnused Nothing :| [] )
                                                                                                                                                                         ( Ref Nothing
                                                                                                                                                                           ( Local
-                                                                                                                                                                            ( Name "$kont518" )
+                                                                                                                                                                            ( Name "$kont542" )
                                                                                                                                                                           )
                                                                                                                                                                         ) :| []
                                                                                                                                                                       )
@@ -5362,25 +5259,9 @@ UberModule
         { qnameModuleName = ModuleName "Golden.LongWriterBind.Test", qnameName = Name "compute"
         }, ObjectProp Nothing
         ( AppN Nothing
-          ( AppN Nothing
-            ( AppN Nothing
-              ( AppN Nothing
-                ( Ref Nothing
-                  ( Imported ( ModuleName "Control.Semigroupoid" ) ( Name "compose" ) )
-                )
-                ( Ref Nothing
-                  ( Imported ( ModuleName "Control.Semigroupoid" ) ( Name "semigroupoidFn" ) ) :| []
-                )
-              )
-              ( ObjectProp ( Just Always )
-                ( Ref Nothing ( Imported ( ModuleName "Unsafe.Coerce" ) ( Name "foreign" ) ) )
-                ( PropName "unsafeCoerce" ) :| []
-              )
-            )
-            ( AbsN Nothing
-              ( ParamNamed Nothing ( Name "v$39$494" ) :| [] )
-              ( Ref Nothing ( Local ( Name "v$39$494" ) ) ) :| []
-            )
+          ( ObjectProp ( Just Always )
+            ( Ref Nothing ( Imported ( ModuleName "Unsafe.Coerce" ) ( Name "foreign" ) ) )
+            ( PropName "unsafeCoerce" )
           )
           ( Ref Nothing
             ( Imported ( ModuleName "Golden.LongWriterBind.Test" ) ( Name "go" ) ) :| []
