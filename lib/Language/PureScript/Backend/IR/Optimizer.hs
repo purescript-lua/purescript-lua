@@ -46,7 +46,9 @@ import Language.PureScript.Backend.IR.Types
   , countFreeRef
   , countFreeRefs
   , ctorId
+  , freshenBinders
   , getAnn
+  , isEffectRun
   , isForeignImport
   , isNonRecursiveLiteral
   , lets
@@ -124,6 +126,15 @@ optimizerPipeline neverNames =
     -- `discard` are not dropped as dead. See
     -- Language.PureScript.Backend.IR.MagicDo.
     RunPass magicDoPass
+  , -- Budgeted call-site inlining of dictionary methods (issue #180), the
+    -- cure for non-Effect/ST monadic chains that compile to nested closure
+    -- chains. Runs only here, after magicDo has lowered the Effect/ST chains:
+    -- inlining a bind before that would leave magicDo a chain it can no
+    -- longer recognise. The inlined methods' constructor matches then meet
+    -- the case-of-known-constructor folds (#177/#213/#214), collapsing
+    -- Maybe/Either/Writer/State chains into straight-line code. Code growth
+    -- is bounded by 'inlineSizeBudget'.
+    RunFixpoint "specialize+dce" (specializePass :| [dcePass])
   , -- Flatten the remaining deeply-nested expression trees (issues #104,
     -- #108): continuation/bind chains of any monad (lambda-lifted
     -- into $kont helpers) and applicative/flipped-bind application
@@ -141,10 +152,23 @@ optimizerPipeline neverNames =
       , passRequires = wellScoped
       , passEnsures = guc
       }
+  -- The pre-magicDo optimize pass does no call-site inlining: an inlined
+  -- Effect/ST @bind@ is one magicDo can no longer recognise (issue #180).
   optimizePass =
     Pass
       { passName = "optimize"
-      , passRun = optimizeModule neverNames
+      , passRun = optimizeModule SkipCallSites neverNames
+      , passRequires = guc
+      , passEnsures = guc
+      }
+  -- The post-magicDo pass adds budgeted call-site inlining (issue #180): with
+  -- Effect/ST chains already lowered, only non-Effect/ST methods remain to
+  -- specialize, and inlining them lets the constructor folds collapse the
+  -- chain to straight-line code.
+  specializePass =
+    Pass
+      { passName = "specialize"
+      , passRun = optimizeModule InlineCallSites neverNames
       , passRequires = guc
       , passEnsures = guc
       }
@@ -270,8 +294,12 @@ Besides removing the quadratic cost, this counts against the live
 bindings, so the use-once decision no longer misjudges a binding whose
 references changed earlier in the same run (issue #143).
 -}
-optimizeModule ∷ Set QName → UberModule → SupplyM (UberModule, WasRewritten)
-optimizeModule neverNames UberModule {..} = runWriterT do
+optimizeModule
+  ∷ CallSiteInlining
+  → Set QName
+  → UberModule
+  → SupplyM (UberModule, WasRewritten)
+optimizeModule inlining neverNames UberModule {..} = runWriterT do
   -- See Note [Incremental free-reference counting]
   let initialCounts =
         Map.unionsWith (+) (countFreeRefs . snd <$> uberModuleExports)
@@ -287,12 +315,46 @@ optimizeModule neverNames UberModule {..} = runWriterT do
       , uberModuleExports = uberModuleExports'
       }
  where
+  -- Top-level bindings the call-site inliner may resolve and paste
+  -- (issue #180): Standalone RHSs, minus the @inline never@ set. Built from
+  -- the pristine input bindings, a stable snapshot for this run; the
+  -- specialize+dce fixpoint rebuilds it each round as bindings settle. Empty
+  -- when call-site inlining is off, so the two inline rules never fire — the
+  -- pre-magicDo runs, where inlining an Effect/ST @bind@ would rob magicDo of
+  -- the un-inlined chain it recognises (see 'optimizerPipeline').
+  inlineEnv ∷ InlineEnv
+  inlineEnv = case inlining of
+    SkipCallSites → mempty
+    InlineCallSites →
+      Map.fromList
+        [ (qualifiedQName qname, expr)
+        | Standalone (qname, expr) ← uberModuleBindings
+        , qname `Set.notMember` neverNames
+        ]
+
+  -- Whether 'withBinding' may drop a whole top-level binding by inlining it
+  -- into its use sites. Off exactly when call-site inlining is on, because the
+  -- two are unsound together: 'inlineEnv' is a snapshot taken before this run
+  -- mutates anything, so a host binding it holds may still name a binding that
+  -- 'withBinding' drops mid-run. Pasting that stale host (into a later binding
+  -- or an export) then reintroduces a reference to the dropped binding — a
+  -- dangling name the later DCE cannot repair, since DCE removes bindings but
+  -- never references. Leaving every binding in place during a call-site pass
+  -- keeps the snapshot honest; the following DCE still collects whatever the
+  -- pasting left unreferenced. The pre-magicDo runs, with no env to go stale,
+  -- keep the whole-binding inlining (see Note [Incremental free-reference
+  -- counting] and 'optimizerPipeline').
+  mayInlineWholeBinding ∷ Bool
+  mayInlineWholeBinding = case inlining of
+    SkipCallSites → True
+    InlineCallSites → False
+
   -- Every expression rewrite and every top-level inlining reports into
   -- the pass's 'WasRewritten' result; nothing else in this pass changes
   -- the module, so a converged module reports 'Unmodified'.
   optimizeExp ∷ Exp → WriterT WasRewritten SupplyM Exp
   optimizeExp e = do
-    (e', rewritten) ← lift (optimizedExpressionM e)
+    (e', rewritten) ← lift (optimizedExpressionM inlineEnv e)
     e' <$ tell rewritten
 
   -- See Note [Incremental free-reference counting]
@@ -311,7 +373,8 @@ optimizeModule neverNames UberModule {..} = runWriterT do
         let qn = qualifiedQName qname
             occurrences = Map.findWithDefault 0 qn counts
             isUsedOnce = occurrences == 1
-        if qname `Set.notMember` neverNames
+        if mayInlineWholeBinding
+          && qname `Set.notMember` neverNames
           && not (isForeignImport expr)
           && (isInlinableExpr expr || isUsedOnce)
           then do
@@ -373,21 +436,52 @@ substituteInExports qname inlinee = traverse \case
   (name, expr) →
     (name,) <$> substituteCopyM (qualifiedQName qname) inlinee expr
 
+{- | Top-level bindings visible to call-site inlining (issue #180), keyed by
+the qualified name a reference uses. Built once per 'optimizeModule' run from
+the 'Standalone' bindings, minus the @inline never@ set. Recursive-group
+members are deliberately absent, so a self-referential dictionary is never
+unfolded (Note [Eta reduction is unsound]).
+-}
+
+{- | Whether an 'optimizeModule' run performs call-site inlining (issue
+#180). Off before magic-do so it cannot dismantle the Effect/ST @bind@ chains
+magic-do recognises; on in the specialize fixpoint that runs after (see
+'optimizerPipeline').
+-}
+data CallSiteInlining = InlineCallSites | SkipCallSites
+
+type InlineEnv = Map (Qualified Name) Exp
+
+{- | The largest expression the call-site inliner will paste, GHC's
+unfolding-use-threshold analogue, sized in IR nodes. Code growth is the
+transform's main risk (issue #180); this bounds it. Deliberately generous
+enough to admit an uncurried monad-method worker (a folded Maybe/Either
+match), the payload the cascade is built to collapse.
+-}
+inlineSizeBudget ∷ Natural
+inlineSizeBudget = 64
+
+-- | Node count of an expression, for 'inlineSizeBudget'.
+expSize ∷ RawExp ann → Natural
+expSize e = 1 + sum (expSize <$> toListOf subexpressions e)
+
 {- | Pure wrapper for tests and standalone use: runs the rewrite with
-its own supply. Production code uses 'optimizedExpressionM' so all
-passes share one supply.
+its own supply and no inlining environment. Production code uses
+'optimizedExpressionM' so all passes share one supply.
 -}
 optimizedExpression ∷ Exp → Exp
-optimizedExpression = runSupply . fmap fst . optimizedExpressionM
+optimizedExpression = runSupply . fmap fst . optimizedExpressionM mempty
 
-optimizedExpressionM ∷ Exp → SupplyM (Exp, WasRewritten)
-optimizedExpressionM =
+optimizedExpressionM ∷ InlineEnv → Exp → SupplyM (Exp, WasRewritten)
+optimizedExpressionM env =
   -- See Note [Eta reduction is unsound]
   rewriteExpBottomUpM
     ( constantFolding
         `thenRewrite` reduceObjectProp
         `thenRewrite` reduceKnownConstructor
-        `thenRewrite` propagateKnownCtorThroughLet
+        `thenRewrite` propagateKnownCtorThroughLet env
+        `thenRewrite` resolveDictionaryProp env
+        `thenRewrite` inlineSaturatedCall env
         `thenRewrite` betaReduce
         `thenRewrite` removeUnreachableThenBranch
         `thenRewrite` removeUnreachableElseBranch
@@ -598,6 +692,17 @@ reduceKnownConstructor =
           unwindApp scrutinee
       , length args == length fields →
           Just $ LiteralString ann (ctorId modName tyName ctorName)
+    -- A tag read over a conditional of constructors distributes into the
+    -- branches, where each meets the rule above and folds to its tag string
+    -- (issue #180): an inlined comparison (@compare@\/@>=@) is an if-tree of
+    -- 'Ordering' constructors, and @reflectCtor@ over it would otherwise build
+    -- an 'Ordering' table at runtime only to read the tag back off it. Guarded
+    -- so it fires only when every branch folds, so it never leaves a residual
+    -- read nor grows a conditional whose branches are not constructors.
+    ReflectCtor ann (IfThenElse ifAnn cond t e)
+      | reflectFoldsThrough t
+      , reflectFoldsThrough e →
+          Just $ IfThenElse ifAnn cond (ReflectCtor ann t) (ReflectCtor ann e)
     DataArgumentByIndex ann index scrutinee
       | (Ctor _ _ _ _ _ fields, args) ← unwindApp scrutinee
       , length args == length fields
@@ -612,6 +717,20 @@ reduceKnownConstructor =
             (zip (renderFieldName <$> fields) args) →
           Just (setAnn ann arg)
     _ → Nothing
+
+{- | Whether @ReflectCtor@ over this expression folds away completely: it is a
+saturated sum-type constructor application (folds to its tag string) or a
+conditional whose branches all do. Only then does 'reduceKnownConstructor'
+distribute a tag read into an 'IfThenElse', so the rewrite never leaves a
+residual read behind nor grows a conditional over non-constructor branches.
+-}
+reflectFoldsThrough ∷ RawExp ann → Bool
+reflectFoldsThrough = \case
+  IfThenElse _ _ t e → reflectFoldsThrough t && reflectFoldsThrough e
+  scrutinee
+    | (Ctor _ SumType _ _ _ fields, args) ← unwindApp scrutinee →
+        length args == length fields
+  _ → False
 
 {- | Case-of-known-constructor through a let-bound scrutinee (issue #214).
 
@@ -652,9 +771,21 @@ would dangle the reference, and keeping it while binding the fields would
 duplicate the arguments. A product-type @ReflectCtor@ read has no tag row to
 fold to, so it too leaves a whole-value read and the rule declines. GUC keeps
 the fresh field-binders unique and the binder resolved by name.
+
+The RHS's constructor is recognised either as an in-place 'Ctor' node or, via
+the inline environment, through a 'Ref' to a top-level constructor binding
+(issue #180). A user-written @Right x@ compiles to a reference to the
+@Data.Either.Right@ worker, which 'inlineSaturatedCall' leaves in place — its
+'Ctor' RHS is not a lambda, and pasting the worker would only rebuild the same
+@(function … end)(x)@ the reference already denotes, more deeply nested. So
+without the through-a-reference resolution the constructor test the inlined
+@bind@ introduces (@justTag == ReflectCtor v@) never folds, and the collapsed
+monadic chain stays a deeply-nested @if@\/@let@ tree. Resolving the reference
+only to read its arity and tag introduces no 'Ctor' node, so a chain that does
+not fold is not pessimised into pasted constructor thunks.
 -}
-propagateKnownCtorThroughLet ∷ RewriteRuleM SupplyM Ann
-propagateKnownCtorThroughLet = \case
+propagateKnownCtorThroughLet ∷ InlineEnv → RewriteRuleM SupplyM Ann
+propagateKnownCtorThroughLet env = \case
   Let ann groupings body
     | Just (before, (name, algTy, fields, args, tag), after) ←
         findCtorBinding (toList groupings)
@@ -700,19 +831,30 @@ propagateKnownCtorThroughLet = \case
     go _before [] = Nothing
     go before (grouping : after) = case grouping of
       Standalone (_bAnn, name, rhs)
-        | (Ctor _ algTy modName tyName ctorName fields, args) ← unwindApp rhs
+        | Just (algTy, fields, args, tag) ← asKnownCtorApp rhs
         , length args == length fields
         , -- A self-referencing RHS cannot arise under GUC (a Standalone RHS
           -- does not see its own binder), but 'optimizedExpression' also runs
           -- on non-GUC input; dropping the binding would then dangle the
           -- field-binder that copied the reference (cf. 'inlineLocalBinding').
           countFreeRef (Local name) rhs == 0 →
-            Just
-              ( reverse before
-              , (name, algTy, fields, args, ctorId modName tyName ctorName)
-              , after
-              )
+            Just (reverse before, (name, algTy, fields, args, tag), after)
       _ → go (grouping : before) after
+
+  -- A saturated constructor application, recognised either as an in-place
+  -- 'Ctor' node or through a 'Ref' to a top-level constructor binding held in
+  -- the inline environment (issue #180 — see the note on this function). The
+  -- returned tag and field list come from the constructor's declaration; the
+  -- arguments come from the application spine.
+  asKnownCtorApp ∷ Exp → Maybe (AlgebraicType, [FieldName], [Exp], Text)
+  asKnownCtorApp rhs = case unwindApp rhs of
+    (Ctor _ algTy modName tyName ctorName fields, args) →
+      Just (algTy, fields, args, ctorId modName tyName ctorName)
+    (Ref _ ctorRef, args)
+      | Just (Ctor _ algTy modName tyName ctorName fields) ←
+          Map.lookup ctorRef env →
+          Just (algTy, fields, args, ctorId modName tyName ctorName)
+    _ → Nothing
 
   countFreeRefGrouping ∷ Name → Grouping (Ann, Name, Exp) → Natural
   countFreeRefGrouping name grouping =
@@ -778,6 +920,70 @@ propagateKnownCtorThroughLet = \case
     fromIntegral
       <$> List.findIndex ((renderPropName prop ==) . renderFieldName) fields
 
+{- | Resolve a method projection off a known top-level dictionary (issue
+#180). When @dict@ is a reference to a top-level 'LiteralObject' binding,
+@dict.method@ is replaced by the method expression itself — the concrete
+@bind@ / @apply@ / @map@ — without inlining the rest of the dictionary. The
+generic accessor @Control.Bind.bind = λdict. dict.bind@, once its @dict@
+argument is inlined and beta-reduced, becomes exactly this @dict.bind@
+projection, so this rule is what turns it into the concrete method a call
+site can then reduce.
+
+The projection over a 'LiteralObject' /literal/ is already handled by
+'reduceObjectProp'; this is its through-a-reference companion, reading the
+literal out of the environment. Reading a field of a known record is
+behaviour-preserving, so the resolved method — freshened to keep the copied
+binders unique while the dictionary binding survives — evaluates exactly as
+the projection did.
+
+It declines a method that names its own dictionary (a superclass or
+recursive dictionary), which pasting would dangle or unfold forever, and one
+larger than 'inlineSizeBudget'. The result takes the projection's own
+annotation, never the method's, for the reason 'reduceObjectProp' spells out.
+-}
+resolveDictionaryProp ∷ InlineEnv → RewriteRuleM SupplyM Ann
+resolveDictionaryProp env = \case
+  ObjectProp ann (Ref _ dictName) prop
+    | Just (LiteralObject _ props) ← Map.lookup dictName env
+    , Just method ← List.lookup prop props
+    , countFreeRef dictName method == 0
+    , expSize method <= inlineSizeBudget →
+        Just . setAnn ann <$> freshenBinders method
+  _ → pure Nothing
+
+{- | Inline a top-level lambda binding into a saturated call site (issue
+#180). When the head of an application spine references a top-level binding
+whose RHS is a lambda, and the spine supplies at least the arguments the
+lambda binds, the reference is replaced by a fresh copy of the lambda, which
+'betaReduce' then reduces against the arguments. This is what specializes a
+monad method to its call site: the concrete worker is pasted in, its
+constructor matches meet 'reduceKnownConstructor' and
+'propagateKnownCtorThroughLet', and the chain collapses to straight-line
+code.
+
+Pasting a lambda (a value) duplicates no work, and 'betaReduce' let-binds any
+non-trivial argument rather than copy it into each use, so the reduction is
+behaviour-preserving (issue #167). Growth is bounded by 'inlineSizeBudget'.
+The rule declines a self-referential RHS, which cannot arise for a Standalone
+binding under GUC but must not be unfolded on the non-GUC input the rewrite
+also runs on (Note [Eta reduction is unsound] is the reason the environment
+holds no recursive-group members either).
+-}
+inlineSaturatedCall ∷ InlineEnv → RewriteRuleM SupplyM Ann
+inlineSaturatedCall env expr = case unwindApp expr of
+  (Ref _ fname, args)
+    | not (null args)
+    , Just rhs ← Map.lookup fname env
+    , AbsN _ params _ ← rhs
+    , length args >= length params
+    , countFreeRef fname rhs == 0
+    , expSize rhs <= inlineSizeBudget →
+        Just . rebuildSpine args <$> freshenBinders rhs
+  _ → pure Nothing
+ where
+  rebuildSpine ∷ [Exp] → Exp → Exp
+  rebuildSpine args head' = foldl' (\f a → AppN Nothing f (a :| [])) head' args
+
 {- Note [Beta reduction and local inlining share an inlining guard]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 'betaReduce' and 'inlineLocalBinding' decide whether to paste an expression
@@ -807,14 +1013,22 @@ binding unconditionally. See Note [IR is assumed well-typed].
 -}
 betaReduce ∷ RewriteRuleM SupplyM Ann
 betaReduce = \case
-  AppN _ (AbsN _ params body) args
+  redex@(AppN _ (AbsN _ params body) args)
     | length args == length params
     , -- Under GUC the parameters are pairwise-distinct binders. The rule
       -- is also exercised standalone on non-GUC input, where a repeated
       -- parameter name would let the first substitution steal the
       -- occurrences belonging to the last same-named parameter (the one
       -- Lua binds), so it declines rather than mis-substitute.
-      distinctParamNames params → do
+      distinctParamNames params
+    , -- Do not reduce through a magic-do effect run (a thunk applied to the
+      -- 'EffectRunArg' marker): the thunk is a chunk boundary magic-do
+      -- introduced to keep each function under Lua's local-variable limit, and
+      -- merging it into its parent would overflow that limit. The marker is
+      -- magic-do's alone, so an ordinary nullary thunk (a dictionary accessor
+      -- or newtype coercion applied to @Prim.undefined@) is not mistaken for
+      -- one and reduces freely (issue #180, see 'isEffectRun').
+      not (isEffectRun redex) → do
         (body', letBinds) ←
           foldlM reduceOne (body, []) (NE.zip params args)
         pure . Just $ case nonEmpty (reverse letBinds) of

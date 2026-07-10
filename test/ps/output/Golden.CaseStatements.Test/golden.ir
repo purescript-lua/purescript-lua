@@ -1,43 +1,9 @@
 UberModule
-  { uberModuleBindings =
-    [ Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Golden.Values.Test", qnameName = Name "f" }, AbsN Nothing
-        ( ParamUnused Nothing :| [] ) ( LiteralBool Nothing True )
-      )
-    ], uberModuleForeigns = [], uberModuleExports =
+  { uberModuleBindings = [], uberModuleForeigns = [], uberModuleExports =
     [
       ( Name "a", LiteralInt Nothing 1 ),
       ( Name "b", LiteralChar Nothing 'b' ),
-      ( Name "c", Let Nothing
-        ( Standalone
-          ( Nothing, Name "v$6", AbsN Nothing
-            ( ParamUnused Nothing :| [] )
-            ( LiteralInt Nothing 0 )
-          ) :| []
-        )
-        ( IfThenElse Nothing
-          ( AppN Nothing
-            ( Ref Nothing ( Imported ( ModuleName "Golden.Values.Test" ) ( Name "f" ) ) )
-            ( LiteralInt Nothing 2 :| [] )
-          )
-          ( IfThenElse Nothing
-            ( AppN Nothing
-              ( Ref Nothing ( Imported ( ModuleName "Golden.Values.Test" ) ( Name "f" ) ) )
-              ( LiteralInt Nothing 1 :| [] )
-            )
-            ( LiteralInt Nothing 42 )
-            ( AppN Nothing
-              ( Ref Nothing ( Local ( Name "v$6" ) ) )
-              ( LiteralBool Nothing True :| [] )
-            )
-          )
-          ( AppN Nothing
-            ( Ref Nothing ( Local ( Name "v$6" ) ) )
-            ( LiteralBool Nothing True :| [] )
-          )
-        )
-      ),
+      ( Name "c", LiteralInt Nothing 42 ),
       ( Name "J", Ctor Nothing SumType
         ( ModuleName "Golden.CaseStatements.Test" )
         ( TyName "M" )

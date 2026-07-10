@@ -12,27 +12,6 @@ UberModule
       ( Name "isZero", Ref Nothing
         ( Imported ( ModuleName "Golden.Nested.Test" ) ( Name "isZero" ) )
       ),
-      ( Name "main", IfThenElse Nothing
-        ( AppN Nothing
-          ( Ref Nothing ( Imported ( ModuleName "Golden.Nested.Test" ) ( Name "isZero" ) ) )
-          ( LiteralInt Nothing 1 :| [] )
-        )
-        ( IfThenElse Nothing
-          ( AppN Nothing
-            ( Ref Nothing ( Imported ( ModuleName "Golden.Nested.Test" ) ( Name "isZero" ) ) )
-            ( LiteralInt Nothing 1 :| [] )
-          )
-          ( LiteralString Nothing "ok" )
-          ( LiteralString Nothing "fine" )
-        )
-        ( IfThenElse Nothing
-          ( AppN Nothing
-            ( Ref Nothing ( Imported ( ModuleName "Golden.Nested.Test" ) ( Name "isZero" ) ) )
-            ( LiteralInt Nothing 0 :| [] )
-          )
-          ( LiteralString Nothing "ha" )
-          ( LiteralString Nothing "cool" )
-        )
-      )
+      ( Name "main", LiteralString Nothing "ha" )
     ]
   }

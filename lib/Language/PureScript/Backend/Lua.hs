@@ -242,15 +242,16 @@ fromIR foreigns topLevelNames modname ir = case ir of
   IR.AppN _ann fn args → do
     e ← goExp fn
     -- See Note [Nullary functions and Prim.undefined]. PS inserts a
-    -- synthetic unused argument "Prim.undefined" to force a thunk. The
+    -- synthetic unused argument "Prim.undefined" to force a thunk (and
+    -- magic-do inserts its 'IR.EffectRunArg' twin to run one). The
     -- trailing run of such arguments is elided (the nullary call
     -- included, so it is emitted as f() rather than f(nil)), mirroring
     -- the dropped trailing run of unused parameters above. A
     -- non-trailing one can only face an unused (named-dummy) parameter
     -- of an uncurried worker, so it lowers to an explicit nil.
-    let keptArgs = List.dropWhileEnd isPrimUndefined (toList args)
+    let keptArgs = List.dropWhileEnd isErasedThunkArg (toList args)
     Right . Lua.functionCall e <$> for keptArgs \arg →
-      if isPrimUndefined arg then pure Lua.Nil else goExp arg
+      if isErasedThunkArg arg then pure Lua.Nil else goExp arg
   IR.Ref _ann qualifiedName →
     case qualifiedName of
       IR.Local name
@@ -375,9 +376,14 @@ qualifyName modname = Name.join2 (fromModuleName modname)
 isUnusedParam ∷ IR.Parameter ann → Bool
 isUnusedParam = isNothing . IR.paramName
 
--- | The synthetic argument PureScript passes to force a thunk.
-isPrimUndefined ∷ IR.Exp → Bool
-isPrimUndefined = \case
+{- | A synthetic argument the Lua backend erases to a zero-argument call: the
+@Prim.undefined@ PureScript passes to force a nullary thunk, or magic-do's
+'IR.EffectRunArg' effect-run marker. Both are ignored by the receiving thunk.
+-}
+isErasedThunkArg ∷ IR.Exp → Bool
+isErasedThunkArg = \case
   IR.Ref _ann (IR.Imported (IR.ModuleName "Prim") (IR.Name "undefined")) →
+    True
+  IR.EffectRunArg _ →
     True
   _ → False

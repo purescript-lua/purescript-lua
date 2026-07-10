@@ -1,89 +1,8 @@
-local function PSLUA_runtime_lazy(name)
-  return function(init)
-    local state = 0
-    local val = nil
-    return function()
-      if state == 2 then
-        return val
-      elseif state == 1 then
-        return error(name .. " was needed before it finished initializing")
-      else
-        state = 1
-        val = init()
-        state = 2
-        return val
-      end
-    end
-  end
-end
 local M = {}
 M.Data_Show_foreign = { showIntImpl = function(n) return tostring(n) end }
-M.Effect_foreign = {
-  pureE = function(a) return function() return a end end,
-  bindE = function(a)
-    return function(f) return function() return f(a())() end end
-  end
-}
 M.Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
 }
-M.Data_Semiring_semiringInt = {
-  add = function(x_S_195)
-    return function(y_S_196) return x_S_195 + y_S_196 end
-  end,
-  zero = 0,
-  mul = function(x_S_193)
-    return function(y_S_194) return x_S_193 * y_S_194 end
-  end,
-  one = 1
-}
-M.Data_Functor_map = function(dict) return dict.map end
-M.Control_Applicative_pure = function(dict) return dict.pure end
-M.Control_Bind_bind = function(dict) return dict.bind end
-M.Effect_monadEffect = {
-  Applicative0 = function() return M.Effect_applicativeEffect end,
-  Bind1 = function() return M.Effect_bindEffect end
-}
-M.Effect_bindEffect = {
-  bind = M.Effect_foreign.bindE,
-  Apply0 = function() return M.Effect_Lazy_applyEffect(0) end
-}
-M.Effect_applicativeEffect = {
-  pure = M.Effect_foreign.pureE,
-  Apply0 = function() return M.Effect_Lazy_applyEffect(0) end
-}
-M.Effect_Lazy_functorEffect = PSLUA_runtime_lazy("functorEffect")(function()
-  return {
-    map = function(f_S_31)
-      return function(a_S_32)
-        local Effect_applicativeEffect = M.Effect_applicativeEffect
-        return (Effect_applicativeEffect.Apply0()).apply(M.Control_Applicative_pure(Effect_applicativeEffect)(f_S_31))(a_S_32)
-      end
-    end
-  }
-end)
-M.Effect_Lazy_applyEffect = PSLUA_runtime_lazy("applyEffect")(function()
-  return {
-    apply = (function()
-      local bind_S_10 = M.Control_Bind_bind(M.Effect_monadEffect.Bind1())
-      return function(f_S_12)
-        return function(a_S_13)
-          return bind_S_10(f_S_12)(function(fPrime_S_14)
-            return bind_S_10(a_S_13)(function(aPrime_S_15)
-              return M.Control_Applicative_pure(M.Effect_monadEffect.Applicative0())(fPrime_S_14(aPrime_S_15))
-            end)
-          end)
-        end
-      end
-    end)(),
-    Functor0 = function() return M.Effect_Lazy_functorEffect(0) end
-  }
-end)
-M.Golden_DerivedFunctor_Test_add = M.Data_Semiring_semiringInt.add
-M.Golden_DerivedFunctor_Test_discard = M.Control_Bind_bind(M.Effect_bindEffect)
-M.Golden_DerivedFunctor_Test_logShow = function(a_S_5)
-  return M.Effect_Console_foreign.log(M.Data_Show_foreign.showIntImpl(a_S_5))
-end
 M.Golden_DerivedFunctor_Test_Leaf = {
   ["$ctor"] = "Golden.DerivedFunctor.Test∷Tree.Leaf"
 }
@@ -115,7 +34,7 @@ M.Golden_DerivedFunctor_Test_sumTree = function(v)
   if "Golden.DerivedFunctor.Test∷Tree.Leaf" == v["$ctor"] then
     return 0
   elseif "Golden.DerivedFunctor.Test∷Tree.Node" == v["$ctor"] then
-    return M.Golden_DerivedFunctor_Test_add(M.Golden_DerivedFunctor_Test_add(M.Golden_DerivedFunctor_Test_sumTree(v.value0))(v.value1))(M.Golden_DerivedFunctor_Test_sumTree(v.value2))
+    return M.Golden_DerivedFunctor_Test_sumTree(v.value0) + v.value1 + M.Golden_DerivedFunctor_Test_sumTree(v.value2)
   else
     return error("No patterns matched")
   end
@@ -126,7 +45,7 @@ M.Golden_DerivedFunctor_Test_functorTree = {
       if "Golden.DerivedFunctor.Test∷Tree.Leaf" == m["$ctor"] then
         return M.Golden_DerivedFunctor_Test_Leaf
       elseif "Golden.DerivedFunctor.Test∷Tree.Node" == m["$ctor"] then
-        return M.Golden_DerivedFunctor_Test_Node(M.Data_Functor_map(M.Golden_DerivedFunctor_Test_functorTree)(f)(m.value0))(f(m.value1))(M.Data_Functor_map(M.Golden_DerivedFunctor_Test_functorTree)(f)(m.value2))
+        return M.Golden_DerivedFunctor_Test_Node(M.Golden_DerivedFunctor_Test_functorTree.map(f)(m.value0))(f(m.value1))(M.Golden_DerivedFunctor_Test_functorTree.map(f)(m.value2))
       else
         return error("No patterns matched")
       end
@@ -146,7 +65,6 @@ M.Golden_DerivedFunctor_Test_functorEither = {
     end
   end
 }
-M.Golden_DerivedFunctor_Test_map1 = M.Data_Functor_map(M.Golden_DerivedFunctor_Test_functorEither)
 M.Golden_DerivedFunctor_Test_fromRight_S_w = function(fallback, v)
   if "Golden.DerivedFunctor.Test∷Either.Left" == v["$ctor"] then
     return fallback
@@ -157,14 +75,10 @@ M.Golden_DerivedFunctor_Test_fromRight_S_w = function(fallback, v)
   end
 end
 return (function()
-  local Golden_DerivedFunctor_Test_Leaf, Golden_DerivedFunctor_Test_Node, Golden_DerivedFunctor_Test_logShow, Golden_DerivedFunctor_Test_fromRight_S_w, Golden_DerivedFunctor_Test_map1 = M.Golden_DerivedFunctor_Test_Leaf, M.Golden_DerivedFunctor_Test_Node, M.Golden_DerivedFunctor_Test_logShow, M.Golden_DerivedFunctor_Test_fromRight_S_w, M.Golden_DerivedFunctor_Test_map1
-  local _ = Golden_DerivedFunctor_Test_logShow(Golden_DerivedFunctor_Test_fromRight_S_w(0, Golden_DerivedFunctor_Test_map1(function( v_S_0 )
-    return M.Golden_DerivedFunctor_Test_add(v_S_0)(1)
-  end)(M.Golden_DerivedFunctor_Test_Right(41))))()
-  local _ = Golden_DerivedFunctor_Test_logShow(Golden_DerivedFunctor_Test_fromRight_S_w(7, Golden_DerivedFunctor_Test_map1(function( v0_S_1 )
-    return M.Golden_DerivedFunctor_Test_add(v0_S_1)(1)
-  end)(M.Golden_DerivedFunctor_Test_Left("no"))))()
-  return Golden_DerivedFunctor_Test_logShow(M.Golden_DerivedFunctor_Test_sumTree(M.Data_Functor_map(M.Golden_DerivedFunctor_Test_functorTree)(function( v1_S_2 )
-    return M.Data_Semiring_semiringInt.mul(v1_S_2)(2)
-  end)(Golden_DerivedFunctor_Test_Node(Golden_DerivedFunctor_Test_Node(Golden_DerivedFunctor_Test_Leaf)(1)(Golden_DerivedFunctor_Test_Leaf))(2)(Golden_DerivedFunctor_Test_Node(Golden_DerivedFunctor_Test_Leaf)(3)(Golden_DerivedFunctor_Test_Leaf)))))()
+  local Golden_DerivedFunctor_Test_Leaf, Data_Show_foreign, Effect_Console_foreign, Golden_DerivedFunctor_Test_Node, Golden_DerivedFunctor_Test_fromRight_S_w = M.Golden_DerivedFunctor_Test_Leaf, M.Data_Show_foreign, M.Effect_Console_foreign, M.Golden_DerivedFunctor_Test_Node, M.Golden_DerivedFunctor_Test_fromRight_S_w
+  local _ = Effect_Console_foreign.log(Data_Show_foreign.showIntImpl(Golden_DerivedFunctor_Test_fromRight_S_w(0, M.Golden_DerivedFunctor_Test_Right(42))))()
+  local _ = Effect_Console_foreign.log(Data_Show_foreign.showIntImpl(Golden_DerivedFunctor_Test_fromRight_S_w(7, M.Golden_DerivedFunctor_Test_Left("no"))))()
+  return Effect_Console_foreign.log(Data_Show_foreign.showIntImpl(M.Golden_DerivedFunctor_Test_sumTree(M.Golden_DerivedFunctor_Test_functorTree.map(function( v1_S_2 )
+    return v1_S_2 * 2
+  end)(Golden_DerivedFunctor_Test_Node(Golden_DerivedFunctor_Test_Node(Golden_DerivedFunctor_Test_Leaf)(1)(Golden_DerivedFunctor_Test_Leaf))(2)(Golden_DerivedFunctor_Test_Node(Golden_DerivedFunctor_Test_Leaf)(3)(Golden_DerivedFunctor_Test_Leaf))))))()
 end)()

@@ -30,17 +30,6 @@ UberModule
         }, ForeignImport Nothing
         ( ModuleName "Effect.Console" ) ".spago/p/console/f82835a0b873aafe6bd7b14dd30cc150553d4ab9/src/Effect/Console.purs"
         [ ( Nothing, Name "log" ) ]
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Control.Applicative", qnameName = Name "pure"
-        }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "dict" ) :| [] )
-        ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) ) ( PropName "pure" ) )
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Control.Bind", qnameName = Name "bind" }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "dict" ) :| [] )
-        ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) ) ( PropName "bind" ) )
       ), RecursiveGroup
       (
         ( QName
@@ -124,16 +113,11 @@ UberModule
                             ( PropName "apply" )
                           )
                           ( AppN Nothing
-                            ( AppN Nothing
+                            ( ObjectProp Nothing
                               ( Ref Nothing
-                                ( Imported ( ModuleName "Control.Applicative" ) ( Name "pure" ) )
+                                ( Imported ( ModuleName "Effect" ) ( Name "applicativeEffect" ) )
                               )
-                              ( Ref Nothing
-                                ( Imported
-                                  ( ModuleName "Effect" )
-                                  ( Name "applicativeEffect" )
-                                ) :| []
-                              )
+                              ( PropName "pure" )
                             )
                             ( Ref Nothing ( Local ( Name "f$239" ) ) :| [] ) :| []
                           )
@@ -159,8 +143,7 @@ UberModule
                 [
                   ( PropName "apply", Let Nothing
                     ( Standalone
-                      ( Nothing, Name "bind$219", AppN Nothing
-                        ( Ref Nothing ( Imported ( ModuleName "Control.Bind" ) ( Name "bind" ) ) )
+                      ( Nothing, Name "bind$219", ObjectProp Nothing
                         ( AppN Nothing
                           ( ObjectProp Nothing
                             ( Ref Nothing
@@ -170,8 +153,9 @@ UberModule
                           )
                           ( Ref Nothing
                             ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| []
-                          ) :| []
+                          )
                         )
+                        ( PropName "bind" )
                       ) :| []
                     )
                     ( AbsN Nothing
@@ -193,13 +177,7 @@ UberModule
                               ( AbsN Nothing
                                 ( ParamNamed Nothing ( Name "a'$224" ) :| [] )
                                 ( AppN Nothing
-                                  ( AppN Nothing
-                                    ( Ref Nothing
-                                      ( Imported
-                                        ( ModuleName "Control.Applicative" )
-                                        ( Name "pure" )
-                                      )
-                                    )
+                                  ( ObjectProp Nothing
                                     ( AppN Nothing
                                       ( ObjectProp Nothing
                                         ( Ref Nothing
@@ -215,8 +193,9 @@ UberModule
                                           ( ModuleName "Prim" )
                                           ( Name "undefined" )
                                         ) :| []
-                                      ) :| []
+                                      )
                                     )
+                                    ( PropName "pure" )
                                   )
                                   ( AppN Nothing
                                     ( Ref Nothing ( Local ( Name "f'$223" ) ) )
@@ -252,16 +231,10 @@ UberModule
         ]
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Control.Monad.Rec.Class", qnameName = Name "bind"
-        }, AppN Nothing
-        ( Ref Nothing ( Imported ( ModuleName "Control.Bind" ) ( Name "bind" ) ) )
-        ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "bindEffect" ) ) :| [] )
-      ), Standalone
-      ( QName
         { qnameModuleName = ModuleName "Control.Monad.Rec.Class", qnameName = Name "pure"
-        }, AppN Nothing
-        ( Ref Nothing ( Imported ( ModuleName "Control.Applicative" ) ( Name "pure" ) ) )
-        ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "applicativeEffect" ) ) :| [] )
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "applicativeEffect" ) ) )
+        ( PropName "pure" )
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.TailRecM2Shadow.Test", qnameName = Name "add$w"
@@ -278,8 +251,7 @@ UberModule
         ( ParamNamed Nothing ( Name "dictMonadRec" ) :| [] )
         ( Let Nothing
           ( Standalone
-            ( Nothing, Name "pure", AppN Nothing
-              ( Ref Nothing ( Imported ( ModuleName "Control.Applicative" ) ( Name "pure" ) ) )
+            ( Nothing, Name "pure", ObjectProp Nothing
               ( AppN Nothing
                 ( ObjectProp Nothing
                   ( AppN Nothing
@@ -291,8 +263,9 @@ UberModule
                   )
                   ( PropName "Applicative0" )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] ) :| []
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
               )
+              ( PropName "pure" )
             ) :| []
           )
           ( AbsN Nothing
@@ -320,33 +293,19 @@ UberModule
                           ( IfThenElse Nothing
                             ( Eq Nothing
                               ( LiteralString Nothing "Data.Ordering∷Ordering.LT" )
-                              ( ReflectCtor Nothing
+                              ( IfThenElse Nothing
+                                ( PrimBinOp Nothing PrimLt
+                                  ( Ref Nothing ( Local ( Name "i$2" ) ) )
+                                  ( Ref Nothing ( Local ( Name "n" ) ) )
+                                )
+                                ( LiteralString Nothing "Data.Ordering∷Ordering.LT" )
                                 ( IfThenElse Nothing
-                                  ( PrimBinOp Nothing PrimLt
+                                  ( Eq Nothing
                                     ( Ref Nothing ( Local ( Name "i$2" ) ) )
                                     ( Ref Nothing ( Local ( Name "n" ) ) )
                                   )
-                                  ( Ctor Nothing SumType
-                                    ( ModuleName "Data.Ordering" )
-                                    ( TyName "Ordering" )
-                                    ( CtorName "LT" ) []
-                                  )
-                                  ( IfThenElse Nothing
-                                    ( Eq Nothing
-                                      ( Ref Nothing ( Local ( Name "i$2" ) ) )
-                                      ( Ref Nothing ( Local ( Name "n" ) ) )
-                                    )
-                                    ( Ctor Nothing SumType
-                                      ( ModuleName "Data.Ordering" )
-                                      ( TyName "Ordering" )
-                                      ( CtorName "EQ" ) []
-                                    )
-                                    ( Ctor Nothing SumType
-                                      ( ModuleName "Data.Ordering" )
-                                      ( TyName "Ordering" )
-                                      ( CtorName "GT" ) []
-                                    )
-                                  )
+                                  ( LiteralString Nothing "Data.Ordering∷Ordering.EQ" )
+                                  ( LiteralString Nothing "Data.Ordering∷Ordering.GT" )
                                 )
                               )
                             )
@@ -434,284 +393,426 @@ UberModule
             ( Nothing, Name "r$0", AppN Nothing
               ( AppN Nothing
                 ( AppN Nothing
-                  ( AppN Nothing
-                    ( Ref Nothing
-                      ( Imported ( ModuleName "Golden.TailRecM2Shadow.Test" ) ( Name "sumFrom" ) )
-                    )
-                    ( LiteralObject Nothing
-                      [
-                        ( PropName "tailRecM", AbsN Nothing
-                          ( ParamNamed Nothing ( Name "f$11" ) :| [] )
-                          ( AbsN Nothing
-                            ( ParamNamed Nothing ( Name "a$12" ) :| [] )
+                  ( Let Nothing
+                    ( Standalone
+                      ( Nothing, Name "dictMonadRec$535", LiteralObject Nothing
+                        [
+                          ( PropName "tailRecM", AbsN Nothing
+                            ( ParamNamed Nothing ( Name "f$11" ) :| [] )
                             ( AbsN Nothing
-                              ( ParamUnused Nothing :| [] )
-                              ( Let Nothing
-                                ( Standalone
-                                  ( Nothing, Name "r$16", AppN Nothing
-                                    ( AppN Nothing
+                              ( ParamNamed Nothing ( Name "a$12" ) :| [] )
+                              ( AbsN Nothing
+                                ( ParamUnused Nothing :| [] )
+                                ( Let Nothing
+                                  ( Standalone
+                                    ( Nothing, Name "r$16", AppN Nothing
                                       ( AppN Nothing
                                         ( AppN Nothing
-                                          ( Ref Nothing
-                                            ( Imported
-                                              ( ModuleName "Control.Bind" )
-                                              ( Name "bind" )
+                                          ( ObjectProp Nothing
+                                            ( Ref Nothing
+                                              ( Imported
+                                                ( ModuleName "Effect" )
+                                                ( Name "bindEffect" )
+                                              )
                                             )
+                                            ( PropName "bind" )
                                           )
-                                          ( Ref Nothing
-                                            ( Imported
-                                              ( ModuleName "Effect" )
-                                              ( Name "bindEffect" )
-                                            ) :| []
-                                          )
-                                        )
-                                        ( AppN Nothing
-                                          ( Ref Nothing ( Local ( Name "f$11" ) ) )
-                                          ( Ref Nothing ( Local ( Name "a$12" ) ) :| [] ) :| []
-                                        )
-                                      )
-                                      ( ObjectProp ( Just Always )
-                                        ( Ref Nothing
-                                          ( Imported
-                                            ( ModuleName "Effect.Ref" )
-                                            ( Name "foreign" )
+                                          ( AppN Nothing
+                                            ( Ref Nothing ( Local ( Name "f$11" ) ) )
+                                            ( Ref Nothing ( Local ( Name "a$12" ) ) :| [] ) :| []
                                           )
                                         )
-                                        ( PropName "_new" ) :| []
-                                      )
-                                    )
-                                    ( Ref Nothing
-                                      ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| []
-                                    )
-                                  ) :|
-                                  [ Standalone
-                                    ( Nothing, Name "_", AppN Nothing
-                                      ( AppN Nothing
                                         ( ObjectProp ( Just Always )
                                           ( Ref Nothing
-                                            ( Imported ( ModuleName "Effect" ) ( Name "foreign" ) )
+                                            ( Imported
+                                              ( ModuleName "Effect.Ref" )
+                                              ( Name "foreign" )
+                                            )
                                           )
-                                          ( PropName "untilE" )
-                                        )
-                                        ( AbsN Nothing
-                                          ( ParamUnused Nothing :| [] )
-                                          ( Let Nothing
-                                            ( Standalone
-                                              ( Nothing, Name "v0$17", AppN Nothing
-                                                ( AppN Nothing
-                                                  ( ObjectProp ( Just Always )
-                                                    ( Ref Nothing
-                                                      ( Imported
-                                                        ( ModuleName "Effect.Ref" )
-                                                        ( Name "foreign" )
-                                                      )
-                                                    )
-                                                    ( PropName "read" )
-                                                  )
-                                                  ( Ref Nothing ( Local ( Name "r$16" ) ) :| [] )
-                                                )
-                                                ( Ref Nothing
-                                                  ( Imported
-                                                    ( ModuleName "Prim" )
-                                                    ( Name "undefined" )
-                                                  ) :| []
-                                                )
-                                              ) :| []
-                                            )
-                                            ( AppN Nothing
-                                              ( IfThenElse Nothing
-                                                ( Eq Nothing
-                                                  ( LiteralString Nothing "Control.Monad.Rec.Class∷Step.Loop" )
-                                                  ( ReflectCtor Nothing
-                                                    ( Ref Nothing ( Local ( Name "v0$17" ) ) )
-                                                  )
-                                                )
-                                                ( AbsN Nothing
-                                                  ( ParamUnused Nothing :| [] )
-                                                  ( Let Nothing
-                                                    ( Standalone
-                                                      ( Nothing, Name "e$19", AppN Nothing
-                                                        ( AppN Nothing
-                                                          ( Ref Nothing ( Local ( Name "f$11" ) ) )
-                                                          ( ObjectProp Nothing
-                                                            ( Ref Nothing
-                                                              ( Local ( Name "v0$17" ) )
-                                                            )
-                                                            ( PropName "value0" ) :| []
-                                                          )
-                                                        )
-                                                        ( Ref Nothing
-                                                          ( Imported
-                                                            ( ModuleName "Prim" )
-                                                            ( Name "undefined" )
-                                                          ) :| []
-                                                        )
-                                                      ) :|
-                                                      [ Standalone
-                                                        ( Nothing, Name "_", AppN Nothing
-                                                          ( AppN Nothing
-                                                            ( AppN Nothing
-                                                              ( ObjectProp ( Just Always )
-                                                                ( Ref Nothing
-                                                                  ( Imported
-                                                                    ( ModuleName "Effect.Ref" )
-                                                                    ( Name "foreign" )
-                                                                  )
-                                                                )
-                                                                ( PropName "write" )
-                                                              )
-                                                              ( Ref Nothing
-                                                                ( Local ( Name "e$19" ) ) :| []
-                                                              )
-                                                            )
-                                                            ( Ref Nothing
-                                                              ( Local ( Name "r$16" ) ) :| []
-                                                            )
-                                                          )
-                                                          ( Ref Nothing
-                                                            ( Imported
-                                                              ( ModuleName "Prim" )
-                                                              ( Name "undefined" )
-                                                            ) :| []
-                                                          )
-                                                        )
-                                                      ]
-                                                    )
-                                                    ( AppN Nothing
-                                                      ( AppN Nothing
-                                                        ( Ref Nothing
-                                                          ( Imported
-                                                            ( ModuleName "Control.Monad.Rec.Class" )
-                                                            ( Name "pure" )
-                                                          )
-                                                        )
-                                                        ( LiteralBool Nothing False :| [] )
-                                                      )
-                                                      ( Ref Nothing
-                                                        ( Imported
-                                                          ( ModuleName "Prim" )
-                                                          ( Name "undefined" )
-                                                        ) :| []
-                                                      )
-                                                    )
-                                                  )
-                                                )
-                                                ( IfThenElse Nothing
-                                                  ( Eq Nothing
-                                                    ( LiteralString Nothing "Control.Monad.Rec.Class∷Step.Done" )
-                                                    ( ReflectCtor Nothing
-                                                      ( Ref Nothing ( Local ( Name "v0$17" ) ) )
-                                                    )
-                                                  )
-                                                  ( AppN Nothing
-                                                    ( Ref Nothing
-                                                      ( Imported
-                                                        ( ModuleName "Control.Monad.Rec.Class" )
-                                                        ( Name "pure" )
-                                                      )
-                                                    )
-                                                    ( LiteralBool Nothing True :| [] )
-                                                  )
-                                                  ( Exception Nothing "No patterns matched" )
-                                                )
-                                              )
-                                              ( Ref Nothing
-                                                ( Imported
-                                                  ( ModuleName "Prim" )
-                                                  ( Name "undefined" )
-                                                ) :| []
-                                              )
-                                            )
-                                          ) :| []
+                                          ( PropName "_new" ) :| []
                                         )
                                       )
                                       ( Ref Nothing
                                         ( Imported
                                           ( ModuleName "Prim" )
-                                          ( Name "undefined" )
+                                          ( Name "$magicDoRun" )
                                         ) :| []
                                       )
-                                    )
-                                  ]
-                                )
-                                ( AppN Nothing
-                                  ( AppN Nothing
-                                    ( AppN Nothing
-                                      ( ObjectProp Nothing
-                                        ( Ref Nothing
-                                          ( Imported
-                                            ( ModuleName "Effect" )
-                                            ( Name "functorEffect" )
+                                    ) :|
+                                    [ Standalone
+                                      ( Nothing, Name "_", AppN Nothing
+                                        ( AppN Nothing
+                                          ( ObjectProp ( Just Always )
+                                            ( Ref Nothing
+                                              ( Imported
+                                                ( ModuleName "Effect" )
+                                                ( Name "foreign" )
+                                              )
+                                            )
+                                            ( PropName "untilE" )
+                                          )
+                                          ( AbsN Nothing
+                                            ( ParamUnused Nothing :| [] )
+                                            ( Let Nothing
+                                              ( Standalone
+                                                ( Nothing, Name "v0$17", AppN Nothing
+                                                  ( AppN Nothing
+                                                    ( ObjectProp ( Just Always )
+                                                      ( Ref Nothing
+                                                        ( Imported
+                                                          ( ModuleName "Effect.Ref" )
+                                                          ( Name "foreign" )
+                                                        )
+                                                      )
+                                                      ( PropName "read" )
+                                                    )
+                                                    ( Ref Nothing ( Local ( Name "r$16" ) ) :| [] )
+                                                  )
+                                                  ( Ref Nothing
+                                                    ( Imported
+                                                      ( ModuleName "Prim" )
+                                                      ( Name "$magicDoRun" )
+                                                    ) :| []
+                                                  )
+                                                ) :| []
+                                              )
+                                              ( AppN Nothing
+                                                ( IfThenElse Nothing
+                                                  ( Eq Nothing
+                                                    ( LiteralString Nothing "Control.Monad.Rec.Class∷Step.Loop" )
+                                                    ( ReflectCtor Nothing
+                                                      ( Ref Nothing ( Local ( Name "v0$17" ) ) )
+                                                    )
+                                                  )
+                                                  ( AbsN Nothing
+                                                    ( ParamUnused Nothing :| [] )
+                                                    ( Let Nothing
+                                                      ( Standalone
+                                                        ( Nothing, Name "e$19", AppN Nothing
+                                                          ( AppN Nothing
+                                                            ( Ref Nothing
+                                                              ( Local ( Name "f$11" ) )
+                                                            )
+                                                            ( ObjectProp Nothing
+                                                              ( Ref Nothing
+                                                                ( Local ( Name "v0$17" ) )
+                                                              )
+                                                              ( PropName "value0" ) :| []
+                                                            )
+                                                          )
+                                                          ( Ref Nothing
+                                                            ( Imported
+                                                              ( ModuleName "Prim" )
+                                                              ( Name "$magicDoRun" )
+                                                            ) :| []
+                                                          )
+                                                        ) :|
+                                                        [ Standalone
+                                                          ( Nothing, Name "_", AppN Nothing
+                                                            ( AppN Nothing
+                                                              ( AppN Nothing
+                                                                ( ObjectProp ( Just Always )
+                                                                  ( Ref Nothing
+                                                                    ( Imported
+                                                                      ( ModuleName "Effect.Ref" )
+                                                                      ( Name "foreign" )
+                                                                    )
+                                                                  )
+                                                                  ( PropName "write" )
+                                                                )
+                                                                ( Ref Nothing
+                                                                  ( Local ( Name "e$19" ) ) :| []
+                                                                )
+                                                              )
+                                                              ( Ref Nothing
+                                                                ( Local ( Name "r$16" ) ) :| []
+                                                              )
+                                                            )
+                                                            ( Ref Nothing
+                                                              ( Imported
+                                                                ( ModuleName "Prim" )
+                                                                ( Name "$magicDoRun" )
+                                                              ) :| []
+                                                            )
+                                                          )
+                                                        ]
+                                                      )
+                                                      ( AppN Nothing
+                                                        ( AppN Nothing
+                                                          ( Ref Nothing
+                                                            ( Imported
+                                                              ( ModuleName "Control.Monad.Rec.Class" )
+                                                              ( Name "pure" )
+                                                            )
+                                                          )
+                                                          ( LiteralBool Nothing False :| [] )
+                                                        )
+                                                        ( Ref Nothing
+                                                          ( Imported
+                                                            ( ModuleName "Prim" )
+                                                            ( Name "$magicDoRun" )
+                                                          ) :| []
+                                                        )
+                                                      )
+                                                    )
+                                                  )
+                                                  ( IfThenElse Nothing
+                                                    ( Eq Nothing
+                                                      ( LiteralString Nothing "Control.Monad.Rec.Class∷Step.Done" )
+                                                      ( ReflectCtor Nothing
+                                                        ( Ref Nothing ( Local ( Name "v0$17" ) ) )
+                                                      )
+                                                    )
+                                                    ( AppN Nothing
+                                                      ( Ref Nothing
+                                                        ( Imported
+                                                          ( ModuleName "Control.Monad.Rec.Class" )
+                                                          ( Name "pure" )
+                                                        )
+                                                      )
+                                                      ( LiteralBool Nothing True :| [] )
+                                                    )
+                                                    ( Exception Nothing "No patterns matched" )
+                                                  )
+                                                )
+                                                ( Ref Nothing
+                                                  ( Imported
+                                                    ( ModuleName "Prim" )
+                                                    ( Name "$magicDoRun" )
+                                                  ) :| []
+                                                )
+                                              )
+                                            ) :| []
                                           )
                                         )
-                                        ( PropName "map" )
+                                        ( Ref Nothing
+                                          ( Imported
+                                            ( ModuleName "Prim" )
+                                            ( Name "$magicDoRun" )
+                                          ) :| []
+                                        )
+                                      )
+                                    ]
+                                  )
+                                  ( AppN Nothing
+                                    ( AppN Nothing
+                                      ( AppN Nothing
+                                        ( ObjectProp Nothing
+                                          ( Ref Nothing
+                                            ( Imported
+                                              ( ModuleName "Effect" )
+                                              ( Name "functorEffect" )
+                                            )
+                                          )
+                                          ( PropName "map" )
+                                        )
+                                        ( AppN Nothing
+                                          ( ObjectProp ( Just Always )
+                                            ( Ref Nothing
+                                              ( Imported
+                                                ( ModuleName "Partial.Unsafe" )
+                                                ( Name "foreign" )
+                                              )
+                                            )
+                                            ( PropName "_unsafePartial" )
+                                          )
+                                          ( AbsN Nothing
+                                            ( ParamUnused Nothing :| [] )
+                                            ( AbsN Nothing
+                                              ( ParamNamed Nothing ( Name "v$9$20" ) :| [] )
+                                              ( IfThenElse Nothing
+                                                ( Eq Nothing
+                                                  ( LiteralString Nothing "Control.Monad.Rec.Class∷Step.Done" )
+                                                  ( ReflectCtor Nothing
+                                                    ( Ref Nothing ( Local ( Name "v$9$20" ) ) )
+                                                  )
+                                                )
+                                                ( ObjectProp Nothing
+                                                  ( Ref Nothing ( Local ( Name "v$9$20" ) ) )
+                                                  ( PropName "value0" )
+                                                )
+                                                ( Exception Nothing "No patterns matched" )
+                                              )
+                                            ) :| []
+                                          ) :| []
+                                        )
                                       )
                                       ( AppN Nothing
                                         ( ObjectProp ( Just Always )
                                           ( Ref Nothing
                                             ( Imported
-                                              ( ModuleName "Partial.Unsafe" )
+                                              ( ModuleName "Effect.Ref" )
                                               ( Name "foreign" )
                                             )
                                           )
-                                          ( PropName "_unsafePartial" )
+                                          ( PropName "read" )
                                         )
-                                        ( AbsN Nothing
-                                          ( ParamUnused Nothing :| [] )
-                                          ( AbsN Nothing
-                                            ( ParamNamed Nothing ( Name "v$9$20" ) :| [] )
-                                            ( IfThenElse Nothing
-                                              ( Eq Nothing
-                                                ( LiteralString Nothing "Control.Monad.Rec.Class∷Step.Done" )
-                                                ( ReflectCtor Nothing
-                                                  ( Ref Nothing ( Local ( Name "v$9$20" ) ) )
-                                                )
-                                              )
-                                              ( ObjectProp Nothing
-                                                ( Ref Nothing ( Local ( Name "v$9$20" ) ) )
-                                                ( PropName "value0" )
-                                              )
-                                              ( Exception Nothing "No patterns matched" )
-                                            )
-                                          ) :| []
-                                        ) :| []
+                                        ( Ref Nothing ( Local ( Name "r$16" ) ) :| [] ) :| []
                                       )
                                     )
-                                    ( AppN Nothing
-                                      ( ObjectProp ( Just Always )
-                                        ( Ref Nothing
-                                          ( Imported
-                                            ( ModuleName "Effect.Ref" )
-                                            ( Name "foreign" )
-                                          )
-                                        )
-                                        ( PropName "read" )
-                                      )
-                                      ( Ref Nothing ( Local ( Name "r$16" ) ) :| [] ) :| []
+                                    ( Ref Nothing
+                                      ( Imported
+                                        ( ModuleName "Prim" )
+                                        ( Name "$magicDoRun" )
+                                      ) :| []
                                     )
-                                  )
-                                  ( Ref Nothing
-                                    ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| []
                                   )
                                 )
                               )
                             )
+                          ),
+                          ( PropName "Monad0", AbsN Nothing
+                            ( ParamUnused Nothing :| [] )
+                            ( Ref Nothing
+                              ( Imported ( ModuleName "Effect" ) ( Name "monadEffect" ) )
+                            )
                           )
-                        ),
-                        ( PropName "Monad0", AbsN Nothing
-                          ( ParamUnused Nothing :| [] )
-                          ( Ref Nothing
-                            ( Imported ( ModuleName "Effect" ) ( Name "monadEffect" ) )
+                        ]
+                      ) :| []
+                    )
+                    ( Let Nothing
+                      ( Standalone
+                        ( Nothing, Name "pure$536", ObjectProp Nothing
+                          ( AppN Nothing
+                            ( ObjectProp Nothing
+                              ( AppN Nothing
+                                ( ObjectProp Nothing
+                                  ( Ref Nothing ( Local ( Name "dictMonadRec$535" ) ) )
+                                  ( PropName "Monad0" )
+                                )
+                                ( Ref Nothing
+                                  ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| []
+                                )
+                              )
+                              ( PropName "Applicative0" )
+                            )
+                            ( Ref Nothing
+                              ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| []
+                            )
+                          )
+                          ( PropName "pure" )
+                        ) :| []
+                      )
+                      ( AbsN Nothing
+                        ( ParamNamed Nothing ( Name "b$537" ) :| [] )
+                        ( AbsN Nothing
+                          ( ParamNamed Nothing ( Name "n$538" ) :| [] )
+                          ( AppN Nothing
+                            ( AppN Nothing
+                              ( ObjectProp Nothing
+                                ( Ref Nothing ( Local ( Name "dictMonadRec$535" ) ) )
+                                ( PropName "tailRecM" )
+                              )
+                              ( AbsN Nothing
+                                ( ParamNamed Nothing ( Name "o$483$539" ) :| [] )
+                                ( AppN Nothing
+                                  ( Let Nothing
+                                    ( Standalone
+                                      ( Nothing, Name "acc$1$540", ObjectProp Nothing
+                                        ( Ref Nothing ( Local ( Name "o$483$539" ) ) )
+                                        ( PropName "a" )
+                                      ) :| []
+                                    )
+                                    ( AbsN Nothing
+                                      ( ParamNamed Nothing ( Name "i$2$541" ) :| [] )
+                                      ( IfThenElse Nothing
+                                        ( Eq Nothing
+                                          ( LiteralString Nothing "Data.Ordering∷Ordering.LT" )
+                                          ( IfThenElse Nothing
+                                            ( PrimBinOp Nothing PrimLt
+                                              ( Ref Nothing ( Local ( Name "i$2$541" ) ) )
+                                              ( Ref Nothing ( Local ( Name "n$538" ) ) )
+                                            )
+                                            ( LiteralString Nothing "Data.Ordering∷Ordering.LT" )
+                                            ( IfThenElse Nothing
+                                              ( Eq Nothing
+                                                ( Ref Nothing ( Local ( Name "i$2$541" ) ) )
+                                                ( Ref Nothing ( Local ( Name "n$538" ) ) )
+                                              )
+                                              ( LiteralString Nothing "Data.Ordering∷Ordering.EQ" )
+                                              ( LiteralString Nothing "Data.Ordering∷Ordering.GT" )
+                                            )
+                                          )
+                                        )
+                                        ( AppN Nothing
+                                          ( Ref Nothing ( Local ( Name "pure$536" ) ) )
+                                          ( AppN Nothing
+                                            ( Ctor Nothing SumType
+                                              ( ModuleName "Control.Monad.Rec.Class" )
+                                              ( TyName "Step" )
+                                              ( CtorName "Loop" )
+                                              [ FieldName "value0" ]
+                                            )
+                                            ( LiteralObject Nothing
+                                              [
+                                                ( PropName "a", AppN Nothing
+                                                  ( Ref Nothing
+                                                    ( Imported
+                                                      ( ModuleName "Golden.TailRecM2Shadow.Test" )
+                                                      ( Name "add$w" )
+                                                    )
+                                                  )
+                                                  ( Ref Nothing
+                                                    ( Local ( Name "acc$1$540" ) ) :|
+                                                    [ Ref Nothing ( Local ( Name "i$2$541" ) ) ]
+                                                  )
+                                                ),
+                                                ( PropName "b", AppN Nothing
+                                                  ( Ref Nothing
+                                                    ( Imported
+                                                      ( ModuleName "Golden.TailRecM2Shadow.Test" )
+                                                      ( Name "add$w" )
+                                                    )
+                                                  )
+                                                  ( Ref Nothing
+                                                    ( Local ( Name "i$2$541" ) ) :|
+                                                    [ LiteralInt Nothing 1 ]
+                                                  )
+                                                )
+                                              ] :| []
+                                            ) :| []
+                                          )
+                                        )
+                                        ( AppN Nothing
+                                          ( Ref Nothing ( Local ( Name "pure$536" ) ) )
+                                          ( AppN Nothing
+                                            ( Ctor Nothing SumType
+                                              ( ModuleName "Control.Monad.Rec.Class" )
+                                              ( TyName "Step" )
+                                              ( CtorName "Done" )
+                                              [ FieldName "value0" ]
+                                            )
+                                            ( Ref Nothing
+                                              ( Local ( Name "acc$1$540" ) ) :| []
+                                            ) :| []
+                                          )
+                                        )
+                                      )
+                                    )
+                                  )
+                                  ( ObjectProp Nothing
+                                    ( Ref Nothing ( Local ( Name "o$483$539" ) ) )
+                                    ( PropName "b" ) :| []
+                                  )
+                                ) :| []
+                              )
+                            )
+                            ( LiteralObject Nothing
+                              [
+                                ( PropName "a", Ref Nothing ( Local ( Name "b$537" ) ) ),
+                                ( PropName "b", LiteralInt Nothing 0 )
+                              ] :| []
+                            )
                           )
                         )
-                      ] :| []
+                      )
                     )
                   )
                   ( LiteralInt Nothing 0 :| [] )
                 )
                 ( LiteralInt Nothing 5 :| [] )
               )
-              ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+              ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
             ) :| []
           )
           ( AppN Nothing
@@ -725,10 +826,459 @@ UberModule
                   ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
                   ( PropName "showIntImpl" )
                 )
-                ( Ref Nothing ( Local ( Name "r$0" ) ) :| [] ) :| []
+                ( AppN Nothing
+                  ( AppN Nothing
+                    ( AppN Nothing
+                      ( Let Nothing
+                        ( Standalone
+                          ( Nothing, Name "dictMonadRec$535$543", LiteralObject Nothing
+                            [
+                              ( PropName "tailRecM", AbsN Nothing
+                                ( ParamNamed Nothing ( Name "f$11$544" ) :| [] )
+                                ( AbsN Nothing
+                                  ( ParamNamed Nothing ( Name "a$12$545" ) :| [] )
+                                  ( AbsN Nothing
+                                    ( ParamUnused Nothing :| [] )
+                                    ( Let Nothing
+                                      ( Standalone
+                                        ( Nothing, Name "r$16$546", AppN Nothing
+                                          ( AppN Nothing
+                                            ( AppN Nothing
+                                              ( ObjectProp Nothing
+                                                ( Ref Nothing
+                                                  ( Imported
+                                                    ( ModuleName "Effect" )
+                                                    ( Name "bindEffect" )
+                                                  )
+                                                )
+                                                ( PropName "bind" )
+                                              )
+                                              ( AppN Nothing
+                                                ( Ref Nothing ( Local ( Name "f$11$544" ) ) )
+                                                ( Ref Nothing
+                                                  ( Local ( Name "a$12$545" ) ) :| []
+                                                ) :| []
+                                              )
+                                            )
+                                            ( ObjectProp ( Just Always )
+                                              ( Ref Nothing
+                                                ( Imported
+                                                  ( ModuleName "Effect.Ref" )
+                                                  ( Name "foreign" )
+                                                )
+                                              )
+                                              ( PropName "_new" ) :| []
+                                            )
+                                          )
+                                          ( Ref Nothing
+                                            ( Imported
+                                              ( ModuleName "Prim" )
+                                              ( Name "$magicDoRun" )
+                                            ) :| []
+                                          )
+                                        ) :|
+                                        [ Standalone
+                                          ( Nothing, Name "_$547", AppN Nothing
+                                            ( AppN Nothing
+                                              ( ObjectProp ( Just Always )
+                                                ( Ref Nothing
+                                                  ( Imported
+                                                    ( ModuleName "Effect" )
+                                                    ( Name "foreign" )
+                                                  )
+                                                )
+                                                ( PropName "untilE" )
+                                              )
+                                              ( AbsN Nothing
+                                                ( ParamUnused Nothing :| [] )
+                                                ( Let Nothing
+                                                  ( Standalone
+                                                    ( Nothing, Name "v0$17$548", AppN Nothing
+                                                      ( AppN Nothing
+                                                        ( ObjectProp ( Just Always )
+                                                          ( Ref Nothing
+                                                            ( Imported
+                                                              ( ModuleName "Effect.Ref" )
+                                                              ( Name "foreign" )
+                                                            )
+                                                          )
+                                                          ( PropName "read" )
+                                                        )
+                                                        ( Ref Nothing
+                                                          ( Local ( Name "r$16$546" ) ) :| []
+                                                        )
+                                                      )
+                                                      ( Ref Nothing
+                                                        ( Imported
+                                                          ( ModuleName "Prim" )
+                                                          ( Name "$magicDoRun" )
+                                                        ) :| []
+                                                      )
+                                                    ) :| []
+                                                  )
+                                                  ( AppN Nothing
+                                                    ( IfThenElse Nothing
+                                                      ( Eq Nothing
+                                                        ( LiteralString Nothing "Control.Monad.Rec.Class∷Step.Loop" )
+                                                        ( ReflectCtor Nothing
+                                                          ( Ref Nothing
+                                                            ( Local ( Name "v0$17$548" ) )
+                                                          )
+                                                        )
+                                                      )
+                                                      ( AbsN Nothing
+                                                        ( ParamUnused Nothing :| [] )
+                                                        ( Let Nothing
+                                                          ( Standalone
+                                                            ( Nothing, Name "e$19$549", AppN Nothing
+                                                              ( AppN Nothing
+                                                                ( Ref Nothing
+                                                                  ( Local ( Name "f$11$544" ) )
+                                                                )
+                                                                ( ObjectProp Nothing
+                                                                  ( Ref Nothing
+                                                                    ( Local ( Name "v0$17$548" ) )
+                                                                  )
+                                                                  ( PropName "value0" ) :| []
+                                                                )
+                                                              )
+                                                              ( Ref Nothing
+                                                                ( Imported
+                                                                  ( ModuleName "Prim" )
+                                                                  ( Name "$magicDoRun" )
+                                                                ) :| []
+                                                              )
+                                                            ) :|
+                                                            [ Standalone
+                                                              ( Nothing, Name "_$550", AppN Nothing
+                                                                ( AppN Nothing
+                                                                  ( AppN Nothing
+                                                                    ( ObjectProp ( Just Always )
+                                                                      ( Ref Nothing
+                                                                        ( Imported
+                                                                          ( ModuleName "Effect.Ref" )
+                                                                          ( Name "foreign" )
+                                                                        )
+                                                                      )
+                                                                      ( PropName "write" )
+                                                                    )
+                                                                    ( Ref Nothing
+                                                                      ( Local
+                                                                        ( Name "e$19$549" )
+                                                                      ) :| []
+                                                                    )
+                                                                  )
+                                                                  ( Ref Nothing
+                                                                    ( Local
+                                                                      ( Name "r$16$546" )
+                                                                    ) :| []
+                                                                  )
+                                                                )
+                                                                ( Ref Nothing
+                                                                  ( Imported
+                                                                    ( ModuleName "Prim" )
+                                                                    ( Name "$magicDoRun" )
+                                                                  ) :| []
+                                                                )
+                                                              )
+                                                            ]
+                                                          )
+                                                          ( AppN Nothing
+                                                            ( AppN Nothing
+                                                              ( Ref Nothing
+                                                                ( Imported
+                                                                  ( ModuleName "Control.Monad.Rec.Class" )
+                                                                  ( Name "pure" )
+                                                                )
+                                                              )
+                                                              ( LiteralBool Nothing False :| [] )
+                                                            )
+                                                            ( Ref Nothing
+                                                              ( Imported
+                                                                ( ModuleName "Prim" )
+                                                                ( Name "$magicDoRun" )
+                                                              ) :| []
+                                                            )
+                                                          )
+                                                        )
+                                                      )
+                                                      ( IfThenElse Nothing
+                                                        ( Eq Nothing
+                                                          ( LiteralString Nothing "Control.Monad.Rec.Class∷Step.Done" )
+                                                          ( ReflectCtor Nothing
+                                                            ( Ref Nothing
+                                                              ( Local ( Name "v0$17$548" ) )
+                                                            )
+                                                          )
+                                                        )
+                                                        ( AppN Nothing
+                                                          ( Ref Nothing
+                                                            ( Imported
+                                                              ( ModuleName "Control.Monad.Rec.Class" )
+                                                              ( Name "pure" )
+                                                            )
+                                                          )
+                                                          ( LiteralBool Nothing True :| [] )
+                                                        )
+                                                        ( Exception Nothing "No patterns matched" )
+                                                      )
+                                                    )
+                                                    ( Ref Nothing
+                                                      ( Imported
+                                                        ( ModuleName "Prim" )
+                                                        ( Name "$magicDoRun" )
+                                                      ) :| []
+                                                    )
+                                                  )
+                                                ) :| []
+                                              )
+                                            )
+                                            ( Ref Nothing
+                                              ( Imported
+                                                ( ModuleName "Prim" )
+                                                ( Name "$magicDoRun" )
+                                              ) :| []
+                                            )
+                                          )
+                                        ]
+                                      )
+                                      ( AppN Nothing
+                                        ( AppN Nothing
+                                          ( AppN Nothing
+                                            ( ObjectProp Nothing
+                                              ( Ref Nothing
+                                                ( Imported
+                                                  ( ModuleName "Effect" )
+                                                  ( Name "functorEffect" )
+                                                )
+                                              )
+                                              ( PropName "map" )
+                                            )
+                                            ( AppN Nothing
+                                              ( ObjectProp ( Just Always )
+                                                ( Ref Nothing
+                                                  ( Imported
+                                                    ( ModuleName "Partial.Unsafe" )
+                                                    ( Name "foreign" )
+                                                  )
+                                                )
+                                                ( PropName "_unsafePartial" )
+                                              )
+                                              ( AbsN Nothing
+                                                ( ParamUnused Nothing :| [] )
+                                                ( AbsN Nothing
+                                                  ( ParamNamed Nothing
+                                                    ( Name "v$9$20$551" ) :| []
+                                                  )
+                                                  ( IfThenElse Nothing
+                                                    ( Eq Nothing
+                                                      ( LiteralString Nothing "Control.Monad.Rec.Class∷Step.Done" )
+                                                      ( ReflectCtor Nothing
+                                                        ( Ref Nothing
+                                                          ( Local ( Name "v$9$20$551" ) )
+                                                        )
+                                                      )
+                                                    )
+                                                    ( ObjectProp Nothing
+                                                      ( Ref Nothing
+                                                        ( Local ( Name "v$9$20$551" ) )
+                                                      )
+                                                      ( PropName "value0" )
+                                                    )
+                                                    ( Exception Nothing "No patterns matched" )
+                                                  )
+                                                ) :| []
+                                              ) :| []
+                                            )
+                                          )
+                                          ( AppN Nothing
+                                            ( ObjectProp ( Just Always )
+                                              ( Ref Nothing
+                                                ( Imported
+                                                  ( ModuleName "Effect.Ref" )
+                                                  ( Name "foreign" )
+                                                )
+                                              )
+                                              ( PropName "read" )
+                                            )
+                                            ( Ref Nothing
+                                              ( Local ( Name "r$16$546" ) ) :| []
+                                            ) :| []
+                                          )
+                                        )
+                                        ( Ref Nothing
+                                          ( Imported
+                                            ( ModuleName "Prim" )
+                                            ( Name "$magicDoRun" )
+                                          ) :| []
+                                        )
+                                      )
+                                    )
+                                  )
+                                )
+                              ),
+                              ( PropName "Monad0", AbsN Nothing
+                                ( ParamUnused Nothing :| [] )
+                                ( Ref Nothing
+                                  ( Imported ( ModuleName "Effect" ) ( Name "monadEffect" ) )
+                                )
+                              )
+                            ]
+                          ) :| []
+                        )
+                        ( Let Nothing
+                          ( Standalone
+                            ( Nothing, Name "pure$536$552", ObjectProp Nothing
+                              ( AppN Nothing
+                                ( ObjectProp Nothing
+                                  ( AppN Nothing
+                                    ( ObjectProp Nothing
+                                      ( Ref Nothing ( Local ( Name "dictMonadRec$535$543" ) ) )
+                                      ( PropName "Monad0" )
+                                    )
+                                    ( Ref Nothing
+                                      ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| []
+                                    )
+                                  )
+                                  ( PropName "Applicative0" )
+                                )
+                                ( Ref Nothing
+                                  ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| []
+                                )
+                              )
+                              ( PropName "pure" )
+                            ) :| []
+                          )
+                          ( AbsN Nothing
+                            ( ParamNamed Nothing ( Name "b$537$553" ) :| [] )
+                            ( AbsN Nothing
+                              ( ParamNamed Nothing ( Name "n$538$554" ) :| [] )
+                              ( AppN Nothing
+                                ( AppN Nothing
+                                  ( ObjectProp Nothing
+                                    ( Ref Nothing ( Local ( Name "dictMonadRec$535$543" ) ) )
+                                    ( PropName "tailRecM" )
+                                  )
+                                  ( AbsN Nothing
+                                    ( ParamNamed Nothing ( Name "o$483$539$555" ) :| [] )
+                                    ( AppN Nothing
+                                      ( Let Nothing
+                                        ( Standalone
+                                          ( Nothing, Name "acc$1$540$556", ObjectProp Nothing
+                                            ( Ref Nothing ( Local ( Name "o$483$539$555" ) ) )
+                                            ( PropName "a" )
+                                          ) :| []
+                                        )
+                                        ( AbsN Nothing
+                                          ( ParamNamed Nothing ( Name "i$2$541$557" ) :| [] )
+                                          ( IfThenElse Nothing
+                                            ( Eq Nothing
+                                              ( LiteralString Nothing "Data.Ordering∷Ordering.LT" )
+                                              ( IfThenElse Nothing
+                                                ( PrimBinOp Nothing PrimLt
+                                                  ( Ref Nothing ( Local ( Name "i$2$541$557" ) ) )
+                                                  ( Ref Nothing ( Local ( Name "n$538$554" ) ) )
+                                                )
+                                                ( LiteralString Nothing "Data.Ordering∷Ordering.LT" )
+                                                ( IfThenElse Nothing
+                                                  ( Eq Nothing
+                                                    ( Ref Nothing
+                                                      ( Local ( Name "i$2$541$557" ) )
+                                                    )
+                                                    ( Ref Nothing ( Local ( Name "n$538$554" ) ) )
+                                                  )
+                                                  ( LiteralString Nothing "Data.Ordering∷Ordering.EQ" )
+                                                  ( LiteralString Nothing "Data.Ordering∷Ordering.GT" )
+                                                )
+                                              )
+                                            )
+                                            ( AppN Nothing
+                                              ( Ref Nothing ( Local ( Name "pure$536$552" ) ) )
+                                              ( AppN Nothing
+                                                ( Ctor Nothing SumType
+                                                  ( ModuleName "Control.Monad.Rec.Class" )
+                                                  ( TyName "Step" )
+                                                  ( CtorName "Loop" )
+                                                  [ FieldName "value0" ]
+                                                )
+                                                ( LiteralObject Nothing
+                                                  [
+                                                    ( PropName "a", AppN Nothing
+                                                      ( Ref Nothing
+                                                        ( Imported
+                                                          ( ModuleName "Golden.TailRecM2Shadow.Test" )
+                                                          ( Name "add$w" )
+                                                        )
+                                                      )
+                                                      ( Ref Nothing
+                                                        ( Local ( Name "acc$1$540$556" ) ) :|
+                                                        [ Ref Nothing
+                                                          ( Local ( Name "i$2$541$557" ) )
+                                                        ]
+                                                      )
+                                                    ),
+                                                    ( PropName "b", AppN Nothing
+                                                      ( Ref Nothing
+                                                        ( Imported
+                                                          ( ModuleName "Golden.TailRecM2Shadow.Test" )
+                                                          ( Name "add$w" )
+                                                        )
+                                                      )
+                                                      ( Ref Nothing
+                                                        ( Local ( Name "i$2$541$557" ) ) :|
+                                                        [ LiteralInt Nothing 1 ]
+                                                      )
+                                                    )
+                                                  ] :| []
+                                                ) :| []
+                                              )
+                                            )
+                                            ( AppN Nothing
+                                              ( Ref Nothing ( Local ( Name "pure$536$552" ) ) )
+                                              ( AppN Nothing
+                                                ( Ctor Nothing SumType
+                                                  ( ModuleName "Control.Monad.Rec.Class" )
+                                                  ( TyName "Step" )
+                                                  ( CtorName "Done" )
+                                                  [ FieldName "value0" ]
+                                                )
+                                                ( Ref Nothing
+                                                  ( Local ( Name "acc$1$540$556" ) ) :| []
+                                                ) :| []
+                                              )
+                                            )
+                                          )
+                                        )
+                                      )
+                                      ( ObjectProp Nothing
+                                        ( Ref Nothing ( Local ( Name "o$483$539$555" ) ) )
+                                        ( PropName "b" ) :| []
+                                      )
+                                    ) :| []
+                                  )
+                                )
+                                ( LiteralObject Nothing
+                                  [
+                                    ( PropName "a", Ref Nothing ( Local ( Name "b$537$553" ) ) ),
+                                    ( PropName "b", LiteralInt Nothing 0 )
+                                  ] :| []
+                                )
+                              )
+                            )
+                          )
+                        )
+                      )
+                      ( LiteralInt Nothing 0 :| [] )
+                    )
+                    ( LiteralInt Nothing 5 :| [] )
+                  )
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                  ) :| []
+                ) :| []
               )
             )
-            ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| [] )
+            ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
           )
         )
       )

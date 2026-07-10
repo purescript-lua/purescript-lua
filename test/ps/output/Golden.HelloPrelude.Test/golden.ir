@@ -12,12 +12,6 @@ UberModule
         }, ForeignImport Nothing
         ( ModuleName "Effect" ) ".spago/p/effect/82bac3dff904fa34534c4f5b9deeb5da359471c8/src/Effect.purs"
         [ ( Nothing, Name "pureE" ), ( Nothing, Name "bindE" ) ]
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Control.Applicative", qnameName = Name "pure"
-        }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "dict" ) :| [] )
-        ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) ) ( PropName "pure" ) )
       ), RecursiveGroup
       (
         ( QName
@@ -101,16 +95,11 @@ UberModule
                             ( PropName "apply" )
                           )
                           ( AppN Nothing
-                            ( AppN Nothing
+                            ( ObjectProp Nothing
                               ( Ref Nothing
-                                ( Imported ( ModuleName "Control.Applicative" ) ( Name "pure" ) )
+                                ( Imported ( ModuleName "Effect" ) ( Name "applicativeEffect" ) )
                               )
-                              ( Ref Nothing
-                                ( Imported
-                                  ( ModuleName "Effect" )
-                                  ( Name "applicativeEffect" )
-                                ) :| []
-                              )
+                              ( PropName "pure" )
                             )
                             ( Ref Nothing ( Local ( Name "f$23" ) ) :| [] ) :| []
                           )
@@ -170,13 +159,7 @@ UberModule
                               ( AbsN Nothing
                                 ( ParamNamed Nothing ( Name "a'$10" ) :| [] )
                                 ( AppN Nothing
-                                  ( AppN Nothing
-                                    ( Ref Nothing
-                                      ( Imported
-                                        ( ModuleName "Control.Applicative" )
-                                        ( Name "pure" )
-                                      )
-                                    )
+                                  ( ObjectProp Nothing
                                     ( AppN Nothing
                                       ( ObjectProp Nothing
                                         ( Ref Nothing
@@ -192,8 +175,9 @@ UberModule
                                           ( ModuleName "Prim" )
                                           ( Name "undefined" )
                                         ) :| []
-                                      ) :| []
+                                      )
                                     )
+                                    ( PropName "pure" )
                                   )
                                   ( AppN Nothing
                                     ( Ref Nothing ( Local ( Name "f'$9" ) ) )
@@ -225,9 +209,9 @@ UberModule
     ], uberModuleForeigns = [], uberModuleExports =
     [
       ( Name "main", AppN Nothing
-        ( AppN Nothing
-          ( Ref Nothing ( Imported ( ModuleName "Control.Applicative" ) ( Name "pure" ) ) )
-          ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "applicativeEffect" ) ) :| [] )
+        ( ObjectProp Nothing
+          ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "applicativeEffect" ) ) )
+          ( PropName "pure" )
         )
         ( ObjectProp ( Just Always )
           ( Ref Nothing ( Imported ( ModuleName "Data.Unit" ) ( Name "foreign" ) ) )

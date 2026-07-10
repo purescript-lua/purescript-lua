@@ -24,8 +24,6 @@ M.Effect_foreign = {
     return function(f) return function() return f(a())() end end
   end
 }
-M.Control_Applicative_pure = function(dict) return dict.pure end
-M.Control_Bind_bind = function(dict) return dict.bind end
 M.Effect_monadEffect = {
   Applicative0 = function() return M.Effect_applicativeEffect end,
   Bind1 = function() return M.Effect_bindEffect end
@@ -43,7 +41,7 @@ M.Effect_Lazy_functorEffect = PSLUA_runtime_lazy("functorEffect")(function()
     map = function(f_S_32)
       return function(a_S_33)
         local Effect_applicativeEffect = M.Effect_applicativeEffect
-        return (Effect_applicativeEffect.Apply0()).apply(M.Control_Applicative_pure(Effect_applicativeEffect)(f_S_32))(a_S_33)
+        return (Effect_applicativeEffect.Apply0()).apply(Effect_applicativeEffect.pure(f_S_32))(a_S_33)
       end
     end
   }
@@ -51,12 +49,12 @@ end)
 M.Effect_Lazy_applyEffect = PSLUA_runtime_lazy("applyEffect")(function()
   return {
     apply = (function()
-      local bind_S_11 = M.Control_Bind_bind(M.Effect_monadEffect.Bind1())
+      local bind_S_11 = (M.Effect_monadEffect.Bind1()).bind
       return function(f_S_13)
         return function(a_S_14)
           return bind_S_11(f_S_13)(function(fPrime_S_15)
             return bind_S_11(a_S_14)(function(aPrime_S_16)
-              return M.Control_Applicative_pure(M.Effect_monadEffect.Applicative0())(fPrime_S_15(aPrime_S_16))
+              return (M.Effect_monadEffect.Applicative0()).pure(fPrime_S_15(aPrime_S_16))
             end)
           end)
         end
@@ -65,22 +63,19 @@ M.Effect_Lazy_applyEffect = PSLUA_runtime_lazy("applyEffect")(function()
     Functor0 = function() return M.Effect_Lazy_functorEffect(0) end
   }
 end)
-M.Golden_Issue37_Test_discard = function(dictBind_S_17_S_219)
-  return M.Control_Bind_bind(dictBind_S_17_S_219)
-end
 return {
   baz = (function()
     local Effect_monadEffect = M.Effect_monadEffect
     local Bind1_S_1 = Effect_monadEffect.Bind1()
-    local pure_S_4 = M.Control_Applicative_pure(Effect_monadEffect.Applicative0())
+    local pure_S_4 = (Effect_monadEffect.Applicative0()).pure
     return function(f_S_6)
-      return M.Golden_Issue37_Test_discard(Bind1_S_1)(f_S_6)(function()
-        return M.Control_Bind_bind(Bind1_S_1)(pure_S_4({
+      return Bind1_S_1.bind(f_S_6)(function()
+        return Bind1_S_1.bind(pure_S_4({
           [1] = (function()
             local Bind1_S_216 = M.Effect_monadEffect.Bind1()
-            local discard1_S_217 = M.Golden_Issue37_Test_discard(Bind1_S_216)
+            local discard1_S_217 = Bind1_S_216.bind
             return function(fn1_S_218)
-              return M.Control_Bind_bind(Bind1_S_216)(fn1_S_218)(function()
+              return Bind1_S_216.bind(fn1_S_218)(function()
                 return discard1_S_217(fn1_S_218)(function()
                   return discard1_S_217(fn1_S_218)(function()
                     return fn1_S_218
@@ -92,5 +87,5 @@ return {
         }))(function() return pure_S_4(M.Data_Unit_foreign.unit) end)
       end)
     end
-  end)()(M.Control_Applicative_pure(M.Effect_applicativeEffect)(M.Data_Unit_foreign.unit))
+  end)()(M.Effect_applicativeEffect.pure(M.Data_Unit_foreign.unit))
 }

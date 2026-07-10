@@ -28,9 +28,7 @@ return (function()
   local Lazy_record_S_0
   local record_S_1
   Lazy_record_S_0 = PSLUA_runtime_lazy("record")(function()
-    return M.Golden_RecGroupOrder_Test_store(function()
-      return (Lazy_record_S_0(0)).tag
-    end)
+    return { run = function() return (Lazy_record_S_0(0)).tag end, tag = "ok!" }
   end)
   record_S_1 = Lazy_record_S_0(0)
   return M.Effect_Console_foreign.log(record_S_1.run(M.Data_Unit_foreign.unit))

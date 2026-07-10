@@ -26,6 +26,7 @@ import Language.PureScript.Backend.IR.Types
   , RawExp (..)
   , WasRewritten (..)
   , getAnn
+  , isEffectRun
   , listGrouping
   , rewriteExpBottomUp
   , rewrittenIf
@@ -183,8 +184,10 @@ eliminateDeadCode uber@UberModule {..} =
       ∷ [Grouping ((Id, Ann), Name, AExp)]
       → [Grouping ((Id, Ann), Name, AExp)]
     preservedGroupings = mapMaybe \case
-      g@(Standalone ((nameId, _ann), _name, _expr)) →
-        g <$ guard (nameId `member` reachableIds)
+      -- An effect statement is kept even though its binder is unreferenced:
+      -- dropping it would silently discard the side effect (see 'isEffectRun').
+      g@(Standalone ((nameId, _ann), _name, expr)) →
+        g <$ guard (nameId `member` reachableIds || isEffectRun expr)
       RecursiveGroup recBinds →
         RecursiveGroup
           <$> NE.nonEmpty
@@ -376,9 +379,18 @@ eliminateDeadCode uber@UberModule {..} =
 expressionDependsOnIds ∷ Scope → AExp → [Id]
 expressionDependsOnIds exprScope = \case
   Ref _ann qname → maybeToList $ Map.lookup qname exprScope
-  -- A Let node depends only on its body: the groupings are pulled in
-  -- via the per-binder nodes built by 'adjacencyListForGrouping'.
-  Let _ann _groupings body → [nodeId body]
+  -- A Let node depends on its body, and on any effect-run binding it holds:
+  -- the groupings referenced by name are pulled in via the per-binder nodes
+  -- built by 'adjacencyListForGrouping', but a magic-do effect statement
+  -- (@let _ = m EffectRunArg@) is bound to an unreferenced name, so nothing
+  -- would otherwise keep its observable side effect reachable (see
+  -- 'isEffectRun' and Note [Sequential scoping of Let bindings]).
+  Let _ann groupings body →
+    nodeId body
+      : [ nodeId rhs
+        | Standalone (_binder, _name, rhs) ← toList groupings
+        , isEffectRun rhs
+        ]
   other → nodeId <$> toListOf subexpressions other
 
 {- | Under GUC (@UniqueBinders@) no two live binders at one site share a

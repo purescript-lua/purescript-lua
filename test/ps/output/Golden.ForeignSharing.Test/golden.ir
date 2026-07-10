@@ -18,17 +18,6 @@ UberModule
         }, ForeignImport Nothing
         ( ModuleName "Golden.ForeignSharing.Test" ) "src/Golden/ForeignSharing/Test.purs"
         [ ( Nothing, Name "same" ) ]
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Golden.ForeignSharing.Test", qnameName = Name "sharedToken"
-        }, AbsN Nothing
-        ( ParamUnused Nothing :| [] )
-        ( ObjectProp ( Just Always )
-          ( Ref Nothing
-            ( Imported ( ModuleName "Golden.ForeignSharing.Token" ) ( Name "foreign" ) )
-          )
-          ( PropName "token" )
-        )
       )
     ], uberModuleForeigns = [], uberModuleExports =
     [
@@ -46,18 +35,18 @@ UberModule
                 )
                 ( PropName "same" )
               )
-              ( AppN Nothing
+              ( ObjectProp ( Just Always )
                 ( Ref Nothing
-                  ( Imported ( ModuleName "Golden.ForeignSharing.Test" ) ( Name "sharedToken" ) )
+                  ( Imported ( ModuleName "Golden.ForeignSharing.Token" ) ( Name "foreign" ) )
                 )
-                ( LiteralInt Nothing 0 :| [] ) :| []
+                ( PropName "token" ) :| []
               )
             )
-            ( AppN Nothing
+            ( ObjectProp ( Just Always )
               ( Ref Nothing
-                ( Imported ( ModuleName "Golden.ForeignSharing.Test" ) ( Name "sharedToken" ) )
+                ( Imported ( ModuleName "Golden.ForeignSharing.Token" ) ( Name "foreign" ) )
               )
-              ( LiteralInt Nothing 1 :| [] ) :| []
+              ( PropName "token" ) :| []
             )
           )
           ( LiteralString Nothing "shared" )
