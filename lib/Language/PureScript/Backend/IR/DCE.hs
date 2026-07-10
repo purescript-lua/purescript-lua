@@ -382,7 +382,7 @@ expressionDependsOnIds exprScope = \case
   -- A Let node depends on its body, and on any effect-run binding it holds:
   -- the groupings referenced by name are pulled in via the per-binder nodes
   -- built by 'adjacencyListForGrouping', but a magic-do effect statement
-  -- (@let _ = m Prim.undefined@) is bound to an unreferenced name, so nothing
+  -- (@let _ = m EffectRunArg@) is bound to an unreferenced name, so nothing
   -- would otherwise keep its observable side effect reachable (see
   -- 'isEffectRun' and Note [Sequential scoping of Let bindings]).
   Let _ann groupings body →
