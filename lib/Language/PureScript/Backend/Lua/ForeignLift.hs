@@ -22,12 +22,27 @@ registry of qualified-name → IR mappings, is what makes registry drift
 against the package set impossible by construction — the payoff of
 Lua's tiny grammar (issue #178).
 
+The same machinery lifts the @run@ half of the @*.Uncurried@ wrappers
+(issue #198): @runFn3@ becomes @\\fn a b c -> AppN fn [a, b, c]@ and
+@runSTFn2@ becomes @\\fn a b -> Abs _ (AppN fn [a, b])@ (the trailing
+effect thunk is a unary lambda with an unused parameter). Marked
+inline-always like every lifted accessor, a saturated call site collapses
+to a single n-ary Lua call after beta reduction, and the effect thunk then
+fuses away in statement position via magicDo — turning
+@runSTFn2(pushImpl)(x)(arr)()@ from four calls and three closures into one
+@pushImpl(x, arr)@.
+
 = What lifts
 
 The translatable subset, mirroring the shapes the prelude forks actually
 use:
 
   * curried single-parameter function literals → nested 'Abs';
+  * a zero-parameter function literal (the @*.Uncurried@ effect thunk,
+    @function() … end@) → a unary 'Abs' with an unused parameter;
+  * a saturated call @fn(a, b, …)@ of one or more arguments → the n-ary
+    'AppN' node (issue #198); a nullary @fn()@ has no 'AppN' and does not
+    lift;
   * @return@ / @if … then … else@ trees (an @elseif@ is a nested @if@ in
     the else branch) → 'IfThenElse', provided every branch returns a
     value (a branch that falls through to @nil@ does not lift);
@@ -38,9 +53,9 @@ use:
     header (inlined) — this is how @ordIntImpl = (unsafeCoerceImpl)@ and
     the @refEq@ aliases resolve.
 
-Everything else — loops, mutation, varargs, table constructors, calls,
-multi-parameter functions, string/char literals — leaves the export
-opaque (correct for e.g. @foldlArray@).
+Everything else — loops, mutation, varargs, table constructors,
+multi-parameter function literals, string/char literals — leaves the
+export opaque (correct for e.g. @foldlArray@).
 -}
 module Language.PureScript.Backend.Lua.ForeignLift
   ( liftForeigns
@@ -69,12 +84,14 @@ import Language.PureScript.Backend.IR.Types
   , PrimOp (..)
   , RawExp (ForeignImport, ObjectProp)
   , abstraction
+  , applicationN
   , eq
   , ifThenElse
   , literalBool
   , literalFloat
   , literalInt
   , paramNamed
+  , paramUnused
   , primBinOp
   , primNot
   , refLocal
@@ -101,11 +118,11 @@ import Prelude hiding (show)
 --------------------------------------------------------------------------------
 -- Allowlist -------------------------------------------------------------------
 
-{- | The foreign exports lifted into the IR — the arithmetic, comparison,
-boolean, and concatenation core of the prelude (issue #178). Membership
-is a hard contract (see the module header): a listed export that fails to
-lift is a compile error. The @*.Uncurried@ modules and a broader
-allowlist are follow-up work (issues #179, #187).
+{- | The foreign exports lifted into the IR: the arithmetic, comparison,
+boolean, and concatenation core of the prelude (issue #178), plus the
+@run@ half of the @*.Uncurried@ wrappers (issue #198). Membership is a
+hard contract (see the module header): a listed export that fails to lift
+is a compile error. A broader allowlist is follow-up work (issue #187).
 -}
 allowlist ∷ Set QName
 allowlist =
@@ -133,7 +150,19 @@ allowlist =
         ]
       )
     , ("Data.Semigroup", ["concatString"])
+    , -- The @run@ half of the uncurried FFI wrappers (issue #198). Their
+      -- @mk@ counterparts need an n-ary 'AbsN' (issue #24) and stay opaque;
+      -- @runFn0@ is a nullary call with no 'AppN', @runFn1@ is PureScript
+      -- @id@ with no foreign — both absent below.
+      ("Data.Function.Uncurried", runWrappers "runFn" [2 .. 10])
+    , ("Control.Monad.ST.Uncurried", runWrappers "runSTFn" [1 .. 10])
+    , ("Effect.Uncurried", runWrappers "runEffectFn" [1 .. 10])
     ]
+
+  -- @[prefix<n> | n <- arities]@, e.g. @runWrappers "runFn" [2, 3]@ is
+  -- @["runFn2", "runFn3"]@.
+  runWrappers ∷ Text → [Int] → [Text]
+  runWrappers prefix arities = [prefix <> toText (show n) | n ← arities]
 
 --------------------------------------------------------------------------------
 -- Orchestration ---------------------------------------------------------------
@@ -275,6 +304,21 @@ liftLuaExp env bound = \case
   Function [(_ann, ParamNamed param)] body →
     abstraction (paramNamed (irName param))
       <$> liftBlock env (Set.insert param bound) body
+  -- A zero-parameter function literal is the effect thunk of the
+  -- @run{ST,Effect}FnN@ wrappers: @function() return fn(a, b) end@. It
+  -- lifts to a unary 'Abs' with an unused parameter — the shape magicDo
+  -- executes in statement position, so a saturated site fuses the thunk
+  -- away entirely (issue #198).
+  Function [] body →
+    abstraction paramUnused <$> liftBlock env bound body
+  -- A saturated call @fn(a, b, …)@ — the body of the @runFnN@ wrappers —
+  -- lifts to the n-ary 'AppN' node (issue #198). A nullary call @fn()@
+  -- has no 'AppN' representation, so 'nonEmpty' declines it (e.g.
+  -- @runFn0 = \\fn -> fn()@ stays opaque).
+  FunctionCall (_ann, fn) args → do
+    fn' ← liftLuaExp env bound fn
+    args' ← nonEmpty args >>= traverse (\(_ann', a) → liftLuaExp env bound a)
+    Just (applicationN fn' args')
   _ → Nothing
 
 {- | Translate a block that must be a pure return tree: a single @return@

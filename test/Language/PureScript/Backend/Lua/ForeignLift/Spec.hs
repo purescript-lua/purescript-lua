@@ -9,9 +9,11 @@ import Language.PureScript.Backend.IR.Names
 import Language.PureScript.Backend.IR.Types
   ( PrimOp (..)
   , abstraction
+  , applicationN
   , eq
   , ifThenElse
   , paramNamed
+  , paramUnused
   , primBinOp
   , primNot
   , refLocal
@@ -98,9 +100,88 @@ spec = describe "Foreign lift (#178)" do
                 primBinOp PrimConcat (refLocal (Name "s1")) (refLocal (Name "s2"))
           )
 
+  describe "lifts the *.Uncurried run wrappers (#198)" do
+    it "lifts runFn3 to a saturated n-ary call" do
+      -- The pure wrapper: `\fn a b c -> fn(a, b, c)`. The body is a single
+      -- Lua call of every parameter at once, which lifts to the n-ary AppN
+      -- node. Marked inline-always downstream, a saturated site beta-reduces
+      -- to a direct `AppN impl [x, y, z]`.
+      let src =
+            "return { runFn3 = function(fn) return function(a) "
+              <> "return function(b) return function(c) "
+              <> "return fn(a, b, c) end end end end }"
+          fn = Name "fn"
+          a = Name "a"
+          b = Name "b"
+          c = Name "c"
+      liftExport (source src) (Name "runFn3")
+        `shouldBe` Just
+          ( abstraction (paramNamed fn) $
+              abstraction (paramNamed a) $
+                abstraction (paramNamed b) $
+                  abstraction (paramNamed c) $
+                    applicationN
+                      (refLocal fn)
+                      (refLocal a :| [refLocal b, refLocal c])
+          )
+
+    it "lifts runSTFn2 to a thunk over an n-ary call" do
+      -- The effectful wrapper: `\fn a b -> \() -> fn(a, b)`. The trailing
+      -- `function()` thunk becomes a unary lambda with an unused parameter
+      -- (Abs paramUnused) — the exact shape magicDo already executes in
+      -- statement position, so the thunk and its three closures fuse away.
+      let src =
+            "return { runSTFn2 = function(fn) return function(a) "
+              <> "return function(b) return function() "
+              <> "return fn(a, b) end end end end }"
+          fn = Name "fn"
+          a = Name "a"
+          b = Name "b"
+      liftExport (source src) (Name "runSTFn2")
+        `shouldBe` Just
+          ( abstraction (paramNamed fn) $
+              abstraction (paramNamed a) $
+                abstraction (paramNamed b) $
+                  abstraction paramUnused $
+                    applicationN (refLocal fn) (refLocal a :| [refLocal b])
+          )
+
+    it "lifts runEffectFn1 (single-argument n-ary call under a thunk)" do
+      let src =
+            "return { runEffectFn1 = function(fn) return function(a) "
+              <> "return function() return fn(a) end end end }"
+          fn = Name "fn"
+          a = Name "a"
+      liftExport (source src) (Name "runEffectFn1")
+        `shouldBe` Just
+          ( abstraction (paramNamed fn) $
+              abstraction (paramNamed a) $
+                abstraction paramUnused $
+                  applicationN (refLocal fn) (refLocal a :| [])
+          )
+
+    it "declines the mk* wrappers (their inner function is n-ary, #24)" do
+      -- `mkFn2 = \fn -> function(a, b) return fn(a)(b) end`: the inner
+      -- multi-parameter function needs an n-ary AbsN (issue #24), so the
+      -- wrapper stays an opaque foreign, not on this allowlist.
+      liftExport
+        ( source
+            "return { mkFn2 = function(fn) return function(a, b) return fn(a)(b) end end }"
+        )
+        (Name "mkFn2")
+        `shouldSatisfy` isNothing
+
   describe "declines everything outside the subset" do
     it "declines a multi-parameter function (would misapply when curried)" do
       liftExport (source "return { f = function(x, y) return x + y end }") (Name "f")
+        `shouldSatisfy` isNothing
+
+    it "declines a nullary call (AppN cannot express a zero-argument call)" do
+      -- `runFn0 = \fn -> fn()`. An n-ary AppN needs at least one argument;
+      -- the zero-argument call falls outside the subset and stays opaque.
+      liftExport
+        (source "return { runFn0 = function(fn) return fn() end }")
+        (Name "runFn0")
         `shouldSatisfy` isNothing
 
     it "declines a body with a table index" do
@@ -129,9 +210,22 @@ spec = describe "Foreign lift (#178)" do
       Set.member (qname "Data.Eq" "refEq") allowlist `shouldBe` True
       Set.member (qname "Data.Semigroup" "concatString") allowlist `shouldBe` True
 
-    it "does not list opaque foreigns" do
+    it "lists the *.Uncurried run wrappers (#198)" do
+      Set.member (qname "Data.Function.Uncurried" "runFn2") allowlist `shouldBe` True
+      Set.member (qname "Data.Function.Uncurried" "runFn10") allowlist `shouldBe` True
+      Set.member (qname "Control.Monad.ST.Uncurried" "runSTFn1") allowlist
+        `shouldBe` True
+      Set.member (qname "Effect.Uncurried" "runEffectFn2") allowlist `shouldBe` True
+
+    it "does not list the mk* wrappers (n-ary AbsN, #24) or opaque foreigns" do
       Set.member (qname "Data.Ord" "ordArrayImpl") allowlist `shouldBe` False
       Set.member (qname "Data.Semiring" "numAdd") allowlist `shouldBe` False
+      Set.member (qname "Data.Function.Uncurried" "mkFn2") allowlist `shouldBe` False
+      Set.member (qname "Effect.Uncurried" "mkEffectFn2") allowlist `shouldBe` False
+      -- runFn0/runFn1 are not lifted: runFn0 is a nullary call (no AppN),
+      -- runFn1 has no foreign implementation (it is PureScript `id`).
+      Set.member (qname "Data.Function.Uncurried" "runFn0") allowlist `shouldBe` False
+      Set.member (qname "Data.Function.Uncurried" "runFn1") allowlist `shouldBe` False
 
 qname ∷ Text → Text → QName
 qname m n = QName (moduleNameFromString m) (Name n)
