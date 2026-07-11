@@ -69,23 +69,26 @@ generated init code has no effects to suspend).
 
 == Budgets
 
-The rewrite must not push generated code toward Lua 5.1's per-function
-limits that motivated the module table in the first place (issue #19):
+The rewrite must not push generated code toward the target's
+per-function limits that motivated the module table in the first place
+(issue #19). The hard limits come in as
+'Language.PureScript.Backend.Lua.Limits.LuaLimits' (Lua 5.1: 60
+upvalues, 200 locals):
 
-* /Upvalues (60)./ A cache local is referenced only from the caching
+* /Upvalues./ A cache local is referenced only from the caching
   function's own activation region, never from nested (non-IIFE)
   function literals, so no new upvalue chains arise. The exception is
   the looked-through IIFEs, which are function protos underneath:
   cache names referenced inside them occupy upvalue slots. The pass
   bounds the sum of a region IIFE's referenced names and the planned
-  cache count by 'protoUpvalueCeiling' (an over-approximation of the
+  cache count by 'workingUpvalueCeiling' (an over-approximation of the
   proto's upvalue demand — it also counts the IIFE's own locals and
   globals, which cost no slots — so it can only under-cache).
 
-* /Locals (200)./ Cache locals are capped at
+* /Locals./ Cache locals are capped at
   'maxCachedFieldsPerFunction' per function, prioritized by use count,
   and further limited so that parameters, declared locals, and caches
-  stay under 'protoLocalCeiling'.
+  stay under 'workingLocalCeiling'.
 
 Every budget overflow degrades the specific function back to plain
 @M.field@ reads — the worst case is exactly the input chunk.
@@ -98,6 +101,11 @@ module Language.PureScript.Backend.Lua.Localize
 import Data.Map.Strict qualified as Map
 import Data.Semigroup (Max (..))
 import Data.Set qualified as Set
+import Language.PureScript.Backend.Lua.Limits
+  ( LuaLimits
+  , workingLocalCeiling
+  , workingUpvalueCeiling
+  )
 import Language.PureScript.Backend.Lua.Name (Name)
 import Language.PureScript.Backend.Lua.Name qualified as Name
 import Language.PureScript.Backend.Lua.Types
@@ -126,27 +134,15 @@ type Block = [Annotated Comments StatementF]
 maxCachedFieldsPerFunction ∷ Int
 maxCachedFieldsPerFunction = 30
 
-{- | Ceiling on the over-approximated upvalue demand of a looked-through
-IIFE proto after caching; Lua 5.1's limit is 60 (@LUAI_MAXUPVALUES@).
+{- | Cache repeated module-table field reads in function-entry locals,
+budgeting against the given target limits. The 'Name' argument is the
+module-table name ('Language.PureScript.Backend.Lua.Fixture.moduleName').
+Returns the chunk unchanged when the stability precondition does not
+hold — see the module documentation.
 -}
-protoUpvalueCeiling ∷ Int
-protoUpvalueCeiling = 55
-
-{- | Ceiling on parameters + declared locals + cache locals of a
-function; Lua 5.1's limit is 200 (@LUAI_MAXVARS@).
--}
-protoLocalCeiling ∷ Int
-protoLocalCeiling = 180
-
-{- | Cache repeated module-table field reads in function-entry locals.
-The first argument is the module-table name
-('Language.PureScript.Backend.Lua.Fixture.moduleName'). Returns the
-chunk unchanged when the stability precondition does not hold — see
-the module documentation.
--}
-localizeChunk ∷ Name → Chunk → Chunk
-localizeChunk m chunk
-  | moduleTableStable m chunk = walkStatement m TopLevel <$> chunk
+localizeChunk ∷ LuaLimits → Name → Chunk → Chunk
+localizeChunk limits m chunk
+  | moduleTableStable m chunk = walkStatement limits m TopLevel <$> chunk
   | otherwise = chunk
 
 --------------------------------------------------------------------------------
@@ -163,11 +159,11 @@ data WalkMode
   | -- | selected field → its cache local
     Region (Map Name Name)
 
-walkBlock ∷ Name → WalkMode → Block → Block
-walkBlock m mode = fmap (fmap (walkStatement m mode))
+walkBlock ∷ LuaLimits → Name → WalkMode → Block → Block
+walkBlock limits m mode = fmap (fmap (walkStatement limits m mode))
 
-walkStatement ∷ Name → WalkMode → Statement → Statement
-walkStatement m mode = \case
+walkStatement ∷ LuaLimits → Name → WalkMode → Statement → Statement
+walkStatement limits m mode = \case
   Assign vars vals → Assign (goVar <$> vars) (goAnn <$> vals)
   Local names vals → Local names (goAnn <$> vals)
   IfThenElse p tb eb → IfThenElse (goAnn p) (goBlock tb) (goBlock eb)
@@ -180,11 +176,11 @@ walkStatement m mode = \case
     ForNum n (goAnn start) (goAnn limit) (goAnn <$> step) (goBlock body)
   ForIn names es body → ForIn names (goAnn <$> es) (goBlock body)
   LocalFunction n params body →
-    LocalFunction n params (processFunction m params body)
+    LocalFunction n params (processFunction limits m params body)
   Break → Break
  where
-  goBlock = walkBlock m mode
-  goAnn = fmap (walkExp m mode)
+  goBlock = walkBlock limits m mode
+  goAnn = fmap (walkExp limits m mode)
   goVar ∷ Annotated Comments VarF → Annotated Comments VarF
   goVar (c, v) =
     (c,) case v of
@@ -194,8 +190,8 @@ walkStatement m mode = \case
       VarField e n → VarField (goAnn e) n
       VarIndex e1 e2 → VarIndex (goAnn e1) (goAnn e2)
 
-walkExp ∷ Name → WalkMode → Exp → Exp
-walkExp m mode = \case
+walkExp ∷ LuaLimits → Name → WalkMode → Exp → Exp
+walkExp limits m mode = \case
   moduleRead@(Var (c, VarField (Ann (Var (Ann (VarName t)))) field))
     | t == m
     , Region selected ← mode
@@ -209,8 +205,9 @@ walkExp m mode = \case
   -- current activation: in a region its body belongs to that region.
   FunctionCall (fc, Function [] body) []
     | Region _selected ← mode →
-        FunctionCall (fc, Function [] (walkBlock m mode body)) []
-  Function params body → Function params (processFunction m params body)
+        FunctionCall (fc, Function [] (walkBlock limits m mode body)) []
+  Function params body →
+    Function params (processFunction limits m params body)
   FunctionCall fn args → FunctionCall (goAnn fn) (goAnn <$> args)
   MethodCall obj n args → MethodCall (goAnn obj) n (goAnn <$> args)
   TableCtor rows → TableCtor (goRow <<$>> rows)
@@ -224,7 +221,7 @@ walkExp m mode = \case
   String s → String s
   Vararg → Vararg
  where
-  goAnn = fmap (walkExp m mode)
+  goAnn = fmap (walkExp limits m mode)
   goRow ∷ TableRowF Comments → TableRowF Comments
   goRow = \case
     TableRowKV k v → TableRowKV (goAnn k) (goAnn v)
@@ -237,8 +234,8 @@ off the module table, and rewrite the region's reads to the cache
 locals. Nested protos are processed recursively either way.
 -}
 processFunction
-  ∷ Name → [Annotated Comments ParamF] → Block → Block
-processFunction m params body = case cached of
+  ∷ LuaLimits → Name → [Annotated Comments ParamF] → Block → Block
+processFunction limits m params body = case cached of
   [] → rewritten
   (c : cs) → cacheStatement (c :| cs) : rewritten
  where
@@ -247,8 +244,11 @@ processFunction m params body = case cached of
 
   budget =
     maxCachedFieldsPerFunction
-      `min` (protoUpvalueCeiling - getMax iifeNames)
-      `min` (protoLocalCeiling - getSum declaredLocals - length params)
+      `min` (workingUpvalueCeiling limits - getMax iifeNames)
+      `min` ( workingLocalCeiling limits
+                - getSum declaredLocals
+                - length params
+            )
 
   eligible ∷ [Name]
   eligible =
@@ -267,7 +267,7 @@ processFunction m params body = case cached of
         <> Set.fromList (mapMaybe (paramNamed . unAnn) params)
         <> Set.singleton m
 
-  rewritten = walkBlock m (Region (Map.fromList cached)) body
+  rewritten = walkBlock limits m (Region (Map.fromList cached)) body
 
   cacheStatement ∷ NonEmpty (Name, Name) → Annotated Comments StatementF
   cacheStatement pairs =

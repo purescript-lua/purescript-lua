@@ -3,6 +3,7 @@ module Language.PureScript.Backend.Lua.Optimizer where
 import Control.Monad.Trans.Accum (Accum, add, execAccum)
 import Data.Map qualified as Map
 import Language.PureScript.Backend.Lua.Fixture qualified as Fixture
+import Language.PureScript.Backend.Lua.Limits (LuaLimits)
 import Language.PureScript.Backend.Lua.Localize (localizeChunk)
 import Language.PureScript.Backend.Lua.Name qualified as Lua
 import Language.PureScript.Backend.Lua.Traversal
@@ -29,8 +30,9 @@ import Language.PureScript.Backend.Lua.Types qualified as Lua
 eliminate module-table reads, and the reads that remain are the ones
 worth counting and caching.
 -}
-optimizeChunk ∷ Chunk → Chunk
-optimizeChunk = localizeChunk Fixture.moduleName . fmap optimizeStatement
+optimizeChunk ∷ LuaLimits → Chunk → Chunk
+optimizeChunk limits =
+  localizeChunk limits Fixture.moduleName . fmap optimizeStatement
 
 substituteVarForValue ∷ Lua.Name → Exp → Chunk → Chunk
 substituteVarForValue name inlinee =

@@ -13,6 +13,7 @@ import Language.PureScript.Backend.IR.Optimizer
 import Language.PureScript.Backend.IR.Pass (PassCheckFailure)
 import Language.PureScript.Backend.Lua qualified as Lua
 import Language.PureScript.Backend.Lua.ForeignLift qualified as ForeignLift
+import Language.PureScript.Backend.Lua.Limits (LuaLimits)
 import Language.PureScript.Backend.Lua.NestingCheck (exceedsNestingLimit)
 import Language.PureScript.Backend.Lua.Optimizer (optimizeChunk)
 import Language.PureScript.Backend.Lua.Types qualified as Lua
@@ -38,9 +39,10 @@ compileModules
   ⇒ Tagged "output" (SomeBase Dir)
   → Tagged "foreign" (Path Abs Dir)
   → Tagged "lint-ir" Bool
+  → LuaLimits
   → AppOrModule
   → ExceptT (Variant e) IO CompilationResult
-compileModules outputDir foreignDir lintIR appOrModule = do
+compileModules outputDir foreignDir lintIR limits appOrModule = do
   let entryModuleName = entryPointModule appOrModule
   cfnModules ← CoreFn.readModuleRecursively outputDir entryModuleName
   let dataDecls = IR.collectDataDeclarations cfnModules
@@ -64,7 +66,7 @@ compileModules outputDir foreignDir lintIR appOrModule = do
   -- took over). The unfinished module is parked on the 'lua-dce-wip' branch;
   -- its known defects are documented there in
   -- Note [Graph-based dead code elimination for Lua].
-  let optimizedChunk = optimizeChunk chunk
+  let optimizedChunk = optimizeChunk limits chunk
   -- Safety net: reject a chunk that nests too deeply for Lua 5.1's parser
   -- rather than emit Lua that cannot be loaded (issue #104). Catches whatever
   -- 'flattenDeepBinds' bailed on, plus not-yet-flattened deep constructs.

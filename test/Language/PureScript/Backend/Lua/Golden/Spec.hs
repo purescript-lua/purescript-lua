@@ -17,6 +17,7 @@ import Language.PureScript.Backend.IR.Linker qualified as Linker
 import Language.PureScript.Backend.IR.Optimizer (optimizedUberModuleChecked)
 import Language.PureScript.Backend.Lua qualified as Lua
 import Language.PureScript.Backend.Lua.ForeignLift qualified as ForeignLift
+import Language.PureScript.Backend.Lua.Limits (LuaLimits, lua51Limits)
 import Language.PureScript.Backend.Lua.Optimizer (optimizeChunk)
 import Language.PureScript.Backend.Lua.Parser qualified as Parser
 import Language.PureScript.Backend.Lua.Printer qualified as Printer
@@ -132,7 +133,7 @@ spec = do
                 True → AsApplication moduleName (PS.Ident "main")
                 False → AsModule moduleName
             cfn ← compileCorefn (Tagged (Rel psOutputPath)) moduleName
-            compileIr appOrModule cfn
+            compileIr appOrModule lua51Limits cfn
 
     describe "golden files should evaluate" do
       let
@@ -204,8 +205,9 @@ spec = do
       do
         let psModname = PS.ModuleName "Golden.ApplySpine.Test"
             uber = applySpineUberModule 300
-        nested ← compileIr (AsModule psModname) uber
-        flat ← compileIr (AsModule psModname) (flattenDeepBinds uber)
+        nested ← compileIr (AsModule psModname) lua51Limits uber
+        flat ←
+          compileIr (AsModule psModname) lua51Limits (flattenDeepBinds uber)
 
         -- The error message below is the real discriminator: `luac` reports
         -- "too many syntax levels" (nesting), a distinct message from its locals
@@ -304,8 +306,13 @@ compileCorefn outputDir uberModuleName = do
   -- the whole pipeline.
   either (fail . show) pure (optimizedUberModuleChecked liftedModule)
 
-compileIr ∷ (MonadIO m, MonadMask m) ⇒ AppOrModule → IR.UberModule → m Text
-compileIr appOrModule uberModule = withCurrentDir [reldir|test/ps|] do
+compileIr
+  ∷ (MonadIO m, MonadMask m)
+  ⇒ AppOrModule
+  → LuaLimits
+  → IR.UberModule
+  → m Text
+compileIr appOrModule limits uberModule = withCurrentDir [reldir|test/ps|] do
   foreignPath ← Tagged <$> makeAbsolute [reldir|foreign|]
   luaChunk ←
     Lua.fromUberModule foreignPath (Tagged True) appOrModule uberModule
@@ -315,7 +322,7 @@ compileIr appOrModule uberModule = withCurrentDir [reldir|test/ps|] do
 
   let doc =
         luaChunk
-          & optimizeChunk
+          & optimizeChunk limits
           & Printer.printLuaChunk
   let addTrailingLf = (<> "\n")
   let rendered = addTrailingLf $ renderStrict $ layoutPretty defaultLayoutOptions doc
