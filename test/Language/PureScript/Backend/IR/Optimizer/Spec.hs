@@ -20,7 +20,7 @@ import Language.PureScript.Backend.IR.Names
   , Name (..)
   , PropName (..)
   , QName (..)
-  , Qualified (Local)
+  , Qualified (..)
   , TyName (..)
   , moduleNameFromString
   )
@@ -34,17 +34,20 @@ import Language.PureScript.Backend.IR.Optimizer
 import Language.PureScript.Backend.IR.Supply (runSupply)
 import Language.PureScript.Backend.IR.Types
   ( AlgebraicType (ProductType, SumType)
+  , Capture (..)
   , Exp
   , Grouping (..)
   , Module (..)
   , PrimOp (..)
   , RawExp (..)
+  , Usage (..)
   , abstraction
   , abstractionN
   , alphaEq
   , application
   , applicationN
   , countFreeRef
+  , countFreeRefUsage
   , countFreeRefs
   , ctor
   , ctorId
@@ -994,6 +997,124 @@ spec = describe "IR Optimizer" do
             ]
       annotateShow optimized
       fooKept === [QName mainModule (Name "foo")]
+
+  describe "gates inlining by Complexity and Capture (issue #231)" do
+    let main' = moduleNameFromString "Main"
+        ext = moduleNameFromString "Ext"
+        checked = either (fail . show) pure . optimizedUberModuleChecked
+        -- λx. x + 1 — closed, well under any inlining budget.
+        incName = Name "f"
+        incExpr =
+          abstraction (paramNamed (Name "x")) $
+            primBinOp PrimAdd (refLocal (Name "x")) (literalInt 1)
+
+    test "inlines a multi-use projection binding (Deref tier)" do
+      let dName = QName main' (Name "d")
+          dExpr = objectProp (refImported ext (Name "tbl")) (PropName "f")
+          dRef = refImported main' (Name "d")
+          original =
+            Linker.UberModule
+              { uberModuleForeigns = []
+              , uberModuleBindings = [Standalone (dName, dExpr)]
+              , uberModuleExports =
+                  [(Name "main", application (application dRef dRef) dRef)]
+              }
+      optimized ← checked original
+      annotateShow optimized
+      Linker.uberModuleBindings optimized === []
+      Linker.uberModuleExports optimized
+        === [(Name "main", application (application dExpr dExpr) dExpr)]
+
+    test "keeps a multi-use non-trivial binding shared across branches" do
+      let hName = QName main' (Name "h")
+          hExpr = application (refImported ext (Name "g")) (literalInt 1)
+          hRef = refImported main' (Name "h")
+          original =
+            Linker.UberModule
+              { uberModuleForeigns = []
+              , uberModuleBindings = [Standalone (hName, hExpr)]
+              , uberModuleExports =
+                  [ ( Name "main"
+                    , ifThenElse
+                        (refImported ext (Name "cond"))
+                        (application hRef (literalInt 1))
+                        (application hRef (literalInt 2))
+                    )
+                  ]
+              }
+      optimized ← checked original
+      annotateShow optimized
+      [qn | Standalone (qn, _) ← Linker.uberModuleBindings optimized]
+        === [hName]
+
+    it "substitutes a small closed lambda used twice under no closure" do
+      let original =
+            let1 incName incExpr $
+              primBinOp
+                PrimAdd
+                (application (refLocal incName) (literalInt 1))
+                (application (refLocal incName) (literalInt 2))
+      optimizedExpression original
+        `shouldSatisfy` alphaEq (let1 incName incExpr (literalInt 5))
+
+    it "beta-reduces a small closed lambda argument used twice" do
+      let body =
+            primBinOp
+              PrimAdd
+              (application (refLocal incName) (literalInt 1))
+              (application (refLocal incName) (literalInt 2))
+          original = application (abstraction (paramNamed incName) body) incExpr
+      optimizedExpression original `shouldSatisfy` alphaEq (literalInt 5)
+
+    it "refuses to duplicate a lambda into a closure" do
+      let original =
+            let1 incName incExpr $
+              abstraction (paramNamed (Name "y")) $
+                primBinOp
+                  PrimAdd
+                  (application (refLocal incName) (literalInt 1))
+                  (application (refLocal incName) (refLocal (Name "y")))
+      optimizedExpression original `shouldSatisfy` alphaEq original
+
+    describe "countFreeRefUsage" do
+      let freeQ = Imported ext (Name "free")
+          freeRef = refImported ext (Name "free")
+
+      it "reports CaptureNone at an unconditional use" do
+        countFreeRefUsage freeQ (application freeRef (literalInt 1))
+          `shouldBe` Usage 1 CaptureNone
+
+      it "raises to CaptureBranch in a branch arm, not in the condition" do
+        countFreeRefUsage
+          freeQ
+          (ifThenElse (eq freeRef (literalInt 0)) freeRef (literalInt 2))
+          `shouldBe` Usage 2 CaptureBranch
+
+      it "raises to CaptureClosure under a lambda" do
+        countFreeRefUsage freeQ (abstraction paramUnused freeRef)
+          `shouldBe` Usage 1 CaptureClosure
+
+      it "keeps CaptureClosure the ceiling under branch-in-lambda nesting" do
+        countFreeRefUsage
+          freeQ
+          ( ifThenElse
+              (literalBool True)
+              (abstraction paramUnused freeRef)
+              (literalInt 2)
+          )
+          `shouldBe` Usage 1 CaptureClosure
+
+      it "does not count shadowed locals" do
+        countFreeRefUsage
+          (Local (Name "x"))
+          (abstraction (paramNamed (Name "x")) (refLocal (Name "x")))
+          `shouldBe` Usage 0 CaptureNone
+
+      prop "total agrees with countFreeRef" do
+        e ← forAll Gen.scopedExp
+        let refs = Map.toList (countFreeRefs e)
+        annotateShow refs
+        for_ refs \(qn, n) → usageTotal (countFreeRefUsage qn e) === n
 
   -- What a worker/wrapper split turns into is decided by the passes
   -- downstream of the uncurrying pass — the post-uncurry optimize+dce

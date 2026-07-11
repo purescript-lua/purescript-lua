@@ -777,6 +777,36 @@ countFreeRefs = fmap getSum . MMap.toMap . countFreeRefs' mempty
 countFreeRef ∷ Qualified Name → RawExp ann → Natural
 countFreeRef name = Map.findWithDefault 0 name . countFreeRefs
 
+{- | Where a reference sits relative to the expression root: reached
+unconditionally, only inside an 'IfThenElse' arm, or from inside a
+nested 'AbsN'. Ordered by escalation; combines by taking the strongest
+context.
+-}
+data Capture = CaptureNone | CaptureBranch | CaptureClosure
+  deriving stock (Show, Eq, Ord)
+
+instance Semigroup Capture where
+  (<>) = max
+
+instance Monoid Capture where
+  mempty = CaptureNone
+
+-- | Aggregate of one name's free references: how many, and the
+-- strongest 'Capture' context any of them sits under.
+data Usage = Usage {usageTotal ∷ Natural, usageCapture ∷ Capture}
+  deriving stock (Show, Eq)
+
+instance Semigroup Usage where
+  Usage t1 c1 <> Usage t2 c2 = Usage (t1 + t2) (c1 <> c2)
+
+instance Monoid Usage where
+  mempty = Usage 0 mempty
+
+-- | 'countFreeRef' enriched with the 'Capture' context of the counted
+-- references.
+countFreeRefUsage ∷ Qualified Name → RawExp ann → Usage
+countFreeRefUsage name expr = Usage (countFreeRef name expr) CaptureNone
+
 {- | Structural equality modulo the names of locally-bound binders.
 
 Two expressions are alpha-equivalent when they differ at most in the
