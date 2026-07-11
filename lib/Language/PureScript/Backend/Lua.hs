@@ -239,8 +239,8 @@ fromIR foreigns topLevelNames modname ir = case ir of
     pure . Right $ case body of
       Left chunk → Lua.functionDef luaParams chunk
       Right e → Lua.functionDef luaParams [Lua.return e]
-  -- Running the literal thunk a saturated lifted @*.Uncurried@ effect wrapper
-  -- reduces to — @(\_ -> fn(a, …)) EffectRunArg@ — is just the call
+  -- Running the literal thunk that a saturated lifted @*.Uncurried@ effect
+  -- wrapper reduces to — @(\_ -> fn(a, …)) EffectRunArg@ — is just the call
   -- @fn(a, …)@: the uncurried @fn@ runs once it has every argument, so no
   -- thunk need be built and immediately forced (issue #198). This is the
   -- effect-side payoff of the lift — @fn(a, …)@ instead of

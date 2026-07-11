@@ -27,10 +27,11 @@ The same machinery lifts the @run@ half of the @*.Uncurried@ wrappers
 @runSTFn2@ becomes @\\fn a b -> Abs _ (AppN fn [a, b])@ (the trailing
 effect thunk is a unary lambda with an unused parameter). Marked
 inline-always like every lifted accessor, a saturated call site collapses
-to a single n-ary Lua call after beta reduction, and the effect thunk then
-fuses away in statement position via magicDo — turning
-@runSTFn2(pushImpl)(x)(arr)()@ from four calls and three closures into one
-@pushImpl(x, arr)@.
+to a single n-ary Lua call after beta reduction; the effect thunk — run
+in statement position by magic-do's 'EffectRunArg' application — is then
+shed at code generation ('Language.PureScript.Backend.Lua.fromIR'),
+turning @runSTFn2(pushImpl)(x)(arr)()@ from four calls and three closures
+into one @pushImpl(x, arr)@.
 
 = What lifts
 
@@ -42,7 +43,8 @@ use:
     @function() … end@) → a unary 'Abs' with an unused parameter;
   * a saturated call @fn(a, b, …)@ of one or more arguments → the n-ary
     'AppN' node (issue #198); a nullary @fn()@ has no 'AppN' and does not
-    lift;
+    lift, and a literal-lambda head called at any arity other than its
+    own declines (Note [n-ary application]);
   * @return@ / @if … then … else@ trees (an @elseif@ is a nested @if@ in
     the else branch) → 'IfThenElse', provided every branch returns a
     value (a branch that falls through to @nil@ does not lift);
@@ -82,7 +84,7 @@ import Language.PureScript.Backend.IR.Types
   ( Exp
   , Grouping (Standalone)
   , PrimOp (..)
-  , RawExp (ForeignImport, ObjectProp)
+  , RawExp (AbsN, ForeignImport, ObjectProp)
   , abstraction
   , applicationN
   , eq
@@ -306,9 +308,9 @@ liftLuaExp env bound = \case
       <$> liftBlock env (Set.insert param bound) body
   -- A zero-parameter function literal is the effect thunk of the
   -- @run{ST,Effect}FnN@ wrappers: @function() return fn(a, b) end@. It
-  -- lifts to a unary 'Abs' with an unused parameter — the shape magicDo
-  -- executes in statement position, so a saturated site fuses the thunk
-  -- away entirely (issue #198).
+  -- lifts to a unary 'Abs' with an unused parameter — the shape
+  -- magic-do runs in statement position and codegen then sheds, so a
+  -- saturated site fuses the thunk away entirely (issue #198).
   Function [] body →
     abstraction paramUnused <$> liftBlock env bound body
   -- A saturated call @fn(a, b, …)@ — the body of the @runFnN@ wrappers —
@@ -318,7 +320,14 @@ liftLuaExp env bound = \case
   FunctionCall (_ann, fn) args → do
     fn' ← liftLuaExp env bound fn
     args' ← nonEmpty args >>= traverse (\(_ann', a) → liftLuaExp env bound a)
-    Just (applicationN fn' args')
+    -- A literal-lambda head (an inlined header local, or a parenthesized
+    -- function literal) must be called at exactly its own arity: any
+    -- other count would build an ill-formed 'AppN' (Note [n-ary
+    -- application]). Splitting the spine instead would change the
+    -- program — Lua drops surplus arguments — so a mismatch declines.
+    case fn' of
+      AbsN _ params _ | length params /= length args' → Nothing
+      _ → Just (applicationN fn' args')
   _ → Nothing
 
 {- | Translate a block that must be a pure return tree: a single @return@

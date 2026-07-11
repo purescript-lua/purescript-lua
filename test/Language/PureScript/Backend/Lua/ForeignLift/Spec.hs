@@ -128,8 +128,9 @@ spec = describe "Foreign lift (#178)" do
     it "lifts runSTFn2 to a thunk over an n-ary call" do
       -- The effectful wrapper: `\fn a b -> \() -> fn(a, b)`. The trailing
       -- `function()` thunk becomes a unary lambda with an unused parameter
-      -- (Abs paramUnused) — the exact shape magicDo already executes in
-      -- statement position, so the thunk and its three closures fuse away.
+      -- (Abs paramUnused) — the exact shape magic-do runs in statement
+      -- position and codegen then sheds, so the thunk and its three
+      -- closures fuse away.
       let src =
             "return { runSTFn2 = function(fn) return function(a) "
               <> "return function(b) return function() "
@@ -164,12 +165,10 @@ spec = describe "Foreign lift (#178)" do
       -- `mkFn2 = \fn -> function(a, b) return fn(a)(b) end`: the inner
       -- multi-parameter function needs an n-ary AbsN (issue #24), so the
       -- wrapper stays an opaque foreign, not on this allowlist.
-      liftExport
-        ( source
-            "return { mkFn2 = function(fn) return function(a, b) return fn(a)(b) end end }"
-        )
-        (Name "mkFn2")
-        `shouldSatisfy` isNothing
+      let src =
+            "return { mkFn2 = function(fn) "
+              <> "return function(a, b) return fn(a)(b) end end }"
+      liftExport (source src) (Name "mkFn2") `shouldSatisfy` isNothing
 
   describe "declines everything outside the subset" do
     it "declines a multi-parameter function (would misapply when curried)" do
@@ -183,6 +182,17 @@ spec = describe "Foreign lift (#178)" do
         (source "return { runFn0 = function(fn) return fn() end }")
         (Name "runFn0")
         `shouldSatisfy` isNothing
+
+    it "declines a literal-lambda call at a mismatched arity" do
+      -- `local k = function(x) return x end; f = \a -> k(a, a)`: legal
+      -- Lua (the surplus argument is dropped), but the header local
+      -- inlines to a literal unary 'Abs', and applying it to two
+      -- arguments would build an ill-formed 'AppN' (Note [n-ary
+      -- application]) — so the export declines instead.
+      let src =
+            "local k = function(x) return x end\n"
+              <> "return { f = function(a) return k(a, a) end }"
+      liftExport (source src) (Name "f") `shouldSatisfy` isNothing
 
     it "declines a body with a table index" do
       liftExport (source "return { f = function(xs) return xs[1] end }") (Name "f")
@@ -211,21 +221,28 @@ spec = describe "Foreign lift (#178)" do
       Set.member (qname "Data.Semigroup" "concatString") allowlist `shouldBe` True
 
     it "lists the *.Uncurried run wrappers (#198)" do
-      Set.member (qname "Data.Function.Uncurried" "runFn2") allowlist `shouldBe` True
-      Set.member (qname "Data.Function.Uncurried" "runFn10") allowlist `shouldBe` True
+      Set.member (qname "Data.Function.Uncurried" "runFn2") allowlist
+        `shouldBe` True
+      Set.member (qname "Data.Function.Uncurried" "runFn10") allowlist
+        `shouldBe` True
       Set.member (qname "Control.Monad.ST.Uncurried" "runSTFn1") allowlist
         `shouldBe` True
-      Set.member (qname "Effect.Uncurried" "runEffectFn2") allowlist `shouldBe` True
+      Set.member (qname "Effect.Uncurried" "runEffectFn2") allowlist
+        `shouldBe` True
 
     it "does not list the mk* wrappers (n-ary AbsN, #24) or opaque foreigns" do
       Set.member (qname "Data.Ord" "ordArrayImpl") allowlist `shouldBe` False
       Set.member (qname "Data.Semiring" "numAdd") allowlist `shouldBe` False
-      Set.member (qname "Data.Function.Uncurried" "mkFn2") allowlist `shouldBe` False
-      Set.member (qname "Effect.Uncurried" "mkEffectFn2") allowlist `shouldBe` False
+      Set.member (qname "Data.Function.Uncurried" "mkFn2") allowlist
+        `shouldBe` False
+      Set.member (qname "Effect.Uncurried" "mkEffectFn2") allowlist
+        `shouldBe` False
       -- runFn0/runFn1 are not lifted: runFn0 is a nullary call (no AppN),
       -- runFn1 has no foreign implementation (it is PureScript `id`).
-      Set.member (qname "Data.Function.Uncurried" "runFn0") allowlist `shouldBe` False
-      Set.member (qname "Data.Function.Uncurried" "runFn1") allowlist `shouldBe` False
+      Set.member (qname "Data.Function.Uncurried" "runFn0") allowlist
+        `shouldBe` False
+      Set.member (qname "Data.Function.Uncurried" "runFn1") allowlist
+        `shouldBe` False
 
 qname ∷ Text → Text → QName
 qname m n = QName (moduleNameFromString m) (Name n)
