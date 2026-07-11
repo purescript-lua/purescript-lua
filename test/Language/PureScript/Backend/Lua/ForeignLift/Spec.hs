@@ -161,9 +161,9 @@ spec = describe "Foreign lift (#178)" do
                   applicationN (refLocal fn) (refLocal a :| [])
           )
 
-    it "declines the mk* wrappers (their inner function is n-ary, #24)" do
+    it "declines the mk* wrappers (their inner function is n-ary, #227)" do
       -- `mkFn2 = \fn -> function(a, b) return fn(a)(b) end`: the inner
-      -- multi-parameter function needs an n-ary AbsN (issue #24), so the
+      -- multi-parameter function needs an n-ary AbsN (issue #227), so the
       -- wrapper stays an opaque foreign, not on this allowlist.
       let src =
             "return { mkFn2 = function(fn) "
@@ -230,7 +230,7 @@ spec = describe "Foreign lift (#178)" do
       Set.member (qname "Effect.Uncurried" "runEffectFn2") allowlist
         `shouldBe` True
 
-    it "does not list the mk* wrappers (n-ary AbsN, #24) or opaque foreigns" do
+    it "does not list the mk* wrappers (n-ary AbsN, #227) or opaque foreigns" do
       Set.member (qname "Data.Ord" "ordArrayImpl") allowlist `shouldBe` False
       Set.member (qname "Data.Semiring" "numAdd") allowlist `shouldBe` False
       Set.member (qname "Data.Function.Uncurried" "mkFn2") allowlist

@@ -10,7 +10,7 @@
   site then beta-reduces to a single n-ary Lua call, so `runFn3 impl x y z`
   compiles to `impl(x, y, z)` rather than the two-closure curried onion; a
   partial application keeps the wrapper's curried fallback. The `mk`
-  counterparts need an n-ary `AbsN` (#24) and stay opaque.
+  counterparts need an n-ary `AbsN` (#227) and stay opaque.
 - An `Effect`/`ST` statement whose action is a lifted uncurried wrapper now
   sheds its final closure at code generation: the effect run of a literal thunk,
   `(\_ -> fn(a, …)) EffectRunArg`, lowers straight to the call `fn(a, …)`

@@ -153,7 +153,7 @@ allowlist =
       )
     , ("Data.Semigroup", ["concatString"])
     , -- The @run@ half of the uncurried FFI wrappers (issue #198). Their
-      -- @mk@ counterparts need an n-ary 'AbsN' (issue #24) and stay opaque;
+      -- @mk@ counterparts need an n-ary 'AbsN' (issue #227) and stay opaque;
       -- @runFn0@ is a nullary call with no 'AppN', @runFn1@ is PureScript
       -- @id@ with no foreign — both absent below.
       ("Data.Function.Uncurried", runWrappers "runFn" [2 .. 10])
