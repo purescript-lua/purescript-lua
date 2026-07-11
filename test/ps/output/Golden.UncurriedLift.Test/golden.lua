@@ -28,18 +28,8 @@ M.Control_Monad_ST_Internal_foreign = {
   end,
   run = function(f) return f() end
 }
-M.Control_Monad_ST_Uncurried_foreign = {
-  mkSTFn2 = function(fn) return function(a, b) return fn(a)(b)() end end
-}
-M.Data_Function_Uncurried_foreign = {
-  mkFn2 = function(fn) return function(a, b) return fn(a)(b) end end,
-  mkFn3 = function(fn) return function(a, b, c) return fn(a)(b)(c) end end
-}
 M.Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
-}
-M.Effect_Uncurried_foreign = {
-  mkEffectFn2 = function(fn) return function(a, b) return fn(a)(b)() end end
 }
 M.Control_Monad_ST_Internal_monadST = {
   Applicative0 = function()
@@ -58,12 +48,12 @@ M.Control_Monad_ST_Internal_applicativeST = {
 M.Control_Monad_ST_Internal_Lazy_applyST = PSLUA_runtime_lazy("applyST")(function(  )
   return {
     apply = (function()
-      local bind_S_604 = (M.Control_Monad_ST_Internal_monadST.Bind1()).bind
-      return function(f_S_605)
-        return function(a_S_606)
-          return bind_S_604(f_S_605)(function(fPrime_S_607)
-            return bind_S_604(a_S_606)(function(aPrime_S_608)
-              return (M.Control_Monad_ST_Internal_monadST.Applicative0()).pure(fPrime_S_607(aPrime_S_608))
+      local bind_S_753 = (M.Control_Monad_ST_Internal_monadST.Bind1()).bind
+      return function(f_S_754)
+        return function(a_S_755)
+          return bind_S_753(f_S_754)(function(fPrime_S_756)
+            return bind_S_753(a_S_755)(function(aPrime_S_757)
+              return (M.Control_Monad_ST_Internal_monadST.Applicative0()).pure(fPrime_S_756(aPrime_S_757))
             end)
           end)
         end
@@ -74,34 +64,34 @@ M.Control_Monad_ST_Internal_Lazy_applyST = PSLUA_runtime_lazy("applyST")(functio
     end
   }
 end)
-M.Golden_UncurriedLift_Test_sumST = M.Control_Monad_ST_Uncurried_foreign.mkSTFn2(function( a )
-  return function(b)
-    return M.Control_Monad_ST_Internal_applicativeST.pure(a + b)
-  end
-end)
-M.Golden_UncurriedLift_Test_mul2 = M.Data_Function_Uncurried_foreign.mkFn2(function( a )
-  return function(b) return a * b end
-end)
-M.Golden_UncurriedLift_Test_logTwice = M.Effect_Uncurried_foreign.mkEffectFn2(function( a )
-  return function(b)
-    return function()
-      local Effect_Console_foreign = M.Effect_Console_foreign
-      local _ = Effect_Console_foreign.log(a)()
-      return Effect_Console_foreign.log(b)()
-    end
-  end
-end)
-M.Golden_UncurriedLift_Test_add3 = M.Data_Function_Uncurried_foreign.mkFn3(function( a )
-  return function(b) return function(c) return a + b + c end end
-end)
-M.Golden_UncurriedLift_Test_addOnePlusTwoTo = function(c_S_547)
-  return M.Golden_UncurriedLift_Test_add3(1, 2, c_S_547)
+M.Golden_UncurriedLift_Test_sumST = function(a_S_705, b_S_706)
+  return M.Control_Monad_ST_Internal_applicativeST.pure(a_S_705 + b_S_706)()
+end
+M.Golden_UncurriedLift_Test_mulByFn = function(a_S_696, b_S_697)
+  return a_S_696 * b_S_697
+end
+M.Golden_UncurriedLift_Test_mul2 = function(a_S_699, b_S_700)
+  return a_S_699 * b_S_700
+end
+M.Golden_UncurriedLift_Test_logTwice = function(a_S_671, b_S_672)
+  local Effect_Console_foreign = M.Effect_Console_foreign
+  return (function()
+    local _ = Effect_Console_foreign.log(a_S_671)()
+    return Effect_Console_foreign.log(b_S_672)()
+  end)()
+end
+M.Golden_UncurriedLift_Test_add3 = function(a_S_692, b_S_693, c_S_694)
+  return a_S_692 + b_S_693 + c_S_694
+end
+M.Golden_UncurriedLift_Test_addOnePlusTwoTo = function(c_S_680)
+  return M.Golden_UncurriedLift_Test_add3(1, 2, c_S_680)
 end
 return (function()
   local Data_Show_foreign, Effect_Console_foreign, Golden_UncurriedLift_Test_add3 = M.Data_Show_foreign, M.Effect_Console_foreign, M.Golden_UncurriedLift_Test_add3
   local _ = M.Golden_UncurriedLift_Test_logTwice("hello", "world")
   local _ = Effect_Console_foreign.log(Data_Show_foreign.showIntImpl(Golden_UncurriedLift_Test_add3(1, 2, 3)))()
   local _ = Effect_Console_foreign.log(Data_Show_foreign.showIntImpl(M.Golden_UncurriedLift_Test_mul2(4, 5)))()
+  local _ = Effect_Console_foreign.log(Data_Show_foreign.showIntImpl(M.Golden_UncurriedLift_Test_mulByFn(6, 8)))()
   local _ = Effect_Console_foreign.log(Data_Show_foreign.showIntImpl(Golden_UncurriedLift_Test_add3(1, 2, 100)))()
   local _ = Effect_Console_foreign.log(Data_Show_foreign.showIntImpl(Golden_UncurriedLift_Test_add3(1, 2, 200)))()
   return Effect_Console_foreign.log(Data_Show_foreign.showIntImpl(M.Control_Monad_ST_Internal_foreign.run(function(  )
