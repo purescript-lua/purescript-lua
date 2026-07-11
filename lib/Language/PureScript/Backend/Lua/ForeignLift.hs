@@ -33,18 +33,33 @@ shed at code generation ('Language.PureScript.Backend.Lua.fromIR'),
 turning @runSTFn2(pushImpl)(x)(arr)()@ from four calls and three closures
 into one @pushImpl(x, arr)@.
 
+The @mk@ half lifts too (issue #227): @mkFn3@ becomes
+@\\fn -> AbsN [a, b, c] (fn(a)(b)(c))@ — the inner multi-parameter
+literal is one n-ary 'AbsN' — and the effectful variants run the
+re-curried call by applying it to the 'EffectRunArg' marker
+(@mkEffectFn2@'s trailing @fn(a)(b)()@). Inlined at a definition site
+like @add3 = mkFn3 \\a b c -> …@, beta reduction leaves the n-ary
+literal itself: zero closures per call, and the @mk@ accessors drop out
+of the emitted FFI tables just like the @run@ ones.
+
 = What lifts
 
 The translatable subset, mirroring the shapes the prelude forks actually
 use:
 
-  * curried single-parameter function literals → nested 'Abs';
+  * function literals → one n-ary 'AbsN' binding every parameter at a
+    single call (a curried chain is nested unary 'Abs'); varargs and
+    duplicate parameter names decline (Lua binds the body's reference
+    to the /last/ same-named parameter — an 'AbsN' would miscompile
+    it);
   * a zero-parameter function literal (the @*.Uncurried@ effect thunk,
     @function() … end@) → a unary 'Abs' with an unused parameter;
-  * a saturated call @fn(a, b, …)@ of one or more arguments → the n-ary
-    'AppN' node (issue #198); a nullary @fn()@ has no 'AppN' and does not
-    lift, and a literal-lambda head called at any arity other than its
-    own declines (Note [n-ary application]);
+  * a call @fn(a, b, …)@ → the n-ary 'AppN' node (issue #198); a
+    nullary @fn()@ — the trailing effect run of the @mk{ST,Effect}FnN@
+    wrappers — becomes an application to the 'EffectRunArg' marker
+    (issue #227); a literal-lambda head called at any arity other than
+    its own declines (Note [n-ary application]), the marker counting
+    as one argument;
   * @return@ / @if … then … else@ trees (an @elseif@ is a nested @if@ in
     the else branch) → 'IfThenElse', provided every branch returns a
     value (a branch that falls through to @nil@ does not lift);
@@ -56,8 +71,8 @@ use:
     the @refEq@ aliases resolve.
 
 Everything else — loops, mutation, varargs, table constructors,
-multi-parameter function literals, string/char literals — leaves the
-export opaque (correct for e.g. @foldlArray@).
+string/char literals — leaves the export opaque (correct for e.g.
+@foldlArray@).
 -}
 module Language.PureScript.Backend.Lua.ForeignLift
   ( liftForeigns
@@ -86,18 +101,21 @@ import Language.PureScript.Backend.IR.Types
   , PrimOp (..)
   , RawExp (AbsN, ForeignImport, ObjectProp)
   , abstraction
+  , abstractionN
   , applicationN
   , eq
   , ifThenElse
   , literalBool
   , literalFloat
   , literalInt
+  , noAnn
   , paramNamed
   , paramUnused
   , primBinOp
   , primNot
   , refLocal
   , setAnn
+  , pattern EffectRunArg
   )
 import Language.PureScript.Backend.Lua.Key qualified as Key
 import Language.PureScript.Backend.Lua.Linker.Foreign (Source (..))
@@ -121,10 +139,24 @@ import Prelude hiding (show)
 -- Allowlist -------------------------------------------------------------------
 
 {- | The foreign exports lifted into the IR: the arithmetic, comparison,
-boolean, and concatenation core of the prelude (issue #178), plus the
-@run@ half of the @*.Uncurried@ wrappers (issue #198). Membership is a
-hard contract (see the module header): a listed export that fails to lift
-is a compile error. A broader allowlist is follow-up work (issue #187).
+boolean, and concatenation core of the prelude (issue #178), plus both
+halves of the @*.Uncurried@ wrappers — @run@ (issue #198) and @mk@
+(issue #227). Membership is a hard contract (see the module header): a
+listed export that fails to lift is a compile error. A broader allowlist
+is follow-up work (issue #187).
+
+A warning to that follow-up: do /not/ list the Effect\/ST core —
+@Effect.bindE@\/@pureE@, @Control.Monad.ST.Internal.bind_@\/@pure_@ —
+even though its thunk-shaped bodies are technically liftable now that
+nullary calls translate. Magic-do
+('Language.PureScript.Backend.IR.MagicDo') recognises bind chains by
+/name/, resolving dictionaries to the @Effect.bindEffect@ and
+@Control.Monad.ST.Internal.bindST@ instances; a lifted core would be
+inlined away during the optimizer fixpoint that runs first, blinding
+magic-do — no flat @do@ chunks, and no chunked statement sequences
+keeping the output under Lua's local-variable limits (issue #19).
+Lifting the core behind a marker magic-do understands is tracked as
+issue #228.
 -}
 allowlist ∷ Set QName
 allowlist =
@@ -152,19 +184,29 @@ allowlist =
         ]
       )
     , ("Data.Semigroup", ["concatString"])
-    , -- The @run@ half of the uncurried FFI wrappers (issue #198). Their
-      -- @mk@ counterparts need an n-ary 'AbsN' (issue #227) and stay opaque;
-      -- @runFn0@ is a nullary call with no 'AppN', @runFn1@ is PureScript
-      -- @id@ with no foreign — both absent below.
-      ("Data.Function.Uncurried", runWrappers "runFn" [2 .. 10])
-    , ("Control.Monad.ST.Uncurried", runWrappers "runSTFn" [1 .. 10])
-    , ("Effect.Uncurried", runWrappers "runEffectFn" [1 .. 10])
+    , -- Both halves of the uncurried FFI wrappers: @run@ (issue #198)
+      -- and @mk@ (issue #227). @runFn0@/@mkFn0@ are absent by policy,
+      -- not liftability: their bodies force a /pure/ @Fn0@ with a
+      -- nullary call, which must not be marked an effect run.
+      -- @runFn1@/@mkFn1@ are PureScript @id@ with no foreign.
+
+      ( "Data.Function.Uncurried"
+      , wrappers "runFn" [2 .. 10] <> wrappers "mkFn" [2 .. 10]
+      )
+    ,
+      ( "Control.Monad.ST.Uncurried"
+      , wrappers "runSTFn" [1 .. 10] <> wrappers "mkSTFn" [1 .. 10]
+      )
+    ,
+      ( "Effect.Uncurried"
+      , wrappers "runEffectFn" [1 .. 10] <> wrappers "mkEffectFn" [1 .. 10]
+      )
     ]
 
-  -- @[prefix<n> | n <- arities]@, e.g. @runWrappers "runFn" [2, 3]@ is
+  -- @[prefix<n> | n <- arities]@, e.g. @wrappers "runFn" [2, 3]@ is
   -- @["runFn2", "runFn3"]@.
-  runWrappers ∷ Text → [Int] → [Text]
-  runWrappers prefix arities = [prefix <> toText (show n) | n ← arities]
+  wrappers ∷ Text → [Int] → [Text]
+  wrappers prefix arities = [prefix <> toText (show n) | n ← arities]
 
 --------------------------------------------------------------------------------
 -- Orchestration ---------------------------------------------------------------
@@ -299,13 +341,20 @@ liftLuaExp env bound = \case
     a' ← liftLuaExp env bound a
     b' ← liftLuaExp env bound b
     liftBinOp op a' b'
-  -- Only single-parameter (curried) function literals lift: a Lua
-  -- function binds every parameter at one call, so translating a
-  -- multi-parameter one to nested 'Abs' would misapply it (it would
-  -- fail the WellApplied invariant). The prelude FFI is curried anyway.
-  Function [(_ann, ParamNamed param)] body →
-    abstraction (paramNamed (irName param))
-      <$> liftBlock env (Set.insert param bound) body
+  -- A function literal binds every parameter at one call, so it lifts
+  -- to a single n-ary 'AbsN' (issue #227) — nested unary 'Abs' would
+  -- misapply when curried (it would fail the WellApplied invariant).
+  -- Varargs decline (the length check fails on the filtered-out
+  -- 'ParamVararg'), and so do duplicate parameter names: Lua binds the
+  -- body's reference to the /last/ same-named parameter, which an
+  -- 'AbsN' would silently miscompile.
+  Function params body
+    | Just names ← nonEmpty [name | (_ann, ParamNamed name) ← params]
+    , length names == length params
+    , let paramSet = Set.fromList (toList names)
+    , Set.size paramSet == length names →
+        abstractionN (paramNamed . irName <$> names)
+          <$> liftBlock env (Set.union bound paramSet) body
   -- A zero-parameter function literal is the effect thunk of the
   -- @run{ST,Effect}FnN@ wrappers: @function() return fn(a, b) end@. It
   -- lifts to a unary 'Abs' with an unused parameter — the shape
@@ -313,18 +362,24 @@ liftLuaExp env bound = \case
   -- saturated site fuses the thunk away entirely (issue #198).
   Function [] body →
     abstraction paramUnused <$> liftBlock env bound body
-  -- A saturated call @fn(a, b, …)@ — the body of the @runFnN@ wrappers —
-  -- lifts to the n-ary 'AppN' node (issue #198). A nullary call @fn()@
-  -- has no 'AppN' representation, so 'nonEmpty' declines it (e.g.
-  -- @runFn0 = \\fn -> fn()@ stays opaque).
+  -- A call @fn(a, b, …)@ — the body of the @runFnN@ wrappers — lifts to
+  -- the n-ary 'AppN' node (issue #198). A nullary call @fn()@ — the
+  -- trailing effect run of the @mk{ST,Effect}FnN@ wrappers — lifts as
+  -- an application to the 'EffectRunArg' marker (issue #227): the shape
+  -- magic-do emits, which the Lua backend erases back to an empty
+  -- argument list.
   FunctionCall (_ann, fn) args → do
     fn' ← liftLuaExp env bound fn
-    args' ← nonEmpty args >>= traverse (\(_ann', a) → liftLuaExp env bound a)
+    args' ← case nonEmpty args of
+      Nothing → Just (EffectRunArg noAnn :| [])
+      Just ne → traverse (\(_ann', a) → liftLuaExp env bound a) ne
     -- A literal-lambda head (an inlined header local, or a parenthesized
     -- function literal) must be called at exactly its own arity: any
     -- other count would build an ill-formed 'AppN' (Note [n-ary
     -- application]). Splitting the spine instead would change the
     -- program — Lua drops surplus arguments — so a mismatch declines.
+    -- The marker counts as one argument: a nullary call passes a thunk
+    -- head and declines any wider literal.
     case fn' of
       AbsN _ params _ | length params /= length args' → Nothing
       _ → Just (applicationN fn' args')

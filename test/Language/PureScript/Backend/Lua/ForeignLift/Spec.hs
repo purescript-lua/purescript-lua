@@ -4,14 +4,18 @@ import Language.PureScript.Backend.IR.Names (Name (..))
 import Language.PureScript.Backend.IR.Types
   ( PrimOp (..)
   , abstraction
+  , abstractionN
+  , application
   , applicationN
   , eq
   , ifThenElse
+  , noAnn
   , paramNamed
   , paramUnused
   , primBinOp
   , primNot
   , refLocal
+  , pattern EffectRunArg
   )
 import Language.PureScript.Backend.Lua.ForeignLift (liftExport)
 import Language.PureScript.Backend.Lua.Linker.Foreign
@@ -95,6 +99,18 @@ spec = describe "Foreign lift (#178)" do
                 primBinOp PrimConcat (refLocal (Name "s1")) (refLocal (Name "s2"))
           )
 
+    it "lifts a multi-parameter function literal to one n-ary AbsN (#227)" do
+      -- A Lua function binds every parameter at one call, so the literal
+      -- becomes a single n-ary 'AbsN' — nested unary 'Abs' would misapply
+      -- when curried (Note [n-ary application]).
+      liftExport
+        (source "return { f = function(x, y) return x + y end }")
+        (Name "f")
+        `shouldBe` Just
+          ( abstractionN (paramNamed (Name "x") :| [paramNamed (Name "y")]) $
+              primBinOp PrimAdd (refLocal (Name "x")) (refLocal (Name "y"))
+          )
+
   describe "lifts the *.Uncurried run wrappers (#198)" do
     it "lifts runFn3 to a saturated n-ary call" do
       -- The pure wrapper: `\fn a b c -> fn(a, b, c)`. The body is a single
@@ -156,26 +172,99 @@ spec = describe "Foreign lift (#178)" do
                   applicationN (refLocal fn) (refLocal a :| [])
           )
 
-    it "declines the mk* wrappers (their inner function is n-ary, #227)" do
+  describe "lifts the *.Uncurried mk wrappers (#227)" do
+    it "lifts mkFn2 to an n-ary literal over a re-curried call" do
       -- `mkFn2 = \fn -> function(a, b) return fn(a)(b) end`: the inner
-      -- multi-parameter function needs an n-ary AbsN (issue #227), so the
-      -- wrapper stays an opaque foreign, not on this allowlist.
+      -- multi-parameter literal becomes a single n-ary 'AbsN'; its body
+      -- re-curries the wrapped function, so the call chain lifts as
+      -- nested unary applications. Marked inline-always downstream, a
+      -- `mkFn2 \a b -> …` definition beta-reduces to the two-parameter
+      -- literal itself — zero closures per call.
       let src =
             "return { mkFn2 = function(fn) "
               <> "return function(a, b) return fn(a)(b) end end }"
-      liftExport (source src) (Name "mkFn2") `shouldSatisfy` isNothing
+          fn = Name "fn"
+          a = Name "a"
+          b = Name "b"
+      liftExport (source src) (Name "mkFn2")
+        `shouldBe` Just
+          ( abstraction (paramNamed fn) $
+              abstractionN (paramNamed a :| [paramNamed b]) $
+                applicationN
+                  (applicationN (refLocal fn) (refLocal a :| []))
+                  (refLocal b :| [])
+          )
 
-  describe "declines everything outside the subset" do
-    it "declines a multi-parameter function (would misapply when curried)" do
-      liftExport (source "return { f = function(x, y) return x + y end }") (Name "f")
-        `shouldSatisfy` isNothing
+    it "lifts mkEffectFn2 (effect run of the re-curried call)" do
+      -- `mkEffectFn2 = \fn -> function(a, b) return fn(a)(b)() end`: the
+      -- trailing nullary call runs the effect the wrapped function
+      -- returns, and lifts as an application to the 'EffectRunArg'
+      -- marker — the shape magic-do emits, erased to an empty argument
+      -- list at code generation.
+      let src =
+            "return { mkEffectFn2 = function(fn) "
+              <> "return function(a, b) return fn(a)(b)() end end }"
+          fn = Name "fn"
+          a = Name "a"
+          b = Name "b"
+      liftExport (source src) (Name "mkEffectFn2")
+        `shouldBe` Just
+          ( abstraction (paramNamed fn) $
+              abstractionN (paramNamed a :| [paramNamed b]) $
+                application
+                  ( applicationN
+                      (applicationN (refLocal fn) (refLocal a :| []))
+                      (refLocal b :| [])
+                  )
+                  (EffectRunArg noAnn)
+          )
 
-    it "declines a nullary call (AppN cannot express a zero-argument call)" do
-      -- `runFn0 = \fn -> fn()`. An n-ary AppN needs at least one argument;
-      -- the zero-argument call falls outside the subset and stays opaque.
+    it "lifts mkSTFn1 (unary inner literal, the nullary-call half alone)" do
+      -- The arity-1 wrappers keep a unary inner literal, so this
+      -- exercises only the nullary-call half of #227: `fn(a)()` becomes
+      -- the effect-run application under a plain unary 'Abs'.
+      let src =
+            "return { mkSTFn1 = function(fn) "
+              <> "return function(a) return fn(a)() end end }"
+          fn = Name "fn"
+          a = Name "a"
+      liftExport (source src) (Name "mkSTFn1")
+        `shouldBe` Just
+          ( abstraction (paramNamed fn) $
+              abstraction (paramNamed a) $
+                application
+                  (applicationN (refLocal fn) (refLocal a :| []))
+                  (EffectRunArg noAnn)
+          )
+
+    it "lifts a nullary call to an effect-run application" do
+      -- `runFn0 = \fn -> fn()`. The zero-argument call lifts as an
+      -- application to the 'EffectRunArg' marker. `runFn0`/`mkFn0`
+      -- nonetheless stay off the allowlist by policy, not liftability:
+      -- forcing a pure `Fn0` is not an effect run and must not be
+      -- marked as one.
       liftExport
         (source "return { runFn0 = function(fn) return fn() end }")
         (Name "runFn0")
+        `shouldBe` Just
+          ( abstraction (paramNamed (Name "fn")) $
+              application (refLocal (Name "fn")) (EffectRunArg noAnn)
+          )
+
+  describe "declines everything outside the subset" do
+    it "declines a vararg function literal" do
+      liftExport
+        (source "return { f = function(a, ...) return a end }")
+        (Name "f")
+        `shouldSatisfy` isNothing
+
+    it "declines duplicate parameter names" do
+      -- Lua's `function(a, a)` binds the body's `a` to the *last*
+      -- parameter; an 'AbsN' with two same-named parameters would
+      -- silently miscompile that reference, so the literal declines.
+      liftExport
+        (source "return { f = function(a, a) return a end }")
+        (Name "f")
         `shouldSatisfy` isNothing
 
     it "declines a literal-lambda call at a mismatched arity" do
@@ -187,6 +276,16 @@ spec = describe "Foreign lift (#178)" do
       let src =
             "local k = function(x) return x end\n"
               <> "return { f = function(a) return k(a, a) end }"
+      liftExport (source src) (Name "f") `shouldSatisfy` isNothing
+
+    it "declines an under-applied multi-parameter literal head" do
+      -- The mirror image: `local k = function(a, b) return a end` now
+      -- inlines to a two-parameter 'AbsN' (#227), and calling it with
+      -- one argument would again build an ill-formed 'AppN' — Lua pads
+      -- the missing parameter with nil, so the mismatch declines.
+      let src =
+            "local k = function(a, b) return a end\n"
+              <> "return { f = function(x) return k(x) end }"
       liftExport (source src) (Name "f") `shouldSatisfy` isNothing
 
     it "declines a body with a table index" do
