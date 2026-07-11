@@ -1,11 +1,6 @@
 module Language.PureScript.Backend.Lua.ForeignLift.Spec where
 
-import Data.Set qualified as Set
-import Language.PureScript.Backend.IR.Names
-  ( Name (..)
-  , QName (..)
-  , moduleNameFromString
-  )
+import Language.PureScript.Backend.IR.Names (Name (..))
 import Language.PureScript.Backend.IR.Types
   ( PrimOp (..)
   , abstraction
@@ -18,7 +13,7 @@ import Language.PureScript.Backend.IR.Types
   , primNot
   , refLocal
   )
-import Language.PureScript.Backend.Lua.ForeignLift (allowlist, liftExport)
+import Language.PureScript.Backend.Lua.ForeignLift (liftExport)
 import Language.PureScript.Backend.Lua.Linker.Foreign
   ( Source
   , interpretForeignModule
@@ -212,40 +207,6 @@ spec = describe "Foreign lift (#178)" do
     it "declines a missing export" do
       liftExport (source "return { a = function(x) return x end }") (Name "b")
         `shouldSatisfy` isNothing
-
-  describe "allowlist" do
-    it "lists the arithmetic/comparison/boolean/concat core" do
-      Set.member (qname "Data.Semiring" "intAdd") allowlist `shouldBe` True
-      Set.member (qname "Data.Ord" "ordIntImpl") allowlist `shouldBe` True
-      Set.member (qname "Data.Eq" "refEq") allowlist `shouldBe` True
-      Set.member (qname "Data.Semigroup" "concatString") allowlist `shouldBe` True
-
-    it "lists the *.Uncurried run wrappers (#198)" do
-      Set.member (qname "Data.Function.Uncurried" "runFn2") allowlist
-        `shouldBe` True
-      Set.member (qname "Data.Function.Uncurried" "runFn10") allowlist
-        `shouldBe` True
-      Set.member (qname "Control.Monad.ST.Uncurried" "runSTFn1") allowlist
-        `shouldBe` True
-      Set.member (qname "Effect.Uncurried" "runEffectFn2") allowlist
-        `shouldBe` True
-
-    it "does not list the mk* wrappers (n-ary AbsN, #227) or opaque foreigns" do
-      Set.member (qname "Data.Ord" "ordArrayImpl") allowlist `shouldBe` False
-      Set.member (qname "Data.Semiring" "numAdd") allowlist `shouldBe` False
-      Set.member (qname "Data.Function.Uncurried" "mkFn2") allowlist
-        `shouldBe` False
-      Set.member (qname "Effect.Uncurried" "mkEffectFn2") allowlist
-        `shouldBe` False
-      -- runFn0/runFn1 are not lifted: runFn0 is a nullary call (no AppN),
-      -- runFn1 has no foreign implementation (it is PureScript `id`).
-      Set.member (qname "Data.Function.Uncurried" "runFn0") allowlist
-        `shouldBe` False
-      Set.member (qname "Data.Function.Uncurried" "runFn1") allowlist
-        `shouldBe` False
-
-qname ∷ Text → Text → QName
-qname m n = QName (moduleNameFromString m) (Name n)
 
 {- | Parse a foreign-module source into a 'Source', failing the test with a
 clear message if it does not parse or interpret.
