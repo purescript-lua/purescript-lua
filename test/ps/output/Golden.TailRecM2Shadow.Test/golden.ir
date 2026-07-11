@@ -280,92 +280,89 @@ UberModule
                   )
                   ( AbsN Nothing
                     ( ParamNamed Nothing ( Name "o$483" ) :| [] )
-                    ( AppN Nothing
-                      ( Let Nothing
-                        ( Standalone
-                          ( Nothing, Name "acc$1", ObjectProp Nothing
-                            ( Ref Nothing ( Local ( Name "o$483" ) ) )
-                            ( PropName "a" )
-                          ) :| []
-                        )
-                        ( AbsN Nothing
-                          ( ParamNamed Nothing ( Name "i$2" ) :| [] )
+                    ( IfThenElse Nothing
+                      ( Eq Nothing
+                        ( LiteralString Nothing "Data.Ordering∷Ordering.LT" )
+                        ( IfThenElse Nothing
+                          ( PrimBinOp Nothing PrimLt
+                            ( ObjectProp Nothing
+                              ( Ref Nothing ( Local ( Name "o$483" ) ) )
+                              ( PropName "b" )
+                            )
+                            ( Ref Nothing ( Local ( Name "n" ) ) )
+                          )
+                          ( LiteralString Nothing "Data.Ordering∷Ordering.LT" )
                           ( IfThenElse Nothing
                             ( Eq Nothing
-                              ( LiteralString Nothing "Data.Ordering∷Ordering.LT" )
-                              ( IfThenElse Nothing
-                                ( PrimBinOp Nothing PrimLt
-                                  ( Ref Nothing ( Local ( Name "i$2" ) ) )
-                                  ( Ref Nothing ( Local ( Name "n" ) ) )
-                                )
-                                ( LiteralString Nothing "Data.Ordering∷Ordering.LT" )
-                                ( IfThenElse Nothing
-                                  ( Eq Nothing
-                                    ( Ref Nothing ( Local ( Name "i$2" ) ) )
-                                    ( Ref Nothing ( Local ( Name "n" ) ) )
-                                  )
-                                  ( LiteralString Nothing "Data.Ordering∷Ordering.EQ" )
-                                  ( LiteralString Nothing "Data.Ordering∷Ordering.GT" )
-                                )
+                              ( ObjectProp Nothing
+                                ( Ref Nothing ( Local ( Name "o$483" ) ) )
+                                ( PropName "b" )
                               )
+                              ( Ref Nothing ( Local ( Name "n" ) ) )
                             )
-                            ( AppN Nothing
-                              ( Ref Nothing ( Local ( Name "pure" ) ) )
-                              ( AppN Nothing
-                                ( Ctor Nothing SumType
-                                  ( ModuleName "Control.Monad.Rec.Class" )
-                                  ( TyName "Step" )
-                                  ( CtorName "Loop" )
-                                  [ FieldName "value0" ]
-                                )
-                                ( LiteralObject Nothing
-                                  [
-                                    ( PropName "a", AppN Nothing
-                                      ( Ref Nothing
-                                        ( Imported
-                                          ( ModuleName "Golden.TailRecM2Shadow.Test" )
-                                          ( Name "add$w" )
-                                        )
-                                      )
-                                      ( Ref Nothing
-                                        ( Local ( Name "acc$1" ) ) :|
-                                        [ Ref Nothing ( Local ( Name "i$2" ) ) ]
-                                      )
-                                    ),
-                                    ( PropName "b", AppN Nothing
-                                      ( Ref Nothing
-                                        ( Imported
-                                          ( ModuleName "Golden.TailRecM2Shadow.Test" )
-                                          ( Name "add$w" )
-                                        )
-                                      )
-                                      ( Ref Nothing
-                                        ( Local ( Name "i$2" ) ) :|
-                                        [ LiteralInt Nothing 1 ]
-                                      )
-                                    )
-                                  ] :| []
-                                ) :| []
-                              )
-                            )
-                            ( AppN Nothing
-                              ( Ref Nothing ( Local ( Name "pure" ) ) )
-                              ( AppN Nothing
-                                ( Ctor Nothing SumType
-                                  ( ModuleName "Control.Monad.Rec.Class" )
-                                  ( TyName "Step" )
-                                  ( CtorName "Done" )
-                                  [ FieldName "value0" ]
-                                )
-                                ( Ref Nothing ( Local ( Name "acc$1" ) ) :| [] ) :| []
-                              )
-                            )
+                            ( LiteralString Nothing "Data.Ordering∷Ordering.EQ" )
+                            ( LiteralString Nothing "Data.Ordering∷Ordering.GT" )
                           )
                         )
                       )
-                      ( ObjectProp Nothing
-                        ( Ref Nothing ( Local ( Name "o$483" ) ) )
-                        ( PropName "b" ) :| []
+                      ( AppN Nothing
+                        ( Ref Nothing ( Local ( Name "pure" ) ) )
+                        ( AppN Nothing
+                          ( Ctor Nothing SumType
+                            ( ModuleName "Control.Monad.Rec.Class" )
+                            ( TyName "Step" )
+                            ( CtorName "Loop" )
+                            [ FieldName "value0" ]
+                          )
+                          ( LiteralObject Nothing
+                            [
+                              ( PropName "a", AppN Nothing
+                                ( Ref Nothing
+                                  ( Imported
+                                    ( ModuleName "Golden.TailRecM2Shadow.Test" )
+                                    ( Name "add$w" )
+                                  )
+                                )
+                                ( ObjectProp Nothing
+                                  ( Ref Nothing ( Local ( Name "o$483" ) ) )
+                                  ( PropName "a" ) :|
+                                  [ ObjectProp Nothing
+                                    ( Ref Nothing ( Local ( Name "o$483" ) ) )
+                                    ( PropName "b" )
+                                  ]
+                                )
+                              ),
+                              ( PropName "b", AppN Nothing
+                                ( Ref Nothing
+                                  ( Imported
+                                    ( ModuleName "Golden.TailRecM2Shadow.Test" )
+                                    ( Name "add$w" )
+                                  )
+                                )
+                                ( ObjectProp Nothing
+                                  ( Ref Nothing ( Local ( Name "o$483" ) ) )
+                                  ( PropName "b" ) :|
+                                  [ LiteralInt Nothing 1 ]
+                                )
+                              )
+                            ] :| []
+                          ) :| []
+                        )
+                      )
+                      ( AppN Nothing
+                        ( Ref Nothing ( Local ( Name "pure" ) ) )
+                        ( AppN Nothing
+                          ( Ctor Nothing SumType
+                            ( ModuleName "Control.Monad.Rec.Class" )
+                            ( TyName "Step" )
+                            ( CtorName "Done" )
+                            [ FieldName "value0" ]
+                          )
+                          ( ObjectProp Nothing
+                            ( Ref Nothing ( Local ( Name "o$483" ) ) )
+                            ( PropName "a" ) :| []
+                          ) :| []
+                        )
                       )
                     ) :| []
                   )
@@ -705,94 +702,89 @@ UberModule
                               )
                               ( AbsN Nothing
                                 ( ParamNamed Nothing ( Name "o$483$539" ) :| [] )
-                                ( AppN Nothing
-                                  ( Let Nothing
-                                    ( Standalone
-                                      ( Nothing, Name "acc$1$540", ObjectProp Nothing
-                                        ( Ref Nothing ( Local ( Name "o$483$539" ) ) )
-                                        ( PropName "a" )
-                                      ) :| []
-                                    )
-                                    ( AbsN Nothing
-                                      ( ParamNamed Nothing ( Name "i$2$541" ) :| [] )
+                                ( IfThenElse Nothing
+                                  ( Eq Nothing
+                                    ( LiteralString Nothing "Data.Ordering∷Ordering.LT" )
+                                    ( IfThenElse Nothing
+                                      ( PrimBinOp Nothing PrimLt
+                                        ( ObjectProp Nothing
+                                          ( Ref Nothing ( Local ( Name "o$483$539" ) ) )
+                                          ( PropName "b" )
+                                        )
+                                        ( Ref Nothing ( Local ( Name "n$538" ) ) )
+                                      )
+                                      ( LiteralString Nothing "Data.Ordering∷Ordering.LT" )
                                       ( IfThenElse Nothing
                                         ( Eq Nothing
-                                          ( LiteralString Nothing "Data.Ordering∷Ordering.LT" )
-                                          ( IfThenElse Nothing
-                                            ( PrimBinOp Nothing PrimLt
-                                              ( Ref Nothing ( Local ( Name "i$2$541" ) ) )
-                                              ( Ref Nothing ( Local ( Name "n$538" ) ) )
-                                            )
-                                            ( LiteralString Nothing "Data.Ordering∷Ordering.LT" )
-                                            ( IfThenElse Nothing
-                                              ( Eq Nothing
-                                                ( Ref Nothing ( Local ( Name "i$2$541" ) ) )
-                                                ( Ref Nothing ( Local ( Name "n$538" ) ) )
-                                              )
-                                              ( LiteralString Nothing "Data.Ordering∷Ordering.EQ" )
-                                              ( LiteralString Nothing "Data.Ordering∷Ordering.GT" )
-                                            )
+                                          ( ObjectProp Nothing
+                                            ( Ref Nothing ( Local ( Name "o$483$539" ) ) )
+                                            ( PropName "b" )
                                           )
+                                          ( Ref Nothing ( Local ( Name "n$538" ) ) )
                                         )
-                                        ( AppN Nothing
-                                          ( Ref Nothing ( Local ( Name "pure$536" ) ) )
-                                          ( AppN Nothing
-                                            ( Ctor Nothing SumType
-                                              ( ModuleName "Control.Monad.Rec.Class" )
-                                              ( TyName "Step" )
-                                              ( CtorName "Loop" )
-                                              [ FieldName "value0" ]
-                                            )
-                                            ( LiteralObject Nothing
-                                              [
-                                                ( PropName "a", AppN Nothing
-                                                  ( Ref Nothing
-                                                    ( Imported
-                                                      ( ModuleName "Golden.TailRecM2Shadow.Test" )
-                                                      ( Name "add$w" )
-                                                    )
-                                                  )
-                                                  ( Ref Nothing
-                                                    ( Local ( Name "acc$1$540" ) ) :|
-                                                    [ Ref Nothing ( Local ( Name "i$2$541" ) ) ]
-                                                  )
-                                                ),
-                                                ( PropName "b", AppN Nothing
-                                                  ( Ref Nothing
-                                                    ( Imported
-                                                      ( ModuleName "Golden.TailRecM2Shadow.Test" )
-                                                      ( Name "add$w" )
-                                                    )
-                                                  )
-                                                  ( Ref Nothing
-                                                    ( Local ( Name "i$2$541" ) ) :|
-                                                    [ LiteralInt Nothing 1 ]
-                                                  )
-                                                )
-                                              ] :| []
-                                            ) :| []
-                                          )
-                                        )
-                                        ( AppN Nothing
-                                          ( Ref Nothing ( Local ( Name "pure$536" ) ) )
-                                          ( AppN Nothing
-                                            ( Ctor Nothing SumType
-                                              ( ModuleName "Control.Monad.Rec.Class" )
-                                              ( TyName "Step" )
-                                              ( CtorName "Done" )
-                                              [ FieldName "value0" ]
-                                            )
-                                            ( Ref Nothing
-                                              ( Local ( Name "acc$1$540" ) ) :| []
-                                            ) :| []
-                                          )
-                                        )
+                                        ( LiteralString Nothing "Data.Ordering∷Ordering.EQ" )
+                                        ( LiteralString Nothing "Data.Ordering∷Ordering.GT" )
                                       )
                                     )
                                   )
-                                  ( ObjectProp Nothing
-                                    ( Ref Nothing ( Local ( Name "o$483$539" ) ) )
-                                    ( PropName "b" ) :| []
+                                  ( AppN Nothing
+                                    ( Ref Nothing ( Local ( Name "pure$536" ) ) )
+                                    ( AppN Nothing
+                                      ( Ctor Nothing SumType
+                                        ( ModuleName "Control.Monad.Rec.Class" )
+                                        ( TyName "Step" )
+                                        ( CtorName "Loop" )
+                                        [ FieldName "value0" ]
+                                      )
+                                      ( LiteralObject Nothing
+                                        [
+                                          ( PropName "a", AppN Nothing
+                                            ( Ref Nothing
+                                              ( Imported
+                                                ( ModuleName "Golden.TailRecM2Shadow.Test" )
+                                                ( Name "add$w" )
+                                              )
+                                            )
+                                            ( ObjectProp Nothing
+                                              ( Ref Nothing ( Local ( Name "o$483$539" ) ) )
+                                              ( PropName "a" ) :|
+                                              [ ObjectProp Nothing
+                                                ( Ref Nothing ( Local ( Name "o$483$539" ) ) )
+                                                ( PropName "b" )
+                                              ]
+                                            )
+                                          ),
+                                          ( PropName "b", AppN Nothing
+                                            ( Ref Nothing
+                                              ( Imported
+                                                ( ModuleName "Golden.TailRecM2Shadow.Test" )
+                                                ( Name "add$w" )
+                                              )
+                                            )
+                                            ( ObjectProp Nothing
+                                              ( Ref Nothing ( Local ( Name "o$483$539" ) ) )
+                                              ( PropName "b" ) :|
+                                              [ LiteralInt Nothing 1 ]
+                                            )
+                                          )
+                                        ] :| []
+                                      ) :| []
+                                    )
+                                  )
+                                  ( AppN Nothing
+                                    ( Ref Nothing ( Local ( Name "pure$536" ) ) )
+                                    ( AppN Nothing
+                                      ( Ctor Nothing SumType
+                                        ( ModuleName "Control.Monad.Rec.Class" )
+                                        ( TyName "Step" )
+                                        ( CtorName "Done" )
+                                        [ FieldName "value0" ]
+                                      )
+                                      ( ObjectProp Nothing
+                                        ( Ref Nothing ( Local ( Name "o$483$539" ) ) )
+                                        ( PropName "a" ) :| []
+                                      ) :| []
+                                    )
                                   )
                                 ) :| []
                               )
@@ -831,17 +823,17 @@ UberModule
                     ( AppN Nothing
                       ( Let Nothing
                         ( Standalone
-                          ( Nothing, Name "dictMonadRec$535$543", LiteralObject Nothing
+                          ( Nothing, Name "dictMonadRec$535$541", LiteralObject Nothing
                             [
                               ( PropName "tailRecM", AbsN Nothing
-                                ( ParamNamed Nothing ( Name "f$11$544" ) :| [] )
+                                ( ParamNamed Nothing ( Name "f$11$542" ) :| [] )
                                 ( AbsN Nothing
-                                  ( ParamNamed Nothing ( Name "a$12$545" ) :| [] )
+                                  ( ParamNamed Nothing ( Name "a$12$543" ) :| [] )
                                   ( AbsN Nothing
                                     ( ParamUnused Nothing :| [] )
                                     ( Let Nothing
                                       ( Standalone
-                                        ( Nothing, Name "r$16$546", AppN Nothing
+                                        ( Nothing, Name "r$16$544", AppN Nothing
                                           ( AppN Nothing
                                             ( AppN Nothing
                                               ( ObjectProp Nothing
@@ -854,9 +846,9 @@ UberModule
                                                 ( PropName "bind" )
                                               )
                                               ( AppN Nothing
-                                                ( Ref Nothing ( Local ( Name "f$11$544" ) ) )
+                                                ( Ref Nothing ( Local ( Name "f$11$542" ) ) )
                                                 ( Ref Nothing
-                                                  ( Local ( Name "a$12$545" ) ) :| []
+                                                  ( Local ( Name "a$12$543" ) ) :| []
                                                 ) :| []
                                               )
                                             )
@@ -878,7 +870,7 @@ UberModule
                                           )
                                         ) :|
                                         [ Standalone
-                                          ( Nothing, Name "_$547", AppN Nothing
+                                          ( Nothing, Name "_$545", AppN Nothing
                                             ( AppN Nothing
                                               ( ObjectProp ( Just Always )
                                                 ( Ref Nothing
@@ -893,7 +885,7 @@ UberModule
                                                 ( ParamUnused Nothing :| [] )
                                                 ( Let Nothing
                                                   ( Standalone
-                                                    ( Nothing, Name "v0$17$548", AppN Nothing
+                                                    ( Nothing, Name "v0$17$546", AppN Nothing
                                                       ( AppN Nothing
                                                         ( ObjectProp ( Just Always )
                                                           ( Ref Nothing
@@ -905,7 +897,7 @@ UberModule
                                                           ( PropName "read" )
                                                         )
                                                         ( Ref Nothing
-                                                          ( Local ( Name "r$16$546" ) ) :| []
+                                                          ( Local ( Name "r$16$544" ) ) :| []
                                                         )
                                                       )
                                                       ( Ref Nothing
@@ -922,7 +914,7 @@ UberModule
                                                         ( LiteralString Nothing "Control.Monad.Rec.Class∷Step.Loop" )
                                                         ( ReflectCtor Nothing
                                                           ( Ref Nothing
-                                                            ( Local ( Name "v0$17$548" ) )
+                                                            ( Local ( Name "v0$17$546" ) )
                                                           )
                                                         )
                                                       )
@@ -930,14 +922,14 @@ UberModule
                                                         ( ParamUnused Nothing :| [] )
                                                         ( Let Nothing
                                                           ( Standalone
-                                                            ( Nothing, Name "e$19$549", AppN Nothing
+                                                            ( Nothing, Name "e$19$547", AppN Nothing
                                                               ( AppN Nothing
                                                                 ( Ref Nothing
-                                                                  ( Local ( Name "f$11$544" ) )
+                                                                  ( Local ( Name "f$11$542" ) )
                                                                 )
                                                                 ( ObjectProp Nothing
                                                                   ( Ref Nothing
-                                                                    ( Local ( Name "v0$17$548" ) )
+                                                                    ( Local ( Name "v0$17$546" ) )
                                                                   )
                                                                   ( PropName "value0" ) :| []
                                                                 )
@@ -950,7 +942,7 @@ UberModule
                                                               )
                                                             ) :|
                                                             [ Standalone
-                                                              ( Nothing, Name "_$550", AppN Nothing
+                                                              ( Nothing, Name "_$548", AppN Nothing
                                                                 ( AppN Nothing
                                                                   ( AppN Nothing
                                                                     ( ObjectProp ( Just Always )
@@ -964,13 +956,13 @@ UberModule
                                                                     )
                                                                     ( Ref Nothing
                                                                       ( Local
-                                                                        ( Name "e$19$549" )
+                                                                        ( Name "e$19$547" )
                                                                       ) :| []
                                                                     )
                                                                   )
                                                                   ( Ref Nothing
                                                                     ( Local
-                                                                      ( Name "r$16$546" )
+                                                                      ( Name "r$16$544" )
                                                                     ) :| []
                                                                   )
                                                                 )
@@ -1007,7 +999,7 @@ UberModule
                                                           ( LiteralString Nothing "Control.Monad.Rec.Class∷Step.Done" )
                                                           ( ReflectCtor Nothing
                                                             ( Ref Nothing
-                                                              ( Local ( Name "v0$17$548" ) )
+                                                              ( Local ( Name "v0$17$546" ) )
                                                             )
                                                           )
                                                         )
@@ -1068,20 +1060,20 @@ UberModule
                                                 ( ParamUnused Nothing :| [] )
                                                 ( AbsN Nothing
                                                   ( ParamNamed Nothing
-                                                    ( Name "v$9$20$551" ) :| []
+                                                    ( Name "v$9$20$549" ) :| []
                                                   )
                                                   ( IfThenElse Nothing
                                                     ( Eq Nothing
                                                       ( LiteralString Nothing "Control.Monad.Rec.Class∷Step.Done" )
                                                       ( ReflectCtor Nothing
                                                         ( Ref Nothing
-                                                          ( Local ( Name "v$9$20$551" ) )
+                                                          ( Local ( Name "v$9$20$549" ) )
                                                         )
                                                       )
                                                     )
                                                     ( ObjectProp Nothing
                                                       ( Ref Nothing
-                                                        ( Local ( Name "v$9$20$551" ) )
+                                                        ( Local ( Name "v$9$20$549" ) )
                                                       )
                                                       ( PropName "value0" )
                                                     )
@@ -1102,7 +1094,7 @@ UberModule
                                               ( PropName "read" )
                                             )
                                             ( Ref Nothing
-                                              ( Local ( Name "r$16$546" ) ) :| []
+                                              ( Local ( Name "r$16$544" ) ) :| []
                                             ) :| []
                                           )
                                         )
@@ -1128,12 +1120,12 @@ UberModule
                         )
                         ( Let Nothing
                           ( Standalone
-                            ( Nothing, Name "pure$536$552", ObjectProp Nothing
+                            ( Nothing, Name "pure$536$550", ObjectProp Nothing
                               ( AppN Nothing
                                 ( ObjectProp Nothing
                                   ( AppN Nothing
                                     ( ObjectProp Nothing
-                                      ( Ref Nothing ( Local ( Name "dictMonadRec$535$543" ) ) )
+                                      ( Ref Nothing ( Local ( Name "dictMonadRec$535$541" ) ) )
                                       ( PropName "Monad0" )
                                     )
                                     ( Ref Nothing
@@ -1150,116 +1142,113 @@ UberModule
                             ) :| []
                           )
                           ( AbsN Nothing
-                            ( ParamNamed Nothing ( Name "b$537$553" ) :| [] )
+                            ( ParamNamed Nothing ( Name "b$537$551" ) :| [] )
                             ( AbsN Nothing
-                              ( ParamNamed Nothing ( Name "n$538$554" ) :| [] )
+                              ( ParamNamed Nothing ( Name "n$538$552" ) :| [] )
                               ( AppN Nothing
                                 ( AppN Nothing
                                   ( ObjectProp Nothing
-                                    ( Ref Nothing ( Local ( Name "dictMonadRec$535$543" ) ) )
+                                    ( Ref Nothing ( Local ( Name "dictMonadRec$535$541" ) ) )
                                     ( PropName "tailRecM" )
                                   )
                                   ( AbsN Nothing
-                                    ( ParamNamed Nothing ( Name "o$483$539$555" ) :| [] )
-                                    ( AppN Nothing
-                                      ( Let Nothing
-                                        ( Standalone
-                                          ( Nothing, Name "acc$1$540$556", ObjectProp Nothing
-                                            ( Ref Nothing ( Local ( Name "o$483$539$555" ) ) )
-                                            ( PropName "a" )
-                                          ) :| []
-                                        )
-                                        ( AbsN Nothing
-                                          ( ParamNamed Nothing ( Name "i$2$541$557" ) :| [] )
+                                    ( ParamNamed Nothing ( Name "o$483$539$553" ) :| [] )
+                                    ( IfThenElse Nothing
+                                      ( Eq Nothing
+                                        ( LiteralString Nothing "Data.Ordering∷Ordering.LT" )
+                                        ( IfThenElse Nothing
+                                          ( PrimBinOp Nothing PrimLt
+                                            ( ObjectProp Nothing
+                                              ( Ref Nothing ( Local ( Name "o$483$539$553" ) ) )
+                                              ( PropName "b" )
+                                            )
+                                            ( Ref Nothing ( Local ( Name "n$538$552" ) ) )
+                                          )
+                                          ( LiteralString Nothing "Data.Ordering∷Ordering.LT" )
                                           ( IfThenElse Nothing
                                             ( Eq Nothing
-                                              ( LiteralString Nothing "Data.Ordering∷Ordering.LT" )
-                                              ( IfThenElse Nothing
-                                                ( PrimBinOp Nothing PrimLt
-                                                  ( Ref Nothing ( Local ( Name "i$2$541$557" ) ) )
-                                                  ( Ref Nothing ( Local ( Name "n$538$554" ) ) )
-                                                )
-                                                ( LiteralString Nothing "Data.Ordering∷Ordering.LT" )
-                                                ( IfThenElse Nothing
-                                                  ( Eq Nothing
-                                                    ( Ref Nothing
-                                                      ( Local ( Name "i$2$541$557" ) )
-                                                    )
-                                                    ( Ref Nothing ( Local ( Name "n$538$554" ) ) )
-                                                  )
-                                                  ( LiteralString Nothing "Data.Ordering∷Ordering.EQ" )
-                                                  ( LiteralString Nothing "Data.Ordering∷Ordering.GT" )
-                                                )
+                                              ( ObjectProp Nothing
+                                                ( Ref Nothing ( Local ( Name "o$483$539$553" ) ) )
+                                                ( PropName "b" )
                                               )
+                                              ( Ref Nothing ( Local ( Name "n$538$552" ) ) )
                                             )
-                                            ( AppN Nothing
-                                              ( Ref Nothing ( Local ( Name "pure$536$552" ) ) )
-                                              ( AppN Nothing
-                                                ( Ctor Nothing SumType
-                                                  ( ModuleName "Control.Monad.Rec.Class" )
-                                                  ( TyName "Step" )
-                                                  ( CtorName "Loop" )
-                                                  [ FieldName "value0" ]
-                                                )
-                                                ( LiteralObject Nothing
-                                                  [
-                                                    ( PropName "a", AppN Nothing
-                                                      ( Ref Nothing
-                                                        ( Imported
-                                                          ( ModuleName "Golden.TailRecM2Shadow.Test" )
-                                                          ( Name "add$w" )
-                                                        )
-                                                      )
-                                                      ( Ref Nothing
-                                                        ( Local ( Name "acc$1$540$556" ) ) :|
-                                                        [ Ref Nothing
-                                                          ( Local ( Name "i$2$541$557" ) )
-                                                        ]
-                                                      )
-                                                    ),
-                                                    ( PropName "b", AppN Nothing
-                                                      ( Ref Nothing
-                                                        ( Imported
-                                                          ( ModuleName "Golden.TailRecM2Shadow.Test" )
-                                                          ( Name "add$w" )
-                                                        )
-                                                      )
-                                                      ( Ref Nothing
-                                                        ( Local ( Name "i$2$541$557" ) ) :|
-                                                        [ LiteralInt Nothing 1 ]
-                                                      )
-                                                    )
-                                                  ] :| []
-                                                ) :| []
-                                              )
-                                            )
-                                            ( AppN Nothing
-                                              ( Ref Nothing ( Local ( Name "pure$536$552" ) ) )
-                                              ( AppN Nothing
-                                                ( Ctor Nothing SumType
-                                                  ( ModuleName "Control.Monad.Rec.Class" )
-                                                  ( TyName "Step" )
-                                                  ( CtorName "Done" )
-                                                  [ FieldName "value0" ]
-                                                )
-                                                ( Ref Nothing
-                                                  ( Local ( Name "acc$1$540$556" ) ) :| []
-                                                ) :| []
-                                              )
-                                            )
+                                            ( LiteralString Nothing "Data.Ordering∷Ordering.EQ" )
+                                            ( LiteralString Nothing "Data.Ordering∷Ordering.GT" )
                                           )
                                         )
                                       )
-                                      ( ObjectProp Nothing
-                                        ( Ref Nothing ( Local ( Name "o$483$539$555" ) ) )
-                                        ( PropName "b" ) :| []
+                                      ( AppN Nothing
+                                        ( Ref Nothing ( Local ( Name "pure$536$550" ) ) )
+                                        ( AppN Nothing
+                                          ( Ctor Nothing SumType
+                                            ( ModuleName "Control.Monad.Rec.Class" )
+                                            ( TyName "Step" )
+                                            ( CtorName "Loop" )
+                                            [ FieldName "value0" ]
+                                          )
+                                          ( LiteralObject Nothing
+                                            [
+                                              ( PropName "a", AppN Nothing
+                                                ( Ref Nothing
+                                                  ( Imported
+                                                    ( ModuleName "Golden.TailRecM2Shadow.Test" )
+                                                    ( Name "add$w" )
+                                                  )
+                                                )
+                                                ( ObjectProp Nothing
+                                                  ( Ref Nothing
+                                                    ( Local ( Name "o$483$539$553" ) )
+                                                  )
+                                                  ( PropName "a" ) :|
+                                                  [ ObjectProp Nothing
+                                                    ( Ref Nothing
+                                                      ( Local ( Name "o$483$539$553" ) )
+                                                    )
+                                                    ( PropName "b" )
+                                                  ]
+                                                )
+                                              ),
+                                              ( PropName "b", AppN Nothing
+                                                ( Ref Nothing
+                                                  ( Imported
+                                                    ( ModuleName "Golden.TailRecM2Shadow.Test" )
+                                                    ( Name "add$w" )
+                                                  )
+                                                )
+                                                ( ObjectProp Nothing
+                                                  ( Ref Nothing
+                                                    ( Local ( Name "o$483$539$553" ) )
+                                                  )
+                                                  ( PropName "b" ) :|
+                                                  [ LiteralInt Nothing 1 ]
+                                                )
+                                              )
+                                            ] :| []
+                                          ) :| []
+                                        )
+                                      )
+                                      ( AppN Nothing
+                                        ( Ref Nothing ( Local ( Name "pure$536$550" ) ) )
+                                        ( AppN Nothing
+                                          ( Ctor Nothing SumType
+                                            ( ModuleName "Control.Monad.Rec.Class" )
+                                            ( TyName "Step" )
+                                            ( CtorName "Done" )
+                                            [ FieldName "value0" ]
+                                          )
+                                          ( ObjectProp Nothing
+                                            ( Ref Nothing ( Local ( Name "o$483$539$553" ) ) )
+                                            ( PropName "a" ) :| []
+                                          ) :| []
+                                        )
                                       )
                                     ) :| []
                                   )
                                 )
                                 ( LiteralObject Nothing
                                   [
-                                    ( PropName "a", Ref Nothing ( Local ( Name "b$537$553" ) ) ),
+                                    ( PropName "a", Ref Nothing ( Local ( Name "b$537$551" ) ) ),
                                     ( PropName "b", LiteralInt Nothing 0 )
                                   ] :| []
                                 )

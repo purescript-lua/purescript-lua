@@ -479,14 +479,9 @@ M.Data_String_CodePoints_toCodePointArray = M.Data_String_CodePoints_foreign._to
   end)(function(s_S_11)
     local v1_S_1578 = M.Data_String_CodePoints_uncons(s_S_11)
     if "Data.Maybe∷Maybe.Just" == v1_S_1578["$ctor"] then
-      return M.Data_Maybe_Just((function()
-        local v_S_12 = v1_S_1578.value0
-        return (function(value0)
-          return function(value1)
-            return { value0 = value0, value1 = value1 }
-          end
-        end)(v_S_12.head)(v_S_12.tail)
-      end)())
+      return M.Data_Maybe_Just((function(value0)
+        return function(value1) return { value0 = value0, value1 = value1 } end
+      end)(v1_S_1578.value0.head)(v1_S_1578.value0.tail))
     else
       return M.Data_Maybe_Nothing
     end

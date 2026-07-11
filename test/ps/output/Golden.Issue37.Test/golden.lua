@@ -73,11 +73,10 @@ return {
         return Bind1_S_1.bind(pure_S_4({
           [1] = (function()
             local Bind1_S_216 = M.Effect_monadEffect.Bind1()
-            local discard1_S_217 = Bind1_S_216.bind
             return function(fn1_S_218)
               return Bind1_S_216.bind(fn1_S_218)(function()
-                return discard1_S_217(fn1_S_218)(function()
-                  return discard1_S_217(fn1_S_218)(function()
+                return Bind1_S_216.bind(fn1_S_218)(function()
+                  return Bind1_S_216.bind(fn1_S_218)(function()
                     return fn1_S_218
                   end)
                 end)

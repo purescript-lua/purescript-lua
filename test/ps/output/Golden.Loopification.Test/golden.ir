@@ -359,24 +359,24 @@ UberModule
                     ( Let Nothing
                       ( RecursiveGroup
                         (
-                          ( Nothing, Name "go$w$252", AbsN Nothing
+                          ( Nothing, Name "go$w$264", AbsN Nothing
                             ( ParamNamed Nothing
-                              ( Name "acc$253" ) :|
-                              [ ParamNamed Nothing ( Name "n$254" ) ]
+                              ( Name "acc$265" ) :|
+                              [ ParamNamed Nothing ( Name "n$266" ) ]
                             )
                             ( IfThenElse Nothing
                               ( Eq Nothing
-                                ( Ref Nothing ( Local ( Name "n$254" ) ) )
+                                ( Ref Nothing ( Local ( Name "n$266" ) ) )
                                 ( LiteralInt Nothing 0 )
                               )
-                              ( Ref Nothing ( Local ( Name "acc$253" ) ) )
+                              ( Ref Nothing ( Local ( Name "acc$265" ) ) )
                               ( AppN Nothing
-                                ( Ref Nothing ( Local ( Name "go$w$252" ) ) )
+                                ( Ref Nothing ( Local ( Name "go$w$264" ) ) )
                                 ( PrimBinOp Nothing PrimAdd
-                                  ( Ref Nothing ( Local ( Name "acc$253" ) ) )
+                                  ( Ref Nothing ( Local ( Name "acc$265" ) ) )
                                   ( PrimBinOp Nothing PrimMul
-                                    ( Ref Nothing ( Local ( Name "n$254" ) ) )
-                                    ( Ref Nothing ( Local ( Name "n$254" ) ) )
+                                    ( Ref Nothing ( Local ( Name "n$266" ) ) )
+                                    ( Ref Nothing ( Local ( Name "n$266" ) ) )
                                   ) :|
                                   [ AppN Nothing
                                     ( Ref Nothing
@@ -386,7 +386,7 @@ UberModule
                                       )
                                     )
                                     ( Ref Nothing
-                                      ( Local ( Name "n$254" ) ) :|
+                                      ( Local ( Name "n$266" ) ) :|
                                       [ LiteralInt Nothing 1 ]
                                     )
                                   ]
@@ -397,7 +397,7 @@ UberModule
                         ) :| []
                       )
                       ( AppN Nothing
-                        ( Ref Nothing ( Local ( Name "go$w$252" ) ) )
+                        ( Ref Nothing ( Local ( Name "go$w$264" ) ) )
                         ( LiteralInt Nothing 0 :| [ LiteralInt Nothing 4 ] )
                       ) :| []
                     ) :| []

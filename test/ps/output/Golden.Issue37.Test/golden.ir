@@ -265,13 +265,7 @@ UberModule
                                 ( Ref Nothing
                                   ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| []
                                 )
-                              ) :|
-                              [ Standalone
-                                ( Nothing, Name "discard1$217", ObjectProp Nothing
-                                  ( Ref Nothing ( Local ( Name "Bind1$216" ) ) )
-                                  ( PropName "bind" )
-                                )
-                              ]
+                              ) :| []
                             )
                             ( AbsN Nothing
                               ( ParamNamed Nothing ( Name "fn1$218" ) :| [] )
@@ -287,14 +281,20 @@ UberModule
                                   ( ParamUnused Nothing :| [] )
                                   ( AppN Nothing
                                     ( AppN Nothing
-                                      ( Ref Nothing ( Local ( Name "discard1$217" ) ) )
+                                      ( ObjectProp Nothing
+                                        ( Ref Nothing ( Local ( Name "Bind1$216" ) ) )
+                                        ( PropName "bind" )
+                                      )
                                       ( Ref Nothing ( Local ( Name "fn1$218" ) ) :| [] )
                                     )
                                     ( AbsN Nothing
                                       ( ParamUnused Nothing :| [] )
                                       ( AppN Nothing
                                         ( AppN Nothing
-                                          ( Ref Nothing ( Local ( Name "discard1$217" ) ) )
+                                          ( ObjectProp Nothing
+                                            ( Ref Nothing ( Local ( Name "Bind1$216" ) ) )
+                                            ( PropName "bind" )
+                                          )
                                           ( Ref Nothing ( Local ( Name "fn1$218" ) ) :| [] )
                                         )
                                         ( AbsN Nothing

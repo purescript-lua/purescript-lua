@@ -1313,30 +1313,28 @@ UberModule
                       )
                       ( AppN Nothing
                         ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Just" ) ) )
-                        ( Let Nothing
-                          ( Standalone
-                            ( Nothing, Name "v$12", ObjectProp Nothing
-                              ( Ref Nothing ( Local ( Name "v1$1578" ) ) )
-                              ( PropName "value0" )
-                            ) :| []
-                          )
+                        ( AppN Nothing
                           ( AppN Nothing
-                            ( AppN Nothing
-                              ( Ctor Nothing ProductType
-                                ( ModuleName "Data.Tuple" )
-                                ( TyName "Tuple" )
-                                ( CtorName "Tuple" )
-                                [ FieldName "value0", FieldName "value1" ]
-                              )
-                              ( ObjectProp Nothing
-                                ( Ref Nothing ( Local ( Name "v$12" ) ) )
-                                ( PropName "head" ) :| []
-                              )
+                            ( Ctor Nothing ProductType
+                              ( ModuleName "Data.Tuple" )
+                              ( TyName "Tuple" )
+                              ( CtorName "Tuple" )
+                              [ FieldName "value0", FieldName "value1" ]
                             )
                             ( ObjectProp Nothing
-                              ( Ref Nothing ( Local ( Name "v$12" ) ) )
-                              ( PropName "tail" ) :| []
+                              ( ObjectProp Nothing
+                                ( Ref Nothing ( Local ( Name "v1$1578" ) ) )
+                                ( PropName "value0" )
+                              )
+                              ( PropName "head" ) :| []
                             )
+                          )
+                          ( ObjectProp Nothing
+                            ( ObjectProp Nothing
+                              ( Ref Nothing ( Local ( Name "v1$1578" ) ) )
+                              ( PropName "value0" )
+                            )
+                            ( PropName "tail" ) :| []
                           ) :| []
                         )
                       )

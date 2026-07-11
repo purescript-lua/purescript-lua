@@ -60,15 +60,6 @@ UberModule
         )
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Golden.Uncurry.Test", qnameName = Name "add$w"
-        }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "x$191$220" ) :| [ ParamNamed Nothing ( Name "y$192$221" ) ] )
-        ( PrimBinOp Nothing PrimAdd
-          ( Ref Nothing ( Local ( Name "x$191$220" ) ) )
-          ( Ref Nothing ( Local ( Name "y$192$221" ) ) )
-        )
-      ), Standalone
-      ( QName
         { qnameModuleName = ModuleName "Golden.Uncurry.Test", qnameName = Name "sub$w"
         }, AbsN Nothing
         ( ParamNamed Nothing ( Name "x$187$213" ) :| [ ParamNamed Nothing ( Name "y$188$214" ) ] )
@@ -96,14 +87,9 @@ UberModule
                   ( Ref Nothing ( Local ( Name "acc" ) ) )
                   ( AppN Nothing
                     ( Ref Nothing ( Local ( Name "go$w" ) ) )
-                    ( AppN Nothing
-                      ( Ref Nothing
-                        ( Imported ( ModuleName "Golden.Uncurry.Test" ) ( Name "add$w" ) )
-                      )
-                      ( Ref Nothing
-                        ( Local ( Name "acc" ) ) :|
-                        [ Ref Nothing ( Local ( Name "n" ) ) ]
-                      ) :|
+                    ( PrimBinOp Nothing PrimAdd
+                      ( Ref Nothing ( Local ( Name "acc" ) ) )
+                      ( Ref Nothing ( Local ( Name "n" ) ) ) :|
                       [ AppN Nothing
                         ( Ref Nothing
                           ( Imported ( ModuleName "Golden.Uncurry.Test" ) ( Name "sub$w" ) )
@@ -137,9 +123,9 @@ UberModule
               ( Ref Nothing
                 ( Imported ( ModuleName "Golden.Uncurry.Test" ) ( Name "evenSteps$w" ) )
               )
-              ( AppN Nothing
-                ( Ref Nothing ( Imported ( ModuleName "Golden.Uncurry.Test" ) ( Name "add$w" ) ) )
-                ( Ref Nothing ( Local ( Name "acc" ) ) :| [ LiteralInt Nothing 1 ] ) :|
+              ( PrimBinOp Nothing PrimAdd
+                ( Ref Nothing ( Local ( Name "acc" ) ) )
+                ( LiteralInt Nothing 1 ) :|
                 [ AppN Nothing
                   ( Ref Nothing
                     ( Imported ( ModuleName "Golden.Uncurry.Test" ) ( Name "sub$w" ) )
@@ -182,11 +168,9 @@ UberModule
                 ( Ref Nothing
                   ( Imported ( ModuleName "Golden.Uncurry.Test" ) ( Name "oddSteps$w" ) )
                 )
-                ( AppN Nothing
-                  ( Ref Nothing
-                    ( Imported ( ModuleName "Golden.Uncurry.Test" ) ( Name "add$w" ) )
-                  )
-                  ( Ref Nothing ( Local ( Name "acc" ) ) :| [ LiteralInt Nothing 1 ] ) :|
+                ( PrimBinOp Nothing PrimAdd
+                  ( Ref Nothing ( Local ( Name "acc" ) ) )
+                  ( LiteralInt Nothing 1 ) :|
                   [ AppN Nothing
                     ( Ref Nothing
                       ( Imported ( ModuleName "Golden.Uncurry.Test" ) ( Name "sub$w" ) )
@@ -227,14 +211,13 @@ UberModule
         }, AbsN Nothing
         ( ParamNamed Nothing ( Name "x" ) :| [ ParamNamed Nothing ( Name "y" ) ] )
         ( AbsN Nothing
-          ( ParamNamed Nothing ( Name "add$p2$229" ) :| [] )
-          ( AppN Nothing
-            ( Ref Nothing ( Imported ( ModuleName "Golden.Uncurry.Test" ) ( Name "add$w" ) ) )
-            ( AppN Nothing
-              ( Ref Nothing ( Imported ( ModuleName "Golden.Uncurry.Test" ) ( Name "add$w" ) ) )
-              ( Ref Nothing ( Local ( Name "x" ) ) :| [ Ref Nothing ( Local ( Name "y" ) ) ] ) :|
-              [ Ref Nothing ( Local ( Name "add$p2$229" ) ) ]
+          ( ParamNamed Nothing ( Name "y$192$234" ) :| [] )
+          ( PrimBinOp Nothing PrimAdd
+            ( PrimBinOp Nothing PrimAdd
+              ( Ref Nothing ( Local ( Name "x" ) ) )
+              ( Ref Nothing ( Local ( Name "y" ) ) )
             )
+            ( Ref Nothing ( Local ( Name "y$192$234" ) ) )
           )
         )
       ), Standalone
@@ -245,13 +228,12 @@ UberModule
           ( Name "x" ) :|
           [ ParamNamed Nothing ( Name "y" ), ParamNamed Nothing ( Name "z" ) ]
         )
-        ( AppN Nothing
-          ( Ref Nothing ( Imported ( ModuleName "Golden.Uncurry.Test" ) ( Name "add$w" ) ) )
-          ( AppN Nothing
-            ( Ref Nothing ( Imported ( ModuleName "Golden.Uncurry.Test" ) ( Name "add$w" ) ) )
-            ( Ref Nothing ( Local ( Name "x" ) ) :| [ Ref Nothing ( Local ( Name "y" ) ) ] ) :|
-            [ Ref Nothing ( Local ( Name "z" ) ) ]
+        ( PrimBinOp Nothing PrimAdd
+          ( PrimBinOp Nothing PrimAdd
+            ( Ref Nothing ( Local ( Name "x" ) ) )
+            ( Ref Nothing ( Local ( Name "y" ) ) )
           )
+          ( Ref Nothing ( Local ( Name "z" ) ) )
         )
       ), Standalone
       ( QName
@@ -278,11 +260,11 @@ UberModule
       ( QName
         { qnameModuleName = ModuleName "Golden.Uncurry.Test", qnameName = Name "inc"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "add3$p3$234" ) :| [] )
+        ( ParamNamed Nothing ( Name "add3$p3$228" ) :| [] )
         ( AppN Nothing
           ( Ref Nothing ( Imported ( ModuleName "Golden.Uncurry.Test" ) ( Name "add3$w" ) ) )
           ( LiteralInt Nothing 1 :|
-            [ LiteralInt Nothing 0, Ref Nothing ( Local ( Name "add3$p3$234" ) ) ]
+            [ LiteralInt Nothing 0, Ref Nothing ( Local ( Name "add3$p3$228" ) ) ]
           )
         )
       )
@@ -302,29 +284,29 @@ UberModule
         ( Imported ( ModuleName "Golden.Uncurry.Test" ) ( Name "sumTo" ) )
       ),
       ( Name "adderOf", AbsN Nothing
-        ( ParamNamed Nothing ( Name "adderOf$p1$224" ) :| [] )
+        ( ParamNamed Nothing ( Name "adderOf$p1$220" ) :| [] )
         ( AbsN Nothing
-          ( ParamNamed Nothing ( Name "adderOf$p2$225" ) :| [] )
+          ( ParamNamed Nothing ( Name "adderOf$p2$221" ) :| [] )
           ( AppN Nothing
             ( Ref Nothing ( Imported ( ModuleName "Golden.Uncurry.Test" ) ( Name "adderOf$w" ) ) )
             ( Ref Nothing
-              ( Local ( Name "adderOf$p1$224" ) ) :|
-              [ Ref Nothing ( Local ( Name "adderOf$p2$225" ) ) ]
+              ( Local ( Name "adderOf$p1$220" ) ) :|
+              [ Ref Nothing ( Local ( Name "adderOf$p2$221" ) ) ]
             )
           )
         )
       ),
       ( Name "alwaysFirst", AbsN Nothing
-        ( ParamNamed Nothing ( Name "alwaysFirst$p1$226" ) :| [] )
+        ( ParamNamed Nothing ( Name "alwaysFirst$p1$222" ) :| [] )
         ( AbsN Nothing
-          ( ParamNamed Nothing ( Name "alwaysFirst$p2$227" ) :| [] )
+          ( ParamNamed Nothing ( Name "alwaysFirst$p2$223" ) :| [] )
           ( AppN Nothing
             ( Ref Nothing
               ( Imported ( ModuleName "Golden.Uncurry.Test" ) ( Name "alwaysFirst$w" ) )
             )
             ( Ref Nothing
-              ( Local ( Name "alwaysFirst$p1$226" ) ) :|
-              [ Ref Nothing ( Local ( Name "alwaysFirst$p2$227" ) ) ]
+              ( Local ( Name "alwaysFirst$p1$222" ) ) :|
+              [ Ref Nothing ( Local ( Name "alwaysFirst$p2$223" ) ) ]
             )
           )
         )
@@ -423,13 +405,13 @@ UberModule
                           ( PropName "arrayMap" )
                         )
                         ( AbsN Nothing
-                          ( ParamNamed Nothing ( Name "add3$p3$247" ) :| [] )
+                          ( ParamNamed Nothing ( Name "add3$p3$255" ) :| [] )
                           ( AppN Nothing
                             ( Ref Nothing
                               ( Imported ( ModuleName "Golden.Uncurry.Test" ) ( Name "add3$w" ) )
                             )
                             ( LiteralInt Nothing 1 :|
-                              [ LiteralInt Nothing 2, Ref Nothing ( Local ( Name "add3$p3$247" ) ) ]
+                              [ LiteralInt Nothing 2, Ref Nothing ( Local ( Name "add3$p3$255" ) ) ]
                             )
                           ) :| []
                         )
@@ -480,10 +462,10 @@ UberModule
                     [ Let Nothing
                       ( RecursiveGroup
                         (
-                          ( Nothing, Name "go$w$251", AbsN Nothing
+                          ( Nothing, Name "go$w$259", AbsN Nothing
                             ( ParamNamed Nothing
-                              ( Name "acc$252" ) :|
-                              [ ParamNamed Nothing ( Name "n$253" ) ]
+                              ( Name "acc$260" ) :|
+                              [ ParamNamed Nothing ( Name "n$261" ) ]
                             )
                             ( IfThenElse Nothing
                               ( AppN Nothing
@@ -491,24 +473,16 @@ UberModule
                                   ( Imported ( ModuleName "Golden.Uncurry.Test" ) ( Name "eq$w" ) )
                                 )
                                 ( Ref Nothing
-                                  ( Local ( Name "n$253" ) ) :|
+                                  ( Local ( Name "n$261" ) ) :|
                                   [ LiteralInt Nothing 0 ]
                                 )
                               )
-                              ( Ref Nothing ( Local ( Name "acc$252" ) ) )
+                              ( Ref Nothing ( Local ( Name "acc$260" ) ) )
                               ( AppN Nothing
-                                ( Ref Nothing ( Local ( Name "go$w$251" ) ) )
-                                ( AppN Nothing
-                                  ( Ref Nothing
-                                    ( Imported
-                                      ( ModuleName "Golden.Uncurry.Test" )
-                                      ( Name "add$w" )
-                                    )
-                                  )
-                                  ( Ref Nothing
-                                    ( Local ( Name "acc$252" ) ) :|
-                                    [ Ref Nothing ( Local ( Name "n$253" ) ) ]
-                                  ) :|
+                                ( Ref Nothing ( Local ( Name "go$w$259" ) ) )
+                                ( PrimBinOp Nothing PrimAdd
+                                  ( Ref Nothing ( Local ( Name "acc$260" ) ) )
+                                  ( Ref Nothing ( Local ( Name "n$261" ) ) ) :|
                                   [ AppN Nothing
                                     ( Ref Nothing
                                       ( Imported
@@ -517,7 +491,7 @@ UberModule
                                       )
                                     )
                                     ( Ref Nothing
-                                      ( Local ( Name "n$253" ) ) :|
+                                      ( Local ( Name "n$261" ) ) :|
                                       [ LiteralInt Nothing 1 ]
                                     )
                                   ]
@@ -528,7 +502,7 @@ UberModule
                         ) :| []
                       )
                       ( AppN Nothing
-                        ( Ref Nothing ( Local ( Name "go$w$251" ) ) )
+                        ( Ref Nothing ( Local ( Name "go$w$259" ) ) )
                         ( LiteralInt Nothing 0 :| [ LiteralInt Nothing 10 ] )
                       )
                     ]
@@ -544,10 +518,10 @@ UberModule
                     [ Let Nothing
                       ( RecursiveGroup
                         (
-                          ( Nothing, Name "go$w$256", AbsN Nothing
+                          ( Nothing, Name "go$w$266", AbsN Nothing
                             ( ParamNamed Nothing
-                              ( Name "acc$257" ) :|
-                              [ ParamNamed Nothing ( Name "n$258" ) ]
+                              ( Name "acc$267" ) :|
+                              [ ParamNamed Nothing ( Name "n$268" ) ]
                             )
                             ( IfThenElse Nothing
                               ( AppN Nothing
@@ -555,24 +529,16 @@ UberModule
                                   ( Imported ( ModuleName "Golden.Uncurry.Test" ) ( Name "eq$w" ) )
                                 )
                                 ( Ref Nothing
-                                  ( Local ( Name "n$258" ) ) :|
+                                  ( Local ( Name "n$268" ) ) :|
                                   [ LiteralInt Nothing 0 ]
                                 )
                               )
-                              ( Ref Nothing ( Local ( Name "acc$257" ) ) )
+                              ( Ref Nothing ( Local ( Name "acc$267" ) ) )
                               ( AppN Nothing
-                                ( Ref Nothing ( Local ( Name "go$w$256" ) ) )
-                                ( AppN Nothing
-                                  ( Ref Nothing
-                                    ( Imported
-                                      ( ModuleName "Golden.Uncurry.Test" )
-                                      ( Name "add$w" )
-                                    )
-                                  )
-                                  ( Ref Nothing
-                                    ( Local ( Name "acc$257" ) ) :|
-                                    [ Ref Nothing ( Local ( Name "n$258" ) ) ]
-                                  ) :|
+                                ( Ref Nothing ( Local ( Name "go$w$266" ) ) )
+                                ( PrimBinOp Nothing PrimAdd
+                                  ( Ref Nothing ( Local ( Name "acc$267" ) ) )
+                                  ( Ref Nothing ( Local ( Name "n$268" ) ) ) :|
                                   [ AppN Nothing
                                     ( Ref Nothing
                                       ( Imported
@@ -581,7 +547,7 @@ UberModule
                                       )
                                     )
                                     ( Ref Nothing
-                                      ( Local ( Name "n$258" ) ) :|
+                                      ( Local ( Name "n$268" ) ) :|
                                       [ LiteralInt Nothing 1 ]
                                     )
                                   ]
@@ -592,7 +558,7 @@ UberModule
                         ) :| []
                       )
                       ( AppN Nothing
-                        ( Ref Nothing ( Local ( Name "go$w$256" ) ) )
+                        ( Ref Nothing ( Local ( Name "go$w$266" ) ) )
                         ( LiteralInt Nothing 0 :| [ LiteralInt Nothing 100 ] )
                       )
                     ]
