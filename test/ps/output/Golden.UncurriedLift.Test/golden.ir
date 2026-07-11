@@ -1,0 +1,498 @@
+UberModule
+  { uberModuleBindings =
+    [ Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Show", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Data.Show" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Show.purs"
+        [ ( Nothing, Name "showIntImpl" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Control.Monad.ST.Internal", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Control.Monad.ST.Internal" ) ".spago/p/st/6d41fd264a05b9a089e79322b22b906597ea7c36/src/Control/Monad/ST/Internal.purs"
+        [
+          ( Nothing, Name "map_" ),
+          ( Nothing, Name "pure_" ),
+          ( Nothing, Name "bind_" ),
+          ( Nothing, Name "run" )
+        ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Control.Monad.ST.Uncurried", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Control.Monad.ST.Uncurried" ) ".spago/p/st/6d41fd264a05b9a089e79322b22b906597ea7c36/src/Control/Monad/ST/Uncurried.purs"
+        [ ( Nothing, Name "mkSTFn2" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Function.Uncurried", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Data.Function.Uncurried" ) ".spago/p/functions/03cdfb3561c4e055a53bdba2c491ed3e063eb468/src/Data/Function/Uncurried.purs"
+        [ ( Nothing, Name "mkFn2" ), ( Nothing, Name "mkFn3" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Effect.Console" ) ".spago/p/console/f82835a0b873aafe6bd7b14dd30cc150553d4ab9/src/Effect/Console.purs"
+        [ ( Nothing, Name "log" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Effect.Uncurried", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Effect.Uncurried" ) ".spago/p/effect/82bac3dff904fa34534c4f5b9deeb5da359471c8/src/Effect/Uncurried.purs"
+        [ ( Nothing, Name "mkEffectFn2" ) ]
+      ), RecursiveGroup
+      (
+        ( QName
+          { qnameModuleName = ModuleName "Control.Monad.ST.Internal", qnameName = Name "monadST"
+          }, LiteralObject Nothing
+          [
+            ( PropName "Applicative0", AbsN Nothing
+              ( ParamUnused Nothing :| [] )
+              ( Ref Nothing
+                ( Imported ( ModuleName "Control.Monad.ST.Internal" ) ( Name "applicativeST" ) )
+              )
+            ),
+            ( PropName "Bind1", AbsN Nothing
+              ( ParamUnused Nothing :| [] )
+              ( Ref Nothing
+                ( Imported ( ModuleName "Control.Monad.ST.Internal" ) ( Name "bindST" ) )
+              )
+            )
+          ]
+        ) :|
+        [
+          ( QName
+            { qnameModuleName = ModuleName "Control.Monad.ST.Internal", qnameName = Name "bindST"
+            }, LiteralObject Nothing
+            [
+              ( PropName "bind", ObjectProp ( Just Always )
+                ( Ref Nothing
+                  ( Imported ( ModuleName "Control.Monad.ST.Internal" ) ( Name "foreign" ) )
+                )
+                ( PropName "bind_" )
+              ),
+              ( PropName "Apply0", AbsN Nothing
+                ( ParamUnused Nothing :| [] )
+                ( AppN Nothing
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Control.Monad.ST.Internal" ) ( Name "Lazy_applyST" ) )
+                  )
+                  ( LiteralInt Nothing 0 :| [] )
+                )
+              )
+            ]
+          ),
+          ( QName
+            { qnameModuleName = ModuleName "Control.Monad.ST.Internal", qnameName = Name "applicativeST"
+            }, LiteralObject Nothing
+            [
+              ( PropName "pure", ObjectProp ( Just Always )
+                ( Ref Nothing
+                  ( Imported ( ModuleName "Control.Monad.ST.Internal" ) ( Name "foreign" ) )
+                )
+                ( PropName "pure_" )
+              ),
+              ( PropName "Apply0", AbsN Nothing
+                ( ParamUnused Nothing :| [] )
+                ( AppN Nothing
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Control.Monad.ST.Internal" ) ( Name "Lazy_applyST" ) )
+                  )
+                  ( LiteralInt Nothing 0 :| [] )
+                )
+              )
+            ]
+          ),
+          ( QName
+            { qnameModuleName = ModuleName "Control.Monad.ST.Internal", qnameName = Name "Lazy_applyST"
+            }, AppN Nothing
+            ( AppN Nothing
+              ( Ref Nothing ( Local ( Name "PSLUA_runtime_lazy" ) ) )
+              ( LiteralString Nothing "applyST" :| [] )
+            )
+            ( AbsN Nothing
+              ( ParamUnused Nothing :| [] )
+              ( LiteralObject Nothing
+                [
+                  ( PropName "apply", Let Nothing
+                    ( Standalone
+                      ( Nothing, Name "bind$604", ObjectProp Nothing
+                        ( AppN Nothing
+                          ( ObjectProp Nothing
+                            ( Ref Nothing
+                              ( Imported
+                                ( ModuleName "Control.Monad.ST.Internal" )
+                                ( Name "monadST" )
+                              )
+                            )
+                            ( PropName "Bind1" )
+                          )
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| []
+                          )
+                        )
+                        ( PropName "bind" )
+                      ) :| []
+                    )
+                    ( AbsN Nothing
+                      ( ParamNamed Nothing ( Name "f$605" ) :| [] )
+                      ( AbsN Nothing
+                        ( ParamNamed Nothing ( Name "a$606" ) :| [] )
+                        ( AppN Nothing
+                          ( AppN Nothing
+                            ( Ref Nothing ( Local ( Name "bind$604" ) ) )
+                            ( Ref Nothing ( Local ( Name "f$605" ) ) :| [] )
+                          )
+                          ( AbsN Nothing
+                            ( ParamNamed Nothing ( Name "f'$607" ) :| [] )
+                            ( AppN Nothing
+                              ( AppN Nothing
+                                ( Ref Nothing ( Local ( Name "bind$604" ) ) )
+                                ( Ref Nothing ( Local ( Name "a$606" ) ) :| [] )
+                              )
+                              ( AbsN Nothing
+                                ( ParamNamed Nothing ( Name "a'$608" ) :| [] )
+                                ( AppN Nothing
+                                  ( ObjectProp Nothing
+                                    ( AppN Nothing
+                                      ( ObjectProp Nothing
+                                        ( Ref Nothing
+                                          ( Imported
+                                            ( ModuleName "Control.Monad.ST.Internal" )
+                                            ( Name "monadST" )
+                                          )
+                                        )
+                                        ( PropName "Applicative0" )
+                                      )
+                                      ( Ref Nothing
+                                        ( Imported
+                                          ( ModuleName "Prim" )
+                                          ( Name "undefined" )
+                                        ) :| []
+                                      )
+                                    )
+                                    ( PropName "pure" )
+                                  )
+                                  ( AppN Nothing
+                                    ( Ref Nothing ( Local ( Name "f'$607" ) ) )
+                                    ( Ref Nothing ( Local ( Name "a'$608" ) ) :| [] ) :| []
+                                  )
+                                ) :| []
+                              )
+                            ) :| []
+                          )
+                        )
+                      )
+                    )
+                  ),
+                  ( PropName "Functor0", AbsN Nothing
+                    ( ParamUnused Nothing :| [] )
+                    ( LiteralObject Nothing
+                      [
+                        ( PropName "map", ObjectProp ( Just Always )
+                          ( Ref Nothing
+                            ( Imported
+                              ( ModuleName "Control.Monad.ST.Internal" )
+                              ( Name "foreign" )
+                            )
+                          )
+                          ( PropName "map_" )
+                        )
+                      ]
+                    )
+                  )
+                ]
+              ) :| []
+            )
+          )
+        ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.UncurriedLift.Test", qnameName = Name "sumST"
+        }, AppN Nothing
+        ( ObjectProp ( Just Always )
+          ( Ref Nothing
+            ( Imported ( ModuleName "Control.Monad.ST.Uncurried" ) ( Name "foreign" ) )
+          )
+          ( PropName "mkSTFn2" )
+        )
+        ( AbsN Nothing
+          ( ParamNamed Nothing ( Name "a" ) :| [] )
+          ( AbsN Nothing
+            ( ParamNamed Nothing ( Name "b" ) :| [] )
+            ( AppN Nothing
+              ( ObjectProp Nothing
+                ( Ref Nothing
+                  ( Imported ( ModuleName "Control.Monad.ST.Internal" ) ( Name "applicativeST" ) )
+                )
+                ( PropName "pure" )
+              )
+              ( PrimBinOp Nothing PrimAdd
+                ( Ref Nothing ( Local ( Name "a" ) ) )
+                ( Ref Nothing ( Local ( Name "b" ) ) ) :| []
+              )
+            )
+          ) :| []
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.UncurriedLift.Test", qnameName = Name "mul2"
+        }, AppN Nothing
+        ( ObjectProp ( Just Always )
+          ( Ref Nothing ( Imported ( ModuleName "Data.Function.Uncurried" ) ( Name "foreign" ) ) )
+          ( PropName "mkFn2" )
+        )
+        ( AbsN Nothing
+          ( ParamNamed Nothing ( Name "a" ) :| [] )
+          ( AbsN Nothing
+            ( ParamNamed Nothing ( Name "b" ) :| [] )
+            ( PrimBinOp Nothing PrimMul
+              ( Ref Nothing ( Local ( Name "a" ) ) )
+              ( Ref Nothing ( Local ( Name "b" ) ) )
+            )
+          ) :| []
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.UncurriedLift.Test", qnameName = Name "logTwice"
+        }, AppN Nothing
+        ( ObjectProp ( Just Always )
+          ( Ref Nothing ( Imported ( ModuleName "Effect.Uncurried" ) ( Name "foreign" ) ) )
+          ( PropName "mkEffectFn2" )
+        )
+        ( AbsN Nothing
+          ( ParamNamed Nothing ( Name "a" ) :| [] )
+          ( AbsN Nothing
+            ( ParamNamed Nothing ( Name "b" ) :| [] )
+            ( AbsN Nothing
+              ( ParamUnused Nothing :| [] )
+              ( Let Nothing
+                ( Standalone
+                  ( Nothing, Name "_", AppN Nothing
+                    ( AppN Nothing
+                      ( ObjectProp ( Just Always )
+                        ( Ref Nothing
+                          ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) )
+                        )
+                        ( PropName "log" )
+                      )
+                      ( Ref Nothing ( Local ( Name "a" ) ) :| [] )
+                    )
+                    ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+                  ) :| []
+                )
+                ( AppN Nothing
+                  ( AppN Nothing
+                    ( ObjectProp ( Just Always )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) )
+                      )
+                      ( PropName "log" )
+                    )
+                    ( Ref Nothing ( Local ( Name "b" ) ) :| [] )
+                  )
+                  ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+                )
+              )
+            )
+          ) :| []
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.UncurriedLift.Test", qnameName = Name "add3"
+        }, AppN Nothing
+        ( ObjectProp ( Just Always )
+          ( Ref Nothing ( Imported ( ModuleName "Data.Function.Uncurried" ) ( Name "foreign" ) ) )
+          ( PropName "mkFn3" )
+        )
+        ( AbsN Nothing
+          ( ParamNamed Nothing ( Name "a" ) :| [] )
+          ( AbsN Nothing
+            ( ParamNamed Nothing ( Name "b" ) :| [] )
+            ( AbsN Nothing
+              ( ParamNamed Nothing ( Name "c" ) :| [] )
+              ( PrimBinOp Nothing PrimAdd
+                ( PrimBinOp Nothing PrimAdd
+                  ( Ref Nothing ( Local ( Name "a" ) ) )
+                  ( Ref Nothing ( Local ( Name "b" ) ) )
+                )
+                ( Ref Nothing ( Local ( Name "c" ) ) )
+              )
+            )
+          ) :| []
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.UncurriedLift.Test", qnameName = Name "addOnePlusTwoTo"
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "c$547" ) :| [] )
+        ( AppN Nothing
+          ( Ref Nothing ( Imported ( ModuleName "Golden.UncurriedLift.Test" ) ( Name "add3" ) ) )
+          ( LiteralInt Nothing 1 :|
+            [ LiteralInt Nothing 2, Ref Nothing ( Local ( Name "c$547" ) ) ]
+          )
+        )
+      )
+    ], uberModuleForeigns = [], uberModuleExports =
+    [
+      ( Name "add3", Ref Nothing
+        ( Imported ( ModuleName "Golden.UncurriedLift.Test" ) ( Name "add3" ) )
+      ),
+      ( Name "mul2", Ref Nothing
+        ( Imported ( ModuleName "Golden.UncurriedLift.Test" ) ( Name "mul2" ) )
+      ),
+      ( Name "logTwice", Ref Nothing
+        ( Imported ( ModuleName "Golden.UncurriedLift.Test" ) ( Name "logTwice" ) )
+      ),
+      ( Name "sumST", Ref Nothing
+        ( Imported ( ModuleName "Golden.UncurriedLift.Test" ) ( Name "sumST" ) )
+      ),
+      ( Name "addOnePlusTwoTo", Ref Nothing
+        ( Imported ( ModuleName "Golden.UncurriedLift.Test" ) ( Name "addOnePlusTwoTo" ) )
+      ),
+      ( Name "main", AbsN Nothing
+        ( ParamUnused Nothing :| [] )
+        ( Let Nothing
+          ( Standalone
+            ( Nothing, Name "_", AppN Nothing
+              ( AbsN Nothing
+                ( ParamUnused Nothing :| [] )
+                ( AppN Nothing
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Golden.UncurriedLift.Test" ) ( Name "logTwice" ) )
+                  )
+                  ( LiteralString Nothing "hello" :| [ LiteralString Nothing "world" ] )
+                )
+              )
+              ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+            ) :|
+            [ Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( ObjectProp ( Just Always )
+                    ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
+                    ( PropName "log" )
+                  )
+                  ( AppN Nothing
+                    ( ObjectProp ( Just Always )
+                      ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
+                      ( PropName "showIntImpl" )
+                    )
+                    ( AppN Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Golden.UncurriedLift.Test" ) ( Name "add3" ) )
+                      )
+                      ( LiteralInt Nothing 1 :|
+                        [ LiteralInt Nothing 2, LiteralInt Nothing 3 ]
+                      ) :| []
+                    ) :| []
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              ), Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( ObjectProp ( Just Always )
+                    ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
+                    ( PropName "log" )
+                  )
+                  ( AppN Nothing
+                    ( ObjectProp ( Just Always )
+                      ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
+                      ( PropName "showIntImpl" )
+                    )
+                    ( AppN Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Golden.UncurriedLift.Test" ) ( Name "mul2" ) )
+                      )
+                      ( LiteralInt Nothing 4 :| [ LiteralInt Nothing 5 ] ) :| []
+                    ) :| []
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              ), Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( ObjectProp ( Just Always )
+                    ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
+                    ( PropName "log" )
+                  )
+                  ( AppN Nothing
+                    ( ObjectProp ( Just Always )
+                      ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
+                      ( PropName "showIntImpl" )
+                    )
+                    ( AppN Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Golden.UncurriedLift.Test" ) ( Name "add3" ) )
+                      )
+                      ( LiteralInt Nothing 1 :|
+                        [ LiteralInt Nothing 2, LiteralInt Nothing 100 ]
+                      ) :| []
+                    ) :| []
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              ), Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( ObjectProp ( Just Always )
+                    ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
+                    ( PropName "log" )
+                  )
+                  ( AppN Nothing
+                    ( ObjectProp ( Just Always )
+                      ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
+                      ( PropName "showIntImpl" )
+                    )
+                    ( AppN Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Golden.UncurriedLift.Test" ) ( Name "add3" ) )
+                      )
+                      ( LiteralInt Nothing 1 :|
+                        [ LiteralInt Nothing 2, LiteralInt Nothing 200 ]
+                      ) :| []
+                    ) :| []
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              )
+            ]
+          )
+          ( AppN Nothing
+            ( AppN Nothing
+              ( ObjectProp ( Just Always )
+                ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
+                ( PropName "log" )
+              )
+              ( AppN Nothing
+                ( ObjectProp ( Just Always )
+                  ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
+                  ( PropName "showIntImpl" )
+                )
+                ( AppN Nothing
+                  ( ObjectProp ( Just Always )
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Control.Monad.ST.Internal" ) ( Name "foreign" ) )
+                    )
+                    ( PropName "run" )
+                  )
+                  ( AbsN Nothing
+                    ( ParamUnused Nothing :| [] )
+                    ( AppN Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Golden.UncurriedLift.Test" ) ( Name "sumST" ) )
+                      )
+                      ( LiteralInt Nothing 40 :| [ LiteralInt Nothing 2 ] )
+                    ) :| []
+                  ) :| []
+                ) :| []
+              )
+            )
+            ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+          )
+        )
+      )
+    ]
+  }

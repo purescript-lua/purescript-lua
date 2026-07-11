@@ -239,6 +239,22 @@ fromIR foreigns topLevelNames modname ir = case ir of
     pure . Right $ case body of
       Left chunk → Lua.functionDef luaParams chunk
       Right e → Lua.functionDef luaParams [Lua.return e]
+  -- Running the literal thunk that a saturated lifted @*.Uncurried@ effect
+  -- wrapper reduces to — @(\_ -> fn(a, …)) EffectRunArg@ — is just the call
+  -- @fn(a, …)@: the uncurried @fn@ runs once it has every argument, so no
+  -- thunk need be built and immediately forced (issue #198). This is the
+  -- effect-side payoff of the lift — @fn(a, …)@ instead of
+  -- @(function() return fn(a, …) end)()@. The 'IR.EffectRunArg' marker is
+  -- kept in the IR through the pipeline, so dead-code elimination still keeps
+  -- the (result-unused) effect statement (see 'IR.isEffectRun'); only codegen
+  -- drops the redundant force. The body is required to be an 'IR.AppN', which
+  -- always lowers to an expression — so this never inlines a 'Let' (magic-do
+  -- keeps such chunk boundaries thunked to bound locals per Lua function).
+  IR.AppN
+    _ann
+    (IR.AbsN _ (IR.ParamUnused _ :| []) body@IR.AppN {})
+    (IR.EffectRunArg _ :| []) →
+      Right <$> goExp body
   IR.AppN _ann fn args → do
     e ← goExp fn
     -- See Note [Nullary functions and Prim.undefined]. PS inserts a
