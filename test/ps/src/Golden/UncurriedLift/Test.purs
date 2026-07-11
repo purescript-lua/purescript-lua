@@ -1,5 +1,6 @@
 -- | Exercises the lifting of the @*.Uncurried@ run wrappers to direct
--- | n-ary calls (issue #198).
+-- | n-ary calls (issue #198) and of the mk wrappers to n-ary
+-- | definitions (issue #227).
 -- |
 -- | The pure @runFn2@/@runFn3@ sites must collapse to a single Lua call
 -- | (@add3(1, 2, 3)@), not the curried-onion @runFn3(add3)(1)(2)(3)@. The
@@ -8,9 +9,16 @@
 -- | a direct @logTwice(a, b)@ — one call and no closures where the
 -- | fallback paid four calls and three.
 -- |
--- | The @runSTFn2@ site links @Control.Monad.ST.Uncurried@'s real fork
--- | FFI through the lifter, so a fork release that reshapes it trips the
--- | allowlist hard contract here instead of only downstream.
+-- | The mk half: each @mkFnN@/@mkEffectFnN@/@mkSTFnN@ definition must
+-- | become a single n-ary Lua literal (@add3 = function(a, b, c) …@),
+-- | not an opaque @mkFn3(…)@ wrapper that re-curries every call through
+-- | two closures. @mulByFn@ applies @mkFn2@ point-free to a named
+-- | function, so the wrapper's lifted body reduces against a
+-- | dictionary-resolved @intMul@ rather than a literal lambda.
+-- |
+-- | The @runSTFn2@/@mkSTFn2@ sites link @Control.Monad.ST.Uncurried@'s
+-- | real fork FFI through the lifter, so a fork release that reshapes it
+-- | trips the allowlist hard contract here instead of only downstream.
 module Golden.UncurriedLift.Test where
 
 import Prelude
@@ -27,6 +35,9 @@ add3 = mkFn3 \a b c -> a + b + c
 
 mul2 :: Fn2 Int Int Int
 mul2 = mkFn2 \a b -> a * b
+
+mulByFn :: Fn2 Int Int Int
+mulByFn = mkFn2 mul
 
 logTwice :: EffectFn2 String String Unit
 logTwice = mkEffectFn2 \a b -> do
@@ -52,6 +63,7 @@ main = do
   runEffectFn2 logTwice "hello" "world" -- hello / world
   logShow (runFn3 add3 1 2 3) -- 6
   logShow (runFn2 mul2 4 5) -- 20
+  logShow (runFn2 mulByFn 6 8) -- 48
   logShow (addOnePlusTwoTo 100) -- 103
   logShow (addOnePlusTwoTo 200) -- 203
   logShow (ST.run (runSTFn2 sumST 40 2)) -- 42

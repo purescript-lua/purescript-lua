@@ -19,28 +19,10 @@ UberModule
         ]
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Control.Monad.ST.Uncurried", qnameName = Name "foreign"
-        }, ForeignImport Nothing
-        ( ModuleName "Control.Monad.ST.Uncurried" ) ".spago/p/st/6d41fd264a05b9a089e79322b22b906597ea7c36/src/Control/Monad/ST/Uncurried.purs"
-        [ ( Nothing, Name "mkSTFn2" ) ]
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Data.Function.Uncurried", qnameName = Name "foreign"
-        }, ForeignImport Nothing
-        ( ModuleName "Data.Function.Uncurried" ) ".spago/p/functions/03cdfb3561c4e055a53bdba2c491ed3e063eb468/src/Data/Function/Uncurried.purs"
-        [ ( Nothing, Name "mkFn2" ), ( Nothing, Name "mkFn3" ) ]
-      ), Standalone
-      ( QName
         { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "foreign"
         }, ForeignImport Nothing
         ( ModuleName "Effect.Console" ) ".spago/p/console/f82835a0b873aafe6bd7b14dd30cc150553d4ab9/src/Effect/Console.purs"
         [ ( Nothing, Name "log" ) ]
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Effect.Uncurried", qnameName = Name "foreign"
-        }, ForeignImport Nothing
-        ( ModuleName "Effect.Uncurried" ) ".spago/p/effect/82bac3dff904fa34534c4f5b9deeb5da359471c8/src/Effect/Uncurried.purs"
-        [ ( Nothing, Name "mkEffectFn2" ) ]
       ), RecursiveGroup
       (
         ( QName
@@ -117,7 +99,7 @@ UberModule
                 [
                   ( PropName "apply", Let Nothing
                     ( Standalone
-                      ( Nothing, Name "bind$604", ObjectProp Nothing
+                      ( Nothing, Name "bind$753", ObjectProp Nothing
                         ( AppN Nothing
                           ( ObjectProp Nothing
                             ( Ref Nothing
@@ -136,23 +118,23 @@ UberModule
                       ) :| []
                     )
                     ( AbsN Nothing
-                      ( ParamNamed Nothing ( Name "f$605" ) :| [] )
+                      ( ParamNamed Nothing ( Name "f$754" ) :| [] )
                       ( AbsN Nothing
-                        ( ParamNamed Nothing ( Name "a$606" ) :| [] )
+                        ( ParamNamed Nothing ( Name "a$755" ) :| [] )
                         ( AppN Nothing
                           ( AppN Nothing
-                            ( Ref Nothing ( Local ( Name "bind$604" ) ) )
-                            ( Ref Nothing ( Local ( Name "f$605" ) ) :| [] )
+                            ( Ref Nothing ( Local ( Name "bind$753" ) ) )
+                            ( Ref Nothing ( Local ( Name "f$754" ) ) :| [] )
                           )
                           ( AbsN Nothing
-                            ( ParamNamed Nothing ( Name "f'$607" ) :| [] )
+                            ( ParamNamed Nothing ( Name "f'$756" ) :| [] )
                             ( AppN Nothing
                               ( AppN Nothing
-                                ( Ref Nothing ( Local ( Name "bind$604" ) ) )
-                                ( Ref Nothing ( Local ( Name "a$606" ) ) :| [] )
+                                ( Ref Nothing ( Local ( Name "bind$753" ) ) )
+                                ( Ref Nothing ( Local ( Name "a$755" ) ) :| [] )
                               )
                               ( AbsN Nothing
-                                ( ParamNamed Nothing ( Name "a'$608" ) :| [] )
+                                ( ParamNamed Nothing ( Name "a'$757" ) :| [] )
                                 ( AppN Nothing
                                   ( ObjectProp Nothing
                                     ( AppN Nothing
@@ -175,8 +157,8 @@ UberModule
                                     ( PropName "pure" )
                                   )
                                   ( AppN Nothing
-                                    ( Ref Nothing ( Local ( Name "f'$607" ) ) )
-                                    ( Ref Nothing ( Local ( Name "a'$608" ) ) :| [] ) :| []
+                                    ( Ref Nothing ( Local ( Name "f'$756" ) ) )
+                                    ( Ref Nothing ( Local ( Name "a'$757" ) ) :| [] ) :| []
                                   )
                                 ) :| []
                               )
@@ -210,79 +192,52 @@ UberModule
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.UncurriedLift.Test", qnameName = Name "sumST"
-        }, AppN Nothing
-        ( ObjectProp ( Just Always )
-          ( Ref Nothing
-            ( Imported ( ModuleName "Control.Monad.ST.Uncurried" ) ( Name "foreign" ) )
-          )
-          ( PropName "mkSTFn2" )
-        )
-        ( AbsN Nothing
-          ( ParamNamed Nothing ( Name "a" ) :| [] )
-          ( AbsN Nothing
-            ( ParamNamed Nothing ( Name "b" ) :| [] )
-            ( AppN Nothing
-              ( ObjectProp Nothing
-                ( Ref Nothing
-                  ( Imported ( ModuleName "Control.Monad.ST.Internal" ) ( Name "applicativeST" ) )
-                )
-                ( PropName "pure" )
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "a$705" ) :| [ ParamNamed Nothing ( Name "b$706" ) ] )
+        ( AppN Nothing
+          ( AppN Nothing
+            ( ObjectProp Nothing
+              ( Ref Nothing
+                ( Imported ( ModuleName "Control.Monad.ST.Internal" ) ( Name "applicativeST" ) )
               )
-              ( PrimBinOp Nothing PrimAdd
-                ( Ref Nothing ( Local ( Name "a" ) ) )
-                ( Ref Nothing ( Local ( Name "b" ) ) ) :| []
-              )
+              ( PropName "pure" )
             )
-          ) :| []
+            ( PrimBinOp Nothing PrimAdd
+              ( Ref Nothing ( Local ( Name "a$705" ) ) )
+              ( Ref Nothing ( Local ( Name "b$706" ) ) ) :| []
+            )
+          )
+          ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.UncurriedLift.Test", qnameName = Name "mulByFn"
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "a$696" ) :| [ ParamNamed Nothing ( Name "b$697" ) ] )
+        ( PrimBinOp Nothing PrimMul
+          ( Ref Nothing ( Local ( Name "a$696" ) ) )
+          ( Ref Nothing ( Local ( Name "b$697" ) ) )
         )
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.UncurriedLift.Test", qnameName = Name "mul2"
-        }, AppN Nothing
-        ( ObjectProp ( Just Always )
-          ( Ref Nothing ( Imported ( ModuleName "Data.Function.Uncurried" ) ( Name "foreign" ) ) )
-          ( PropName "mkFn2" )
-        )
-        ( AbsN Nothing
-          ( ParamNamed Nothing ( Name "a" ) :| [] )
-          ( AbsN Nothing
-            ( ParamNamed Nothing ( Name "b" ) :| [] )
-            ( PrimBinOp Nothing PrimMul
-              ( Ref Nothing ( Local ( Name "a" ) ) )
-              ( Ref Nothing ( Local ( Name "b" ) ) )
-            )
-          ) :| []
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "a$699" ) :| [ ParamNamed Nothing ( Name "b$700" ) ] )
+        ( PrimBinOp Nothing PrimMul
+          ( Ref Nothing ( Local ( Name "a$699" ) ) )
+          ( Ref Nothing ( Local ( Name "b$700" ) ) )
         )
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.UncurriedLift.Test", qnameName = Name "logTwice"
-        }, AppN Nothing
-        ( ObjectProp ( Just Always )
-          ( Ref Nothing ( Imported ( ModuleName "Effect.Uncurried" ) ( Name "foreign" ) ) )
-          ( PropName "mkEffectFn2" )
-        )
-        ( AbsN Nothing
-          ( ParamNamed Nothing ( Name "a" ) :| [] )
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "a$671" ) :| [ ParamNamed Nothing ( Name "b$672" ) ] )
+        ( AppN Nothing
           ( AbsN Nothing
-            ( ParamNamed Nothing ( Name "b" ) :| [] )
-            ( AbsN Nothing
-              ( ParamUnused Nothing :| [] )
-              ( Let Nothing
-                ( Standalone
-                  ( Nothing, Name "_", AppN Nothing
-                    ( AppN Nothing
-                      ( ObjectProp ( Just Always )
-                        ( Ref Nothing
-                          ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) )
-                        )
-                        ( PropName "log" )
-                      )
-                      ( Ref Nothing ( Local ( Name "a" ) ) :| [] )
-                    )
-                    ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
-                  ) :| []
-                )
-                ( AppN Nothing
+            ( ParamUnused Nothing :| [] )
+            ( Let Nothing
+              ( Standalone
+                ( Nothing, Name "_", AppN Nothing
                   ( AppN Nothing
                     ( ObjectProp ( Just Always )
                       ( Ref Nothing
@@ -290,47 +245,49 @@ UberModule
                       )
                       ( PropName "log" )
                     )
-                    ( Ref Nothing ( Local ( Name "b" ) ) :| [] )
+                    ( Ref Nothing ( Local ( Name "a$671" ) ) :| [] )
                   )
                   ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+                ) :| []
+              )
+              ( AppN Nothing
+                ( AppN Nothing
+                  ( ObjectProp ( Just Always )
+                    ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
+                    ( PropName "log" )
+                  )
+                  ( Ref Nothing ( Local ( Name "b$672" ) ) :| [] )
                 )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               )
             )
-          ) :| []
+          )
+          ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
         )
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.UncurriedLift.Test", qnameName = Name "add3"
-        }, AppN Nothing
-        ( ObjectProp ( Just Always )
-          ( Ref Nothing ( Imported ( ModuleName "Data.Function.Uncurried" ) ( Name "foreign" ) ) )
-          ( PropName "mkFn3" )
+        }, AbsN Nothing
+        ( ParamNamed Nothing
+          ( Name "a$692" ) :|
+          [ ParamNamed Nothing ( Name "b$693" ), ParamNamed Nothing ( Name "c$694" ) ]
         )
-        ( AbsN Nothing
-          ( ParamNamed Nothing ( Name "a" ) :| [] )
-          ( AbsN Nothing
-            ( ParamNamed Nothing ( Name "b" ) :| [] )
-            ( AbsN Nothing
-              ( ParamNamed Nothing ( Name "c" ) :| [] )
-              ( PrimBinOp Nothing PrimAdd
-                ( PrimBinOp Nothing PrimAdd
-                  ( Ref Nothing ( Local ( Name "a" ) ) )
-                  ( Ref Nothing ( Local ( Name "b" ) ) )
-                )
-                ( Ref Nothing ( Local ( Name "c" ) ) )
-              )
-            )
-          ) :| []
+        ( PrimBinOp Nothing PrimAdd
+          ( PrimBinOp Nothing PrimAdd
+            ( Ref Nothing ( Local ( Name "a$692" ) ) )
+            ( Ref Nothing ( Local ( Name "b$693" ) ) )
+          )
+          ( Ref Nothing ( Local ( Name "c$694" ) ) )
         )
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.UncurriedLift.Test", qnameName = Name "addOnePlusTwoTo"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "c$547" ) :| [] )
+        ( ParamNamed Nothing ( Name "c$680" ) :| [] )
         ( AppN Nothing
           ( Ref Nothing ( Imported ( ModuleName "Golden.UncurriedLift.Test" ) ( Name "add3" ) ) )
           ( LiteralInt Nothing 1 :|
-            [ LiteralInt Nothing 2, Ref Nothing ( Local ( Name "c$547" ) ) ]
+            [ LiteralInt Nothing 2, Ref Nothing ( Local ( Name "c$680" ) ) ]
           )
         )
       )
@@ -341,6 +298,9 @@ UberModule
       ),
       ( Name "mul2", Ref Nothing
         ( Imported ( ModuleName "Golden.UncurriedLift.Test" ) ( Name "mul2" ) )
+      ),
+      ( Name "mulByFn", Ref Nothing
+        ( Imported ( ModuleName "Golden.UncurriedLift.Test" ) ( Name "mulByFn" ) )
       ),
       ( Name "logTwice", Ref Nothing
         ( Imported ( ModuleName "Golden.UncurriedLift.Test" ) ( Name "logTwice" ) )
@@ -407,6 +367,27 @@ UberModule
                         ( Imported ( ModuleName "Golden.UncurriedLift.Test" ) ( Name "mul2" ) )
                       )
                       ( LiteralInt Nothing 4 :| [ LiteralInt Nothing 5 ] ) :| []
+                    ) :| []
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              ), Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( ObjectProp ( Just Always )
+                    ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
+                    ( PropName "log" )
+                  )
+                  ( AppN Nothing
+                    ( ObjectProp ( Just Always )
+                      ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
+                      ( PropName "showIntImpl" )
+                    )
+                    ( AppN Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Golden.UncurriedLift.Test" ) ( Name "mulByFn" ) )
+                      )
+                      ( LiteralInt Nothing 6 :| [ LiteralInt Nothing 8 ] ) :| []
                     ) :| []
                   )
                 )
