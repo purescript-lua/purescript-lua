@@ -1,11 +1,14 @@
 -- Constructor allocation plus tag match: the generated encoding keeps the
--- tag and the payload in the table's hash part, keyed by long strings,
--- versus an array-part encoding with a small-integer tag.
+-- tag string in the table's array slot 1 and the payload after it. The
+-- superseded hash-part encoding (string keys, pre-#185) stays as the
+-- baseline that motivated the switch, and the small-integer-tag variant
+-- records the anti-result: an interned tag string compares by pointer, so
+-- an integer tag buys nothing over it — the win is the positional layout.
 return {
   n = 2e6,
   variants = {
     {
-      name = "current",
+      name = "hash (old)",
       fn = function(n)
         local acc = 0
         for i = 1, n do
@@ -18,7 +21,20 @@ return {
       end,
     },
     {
-      name = "ideal",
+      name = "array (current)",
+      fn = function(n)
+        local acc = 0
+        for i = 1, n do
+          local m = { "Data.Maybe∷Maybe.Just", i }
+          if "Data.Maybe∷Maybe.Just" == m[1] then
+            acc = acc + m[2]
+          end
+        end
+        return acc
+      end,
+    },
+    {
+      name = "array, int tag",
       fn = function(n)
         local acc = 0
         for i = 1, n do
