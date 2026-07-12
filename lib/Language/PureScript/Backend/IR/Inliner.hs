@@ -68,8 +68,10 @@ stages:
          consults it by name (@policyAlways@) and keeps a bare-Ref alias
          to such a name as the single materialization point — dissolving
          the alias would multiply the target's use sites right before
-         Always pastes its body into each (issue #171); the local rules
-         read the root annotation directly ('isInlinableExpr');
+         Always pastes its body into each (issue #171). The pasted
+         copies shed the annotation at the paste, so only pristine roots
+         ever carry directive weight; the local rules still read the
+         root annotation directly ('isInlinableExpr');
        * @Never@ names are never pasted ('withBinding', the call-site
          rules, and the uncurry split all veto them);
        * @Arity n@ names are pasted exactly at call sites applying at

@@ -58,7 +58,7 @@ UberModule
                 )
               )
             ),
-            ( PropName "conj", AbsN ( Just Always )
+            ( PropName "conj", AbsN Nothing
               ( ParamNamed Nothing ( Name "b1$213" ) :| [] )
               ( AbsN Nothing
                 ( ParamNamed Nothing ( Name "b2$214" ) :| [] )
@@ -68,7 +68,7 @@ UberModule
                 )
               )
             ),
-            ( PropName "disj", AbsN ( Just Always )
+            ( PropName "disj", AbsN Nothing
               ( ParamNamed Nothing ( Name "b1$211" ) :| [] )
               ( AbsN Nothing
                 ( ParamNamed Nothing ( Name "b2$212" ) :| [] )
@@ -78,7 +78,7 @@ UberModule
                 )
               )
             ),
-            ( PropName "not", AbsN ( Just Always )
+            ( PropName "not", AbsN Nothing
               ( ParamNamed Nothing ( Name "b$210" ) :| [] )
               ( PrimNot Nothing ( Ref Nothing ( Local ( Name "b$210" ) ) ) )
             )

@@ -32,6 +32,7 @@ import Language.PureScript.Backend.IR.Optimizer
   , optimizedExpression
   , optimizedUberModule
   , optimizedUberModuleChecked
+  , shareForeignAccessors
   , sinkProjectionIntoLet
   )
 import Language.PureScript.Backend.IR.Supply (runSupply)
@@ -966,6 +967,78 @@ spec = describe "IR Optimizer" do
         === [ (Name "main1", refImported mainModule (Name "add"))
             , (Name "main2", refImported mainModule (Name "add"))
             ]
+      -- The Always directive is spent on the paste: the body
+      -- materialized into the alias carries no annotation, so nothing
+      -- downstream can mistake the alias for a directed binding.
+      let aliasAnns =
+            [ getAnn rhs
+            | Standalone (qn, rhs) ← Linker.uberModuleBindings optimized
+            , qn == addName
+            ]
+      aliasAnns === [Nothing]
+
+    test "a use-once alias to an @inline always binding still dissolves" do
+      -- The veto guards multi-use aliases only: at a single use site the
+      -- dissolution is a relocation (the target's site count stays one),
+      -- so the alias collapses and the body lands at the one site, its
+      -- annotation spent.
+      let semiringModule = moduleNameFromString "Data.Semiring"
+          mainModule = moduleNameFromString "Main"
+          liftedIntAdd =
+            setAnn (Just Always) . abstraction (paramNamed (Name "x")) $
+              primBinOp PrimAdd (refLocal (Name "x")) (refLocal (Name "x"))
+          original =
+            Linker.UberModule
+              { uberModuleForeigns = []
+              , uberModuleBindings =
+                  [ Standalone
+                      (QName semiringModule (Name "intAdd"), liftedIntAdd)
+                  , Standalone
+                      ( QName mainModule (Name "add")
+                      , refImported semiringModule (Name "intAdd")
+                      )
+                  ]
+              , uberModuleExports =
+                  [(Name "main1", refImported mainModule (Name "add"))]
+              }
+      optimized ←
+        either (fail . show) pure (optimizedUberModuleChecked original)
+      annotateShow optimized
+      Linker.uberModuleBindings optimized === []
+      let exportNames = fst <$> Linker.uberModuleExports optimized
+      exportNames === [Name "main1"]
+      for_ (Linker.uberModuleExports optimized) \(_name, body) →
+        diff body alphaEq (setAnn Nothing liftedIntAdd)
+
+  describe "respects @inline always after a rewrite drops it (#171)" do
+    test "dissolves a fold-stripped always binding into every use site" do
+      -- foo = @inline always (if true then f 1 else g 2). The
+      -- unreachable-else fold rewrites the root to `f 1`, dropping the
+      -- annotation; the policy keys off the pristine name, so foo still
+      -- dissolves into both use sites — the @inline always mirror of the
+      -- "respects @inline never (issue #131)" test above.
+      let mainModule = moduleNameFromString "Main"
+          ext = moduleNameFromString "Ext"
+          thenB = application (refImported ext (Name "f")) (literalInt 1)
+          elseB = application (refImported ext (Name "g")) (literalInt 2)
+          fooExp =
+            setAnn (Just Always) (ifThenElse (literalBool True) thenB elseB)
+          original =
+            Linker.UberModule
+              { uberModuleForeigns = []
+              , uberModuleBindings =
+                  [Standalone (QName mainModule (Name "foo"), fooExp)]
+              , uberModuleExports =
+                  [ (Name "main1", refImported mainModule (Name "foo"))
+                  , (Name "main2", refImported mainModule (Name "foo"))
+                  ]
+              }
+      optimized ←
+        either (fail . show) pure (optimizedUberModuleChecked original)
+      annotateShow optimized
+      Linker.uberModuleBindings optimized === []
+      Linker.uberModuleExports optimized
+        === [(Name "main1", thenB), (Name "main2", thenB)]
 
   describe "gates inlining by Complexity and Capture (issue #231)" do
     let main' = moduleNameFromString "Main"
@@ -1721,10 +1794,48 @@ spec = describe "IR Optimizer" do
             [Name "a", Name "b"]
             (Just Always)
       accessorBindings optimized `shouldBe` []
+      -- The pasted reads shed the annotation at the paste; the per-site
+      -- contract holds anyway, because 'shareForeignAccessors' consults
+      -- the directive by name, not by reading the (unreliable) node
+      -- annotations.
       Linker.uberModuleExports optimized
-        `shouldBe` [ (Name "a", xAccessor (Just Always))
-                   , (Name "b", xAccessor (Just Always))
+        `shouldBe` [ (Name "a", xAccessor noAnn)
+                   , (Name "b", xAccessor noAnn)
                    ]
+
+    it "re-binds annotated reads of an undirected name" do
+      -- A fold can transplant a stray annotation onto a read
+      -- ('reduceObjectProp' hands the projection's own annotation to the
+      -- folded value), so the pass consults no node annotations: the
+      -- directive lives in the name-keyed policy alone. The inserted
+      -- binding is normalized to no annotation, whichever copy became
+      -- the representative.
+      let foreignBinding =
+            Standalone
+              ( QName mainModule (Name "foreign")
+              , ForeignImport noAnn mainModule "Main.purs" [(noAnn, Name "x")]
+              )
+          shared =
+            shareForeignAccessors
+              mempty
+              Linker.UberModule
+                { uberModuleForeigns = []
+                , uberModuleBindings = [foreignBinding]
+                , uberModuleExports =
+                    [ (Name "a", xAccessor (Just Never))
+                    , (Name "b", xAccessor (Just Never))
+                    ]
+                }
+      Linker.uberModuleExports shared
+        `shouldBe` [ (Name "a", refImported mainModule (Name "x"))
+                   , (Name "b", refImported mainModule (Name "x"))
+                   ]
+      let insertedAnns =
+            [ getAnn rhs
+            | Standalone (qn, rhs) ← Linker.uberModuleBindings shared
+            , qn == QName mainModule (Name "x")
+            ]
+      insertedAnns `shouldBe` [Nothing]
 
   describe "counts free references against the live module (#143)" do
     -- Within a single 'optimizeModule' run the use-once check must consult
