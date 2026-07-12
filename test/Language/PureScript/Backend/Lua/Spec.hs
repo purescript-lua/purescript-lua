@@ -1,6 +1,9 @@
+{-# LANGUAGE QuasiQuotes #-}
+
 module Language.PureScript.Backend.Lua.Spec where
 
 import Control.Monad.Oops (Variant)
+import Control.Monad.Oops qualified as Oops
 import Data.Tagged (Tagged (..))
 import Data.Text qualified as Text
 import Language.PureScript.Backend.IR qualified as IR
@@ -9,10 +12,12 @@ import Language.PureScript.Backend.Lua qualified as Lua
 import Language.PureScript.Backend.Lua.Printer qualified as Printer
 import Language.PureScript.Backend.Lua.Types qualified as Lua.Types
 import Language.PureScript.Backend.Types (AppOrModule (AsModule))
-import Path.IO (getCurrentDir)
+import Path (relfile, toFilePath, (</>))
+import Path.IO (getCurrentDir, withSystemTempDir)
 import Prettyprinter (defaultLayoutOptions, layoutPretty)
 import Prettyprinter.Render.Text (renderStrict)
 import Test.Hspec (Spec, describe, expectationFailure, it, shouldSatisfy)
+import Test.Hspec.Expectations.Pretty (shouldBe)
 
 spec ∷ Spec
 spec = describe "Lua.fromUberModule" do
@@ -105,6 +110,23 @@ spec = describe "Lua.fromUberModule" do
           (shortCall topSelf (IR.App IR.noAnn (ref "g") (ref "x")))
       rendered `shouldSatisfy` (not . Text.isInfixOf "while true do")
 
+  describe "foreign export check (#249)" do
+    it "rejects a declared foreign name missing from the FFI exports" do
+      result ← compileForeignModule "return { foo = 42 }" ["foo", "bar"]
+      case result of
+        Left (Lua.ForeignExportsMissing modname missing) → do
+          modname `shouldBe` testModuleName
+          toList missing `shouldBe` [IR.Name "bar"]
+        Left err →
+          expectationFailure ("Unexpected error: " <> show err)
+        Right _chunk →
+          expectationFailure
+            "Expected ForeignExportsMissing, but compilation succeeded"
+
+    it "accepts an FFI file that exports every declared name" do
+      result ← compileForeignModule "return { foo = 42, bar = 1 }" ["foo"]
+      result `shouldSatisfy` isRight
+
 compileExportedExpr ∷ IR.Exp → IO Text
 compileExportedExpr expr =
   compileUberModule
@@ -149,6 +171,41 @@ compileUberModule uberModule = do
     Right chunk →
       pure . renderStrict $
         layoutPretty defaultLayoutOptions (Printer.printLuaChunk chunk)
+
+{- | Compile a module whose only content is a foreign import carrying
+@declaredNames@, resolved against an FFI file with the given source text.
+Mirrors the shape 'Language.PureScript.Backend.IR.Linker.foreignBindings'
+emits (see Note [Foreign bindings structure emitted by the Linker]).
+-}
+compileForeignModule ∷ String → [Text] → IO (Either Lua.Error Lua.Types.Chunk)
+compileForeignModule ffiSource declaredNames =
+  withSystemTempDir "foreigns" \foreigns → do
+    let path = toFilePath (foreigns </> [relfile|Foo.lua|])
+    writeFile path ffiSource
+    let uberModule =
+          UberModule
+            { uberModuleBindings = []
+            , uberModuleForeigns =
+                [
+                  ( IR.QName testModuleName (IR.Name "foreign")
+                  , IR.ForeignImport
+                      IR.noAnn
+                      testModuleName
+                      path
+                      [(IR.noAnn, IR.Name name) | name ← declaredNames]
+                  )
+                ]
+            , uberModuleExports = []
+            }
+    Oops.runOops $
+      ( Right
+          <$> Lua.fromUberModule
+            (Tagged foreigns)
+            (Tagged False)
+            (AsModule testModuleName)
+            uberModule
+      )
+        & Oops.catch \(e ∷ Lua.Error) → pure (Left e)
 
 absWithLetBody ∷ IR.Exp
 absWithLetBody =
