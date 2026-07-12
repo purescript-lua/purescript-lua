@@ -1,0 +1,111 @@
+UberModule
+  { uberModuleBindings =
+    [ Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Show", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Data.Show" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Show.purs"
+        [ ( Nothing, Name "showIntImpl" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Show", qnameName = Name "showIntImpl"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
+        ( PropName "showIntImpl" )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Effect.Console" ) ".spago/p/console/f82835a0b873aafe6bd7b14dd30cc150553d4ab9/src/Effect/Console.purs"
+        [ ( Nothing, Name "log" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "log"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
+        ( PropName "log" )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.ForeignAccessorDefault.Test", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Golden.ForeignAccessorDefault.Test" ) "src/Golden/ForeignAccessorDefault/Test.purs"
+        [ ( Nothing, Name "double" ), ( Nothing, Name "bump" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.ForeignAccessorDefault.Test", qnameName = Name "double"
+        }, ObjectProp Nothing
+        ( Ref Nothing
+          ( Imported ( ModuleName "Golden.ForeignAccessorDefault.Test" ) ( Name "foreign" ) )
+        )
+        ( PropName "double" )
+      )
+    ], uberModuleForeigns = [], uberModuleExports =
+    [
+      ( Name "main", AbsN Nothing
+        ( ParamUnused Nothing :| [] )
+        ( Let Nothing
+          ( Standalone
+            ( Nothing, Name "_", AppN Nothing
+              ( AppN Nothing
+                ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+                ( AppN Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
+                  ( AppN Nothing
+                    ( Ref Nothing
+                      ( Imported
+                        ( ModuleName "Golden.ForeignAccessorDefault.Test" )
+                        ( Name "double" )
+                      )
+                    )
+                    ( LiteralInt Nothing 21 :| [] ) :| []
+                  ) :| []
+                )
+              )
+              ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+            ) :|
+            [ Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+                  ( AppN Nothing
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
+                    ( AppN Nothing
+                      ( Ref Nothing
+                        ( Imported
+                          ( ModuleName "Golden.ForeignAccessorDefault.Test" )
+                          ( Name "double" )
+                        )
+                      )
+                      ( LiteralInt Nothing 4 :| [] ) :| []
+                    ) :| []
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              )
+            ]
+          )
+          ( AppN Nothing
+            ( AppN Nothing
+              ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+              ( AppN Nothing
+                ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
+                ( AppN Nothing
+                  ( ObjectProp Nothing
+                    ( Ref Nothing
+                      ( Imported
+                        ( ModuleName "Golden.ForeignAccessorDefault.Test" )
+                        ( Name "foreign" )
+                      )
+                    )
+                    ( PropName "bump" )
+                  )
+                  ( LiteralInt Nothing 7 :| [] ) :| []
+                ) :| []
+              )
+            )
+            ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+          )
+        )
+      )
+    ]
+  }
