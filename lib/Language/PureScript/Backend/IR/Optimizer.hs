@@ -1675,6 +1675,11 @@ inlineLocalBinding rhsRefCounts grouping (body, inlined) =
     Standalone (_ann, Local → name, inlinee)
       | occurrences > 0
       , countFreeRef name inlinee == 0 -- no self-reference, see above
+      , -- A magic-do effect run must stay a statement: dead-code
+        -- elimination keeps the binding even when the paste leaves it
+        -- unreferenced (see 'isEffectRun'), so a pasted copy would be a
+        -- second execution of the effect, not a relocation.
+        not (isEffectRun inlinee)
       , -- See Note [Beta reduction and local inlining share an inlining guard].
         -- A non-trivial inlinee a sibling grouping's RHS also references must
         -- not be inlined: substitution reaches only the body, so the sibling

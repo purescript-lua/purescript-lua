@@ -78,6 +78,7 @@ import Language.PureScript.Backend.IR.Types
   , refLocal
   , reflectCtor
   , setAnn
+  , pattern EffectRunArg
   )
 import Language.PureScript.Backend.IR.Uniquify (uniquifyNamesInExpr)
 import Test.Hspec
@@ -176,6 +177,21 @@ spec = describe "IR Optimizer" do
       let original =
             application (abstraction (paramNamed x) (literalInt 7)) nonTrivial
       optimizedExpression original `shouldBe` literalInt 7
+
+  -- A magic-do effect run (@m $magicDoRun@, see 'isEffectRun') bound by a
+  -- Let statement is kept by dead-code elimination even when its binder
+  -- is unreferenced, so pasting its RHS into the body leaves two copies —
+  -- the surviving statement and the pasted one — and the effect executes
+  -- twice.
+  describe "local inlining leaves magic-do effect runs in place" do
+    it "declines to inline a use-once effect-run binding" do
+      let m = moduleNameFromString "M"
+          x = Name "x"
+          runAct =
+            application (refImported m (Name "act")) (EffectRunArg noAnn)
+          body = application (refImported m (Name "consume")) (refLocal x)
+          original = let1 x runAct body
+      optimizedExpression original `shouldBe` original
 
   -- The n-ary redex — one call binding every parameter of a literal
   -- 'AbsN' (Note [n-ary abstraction]). Reduces only at exact arity;

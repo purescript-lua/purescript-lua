@@ -442,9 +442,11 @@ pattern EffectRunArg ann =
 application @m EffectRunArg@ (see 'Language.PureScript.Backend.IR.MagicDo'). Its
 side effect is observable and its statement sequencing is size-managed by
 magic-do's chunking, so passes that run after magic-do must leave it alone:
-dead-code elimination keeps it even when its binder is unreferenced, and beta
+dead-code elimination keeps it even when its binder is unreferenced, beta
 reduction does not reduce through it (which would merge a chunk into its parent
-and overflow Lua's local-variable limit).
+and overflow Lua's local-variable limit), and local inlining does not paste a
+run bound by a Let statement into the body (the kept statement plus the pasted
+copy would execute the effect twice).
 -}
 isEffectRun ∷ RawExp ann → Bool
 isEffectRun = \case

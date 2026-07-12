@@ -25,7 +25,6 @@ local Effect_foreign = {
   end,
   untilE = function(f) return function() while not(f()) do  end end end
 }
-local Effect_untilE = Effect_foreign.untilE
 local Effect_Ref_foreign = {
   _new = function(val) return function() return { value = val } end end,
   read = function(ref) return function() return ref.value end end,
@@ -33,11 +32,8 @@ local Effect_Ref_foreign = {
     return function(ref) return function() ref.value = val end end
   end
 }
-local Effect_Ref__new = Effect_Ref_foreign._new
 local Effect_Ref_read = Effect_Ref_foreign.read
-local Effect_Ref_write = Effect_Ref_foreign.write
 local Partial_Unsafe_foreign = { _unsafePartial = function(f) return f() end }
-local Partial_Unsafe__unsafePartial = Partial_Unsafe_foreign._unsafePartial
 local Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
 }
@@ -123,14 +119,14 @@ return (function()
       tailRecM = function(f_S_11)
         return function(a_S_12)
           return function()
-            local r_S_16 = Effect_bindEffect.bind(f_S_11(a_S_12))(Effect_Ref__new)()
-            local _ = Effect_untilE(function()
+            local r_S_16 = Effect_bindEffect.bind(f_S_11(a_S_12))(Effect_Ref_foreign._new)()
+            local _ = Effect_foreign.untilE(function()
               local v0_S_17 = Effect_Ref_read(r_S_16)()
               return (function()
                 if "Control.Monad.Rec.Class∷Step.Loop" == v0_S_17[1] then
                   return function()
                     local e_S_19 = f_S_11(v0_S_17[2])()
-                    local _ = Effect_Ref_write(e_S_19)(r_S_16)()
+                    local _ = Effect_Ref_foreign.write(e_S_19)(r_S_16)()
                     return Control_Monad_Rec_Class_pure(false)()
                   end
                 elseif "Control.Monad.Rec.Class∷Step.Done" == v0_S_17[1] then
@@ -140,7 +136,7 @@ return (function()
                 end
               end)()()
             end)()
-            return Effect_functorEffect.map(Partial_Unsafe__unsafePartial(function(  )
+            return Effect_functorEffect.map(Partial_Unsafe_foreign._unsafePartial(function(  )
               return function(v_S_9_S_20)
                 if "Control.Monad.Rec.Class∷Step.Done" == v_S_9_S_20[1] then
                   return v_S_9_S_20[2]
@@ -182,68 +178,5 @@ return (function()
       end
     end
   end)()(0)(5)()
-  return Effect_Console_foreign.log(Data_Show_foreign.showIntImpl((function()
-    local dictMonadRec_S_535_S_541 = {
-      tailRecM = function(f_S_11_S_542)
-        return function(a_S_12_S_543)
-          return function()
-            local r_S_16_S_544 = Effect_bindEffect.bind(f_S_11_S_542(a_S_12_S_543))(Effect_Ref__new)()
-            local __S_545 = Effect_untilE(function()
-              local v0_S_17_S_546 = Effect_Ref_read(r_S_16_S_544)()
-              return (function()
-                if "Control.Monad.Rec.Class∷Step.Loop" == v0_S_17_S_546[1] then
-                  return function()
-                    local e_S_19_S_547 = f_S_11_S_542(v0_S_17_S_546[2])()
-                    local __S_548 = Effect_Ref_write(e_S_19_S_547)(r_S_16_S_544)()
-                    return Control_Monad_Rec_Class_pure(false)()
-                  end
-                elseif "Control.Monad.Rec.Class∷Step.Done" == v0_S_17_S_546[1] then
-                  return Control_Monad_Rec_Class_pure(true)
-                else
-                  return error("No patterns matched")
-                end
-              end)()()
-            end)()
-            return Effect_functorEffect.map(Partial_Unsafe__unsafePartial(function(  )
-              return function(v_S_9_S_20_S_549)
-                if "Control.Monad.Rec.Class∷Step.Done" == v_S_9_S_20_S_549[1] then
-                  return v_S_9_S_20_S_549[2]
-                else
-                  return error("No patterns matched")
-                end
-              end
-            end))(Effect_Ref_read(r_S_16_S_544))()
-          end
-        end
-      end,
-      Monad0 = function() return Effect_monadEffect end
-    }
-    local pure_S_536_S_550 = ((dictMonadRec_S_535_S_541.Monad0()).Applicative0()).pure
-    return function(b_S_537_S_551)
-      return function(n_S_538_S_552)
-        return dictMonadRec_S_535_S_541.tailRecM(function(o_S_483_S_539_S_553)
-          if "Data.Ordering∷Ordering.LT" == (function()
-            if o_S_483_S_539_S_553.b < n_S_538_S_552 then
-              return "Data.Ordering∷Ordering.LT"
-            elseif o_S_483_S_539_S_553.b == n_S_538_S_552 then
-              return "Data.Ordering∷Ordering.EQ"
-            else
-              return "Data.Ordering∷Ordering.GT"
-            end
-          end)() then
-            return pure_S_536_S_550((function(value0)
-              return { "Control.Monad.Rec.Class∷Step.Loop", value0 }
-            end)({
-              a = Golden_TailRecM2Shadow_Test_add_S_w(o_S_483_S_539_S_553.a, o_S_483_S_539_S_553.b),
-              b = Golden_TailRecM2Shadow_Test_add_S_w(o_S_483_S_539_S_553.b, 1)
-            }))
-          else
-            return pure_S_536_S_550((function(value0)
-              return { "Control.Monad.Rec.Class∷Step.Done", value0 }
-            end)(o_S_483_S_539_S_553.a))
-          end
-        end)({ a = b_S_537_S_551, b = 0 })
-      end
-    end
-  end)()(0)(5)()))()
+  return Effect_Console_foreign.log(Data_Show_foreign.showIntImpl(r_S_0))()
 end)()
