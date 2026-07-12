@@ -96,6 +96,10 @@ Every budget overflow degrades the specific function back to plain
 module Language.PureScript.Backend.Lua.Localize
   ( localizeChunk
   , maxCachedFieldsPerFunction
+
+    -- * Shared with "Language.PureScript.Backend.Lua.Promote"
+  , moduleTableStable
+  , namesInBlock
   ) where
 
 import Data.Map.Strict qualified as Map
