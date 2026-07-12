@@ -64,7 +64,12 @@ stages:
      rewrites may strip an annotation off its node, so decisions key off
      names — and the optimizer consults the resulting policy:
 
-       * @Just Always@ on a root forces inlining ('isInlinableExpr');
+       * @Just Always@ on a root forces inlining: the top-level inliner
+         consults it by name (@policyAlways@) and keeps a bare-Ref alias
+         to such a name as the single materialization point — dissolving
+         the alias would multiply the target's use sites right before
+         Always pastes its body into each (issue #171); the local rules
+         read the root annotation directly ('isInlinableExpr');
        * @Never@ names are never pasted ('withBinding', the call-site
          rules, and the uncurry split all veto them);
        * @Arity n@ names are pasted exactly at call sites applying at
