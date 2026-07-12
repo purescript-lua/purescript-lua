@@ -4,6 +4,7 @@ import Cli (Args (luaOutputFile), ExtraOutput (..))
 import Cli qualified
 import Control.Monad.Oops qualified as Oops
 import Data.Tagged (Tagged (..))
+import Data.Text qualified as Text
 import Language.PureScript.Backend (CompilationResult (..))
 import Language.PureScript.Backend qualified as Backend
 import Language.PureScript.Backend.IR qualified as IR
@@ -140,6 +141,16 @@ handleLuaError =
   Oops.catch \case
     Lua.LinkerErrorForeign e →
       die $ "Linker error:\n" <> show e
+    Lua.ForeignExportsMissing modname names →
+      die . toString . unlines $
+        [ "The foreign module for "
+            <> runModuleName modname
+            <> " does not export: "
+            <> Text.intercalate ", " (IR.nameToText <$> toList names)
+            <> "."
+        , "Every name declared as a `foreign import` in PureScript must be a"
+        , "key of the table returned by the module's FFI file."
+        ]
     Lua.AppEntryPointNotFound modname ident →
       die . toString $
         "App entry point not found: "

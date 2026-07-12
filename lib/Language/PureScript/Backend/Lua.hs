@@ -53,6 +53,11 @@ instance Monoid UsesObjectUpdate where
 
 data Error
   = LinkerErrorForeign Foreign.Error
+  | {- | Names declared as @foreign import@s whose keys are missing from the
+    table the module's FFI file returns. Every such read would be @nil@ at
+    runtime, so lowering rejects the module instead. See issue #249.
+    -}
+    ForeignExportsMissing ModuleName (NonEmpty IR.Name)
   | AppEntryPointNotFound ModuleName PS.Ident
   | {- | The generated chunk nests more deeply than Lua 5.1's parser allows
     (~200 syntax levels), so it would fail to load. Carries the measured
@@ -327,13 +332,26 @@ fromIR foreigns topLevelNames modname ir = case ir of
     pure $ Left [Lua.ifThenElse condExp thenBranch elseBranch]
   IR.Exception _ann msg →
     pure . Right $ Lua.error msg
-  IR.ForeignImport _ann _moduleName path annotatedNames → do
+  IR.ForeignImport _ann foreignModuleName path annotatedNames → do
     let foreignNames = fromName <<$>> annotatedNames
     -- See Note [Foreign module source format] in ...Lua.Linker.Foreign
     Foreign.Source {header, returnComments, exports} ←
       Oops.hoistEither =<< liftIO do
         left LinkerErrorForeign
           <$> Foreign.parseForeignSource (untag foreigns) path
+    -- A declared name absent from the FFI exports would lower to a read of
+    -- a missing table field and fail only at runtime, as a nil. The carried
+    -- name list is DCE-pruned, so exactly the names the emitted accessors
+    -- will read are required to exist.
+    let exportedNames = [Key.toSafeName key | (key, _value) ← toList exports]
+    whenJust
+      ( nonEmpty
+          [ name
+          | (_nameAnn, name) ← annotatedNames
+          , fromName name `notElem` exportedNames
+          ]
+      )
+      (Oops.throw . ForeignExportsMissing foreignModuleName)
     let keptRows =
           [ (comments, Lua.TableRowNV name (Lua.ann value))
           | (key, (comments, value)) ← toList exports
