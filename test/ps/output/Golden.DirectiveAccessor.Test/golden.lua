@@ -1,7 +1,9 @@
 local Data_Show_foreign = { showIntImpl = function(n) return tostring(n) end }
+local Data_Show_showIntImpl = Data_Show_foreign.showIntImpl
 local Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
 }
+local Effect_Console_log = Effect_Console_foreign.log
 local Golden_DirectiveAccessor_Test_ops = {
   add = function(a) return function(b) return a + b end end,
   mul = function(a0) return function(b0) return a0 * b0 end end
@@ -23,8 +25,8 @@ local Golden_DirectiveAccessor_Test_mkOps = function(n)
   }
 end
 return (function()
-  local _ = Effect_Console_foreign.log(Data_Show_foreign.showIntImpl(Golden_DirectiveAccessor_Test_ops.mul(6)(7)))()
-  local _ = Effect_Console_foreign.log(Data_Show_foreign.showIntImpl(Golden_DirectiveAccessor_Test_ops.mul(2)(3)))()
-  local _ = Effect_Console_foreign.log(Data_Show_foreign.showIntImpl(252))()
-  return Effect_Console_foreign.log(Data_Show_foreign.showIntImpl((Golden_DirectiveAccessor_Test_mkOps(2)).mul(3)(4)))()
+  local _ = Effect_Console_log(Data_Show_showIntImpl(Golden_DirectiveAccessor_Test_ops.mul(6)(7)))()
+  local _ = Effect_Console_log(Data_Show_showIntImpl(Golden_DirectiveAccessor_Test_ops.mul(2)(3)))()
+  local _ = Effect_Console_log(Data_Show_showIntImpl(252))()
+  return Effect_Console_log(Data_Show_showIntImpl((Golden_DirectiveAccessor_Test_mkOps(2)).mul(3)(4)))()
 end)()
