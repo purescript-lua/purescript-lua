@@ -6,7 +6,9 @@ import Hedgehog (PropertyT, annotateShow, diff, forAll, (===))
 import Hedgehog.Gen qualified as Gen
 import Hedgehog.Range qualified as Range
 import Language.PureScript.Backend.IR.Gen qualified as Gen
-import Language.PureScript.Backend.IR.Inliner (Annotation (Always, Never))
+import Language.PureScript.Backend.IR.Inliner
+  ( Annotation (Always, Arity, Never)
+  )
 import Language.PureScript.Backend.IR.Linker (LinkMode (..))
 import Language.PureScript.Backend.IR.Linker qualified as Linker
 import Language.PureScript.Backend.IR.Linter
@@ -1244,6 +1246,163 @@ spec = describe "IR Optimizer" do
                                   )
                             )
         es → expectationFailure ("unexpected exports: " <> show es)
+
+  describe "honours @inline arity=N directives (issue #232)" do
+    let mainModule = moduleNameFromString "Main"
+        extern = moduleNameFromString "Extern"
+        g = refImported extern (Name "g")
+        fName = QName mainModule (Name "f")
+        fRef = refImported mainModule (Name "f")
+        -- λa. λb. g a b — non-foldable, curried.
+        fDef =
+          abstraction (paramNamed (Name "a")) $
+            abstraction (paramNamed (Name "b")) $
+              application
+                (application g (refLocal (Name "a")))
+                (refLocal (Name "b"))
+        applied2 x y =
+          application (application fRef (literalInt x)) (literalInt y)
+        checked = either (fail . show) pure . optimizedUberModuleChecked
+        namesOf uber =
+          [ name
+          | Standalone (QName _ (Name name), _) ←
+              Linker.uberModuleBindings uber
+          ]
+
+    it "inlines at sites applied to N arguments" do
+      -- Two saturated sites (so the use-once path cannot claim the
+      -- binding): both collapse to direct g calls and f is collected.
+      optimized ←
+        checked
+          Linker.UberModule
+            { uberModuleForeigns = []
+            , uberModuleBindings =
+                [Standalone (fName, setAnn (Just (Arity 2)) fDef)]
+            , uberModuleExports =
+                [(Name "main1", applied2 1 2), (Name "main2", applied2 3 4)]
+            }
+      namesOf optimized `shouldBe` []
+      Linker.uberModuleExports optimized
+        `shouldBe` [
+                     ( Name "main1"
+                     , application (application g (literalInt 1)) (literalInt 2)
+                     )
+                   ,
+                     ( Name "main2"
+                     , application (application g (literalInt 3)) (literalInt 4)
+                     )
+                   ]
+
+    it "keeps the binding a reference at an under-applied site" do
+      -- One single-argument site: below the directed arity nothing may
+      -- paste — not even the use-once whole-binding path.
+      optimized ←
+        checked
+          Linker.UberModule
+            { uberModuleForeigns = []
+            , uberModuleBindings =
+                [Standalone (fName, setAnn (Just (Arity 2)) fDef)]
+            , uberModuleExports =
+                [(Name "main", application fRef (literalInt 1))]
+            }
+      namesOf optimized `shouldBe` ["f"]
+      Linker.uberModuleExports optimized
+        `shouldBe` [(Name "main", application fRef (literalInt 1))]
+
+    it "inlines at a site applied to more than N arguments" do
+      optimized ←
+        checked
+          Linker.UberModule
+            { uberModuleForeigns = []
+            , uberModuleBindings =
+                [Standalone (fName, setAnn (Just (Arity 1)) fDef)]
+            , uberModuleExports =
+                [(Name "main1", applied2 1 2), (Name "main2", applied2 3 4)]
+            }
+      namesOf optimized `shouldBe` []
+      Linker.uberModuleExports optimized
+        `shouldBe` [
+                     ( Name "main1"
+                     , application (application g (literalInt 1)) (literalInt 2)
+                     )
+                   ,
+                     ( Name "main2"
+                     , application (application g (literalInt 3)) (literalInt 4)
+                     )
+                   ]
+
+    it "bypasses the size budget at a directed site" do
+      -- λa. a + 1 + 2 + … — far over 'inlineSizeBudget', so only the
+      -- directive can paste it. After the paste, constant folding
+      -- collapses each export to a literal.
+      let bigDef =
+            abstraction (paramNamed (Name "a")) $
+              foldl'
+                (\acc i → primBinOp PrimAdd acc (literalInt i))
+                (refLocal (Name "a"))
+                [1 .. 40]
+      optimized ←
+        checked
+          Linker.UberModule
+            { uberModuleForeigns = []
+            , uberModuleBindings =
+                [Standalone (fName, setAnn (Just (Arity 1)) bigDef)]
+            , uberModuleExports =
+                [ (Name "main1", application fRef (literalInt 0))
+                , (Name "main2", application fRef (literalInt 100))
+                ]
+            }
+      namesOf optimized `shouldBe` []
+      Linker.uberModuleExports optimized
+        `shouldBe` [ (Name "main1", literalInt 820)
+                   , (Name "main2", literalInt 920)
+                   ]
+
+    it "pastes a non-lambda definition at a directed site" do
+      -- h = g 1 — a partial application, not a manifest lambda. The
+      -- directive pastes it anyway; duplicated work is the user's call.
+      let hName = QName mainModule (Name "h")
+          hRef = refImported mainModule (Name "h")
+          hDef = application g (literalInt 1)
+      optimized ←
+        checked
+          Linker.UberModule
+            { uberModuleForeigns = []
+            , uberModuleBindings =
+                [Standalone (hName, setAnn (Just (Arity 1)) hDef)]
+            , uberModuleExports =
+                [ (Name "main1", application hRef (literalInt 2))
+                , (Name "main2", application hRef (literalInt 3))
+                ]
+            }
+      namesOf optimized `shouldBe` []
+      Linker.uberModuleExports optimized
+        `shouldBe` [
+                     ( Name "main1"
+                     , application (application g (literalInt 1)) (literalInt 2)
+                     )
+                   ,
+                     ( Name "main2"
+                     , application (application g (literalInt 1)) (literalInt 3)
+                     )
+                   ]
+
+    it "keeps an arity-marked binding out of the uncurry split" do
+      -- Directed arity above every site's argument count: no site
+      -- pastes, and the split must not steal the name's call sites
+      -- either — no worker may appear.
+      optimized ←
+        checked
+          Linker.UberModule
+            { uberModuleForeigns = []
+            , uberModuleBindings =
+                [Standalone (fName, setAnn (Just (Arity 3)) fDef)]
+            , uberModuleExports =
+                [(Name "main1", applied2 1 2), (Name "main2", applied2 3 4)]
+            }
+      namesOf optimized `shouldBe` ["f"]
+      Linker.uberModuleExports optimized
+        `shouldBe` [(Name "main1", applied2 1 2), (Name "main2", applied2 3 4)]
 
   describe "keeps foreign module tables hoisted (issue #175)" do
     -- A foreign module's value table must stay a single shared binding:
