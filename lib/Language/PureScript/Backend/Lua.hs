@@ -7,7 +7,6 @@ module Language.PureScript.Backend.Lua
   ) where
 
 import Control.Arrow (left)
-import Control.Monad (ap)
 import Control.Monad.Oops (CouldBe, Variant)
 import Control.Monad.Oops qualified as Oops
 import Control.Monad.Trans.Accum (AccumT, add, runAccumT)
@@ -188,9 +187,16 @@ fromIR foreigns topLevelNames modname ir = case ir of
     Right . Lua.table <$> for kvs \(prop, exp) →
       Lua.tableRowNV (fromPropName prop) <$> goExp exp
   IR.ReflectCtor _ann e →
-    Right . (`Lua.varIndex` keyCtor) <$> goExp e
-  IR.DataArgumentByIndex _ann _algTy i e →
-    Right . (`Lua.varField` Lua.unsafeName ("value" <> show i)) <$> goExp e
+    Right . (`Lua.varIndex` Lua.Integer 1) <$> goExp e
+  IR.DataArgumentByIndex _ann algTy i e →
+    -- Constructor fields sit in consecutive array slots after the tag
+    -- (sum types) or from slot 1 (product types, which carry no tag) —
+    -- see the 'IR.Ctor' case below.
+    Right . (`Lua.varIndex` Lua.Integer (intCast i + offset)) <$> goExp e
+   where
+    offset = case algTy of
+      IR.SumType → 2
+      IR.ProductType → 1
   IR.Eq _ann l r →
     Right <$> liftA2 Lua.equalTo (goExp l) (goExp r)
   -- See Note [IR primops]: lowering is the identity onto the Lua operator.
@@ -202,17 +208,27 @@ fromIR foreigns topLevelNames modname ir = case ir of
     pure . Right $ foldr wrap value args
    where
     wrap name expr = Lua.functionDef [ParamNamed name] [Lua.return expr]
-    -- Only sum-type constructors need the tag row: the pattern matcher emits a
-    -- ReflectCtor read (the reflectCtor == ctorId test) exclusively for sum
-    -- types, so on a product value the row would never be read.
-    -- See Note [Compiling case expressions to decision trees].
+    -- A constructor value is a positional table: the tag string in slot
+    -- 1, fields in the slots after it. Only sum-type constructors need
+    -- the tag row: the pattern matcher emits a ReflectCtor read (the
+    -- reflectCtor == ctorId test) exclusively for sum types, so on a
+    -- product value the row would never be read — product fields start
+    -- at slot 1. See Note [Compiling case expressions to decision trees].
+    --
+    -- The rows must stay positional ('TableRowV'), not '[i] = v' keyed
+    -- ('TableRowKV'): only a positional constructor pre-sizes the
+    -- table's array part in PUC Lua 5.1 — keyed integer rows go through
+    -- the hash lookup this representation exists to avoid. Positional
+    -- rows are safe because every row is a plain parameter name, which
+    -- is single-valued in Lua even when nil, so a row can never splice
+    -- multiple values into the constructor the way a call could.
     value = Lua.table case algebraicTy of
       IR.SumType → ctorRow : attributes
       IR.ProductType → attributes
     ctorId = IR.ctorId ctorModName ctorTyName ctorName
-    ctorRow = Lua.tableRowKV keyCtor (Lua.String ctorId)
+    ctorRow = Lua.tableRowV (Lua.String ctorId)
     args = Name.unsafeName . IR.renderFieldName <$> fieldNames
-    attributes = args <&> ap Lua.tableRowNV Lua.varName
+    attributes = args <&> Lua.tableRowV . Lua.varName
   IR.ArrayLength _ann e →
     Right . Lua.hash <$> goExp e
   IR.ArrayIndex _ann expr index →
@@ -382,9 +398,6 @@ fromIR foreigns topLevelNames modname ir = case ir of
 
   goExp ∷ IR.Exp → LuaM e Lua.Exp
   goExp = asExpression <<$>> go
-
-keyCtor ∷ Lua.Exp
-keyCtor = Lua.String "$ctor"
 
 --------------------------------------------------------------------------------
 -- Helpers ---------------------------------------------------------------------

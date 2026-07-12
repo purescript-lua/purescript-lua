@@ -740,7 +740,10 @@ data Pattern
   | PatArrayLength Int
   deriving stock (Eq, Show)
 
-data Step = TakeIndex Natural | TakeProp PropName
+data Step
+  = TakeIndex Natural
+  | TakeProp PropName
+  | TakeCtorField AlgebraicType Natural
   deriving stock (Eq, Show)
 
 applyStep ∷ Step → Exp → Exp
@@ -748,6 +751,7 @@ applyStep step expr =
   case step of
     TakeIndex i → arrayIndex expr i
     TakeProp p → objectProp expr p
+    TakeCtorField algTy i → dataArgumentByIndex algTy i expr
 
 data Match = Match
   { matchExp ∷ Exp
@@ -783,11 +787,6 @@ mkBinder matchExp = go mempty
             throwContextualError
               NewtypeCtorBinderHasUnexpectedNumberOfNestedBinders
         else do
-          nestedMatches ←
-            for (zip [0 ..] binders) \(index ∷ Int, binder) →
-              let prop = PropName ("value" <> toText (show index))
-               in go (TakeProp prop : stepsToFocus) binder
-
           let qualifiedTypeName = mkQualified mkTyName qTypeName
           Context {contextModule} ← get
           let contextModuleName = Cfn.moduleName contextModule
@@ -797,6 +796,11 @@ mkBinder matchExp = go mempty
             Local tyName →
               (contextModuleName,tyName,)
                 <$> algebraicTy contextModuleName tyName
+
+          nestedMatches ←
+            for (zip [0 ..] binders) \(index, binder) →
+              go (TakeCtorField algTy index : stepsToFocus) binder
+
           let ctrName = mkCtorName (Names.disqualify qCtorName)
           pure
             Match
