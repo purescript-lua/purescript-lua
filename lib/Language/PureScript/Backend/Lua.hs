@@ -343,12 +343,13 @@ fromIR foreigns topLevelNames modname ir = case ir of
     -- a missing table field and fail only at runtime, as a nil. The carried
     -- name list is DCE-pruned, so exactly the names the emitted accessors
     -- will read are required to exist.
-    let exportedNames = [Key.toSafeName key | (key, _value) ← toList exports]
+    let exportedNames =
+          Set.fromList [Key.toSafeName key | (key, _value) ← toList exports]
     whenJust
       ( nonEmpty
           [ name
           | (_nameAnn, name) ← annotatedNames
-          , fromName name `notElem` exportedNames
+          , fromName name `Set.notMember` exportedNames
           ]
       )
       (Oops.throw . ForeignExportsMissing foreignModuleName)
