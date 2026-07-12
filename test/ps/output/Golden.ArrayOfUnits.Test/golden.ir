@@ -4,13 +4,19 @@ UberModule
       ( QName
         { qnameModuleName = ModuleName "Data.Unit", qnameName = Name "foreign"
         }, ForeignImport Nothing
-        ( ModuleName "Data.Unit" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Unit.purs"
-        [ ( Just Always, Name "unit" ) ]
+        ( ModuleName "Data.Unit" ) ".spago/p/prelude/5718c84fdde6247749cb053e816df696c30fe691/src/Data/Unit.purs"
+        [ ( Just Never, Name "unit" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Unit", qnameName = Name "unit"
+        }, ObjectProp ( Just Never )
+        ( Ref Nothing ( Imported ( ModuleName "Data.Unit" ) ( Name "foreign" ) ) )
+        ( PropName "unit" )
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Data.Show", qnameName = Name "foreign"
         }, ForeignImport Nothing
-        ( ModuleName "Data.Show" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Show.purs"
+        ( ModuleName "Data.Show" ) ".spago/p/prelude/5718c84fdde6247749cb053e816df696c30fe691/src/Data/Show.purs"
         [ ( Nothing, Name "showIntImpl" ) ]
       ), Standalone
       ( QName
@@ -310,13 +316,10 @@ UberModule
       ( Name "main", Let Nothing
         ( Standalone
           ( Nothing, Name "arr$0", LiteralArray Nothing
-            [ ObjectProp ( Just Always )
-              ( Ref Nothing ( Imported ( ModuleName "Data.Unit" ) ( Name "foreign" ) ) )
-              ( PropName "unit" ), ObjectProp ( Just Always )
-              ( Ref Nothing ( Imported ( ModuleName "Data.Unit" ) ( Name "foreign" ) ) )
-              ( PropName "unit" ), ObjectProp ( Just Always )
-              ( Ref Nothing ( Imported ( ModuleName "Data.Unit" ) ( Name "foreign" ) ) )
-              ( PropName "unit" )
+            [ Ref Nothing
+              ( Imported ( ModuleName "Data.Unit" ) ( Name "unit" ) ), Ref Nothing
+              ( Imported ( ModuleName "Data.Unit" ) ( Name "unit" ) ), Ref Nothing
+              ( Imported ( ModuleName "Data.Unit" ) ( Name "unit" ) )
             ]
           ) :| []
         )
@@ -421,9 +424,8 @@ UberModule
                         )
                         ( PropName "pure" )
                       )
-                      ( ObjectProp ( Just Always )
-                        ( Ref Nothing ( Imported ( ModuleName "Data.Unit" ) ( Name "foreign" ) ) )
-                        ( PropName "unit" ) :| []
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Data.Unit" ) ( Name "unit" ) ) :| []
                       ) :| []
                     )
                   )

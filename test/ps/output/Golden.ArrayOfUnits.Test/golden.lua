@@ -17,6 +17,7 @@ local function PSLUA_runtime_lazy(name)
   end
 end
 local Data_Unit_foreign = { unit = {} }
+local Data_Unit_unit = Data_Unit_foreign.unit
 local Data_Show_foreign = { showIntImpl = function(n) return tostring(n) end }
 local Data_Foldable_foreign = {
   foldrArray = function(f)
@@ -109,9 +110,9 @@ local Effect_Console_logShow_S_w = function(dictShow, a)
 end
 return (function()
   local arr_S_0 = {
-    [1] = Data_Unit_foreign.unit,
-    [2] = Data_Unit_foreign.unit,
-    [3] = Data_Unit_foreign.unit
+    [1] = Data_Unit_unit,
+    [2] = Data_Unit_unit,
+    [3] = Data_Unit_unit
   }
   return function()
     local _ = Data_Foldable_foldableArray.foldr(function(x_S_940)
@@ -127,7 +128,7 @@ return (function()
       end)()(Effect_Console_logShow_S_w({
         show = function() return "unit" end
       }, x_S_940))
-    end)(Effect_applicativeEffect.pure(Data_Unit_foreign.unit))(arr_S_0)()
+    end)(Effect_applicativeEffect.pure(Data_Unit_unit))(arr_S_0)()
     return Effect_Console_logShow_S_w({
       show = Data_Show_foreign.showIntImpl
     }, Data_Foldable_foldableArray.foldl(function(c_S_372_S_914)

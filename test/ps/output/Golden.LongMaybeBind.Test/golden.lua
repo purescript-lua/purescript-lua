@@ -1,4 +1,5 @@
 local Data_Unit_foreign = { unit = {} }
+local Data_Unit_unit = Data_Unit_foreign.unit
 local Data_Show_foreign = { showIntImpl = function(n) return tostring(n) end }
 local Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
@@ -87,7 +88,7 @@ local Golden_LongMaybeBind_Test_compute = (function()
                         return Golden_LongMaybeBind_Test_bind_S_w(Data_Maybe_Just(Golden_LongMaybeBind_Test_add_S_w(x247, 1)), function( x248 )
                           return Golden_LongMaybeBind_Test_bind_S_w(Data_Maybe_Just(Golden_LongMaybeBind_Test_add_S_w(x248, 1)), function( x249 )
                             return Golden_LongMaybeBind_Test_bind_S_w(Data_Maybe_Just(Golden_LongMaybeBind_Test_add_S_w(x249, 1)), function( x250 )
-                              return Golden_LongMaybeBind_Test_bind_S_w(Data_Maybe_Just(Data_Unit_foreign.unit), function(  )
+                              return Golden_LongMaybeBind_Test_bind_S_w(Data_Maybe_Just(Data_Unit_unit), function(  )
                                 return Golden_LongMaybeBind_Test_bind_S_w(Data_Maybe_Just(Golden_LongMaybeBind_Test_add_S_w(x250, 1)), function( x251 )
                                   return Golden_LongMaybeBind_Test_bind_S_w(Data_Maybe_Just(Golden_LongMaybeBind_Test_add_S_w(x251, 1)), function( x252 )
                                     return Golden_LongMaybeBind_Test_bind_S_w(Data_Maybe_Just(Golden_LongMaybeBind_Test_add_S_w(x252, 1)), function( x253 )
@@ -361,7 +362,7 @@ local Golden_LongMaybeBind_Test_compute = (function()
                                                               return Golden_LongMaybeBind_Test_bind_S_w(Data_Maybe_Just(Golden_LongMaybeBind_Test_add_S_w(x147, 1)), function( x148 )
                                                                 return Golden_LongMaybeBind_Test_bind_S_w(Data_Maybe_Just(Golden_LongMaybeBind_Test_add_S_w(x148, 1)), function( x149 )
                                                                   return Golden_LongMaybeBind_Test_bind_S_w(Data_Maybe_Just(Golden_LongMaybeBind_Test_add_S_w(x149, 1)), function( x150 )
-                                                                    return Golden_LongMaybeBind_Test_bind_S_w(Data_Maybe_Just(Data_Unit_foreign.unit), function(  )
+                                                                    return Golden_LongMaybeBind_Test_bind_S_w(Data_Maybe_Just(Data_Unit_unit), function(  )
                                                                       return Golden_LongMaybeBind_Test_bind_S_w(Data_Maybe_Just(Golden_LongMaybeBind_Test_add_S_w(x150, 1)), function( x151 )
                                                                         return Golden_LongMaybeBind_Test_bind_S_w(Data_Maybe_Just(Golden_LongMaybeBind_Test_add_S_w(x151, 1)), function( x152 )
                                                                           return Golden_LongMaybeBind_Test_bind_S_w(Data_Maybe_Just(Golden_LongMaybeBind_Test_add_S_w(x152, 1)), function( x153 )
@@ -510,7 +511,7 @@ local Golden_LongMaybeBind_Test_compute = (function()
                     return Golden_LongMaybeBind_Test_bind_S_w(Data_Maybe_Just(Golden_LongMaybeBind_Test_add_S_w(x47, 1)), function( x48 )
                       return Golden_LongMaybeBind_Test_bind_S_w(Data_Maybe_Just(Golden_LongMaybeBind_Test_add_S_w(x48, 1)), function( x49 )
                         return Golden_LongMaybeBind_Test_bind_S_w(Data_Maybe_Just(Golden_LongMaybeBind_Test_add_S_w(x49, 1)), function( x50 )
-                          return Golden_LongMaybeBind_Test_bind_S_w(Data_Maybe_Just(Data_Unit_foreign.unit), function(  )
+                          return Golden_LongMaybeBind_Test_bind_S_w(Data_Maybe_Just(Data_Unit_unit), function(  )
                             return Golden_LongMaybeBind_Test_bind_S_w(Data_Maybe_Just(Golden_LongMaybeBind_Test_add_S_w(x50, 1)), function( x51 )
                               return Golden_LongMaybeBind_Test_bind_S_w(Data_Maybe_Just(Golden_LongMaybeBind_Test_add_S_w(x51, 1)), function( x52 )
                                 return Golden_LongMaybeBind_Test_bind_S_w(Data_Maybe_Just(Golden_LongMaybeBind_Test_add_S_w(x52, 1)), function( x53 )
