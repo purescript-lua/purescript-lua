@@ -61,14 +61,9 @@ exp =
       , Gen.subtermM exp \e →
           (`IR.lets` e) <$> Gen.nonEmpty (Range.linear 1 5) binding
       )
-    , (3, genCtorApp)
-    , (2, IR.reflectCtor <$> genCtorApp)
-    ,
-      ( 2
-      , IR.dataArgumentByIndex
-          <$> Gen.integral (Range.linear 0 3)
-          <*> genCtorApp
-      )
+    , (3, snd <$> genCtorApp)
+    , (2, IR.reflectCtor . snd <$> genCtorApp)
+    , (2, genCtorFieldRead)
     , -- Primops (issue #178): operands are arbitrary (possibly ill-typed)
       -- expressions — constant folding simply declines unless they are the
       -- matching literals, which is exactly the robustness worth fuzzing.
@@ -82,20 +77,29 @@ exp =
     ]
  where
   -- A saturated constructor application: exactly one argument per field
-  -- (nullary ctor ⇒ a bare 'Ctor'). This is the shape the #177
-  -- case-of-known-constructor fold matches on, so the fold-firing input
-  -- reaches the 'exp'-based suites too.
+  -- (nullary ctor ⇒ a bare 'Ctor'), returned along with its algebraic
+  -- type. This is the shape the #177 case-of-known-constructor fold
+  -- matches on, so the fold-firing input reaches the 'exp'-based suites
+  -- too.
   genCtorApp = do
+    algTy ← Gen.enumBounded
     fields ← Gen.list (Range.linear 0 3) fieldName
     ctorExp ←
-      IR.ctor
-        <$> Gen.enumBounded
-        <*> moduleName
+      IR.ctor algTy
+        <$> moduleName
         <*> tyName
         <*> ctorName
         <*> pure fields
     args ← forM fields \_field → exp
-    pure (foldl' IR.application ctorExp args)
+    pure (algTy, foldl' IR.application ctorExp args)
+  -- A field read carrying the constructor's own algebraic type most of
+  -- the time (the #177 fold requires the match); occasionally an
+  -- independent one, fuzzing the fold's decline path.
+  genCtorFieldRead = do
+    (algTy, ctorApp) ← genCtorApp
+    readTy ← Gen.frequency [(9, pure algTy), (1, Gen.enumBounded)]
+    index ← Gen.integral (Range.linear 0 3)
+    pure (IR.dataArgumentByIndex readTy index ctorApp)
 
 {- | A generation-time scope: the local names with an enclosing binder.
 Lets 'scopedExp' emit only references that resolve to a binder.
@@ -142,14 +146,9 @@ scopedExpIn scope =
             (Range.linear 1 4)
             ((,) <$> genPropName <*> scopedExpIn scope)
       )
-    , (3, genCtorApp)
-    , (2, IR.reflectCtor <$> genCtorApp)
-    ,
-      ( 2
-      , IR.dataArgumentByIndex
-          <$> Gen.integral (Range.linear 0 3)
-          <*> genCtorApp
-      )
+    , (3, snd <$> genCtorApp)
+    , (2, IR.reflectCtor . snd <$> genCtorApp)
+    , (2, genCtorFieldRead)
     , -- Primops (issue #178). See the note in 'exp'; here the operands
       -- are scoped subterms so the well-scopedness/GUC properties fuzz
       -- constant folding over them.
@@ -164,21 +163,30 @@ scopedExpIn scope =
  where
   scopedRef = IR.refLocal <$> Gen.element (Set.toList scope)
   -- A saturated constructor application: exactly one argument per field
-  -- (nullary ctor ⇒ a bare 'Ctor'). A 'Ctor' node binds nothing and
-  -- references no 'Scope' entry, so every argument just reuses the
-  -- incoming scope — the same category as application / if / object.
-  -- This is the shape the #177 case-of-known-constructor fold matches on.
+  -- (nullary ctor ⇒ a bare 'Ctor'), returned along with its algebraic
+  -- type. A 'Ctor' node binds nothing and references no 'Scope' entry,
+  -- so every argument just reuses the incoming scope — the same category
+  -- as application / if / object. This is the shape the #177
+  -- case-of-known-constructor fold matches on.
   genCtorApp = do
+    algTy ← Gen.enumBounded
     fields ← Gen.list (Range.linear 0 3) fieldName
     ctorExp ←
-      IR.ctor
-        <$> Gen.enumBounded
-        <*> moduleName
+      IR.ctor algTy
+        <$> moduleName
         <*> tyName
         <*> ctorName
         <*> pure fields
     args ← forM fields \_field → scopedExpIn scope
-    pure (foldl' IR.application ctorExp args)
+    pure (algTy, foldl' IR.application ctorExp args)
+  -- A field read carrying the constructor's own algebraic type most of
+  -- the time (the #177 fold requires the match); occasionally an
+  -- independent one, fuzzing the fold's decline path.
+  genCtorFieldRead = do
+    (algTy, ctorApp) ← genCtorApp
+    readTy ← Gen.frequency [(9, pure algTy), (1, Gen.enumBounded)]
+    index ← Gen.integral (Range.linear 0 3)
+    pure (IR.dataArgumentByIndex readTy index ctorApp)
   genAbs = do
     (param, body) ← genBinderBody
     pure (IR.abstraction param body)

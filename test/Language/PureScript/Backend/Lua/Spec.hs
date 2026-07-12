@@ -29,13 +29,31 @@ spec = describe "Lua.fromUberModule" do
     rendered ← compileExportedExpr absWithIfBody
     rendered `shouldSatisfy` (not . Text.isInfixOf "(function()")
 
-  it "omits the $ctor row for a product-type constructor" do
+  it "lays a product-type constructor out positionally, without a tag" do
     rendered ← compileExportedExpr (ctorExpr IR.ProductType)
+    rendered `shouldSatisfy` Text.isInfixOf "{ value0 }"
+    rendered `shouldSatisfy` (not . Text.isInfixOf "M∷T.C")
+
+  it "lays a sum-type constructor out positionally, tag string first" do
+    rendered ← compileExportedExpr (ctorExpr IR.SumType)
+    rendered `shouldSatisfy` Text.isInfixOf "{ \"M∷T.C\", value0 }"
     rendered `shouldSatisfy` (not . Text.isInfixOf "$ctor")
 
-  it "keeps the $ctor row for a sum-type constructor" do
-    rendered ← compileExportedExpr (ctorExpr IR.SumType)
-    rendered `shouldSatisfy` Text.isInfixOf "[\"$ctor\"]"
+  it "lowers a tag read to index [1]" do
+    rendered ← compileExportedExpr (absN ["x"] (IR.reflectCtor (ref "x")))
+    rendered `shouldSatisfy` Text.isInfixOf "x[1]"
+
+  it "offsets a sum-type field read past the tag slot" do
+    rendered ←
+      compileExportedExpr
+        (absN ["x"] (IR.dataArgumentByIndex IR.SumType 0 (ref "x")))
+    rendered `shouldSatisfy` Text.isInfixOf "x[2]"
+
+  it "reads a product-type field with no tag offset" do
+    rendered ←
+      compileExportedExpr
+        (absN ["x"] (IR.dataArgumentByIndex IR.ProductType 0 (ref "x")))
+    rendered `shouldSatisfy` Text.isInfixOf "x[1]"
 
   it "emits one n-ary Lua call for a multi-argument AppN" do
     rendered ← compileExportedExpr naryCall

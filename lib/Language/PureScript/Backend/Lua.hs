@@ -189,7 +189,7 @@ fromIR foreigns topLevelNames modname ir = case ir of
       Lua.tableRowNV (fromPropName prop) <$> goExp exp
   IR.ReflectCtor _ann e →
     Right . (`Lua.varIndex` keyCtor) <$> goExp e
-  IR.DataArgumentByIndex _ann i e →
+  IR.DataArgumentByIndex _ann _algTy i e →
     Right . (`Lua.varField` Lua.unsafeName ("value" <> show i)) <$> goExp e
   IR.Eq _ann l r →
     Right <$> liftA2 Lua.equalTo (goExp l) (goExp r)

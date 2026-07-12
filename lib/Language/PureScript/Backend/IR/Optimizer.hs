@@ -687,7 +687,7 @@ complexityOf = \case
   ArrayIndex _ann base _idx → Deref <> complexityOf base
   ArrayLength _ann base → Deref <> complexityOf base
   ReflectCtor _ann base → Deref <> complexityOf base
-  DataArgumentByIndex _ann _idx base → Deref <> complexityOf base
+  DataArgumentByIndex _ann _algTy _idx base → Deref <> complexityOf base
   AbsN _ann _params body → KnownSize <> complexityOf body
   _ → NonTrivial
 
@@ -949,7 +949,7 @@ reduceKnownConstructor =
       | reflectFoldsThrough t
       , reflectFoldsThrough e →
           Just $ IfThenElse ifAnn cond (ReflectCtor ann t) (ReflectCtor ann e)
-    DataArgumentByIndex ann index scrutinee
+    DataArgumentByIndex ann _algTy index scrutinee
       | (Ctor _ _ _ _ _ fields, args) ← unwindApp scrutinee
       , length args == length fields
       , Just arg ← viaNonEmpty head (List.genericDrop index args) →
@@ -1122,7 +1122,7 @@ propagateKnownCtorThroughLet env = \case
       -- cannot bind. Well-typed input never indexes past the arity; the
       -- guard keeps the rule sound on the non-GUC / generated input
       -- 'optimizedExpression' also runs on.
-      DataArgumentByIndex _ i (Ref _ (Local n))
+      DataArgumentByIndex _ _algTy i (Ref _ (Local n))
         | n == name, i < fromIntegral (length fields) → False
       Ref _ (Local n) | n == name → True
       other → any go (toListOf subexpressions other)
@@ -1134,7 +1134,7 @@ propagateKnownCtorThroughLet env = \case
     self = \case
       ObjectProp _ (Ref _ (Local n)) prop
         | n == name, Just i ← fieldIndex fields prop → Set.singleton i
-      DataArgumentByIndex _ i (Ref _ (Local n)) | n == name → Set.singleton i
+      DataArgumentByIndex _ _algTy i (Ref _ (Local n)) | n == name → Set.singleton i
       _ → mempty
 
   foldCtorReads
@@ -1155,7 +1155,7 @@ propagateKnownCtorThroughLet env = \case
         , Just i ← fieldIndex fields prop
         , Just f ← Map.lookup i freshFields →
             Ref opAnn (Local f)
-      DataArgumentByIndex daAnn i (Ref _ (Local n))
+      DataArgumentByIndex daAnn _algTy i (Ref _ (Local n))
         | n == name
         , Just f ← Map.lookup i freshFields →
             Ref daAnn (Local f)
@@ -1192,7 +1192,7 @@ reduceKnownCtorRefRead env =
       , Just i ← fieldIndex fields prop
       , Just arg ← args !!? fromIntegral i →
           Just (setAnn ann arg)
-    DataArgumentByIndex ann i spine
+    DataArgumentByIndex ann _algTy i spine
       | Just (_algTy, _fields, args, _tag) ← saturatedCtorRefApp env spine
       , Just arg ← args !!? fromIntegral i →
           Just (setAnn ann arg)

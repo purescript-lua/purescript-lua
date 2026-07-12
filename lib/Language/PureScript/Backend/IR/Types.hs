@@ -164,7 +164,7 @@ data RawExp ann
     PrimBinOp ann PrimOp (RawExp ann) (RawExp ann)
   | -- | See Note [IR primops]
     PrimNot ann (RawExp ann)
-  | DataArgumentByIndex ann Natural (RawExp ann)
+  | DataArgumentByIndex ann AlgebraicType Natural (RawExp ann)
   | ArrayLength ann (RawExp ann)
   | ArrayIndex ann (RawExp ann) Natural
   | ObjectProp ann (RawExp ann) PropName
@@ -352,7 +352,7 @@ getAnn = \case
   Eq ann _ _ → ann
   PrimBinOp ann _ _ _ → ann
   PrimNot ann _ → ann
-  DataArgumentByIndex ann _ _ → ann
+  DataArgumentByIndex ann _ _ _ → ann
   ArrayLength ann _ → ann
   ArrayIndex ann _ _ → ann
   ObjectProp ann _ _ → ann
@@ -384,7 +384,7 @@ setAnn ann = \case
   Eq _ l r → Eq ann l r
   PrimBinOp _ op l r → PrimBinOp ann op l r
   PrimNot _ e → PrimNot ann e
-  DataArgumentByIndex _ i e → DataArgumentByIndex ann i e
+  DataArgumentByIndex _ algTy i e → DataArgumentByIndex ann algTy i e
   ArrayLength _ e → ArrayLength ann e
   ArrayIndex _ e i → ArrayIndex ann e i
   ObjectProp _ e prop → ObjectProp ann e prop
@@ -545,7 +545,7 @@ arrayLength = ArrayLength noAnn
 reflectCtor ∷ Exp → Exp
 reflectCtor = ReflectCtor noAnn
 
-dataArgumentByIndex ∷ Natural → Exp → Exp
+dataArgumentByIndex ∷ AlgebraicType → Natural → Exp → Exp
 dataArgumentByIndex = DataArgumentByIndex noAnn
 
 --------------------------------------------------------------------------------
@@ -606,8 +606,8 @@ subexpressions go = \case
     LiteralObject ann <$> traverse (traverse go) props
   ReflectCtor ann a →
     ReflectCtor ann <$> go a
-  DataArgumentByIndex ann idx a →
-    DataArgumentByIndex ann idx <$> go a
+  DataArgumentByIndex ann algTy idx a →
+    DataArgumentByIndex ann algTy idx <$> go a
   Eq ann a b →
     Eq ann <$> go a <*> go b
   PrimBinOp ann op a b →
@@ -934,8 +934,8 @@ alphaEq = go 0 Map.empty Map.empty
         && go lvl scopeL scopeR bL bR
     (PrimNot annL aL, PrimNot annR aR) →
       annL == annR && go lvl scopeL scopeR aL aR
-    (DataArgumentByIndex annL iL aL, DataArgumentByIndex annR iR aR) →
-      annL == annR && iL == iR && go lvl scopeL scopeR aL aR
+    (DataArgumentByIndex annL tL iL aL, DataArgumentByIndex annR tR iR aR) →
+      annL == annR && tL == tR && iL == iR && go lvl scopeL scopeR aL aR
     (ArrayLength annL aL, ArrayLength annR aR) →
       annL == annR && go lvl scopeL scopeR aL aR
     (ArrayIndex annL aL iL, ArrayIndex annR aR iR) →
