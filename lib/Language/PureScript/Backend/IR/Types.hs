@@ -27,6 +27,7 @@ import Language.PureScript.Backend.IR.Names
   , PropName
   , Qualified (..)
   , TyName (renderTyName)
+  , discardName
   , runModuleName
   )
 import Language.PureScript.Backend.IR.Supply (SupplyM, freshName)
@@ -1091,6 +1092,12 @@ freshenBinders = go Map.empty
     Let ann binds body → do
       -- Under unique binders no Let name can be referenced before it is
       -- bound, so all the groupings can enter the rename map up front.
+      -- The discard binder `_` stays out of the map: it is exempt from
+      -- the uniqueness invariant, so one Let can bind it several times
+      -- (magic-do's discard statements), and a single name-keyed entry
+      -- would rename every one of them to the same fresh name — a
+      -- genuine duplicate the exemption no longer covers. Nothing may
+      -- reference it, so it needs no rename at all.
       renames' ←
         foldlM
           ( \rs name → do
@@ -1098,7 +1105,7 @@ freshenBinders = go Map.empty
               pure (Map.insert name name' rs)
           )
           renames
-          (bindingNames =<< toList binds)
+          (filter (/= discardName) (bindingNames =<< toList binds))
       let renameBound (bindAnn, name, expr) =
             (bindAnn,Map.findWithDefault name name renames',)
               <$> go renames' expr

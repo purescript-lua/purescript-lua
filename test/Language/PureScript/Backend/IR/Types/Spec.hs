@@ -7,10 +7,12 @@ import Language.PureScript.Backend.IR.Names
   ( ModuleName (..)
   , Name (..)
   , Qualified (Imported, Local)
+  , discardName
   )
 import Language.PureScript.Backend.IR.Supply (freshName, runSupply)
 import Language.PureScript.Backend.IR.Types
   ( Ann
+  , Binding
   , Exp
   , Grouping (..)
   , RawExp (..)
@@ -281,6 +283,20 @@ spec = describe "Types" do
           freshened = runSupply (freshenBinders guc)
       annotateShow freshened
       alphaEq guc freshened === True
+
+    it "keeps the discard binders of a Let apart" do
+      -- A magic-do-lowered thunk binds several Let statements to the
+      -- GUC-exempt discard binder `_`. One name-keyed rename entry
+      -- would send them all to the same fresh name — a genuine
+      -- duplicate binder the exemption no longer covers. The discard
+      -- binder is never referenced, so it takes no rename at all.
+      let discard ∷ Exp → Binding
+          discard e = Standalone (noAnn, discardName, e)
+          thunk =
+            lets
+              (discard (refLocal x) :| [discard (refLocal y)])
+              (literalInt 1)
+      runSupply (freshenBinders thunk) `shouldBe` thunk
 
   describe "substituteCopyM / substituteMoveM" do
     let x = Name "x"
