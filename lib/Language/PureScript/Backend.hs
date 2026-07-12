@@ -47,7 +47,7 @@ compileModules outputDir foreignDir lintIR limits appOrModule = do
   cfnModules ← CoreFn.readModuleRecursively outputDir entryModuleName
   let dataDecls = IR.collectDataDeclarations cfnModules
   irResults ← forM (Map.toList cfnModules) \(_psModuleName, cfnModule) →
-    Oops.hoistEither $ IR.mkModule cfnModule dataDecls
+    Oops.hoistEither $ IR.mkModule mempty cfnModule dataDecls
   let (needsRuntimeLazys, irModules) = unzip irResults
   let linkedModule = Linker.makeUberModule (linkerMode appOrModule) irModules
   -- Lift the allowlisted foreign exports to IR primops before optimizing, so

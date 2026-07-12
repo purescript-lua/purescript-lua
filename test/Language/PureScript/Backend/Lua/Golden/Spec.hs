@@ -290,7 +290,8 @@ compileCorefn outputDir uberModuleName = do
   let dataDecls = IR.collectDataDeclarations cfnModules
   modules ←
     forM (toList cfnModules) $
-      either (fail . show) (pure . snd) . (`IR.mkModule` dataDecls)
+      either (fail . show) (pure . snd) . \cfnModule →
+        IR.mkModule mempty cfnModule dataDecls
   let uberModule = Linker.makeUberModule (LinkAsModule uberModuleName) modules
   -- Lift the allowlisted foreign exports to IR primops (issue #178) exactly
   -- as Backend.compileModules does, so the .ir goldens reflect the same

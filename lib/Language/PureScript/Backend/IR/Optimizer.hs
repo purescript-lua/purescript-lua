@@ -1371,8 +1371,7 @@ isInlinableExpr expr =
   hasInlineAnnotation =
     getAnn >>> \case
       Just Always → True
-      Just Never → False
-      Nothing → False
+      _ → False
 
   -- The Deref tier. The explicit disjuncts above are subsumed for the
   -- shapes they share (a Ref, a short scalar), but kept: they also admit
