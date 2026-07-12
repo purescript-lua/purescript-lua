@@ -191,7 +191,7 @@ UberModule
                 )
               )
             ),
-            ( PropName "conj", AbsN ( Just Always )
+            ( PropName "conj", AbsN Nothing
               ( ParamNamed Nothing ( Name "b1$1497" ) :| [] )
               ( AbsN Nothing
                 ( ParamNamed Nothing ( Name "b2$1498" ) :| [] )
@@ -201,7 +201,7 @@ UberModule
                 )
               )
             ),
-            ( PropName "disj", AbsN ( Just Always )
+            ( PropName "disj", AbsN Nothing
               ( ParamNamed Nothing ( Name "b1$1495" ) :| [] )
               ( AbsN Nothing
                 ( ParamNamed Nothing ( Name "b2$1496" ) :| [] )
@@ -211,7 +211,7 @@ UberModule
                 )
               )
             ),
-            ( PropName "not", AbsN ( Just Always )
+            ( PropName "not", AbsN Nothing
               ( ParamNamed Nothing ( Name "b$1494" ) :| [] )
               ( PrimNot Nothing ( Ref Nothing ( Local ( Name "b$1494" ) ) ) )
             )
@@ -221,7 +221,7 @@ UberModule
       ( QName
         { qnameModuleName = ModuleName "Data.Eq", qnameName = Name "eqInt" }, LiteralObject Nothing
         [
-          ( PropName "eq", AbsN ( Just Always )
+          ( PropName "eq", AbsN Nothing
             ( ParamNamed Nothing ( Name "r1$1490" ) :| [] )
             ( AbsN Nothing
               ( ParamNamed Nothing ( Name "r2$1491" ) :| [] )

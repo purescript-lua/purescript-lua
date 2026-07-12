@@ -204,7 +204,8 @@ optimizerPipeline policy =
       , passEnsures = guc
       }
   floatInPass = gucPass "float-in" floatIn
-  shareAccessorsPass = gucPass "share-accessors" shareForeignAccessors
+  shareAccessorsPass =
+    gucPass "share-accessors" (shareForeignAccessors policy)
   magicDoPass =
     Pass
       { passName = "magicDo"
@@ -265,18 +266,23 @@ and re-binds every accessor whose read occurs at two or more sites to
 its linker name, rewriting the reads to references.
 
 Runs once, after the specialize fixpoint has finished pasting (see
-'optimizerPipeline'). Only unannotated reads participate: a read
-carrying @inline always@ is pasted per site on explicit request, and a
-@never@ accessor never dissolved in the first place (see
-Note [Inline annotations and inlining heuristics]). The re-bound
+'optimizerPipeline'). The @inline@ directive is consulted by name, from
+the same 'InlinePolicy' every other inlining decision reads: a name
+under @inline always@ is skipped — its read is pasted per site on
+explicit request — and a @never@ accessor never dissolved in the first
+place, so its reads are already references to the kept binding (see
+Note [Inline annotations and inlining heuristics]). The read nodes
+themselves carry no directive weight here: a paste sheds the root
+annotation ('withBinding'), and a fold can transplant or drop one
+mid-pipeline. The re-bound
 accessor is inserted right after its module's 'ForeignImport' binding,
 where the module-init order guarantees the foreign table is already
 initialized; the reads it replaces sit in bindings placed after every
 foreign table ('mergeForeignsIntoBindings' front-loads them all) or in
 exports.
 -}
-shareForeignAccessors ∷ UberModule → UberModule
-shareForeignAccessors uber@UberModule {uberModuleBindings, uberModuleExports}
+shareForeignAccessors ∷ InlinePolicy → UberModule → UberModule
+shareForeignAccessors policy uber
   | Map.null shared = uber
   | otherwise =
       uber
@@ -286,9 +292,12 @@ shareForeignAccessors uber@UberModule {uberModuleBindings, uberModuleExports}
         , uberModuleExports = fmap (fmap rewriteExp) uberModuleExports
         }
  where
-  -- Unannotated accessor reads, keyed by the QName the linker
-  -- originally bound the accessor to, with one representative
-  -- expression per key (every copy of a read is identical). Only reads
+  UberModule {uberModuleBindings, uberModuleExports} = uber
+
+  -- Accessor reads of names with no @inline always@ directive, keyed
+  -- by the QName the linker originally bound the accessor to, with one
+  -- representative expression per key (copies are identical up to
+  -- their annotation slot, normalized to 'Nothing' here). Only reads
   -- whose module still has its 'ForeignImport' binding participate —
   -- always the case for a well-scoped module, since the read itself
   -- references the foreign table.
@@ -300,17 +309,19 @@ shareForeignAccessors uber@UberModule {uberModuleBindings, uberModuleExports}
     sharedNames =
       Map.keysSet $
         Map.filter (> 1) $
-          Map.fromListWith (+) [(qname, 1 ∷ Natural) | (qname, _) ← accessorReads]
+          Map.fromListWith
+            (+)
+            [(qname, 1 ∷ Natural) | (qname, _) ← accessorReads]
 
   accessorReads ∷ [(QName, Exp)]
   accessorReads =
-    [ (qname, node)
+    [ (qname, setAnn Nothing node)
     | expr ←
         (snd <$> (listGrouping =<< uberModuleBindings))
           <> (snd <$> uberModuleExports)
     , node ← universeOf subexpressions expr
-    , isNothing (getAnn node)
     , Just qname ← [foreignAccessorQName node]
+    , qname `Set.notMember` policyAlways policy
     , qname `Set.notMember` boundNames
     , qnameModuleName qname `Set.member` modulesWithForeign
     ]
@@ -333,8 +344,7 @@ shareForeignAccessors uber@UberModule {uberModuleBindings, uberModuleExports}
   rewriteExp = transformOf subexpressions \node →
     case foreignAccessorQName node of
       Just qname@(QName modname name)
-        | isNothing (getAnn node)
-        , qname `Map.member` shared →
+        | qname `Map.member` shared →
             refImported modname name
       _ → node
 
@@ -508,15 +518,15 @@ optimizeModule inlining policy UberModule {..} = runWriterT do
 
   -- The top-level counterpart of 'isInlinableExpr', diverging from it
   -- twice (issue #171). The Always directive is consulted by name —
-  -- 'policyAlways', not the RHS root annotation, which an earlier paste
-  -- may have planted there: a binding that merely received an
-  -- always-annotated body must not itself turn unconditionally
-  -- inlinable. And a bare-Ref alias to an @inline always@ binding is
-  -- never dissolved: substituting it would multiply the target's use
-  -- sites right before Always pastes its body into every one of them,
-  -- destroying the alias that is the better materialization point on
-  -- both size and speed. The target's body pastes into the surviving
-  -- alias instead.
+  -- 'policyAlways', never the RHS root annotation — for the reason all
+  -- directives are ('collectInlinePolicy'): a rewrite can drop or
+  -- transplant a live node's annotation, and the whole-binding paste
+  -- sheds it outright (see 'withBinding'). And a bare-Ref alias to an
+  -- @inline always@ binding is never dissolved: substituting it would
+  -- multiply the target's use sites right before Always pastes its
+  -- body into every one of them, destroying the alias that is the
+  -- better materialization point on both size and speed. The target's
+  -- body pastes into the surviving alias instead.
   topLevelInlinable ∷ QName → Exp → Bool
   topLevelInlinable qname expr =
     qname `Set.member` policyAlways policy
@@ -577,11 +587,19 @@ optimizeModule inlining policy UberModule {..} = runWriterT do
             -- substituted copies: a rewrite even when it had no
             -- occurrences left to substitute.
             tell Rewritten
+            -- The pasted copies are no longer the directed binding, so
+            -- the root annotation is spent at the paste rather than
+            -- riding into the hosts (mirrors the call-site paste in
+            -- 'inlineSaturatedCall'): an @inline always@ body pasted
+            -- into a bare-Ref alias would otherwise plant Just Always
+            -- on the alias's root, turning the alias itself
+            -- unconditionally inlinable one round later (issue #171).
+            let pasted = setAnn Nothing expr
             (bindings', exports') ←
               lift $
                 (,)
-                  <$> substituteInBindings qname expr bindings
-                  <*> substituteInExports qname expr exports
+                  <$> substituteInBindings qname pasted bindings
+                  <*> substituteInExports qname pasted exports
             -- Substituting drops the binding's own occurrences and pastes
             -- one copy of its free refs per occurrence replaced.
             let pastedRefs = fmap (* occurrences) (countFreeRefs expr)

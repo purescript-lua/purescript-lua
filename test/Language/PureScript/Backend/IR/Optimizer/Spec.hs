@@ -966,6 +966,15 @@ spec = describe "IR Optimizer" do
         === [ (Name "main1", refImported mainModule (Name "add"))
             , (Name "main2", refImported mainModule (Name "add"))
             ]
+      -- The Always directive is spent on the paste: the body
+      -- materialized into the alias carries no annotation, so nothing
+      -- downstream can mistake the alias for a directed binding.
+      let aliasAnns =
+            [ getAnn rhs
+            | Standalone (qn, rhs) ← Linker.uberModuleBindings optimized
+            , qn == addName
+            ]
+      aliasAnns === [Nothing]
 
   describe "gates inlining by Complexity and Capture (issue #231)" do
     let main' = moduleNameFromString "Main"
@@ -1721,9 +1730,13 @@ spec = describe "IR Optimizer" do
             [Name "a", Name "b"]
             (Just Always)
       accessorBindings optimized `shouldBe` []
+      -- The pasted reads shed the annotation at the paste; the per-site
+      -- contract holds anyway, because 'shareForeignAccessors' consults
+      -- the directive by name, not by reading the (unreliable) node
+      -- annotations.
       Linker.uberModuleExports optimized
-        `shouldBe` [ (Name "a", xAccessor (Just Always))
-                   , (Name "b", xAccessor (Just Always))
+        `shouldBe` [ (Name "a", xAccessor noAnn)
+                   , (Name "b", xAccessor noAnn)
                    ]
 
   describe "counts free references against the live module (#143)" do
