@@ -365,13 +365,20 @@ spec = describe "IR Optimizer" do
         `shouldBe` literalString justTag
 
     it "reduces a field read to the constructor argument" do
-      optimizedExpression (dataArgumentByIndex 0 (just (literalInt 7)))
+      optimizedExpression (dataArgumentByIndex SumType 0 (just (literalInt 7)))
         `shouldBe` literalInt 7
 
     it "reads the second field of a saturated product application" do
       optimizedExpression
-        (dataArgumentByIndex 1 (tuple (literalInt 1) (literalInt 2)))
+        (dataArgumentByIndex ProductType 1 (tuple (literalInt 1) (literalInt 2)))
         `shouldBe` literalInt 2
+
+    it "declines a field read whose algebraic type mismatches the ctor's" do
+      -- The node's algebraic type decides the runtime slot offset, so a
+      -- mismatched read addresses a different slot than the fold would
+      -- return; only well-typed reads (matching types) fold.
+      let original = dataArgumentByIndex ProductType 0 (just (literalInt 7))
+      optimizedExpression original `shouldBe` original
 
     it "collapses a tag-equality test into its result" do
       -- The payoff cascade: the folded tag meets the surrounding Eq and
@@ -382,19 +389,28 @@ spec = describe "IR Optimizer" do
     it "declines a partially applied constructor" do
       -- One argument against a two-field constructor: still a function,
       -- so the field read must not fire.
-      let original = dataArgumentByIndex 0 (application tupleCtor (literalInt 1))
+      let original =
+            dataArgumentByIndex
+              ProductType
+              0
+              (application tupleCtor (literalInt 1))
       optimizedExpression original `shouldBe` original
 
     it "declines a product-type tag read" do
-      -- Product constructors carry no $ctor row at runtime, so folding
-      -- the tag would invent a value the runtime reads as nil.
+      -- Product constructors carry no tag slot at runtime (a product tag
+      -- read aliases the first field), so there is no tag string to fold
+      -- to.
       let original = reflectCtor (tuple (literalInt 1) (literalInt 2))
       optimizedExpression original `shouldBe` original
 
     it "drops the discarded arguments of a field read" do
       -- Only the read field survives; the sibling is gone, not Let-bound.
       optimizedExpression
-        (dataArgumentByIndex 0 (tuple (refLocal (Name "a")) (refLocal (Name "b"))))
+        ( dataArgumentByIndex
+            ProductType
+            0
+            (tuple (refLocal (Name "a")) (refLocal (Name "b")))
+        )
         `shouldBe` refLocal (Name "a")
 
     -- A discarded field can hold a `Just Always`-annotated accessor (see
@@ -409,11 +425,11 @@ spec = describe "IR Optimizer" do
             (PropName "value0")
 
     it "does not leak the kept argument's annotation" do
-      let original = dataArgumentByIndex 0 (just accessor)
+      let original = dataArgumentByIndex SumType 0 (just accessor)
       getAnn (optimizedExpression original) `shouldBe` Nothing
 
     it "keeps the read node's own annotation on the folded field" do
-      let original = DataArgumentByIndex (Just Never) 0 (just accessor)
+      let original = DataArgumentByIndex (Just Never) SumType 0 (just accessor)
       getAnn (optimizedExpression original) `shouldBe` Just Never
 
     -- Randomized discard-semantics stress (the issue's explicit ask):
@@ -436,7 +452,7 @@ spec = describe "IR Optimizer" do
           index = fromIntegral (length before)
       -- Equality to the kept argument alone proves the siblings are
       -- dropped, not Let-bound or duplicated.
-      optimizedExpression (dataArgumentByIndex index app) === kept
+      optimizedExpression (dataArgumentByIndex algTy index app) === kept
 
     prop "folds a saturated sum-type tag read to the tag string" do
       args ← forAll (Gen.list (Range.linear 0 5) trivialArg)
@@ -446,104 +462,6 @@ spec = describe "IR Optimizer" do
       let fields = FieldName . show <$> [1 .. length args]
           app = foldl' application (ctor SumType modName ty cn fields) args
       optimizedExpression (reflectCtor app) === literalString (ctorId modName ty cn)
-
-  describe "folds ObjectProp field reads over a known constructor (#213)" do
-    let maybeMod = moduleNameFromString "Data.Maybe"
-        maybeTy = TyName "Maybe"
-        justName = CtorName "Just"
-        justCtor = ctor SumType maybeMod maybeTy justName [FieldName "value0"]
-        just = application justCtor
-
-        tupleMod = moduleNameFromString "Data.Tuple"
-        tupleTy = TyName "Tuple"
-        tupleName = CtorName "Tuple"
-        tupleCtor =
-          ctor
-            ProductType
-            tupleMod
-            tupleTy
-            tupleName
-            [FieldName "value0", FieldName "value1"]
-        tuple a = application (application tupleCtor a)
-
-        value0 = PropName "value0"
-        value1 = PropName "value1"
-
-    it "reads a field off a saturated sum-type constructor" do
-      optimizedExpression (objectProp (just (literalInt 7)) value0)
-        `shouldBe` literalInt 7
-
-    it "reads the second field of a saturated product application" do
-      optimizedExpression
-        (objectProp (tuple (literalInt 1) (literalInt 2)) value1)
-        `shouldBe` literalInt 2
-
-    it "feeds the folded field into sibling rules in one pass" do
-      -- The read payload meets the surrounding Eq and constant folding
-      -- collapses the whole test, the same cascade the record-literal and
-      -- DataArgumentByIndex folds unlock.
-      let original = eq (objectProp (just (literalInt 1)) value0) (literalInt 1)
-      optimizedExpression original `shouldBe` literalBool True
-
-    it "declines a partially applied constructor" do
-      -- One argument against a two-field constructor: still a function, so
-      -- the field read must not fire.
-      let original = objectProp (application tupleCtor (literalInt 1)) value0
-      optimizedExpression original `shouldBe` original
-
-    it "declines when the projected field is absent" do
-      -- Unreachable for well-typed IR (value1 off a one-field constructor);
-      -- the rule must decline rather than invent a value.
-      let original = objectProp (just (literalInt 7)) value1
-      optimizedExpression original `shouldBe` original
-
-    it "drops the discarded arguments of a field read" do
-      -- Only the read field survives; the sibling is gone, not Let-bound.
-      optimizedExpression
-        (objectProp (tuple (refLocal (Name "a")) (refLocal (Name "b"))) value0)
-        `shouldBe` refLocal (Name "a")
-
-    -- A discarded field can hold a `Just Always`-annotated accessor; the
-    -- fold must take the read node's own annotation, never the argument's,
-    -- or the result becomes unconditionally inlinable and duplicates across
-    -- use sites (the leak care of reduceObjectProp).
-    let dictModule = moduleNameFromString "Dict"
-        accessor =
-          ObjectProp
-            (Just Always)
-            (refImported dictModule (Name "foreign"))
-            value0
-
-    it "does not leak the kept argument's annotation" do
-      let original = objectProp (just accessor) value0
-      getAnn (optimizedExpression original) `shouldBe` Nothing
-
-    it "keeps the read node's own annotation on the folded field" do
-      let original = ObjectProp (Just Never) (just accessor) value0
-      getAnn (optimizedExpression original) `shouldBe` Just Never
-
-    -- Randomized discard-semantics stress (the issue's explicit ask):
-    -- across arbitrary arity, algebraic type, and argument content, a
-    -- record-projection field read folds to exactly its argument with the
-    -- siblings gone (no residue).
-    let trivialArg = Gen.choice [Gen.scalarExp, refLocal <$> Gen.name]
-
-    prop "folds a saturated field read to its argument at any arity" do
-      before ← forAll (Gen.list (Range.linear 0 3) trivialArg)
-      kept ← forAll trivialArg
-      after ← forAll (Gen.list (Range.linear 0 3) trivialArg)
-      algTy ← forAll (Gen.element [SumType, ProductType])
-      modName ← forAll Gen.moduleName
-      ty ← forAll Gen.tyName
-      cn ← forAll Gen.ctorName
-      let args = before <> [kept] <> after
-          index = length before
-          fields = [FieldName ("value" <> show i) | i ← [0 .. length args - 1]]
-          app = foldl' application (ctor algTy modName ty cn fields) args
-      -- Name-based lookup, unlike the index-based DataArgumentByIndex fold:
-      -- the projection reads value<index>, the label of the kept field.
-      optimizedExpression (objectProp app (PropName ("value" <> show index)))
-        === kept
 
   describe "propagates a known constructor through a let (#214)" do
     let m = moduleNameFromString "M"
@@ -556,7 +474,6 @@ spec = describe "IR Optimizer" do
         just = application justCtor
         justTag = ctorId maybeMod maybeTy justName
         nothingTag = ctorId maybeMod maybeTy nothingName
-        value0 = PropName "value0"
 
         tupleMod = moduleNameFromString "Data.Tuple"
         tupleTy = TyName "Tuple"
@@ -598,16 +515,16 @@ spec = describe "IR Optimizer" do
       optimizedExpression original `shouldBe` here
 
     it "binds a field read at several sites once (no duplication)" do
-      -- v.value0 read twice with a non-trivial argument: the argument is
+      -- v's field read twice with a non-trivial argument: the argument is
       -- bound to one field-binder read twice, never copied to each site.
       let original =
             let1 (Name "v") (just nonTrivial) $
               application
                 ( application
                     (refImported m (Name "pair"))
-                    (objectProp (refLocal (Name "v")) value0)
+                    (dataArgumentByIndex SumType 0 (refLocal (Name "v")))
                 )
-                (objectProp (refLocal (Name "v")) value0)
+                (dataArgumentByIndex SumType 0 (refLocal (Name "v")))
           -- The field-binder's name is whatever the fresh-name supply draws;
           -- compare up to alpha-equivalence so the test pins the structure --
           -- one field-binder bound once, read twice -- not the incidental name.
@@ -638,8 +555,8 @@ spec = describe "IR Optimizer" do
       let original =
             let1 (Name "v") (application tupleCtor (literalInt 1)) $
               eq
-                (dataArgumentByIndex 0 (refLocal (Name "v")))
-                (dataArgumentByIndex 0 (refLocal (Name "v")))
+                (dataArgumentByIndex ProductType 0 (refLocal (Name "v")))
+                (dataArgumentByIndex ProductType 0 (refLocal (Name "v")))
       optimizedExpression original `shouldBe` original
 
     it "collapses an inlined-method match to straight-line code" do
@@ -656,7 +573,7 @@ spec = describe "IR Optimizer" do
                 (eq (literalString justTag) (reflectCtor (refLocal (Name "v"))))
                 ( application
                     (refImported mainMod (Name "use"))
-                    (objectProp (refLocal (Name "v")) value0)
+                    (dataArgumentByIndex SumType 0 (refLocal (Name "v")))
                 )
                 nothingCtor
       optimized ←
@@ -689,7 +606,7 @@ spec = describe "IR Optimizer" do
                 (eq (literalString justTag) (reflectCtor (refLocal (Name "v"))))
                 ( application
                     (refImported m (Name "use"))
-                    (objectProp (refLocal (Name "v")) value0)
+                    (dataArgumentByIndex SumType 0 (refLocal (Name "v")))
                 )
                 gone
           optimized = optimizedExpression original
@@ -718,7 +635,7 @@ spec = describe "IR Optimizer" do
               (replicate arity (literalInt 1))
           original =
             let1 (Name "v") ctorApp $
-              dataArgumentByIndex index (refLocal (Name "v"))
+              dataArgumentByIndex SumType index (refLocal (Name "v"))
       unboundLocals (optimizedExpression original) === []
 
     it "resolves a let-bound constructor worker reference, then folds (#180)" do
@@ -749,7 +666,7 @@ spec = describe "IR Optimizer" do
                 (eq (literalString justTag) (reflectCtor (refLocal (Name "v"))))
                 ( application
                     (refImported mainMod (Name "use"))
-                    (objectProp (refLocal (Name "v")) value0)
+                    (dataArgumentByIndex SumType 0 (refLocal (Name "v")))
                 )
                 nothingCtor
       optimized ←
@@ -1451,6 +1368,21 @@ spec = describe "IR Optimizer" do
       runIdentity (sinkProjectionIntoLet (objectProp (let1 (Name "x") bound obj) m))
         === Just (let1 (Name "x") bound (objectProp obj m))
 
+    test "sinks a constructor field read into a let" do
+      -- The ctor-read twin of the projection sink: a directive-driven
+      -- paste leaves the same let residue under a field read, which must
+      -- sink for the case-of-known-constructor fold to reach the ctor.
+      let ctorApp =
+            application
+              (ctor SumType extern (TyName "T") (CtorName "K") [FieldName "value0"])
+              (refLocal (Name "x"))
+          bound = application g (literalInt 1)
+      runIdentity
+        ( sinkProjectionIntoLet
+            (dataArgumentByIndex SumType 0 (let1 (Name "x") bound ctorApp))
+        )
+        === Just (let1 (Name "x") bound (dataArgumentByIndex SumType 0 ctorApp))
+
     it ".label never keeps the method behind the dictionary" do
       -- Without the veto the small method resolves at both sites and
       -- the dictionary is collected.
@@ -1569,8 +1501,8 @@ spec = describe "IR Optimizer" do
   describe "folds constructor reads through a reference (issue #232)" do
     it "folds a field read over an applied constructor reference" do
       -- A user-written `Op f` compiles to a reference to the Op worker;
-      -- a multi-use worker stays a binding, so the projection must fold
-      -- through the reference or the cascade stalls at (Op(f)).value0.
+      -- a multi-use worker stays a binding, so the field read must fold
+      -- through the reference or the cascade stalls at reading Op(f).
       let mainModule = moduleNameFromString "Main"
           extern = moduleNameFromString "Extern"
           g = refImported extern (Name "g")
@@ -1588,7 +1520,7 @@ spec = describe "IR Optimizer" do
               application (application g (literalInt n)) (refLocal (Name "x"))
           site n x =
             application
-              (objectProp (application opRef (wrap n)) (PropName "value0"))
+              (dataArgumentByIndex ProductType 0 (application opRef (wrap n)))
               (literalInt x)
       optimized ←
         either (fail . show) pure . optimizedUberModuleChecked $
@@ -1859,7 +1791,7 @@ spec = describe "IR Optimizer" do
               let1
                 name
                 (application boxCtor (literalInt 1))
-                (dataArgumentByIndex 0 (refLocal name))
+                (dataArgumentByIndex ProductType 0 (refLocal name))
           expected =
             Linker.UberModule
               { uberModuleForeigns = []

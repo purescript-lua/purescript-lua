@@ -2713,11 +2713,10 @@ UberModule
                     ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
                     ( PropName "showStringImpl" )
                   )
-                  ( ObjectProp Nothing
+                  ( DataArgumentByIndex Nothing SumType 0
                     ( Ref Nothing
                       ( Imported ( ModuleName "Golden.LongEitherBind.Test" ) ( Name "compute" ) )
-                    )
-                    ( PropName "value0" ) :| []
+                    ) :| []
                   ) :|
                   [ LiteralString Nothing ")" ]
                 )
@@ -2743,11 +2742,10 @@ UberModule
                       ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
                       ( PropName "showIntImpl" )
                     )
-                    ( ObjectProp Nothing
+                    ( DataArgumentByIndex Nothing SumType 0
                       ( Ref Nothing
                         ( Imported ( ModuleName "Golden.LongEitherBind.Test" ) ( Name "compute" ) )
-                      )
-                      ( PropName "value0" ) :| []
+                      ) :| []
                     ) :|
                     [ LiteralString Nothing ")" ]
                   )

@@ -103,20 +103,14 @@ M.Golden_TailRecM2Shadow_Test_sumFrom = function(dictMonadRec)
           end
         end)() then
           return pure((function(value0)
-            return {
-              ["$ctor"] = "Control.Monad.Rec.Class∷Step.Loop",
-              value0 = value0
-            }
+            return { "Control.Monad.Rec.Class∷Step.Loop", value0 }
           end)({
             a = Golden_TailRecM2Shadow_Test_add_S_w(o_S_483.a, o_S_483.b),
             b = Golden_TailRecM2Shadow_Test_add_S_w(o_S_483.b, 1)
           }))
         else
           return pure((function(value0)
-            return {
-              ["$ctor"] = "Control.Monad.Rec.Class∷Step.Done",
-              value0 = value0
-            }
+            return { "Control.Monad.Rec.Class∷Step.Done", value0 }
           end)(o_S_483.a))
         end
       end)({ a = b, b = 0 })
@@ -133,13 +127,13 @@ return (function()
             local _ = Effect_untilE(function()
               local v0_S_17 = Effect_Ref_read(r_S_16)()
               return (function()
-                if "Control.Monad.Rec.Class∷Step.Loop" == v0_S_17["$ctor"] then
+                if "Control.Monad.Rec.Class∷Step.Loop" == v0_S_17[1] then
                   return function()
-                    local e_S_19 = f_S_11(v0_S_17.value0)()
+                    local e_S_19 = f_S_11(v0_S_17[2])()
                     local _ = Effect_Ref_write(e_S_19)(r_S_16)()
                     return Control_Monad_Rec_Class_pure(false)()
                   end
-                elseif "Control.Monad.Rec.Class∷Step.Done" == v0_S_17["$ctor"] then
+                elseif "Control.Monad.Rec.Class∷Step.Done" == v0_S_17[1] then
                   return Control_Monad_Rec_Class_pure(true)
                 else
                   return error("No patterns matched")
@@ -148,8 +142,8 @@ return (function()
             end)()
             return Effect_functorEffect.map(Partial_Unsafe__unsafePartial(function(  )
               return function(v_S_9_S_20)
-                if "Control.Monad.Rec.Class∷Step.Done" == v_S_9_S_20["$ctor"] then
-                  return v_S_9_S_20.value0
+                if "Control.Monad.Rec.Class∷Step.Done" == v_S_9_S_20[1] then
+                  return v_S_9_S_20[2]
                 else
                   return error("No patterns matched")
                 end
@@ -174,20 +168,14 @@ return (function()
             end
           end)() then
             return pure_S_536((function(value0)
-              return {
-                ["$ctor"] = "Control.Monad.Rec.Class∷Step.Loop",
-                value0 = value0
-              }
+              return { "Control.Monad.Rec.Class∷Step.Loop", value0 }
             end)({
               a = Golden_TailRecM2Shadow_Test_add_S_w(o_S_483_S_539.a, o_S_483_S_539.b),
               b = Golden_TailRecM2Shadow_Test_add_S_w(o_S_483_S_539.b, 1)
             }))
           else
             return pure_S_536((function(value0)
-              return {
-                ["$ctor"] = "Control.Monad.Rec.Class∷Step.Done",
-                value0 = value0
-              }
+              return { "Control.Monad.Rec.Class∷Step.Done", value0 }
             end)(o_S_483_S_539.a))
           end
         end)({ a = b_S_537, b = 0 })
@@ -203,13 +191,13 @@ return (function()
             local __S_545 = Effect_untilE(function()
               local v0_S_17_S_546 = Effect_Ref_read(r_S_16_S_544)()
               return (function()
-                if "Control.Monad.Rec.Class∷Step.Loop" == v0_S_17_S_546["$ctor"] then
+                if "Control.Monad.Rec.Class∷Step.Loop" == v0_S_17_S_546[1] then
                   return function()
-                    local e_S_19_S_547 = f_S_11_S_542(v0_S_17_S_546.value0)()
+                    local e_S_19_S_547 = f_S_11_S_542(v0_S_17_S_546[2])()
                     local __S_548 = Effect_Ref_write(e_S_19_S_547)(r_S_16_S_544)()
                     return Control_Monad_Rec_Class_pure(false)()
                   end
-                elseif "Control.Monad.Rec.Class∷Step.Done" == v0_S_17_S_546["$ctor"] then
+                elseif "Control.Monad.Rec.Class∷Step.Done" == v0_S_17_S_546[1] then
                   return Control_Monad_Rec_Class_pure(true)
                 else
                   return error("No patterns matched")
@@ -218,8 +206,8 @@ return (function()
             end)()
             return Effect_functorEffect.map(Partial_Unsafe__unsafePartial(function(  )
               return function(v_S_9_S_20_S_549)
-                if "Control.Monad.Rec.Class∷Step.Done" == v_S_9_S_20_S_549["$ctor"] then
-                  return v_S_9_S_20_S_549.value0
+                if "Control.Monad.Rec.Class∷Step.Done" == v_S_9_S_20_S_549[1] then
+                  return v_S_9_S_20_S_549[2]
                 else
                   return error("No patterns matched")
                 end
@@ -244,20 +232,14 @@ return (function()
             end
           end)() then
             return pure_S_536_S_550((function(value0)
-              return {
-                ["$ctor"] = "Control.Monad.Rec.Class∷Step.Loop",
-                value0 = value0
-              }
+              return { "Control.Monad.Rec.Class∷Step.Loop", value0 }
             end)({
               a = Golden_TailRecM2Shadow_Test_add_S_w(o_S_483_S_539_S_553.a, o_S_483_S_539_S_553.b),
               b = Golden_TailRecM2Shadow_Test_add_S_w(o_S_483_S_539_S_553.b, 1)
             }))
           else
             return pure_S_536_S_550((function(value0)
-              return {
-                ["$ctor"] = "Control.Monad.Rec.Class∷Step.Done",
-                value0 = value0
-              }
+              return { "Control.Monad.Rec.Class∷Step.Done", value0 }
             end)(o_S_483_S_539_S_553.a))
           end
         end)({ a = b_S_537_S_551, b = 0 })

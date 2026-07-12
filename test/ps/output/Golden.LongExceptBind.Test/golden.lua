@@ -48,10 +48,10 @@ local Data_Either_append_S_w = function(s1_S_513_S_554, s2_S_514_S_555)
   return s1_S_513_S_554 .. s2_S_514_S_555
 end
 local Data_Either_Left = function(value0)
-  return { ["$ctor"] = "Data.Either∷Either.Left", value0 = value0 }
+  return { "Data.Either∷Either.Left", value0 }
 end
 local Data_Either_Right = function(value0)
-  return { ["$ctor"] = "Data.Either∷Either.Right", value0 = value0 }
+  return { "Data.Either∷Either.Right", value0 }
 end
 local Data_Identity_applyIdentity = {
   apply = function(v) return function(v1) return v(v1) end end,
@@ -96,10 +96,10 @@ Control_Monad_Except_Trans_bindExceptT = function(dictMonad)
     bind = function(v)
       return function(k)
         return (dictMonad.Bind1()).bind(v)(function(v2_S_539)
-          if "Data.Either∷Either.Left" == v2_S_539["$ctor"] then
-            return (dictMonad.Applicative0()).pure(Data_Either_Left(v2_S_539.value0))
-          elseif "Data.Either∷Either.Right" == v2_S_539["$ctor"] then
-            return k(v2_S_539.value0)
+          if "Data.Either∷Either.Left" == v2_S_539[1] then
+            return (dictMonad.Applicative0()).pure(Data_Either_Left(v2_S_539[2]))
+          elseif "Data.Either∷Either.Right" == v2_S_539[1] then
+            return k(v2_S_539[2])
           else
             return error("No patterns matched")
           end
@@ -131,10 +131,10 @@ Control_Monad_Except_Trans_applyExceptT = function(dictMonad)
         map = function(f_S_531)
           return function(v_S_533)
             return (((dictMonad.Bind1()).Apply0()).Functor0()).map(function( m_S_541 )
-              if "Data.Either∷Either.Left" == m_S_541["$ctor"] then
-                return Data_Either_Left(m_S_541.value0)
-              elseif "Data.Either∷Either.Right" == m_S_541["$ctor"] then
-                return Data_Either_Right(f_S_531(m_S_541.value0))
+              if "Data.Either∷Either.Left" == m_S_541[1] then
+                return Data_Either_Left(m_S_541[2])
+              elseif "Data.Either∷Either.Right" == m_S_541[1] then
+                return Data_Either_Right(f_S_531(m_S_541[2]))
               else
                 return error("No patterns matched")
               end
@@ -585,10 +585,10 @@ local Golden_LongExceptBind_Test_go = (function()
 end)()
 local Golden_LongExceptBind_Test_compute = Unsafe_Coerce_foreign.unsafeCoerce(Golden_LongExceptBind_Test_go)
 return Effect_Console_foreign.log((function()
-  if "Data.Either∷Either.Left" == Golden_LongExceptBind_Test_compute["$ctor"] then
-    return Data_Either_append_S_w("(Left ", Data_Either_append_S_w(Data_Show_foreign.showStringImpl(Golden_LongExceptBind_Test_compute.value0), ")"))
-  elseif "Data.Either∷Either.Right" == Golden_LongExceptBind_Test_compute["$ctor"] then
-    return Data_Either_append_S_w("(Right ", Data_Either_append_S_w(Data_Show_foreign.showIntImpl(Golden_LongExceptBind_Test_compute.value0), ")"))
+  if "Data.Either∷Either.Left" == Golden_LongExceptBind_Test_compute[1] then
+    return Data_Either_append_S_w("(Left ", Data_Either_append_S_w(Data_Show_foreign.showStringImpl(Golden_LongExceptBind_Test_compute[2]), ")"))
+  elseif "Data.Either∷Either.Right" == Golden_LongExceptBind_Test_compute[1] then
+    return Data_Either_append_S_w("(Right ", Data_Either_append_S_w(Data_Show_foreign.showIntImpl(Golden_LongExceptBind_Test_compute[2]), ")"))
   else
     return error("No patterns matched")
   end

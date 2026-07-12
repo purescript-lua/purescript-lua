@@ -6,38 +6,27 @@ local Effect_Console_foreign = {
 }
 local Effect_Console_log = Effect_Console_foreign.log
 local Golden_DerivedFunctor_Test_Leaf = {
-  ["$ctor"] = "Golden.DerivedFunctor.Test∷Tree.Leaf"
+  "Golden.DerivedFunctor.Test∷Tree.Leaf"
 }
 local Golden_DerivedFunctor_Test_Node = function(value0)
   return function(value1)
     return function(value2)
-      return {
-        ["$ctor"] = "Golden.DerivedFunctor.Test∷Tree.Node",
-        value0 = value0,
-        value1 = value1,
-        value2 = value2
-      }
+      return { "Golden.DerivedFunctor.Test∷Tree.Node", value0, value1, value2 }
     end
   end
 end
 local Golden_DerivedFunctor_Test_Left = function(value0)
-  return {
-    ["$ctor"] = "Golden.DerivedFunctor.Test∷Either.Left",
-    value0 = value0
-  }
+  return { "Golden.DerivedFunctor.Test∷Either.Left", value0 }
 end
 local Golden_DerivedFunctor_Test_Right = function(value0)
-  return {
-    ["$ctor"] = "Golden.DerivedFunctor.Test∷Either.Right",
-    value0 = value0
-  }
+  return { "Golden.DerivedFunctor.Test∷Either.Right", value0 }
 end
 local Golden_DerivedFunctor_Test_sumTree
 Golden_DerivedFunctor_Test_sumTree = function(v)
-  if "Golden.DerivedFunctor.Test∷Tree.Leaf" == v["$ctor"] then
+  if "Golden.DerivedFunctor.Test∷Tree.Leaf" == v[1] then
     return 0
-  elseif "Golden.DerivedFunctor.Test∷Tree.Node" == v["$ctor"] then
-    return Golden_DerivedFunctor_Test_sumTree(v.value0) + v.value1 + Golden_DerivedFunctor_Test_sumTree(v.value2)
+  elseif "Golden.DerivedFunctor.Test∷Tree.Node" == v[1] then
+    return Golden_DerivedFunctor_Test_sumTree(v[2]) + v[3] + Golden_DerivedFunctor_Test_sumTree(v[4])
   else
     return error("No patterns matched")
   end
@@ -46,10 +35,10 @@ local Golden_DerivedFunctor_Test_functorTree
 Golden_DerivedFunctor_Test_functorTree = {
   map = function(f)
     return function(m)
-      if "Golden.DerivedFunctor.Test∷Tree.Leaf" == m["$ctor"] then
+      if "Golden.DerivedFunctor.Test∷Tree.Leaf" == m[1] then
         return Golden_DerivedFunctor_Test_Leaf
-      elseif "Golden.DerivedFunctor.Test∷Tree.Node" == m["$ctor"] then
-        return Golden_DerivedFunctor_Test_Node(Golden_DerivedFunctor_Test_functorTree.map(f)(m.value0))(f(m.value1))(Golden_DerivedFunctor_Test_functorTree.map(f)(m.value2))
+      elseif "Golden.DerivedFunctor.Test∷Tree.Node" == m[1] then
+        return Golden_DerivedFunctor_Test_Node(Golden_DerivedFunctor_Test_functorTree.map(f)(m[2]))(f(m[3]))(Golden_DerivedFunctor_Test_functorTree.map(f)(m[4]))
       else
         return error("No patterns matched")
       end
@@ -59,10 +48,10 @@ Golden_DerivedFunctor_Test_functorTree = {
 M.Golden_DerivedFunctor_Test_functorEither = {
   map = function(f)
     return function(m)
-      if "Golden.DerivedFunctor.Test∷Either.Left" == m["$ctor"] then
-        return Golden_DerivedFunctor_Test_Left(m.value0)
-      elseif "Golden.DerivedFunctor.Test∷Either.Right" == m["$ctor"] then
-        return Golden_DerivedFunctor_Test_Right(f(m.value0))
+      if "Golden.DerivedFunctor.Test∷Either.Left" == m[1] then
+        return Golden_DerivedFunctor_Test_Left(m[2])
+      elseif "Golden.DerivedFunctor.Test∷Either.Right" == m[1] then
+        return Golden_DerivedFunctor_Test_Right(f(m[2]))
       else
         return error("No patterns matched")
       end
@@ -70,10 +59,10 @@ M.Golden_DerivedFunctor_Test_functorEither = {
   end
 }
 local Golden_DerivedFunctor_Test_fromRight_S_w = function(fallback, v)
-  if "Golden.DerivedFunctor.Test∷Either.Left" == v["$ctor"] then
+  if "Golden.DerivedFunctor.Test∷Either.Left" == v[1] then
     return fallback
-  elseif "Golden.DerivedFunctor.Test∷Either.Right" == v["$ctor"] then
-    return v.value0
+  elseif "Golden.DerivedFunctor.Test∷Either.Right" == v[1] then
+    return v[2]
   else
     return error("No patterns matched")
   end

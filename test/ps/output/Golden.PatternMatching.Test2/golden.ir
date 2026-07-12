@@ -21,9 +21,8 @@ UberModule
                 ( Ref Nothing
                   ( Imported ( ModuleName "Golden.PatternMatching.Test2" ) ( Name "bat" ) )
                 )
-                ( ObjectProp Nothing
-                  ( Ref Nothing ( Local ( Name "n" ) ) )
-                  ( PropName "value0" ) :| []
+                ( DataArgumentByIndex Nothing SumType 0
+                  ( Ref Nothing ( Local ( Name "n" ) ) ) :| []
                 )
               )
               ( Exception Nothing "No patterns matched" )
@@ -67,20 +66,14 @@ UberModule
             ( Eq Nothing
               ( LiteralString Nothing "Golden.PatternMatching.Test2∷N.Zero" )
               ( ReflectCtor Nothing
-                ( ObjectProp Nothing
-                  ( Ref Nothing ( Local ( Name "e$0" ) ) )
-                  ( PropName "value1" )
-                )
+                ( DataArgumentByIndex Nothing SumType 1 ( Ref Nothing ( Local ( Name "e$0" ) ) ) )
               )
             )
             ( IfThenElse Nothing
               ( Eq Nothing
                 ( LiteralString Nothing "Golden.PatternMatching.Test2∷N.Add" )
                 ( ReflectCtor Nothing
-                  ( ObjectProp Nothing
-                    ( Ref Nothing ( Local ( Name "e$0" ) ) )
-                    ( PropName "value0" )
-                  )
+                  ( DataArgumentByIndex Nothing SumType 0 ( Ref Nothing ( Local ( Name "e$0" ) ) ) )
                 )
               )
               ( LiteralInt Nothing 1 )
@@ -88,9 +81,8 @@ UberModule
                 ( Eq Nothing
                   ( LiteralString Nothing "Golden.PatternMatching.Test2∷N.Mul" )
                   ( ReflectCtor Nothing
-                    ( ObjectProp Nothing
+                    ( DataArgumentByIndex Nothing SumType 0
                       ( Ref Nothing ( Local ( Name "e$0" ) ) )
-                      ( PropName "value0" )
                     )
                   )
                 )
@@ -102,10 +94,7 @@ UberModule
               ( Eq Nothing
                 ( LiteralString Nothing "Golden.PatternMatching.Test2∷N.Mul" )
                 ( ReflectCtor Nothing
-                  ( ObjectProp Nothing
-                    ( Ref Nothing ( Local ( Name "e$0" ) ) )
-                    ( PropName "value1" )
-                  )
+                  ( DataArgumentByIndex Nothing SumType 1 ( Ref Nothing ( Local ( Name "e$0" ) ) ) )
                 )
               )
               ( LiteralInt Nothing 3 )
@@ -113,9 +102,8 @@ UberModule
                 ( Eq Nothing
                   ( LiteralString Nothing "Golden.PatternMatching.Test2∷N.Add" )
                   ( ReflectCtor Nothing
-                    ( ObjectProp Nothing
+                    ( DataArgumentByIndex Nothing SumType 1
                       ( Ref Nothing ( Local ( Name "e$0" ) ) )
-                      ( PropName "value1" )
                     )
                   )
                 )
@@ -124,9 +112,8 @@ UberModule
                   ( Eq Nothing
                     ( LiteralString Nothing "Golden.PatternMatching.Test2∷N.Zero" )
                     ( ReflectCtor Nothing
-                      ( ObjectProp Nothing
+                      ( DataArgumentByIndex Nothing SumType 1
                         ( Ref Nothing ( Local ( Name "e$0" ) ) )
-                        ( PropName "value1" )
                       )
                     )
                   )

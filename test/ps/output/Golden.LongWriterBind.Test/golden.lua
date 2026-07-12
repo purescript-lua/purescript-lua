@@ -20,7 +20,7 @@ local Effect_Console_foreign = {
 }
 local Data_Semigroup_semigroupArray = { append = Data_Semigroup_concatArray }
 local Data_Tuple_Tuple = function(value0)
-  return function(value1) return { value0 = value0, value1 = value1 } end
+  return function(value1) return { value0, value1 } end
 end
 local Data_Identity_applyIdentity = {
   apply = function(v) return function(v1) return v(v1) end end,
@@ -44,7 +44,7 @@ local Control_Monad_Writer_Trans_applyWriterT_S_w = function( dictSemigroup
       return function(v1)
         return dictApply.apply(Functor0.map(function(v3_S_33)
           return function(v4_S_34)
-            return Data_Tuple_Tuple(v3_S_33.value0(v4_S_34.value0))(dictSemigroup.append(v3_S_33.value1)(v4_S_34.value1))
+            return Data_Tuple_Tuple(v3_S_33[1](v4_S_34[1]))(dictSemigroup.append(v3_S_33[2])(v4_S_34[2]))
           end
         end)(v))(v1)
       end
@@ -54,7 +54,7 @@ local Control_Monad_Writer_Trans_applyWriterT_S_w = function( dictSemigroup
         map = function(f_S_496)
           return function(v_S_499)
             return Functor0.map(function(v_S_497)
-              return Data_Tuple_Tuple(f_S_496(v_S_497.value0))(v_S_497.value1)
+              return Data_Tuple_Tuple(f_S_496(v_S_497[1]))(v_S_497[2])
             end)(v_S_499)
           end
         end
@@ -73,8 +73,8 @@ local Golden_LongWriterBind_Test_discard = (function()
     return function(k_S_522)
       return dictBind_S_519.bind(v_S_521)(function(v1_S_523)
         return ((dictBind_S_519.Apply0()).Functor0()).map(function(v3_S_524)
-          return Data_Tuple_Tuple(v3_S_524.value0)(Data_Semigroup_concatArray(v1_S_523.value1)(v3_S_524.value1))
-        end)(k_S_522(v1_S_523.value0))
+          return Data_Tuple_Tuple(v3_S_524[1])(Data_Semigroup_concatArray(v1_S_523[2])(v3_S_524[2]))
+        end)(k_S_522(v1_S_523[1]))
       end)
     end
   end
@@ -903,5 +903,5 @@ local Golden_LongWriterBind_Test_go = (function()
     end)
   end)
 end)()
-local Golden_LongWriterBind_Test_compute = (Unsafe_Coerce_foreign.unsafeCoerce(Golden_LongWriterBind_Test_go)).value0
+local Golden_LongWriterBind_Test_compute = (Unsafe_Coerce_foreign.unsafeCoerce(Golden_LongWriterBind_Test_go))[1]
 return Effect_Console_foreign.log(Data_Show_foreign.showIntImpl(Golden_LongWriterBind_Test_compute))()

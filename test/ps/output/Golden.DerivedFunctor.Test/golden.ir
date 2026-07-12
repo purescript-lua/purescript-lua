@@ -78,23 +78,18 @@ UberModule
                     ( Ref Nothing
                       ( Imported ( ModuleName "Golden.DerivedFunctor.Test" ) ( Name "sumTree" ) )
                     )
-                    ( ObjectProp Nothing
-                      ( Ref Nothing ( Local ( Name "v" ) ) )
-                      ( PropName "value0" ) :| []
+                    ( DataArgumentByIndex Nothing SumType 0
+                      ( Ref Nothing ( Local ( Name "v" ) ) ) :| []
                     )
                   )
-                  ( ObjectProp Nothing
-                    ( Ref Nothing ( Local ( Name "v" ) ) )
-                    ( PropName "value1" )
-                  )
+                  ( DataArgumentByIndex Nothing SumType 1 ( Ref Nothing ( Local ( Name "v" ) ) ) )
                 )
                 ( AppN Nothing
                   ( Ref Nothing
                     ( Imported ( ModuleName "Golden.DerivedFunctor.Test" ) ( Name "sumTree" ) )
                   )
-                  ( ObjectProp Nothing
-                    ( Ref Nothing ( Local ( Name "v" ) ) )
-                    ( PropName "value2" ) :| []
+                  ( DataArgumentByIndex Nothing SumType 2
+                    ( Ref Nothing ( Local ( Name "v" ) ) ) :| []
                   )
                 )
               )
@@ -144,17 +139,15 @@ UberModule
                               )
                               ( Ref Nothing ( Local ( Name "f" ) ) :| [] )
                             )
-                            ( ObjectProp Nothing
-                              ( Ref Nothing ( Local ( Name "m" ) ) )
-                              ( PropName "value0" ) :| []
+                            ( DataArgumentByIndex Nothing SumType 0
+                              ( Ref Nothing ( Local ( Name "m" ) ) ) :| []
                             ) :| []
                           )
                         )
                         ( AppN Nothing
                           ( Ref Nothing ( Local ( Name "f" ) ) )
-                          ( ObjectProp Nothing
-                            ( Ref Nothing ( Local ( Name "m" ) ) )
-                            ( PropName "value1" ) :| []
+                          ( DataArgumentByIndex Nothing SumType 1
+                            ( Ref Nothing ( Local ( Name "m" ) ) ) :| []
                           ) :| []
                         )
                       )
@@ -171,9 +164,8 @@ UberModule
                           )
                           ( Ref Nothing ( Local ( Name "f" ) ) :| [] )
                         )
-                        ( ObjectProp Nothing
-                          ( Ref Nothing ( Local ( Name "m" ) ) )
-                          ( PropName "value2" ) :| []
+                        ( DataArgumentByIndex Nothing SumType 2
+                          ( Ref Nothing ( Local ( Name "m" ) ) ) :| []
                         ) :| []
                       )
                     )
@@ -202,9 +194,8 @@ UberModule
                   ( Ref Nothing
                     ( Imported ( ModuleName "Golden.DerivedFunctor.Test" ) ( Name "Left" ) )
                   )
-                  ( ObjectProp Nothing
-                    ( Ref Nothing ( Local ( Name "m" ) ) )
-                    ( PropName "value0" ) :| []
+                  ( DataArgumentByIndex Nothing SumType 0
+                    ( Ref Nothing ( Local ( Name "m" ) ) ) :| []
                   )
                 )
                 ( IfThenElse Nothing
@@ -218,9 +209,8 @@ UberModule
                     )
                     ( AppN Nothing
                       ( Ref Nothing ( Local ( Name "f" ) ) )
-                      ( ObjectProp Nothing
-                        ( Ref Nothing ( Local ( Name "m" ) ) )
-                        ( PropName "value0" ) :| []
+                      ( DataArgumentByIndex Nothing SumType 0
+                        ( Ref Nothing ( Local ( Name "m" ) ) ) :| []
                       ) :| []
                     )
                   )
@@ -246,7 +236,7 @@ UberModule
               ( LiteralString Nothing "Golden.DerivedFunctor.Test∷Either.Right" )
               ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v" ) ) ) )
             )
-            ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "v" ) ) ) ( PropName "value0" ) )
+            ( DataArgumentByIndex Nothing SumType 0 ( Ref Nothing ( Local ( Name "v" ) ) ) )
             ( Exception Nothing "No patterns matched" )
           )
         )

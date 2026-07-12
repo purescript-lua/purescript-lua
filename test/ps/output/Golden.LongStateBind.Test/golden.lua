@@ -4,7 +4,7 @@ local Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
 }
 local Data_Tuple_Tuple = function(value0)
-  return function(value1) return { value0 = value0, value1 = value1 } end
+  return function(value1) return { value0, value1 } end
 end
 local Data_Identity_applyIdentity = {
   apply = function(v) return function(v1) return v(v1) end end,
@@ -51,7 +51,7 @@ Control_Monad_State_Trans_bindStateT = function(dictMonad)
       return function(f)
         return function(s)
           return (dictMonad.Bind1()).bind(v(s))(function(v1)
-            return f(v1.value0)(v1.value1)
+            return f(v1[1])(v1[2])
           end)
         end
       end
@@ -82,7 +82,7 @@ Control_Monad_State_Trans_applyStateT = function(dictMonad)
           return function(v_S_516)
             return function(s_S_517)
               return (((dictMonad.Bind1()).Apply0()).Functor0()).map(function( v1_S_518 )
-                return Data_Tuple_Tuple(f_S_515(v1_S_518.value0))(v1_S_518.value1)
+                return Data_Tuple_Tuple(f_S_515(v1_S_518[1]))(v1_S_518[2])
               end)(v_S_516(s_S_517))
             end
           end
@@ -1044,5 +1044,5 @@ local Golden_LongStateBind_Test_go = (function()
     end)
   end)
 end)()
-local Golden_LongStateBind_Test_compute = (Golden_LongStateBind_Test_go(0)).value0
+local Golden_LongStateBind_Test_compute = (Golden_LongStateBind_Test_go(0))[1]
 return Effect_Console_foreign.log(Data_Show_foreign.showIntImpl(Golden_LongStateBind_Test_compute))()

@@ -41,33 +41,30 @@ local Data_Eq_eqRowCons_S_w = function( dictEqRecord
   }
 end
 local Golden_BugListGenericEq_Test_Nil = {
-  ["$ctor"] = "Golden.BugListGenericEq.Test∷List.Nil"
+  "Golden.BugListGenericEq.Test∷List.Nil"
 }
 local Golden_BugListGenericEq_Test_Cons = function(value0)
-  return {
-    ["$ctor"] = "Golden.BugListGenericEq.Test∷List.Cons",
-    value0 = value0
-  }
+  return { "Golden.BugListGenericEq.Test∷List.Cons", value0 }
 end
 M.Golden_BugListGenericEq_Test_genericList = {
   to = function(x)
-    if "Data.Generic.Rep∷Sum.Inl" == x["$ctor"] then
+    if "Data.Generic.Rep∷Sum.Inl" == x[1] then
       return Golden_BugListGenericEq_Test_Nil
-    elseif "Data.Generic.Rep∷Sum.Inr" == x["$ctor"] then
-      return Golden_BugListGenericEq_Test_Cons(x.value0)
+    elseif "Data.Generic.Rep∷Sum.Inr" == x[1] then
+      return Golden_BugListGenericEq_Test_Cons(x[2])
     else
       return error("No patterns matched")
     end
   end,
   from = function(x0)
-    if "Golden.BugListGenericEq.Test∷List.Nil" == x0["$ctor"] then
+    if "Golden.BugListGenericEq.Test∷List.Nil" == x0[1] then
       return (function(value0)
-        return { ["$ctor"] = "Data.Generic.Rep∷Sum.Inl", value0 = value0 }
+        return { "Data.Generic.Rep∷Sum.Inl", value0 }
       end)({})
-    elseif "Golden.BugListGenericEq.Test∷List.Cons" == x0["$ctor"] then
+    elseif "Golden.BugListGenericEq.Test∷List.Cons" == x0[1] then
       return (function(value0)
-        return { ["$ctor"] = "Data.Generic.Rep∷Sum.Inr", value0 = value0 }
-      end)(x0.value0)
+        return { "Data.Generic.Rep∷Sum.Inr", value0 }
+      end)(x0[2])
     else
       return error("No patterns matched")
     end
@@ -80,29 +77,23 @@ Golden_BugListGenericEq_Test_eqList = function(dictEq)
       return function(y)
         return (function()
           local v_S_13 = (function()
-            if "Golden.BugListGenericEq.Test∷List.Nil" == x["$ctor"] then
+            if "Golden.BugListGenericEq.Test∷List.Nil" == x[1] then
               return (function(value0)
-                return {
-                  ["$ctor"] = "Data.Generic.Rep∷Sum.Inl",
-                  value0 = value0
-                }
+                return { "Data.Generic.Rep∷Sum.Inl", value0 }
               end)({})
-            elseif "Golden.BugListGenericEq.Test∷List.Cons" == x["$ctor"] then
+            elseif "Golden.BugListGenericEq.Test∷List.Cons" == x[1] then
               return (function(value0)
-                return {
-                  ["$ctor"] = "Data.Generic.Rep∷Sum.Inr",
-                  value0 = value0
-                }
-              end)(x.value0)
+                return { "Data.Generic.Rep∷Sum.Inr", value0 }
+              end)(x[2])
             else
               return error("No patterns matched")
             end
           end)()
           return function(v1_S_14)
-            if "Data.Generic.Rep∷Sum.Inl" == v_S_13["$ctor"] then
-              return "Data.Generic.Rep∷Sum.Inl" == v1_S_14["$ctor"]
-            elseif "Data.Generic.Rep∷Sum.Inr" == v_S_13["$ctor"] then
-              if "Data.Generic.Rep∷Sum.Inr" == v1_S_14["$ctor"] then
+            if "Data.Generic.Rep∷Sum.Inl" == v_S_13[1] then
+              return "Data.Generic.Rep∷Sum.Inl" == v1_S_14[1]
+            elseif "Data.Generic.Rep∷Sum.Inr" == v_S_13[1] then
+              if "Data.Generic.Rep∷Sum.Inr" == v1_S_14[1] then
                 return (Data_Eq_eqRowCons_S_w(Data_Eq_eqRowCons_S_w({
                   eqRecord = function()
                     return function() return function() return true end end
@@ -111,7 +102,7 @@ Golden_BugListGenericEq_Test_eqList = function(dictEq)
                   reflectSymbol = function() return "tail" end
                 }, Golden_BugListGenericEq_Test_eqList(dictEq)), nil, {
                   reflectSymbol = function() return "head" end
-                }, dictEq)).eqRecord(Type_Proxy_Proxy)(v_S_13.value0)(v1_S_14.value0)
+                }, dictEq)).eqRecord(Type_Proxy_Proxy)(v_S_13[2])(v1_S_14[2])
               else
                 return false
               end
@@ -120,14 +111,14 @@ Golden_BugListGenericEq_Test_eqList = function(dictEq)
             end
           end
         end)()((function()
-          if "Golden.BugListGenericEq.Test∷List.Nil" == y["$ctor"] then
+          if "Golden.BugListGenericEq.Test∷List.Nil" == y[1] then
             return (function(value0)
-              return { ["$ctor"] = "Data.Generic.Rep∷Sum.Inl", value0 = value0 }
+              return { "Data.Generic.Rep∷Sum.Inl", value0 }
             end)({})
-          elseif "Golden.BugListGenericEq.Test∷List.Cons" == y["$ctor"] then
+          elseif "Golden.BugListGenericEq.Test∷List.Cons" == y[1] then
             return (function(value0)
-              return { ["$ctor"] = "Data.Generic.Rep∷Sum.Inr", value0 = value0 }
-            end)(y.value0)
+              return { "Data.Generic.Rep∷Sum.Inr", value0 }
+            end)(y[2])
           else
             return error("No patterns matched")
           end

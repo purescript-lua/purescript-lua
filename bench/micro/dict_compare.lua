@@ -2,9 +2,9 @@
 -- dictionary table, a curried three-level call chain, an Ordering
 -- constructor allocation and a tag match — versus the native `>=` the
 -- whole dance stands for.
-local LT = { ["$ctor"] = "Data.Ordering∷Ordering.LT" }
-local EQ = { ["$ctor"] = "Data.Ordering∷Ordering.EQ" }
-local GT = { ["$ctor"] = "Data.Ordering∷Ordering.GT" }
+local LT = { "Data.Ordering∷Ordering.LT" }
+local EQ = { "Data.Ordering∷Ordering.EQ" }
+local GT = { "Data.Ordering∷Ordering.GT" }
 local M = {}
 M.Data_Ord_ordInt = {
   compare = function(x)
@@ -22,7 +22,7 @@ M.Data_Ord_ordInt = {
 M.Data_Ord_greaterThanOrEq = function(dictOrd)
   return function(a1)
     return function(a2)
-      return dictOrd.compare(a1)(a2)["$ctor"] ~= "Data.Ordering∷Ordering.LT"
+      return dictOrd.compare(a1)(a2)[1] ~= "Data.Ordering∷Ordering.LT"
     end
   end
 end

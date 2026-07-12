@@ -653,9 +653,8 @@ UberModule
                   ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
                   ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v$63$1762" ) ) ) )
                 )
-                ( ObjectProp Nothing
+                ( DataArgumentByIndex Nothing SumType 0
                   ( Ref Nothing ( Local ( Name "v$63$1762" ) ) )
-                  ( PropName "value0" )
                 )
                 ( IfThenElse Nothing
                   ( Eq Nothing
@@ -781,9 +780,8 @@ UberModule
                       ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
                       ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v$63$1764" ) ) ) )
                     )
-                    ( ObjectProp Nothing
+                    ( DataArgumentByIndex Nothing SumType 0
                       ( Ref Nothing ( Local ( Name "v$63$1764" ) ) )
-                      ( PropName "value0" )
                     )
                     ( IfThenElse Nothing
                       ( Eq Nothing
@@ -916,9 +914,8 @@ UberModule
                       ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
                       ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v$63$1766" ) ) ) )
                     )
-                    ( ObjectProp Nothing
+                    ( DataArgumentByIndex Nothing SumType 0
                       ( Ref Nothing ( Local ( Name "v$63$1766" ) ) )
-                      ( PropName "value0" )
                     )
                     ( IfThenElse Nothing
                       ( Eq Nothing
@@ -1091,9 +1088,8 @@ UberModule
                         ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "singleton" ) )
                       )
                       ( ObjectProp Nothing
-                        ( ObjectProp Nothing
+                        ( DataArgumentByIndex Nothing SumType 0
                           ( Ref Nothing ( Local ( Name "v2$17" ) ) )
-                          ( PropName "value0" )
                         )
                         ( PropName "head" ) :| []
                       )
@@ -1109,9 +1105,8 @@ UberModule
                         ( Ref Nothing ( Local ( Name "v" ) ) )
                         ( LiteralInt Nothing 1 ) :|
                         [ ObjectProp Nothing
-                          ( ObjectProp Nothing
+                          ( DataArgumentByIndex Nothing SumType 0
                             ( Ref Nothing ( Local ( Name "v2$17" ) ) )
-                            ( PropName "value0" )
                           )
                           ( PropName "tail" )
                         ]
@@ -1253,9 +1248,8 @@ UberModule
                                 ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
                                 ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v$1575" ) ) ) )
                               )
-                              ( ObjectProp Nothing
+                              ( DataArgumentByIndex Nothing SumType 0
                                 ( Ref Nothing ( Local ( Name "v$1575" ) ) )
-                                ( PropName "value0" )
                               )
                               ( Exception Nothing "No patterns matched" )
                             )
@@ -1265,17 +1259,15 @@ UberModule
                     )
                     ( AbsN Nothing
                       ( ParamNamed Nothing ( Name "v$1526" ) :| [] )
-                      ( ObjectProp Nothing
+                      ( DataArgumentByIndex Nothing ProductType 0
                         ( Ref Nothing ( Local ( Name "v$1526" ) ) )
-                        ( PropName "value0" )
                       ) :| []
                     )
                   )
                   ( AbsN Nothing
                     ( ParamNamed Nothing ( Name "v$1527" ) :| [] )
-                    ( ObjectProp Nothing
+                    ( DataArgumentByIndex Nothing ProductType 1
                       ( Ref Nothing ( Local ( Name "v$1527" ) ) )
-                      ( PropName "value1" )
                     ) :| []
                   )
                 )
@@ -1306,17 +1298,15 @@ UberModule
                               [ FieldName "value0", FieldName "value1" ]
                             )
                             ( ObjectProp Nothing
-                              ( ObjectProp Nothing
+                              ( DataArgumentByIndex Nothing SumType 0
                                 ( Ref Nothing ( Local ( Name "v1$1578" ) ) )
-                                ( PropName "value0" )
                               )
                               ( PropName "head" ) :| []
                             )
                           )
                           ( ObjectProp Nothing
-                            ( ObjectProp Nothing
+                            ( DataArgumentByIndex Nothing SumType 0
                               ( Ref Nothing ( Local ( Name "v1$1578" ) ) )
-                              ( PropName "value0" )
                             )
                             ( PropName "tail" ) :| []
                           ) :| []
@@ -1359,9 +1349,8 @@ UberModule
                 ( AppN Nothing
                   ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Just" ) ) )
                   ( ObjectProp Nothing
-                    ( ObjectProp Nothing
+                    ( DataArgumentByIndex Nothing SumType 0
                       ( Ref Nothing ( Local ( Name "v" ) ) )
-                      ( PropName "value0" )
                     )
                     ( PropName "head" ) :| []
                   )
@@ -1377,9 +1366,8 @@ UberModule
                     ( Ref Nothing ( Local ( Name "n" ) ) )
                     ( LiteralInt Nothing 1 ) :|
                     [ ObjectProp Nothing
-                      ( ObjectProp Nothing
+                      ( DataArgumentByIndex Nothing SumType 0
                         ( Ref Nothing ( Local ( Name "v" ) ) )
-                        ( PropName "value0" )
                       )
                       ( PropName "tail" )
                     ]
@@ -1746,9 +1734,8 @@ UberModule
                     ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
                     ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v$1536" ) ) ) )
                   )
-                  ( ObjectProp Nothing
+                  ( DataArgumentByIndex Nothing SumType 0
                     ( Ref Nothing ( Local ( Name "v$1536" ) ) )
-                    ( PropName "value0" )
                   )
                   ( Exception Nothing "No patterns matched" )
                 )
@@ -1966,9 +1953,8 @@ UberModule
                                 ( Ref Nothing
                                   ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) )
                                 )
-                                ( ObjectProp Nothing
-                                  ( Ref Nothing ( Local ( Name "v$1542$1719" ) ) )
-                                  ( PropName "value0" ) :| []
+                                ( DataArgumentByIndex Nothing SumType 0
+                                  ( Ref Nothing ( Local ( Name "v$1542$1719" ) ) ) :| []
                                 )
                               )
                               ( LiteralString Nothing ")" )
@@ -2013,9 +1999,8 @@ UberModule
                                 ( Name "fromEnum" )
                               )
                             )
-                            ( ObjectProp Nothing
-                              ( Ref Nothing ( Local ( Name "v1$1540$1717" ) ) )
-                              ( PropName "value0" ) :| []
+                            ( DataArgumentByIndex Nothing SumType 0
+                              ( Ref Nothing ( Local ( Name "v1$1540$1717" ) ) ) :| []
                             ) :| []
                           )
                         )
@@ -2045,9 +2030,8 @@ UberModule
                                 ( Ref Nothing
                                   ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) )
                                 )
-                                ( ObjectProp Nothing
-                                  ( Ref Nothing ( Local ( Name "v$1542$1727" ) ) )
-                                  ( PropName "value0" ) :| []
+                                ( DataArgumentByIndex Nothing SumType 0
+                                  ( Ref Nothing ( Local ( Name "v$1542$1727" ) ) ) :| []
                                 )
                               )
                               ( LiteralString Nothing ")" )
@@ -2092,9 +2076,8 @@ UberModule
                                 ( Name "fromEnum" )
                               )
                             )
-                            ( ObjectProp Nothing
-                              ( Ref Nothing ( Local ( Name "v1$1540$1725" ) ) )
-                              ( PropName "value0" ) :| []
+                            ( DataArgumentByIndex Nothing SumType 0
+                              ( Ref Nothing ( Local ( Name "v1$1540$1725" ) ) ) :| []
                             ) :| []
                           )
                         )
@@ -2124,9 +2107,8 @@ UberModule
                                 ( Ref Nothing
                                   ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) )
                                 )
-                                ( ObjectProp Nothing
-                                  ( Ref Nothing ( Local ( Name "v$1542$1735" ) ) )
-                                  ( PropName "value0" ) :| []
+                                ( DataArgumentByIndex Nothing SumType 0
+                                  ( Ref Nothing ( Local ( Name "v$1542$1735" ) ) ) :| []
                                 )
                               )
                               ( LiteralString Nothing ")" )
@@ -2171,9 +2153,8 @@ UberModule
                                 ( Name "fromEnum" )
                               )
                             )
-                            ( ObjectProp Nothing
-                              ( Ref Nothing ( Local ( Name "v1$1540$1733" ) ) )
-                              ( PropName "value0" ) :| []
+                            ( DataArgumentByIndex Nothing SumType 0
+                              ( Ref Nothing ( Local ( Name "v1$1540$1733" ) ) ) :| []
                             ) :| []
                           )
                         )
@@ -2203,9 +2184,8 @@ UberModule
                                 ( Ref Nothing
                                   ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) )
                                 )
-                                ( ObjectProp Nothing
-                                  ( Ref Nothing ( Local ( Name "v$1542$1746" ) ) )
-                                  ( PropName "value0" ) :| []
+                                ( DataArgumentByIndex Nothing SumType 0
+                                  ( Ref Nothing ( Local ( Name "v$1542$1746" ) ) ) :| []
                                 )
                               )
                               ( LiteralString Nothing ")" )
@@ -2248,9 +2228,8 @@ UberModule
                               )
                             )
                             ( ObjectProp Nothing
-                              ( ObjectProp Nothing
+                              ( DataArgumentByIndex Nothing SumType 0
                                 ( Ref Nothing ( Local ( Name "v1$1540$1744" ) ) )
-                                ( PropName "value0" )
                               )
                               ( PropName "head" ) :| []
                             ) :| []
@@ -2290,9 +2269,8 @@ UberModule
                                     ) :| []
                                   )
                                 )
-                                ( ObjectProp Nothing
-                                  ( Ref Nothing ( Local ( Name "v$1657" ) ) )
-                                  ( PropName "value0" ) :| []
+                                ( DataArgumentByIndex Nothing SumType 0
+                                  ( Ref Nothing ( Local ( Name "v$1657" ) ) ) :| []
                                 )
                               )
                               ( LiteralString Nothing ")" )
@@ -2345,9 +2323,8 @@ UberModule
                                 )
                               )
                               ( ObjectProp Nothing
-                                ( ObjectProp Nothing
+                                ( DataArgumentByIndex Nothing SumType 0
                                   ( Ref Nothing ( Local ( Name "v1$1540$1759" ) ) )
-                                  ( PropName "value0" )
                                 )
                                 ( PropName "tail" ) :| []
                               ) :| []
@@ -2460,9 +2437,8 @@ UberModule
                                     ( Ref Nothing ( Local ( Name "v$1536$1772" ) ) )
                                   )
                                 )
-                                ( ObjectProp Nothing
+                                ( DataArgumentByIndex Nothing SumType 0
                                   ( Ref Nothing ( Local ( Name "v$1536$1772" ) ) )
-                                  ( PropName "value0" )
                                 )
                                 ( Exception Nothing "No patterns matched" )
                               )

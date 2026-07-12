@@ -26,8 +26,6 @@ import Language.PureScript.Backend.IR.Names
   , QName (..)
   , Qualified (Imported, Local)
   , qualifiedQName
-  , renderFieldName
-  , renderPropName
   )
 import Language.PureScript.Backend.IR.Pass
   ( Invariant (..)
@@ -687,7 +685,7 @@ complexityOf = \case
   ArrayIndex _ann base _idx → Deref <> complexityOf base
   ArrayLength _ann base → Deref <> complexityOf base
   ReflectCtor _ann base → Deref <> complexityOf base
-  DataArgumentByIndex _ann _idx base → Deref <> complexityOf base
+  DataArgumentByIndex _ann _algTy _idx base → Deref <> complexityOf base
   AbsN _ann _params body → KnownSize <> complexityOf body
   _ → NonTrivial
 
@@ -886,12 +884,19 @@ captured. Pasting a record constructor into a projected application site
 (see 'inlineAnnotatedProjection') leaves exactly this shape behind once
 'betaReduce' let-binds a non-trivial argument; sinking the projection
 lets 'reduceObjectProp' finish the resolution.
+
+A constructor field read over a 'Let' is the same residue with a data
+constructor inside — an inlined paste of code matching on a constructor
+argument — and sinks by the same argument, bringing the read to where
+'reduceKnownConstructor' can reach the constructor.
 -}
 sinkProjectionIntoLet ∷ Applicative m ⇒ RewriteRuleM m Ann
 sinkProjectionIntoLet =
   pure . \case
     ObjectProp ann (Let letAnn binds body) prop →
       Just $ Let letAnn binds (ObjectProp ann body prop)
+    DataArgumentByIndex ann algTy i (Let letAnn binds body) →
+      Just $ Let letAnn binds (DataArgumentByIndex ann algTy i body)
     _ → Nothing
 
 {- | Case-of-known-constructor for algebraic types (issue #177), the
@@ -902,12 +907,8 @@ sinkProjectionIntoLet =
     equality test then meets 'constantFolding' and
     'removeUnreachableThenBranch' / 'removeUnreachableElseBranch', which
     collapse the decision tree to its live branch.
-  * @DataArgumentByIndex i (K a₁ … aₙ)@ — a field read — folds to @aᵢ@.
-  * @ObjectProp (K a₁ … aₙ) "valueᵢ"@ — the record-projection field read the
-    pattern matcher actually emits (issue #213) — folds to @aᵢ@. The label
-    maps to its position through the constructor's declared @[FieldName]@
-    (@value0@, @value1@, … — the row keys the Lua backend gives a @Ctor@), so
-    a projection whose label is not one of them is declined.
+  * @DataArgumentByIndex i (K a₁ … aₙ)@ — a field read, the shape the
+    pattern matcher emits — folds to @aᵢ@.
 
 A constructor application is the curried unary-'App' spine
 @App (… (App (Ctor …) a₁) …) aₙ@ that translation and the pattern
@@ -916,10 +917,14 @@ many arguments as the constructor declares fields), so a partial
 application — still a function — is left alone.
 
 'ReflectCtor' folds for 'SumType' only: product constructors omit the
-@$ctor@ tag row in the generated Lua (see the @Ctor@ case of
-'Language.PureScript.Backend.Lua.fromIR'), so reducing a product-type
-tag read to a string would invent a value the runtime reads as @nil@.
-Field reads fold for either shape, since @valueᵢ@ rows exist for both.
+tag slot in the generated Lua (see the @Ctor@ case of
+'Language.PureScript.Backend.Lua.fromIR'), so a product-type tag read
+has no tag string to fold to — at runtime it aliases the first field.
+A field read folds for either shape, but only when the read's algebraic
+type matches the constructor's: the type decides the runtime slot
+offset (past the tag for sums, from slot 1 for products), so folding a
+mismatched — necessarily ill-typed — read would return a different
+value than the compiled slot access reads.
 
 Discarded arguments are dropped, not evaluated — the discipline
 'reduceObjectProp' applies to discarded record fields and DCE applies to
@@ -949,18 +954,11 @@ reduceKnownConstructor =
       | reflectFoldsThrough t
       , reflectFoldsThrough e →
           Just $ IfThenElse ifAnn cond (ReflectCtor ann t) (ReflectCtor ann e)
-    DataArgumentByIndex ann index scrutinee
-      | (Ctor _ _ _ _ _ fields, args) ← unwindApp scrutinee
+    DataArgumentByIndex ann algTy index scrutinee
+      | (Ctor _ ctorAlgTy _ _ _ fields, args) ← unwindApp scrutinee
+      , algTy == ctorAlgTy
       , length args == length fields
       , Just arg ← viaNonEmpty head (List.genericDrop index args) →
-          Just (setAnn ann arg)
-    ObjectProp ann scrutinee prop
-      | (Ctor _ _ _ _ _ fields, args) ← unwindApp scrutinee
-      , length args == length fields
-      , Just arg ←
-          List.lookup
-            (renderPropName prop)
-            (zip (renderFieldName <$> fields) args) →
           Just (setAnn ann arg)
     _ → Nothing
 
@@ -988,11 +986,11 @@ scrutinee several times — a tag test, a payload read, a fallthrough tag
 test. So an inlined and beta-reduced method lands on
 
 > let v = Just (x + 1) in
->   if justTag == ReflectCtor v then … v.value0 …
+>   if justTag == ReflectCtor v then … DataArgumentByIndex 0 v …
 >   else if nothingTag == ReflectCtor v then Nothing else …
 
 and nothing folds: the rules see @ReflectCtor (Ref v)@ and
-@ObjectProp (Ref v) "value0"@, never the constructor.
+@DataArgumentByIndex 0 (Ref v)@, never the constructor.
 
 This propagates a known constructor from a 'Standalone' Let binding into the
 binder's reads. When the RHS is a saturated 'Ctor' application and the binder
@@ -1000,10 +998,12 @@ is read /only/ through constructor-eliminating reads:
 
   * each @ReflectCtor v@ becomes the tag string (sum types only, as in
     'reduceKnownConstructor');
-  * each field read (@ObjectProp v "valueᵢ"@, @DataArgumentByIndex i v@)
-    becomes a fresh field-binder @fᵢ@ bound once to the iᵗʰ argument — GHC's
-    case-binder to field-binder split, so an argument read at several sites
-    is evaluated once, not duplicated (the discipline 'betaReduce' keeps);
+  * each field read (@DataArgumentByIndex i v@, with the constructor's own
+    algebraic type — see 'reduceKnownConstructor' for why a mismatch does
+    not fold) becomes a fresh field-binder @fᵢ@ bound once to the iᵗʰ
+    argument — GHC's case-binder to field-binder split, so an argument
+    read at several sites is evaluated once, not duplicated (the
+    discipline 'betaReduce' keeps);
   * the @v@ binding is dropped, its unread arguments discarded with the same
     licence 'reduceKnownConstructor' drops a field read's siblings.
 
@@ -1014,7 +1014,7 @@ let the surrounding @Eq@ / @if@ meet 'constantFolding' and
 The rule declines when the binder is read as a whole value — a sibling RHS,
 or a non-eliminating position such as an argument to a function. Dropping it
 would dangle the reference, and keeping it while binding the fields would
-duplicate the arguments. A product-type @ReflectCtor@ read has no tag row to
+duplicate the arguments. A product-type @ReflectCtor@ read has no tag slot to
 fold to, so it too leaves a whole-value read and the rule declines. GUC keeps
 the fresh field-binders unique and the binder resolved by name.
 
@@ -1038,13 +1038,13 @@ propagateKnownCtorThroughLet env = \case
     , all ((== 0) . countFreeRefGrouping name) (before <> after)
     , countFreeRef (Local name) body > 0
     , not (hasWholeValueRead name algTy fields body) → do
-        let readIndices = readFieldIndices name fields body
+        let readIndices = readFieldIndices name algTy body
         freshFields ←
           Map.fromList
             <$> traverse
               (\i → (i,) <$> freshName "$field")
               (toList readIndices)
-        let body' = foldCtorReads name algTy tag fields freshFields body
+        let body' = foldCtorReads name algTy tag freshFields body
             fieldBinds =
               [ Standalone (Nothing, f, arg)
               | (i, f) ← Map.toAscList freshFields
@@ -1113,61 +1113,46 @@ propagateKnownCtorThroughLet env = \case
    where
     go = \case
       ReflectCtor _ (Ref _ (Local n)) | n == name, SumType ← algTy → False
-      ObjectProp _ (Ref _ (Local n)) prop
-        | n == name, isJust (fieldIndex fields prop) → False
-      -- An out-of-range index reads no existing field, so it is not a
-      -- foldable eliminating read: it falls through to the whole-value read
-      -- below, forcing the rule to decline (as 'reduceKnownConstructor'
-      -- does), rather than minting a fresh field-binder the argument list
-      -- cannot bind. Well-typed input never indexes past the arity; the
-      -- guard keeps the rule sound on the non-GUC / generated input
-      -- 'optimizedExpression' also runs on.
-      DataArgumentByIndex _ i (Ref _ (Local n))
-        | n == name, i < fromIntegral (length fields) → False
+      -- An out-of-range index or a mismatched algebraic type reads no
+      -- existing field, so it is not a foldable eliminating read: it falls
+      -- through to the whole-value read below, forcing the rule to decline
+      -- (as 'reduceKnownConstructor' does), rather than minting a fresh
+      -- field-binder the argument list cannot bind. Well-typed input never
+      -- indexes past the arity nor mistypes the read; the guards keep the
+      -- rule sound on the non-GUC / generated input 'optimizedExpression'
+      -- also runs on.
+      DataArgumentByIndex _ readTy i (Ref _ (Local n))
+        | n == name, readTy == algTy, i < fromIntegral (length fields) → False
       Ref _ (Local n) | n == name → True
       other → any go (toListOf subexpressions other)
 
-  readFieldIndices ∷ Name → [FieldName] → Exp → Set Natural
-  readFieldIndices name fields = go
+  readFieldIndices ∷ Name → AlgebraicType → Exp → Set Natural
+  readFieldIndices name algTy = go
    where
     go e = self e <> foldMap go (toListOf subexpressions e)
     self = \case
-      ObjectProp _ (Ref _ (Local n)) prop
-        | n == name, Just i ← fieldIndex fields prop → Set.singleton i
-      DataArgumentByIndex _ i (Ref _ (Local n)) | n == name → Set.singleton i
+      DataArgumentByIndex _ readTy i (Ref _ (Local n))
+        | n == name, readTy == algTy → Set.singleton i
       _ → mempty
 
   foldCtorReads
     ∷ Name
     → AlgebraicType
     → Text
-    → [FieldName]
     → Map Natural Name
     → Exp
     → Exp
-  foldCtorReads name algTy tag fields freshFields = go
+  foldCtorReads name algTy tag freshFields = go
    where
     go = \case
       ReflectCtor rcAnn (Ref _ (Local n))
         | n == name, SumType ← algTy → LiteralString rcAnn tag
-      ObjectProp opAnn (Ref _ (Local n)) prop
+      DataArgumentByIndex daAnn readTy i (Ref _ (Local n))
         | n == name
-        , Just i ← fieldIndex fields prop
-        , Just f ← Map.lookup i freshFields →
-            Ref opAnn (Local f)
-      DataArgumentByIndex daAnn i (Ref _ (Local n))
-        | n == name
+        , readTy == algTy
         , Just f ← Map.lookup i freshFields →
             Ref daAnn (Local f)
       other → over subexpressions go other
-
-{- | The position of a record-projection label among a constructor's
-declared fields (@value0@, @value1@, …).
--}
-fieldIndex ∷ [FieldName] → PropName → Maybe Natural
-fieldIndex fields prop =
-  fromIntegral
-    <$> List.findIndex ((renderPropName prop ==) . renderFieldName) fields
 
 {- | The through-a-reference companion of 'reduceKnownConstructor' — the
 relationship 'resolveDictionaryProp' bears to 'reduceObjectProp'. A
@@ -1187,13 +1172,11 @@ on 'reduceObjectProp'.
 reduceKnownCtorRefRead ∷ Applicative m ⇒ InlineEnv → RewriteRuleM m Ann
 reduceKnownCtorRefRead env =
   pure . \case
-    ObjectProp ann spine prop
-      | Just (_algTy, fields, args, _tag) ← saturatedCtorRefApp env spine
-      , Just i ← fieldIndex fields prop
-      , Just arg ← args !!? fromIntegral i →
-          Just (setAnn ann arg)
-    DataArgumentByIndex ann i spine
-      | Just (_algTy, _fields, args, _tag) ← saturatedCtorRefApp env spine
+    -- Field reads fold only at the constructor's own algebraic type, as
+    -- in 'reduceKnownConstructor'.
+    DataArgumentByIndex ann algTy i spine
+      | Just (ctorAlgTy, _fields, args, _tag) ← saturatedCtorRefApp env spine
+      , algTy == ctorAlgTy
       , Just arg ← args !!? fromIntegral i →
           Just (setAnn ann arg)
     -- Tag reads fold for sum types only, as in 'reduceKnownConstructor'.

@@ -41,7 +41,7 @@ UberModule
         ( AbsN Nothing
           ( ParamNamed Nothing ( Name "x" ) :| [] )
           ( AppN Nothing
-            ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "op" ) ) ) ( PropName "value0" ) )
+            ( DataArgumentByIndex Nothing ProductType 0 ( Ref Nothing ( Local ( Name "op" ) ) ) )
             ( Ref Nothing ( Local ( Name "x" ) ) :| [] )
           )
         )

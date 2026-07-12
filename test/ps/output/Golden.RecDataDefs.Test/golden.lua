@@ -1,10 +1,10 @@
-local Golden_RecDataDefs_Test_A = { ["$ctor"] = "Golden.RecDataDefs.Test∷A.A" }
+local Golden_RecDataDefs_Test_A = { "Golden.RecDataDefs.Test∷A.A" }
 local Golden_RecDataDefs_Test_AB = function(value0)
-  return { ["$ctor"] = "Golden.RecDataDefs.Test∷A.AB", value0 = value0 }
+  return { "Golden.RecDataDefs.Test∷A.AB", value0 }
 end
-local Golden_RecDataDefs_Test_B = { ["$ctor"] = "Golden.RecDataDefs.Test∷B.B" }
+local Golden_RecDataDefs_Test_B = { "Golden.RecDataDefs.Test∷B.B" }
 local Golden_RecDataDefs_Test_BA = function(value0)
-  return { ["$ctor"] = "Golden.RecDataDefs.Test∷B.BA", value0 = value0 }
+  return { "Golden.RecDataDefs.Test∷B.BA", value0 }
 end
 local Golden_RecDataDefs_Test_ab = Golden_RecDataDefs_Test_AB(Golden_RecDataDefs_Test_B)
 return {

@@ -174,14 +174,12 @@ UberModule
                           ( AppN Nothing
                             ( AppN Nothing
                               ( Ref Nothing ( Local ( Name "f" ) ) )
-                              ( ObjectProp Nothing
-                                ( Ref Nothing ( Local ( Name "v1" ) ) )
-                                ( PropName "value0" ) :| []
+                              ( DataArgumentByIndex Nothing ProductType 0
+                                ( Ref Nothing ( Local ( Name "v1" ) ) ) :| []
                               )
                             )
-                            ( ObjectProp Nothing
-                              ( Ref Nothing ( Local ( Name "v1" ) ) )
-                              ( PropName "value1" ) :| []
+                            ( DataArgumentByIndex Nothing ProductType 1
+                              ( Ref Nothing ( Local ( Name "v1" ) ) ) :| []
                             )
                           ) :| []
                         )
@@ -336,15 +334,13 @@ UberModule
                                       )
                                       ( AppN Nothing
                                         ( Ref Nothing ( Local ( Name "f$515" ) ) )
-                                        ( ObjectProp Nothing
-                                          ( Ref Nothing ( Local ( Name "v1$518" ) ) )
-                                          ( PropName "value0" ) :| []
+                                        ( DataArgumentByIndex Nothing ProductType 0
+                                          ( Ref Nothing ( Local ( Name "v1$518" ) ) ) :| []
                                         ) :| []
                                       )
                                     )
-                                    ( ObjectProp Nothing
-                                      ( Ref Nothing ( Local ( Name "v1$518" ) ) )
-                                      ( PropName "value1" ) :| []
+                                    ( DataArgumentByIndex Nothing ProductType 1
+                                      ( Ref Nothing ( Local ( Name "v1$518" ) ) ) :| []
                                     )
                                   ) :| []
                                 )
@@ -10785,12 +10781,11 @@ UberModule
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.LongStateBind.Test", qnameName = Name "compute"
-        }, ObjectProp Nothing
+        }, DataArgumentByIndex Nothing ProductType 0
         ( AppN Nothing
           ( Ref Nothing ( Imported ( ModuleName "Golden.LongStateBind.Test" ) ( Name "go" ) ) )
           ( LiteralInt Nothing 0 :| [] )
         )
-        ( PropName "value0" )
       )
     ], uberModuleForeigns = [], uberModuleExports =
     [
