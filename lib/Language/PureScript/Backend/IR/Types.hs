@@ -777,6 +777,91 @@ countFreeRefs = fmap getSum . MMap.toMap . countFreeRefs' mempty
 countFreeRef ∷ Qualified Name → RawExp ann → Natural
 countFreeRef name = Map.findWithDefault 0 name . countFreeRefs
 
+{- | Where a reference sits relative to the expression root: reached
+unconditionally, only inside an 'IfThenElse' arm, or from inside a
+nested 'AbsN'. Ordered by escalation; combines by taking the strongest
+context.
+-}
+data Capture = CaptureNone | CaptureBranch | CaptureClosure
+  deriving stock (Show, Eq, Ord)
+
+instance Semigroup Capture where
+  (<>) = max
+
+instance Monoid Capture where
+  mempty = CaptureNone
+
+{- | Aggregate of one name's free references: how many, and the
+strongest 'Capture' context any of them sits under.
+-}
+data Usage = Usage {usageTotal ∷ Natural, usageCapture ∷ Capture}
+  deriving stock (Show, Eq)
+
+instance Semigroup Usage where
+  Usage t1 c1 <> Usage t2 c2 = Usage (t1 + t2) (c1 <> c2)
+
+instance Monoid Usage where
+  mempty = Usage 0 mempty
+
+{- | 'countFreeRef' enriched with the 'Capture' context of the counted
+references: the traversal threads the strongest wrapper crossed between
+the expression root and each reference site — an 'AbsN' body raises the
+context to 'CaptureClosure', an 'IfThenElse' arm (not the condition) to
+'CaptureBranch'. A 'Let' defers nothing: its RHSs and body evaluate
+when the 'Let' does, so the context passes through unchanged and only
+the bound-name set advances (Note [Sequential scoping of Let bindings]).
+-}
+countFreeRefUsage ∷ Qualified Name → RawExp ann → Usage
+countFreeRefUsage name = go CaptureNone mempty
+ where
+  go ∷ Capture → Set Name → RawExp ann → Usage
+  go cap bound = \case
+    Ref _ann qname
+      | qname == name → case qname of
+          Local n | Set.member n bound → mempty
+          _ → Usage 1 cap
+      | otherwise → mempty
+    AbsN _ann params body →
+      go (cap <> CaptureClosure) (foldl' bindParam bound params) body
+     where
+      bindParam ∷ Set Name → Parameter ann → Set Name
+      bindParam names = \case
+        ParamNamed _paramAnn n → Set.insert n names
+        ParamUnused _paramAnn → names
+    IfThenElse _ann cond thenBranch elseBranch →
+      go cap bound cond
+        <> go (cap <> CaptureBranch) bound thenBranch
+        <> go (cap <> CaptureBranch) bound elseBranch
+    -- See Note [Sequential scoping of Let bindings]
+    Let _ann binds body → fold (usageInBody : usagesInBinds)
+     where
+      usageInBody = go cap boundAfterBinds body
+      (boundAfterBinds, usagesInBinds) =
+        foldl' withGrouping (bound, []) (toList binds)
+      withGrouping
+        ∷ (Set Name, [Usage])
+        → Grouping (ann, Name, RawExp ann)
+        → (Set Name, [Usage])
+      withGrouping (names, usages) = \case
+        Standalone (_nameAnn, boundName, expr) →
+          (Set.insert boundName names, go cap names expr : usages)
+        RecursiveGroup recBinds →
+          ( namesAfterGroup
+          , ( toList recBinds <&> \(_nameAnn, _boundName, expr) →
+                go cap namesAfterGroup expr
+            )
+              <> usages
+          )
+         where
+          namesAfterGroup =
+            foldr
+              (\(_nameAnn, boundName, _expr) → Set.insert boundName)
+              names
+              recBinds
+    -- No other constructor binds names or defers/conditions evaluation,
+    -- so both context components pass through:
+    other → foldMapOf subexpressions (go cap bound) other
+
 {- | Structural equality modulo the names of locally-bound binders.
 
 Two expressions are alpha-equivalent when they differ at most in the

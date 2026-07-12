@@ -85,37 +85,32 @@ M.Golden_TailRecM2Shadow_Test_sumFrom = function(dictMonadRec)
   return function(b)
     return function(n)
       return dictMonadRec.tailRecM(function(o_S_483)
-        return (function()
-          local acc_S_1 = o_S_483.a
-          return function(i_S_2)
-            if "Data.Ordering∷Ordering.LT" == (function()
-              if i_S_2 < n then
-                return "Data.Ordering∷Ordering.LT"
-              elseif i_S_2 == n then
-                return "Data.Ordering∷Ordering.EQ"
-              else
-                return "Data.Ordering∷Ordering.GT"
-              end
-            end)() then
-              return pure((function(value0)
-                return {
-                  ["$ctor"] = "Control.Monad.Rec.Class∷Step.Loop",
-                  value0 = value0
-                }
-              end)({
-                a = M.Golden_TailRecM2Shadow_Test_add_S_w(acc_S_1, i_S_2),
-                b = M.Golden_TailRecM2Shadow_Test_add_S_w(i_S_2, 1)
-              }))
-            else
-              return pure((function(value0)
-                return {
-                  ["$ctor"] = "Control.Monad.Rec.Class∷Step.Done",
-                  value0 = value0
-                }
-              end)(acc_S_1))
-            end
+        if "Data.Ordering∷Ordering.LT" == (function()
+          if o_S_483.b < n then
+            return "Data.Ordering∷Ordering.LT"
+          elseif o_S_483.b == n then
+            return "Data.Ordering∷Ordering.EQ"
+          else
+            return "Data.Ordering∷Ordering.GT"
           end
-        end)()(o_S_483.b)
+        end)() then
+          return pure((function(value0)
+            return {
+              ["$ctor"] = "Control.Monad.Rec.Class∷Step.Loop",
+              value0 = value0
+            }
+          end)({
+            a = M.Golden_TailRecM2Shadow_Test_add_S_w(o_S_483.a, o_S_483.b),
+            b = M.Golden_TailRecM2Shadow_Test_add_S_w(o_S_483.b, 1)
+          }))
+        else
+          return pure((function(value0)
+            return {
+              ["$ctor"] = "Control.Monad.Rec.Class∷Step.Done",
+              value0 = value0
+            }
+          end)(o_S_483.a))
+        end
       end)({ a = b, b = 0 })
     end
   end
@@ -162,58 +157,53 @@ return (function()
     return function(b_S_537)
       return function(n_S_538)
         return dictMonadRec_S_535.tailRecM(function(o_S_483_S_539)
-          return (function()
-            local acc_S_1_S_540 = o_S_483_S_539.a
-            return function(i_S_2_S_541)
-              if "Data.Ordering∷Ordering.LT" == (function()
-                if i_S_2_S_541 < n_S_538 then
-                  return "Data.Ordering∷Ordering.LT"
-                elseif i_S_2_S_541 == n_S_538 then
-                  return "Data.Ordering∷Ordering.EQ"
-                else
-                  return "Data.Ordering∷Ordering.GT"
-                end
-              end)() then
-                return pure_S_536((function(value0)
-                  return {
-                    ["$ctor"] = "Control.Monad.Rec.Class∷Step.Loop",
-                    value0 = value0
-                  }
-                end)({
-                  a = M.Golden_TailRecM2Shadow_Test_add_S_w(acc_S_1_S_540, i_S_2_S_541),
-                  b = M.Golden_TailRecM2Shadow_Test_add_S_w(i_S_2_S_541, 1)
-                }))
-              else
-                return pure_S_536((function(value0)
-                  return {
-                    ["$ctor"] = "Control.Monad.Rec.Class∷Step.Done",
-                    value0 = value0
-                  }
-                end)(acc_S_1_S_540))
-              end
+          if "Data.Ordering∷Ordering.LT" == (function()
+            if o_S_483_S_539.b < n_S_538 then
+              return "Data.Ordering∷Ordering.LT"
+            elseif o_S_483_S_539.b == n_S_538 then
+              return "Data.Ordering∷Ordering.EQ"
+            else
+              return "Data.Ordering∷Ordering.GT"
             end
-          end)()(o_S_483_S_539.b)
+          end)() then
+            return pure_S_536((function(value0)
+              return {
+                ["$ctor"] = "Control.Monad.Rec.Class∷Step.Loop",
+                value0 = value0
+              }
+            end)({
+              a = M.Golden_TailRecM2Shadow_Test_add_S_w(o_S_483_S_539.a, o_S_483_S_539.b),
+              b = M.Golden_TailRecM2Shadow_Test_add_S_w(o_S_483_S_539.b, 1)
+            }))
+          else
+            return pure_S_536((function(value0)
+              return {
+                ["$ctor"] = "Control.Monad.Rec.Class∷Step.Done",
+                value0 = value0
+              }
+            end)(o_S_483_S_539.a))
+          end
         end)({ a = b_S_537, b = 0 })
       end
     end
   end)()(0)(5)()
   return M.Effect_Console_foreign.log(M.Data_Show_foreign.showIntImpl((function(  )
-    local dictMonadRec_S_535_S_543 = {
-      tailRecM = function(f_S_11_S_544)
-        return function(a_S_12_S_545)
+    local dictMonadRec_S_535_S_541 = {
+      tailRecM = function(f_S_11_S_542)
+        return function(a_S_12_S_543)
           return function()
             local Effect_Ref_foreign = M.Effect_Ref_foreign
-            local r_S_16_S_546 = M.Effect_bindEffect.bind(f_S_11_S_544(a_S_12_S_545))(Effect_Ref_foreign._new)()
-            local __S_547 = M.Effect_foreign.untilE(function()
-              local v0_S_17_S_548 = M.Effect_Ref_foreign.read(r_S_16_S_546)()
+            local r_S_16_S_544 = M.Effect_bindEffect.bind(f_S_11_S_542(a_S_12_S_543))(Effect_Ref_foreign._new)()
+            local __S_545 = M.Effect_foreign.untilE(function()
+              local v0_S_17_S_546 = M.Effect_Ref_foreign.read(r_S_16_S_544)()
               return (function()
-                if "Control.Monad.Rec.Class∷Step.Loop" == v0_S_17_S_548["$ctor"] then
+                if "Control.Monad.Rec.Class∷Step.Loop" == v0_S_17_S_546["$ctor"] then
                   return function()
-                    local e_S_19_S_549 = f_S_11_S_544(v0_S_17_S_548.value0)()
-                    local __S_550 = M.Effect_Ref_foreign.write(e_S_19_S_549)(r_S_16_S_546)()
+                    local e_S_19_S_547 = f_S_11_S_542(v0_S_17_S_546.value0)()
+                    local __S_548 = M.Effect_Ref_foreign.write(e_S_19_S_547)(r_S_16_S_544)()
                     return M.Control_Monad_Rec_Class_pure(false)()
                   end
-                elseif "Control.Monad.Rec.Class∷Step.Done" == v0_S_17_S_548["$ctor"] then
+                elseif "Control.Monad.Rec.Class∷Step.Done" == v0_S_17_S_546["$ctor"] then
                   return M.Control_Monad_Rec_Class_pure(true)
                 else
                   return error("No patterns matched")
@@ -221,55 +211,50 @@ return (function()
               end)()()
             end)()
             return M.Effect_functorEffect.map(M.Partial_Unsafe_foreign._unsafePartial(function(  )
-              return function(v_S_9_S_20_S_551)
-                if "Control.Monad.Rec.Class∷Step.Done" == v_S_9_S_20_S_551["$ctor"] then
-                  return v_S_9_S_20_S_551.value0
+              return function(v_S_9_S_20_S_549)
+                if "Control.Monad.Rec.Class∷Step.Done" == v_S_9_S_20_S_549["$ctor"] then
+                  return v_S_9_S_20_S_549.value0
                 else
                   return error("No patterns matched")
                 end
               end
-            end))(Effect_Ref_foreign.read(r_S_16_S_546))()
+            end))(Effect_Ref_foreign.read(r_S_16_S_544))()
           end
         end
       end,
       Monad0 = function() return M.Effect_monadEffect end
     }
-    local pure_S_536_S_552 = ((dictMonadRec_S_535_S_543.Monad0()).Applicative0()).pure
-    return function(b_S_537_S_553)
-      return function(n_S_538_S_554)
-        return dictMonadRec_S_535_S_543.tailRecM(function(o_S_483_S_539_S_555)
-          return (function()
-            local acc_S_1_S_540_S_556 = o_S_483_S_539_S_555.a
-            return function(i_S_2_S_541_S_557)
-              if "Data.Ordering∷Ordering.LT" == (function()
-                if i_S_2_S_541_S_557 < n_S_538_S_554 then
-                  return "Data.Ordering∷Ordering.LT"
-                elseif i_S_2_S_541_S_557 == n_S_538_S_554 then
-                  return "Data.Ordering∷Ordering.EQ"
-                else
-                  return "Data.Ordering∷Ordering.GT"
-                end
-              end)() then
-                return pure_S_536_S_552((function(value0)
-                  return {
-                    ["$ctor"] = "Control.Monad.Rec.Class∷Step.Loop",
-                    value0 = value0
-                  }
-                end)({
-                  a = M.Golden_TailRecM2Shadow_Test_add_S_w(acc_S_1_S_540_S_556, i_S_2_S_541_S_557),
-                  b = M.Golden_TailRecM2Shadow_Test_add_S_w(i_S_2_S_541_S_557, 1)
-                }))
-              else
-                return pure_S_536_S_552((function(value0)
-                  return {
-                    ["$ctor"] = "Control.Monad.Rec.Class∷Step.Done",
-                    value0 = value0
-                  }
-                end)(acc_S_1_S_540_S_556))
-              end
+    local pure_S_536_S_550 = ((dictMonadRec_S_535_S_541.Monad0()).Applicative0()).pure
+    return function(b_S_537_S_551)
+      return function(n_S_538_S_552)
+        return dictMonadRec_S_535_S_541.tailRecM(function(o_S_483_S_539_S_553)
+          if "Data.Ordering∷Ordering.LT" == (function()
+            if o_S_483_S_539_S_553.b < n_S_538_S_552 then
+              return "Data.Ordering∷Ordering.LT"
+            elseif o_S_483_S_539_S_553.b == n_S_538_S_552 then
+              return "Data.Ordering∷Ordering.EQ"
+            else
+              return "Data.Ordering∷Ordering.GT"
             end
-          end)()(o_S_483_S_539_S_555.b)
-        end)({ a = b_S_537_S_553, b = 0 })
+          end)() then
+            return pure_S_536_S_550((function(value0)
+              return {
+                ["$ctor"] = "Control.Monad.Rec.Class∷Step.Loop",
+                value0 = value0
+              }
+            end)({
+              a = M.Golden_TailRecM2Shadow_Test_add_S_w(o_S_483_S_539_S_553.a, o_S_483_S_539_S_553.b),
+              b = M.Golden_TailRecM2Shadow_Test_add_S_w(o_S_483_S_539_S_553.b, 1)
+            }))
+          else
+            return pure_S_536_S_550((function(value0)
+              return {
+                ["$ctor"] = "Control.Monad.Rec.Class∷Step.Done",
+                value0 = value0
+              }
+            end)(o_S_483_S_539_S_553.a))
+          end
+        end)({ a = b_S_537_S_551, b = 0 })
       end
     end
   end)()(0)(5)()))()

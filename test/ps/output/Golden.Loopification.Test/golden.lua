@@ -101,18 +101,18 @@ return (function()
   local _ = Effect_Console_foreign.log(Data_Show_foreign.showIntImpl(M.Golden_Loopification_Test_countdown(5)))()
   local _ = Effect_Console_foreign.log(Data_Show_foreign.showIntImpl(M.Golden_Loopification_Test_sumTo_S_w(0, 10)))()
   local _ = Effect_Console_foreign.log(Data_Show_foreign.showIntImpl((function()
-    local go_S_w_S_252
-    go_S_w_S_252 = function(acc_S_253, n_S_254)
+    local go_S_w_S_264
+    go_S_w_S_264 = function(acc_S_265, n_S_266)
       local Golden_Loopification_Test_sub_S_w = M.Golden_Loopification_Test_sub_S_w
       while true do
-        if n_S_254 == 0 then
-          return acc_S_253
+        if n_S_266 == 0 then
+          return acc_S_265
         else
-          acc_S_253, n_S_254 = acc_S_253 + n_S_254 * n_S_254, Golden_Loopification_Test_sub_S_w(n_S_254, 1)
+          acc_S_265, n_S_266 = acc_S_265 + n_S_266 * n_S_266, Golden_Loopification_Test_sub_S_w(n_S_266, 1)
         end
       end
     end
-    return go_S_w_S_252(0, 4)
+    return go_S_w_S_264(0, 4)
   end)()))()
   local _ = Effect_Console_foreign.log(Data_Show_foreign.showIntImpl(M.Golden_Loopification_Test_mc91(1)))()
   local _ = Effect_Console_foreign.log(Data_Show_foreign.showIntImpl(M.Golden_Loopification_Test_sumCPS_S_w(5, function( x_S_228 )

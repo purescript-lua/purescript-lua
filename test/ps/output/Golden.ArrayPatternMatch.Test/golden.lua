@@ -20,8 +20,7 @@ return (function()
     if 2 == #(v_S_242) then return v_S_242[1] + v_S_242[2] else return -1 end
   end)()))()
   local _ = Effect_Console_foreign.log(Data_Show_foreign.showIntImpl((function()
-    local v_S_249 = {}
-    if 2 == #(v_S_249) then return v_S_249[1] + v_S_249[2] else return -1 end
+    if 2 == #({}) then return ({})[1] + ({})[2] else return -1 end
   end)()))()
   return Effect_Console_foreign.log(Data_Show_foreign.showIntImpl((function()
     local v_S_256 = { [1] = 7, [2] = 8, [3] = 9 }

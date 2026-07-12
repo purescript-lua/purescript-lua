@@ -78,57 +78,59 @@ M.Golden_BugListGenericEq_Test_eqList = function(dictEq)
     eq = function(x)
       return function(y)
         return (function()
-          local from_S_4 = function(x0_S_248)
-            if "Golden.BugListGenericEq.Test∷List.Nil" == x0_S_248["$ctor"] then
+          local v_S_13 = (function()
+            if "Golden.BugListGenericEq.Test∷List.Nil" == x["$ctor"] then
               return (function(value0)
                 return {
                   ["$ctor"] = "Data.Generic.Rep∷Sum.Inl",
                   value0 = value0
                 }
               end)({})
-            elseif "Golden.BugListGenericEq.Test∷List.Cons" == x0_S_248["$ctor"] then
+            elseif "Golden.BugListGenericEq.Test∷List.Cons" == x["$ctor"] then
               return (function(value0)
                 return {
                   ["$ctor"] = "Data.Generic.Rep∷Sum.Inr",
                   value0 = value0
                 }
-              end)(x0_S_248.value0)
+              end)(x.value0)
             else
               return error("No patterns matched")
             end
-          end
-          return function(dictGenericEq_S_5)
-            return function(x_S_7)
-              return function(y_S_8)
-                return dictGenericEq_S_5.genericEqPrime(from_S_4(x_S_7))(from_S_4(y_S_8))
-              end
-            end
-          end
-        end)()({
-          genericEqPrime = function(v_S_13)
-            return function(v1_S_14)
-              if "Data.Generic.Rep∷Sum.Inl" == v_S_13["$ctor"] then
-                return "Data.Generic.Rep∷Sum.Inl" == v1_S_14["$ctor"]
-              elseif "Data.Generic.Rep∷Sum.Inr" == v_S_13["$ctor"] then
-                if "Data.Generic.Rep∷Sum.Inr" == v1_S_14["$ctor"] then
-                  return (M.Data_Eq_eqRowCons_S_w(M.Data_Eq_eqRowCons_S_w({
-                    eqRecord = function()
-                      return function() return function() return true end end
-                    end
-                  }, nil, {
-                    reflectSymbol = function() return "tail" end
-                  }, M.Golden_BugListGenericEq_Test_eqList(dictEq)), nil, {
-                    reflectSymbol = function() return "head" end
-                  }, dictEq)).eqRecord(M.Type_Proxy_Proxy)(v_S_13.value0)(v1_S_14.value0)
-                else
-                  return false
-                end
+          end)()
+          return function(v1_S_14)
+            if "Data.Generic.Rep∷Sum.Inl" == v_S_13["$ctor"] then
+              return "Data.Generic.Rep∷Sum.Inl" == v1_S_14["$ctor"]
+            elseif "Data.Generic.Rep∷Sum.Inr" == v_S_13["$ctor"] then
+              if "Data.Generic.Rep∷Sum.Inr" == v1_S_14["$ctor"] then
+                return (M.Data_Eq_eqRowCons_S_w(M.Data_Eq_eqRowCons_S_w({
+                  eqRecord = function()
+                    return function() return function() return true end end
+                  end
+                }, nil, {
+                  reflectSymbol = function() return "tail" end
+                }, M.Golden_BugListGenericEq_Test_eqList(dictEq)), nil, {
+                  reflectSymbol = function() return "head" end
+                }, dictEq)).eqRecord(M.Type_Proxy_Proxy)(v_S_13.value0)(v1_S_14.value0)
               else
                 return false
               end
+            else
+              return false
             end
           end
-        })(x)(y)
+        end)()((function()
+          if "Golden.BugListGenericEq.Test∷List.Nil" == y["$ctor"] then
+            return (function(value0)
+              return { ["$ctor"] = "Data.Generic.Rep∷Sum.Inl", value0 = value0 }
+            end)({})
+          elseif "Golden.BugListGenericEq.Test∷List.Cons" == y["$ctor"] then
+            return (function(value0)
+              return { ["$ctor"] = "Data.Generic.Rep∷Sum.Inr", value0 = value0 }
+            end)(y.value0)
+          else
+            return error("No patterns matched")
+          end
+        end)())
       end
     end
   }
@@ -144,19 +146,7 @@ end
 return (function()
   local Golden_BugListGenericEq_Test_Nil, Golden_BugListGenericEq_Test_cons_S_w, Effect_Console_foreign, Golden_BugListGenericEq_Test_eq = M.Golden_BugListGenericEq_Test_Nil, M.Golden_BugListGenericEq_Test_cons_S_w, M.Effect_Console_foreign, M.Golden_BugListGenericEq_Test_eq
   local _ = (function()
-    local a_S_2_S_269 = Golden_BugListGenericEq_Test_eq(Golden_BugListGenericEq_Test_Nil)(Golden_BugListGenericEq_Test_Nil)
-    return Effect_Console_foreign.log((function()
-      if a_S_2_S_269 then
-        return "true"
-      elseif false == a_S_2_S_269 then
-        return "false"
-      else
-        return error("No patterns matched")
-      end
-    end)())
-  end)()()
-  local _ = (function()
-    local a_S_2_S_270 = Golden_BugListGenericEq_Test_eq(Golden_BugListGenericEq_Test_cons_S_w(1, Golden_BugListGenericEq_Test_cons_S_w(2, Golden_BugListGenericEq_Test_Nil)))(Golden_BugListGenericEq_Test_cons_S_w(1, Golden_BugListGenericEq_Test_cons_S_w(2, Golden_BugListGenericEq_Test_Nil)))
+    local a_S_2_S_270 = Golden_BugListGenericEq_Test_eq(Golden_BugListGenericEq_Test_Nil)(Golden_BugListGenericEq_Test_Nil)
     return Effect_Console_foreign.log((function()
       if a_S_2_S_270 then
         return "true"
@@ -167,12 +157,24 @@ return (function()
       end
     end)())
   end)()()
-  return (function()
-    local a_S_2_S_271 = Golden_BugListGenericEq_Test_eq(Golden_BugListGenericEq_Test_cons_S_w(1, Golden_BugListGenericEq_Test_Nil))(Golden_BugListGenericEq_Test_cons_S_w(2, Golden_BugListGenericEq_Test_Nil))
+  local _ = (function()
+    local a_S_2_S_271 = Golden_BugListGenericEq_Test_eq(Golden_BugListGenericEq_Test_cons_S_w(1, Golden_BugListGenericEq_Test_cons_S_w(2, Golden_BugListGenericEq_Test_Nil)))(Golden_BugListGenericEq_Test_cons_S_w(1, Golden_BugListGenericEq_Test_cons_S_w(2, Golden_BugListGenericEq_Test_Nil)))
     return Effect_Console_foreign.log((function()
       if a_S_2_S_271 then
         return "true"
       elseif false == a_S_2_S_271 then
+        return "false"
+      else
+        return error("No patterns matched")
+      end
+    end)())
+  end)()()
+  return (function()
+    local a_S_2_S_272 = Golden_BugListGenericEq_Test_eq(Golden_BugListGenericEq_Test_cons_S_w(1, Golden_BugListGenericEq_Test_Nil))(Golden_BugListGenericEq_Test_cons_S_w(2, Golden_BugListGenericEq_Test_Nil))
+    return Effect_Console_foreign.log((function()
+      if a_S_2_S_272 then
+        return "true"
+      elseif false == a_S_2_S_272 then
         return "false"
       else
         return error("No patterns matched")

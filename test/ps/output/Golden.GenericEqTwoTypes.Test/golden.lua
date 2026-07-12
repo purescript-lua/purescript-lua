@@ -52,6 +52,9 @@ M.Data_Generic_Rep_Inr = function(value0)
   return { ["$ctor"] = "Data.Generic.Rep∷Sum.Inr", value0 = value0 }
 end
 M.Data_Generic_Rep_NoArguments = {}
+M.Data_Eq_Generic_genericEq_S_w = function(dictGeneric, dictGenericEq, x, y)
+  return dictGenericEq.genericEqPrime(dictGeneric.from(x))(dictGeneric.from(y))
+end
 M.Golden_GenericEqTwoTypes_Test_Leaf = {
   ["$ctor"] = "Golden.GenericEqTwoTypes.Test∷Tree.Leaf"
 }
@@ -121,30 +124,13 @@ M.Golden_GenericEqTwoTypes_Test_eqTree = function(dictEq)
   return {
     eq = function(x)
       return function(y)
-        return (function()
-          local from_S_271 = function(x0_S_275)
-            if "Golden.GenericEqTwoTypes.Test∷Tree.Leaf" == x0_S_275["$ctor"] then
-              return M.Data_Generic_Rep_Inl(M.Data_Generic_Rep_NoArguments)
-            elseif "Golden.GenericEqTwoTypes.Test∷Tree.Node" == x0_S_275["$ctor"] then
-              return M.Data_Generic_Rep_Inr(x0_S_275.value0)
-            else
-              return error("No patterns matched")
-            end
-          end
-          return function(dictGenericEq_S_272)
-            return function(x_S_273)
-              return function(y_S_274)
-                return dictGenericEq_S_272.genericEqPrime(from_S_271(x_S_273))(from_S_271(y_S_274))
-              end
-            end
-          end
-        end)()({
-          genericEqPrime = function(v_S_7_S_290)
-            return function(v1_S_8_S_291)
-              if "Data.Generic.Rep∷Sum.Inl" == v_S_7_S_290["$ctor"] then
-                return "Data.Generic.Rep∷Sum.Inl" == v1_S_8_S_291["$ctor"]
-              elseif "Data.Generic.Rep∷Sum.Inr" == v_S_7_S_290["$ctor"] then
-                if "Data.Generic.Rep∷Sum.Inr" == v1_S_8_S_291["$ctor"] then
+        return M.Data_Eq_Generic_genericEq_S_w(M.Golden_GenericEqTwoTypes_Test_genericTree, {
+          genericEqPrime = function(v_S_7_S_276)
+            return function(v1_S_8_S_277)
+              if "Data.Generic.Rep∷Sum.Inl" == v_S_7_S_276["$ctor"] then
+                return "Data.Generic.Rep∷Sum.Inl" == v1_S_8_S_277["$ctor"]
+              elseif "Data.Generic.Rep∷Sum.Inr" == v_S_7_S_276["$ctor"] then
+                if "Data.Generic.Rep∷Sum.Inr" == v1_S_8_S_277["$ctor"] then
                   return (M.Data_Eq_eqRowCons_S_w(M.Data_Eq_eqRowCons_S_w(M.Data_Eq_eqRowCons_S_w({
                     eqRecord = function()
                       return function() return function() return true end end
@@ -155,7 +141,7 @@ M.Golden_GenericEqTwoTypes_Test_eqTree = function(dictEq)
                     reflectSymbol = function() return "right" end
                   }, M.Golden_GenericEqTwoTypes_Test_eqTree(dictEq)), nil, {
                     reflectSymbol = function() return "left" end
-                  }, M.Golden_GenericEqTwoTypes_Test_eqTree(dictEq))).eqRecord(M.Type_Proxy_Proxy)(v_S_7_S_290.value0)(v1_S_8_S_291.value0)
+                  }, M.Golden_GenericEqTwoTypes_Test_eqTree(dictEq))).eqRecord(M.Type_Proxy_Proxy)(v_S_7_S_276.value0)(v1_S_8_S_277.value0)
                 else
                   return false
                 end
@@ -164,7 +150,7 @@ M.Golden_GenericEqTwoTypes_Test_eqTree = function(dictEq)
               end
             end
           end
-        })(x)(y)
+        }, x, y)
       end
     end
   }
@@ -174,30 +160,13 @@ M.Golden_GenericEqTwoTypes_Test_eqList = function(dictEq)
   return {
     eq = function(x)
       return function(y)
-        return (function()
-          local from_S_242 = function(x0_S_246)
-            if "Golden.GenericEqTwoTypes.Test∷List.Nil" == x0_S_246["$ctor"] then
-              return M.Data_Generic_Rep_Inl(M.Data_Generic_Rep_NoArguments)
-            elseif "Golden.GenericEqTwoTypes.Test∷List.Cons" == x0_S_246["$ctor"] then
-              return M.Data_Generic_Rep_Inr(x0_S_246.value0)
-            else
-              return error("No patterns matched")
-            end
-          end
-          return function(dictGenericEq_S_243)
-            return function(x_S_244)
-              return function(y_S_245)
-                return dictGenericEq_S_243.genericEqPrime(from_S_242(x_S_244))(from_S_242(y_S_245))
-              end
-            end
-          end
-        end)()({
-          genericEqPrime = function(v_S_7_S_261)
-            return function(v1_S_8_S_262)
-              if "Data.Generic.Rep∷Sum.Inl" == v_S_7_S_261["$ctor"] then
-                return "Data.Generic.Rep∷Sum.Inl" == v1_S_8_S_262["$ctor"]
-              elseif "Data.Generic.Rep∷Sum.Inr" == v_S_7_S_261["$ctor"] then
-                if "Data.Generic.Rep∷Sum.Inr" == v1_S_8_S_262["$ctor"] then
+        return M.Data_Eq_Generic_genericEq_S_w(M.Golden_GenericEqTwoTypes_Test_genericList, {
+          genericEqPrime = function(v_S_7_S_254)
+            return function(v1_S_8_S_255)
+              if "Data.Generic.Rep∷Sum.Inl" == v_S_7_S_254["$ctor"] then
+                return "Data.Generic.Rep∷Sum.Inl" == v1_S_8_S_255["$ctor"]
+              elseif "Data.Generic.Rep∷Sum.Inr" == v_S_7_S_254["$ctor"] then
+                if "Data.Generic.Rep∷Sum.Inr" == v1_S_8_S_255["$ctor"] then
                   return (M.Data_Eq_eqRowCons_S_w(M.Data_Eq_eqRowCons_S_w({
                     eqRecord = function()
                       return function() return function() return true end end
@@ -206,7 +175,7 @@ M.Golden_GenericEqTwoTypes_Test_eqList = function(dictEq)
                     reflectSymbol = function() return "tail" end
                   }, M.Golden_GenericEqTwoTypes_Test_eqList(dictEq)), nil, {
                     reflectSymbol = function() return "head" end
-                  }, dictEq)).eqRecord(M.Type_Proxy_Proxy)(v_S_7_S_261.value0)(v1_S_8_S_262.value0)
+                  }, dictEq)).eqRecord(M.Type_Proxy_Proxy)(v_S_7_S_254.value0)(v1_S_8_S_255.value0)
                 else
                   return false
                 end
@@ -215,7 +184,7 @@ M.Golden_GenericEqTwoTypes_Test_eqList = function(dictEq)
               end
             end
           end
-        })(x)(y)
+        }, x, y)
       end
     end
   }
@@ -227,11 +196,11 @@ end
 return (function()
   local Golden_GenericEqTwoTypes_Test_Leaf, Golden_GenericEqTwoTypes_Test_cons_S_w, Golden_GenericEqTwoTypes_Test_node_S_w, Effect_Console_foreign, Golden_GenericEqTwoTypes_Test_Nil, Golden_GenericEqTwoTypes_Test_eq, Golden_GenericEqTwoTypes_Test_eq1 = M.Golden_GenericEqTwoTypes_Test_Leaf, M.Golden_GenericEqTwoTypes_Test_cons_S_w, M.Golden_GenericEqTwoTypes_Test_node_S_w, M.Effect_Console_foreign, M.Golden_GenericEqTwoTypes_Test_Nil, M.Golden_GenericEqTwoTypes_Test_eq, M.Golden_GenericEqTwoTypes_Test_eq1
   local _ = (function()
-    local a_S_2_S_314 = Golden_GenericEqTwoTypes_Test_eq1(Golden_GenericEqTwoTypes_Test_cons_S_w(1, Golden_GenericEqTwoTypes_Test_cons_S_w(2, Golden_GenericEqTwoTypes_Test_Nil)))(Golden_GenericEqTwoTypes_Test_cons_S_w(1, Golden_GenericEqTwoTypes_Test_cons_S_w(2, Golden_GenericEqTwoTypes_Test_Nil)))
+    local a_S_2_S_300 = Golden_GenericEqTwoTypes_Test_eq1(Golden_GenericEqTwoTypes_Test_cons_S_w(1, Golden_GenericEqTwoTypes_Test_cons_S_w(2, Golden_GenericEqTwoTypes_Test_Nil)))(Golden_GenericEqTwoTypes_Test_cons_S_w(1, Golden_GenericEqTwoTypes_Test_cons_S_w(2, Golden_GenericEqTwoTypes_Test_Nil)))
     return Effect_Console_foreign.log((function()
-      if a_S_2_S_314 then
+      if a_S_2_S_300 then
         return "true"
-      elseif false == a_S_2_S_314 then
+      elseif false == a_S_2_S_300 then
         return "false"
       else
         return error("No patterns matched")
@@ -239,11 +208,11 @@ return (function()
     end)())
   end)()()
   local _ = (function()
-    local a_S_2_S_315 = Golden_GenericEqTwoTypes_Test_eq1(Golden_GenericEqTwoTypes_Test_cons_S_w(1, Golden_GenericEqTwoTypes_Test_Nil))(Golden_GenericEqTwoTypes_Test_cons_S_w(2, Golden_GenericEqTwoTypes_Test_Nil))
+    local a_S_2_S_301 = Golden_GenericEqTwoTypes_Test_eq1(Golden_GenericEqTwoTypes_Test_cons_S_w(1, Golden_GenericEqTwoTypes_Test_Nil))(Golden_GenericEqTwoTypes_Test_cons_S_w(2, Golden_GenericEqTwoTypes_Test_Nil))
     return Effect_Console_foreign.log((function()
-      if a_S_2_S_315 then
+      if a_S_2_S_301 then
         return "true"
-      elseif false == a_S_2_S_315 then
+      elseif false == a_S_2_S_301 then
         return "false"
       else
         return error("No patterns matched")
@@ -251,11 +220,11 @@ return (function()
     end)())
   end)()()
   local _ = (function()
-    local a_S_2_S_316 = Golden_GenericEqTwoTypes_Test_eq(Golden_GenericEqTwoTypes_Test_node_S_w(Golden_GenericEqTwoTypes_Test_Leaf, 1, Golden_GenericEqTwoTypes_Test_node_S_w(Golden_GenericEqTwoTypes_Test_Leaf, 2, Golden_GenericEqTwoTypes_Test_Leaf)))(Golden_GenericEqTwoTypes_Test_node_S_w(Golden_GenericEqTwoTypes_Test_Leaf, 1, Golden_GenericEqTwoTypes_Test_node_S_w(Golden_GenericEqTwoTypes_Test_Leaf, 2, Golden_GenericEqTwoTypes_Test_Leaf)))
+    local a_S_2_S_302 = Golden_GenericEqTwoTypes_Test_eq(Golden_GenericEqTwoTypes_Test_node_S_w(Golden_GenericEqTwoTypes_Test_Leaf, 1, Golden_GenericEqTwoTypes_Test_node_S_w(Golden_GenericEqTwoTypes_Test_Leaf, 2, Golden_GenericEqTwoTypes_Test_Leaf)))(Golden_GenericEqTwoTypes_Test_node_S_w(Golden_GenericEqTwoTypes_Test_Leaf, 1, Golden_GenericEqTwoTypes_Test_node_S_w(Golden_GenericEqTwoTypes_Test_Leaf, 2, Golden_GenericEqTwoTypes_Test_Leaf)))
     return Effect_Console_foreign.log((function()
-      if a_S_2_S_316 then
+      if a_S_2_S_302 then
         return "true"
-      elseif false == a_S_2_S_316 then
+      elseif false == a_S_2_S_302 then
         return "false"
       else
         return error("No patterns matched")
@@ -263,11 +232,11 @@ return (function()
     end)())
   end)()()
   return (function()
-    local a_S_2_S_317 = Golden_GenericEqTwoTypes_Test_eq(Golden_GenericEqTwoTypes_Test_node_S_w(Golden_GenericEqTwoTypes_Test_Leaf, 1, Golden_GenericEqTwoTypes_Test_Leaf))(Golden_GenericEqTwoTypes_Test_node_S_w(Golden_GenericEqTwoTypes_Test_Leaf, 2, Golden_GenericEqTwoTypes_Test_Leaf))
+    local a_S_2_S_303 = Golden_GenericEqTwoTypes_Test_eq(Golden_GenericEqTwoTypes_Test_node_S_w(Golden_GenericEqTwoTypes_Test_Leaf, 1, Golden_GenericEqTwoTypes_Test_Leaf))(Golden_GenericEqTwoTypes_Test_node_S_w(Golden_GenericEqTwoTypes_Test_Leaf, 2, Golden_GenericEqTwoTypes_Test_Leaf))
     return Effect_Console_foreign.log((function()
-      if a_S_2_S_317 then
+      if a_S_2_S_303 then
         return "true"
-      elseif false == a_S_2_S_317 then
+      elseif false == a_S_2_S_303 then
         return "false"
       else
         return error("No patterns matched")

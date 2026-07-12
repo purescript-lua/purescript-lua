@@ -48,12 +48,12 @@ M.Control_Monad_ST_Internal_applicativeST = {
 M.Control_Monad_ST_Internal_Lazy_applyST = PSLUA_runtime_lazy("applyST")(function(  )
   return {
     apply = (function()
-      local bind_S_753 = (M.Control_Monad_ST_Internal_monadST.Bind1()).bind
-      return function(f_S_754)
-        return function(a_S_755)
-          return bind_S_753(f_S_754)(function(fPrime_S_756)
-            return bind_S_753(a_S_755)(function(aPrime_S_757)
-              return (M.Control_Monad_ST_Internal_monadST.Applicative0()).pure(fPrime_S_756(aPrime_S_757))
+      local bind_S_759 = (M.Control_Monad_ST_Internal_monadST.Bind1()).bind
+      return function(f_S_760)
+        return function(a_S_761)
+          return bind_S_759(f_S_760)(function(fPrime_S_762)
+            return bind_S_759(a_S_761)(function(aPrime_S_763)
+              return (M.Control_Monad_ST_Internal_monadST.Applicative0()).pure(fPrime_S_762(aPrime_S_763))
             end)
           end)
         end

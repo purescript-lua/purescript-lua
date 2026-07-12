@@ -13,8 +13,8 @@ nullary thunk (@function() … end@, run by calling it), we can recognise their
 
 >   function() local x = m1(); local _ = m2(); …; return last() end
 
-which is flat regardless of length. This mirrors the magic-do pass of the
-upstream JS backend and @purs-backend-es@.
+which is flat regardless of length. This is the classic magic-do
+transformation of PureScript backends.
 
 == Why a rewrite into existing 'Let'\/'Abs', not a new IR node
 
