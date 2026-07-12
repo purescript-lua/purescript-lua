@@ -45,32 +45,26 @@ local Data_Eq_eqRowCons_S_w = function( dictEqRecord
   }
 end
 local Data_Generic_Rep_Inl = function(value0)
-  return { ["$ctor"] = "Data.Generic.Rep∷Sum.Inl", value0 = value0 }
+  return { "Data.Generic.Rep∷Sum.Inl", value0 }
 end
 local Data_Generic_Rep_Inr = function(value0)
-  return { ["$ctor"] = "Data.Generic.Rep∷Sum.Inr", value0 = value0 }
+  return { "Data.Generic.Rep∷Sum.Inr", value0 }
 end
 local Data_Generic_Rep_NoArguments = {}
 local Data_Eq_Generic_genericEq_S_w = function(dictGeneric, dictGenericEq, x, y)
   return dictGenericEq.genericEqPrime(dictGeneric.from(x))(dictGeneric.from(y))
 end
 local Golden_GenericEqTwoTypes_Test_Leaf = {
-  ["$ctor"] = "Golden.GenericEqTwoTypes.Test∷Tree.Leaf"
+  "Golden.GenericEqTwoTypes.Test∷Tree.Leaf"
 }
 local Golden_GenericEqTwoTypes_Test_Node = function(value0)
-  return {
-    ["$ctor"] = "Golden.GenericEqTwoTypes.Test∷Tree.Node",
-    value0 = value0
-  }
+  return { "Golden.GenericEqTwoTypes.Test∷Tree.Node", value0 }
 end
 local Golden_GenericEqTwoTypes_Test_Nil = {
-  ["$ctor"] = "Golden.GenericEqTwoTypes.Test∷List.Nil"
+  "Golden.GenericEqTwoTypes.Test∷List.Nil"
 }
 local Golden_GenericEqTwoTypes_Test_Cons = function(value0)
-  return {
-    ["$ctor"] = "Golden.GenericEqTwoTypes.Test∷List.Cons",
-    value0 = value0
-  }
+  return { "Golden.GenericEqTwoTypes.Test∷List.Cons", value0 }
 end
 local Golden_GenericEqTwoTypes_Test_node_S_w = function(left, value, right)
   return Golden_GenericEqTwoTypes_Test_Node({
@@ -81,19 +75,19 @@ local Golden_GenericEqTwoTypes_Test_node_S_w = function(left, value, right)
 end
 local Golden_GenericEqTwoTypes_Test_genericTree = {
   to = function(x)
-    if "Data.Generic.Rep∷Sum.Inl" == x["$ctor"] then
+    if "Data.Generic.Rep∷Sum.Inl" == x[1] then
       return Golden_GenericEqTwoTypes_Test_Leaf
-    elseif "Data.Generic.Rep∷Sum.Inr" == x["$ctor"] then
-      return Golden_GenericEqTwoTypes_Test_Node(x.value0)
+    elseif "Data.Generic.Rep∷Sum.Inr" == x[1] then
+      return Golden_GenericEqTwoTypes_Test_Node(x[2])
     else
       return error("No patterns matched")
     end
   end,
   from = function(x0)
-    if "Golden.GenericEqTwoTypes.Test∷Tree.Leaf" == x0["$ctor"] then
+    if "Golden.GenericEqTwoTypes.Test∷Tree.Leaf" == x0[1] then
       return Data_Generic_Rep_Inl(Data_Generic_Rep_NoArguments)
-    elseif "Golden.GenericEqTwoTypes.Test∷Tree.Node" == x0["$ctor"] then
-      return Data_Generic_Rep_Inr(x0.value0)
+    elseif "Golden.GenericEqTwoTypes.Test∷Tree.Node" == x0[1] then
+      return Data_Generic_Rep_Inr(x0[2])
     else
       return error("No patterns matched")
     end
@@ -101,19 +95,19 @@ local Golden_GenericEqTwoTypes_Test_genericTree = {
 }
 local Golden_GenericEqTwoTypes_Test_genericList = {
   to = function(x)
-    if "Data.Generic.Rep∷Sum.Inl" == x["$ctor"] then
+    if "Data.Generic.Rep∷Sum.Inl" == x[1] then
       return Golden_GenericEqTwoTypes_Test_Nil
-    elseif "Data.Generic.Rep∷Sum.Inr" == x["$ctor"] then
-      return Golden_GenericEqTwoTypes_Test_Cons(x.value0)
+    elseif "Data.Generic.Rep∷Sum.Inr" == x[1] then
+      return Golden_GenericEqTwoTypes_Test_Cons(x[2])
     else
       return error("No patterns matched")
     end
   end,
   from = function(x0)
-    if "Golden.GenericEqTwoTypes.Test∷List.Nil" == x0["$ctor"] then
+    if "Golden.GenericEqTwoTypes.Test∷List.Nil" == x0[1] then
       return Data_Generic_Rep_Inl(Data_Generic_Rep_NoArguments)
-    elseif "Golden.GenericEqTwoTypes.Test∷List.Cons" == x0["$ctor"] then
-      return Data_Generic_Rep_Inr(x0.value0)
+    elseif "Golden.GenericEqTwoTypes.Test∷List.Cons" == x0[1] then
+      return Data_Generic_Rep_Inr(x0[2])
     else
       return error("No patterns matched")
     end
@@ -127,10 +121,10 @@ Golden_GenericEqTwoTypes_Test_eqTree = function(dictEq)
         return Data_Eq_Generic_genericEq_S_w(Golden_GenericEqTwoTypes_Test_genericTree, {
           genericEqPrime = function(v_S_7_S_276)
             return function(v1_S_8_S_277)
-              if "Data.Generic.Rep∷Sum.Inl" == v_S_7_S_276["$ctor"] then
-                return "Data.Generic.Rep∷Sum.Inl" == v1_S_8_S_277["$ctor"]
-              elseif "Data.Generic.Rep∷Sum.Inr" == v_S_7_S_276["$ctor"] then
-                if "Data.Generic.Rep∷Sum.Inr" == v1_S_8_S_277["$ctor"] then
+              if "Data.Generic.Rep∷Sum.Inl" == v_S_7_S_276[1] then
+                return "Data.Generic.Rep∷Sum.Inl" == v1_S_8_S_277[1]
+              elseif "Data.Generic.Rep∷Sum.Inr" == v_S_7_S_276[1] then
+                if "Data.Generic.Rep∷Sum.Inr" == v1_S_8_S_277[1] then
                   return (Data_Eq_eqRowCons_S_w(Data_Eq_eqRowCons_S_w(Data_Eq_eqRowCons_S_w({
                     eqRecord = function()
                       return function() return function() return true end end
@@ -141,7 +135,7 @@ Golden_GenericEqTwoTypes_Test_eqTree = function(dictEq)
                     reflectSymbol = function() return "right" end
                   }, Golden_GenericEqTwoTypes_Test_eqTree(dictEq)), nil, {
                     reflectSymbol = function() return "left" end
-                  }, Golden_GenericEqTwoTypes_Test_eqTree(dictEq))).eqRecord(Type_Proxy_Proxy)(v_S_7_S_276.value0)(v1_S_8_S_277.value0)
+                  }, Golden_GenericEqTwoTypes_Test_eqTree(dictEq))).eqRecord(Type_Proxy_Proxy)(v_S_7_S_276[2])(v1_S_8_S_277[2])
                 else
                   return false
                 end
@@ -164,10 +158,10 @@ Golden_GenericEqTwoTypes_Test_eqList = function(dictEq)
         return Data_Eq_Generic_genericEq_S_w(Golden_GenericEqTwoTypes_Test_genericList, {
           genericEqPrime = function(v_S_7_S_254)
             return function(v1_S_8_S_255)
-              if "Data.Generic.Rep∷Sum.Inl" == v_S_7_S_254["$ctor"] then
-                return "Data.Generic.Rep∷Sum.Inl" == v1_S_8_S_255["$ctor"]
-              elseif "Data.Generic.Rep∷Sum.Inr" == v_S_7_S_254["$ctor"] then
-                if "Data.Generic.Rep∷Sum.Inr" == v1_S_8_S_255["$ctor"] then
+              if "Data.Generic.Rep∷Sum.Inl" == v_S_7_S_254[1] then
+                return "Data.Generic.Rep∷Sum.Inl" == v1_S_8_S_255[1]
+              elseif "Data.Generic.Rep∷Sum.Inr" == v_S_7_S_254[1] then
+                if "Data.Generic.Rep∷Sum.Inr" == v1_S_8_S_255[1] then
                   return (Data_Eq_eqRowCons_S_w(Data_Eq_eqRowCons_S_w({
                     eqRecord = function()
                       return function() return function() return true end end
@@ -176,7 +170,7 @@ Golden_GenericEqTwoTypes_Test_eqList = function(dictEq)
                     reflectSymbol = function() return "tail" end
                   }, Golden_GenericEqTwoTypes_Test_eqList(dictEq)), nil, {
                     reflectSymbol = function() return "head" end
-                  }, dictEq)).eqRecord(Type_Proxy_Proxy)(v_S_7_S_254.value0)(v1_S_8_S_255.value0)
+                  }, dictEq)).eqRecord(Type_Proxy_Proxy)(v_S_7_S_254[2])(v1_S_8_S_255[2])
                 else
                   return false
                 end

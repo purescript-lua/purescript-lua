@@ -222,9 +222,8 @@ UberModule
                   ( Ref Nothing
                     ( Imported ( ModuleName "Golden.BugListGenericEq.Test" ) ( Name "Cons" ) )
                   )
-                  ( ObjectProp Nothing
-                    ( Ref Nothing ( Local ( Name "x" ) ) )
-                    ( PropName "value0" ) :| []
+                  ( DataArgumentByIndex Nothing SumType 0
+                    ( Ref Nothing ( Local ( Name "x" ) ) ) :| []
                   )
                 )
                 ( Exception Nothing "No patterns matched" )
@@ -263,9 +262,8 @@ UberModule
                     ( CtorName "Inr" )
                     [ FieldName "value0" ]
                   )
-                  ( ObjectProp Nothing
-                    ( Ref Nothing ( Local ( Name "x0" ) ) )
-                    ( PropName "value0" ) :| []
+                  ( DataArgumentByIndex Nothing SumType 0
+                    ( Ref Nothing ( Local ( Name "x0" ) ) ) :| []
                   )
                 )
                 ( Exception Nothing "No patterns matched" )
@@ -318,9 +316,8 @@ UberModule
                                 ( CtorName "Inr" )
                                 [ FieldName "value0" ]
                               )
-                              ( ObjectProp Nothing
-                                ( Ref Nothing ( Local ( Name "x" ) ) )
-                                ( PropName "value0" ) :| []
+                              ( DataArgumentByIndex Nothing SumType 0
+                                ( Ref Nothing ( Local ( Name "x" ) ) ) :| []
                               )
                             )
                             ( Exception Nothing "No patterns matched" )
@@ -422,14 +419,12 @@ UberModule
                                       ) :| []
                                     )
                                   )
-                                  ( ObjectProp Nothing
-                                    ( Ref Nothing ( Local ( Name "v$13" ) ) )
-                                    ( PropName "value0" ) :| []
+                                  ( DataArgumentByIndex Nothing SumType 0
+                                    ( Ref Nothing ( Local ( Name "v$13" ) ) ) :| []
                                   )
                                 )
-                                ( ObjectProp Nothing
-                                  ( Ref Nothing ( Local ( Name "v1$14" ) ) )
-                                  ( PropName "value0" ) :| []
+                                ( DataArgumentByIndex Nothing SumType 0
+                                  ( Ref Nothing ( Local ( Name "v1$14" ) ) ) :| []
                                 )
                               ) ( LiteralBool Nothing False )
                             ) ( LiteralBool Nothing False )
@@ -467,9 +462,8 @@ UberModule
                             ( CtorName "Inr" )
                             [ FieldName "value0" ]
                           )
-                          ( ObjectProp Nothing
-                            ( Ref Nothing ( Local ( Name "y" ) ) )
-                            ( PropName "value0" ) :| []
+                          ( DataArgumentByIndex Nothing SumType 0
+                            ( Ref Nothing ( Local ( Name "y" ) ) ) :| []
                           )
                         )
                         ( Exception Nothing "No patterns matched" )

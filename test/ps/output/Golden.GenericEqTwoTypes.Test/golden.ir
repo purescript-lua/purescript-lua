@@ -329,9 +329,8 @@ UberModule
                   ( Ref Nothing
                     ( Imported ( ModuleName "Golden.GenericEqTwoTypes.Test" ) ( Name "Node" ) )
                   )
-                  ( ObjectProp Nothing
-                    ( Ref Nothing ( Local ( Name "x" ) ) )
-                    ( PropName "value0" ) :| []
+                  ( DataArgumentByIndex Nothing SumType 0
+                    ( Ref Nothing ( Local ( Name "x" ) ) ) :| []
                   )
                 )
                 ( Exception Nothing "No patterns matched" )
@@ -358,9 +357,8 @@ UberModule
                 )
                 ( AppN Nothing
                   ( Ref Nothing ( Imported ( ModuleName "Data.Generic.Rep" ) ( Name "Inr" ) ) )
-                  ( ObjectProp Nothing
-                    ( Ref Nothing ( Local ( Name "x0" ) ) )
-                    ( PropName "value0" ) :| []
+                  ( DataArgumentByIndex Nothing SumType 0
+                    ( Ref Nothing ( Local ( Name "x0" ) ) ) :| []
                   )
                 )
                 ( Exception Nothing "No patterns matched" )
@@ -392,9 +390,8 @@ UberModule
                   ( Ref Nothing
                     ( Imported ( ModuleName "Golden.GenericEqTwoTypes.Test" ) ( Name "Cons" ) )
                   )
-                  ( ObjectProp Nothing
-                    ( Ref Nothing ( Local ( Name "x" ) ) )
-                    ( PropName "value0" ) :| []
+                  ( DataArgumentByIndex Nothing SumType 0
+                    ( Ref Nothing ( Local ( Name "x" ) ) ) :| []
                   )
                 )
                 ( Exception Nothing "No patterns matched" )
@@ -421,9 +418,8 @@ UberModule
                 )
                 ( AppN Nothing
                   ( Ref Nothing ( Imported ( ModuleName "Data.Generic.Rep" ) ( Name "Inr" ) ) )
-                  ( ObjectProp Nothing
-                    ( Ref Nothing ( Local ( Name "x0" ) ) )
-                    ( PropName "value0" ) :| []
+                  ( DataArgumentByIndex Nothing SumType 0
+                    ( Ref Nothing ( Local ( Name "x0" ) ) ) :| []
                   )
                 )
                 ( Exception Nothing "No patterns matched" )
@@ -588,14 +584,12 @@ UberModule
                                             ) :| []
                                           )
                                         )
-                                        ( ObjectProp Nothing
-                                          ( Ref Nothing ( Local ( Name "v$7$276" ) ) )
-                                          ( PropName "value0" ) :| []
+                                        ( DataArgumentByIndex Nothing SumType 0
+                                          ( Ref Nothing ( Local ( Name "v$7$276" ) ) ) :| []
                                         )
                                       )
-                                      ( ObjectProp Nothing
-                                        ( Ref Nothing ( Local ( Name "v1$8$277" ) ) )
-                                        ( PropName "value0" ) :| []
+                                      ( DataArgumentByIndex Nothing SumType 0
+                                        ( Ref Nothing ( Local ( Name "v1$8$277" ) ) ) :| []
                                       )
                                     ) ( LiteralBool Nothing False )
                                   ) ( LiteralBool Nothing False )
@@ -755,14 +749,12 @@ UberModule
                                             ) :| []
                                           )
                                         )
-                                        ( ObjectProp Nothing
-                                          ( Ref Nothing ( Local ( Name "v$7$254" ) ) )
-                                          ( PropName "value0" ) :| []
+                                        ( DataArgumentByIndex Nothing SumType 0
+                                          ( Ref Nothing ( Local ( Name "v$7$254" ) ) ) :| []
                                         )
                                       )
-                                      ( ObjectProp Nothing
-                                        ( Ref Nothing ( Local ( Name "v1$8$255" ) ) )
-                                        ( PropName "value0" ) :| []
+                                      ( DataArgumentByIndex Nothing SumType 0
+                                        ( Ref Nothing ( Local ( Name "v1$8$255" ) ) ) :| []
                                       )
                                     ) ( LiteralBool Nothing False )
                                   ) ( LiteralBool Nothing False )

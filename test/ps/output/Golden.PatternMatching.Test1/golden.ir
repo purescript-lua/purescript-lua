@@ -35,22 +35,17 @@ UberModule
             ( Eq Nothing
               ( LiteralString Nothing "Golden.PatternMatching.Test1∷E.Num" )
               ( ReflectCtor Nothing
-                ( ObjectProp Nothing
-                  ( Ref Nothing ( Local ( Name "e$2" ) ) )
-                  ( PropName "value0" )
-                )
+                ( DataArgumentByIndex Nothing SumType 0 ( Ref Nothing ( Local ( Name "e$2" ) ) ) )
               )
             )
             ( IfThenElse Nothing
               ( Eq Nothing
                 ( LiteralString Nothing "Golden.PatternMatching.Test1∷N.Succ" )
                 ( ReflectCtor Nothing
-                  ( ObjectProp Nothing
-                    ( ObjectProp Nothing
+                  ( DataArgumentByIndex Nothing SumType 0
+                    ( DataArgumentByIndex Nothing SumType 0
                       ( Ref Nothing ( Local ( Name "e$2" ) ) )
-                      ( PropName "value0" )
                     )
-                    ( PropName "value0" )
                   )
                 )
               )
@@ -59,12 +54,10 @@ UberModule
                 ( Eq Nothing
                   ( LiteralString Nothing "Golden.PatternMatching.Test1∷N.Zero" )
                   ( ReflectCtor Nothing
-                    ( ObjectProp Nothing
-                      ( ObjectProp Nothing
+                    ( DataArgumentByIndex Nothing SumType 0
+                      ( DataArgumentByIndex Nothing SumType 0
                         ( Ref Nothing ( Local ( Name "e$2" ) ) )
-                        ( PropName "value0" )
                       )
-                      ( PropName "value0" )
                     )
                   )
                 )
@@ -76,22 +69,17 @@ UberModule
               ( Eq Nothing
                 ( LiteralString Nothing "Golden.PatternMatching.Test1∷E.Not" )
                 ( ReflectCtor Nothing
-                  ( ObjectProp Nothing
-                    ( Ref Nothing ( Local ( Name "e$2" ) ) )
-                    ( PropName "value0" )
-                  )
+                  ( DataArgumentByIndex Nothing SumType 0 ( Ref Nothing ( Local ( Name "e$2" ) ) ) )
                 )
               )
               ( IfThenElse Nothing
                 ( Eq Nothing
                   ( LiteralString Nothing "Golden.PatternMatching.Test1∷E.Num" )
                   ( ReflectCtor Nothing
-                    ( ObjectProp Nothing
-                      ( ObjectProp Nothing
+                    ( DataArgumentByIndex Nothing SumType 0
+                      ( DataArgumentByIndex Nothing SumType 0
                         ( Ref Nothing ( Local ( Name "e$2" ) ) )
-                        ( PropName "value0" )
                       )
-                      ( PropName "value0" )
                     )
                   )
                 )
@@ -99,15 +87,12 @@ UberModule
                   ( Eq Nothing
                     ( LiteralString Nothing "Golden.PatternMatching.Test1∷N.Succ" )
                     ( ReflectCtor Nothing
-                      ( ObjectProp Nothing
-                        ( ObjectProp Nothing
-                          ( ObjectProp Nothing
+                      ( DataArgumentByIndex Nothing SumType 0
+                        ( DataArgumentByIndex Nothing SumType 0
+                          ( DataArgumentByIndex Nothing SumType 0
                             ( Ref Nothing ( Local ( Name "e$2" ) ) )
-                            ( PropName "value0" )
                           )
-                          ( PropName "value0" )
                         )
-                        ( PropName "value0" )
                       )
                     )
                   )
@@ -128,10 +113,7 @@ UberModule
               ( Eq Nothing
                 ( LiteralString Nothing "Golden.PatternMatching.Test1∷N.Succ" )
                 ( ReflectCtor Nothing
-                  ( ObjectProp Nothing
-                    ( Ref Nothing ( Local ( Name "e$2" ) ) )
-                    ( PropName "value0" )
-                  )
+                  ( DataArgumentByIndex Nothing SumType 0 ( Ref Nothing ( Local ( Name "e$2" ) ) ) )
                 )
               )
               ( LiteralInt Nothing 4 )
@@ -149,11 +131,11 @@ UberModule
       ),
       ( Name "fst", AbsN Nothing
         ( ParamNamed Nothing ( Name "v$0" ) :| [] )
-        ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "v$0" ) ) ) ( PropName "value0" ) )
+        ( DataArgumentByIndex Nothing ProductType 0 ( Ref Nothing ( Local ( Name "v$0" ) ) ) )
       ),
       ( Name "snd", AbsN Nothing
         ( ParamNamed Nothing ( Name "v$3" ) :| [] )
-        ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "v$3" ) ) ) ( PropName "value1" ) )
+        ( DataArgumentByIndex Nothing ProductType 1 ( Ref Nothing ( Local ( Name "v$3" ) ) ) )
       )
     ]
   }

@@ -74,17 +74,17 @@ return (function()
   }, true)()
   local _ = Effect_Console_logShow_S_w({
     show = function(v_S_116)
-      if "Data.Ordering∷Ordering.LT" == v_S_116["$ctor"] then
+      if "Data.Ordering∷Ordering.LT" == v_S_116[1] then
         return "LT"
-      elseif "Data.Ordering∷Ordering.GT" == v_S_116["$ctor"] then
+      elseif "Data.Ordering∷Ordering.GT" == v_S_116[1] then
         return "GT"
-      elseif "Data.Ordering∷Ordering.EQ" == v_S_116["$ctor"] then
+      elseif "Data.Ordering∷Ordering.EQ" == v_S_116[1] then
         return "EQ"
       else
         return error("No patterns matched")
       end
     end
-  }, { ["$ctor"] = "Data.Ordering∷Ordering.LT" })()
+  }, { "Data.Ordering∷Ordering.LT" })()
   local _ = Effect_Console_log("foobar")()
   return Effect_Console_logShow_S_w({
     show = function(v_S_117_S_260)

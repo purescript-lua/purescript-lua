@@ -1,12 +1,12 @@
 local Data_Unit_foreign = { unit = {} }
 local Data_Maybe_Just = function(value0)
-  return { ["$ctor"] = "Data.Maybe∷Maybe.Just", value0 = value0 }
+  return { "Data.Maybe∷Maybe.Just", value0 }
 end
 local Golden_LongMaybeBindModule_Test_bind_S_w = function(v_S_578, v1_S_579)
-  if "Data.Maybe∷Maybe.Just" == v_S_578["$ctor"] then
-    return v1_S_579(v_S_578.value0)
-  elseif "Data.Maybe∷Maybe.Nothing" == v_S_578["$ctor"] then
-    return { ["$ctor"] = "Data.Maybe∷Maybe.Nothing" }
+  if "Data.Maybe∷Maybe.Just" == v_S_578[1] then
+    return v1_S_579(v_S_578[2])
+  elseif "Data.Maybe∷Maybe.Nothing" == v_S_578[1] then
+    return { "Data.Maybe∷Maybe.Nothing" }
   else
     return error("No patterns matched")
   end

@@ -6,14 +6,14 @@ local Data_Maybe_append_S_w = function(s1_S_286_S_318, s2_S_287_S_319)
   return s1_S_286_S_318 .. s2_S_287_S_319
 end
 local Data_Maybe_Just = function(value0)
-  return { ["$ctor"] = "Data.Maybe∷Maybe.Just", value0 = value0 }
+  return { "Data.Maybe∷Maybe.Just", value0 }
 end
 local Golden_LongBindFlipped_Test_bindFlipped_S_w = function( b_S_135_S_308
 , a_S_136_S_309 )
-  if "Data.Maybe∷Maybe.Just" == a_S_136_S_309["$ctor"] then
-    return b_S_135_S_308(a_S_136_S_309.value0)
-  elseif "Data.Maybe∷Maybe.Nothing" == a_S_136_S_309["$ctor"] then
-    return { ["$ctor"] = "Data.Maybe∷Maybe.Nothing" }
+  if "Data.Maybe∷Maybe.Just" == a_S_136_S_309[1] then
+    return b_S_135_S_308(a_S_136_S_309[2])
+  elseif "Data.Maybe∷Maybe.Nothing" == a_S_136_S_309[1] then
+    return { "Data.Maybe∷Maybe.Nothing" }
   else
     return error("No patterns matched")
   end
@@ -32,9 +32,9 @@ local Golden_LongBindFlipped_Test_compute = (function()
   return Golden_LongBindFlipped_Test_bindFlipped_S_w(Golden_LongBindFlipped_Test_inc, Golden_LongBindFlipped_Test_bindFlipped_S_w(Golden_LongBindFlipped_Test_inc, Golden_LongBindFlipped_Test_bindFlipped_S_w(Golden_LongBindFlipped_Test_inc, Golden_LongBindFlipped_Test_bindFlipped_S_w(Golden_LongBindFlipped_Test_inc, Golden_LongBindFlipped_Test_bindFlipped_S_w(Golden_LongBindFlipped_Test_inc, Golden_LongBindFlipped_Test_bindFlipped_S_w(Golden_LongBindFlipped_Test_inc, Golden_LongBindFlipped_Test_bindFlipped_S_w(Golden_LongBindFlipped_Test_inc, Golden_LongBindFlipped_Test_bindFlipped_S_w(Golden_LongBindFlipped_Test_inc, Golden_LongBindFlipped_Test_bindFlipped_S_w(Golden_LongBindFlipped_Test_inc, Golden_LongBindFlipped_Test_bindFlipped_S_w(Golden_LongBindFlipped_Test_inc, Golden_LongBindFlipped_Test_bindFlipped_S_w(Golden_LongBindFlipped_Test_inc, Golden_LongBindFlipped_Test_bindFlipped_S_w(Golden_LongBindFlipped_Test_inc, Golden_LongBindFlipped_Test_bindFlipped_S_w(Golden_LongBindFlipped_Test_inc, Golden_LongBindFlipped_Test_bindFlipped_S_w(Golden_LongBindFlipped_Test_inc, Golden_LongBindFlipped_Test_bindFlipped_S_w(Golden_LongBindFlipped_Test_inc, Golden_LongBindFlipped_Test_bindFlipped_S_w(Golden_LongBindFlipped_Test_inc, Golden_LongBindFlipped_Test_bindFlipped_S_w(Golden_LongBindFlipped_Test_inc, Golden_LongBindFlipped_Test_bindFlipped_S_w(Golden_LongBindFlipped_Test_inc, Golden_LongBindFlipped_Test_bindFlipped_S_w(Golden_LongBindFlipped_Test_inc, Golden_LongBindFlipped_Test_bindFlipped_S_w(Golden_LongBindFlipped_Test_inc, Golden_LongBindFlipped_Test_bindFlipped_S_w(Golden_LongBindFlipped_Test_inc, _S_tmp330)))))))))))))))))))))
 end)()
 return Effect_Console_foreign.log((function()
-  if "Data.Maybe∷Maybe.Just" == Golden_LongBindFlipped_Test_compute["$ctor"] then
-    return Data_Maybe_append_S_w("(Just ", Data_Maybe_append_S_w(Data_Show_foreign.showIntImpl(Golden_LongBindFlipped_Test_compute.value0), ")"))
-  elseif "Data.Maybe∷Maybe.Nothing" == Golden_LongBindFlipped_Test_compute["$ctor"] then
+  if "Data.Maybe∷Maybe.Just" == Golden_LongBindFlipped_Test_compute[1] then
+    return Data_Maybe_append_S_w("(Just ", Data_Maybe_append_S_w(Data_Show_foreign.showIntImpl(Golden_LongBindFlipped_Test_compute[2]), ")"))
+  elseif "Data.Maybe∷Maybe.Nothing" == Golden_LongBindFlipped_Test_compute[1] then
     return "Nothing"
   else
     return error("No patterns matched")

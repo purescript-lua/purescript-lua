@@ -146,13 +146,11 @@ UberModule
                                     ( Imported ( ModuleName "Data.Tuple" ) ( Name "Tuple" ) )
                                   )
                                   ( AppN Nothing
-                                    ( ObjectProp Nothing
+                                    ( DataArgumentByIndex Nothing ProductType 0
                                       ( Ref Nothing ( Local ( Name "v3$33" ) ) )
-                                      ( PropName "value0" )
                                     )
-                                    ( ObjectProp Nothing
-                                      ( Ref Nothing ( Local ( Name "v4$34" ) ) )
-                                      ( PropName "value0" ) :| []
+                                    ( DataArgumentByIndex Nothing ProductType 0
+                                      ( Ref Nothing ( Local ( Name "v4$34" ) ) ) :| []
                                     ) :| []
                                   )
                                 )
@@ -162,14 +160,12 @@ UberModule
                                       ( Ref Nothing ( Local ( Name "dictSemigroup" ) ) )
                                       ( PropName "append" )
                                     )
-                                    ( ObjectProp Nothing
-                                      ( Ref Nothing ( Local ( Name "v3$33" ) ) )
-                                      ( PropName "value1" ) :| []
+                                    ( DataArgumentByIndex Nothing ProductType 1
+                                      ( Ref Nothing ( Local ( Name "v3$33" ) ) ) :| []
                                     )
                                   )
-                                  ( ObjectProp Nothing
-                                    ( Ref Nothing ( Local ( Name "v4$34" ) ) )
-                                    ( PropName "value1" ) :| []
+                                  ( DataArgumentByIndex Nothing ProductType 1
+                                    ( Ref Nothing ( Local ( Name "v4$34" ) ) ) :| []
                                   ) :| []
                                 )
                               )
@@ -206,15 +202,13 @@ UberModule
                                   )
                                   ( AppN Nothing
                                     ( Ref Nothing ( Local ( Name "f$496" ) ) )
-                                    ( ObjectProp Nothing
-                                      ( Ref Nothing ( Local ( Name "v$497" ) ) )
-                                      ( PropName "value0" ) :| []
+                                    ( DataArgumentByIndex Nothing ProductType 0
+                                      ( Ref Nothing ( Local ( Name "v$497" ) ) ) :| []
                                     ) :| []
                                   )
                                 )
-                                ( ObjectProp Nothing
-                                  ( Ref Nothing ( Local ( Name "v$497" ) ) )
-                                  ( PropName "value1" ) :| []
+                                ( DataArgumentByIndex Nothing ProductType 1
+                                  ( Ref Nothing ( Local ( Name "v$497" ) ) ) :| []
                                 )
                               ) :| []
                             )
@@ -294,9 +288,8 @@ UberModule
                       ( AppN Nothing
                         ( AppN Nothing
                           ( Ref Nothing ( Imported ( ModuleName "Data.Tuple" ) ( Name "Tuple" ) ) )
-                          ( ObjectProp Nothing
-                            ( Ref Nothing ( Local ( Name "v3$524" ) ) )
-                            ( PropName "value0" ) :| []
+                          ( DataArgumentByIndex Nothing ProductType 0
+                            ( Ref Nothing ( Local ( Name "v3$524" ) ) ) :| []
                           )
                         )
                         ( AppN Nothing
@@ -304,14 +297,12 @@ UberModule
                             ( Ref Nothing
                               ( Imported ( ModuleName "Data.Semigroup" ) ( Name "concatArray" ) )
                             )
-                            ( ObjectProp Nothing
-                              ( Ref Nothing ( Local ( Name "v1$523" ) ) )
-                              ( PropName "value1" ) :| []
+                            ( DataArgumentByIndex Nothing ProductType 1
+                              ( Ref Nothing ( Local ( Name "v1$523" ) ) ) :| []
                             )
                           )
-                          ( ObjectProp Nothing
-                            ( Ref Nothing ( Local ( Name "v3$524" ) ) )
-                            ( PropName "value1" ) :| []
+                          ( DataArgumentByIndex Nothing ProductType 1
+                            ( Ref Nothing ( Local ( Name "v3$524" ) ) ) :| []
                           ) :| []
                         )
                       ) :| []
@@ -319,9 +310,8 @@ UberModule
                   )
                   ( AppN Nothing
                     ( Ref Nothing ( Local ( Name "k$522" ) ) )
-                    ( ObjectProp Nothing
-                      ( Ref Nothing ( Local ( Name "v1$523" ) ) )
-                      ( PropName "value0" ) :| []
+                    ( DataArgumentByIndex Nothing ProductType 0
+                      ( Ref Nothing ( Local ( Name "v1$523" ) ) ) :| []
                     ) :| []
                   )
                 ) :| []
@@ -7175,7 +7165,7 @@ UberModule
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.LongWriterBind.Test", qnameName = Name "compute"
-        }, ObjectProp Nothing
+        }, DataArgumentByIndex Nothing ProductType 0
         ( AppN Nothing
           ( ObjectProp Nothing
             ( Ref Nothing ( Imported ( ModuleName "Unsafe.Coerce" ) ( Name "foreign" ) ) )
@@ -7185,7 +7175,6 @@ UberModule
             ( Imported ( ModuleName "Golden.LongWriterBind.Test" ) ( Name "go" ) ) :| []
           )
         )
-        ( PropName "value0" )
       )
     ], uberModuleForeigns = [], uberModuleExports =
     [

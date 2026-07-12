@@ -5,27 +5,27 @@ local Effect_Console_foreign = {
 local Data_Maybe_append_S_w = function(s1_S_295_S_314, s2_S_296_S_315)
   return s1_S_295_S_314 .. s2_S_296_S_315
 end
-local Data_Maybe_Nothing = { ["$ctor"] = "Data.Maybe∷Maybe.Nothing" }
+local Data_Maybe_Nothing = { "Data.Maybe∷Maybe.Nothing" }
 local Data_Maybe_Just = function(value0)
-  return { ["$ctor"] = "Data.Maybe∷Maybe.Just", value0 = value0 }
+  return { "Data.Maybe∷Maybe.Just", value0 }
 end
 local Golden_LongApplyChain_Test_applySecond_S_w = function(a_S_131, b_S_132)
   return (function()
     local v_S_323 = (function()
-      if "Data.Maybe∷Maybe.Just" == a_S_131["$ctor"] then
+      if "Data.Maybe∷Maybe.Just" == a_S_131[1] then
         return Data_Maybe_Just(function(x_S_316) return x_S_316 end)
       else
         return Data_Maybe_Nothing
       end
     end)()
     return function(v1_S_324)
-      if "Data.Maybe∷Maybe.Just" == v_S_323["$ctor"] then
-        if "Data.Maybe∷Maybe.Just" == v1_S_324["$ctor"] then
-          return Data_Maybe_Just(v_S_323.value0(v1_S_324.value0))
+      if "Data.Maybe∷Maybe.Just" == v_S_323[1] then
+        if "Data.Maybe∷Maybe.Just" == v1_S_324[1] then
+          return Data_Maybe_Just(v_S_323[2](v1_S_324[2]))
         else
           return Data_Maybe_Nothing
         end
-      elseif "Data.Maybe∷Maybe.Nothing" == v_S_323["$ctor"] then
+      elseif "Data.Maybe∷Maybe.Nothing" == v_S_323[1] then
         return Data_Maybe_Nothing
       else
         return error("No patterns matched")
@@ -44,9 +44,9 @@ local Golden_LongApplyChain_Test_compute = (function()
   return Golden_LongApplyChain_Test_applySecond_S_w(Golden_LongApplyChain_Test_applySecond_S_w(Golden_LongApplyChain_Test_applySecond_S_w(Golden_LongApplyChain_Test_applySecond_S_w(Golden_LongApplyChain_Test_applySecond_S_w(Golden_LongApplyChain_Test_applySecond_S_w(Golden_LongApplyChain_Test_applySecond_S_w(Golden_LongApplyChain_Test_applySecond_S_w(Golden_LongApplyChain_Test_applySecond_S_w(Golden_LongApplyChain_Test_applySecond_S_w(Golden_LongApplyChain_Test_applySecond_S_w(Golden_LongApplyChain_Test_applySecond_S_w(Golden_LongApplyChain_Test_applySecond_S_w(Golden_LongApplyChain_Test_applySecond_S_w(Golden_LongApplyChain_Test_applySecond_S_w(Golden_LongApplyChain_Test_applySecond_S_w(Golden_LongApplyChain_Test_applySecond_S_w(Golden_LongApplyChain_Test_applySecond_S_w(Golden_LongApplyChain_Test_applySecond_S_w(Golden_LongApplyChain_Test_applySecond_S_w(_S_tmp342, Data_Maybe_Just(281)), Data_Maybe_Just(282)), Data_Maybe_Just(283)), Data_Maybe_Just(284)), Data_Maybe_Just(285)), Data_Maybe_Just(286)), Data_Maybe_Just(287)), Data_Maybe_Just(288)), Data_Maybe_Just(289)), Data_Maybe_Just(290)), Data_Maybe_Just(291)), Data_Maybe_Just(292)), Data_Maybe_Just(293)), Data_Maybe_Just(294)), Data_Maybe_Just(295)), Data_Maybe_Just(296)), Data_Maybe_Just(297)), Data_Maybe_Just(298)), Data_Maybe_Just(299)), Data_Maybe_Just(300))
 end)()
 return Effect_Console_foreign.log((function()
-  if "Data.Maybe∷Maybe.Just" == Golden_LongApplyChain_Test_compute["$ctor"] then
-    return Data_Maybe_append_S_w("(Just ", Data_Maybe_append_S_w(Data_Show_foreign.showIntImpl(Golden_LongApplyChain_Test_compute.value0), ")"))
-  elseif "Data.Maybe∷Maybe.Nothing" == Golden_LongApplyChain_Test_compute["$ctor"] then
+  if "Data.Maybe∷Maybe.Just" == Golden_LongApplyChain_Test_compute[1] then
+    return Data_Maybe_append_S_w("(Just ", Data_Maybe_append_S_w(Data_Show_foreign.showIntImpl(Golden_LongApplyChain_Test_compute[2]), ")"))
+  elseif "Data.Maybe∷Maybe.Nothing" == Golden_LongApplyChain_Test_compute[1] then
     return "Nothing"
   else
     return error("No patterns matched")

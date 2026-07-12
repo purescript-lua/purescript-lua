@@ -76,13 +76,11 @@ UberModule
                   ( AppN Nothing
                     ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Just" ) ) )
                     ( AppN Nothing
-                      ( ObjectProp Nothing
+                      ( DataArgumentByIndex Nothing SumType 0
                         ( Ref Nothing ( Local ( Name "v$323" ) ) )
-                        ( PropName "value0" )
                       )
-                      ( ObjectProp Nothing
-                        ( Ref Nothing ( Local ( Name "v1$324" ) ) )
-                        ( PropName "value0" ) :| []
+                      ( DataArgumentByIndex Nothing SumType 0
+                        ( Ref Nothing ( Local ( Name "v1$324" ) ) ) :| []
                       ) :| []
                     )
                   )
@@ -4800,11 +4798,10 @@ UberModule
                     ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
                     ( PropName "showIntImpl" )
                   )
-                  ( ObjectProp Nothing
+                  ( DataArgumentByIndex Nothing SumType 0
                     ( Ref Nothing
                       ( Imported ( ModuleName "Golden.LongApplyChain.Test" ) ( Name "compute" ) )
-                    )
-                    ( PropName "value0" ) :| []
+                    ) :| []
                   ) :|
                   [ LiteralString Nothing ")" ]
                 )

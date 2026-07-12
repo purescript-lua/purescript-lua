@@ -35,9 +35,8 @@ UberModule
             )
             ( AppN Nothing
               ( Ref Nothing ( Local ( Name "v1" ) ) )
-              ( ObjectProp Nothing
-                ( Ref Nothing ( Local ( Name "v2" ) ) )
-                ( PropName "value0" ) :| []
+              ( DataArgumentByIndex Nothing SumType 0
+                ( Ref Nothing ( Local ( Name "v2" ) ) ) :| []
               )
             )
             ( Exception Nothing "No patterns matched" )
@@ -63,9 +62,8 @@ UberModule
             ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Just" ) ) )
             ( AppN Nothing
               ( Ref Nothing ( Local ( Name "v$284" ) ) )
-              ( ObjectProp Nothing
-                ( Ref Nothing ( Local ( Name "v1$285" ) ) )
-                ( PropName "value0" ) :| []
+              ( DataArgumentByIndex Nothing SumType 0
+                ( Ref Nothing ( Local ( Name "v1$285" ) ) ) :| []
               ) :| []
             )
           )

@@ -210,9 +210,8 @@ UberModule
                               ( Ref Nothing
                                 ( Imported ( ModuleName "Data.Either" ) ( Name "Left" ) )
                               )
-                              ( ObjectProp Nothing
-                                ( Ref Nothing ( Local ( Name "v2$539" ) ) )
-                                ( PropName "value0" ) :| []
+                              ( DataArgumentByIndex Nothing SumType 0
+                                ( Ref Nothing ( Local ( Name "v2$539" ) ) ) :| []
                               ) :| []
                             )
                           )
@@ -223,9 +222,8 @@ UberModule
                             )
                             ( AppN Nothing
                               ( Ref Nothing ( Local ( Name "k" ) ) )
-                              ( ObjectProp Nothing
-                                ( Ref Nothing ( Local ( Name "v2$539" ) ) )
-                                ( PropName "value0" ) :| []
+                              ( DataArgumentByIndex Nothing SumType 0
+                                ( Ref Nothing ( Local ( Name "v2$539" ) ) ) :| []
                               )
                             )
                             ( Exception Nothing "No patterns matched" )
@@ -387,9 +385,8 @@ UberModule
                                     ( Ref Nothing
                                       ( Imported ( ModuleName "Data.Either" ) ( Name "Left" ) )
                                     )
-                                    ( ObjectProp Nothing
-                                      ( Ref Nothing ( Local ( Name "m$541" ) ) )
-                                      ( PropName "value0" ) :| []
+                                    ( DataArgumentByIndex Nothing SumType 0
+                                      ( Ref Nothing ( Local ( Name "m$541" ) ) ) :| []
                                     )
                                   )
                                   ( IfThenElse Nothing
@@ -405,9 +402,8 @@ UberModule
                                       )
                                       ( AppN Nothing
                                         ( Ref Nothing ( Local ( Name "f$531" ) ) )
-                                        ( ObjectProp Nothing
-                                          ( Ref Nothing ( Local ( Name "m$541" ) ) )
-                                          ( PropName "value0" ) :| []
+                                        ( DataArgumentByIndex Nothing SumType 0
+                                          ( Ref Nothing ( Local ( Name "m$541" ) ) ) :| []
                                         ) :| []
                                       )
                                     )
@@ -7676,11 +7672,10 @@ UberModule
                     ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
                     ( PropName "showStringImpl" )
                   )
-                  ( ObjectProp Nothing
+                  ( DataArgumentByIndex Nothing SumType 0
                     ( Ref Nothing
                       ( Imported ( ModuleName "Golden.LongExceptBind.Test" ) ( Name "compute" ) )
-                    )
-                    ( PropName "value0" ) :| []
+                    ) :| []
                   ) :|
                   [ LiteralString Nothing ")" ]
                 )
@@ -7706,11 +7701,10 @@ UberModule
                       ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
                       ( PropName "showIntImpl" )
                     )
-                    ( ObjectProp Nothing
+                    ( DataArgumentByIndex Nothing SumType 0
                       ( Ref Nothing
                         ( Imported ( ModuleName "Golden.LongExceptBind.Test" ) ( Name "compute" ) )
-                      )
-                      ( PropName "value0" ) :| []
+                      ) :| []
                     ) :|
                     [ LiteralString Nothing ")" ]
                   )

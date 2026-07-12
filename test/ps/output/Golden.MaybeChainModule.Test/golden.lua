@@ -1,12 +1,12 @@
-local Data_Maybe_Nothing = { ["$ctor"] = "Data.Maybe∷Maybe.Nothing" }
+local Data_Maybe_Nothing = { "Data.Maybe∷Maybe.Nothing" }
 local Data_Maybe_Just = function(value0)
-  return { ["$ctor"] = "Data.Maybe∷Maybe.Just", value0 = value0 }
+  return { "Data.Maybe∷Maybe.Just", value0 }
 end
 local Data_Maybe_maybe_S_w = function(v, v1, v2)
-  if "Data.Maybe∷Maybe.Nothing" == v2["$ctor"] then
+  if "Data.Maybe∷Maybe.Nothing" == v2[1] then
     return v
-  elseif "Data.Maybe∷Maybe.Just" == v2["$ctor"] then
-    return v1(v2.value0)
+  elseif "Data.Maybe∷Maybe.Just" == v2[1] then
+    return v1(v2[2])
   else
     return error("No patterns matched")
   end
@@ -15,8 +15,8 @@ local Golden_MaybeChainModule_Test_identity = function(x_S_287)
   return x_S_287
 end
 local Golden_MaybeChainModule_Test_map_S_w = function(v_S_284, v1_S_285)
-  if "Data.Maybe∷Maybe.Just" == v1_S_285["$ctor"] then
-    return Data_Maybe_Just(v_S_284(v1_S_285.value0))
+  if "Data.Maybe∷Maybe.Just" == v1_S_285[1] then
+    return Data_Maybe_Just(v_S_284(v1_S_285[2]))
   else
     return Data_Maybe_Nothing
   end

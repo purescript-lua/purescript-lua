@@ -47,7 +47,7 @@ local Data_Either_append_S_w = function(s1_S_299_S_331, s2_S_300_S_332)
   return s1_S_299_S_331 .. s2_S_300_S_332
 end
 local Data_Either_Right = function(value0)
-  return { ["$ctor"] = "Data.Either∷Either.Right", value0 = value0 }
+  return { "Data.Either∷Either.Right", value0 }
 end
 local Golden_LongEitherBind_Test_add_S_w = function( x_S_297_S_326
 , y_S_298_S_327 )
@@ -66,10 +66,10 @@ local Golden_LongEitherBind_Test_compute = (function()
   return Data_Either_Right(Golden_LongEitherBind_Test_add_S_w(Golden_LongEitherBind_Test_add_S_w(1, x150), Golden_LongEitherBind_Test_add_S_w(Golden_LongEitherBind_Test_add_S_w(Golden_LongEitherBind_Test_add_S_w(Golden_LongEitherBind_Test_add_S_w(Golden_LongEitherBind_Test_add_S_w(Golden_LongEitherBind_Test_add_S_w(Golden_LongEitherBind_Test_add_S_w(Golden_LongEitherBind_Test_add_S_w(Golden_LongEitherBind_Test_add_S_w(Golden_LongEitherBind_Test_add_S_w(Golden_LongEitherBind_Test_add_S_w(Golden_LongEitherBind_Test_add_S_w(Golden_LongEitherBind_Test_add_S_w(Golden_LongEitherBind_Test_add_S_w(Golden_LongEitherBind_Test_add_S_w(Golden_LongEitherBind_Test_add_S_w(Golden_LongEitherBind_Test_add_S_w(Golden_LongEitherBind_Test_add_S_w(Golden_LongEitherBind_Test_add_S_w(Golden_LongEitherBind_Test_add_S_w(Golden_LongEitherBind_Test_add_S_w(Golden_LongEitherBind_Test_add_S_w(Golden_LongEitherBind_Test_add_S_w(Golden_LongEitherBind_Test_add_S_w(Golden_LongEitherBind_Test_add_S_w(Golden_LongEitherBind_Test_add_S_w(Golden_LongEitherBind_Test_add_S_w(Golden_LongEitherBind_Test_add_S_w(Golden_LongEitherBind_Test_add_S_w(Golden_LongEitherBind_Test_add_S_w(_S_tmp1242, 1), 1), 1), 1), 1), 1), 1), 1), 1), 1), 1), 1), 1), 1), 1), 1), 1), 1), 1), 1), 1), 1), 1), 1), 1), 1), 1), 1), 1), 1)))
 end)()
 return Effect_Console_foreign.log((function()
-  if "Data.Either∷Either.Left" == Golden_LongEitherBind_Test_compute["$ctor"] then
-    return Data_Either_append_S_w("(Left ", Data_Either_append_S_w(Data_Show_foreign.showStringImpl(Golden_LongEitherBind_Test_compute.value0), ")"))
-  elseif "Data.Either∷Either.Right" == Golden_LongEitherBind_Test_compute["$ctor"] then
-    return Data_Either_append_S_w("(Right ", Data_Either_append_S_w(Data_Show_foreign.showIntImpl(Golden_LongEitherBind_Test_compute.value0), ")"))
+  if "Data.Either∷Either.Left" == Golden_LongEitherBind_Test_compute[1] then
+    return Data_Either_append_S_w("(Left ", Data_Either_append_S_w(Data_Show_foreign.showStringImpl(Golden_LongEitherBind_Test_compute[2]), ")"))
+  elseif "Data.Either∷Either.Right" == Golden_LongEitherBind_Test_compute[1] then
+    return Data_Either_append_S_w("(Right ", Data_Either_append_S_w(Data_Show_foreign.showIntImpl(Golden_LongEitherBind_Test_compute[2]), ")"))
   else
     return error("No patterns matched")
   end

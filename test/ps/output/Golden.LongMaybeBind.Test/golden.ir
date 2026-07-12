@@ -49,9 +49,8 @@ UberModule
           )
           ( AppN Nothing
             ( Ref Nothing ( Local ( Name "v1$304" ) ) )
-            ( ObjectProp Nothing
-              ( Ref Nothing ( Local ( Name "v$303" ) ) )
-              ( PropName "value0" ) :| []
+            ( DataArgumentByIndex Nothing SumType 0
+              ( Ref Nothing ( Local ( Name "v$303" ) ) ) :| []
             )
           )
           ( IfThenElse Nothing
@@ -10413,11 +10412,10 @@ UberModule
                     ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
                     ( PropName "showIntImpl" )
                   )
-                  ( ObjectProp Nothing
+                  ( DataArgumentByIndex Nothing SumType 0
                     ( Ref Nothing
                       ( Imported ( ModuleName "Golden.LongMaybeBind.Test" ) ( Name "compute" ) )
-                    )
-                    ( PropName "value0" ) :| []
+                    ) :| []
                   ) :|
                   [ LiteralString Nothing ")" ]
                 )

@@ -7,13 +7,13 @@ local Data_Maybe_append_S_w = function(s1_S_286_S_314, s2_S_287_S_315)
   return s1_S_286_S_314 .. s2_S_287_S_315
 end
 local Data_Maybe_Just = function(value0)
-  return { ["$ctor"] = "Data.Maybe∷Maybe.Just", value0 = value0 }
+  return { "Data.Maybe∷Maybe.Just", value0 }
 end
 local Golden_LongMaybeBind_Test_bind_S_w = function(v_S_303, v1_S_304)
-  if "Data.Maybe∷Maybe.Just" == v_S_303["$ctor"] then
-    return v1_S_304(v_S_303.value0)
-  elseif "Data.Maybe∷Maybe.Nothing" == v_S_303["$ctor"] then
-    return { ["$ctor"] = "Data.Maybe∷Maybe.Nothing" }
+  if "Data.Maybe∷Maybe.Just" == v_S_303[1] then
+    return v1_S_304(v_S_303[2])
+  elseif "Data.Maybe∷Maybe.Nothing" == v_S_303[1] then
+    return { "Data.Maybe∷Maybe.Nothing" }
   else
     return error("No patterns matched")
   end
@@ -666,9 +666,9 @@ local Golden_LongMaybeBind_Test_compute = (function()
   end)
 end)()
 return Effect_Console_foreign.log((function()
-  if "Data.Maybe∷Maybe.Just" == Golden_LongMaybeBind_Test_compute["$ctor"] then
-    return Data_Maybe_append_S_w("(Just ", Data_Maybe_append_S_w(Data_Show_foreign.showIntImpl(Golden_LongMaybeBind_Test_compute.value0), ")"))
-  elseif "Data.Maybe∷Maybe.Nothing" == Golden_LongMaybeBind_Test_compute["$ctor"] then
+  if "Data.Maybe∷Maybe.Just" == Golden_LongMaybeBind_Test_compute[1] then
+    return Data_Maybe_append_S_w("(Just ", Data_Maybe_append_S_w(Data_Show_foreign.showIntImpl(Golden_LongMaybeBind_Test_compute[2]), ")"))
+  elseif "Data.Maybe∷Maybe.Nothing" == Golden_LongMaybeBind_Test_compute[1] then
     return "Nothing"
   else
     return error("No patterns matched")

@@ -49,13 +49,13 @@ local Data_Either_append_S_w = function(s1_S_552_S_594, s2_S_553_S_595)
   return s1_S_552_S_594 .. s2_S_553_S_595
 end
 local Data_Either_Left = function(value0)
-  return { ["$ctor"] = "Data.Either∷Either.Left", value0 = value0 }
+  return { "Data.Either∷Either.Left", value0 }
 end
 local Data_Either_Right = function(value0)
-  return { ["$ctor"] = "Data.Either∷Either.Right", value0 = value0 }
+  return { "Data.Either∷Either.Right", value0 }
 end
 local Data_Tuple_Tuple = function(value0)
-  return function(value1) return { value0 = value0, value1 = value1 } end
+  return function(value1) return { value0, value1 } end
 end
 local Data_Identity_functorIdentity = {
   map = function(f) return function(m) return f(m) end end
@@ -82,10 +82,10 @@ Control_Monad_Except_Trans_bindExceptT = function(dictMonad)
     bind = function(v)
       return function(k)
         return (dictMonad.Bind1()).bind(v)(function(v2_S_583)
-          if "Data.Either∷Either.Left" == v2_S_583["$ctor"] then
-            return (dictMonad.Applicative0()).pure(Data_Either_Left(v2_S_583.value0))
-          elseif "Data.Either∷Either.Right" == v2_S_583["$ctor"] then
-            return k(v2_S_583.value0)
+          if "Data.Either∷Either.Left" == v2_S_583[1] then
+            return (dictMonad.Applicative0()).pure(Data_Either_Left(v2_S_583[2]))
+          elseif "Data.Either∷Either.Right" == v2_S_583[1] then
+            return k(v2_S_583[2])
           else
             return error("No patterns matched")
           end
@@ -117,10 +117,10 @@ Control_Monad_Except_Trans_applyExceptT = function(dictMonad)
         map = function(f_S_1855)
           return function(v_S_575_S_1856)
             return (((dictMonad.Bind1()).Apply0()).Functor0()).map(function( m_S_585_S_1858 )
-              if "Data.Either∷Either.Left" == m_S_585_S_1858["$ctor"] then
-                return Data_Either_Left(m_S_585_S_1858.value0)
-              elseif "Data.Either∷Either.Right" == m_S_585_S_1858["$ctor"] then
-                return Data_Either_Right(f_S_1855(m_S_585_S_1858.value0))
+              if "Data.Either∷Either.Left" == m_S_585_S_1858[1] then
+                return Data_Either_Left(m_S_585_S_1858[2])
+              elseif "Data.Either∷Either.Right" == m_S_585_S_1858[1] then
+                return Data_Either_Right(f_S_1855(m_S_585_S_1858[2]))
               else
                 return error("No patterns matched")
               end
@@ -160,7 +160,7 @@ Control_Monad_State_Trans_bindStateT = function(dictMonad)
       return function(f)
         return function(s)
           return (dictMonad.Bind1()).bind(v(s))(function(v1)
-            return f(v1.value0)(v1.value1)
+            return f(v1[1])(v1[2])
           end)
         end
       end
@@ -191,7 +191,7 @@ Control_Monad_State_Trans_applyStateT = function(dictMonad)
           return function(v_S_571)
             return function(s_S_572)
               return (((dictMonad.Bind1()).Apply0()).Functor0()).map(function( v1_S_573 )
-                return Data_Tuple_Tuple(f_S_570(v1_S_573.value0))(v1_S_573.value1)
+                return Data_Tuple_Tuple(f_S_570(v1_S_573[1]))(v1_S_573[2])
               end)(v_S_571(s_S_572))
             end
           end
@@ -1165,19 +1165,19 @@ local Golden_LongStackBind_Test_go = (function()
 end)()
 local Golden_LongStackBind_Test_compute = Unsafe_Coerce_foreign.unsafeCoerce((function(  )
   local v_S_575_S_603 = Golden_LongStackBind_Test_go(0)
-  if "Data.Either∷Either.Left" == v_S_575_S_603["$ctor"] then
-    return Data_Either_Left(v_S_575_S_603.value0)
-  elseif "Data.Either∷Either.Right" == v_S_575_S_603["$ctor"] then
-    return Data_Either_Right(v_S_575_S_603.value0.value0)
+  if "Data.Either∷Either.Left" == v_S_575_S_603[1] then
+    return Data_Either_Left(v_S_575_S_603[2])
+  elseif "Data.Either∷Either.Right" == v_S_575_S_603[1] then
+    return Data_Either_Right(v_S_575_S_603[2][1])
   else
     return error("No patterns matched")
   end
 end)())
 return Effect_Console_foreign.log((function()
-  if "Data.Either∷Either.Left" == Golden_LongStackBind_Test_compute["$ctor"] then
-    return Data_Either_append_S_w("(Left ", Data_Either_append_S_w(Data_Show_foreign.showStringImpl(Golden_LongStackBind_Test_compute.value0), ")"))
-  elseif "Data.Either∷Either.Right" == Golden_LongStackBind_Test_compute["$ctor"] then
-    return Data_Either_append_S_w("(Right ", Data_Either_append_S_w(Data_Show_foreign.showIntImpl(Golden_LongStackBind_Test_compute.value0), ")"))
+  if "Data.Either∷Either.Left" == Golden_LongStackBind_Test_compute[1] then
+    return Data_Either_append_S_w("(Left ", Data_Either_append_S_w(Data_Show_foreign.showStringImpl(Golden_LongStackBind_Test_compute[2]), ")"))
+  elseif "Data.Either∷Either.Right" == Golden_LongStackBind_Test_compute[1] then
+    return Data_Either_append_S_w("(Right ", Data_Either_append_S_w(Data_Show_foreign.showIntImpl(Golden_LongStackBind_Test_compute[2]), ")"))
   else
     return error("No patterns matched")
   end
