@@ -149,15 +149,13 @@ is follow-up work (issue #187).
 A warning to that follow-up: do /not/ list the Effect\/ST core —
 @Effect.bindE@\/@pureE@, @Control.Monad.ST.Internal.bind_@\/@pure_@ —
 even though its thunk-shaped bodies are technically liftable now that
-nullary calls translate. Magic-do
-('Language.PureScript.Backend.IR.MagicDo') recognises bind chains by
-/name/, resolving dictionaries to the @Effect.bindEffect@ and
-@Control.Monad.ST.Internal.bindST@ instances; a lifted core would be
-inlined away during the optimizer fixpoint that runs first, blinding
-magic-do — no flat @do@ chunks, and no chunked statement sequences
-keeping the output under Lua's local-variable limits (issue #19).
-Lifting the core behind a marker magic-do understands is tracked as
-issue #228.
+nullary calls translate. Those very names are the canonical heads
+magic-do matches (Note [Canonical Effect/ST heads]); a lifted core
+would be inlined into primop trees during the optimizer fixpoint that
+runs first, erasing the names and blinding magic-do — no flat @do@
+chunks, and no chunked statement sequences keeping the output under
+Lua's local-variable limits (issue #19). Lifting the core behind a
+marker magic-do understands is tracked as issue #228.
 -}
 allowlist ∷ Set QName
 allowlist =

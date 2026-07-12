@@ -432,8 +432,11 @@ but only this one marks an /effect run/. Giving magic-do its own token lets
 coincidentally nullary thunks that share the @f Prim.undefined@ shape: a
 superclass-dictionary accessor or a newtype coercion (@runIdentity@) inlined off
 a non-Effect monad (@State@\/@Writer@). Conflating the two kept beta reduction
-from collapsing those pure thunks, bloating the output (issue #180). The @$@ in
-the name cannot collide with a PureScript identifier.
+from collapsing those pure thunks, bloating the output (issue #180). The marker
+is also the anchor of magic-do's pure run peephole: an application of a
+canonical @pure@ to this argument collapses to @pure@'s own argument (see
+'Language.PureScript.Backend.IR.MagicDo'). The @$@ in the name cannot collide
+with a PureScript identifier.
 -}
 pattern EffectRunArg ∷ ann → RawExp ann
 pattern EffectRunArg ann =
@@ -725,6 +728,10 @@ rewriteExpTopDownM rule = visit
     rule expression >>= \case
       Just expression' → visit expression'
       Nothing → traverseOf subexpressions visit expression
+
+-- | Pure 'rewriteExpTopDownM'.
+rewriteExpTopDown ∷ RewriteRule ann → RawExp ann → RawExp ann
+rewriteExpTopDown rule = runIdentity . rewriteExpTopDownM (pure . rule)
 
 countFreeRefs ∷ RawExp ann → Map (Qualified Name) Natural
 countFreeRefs = fmap getSum . MMap.toMap . countFreeRefs' mempty
