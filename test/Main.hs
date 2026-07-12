@@ -21,6 +21,7 @@ import Language.PureScript.Backend.Lua.NestingCheck.Spec qualified as NestingChe
 import Language.PureScript.Backend.Lua.Optimizer.Spec qualified as LuaOptimizer
 import Language.PureScript.Backend.Lua.Parser.Spec qualified as LuaParser
 import Language.PureScript.Backend.Lua.Printer.Spec qualified as Printer
+import Language.PureScript.Backend.Lua.Promote.Spec qualified as LuaPromote
 import Language.PureScript.Backend.Lua.Run.Spec qualified as Run
 import Language.PureScript.Backend.Lua.Spec qualified as Lua
 import Language.PureScript.Backend.Lua.Traversal.Spec qualified as LuaTraversal
@@ -43,6 +44,7 @@ main = hspec do
   IRUniquify.spec
   LuaOptimizer.spec
   LuaLocalize.spec
+  LuaPromote.spec
   Lua.spec
   LuaParser.spec
   LuaDifferential.spec
