@@ -17,8 +17,8 @@ local function PSLUA_runtime_lazy(name)
   end
 end
 local M = {}
-M.Data_Unit_foreign = { unit = {} }
-M.Effect_Console_foreign = {
+local Data_Unit_foreign = { unit = {} }
+local Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
 }
 M.Golden_RecGroupOrder_Test_store = function(f)
@@ -31,5 +31,5 @@ return (function()
     return { run = function() return (Lazy_record_S_0(0)).tag end, tag = "ok!" }
   end)
   record_S_1 = Lazy_record_S_0(0)
-  return M.Effect_Console_foreign.log(record_S_1.run(M.Data_Unit_foreign.unit))
+  return Effect_Console_foreign.log(record_S_1.run(Data_Unit_foreign.unit))
 end)()()

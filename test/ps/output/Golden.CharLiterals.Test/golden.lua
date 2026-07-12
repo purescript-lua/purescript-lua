@@ -1,5 +1,4 @@
-local M = {}
-M.Data_Show_foreign = {
+local Data_Show_foreign = {
   showCharImpl = function(n)
     local code = n:byte()
     if code < 32 or code == 127 then
@@ -16,12 +15,11 @@ M.Data_Show_foreign = {
     return "'" .. n .. "'"
   end
 }
-M.Effect_Console_foreign = {
+local Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
 }
-M.Golden_CharLiterals_Test_show = M.Data_Show_foreign.showCharImpl
+local Golden_CharLiterals_Test_show = Data_Show_foreign.showCharImpl
 return (function()
-  local Effect_Console_foreign, Golden_CharLiterals_Test_show = M.Effect_Console_foreign, M.Golden_CharLiterals_Test_show
   local _ = Effect_Console_foreign.log(Golden_CharLiterals_Test_show("\n"))()
   local _ = Effect_Console_foreign.log(Golden_CharLiterals_Test_show("\t"))()
   local _ = Effect_Console_foreign.log(Golden_CharLiterals_Test_show("\r"))()

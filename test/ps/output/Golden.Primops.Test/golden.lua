@@ -1,14 +1,14 @@
 local M = {}
-M.Data_Show_foreign = { showIntImpl = function(n) return tostring(n) end }
-M.Effect_Console_foreign = {
+local Data_Show_foreign = { showIntImpl = function(n) return tostring(n) end }
+local Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
 }
-M.Data_HeytingAlgebra_heytingAlgebraBoolean = {
+local Data_HeytingAlgebra_heytingAlgebraBoolean
+Data_HeytingAlgebra_heytingAlgebraBoolean = {
   ff = false,
   tt = true,
   implies = function(a)
     return function(b)
-      local Data_HeytingAlgebra_heytingAlgebraBoolean = M.Data_HeytingAlgebra_heytingAlgebraBoolean
       return Data_HeytingAlgebra_heytingAlgebraBoolean.disj(Data_HeytingAlgebra_heytingAlgebraBoolean._not_(a))(b)
     end
   end,
@@ -20,10 +20,10 @@ M.Data_HeytingAlgebra_heytingAlgebraBoolean = {
   end,
   _not_ = function(b_S_210) return not(b_S_210) end
 }
-M.Effect_Console_logShow_S_w = function(dictShow, a)
-  return M.Effect_Console_foreign.log(dictShow.show(a))
+local Effect_Console_logShow_S_w = function(dictShow, a)
+  return Effect_Console_foreign.log(dictShow.show(a))
 end
-M.Golden_Primops_Test_sumTo_S_w = function(acc, n)
+local Golden_Primops_Test_sumTo_S_w = function(acc, n)
   while true do
     if "Data.Ordering∷Ordering.GT" == (function()
       if n < 0 then
@@ -42,14 +42,13 @@ M.Golden_Primops_Test_sumTo_S_w = function(acc, n)
 end
 M.Golden_Primops_Test_sumTo = function(sumTo_S_p1)
   return function(sumTo_S_p2)
-    return M.Golden_Primops_Test_sumTo_S_w(sumTo_S_p1, sumTo_S_p2)
+    return Golden_Primops_Test_sumTo_S_w(sumTo_S_p1, sumTo_S_p2)
   end
 end
 return (function()
-  local Effect_Console_logShow_S_w, Data_HeytingAlgebra_heytingAlgebraBoolean = M.Effect_Console_logShow_S_w, M.Data_HeytingAlgebra_heytingAlgebraBoolean
   local _ = Effect_Console_logShow_S_w({
-    show = M.Data_Show_foreign.showIntImpl
-  }, M.Golden_Primops_Test_sumTo_S_w(0, 5))()
+    show = Data_Show_foreign.showIntImpl
+  }, Golden_Primops_Test_sumTo_S_w(0, 5))()
   local _ = Effect_Console_logShow_S_w({
     show = function(v_S_117_S_250)
       if v_S_117_S_250 then
@@ -85,7 +84,7 @@ return (function()
       end
     end
   }, { ["$ctor"] = "Data.Ordering∷Ordering.LT" })()
-  local _ = M.Effect_Console_foreign.log("foobar")()
+  local _ = Effect_Console_foreign.log("foobar")()
   return Effect_Console_logShow_S_w({
     show = function(v_S_117_S_260)
       if v_S_117_S_260 then

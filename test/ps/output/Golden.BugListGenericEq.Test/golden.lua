@@ -1,17 +1,17 @@
 local M = {}
-M.Record_Unsafe_foreign = {
+local Record_Unsafe_foreign = {
   unsafeGet = function(l) return function(r) return r[l] end end
 }
-M.Effect_Console_foreign = {
+local Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
 }
-M.Type_Proxy_Proxy = {}
-M.Data_HeytingAlgebra_heytingAlgebraBoolean = {
+local Type_Proxy_Proxy = {}
+local Data_HeytingAlgebra_heytingAlgebraBoolean
+Data_HeytingAlgebra_heytingAlgebraBoolean = {
   ff = false,
   tt = true,
   implies = function(a)
     return function(b)
-      local Data_HeytingAlgebra_heytingAlgebraBoolean = M.Data_HeytingAlgebra_heytingAlgebraBoolean
       return Data_HeytingAlgebra_heytingAlgebraBoolean.disj(Data_HeytingAlgebra_heytingAlgebraBoolean._not_(a))(b)
     end
   end,
@@ -23,7 +23,7 @@ M.Data_HeytingAlgebra_heytingAlgebraBoolean = {
   end,
   _not_ = function(b_S_229) return not(b_S_229) end
 }
-M.Data_Eq_eqRowCons_S_w = function( dictEqRecord
+local Data_Eq_eqRowCons_S_w = function( dictEqRecord
 , eqRowCons_S_u2
 , dictIsSymbol
 , dictEq )
@@ -31,19 +31,18 @@ M.Data_Eq_eqRowCons_S_w = function( dictEqRecord
     eqRecord = function()
       return function(ra)
         return function(rb)
-          local Type_Proxy_Proxy = M.Type_Proxy_Proxy
           local key = dictIsSymbol.reflectSymbol(Type_Proxy_Proxy)
-          local get = M.Record_Unsafe_foreign.unsafeGet(key)
-          return M.Data_HeytingAlgebra_heytingAlgebraBoolean.conj(dictEq.eq(get(ra))(get(rb)))(dictEqRecord.eqRecord(Type_Proxy_Proxy)(ra)(rb))
+          local get = Record_Unsafe_foreign.unsafeGet(key)
+          return Data_HeytingAlgebra_heytingAlgebraBoolean.conj(dictEq.eq(get(ra))(get(rb)))(dictEqRecord.eqRecord(Type_Proxy_Proxy)(ra)(rb))
         end
       end
     end
   }
 end
-M.Golden_BugListGenericEq_Test_Nil = {
+local Golden_BugListGenericEq_Test_Nil = {
   ["$ctor"] = "Golden.BugListGenericEq.Test∷List.Nil"
 }
-M.Golden_BugListGenericEq_Test_Cons = function(value0)
+local Golden_BugListGenericEq_Test_Cons = function(value0)
   return {
     ["$ctor"] = "Golden.BugListGenericEq.Test∷List.Cons",
     value0 = value0
@@ -52,9 +51,9 @@ end
 M.Golden_BugListGenericEq_Test_genericList = {
   to = function(x)
     if "Data.Generic.Rep∷Sum.Inl" == x["$ctor"] then
-      return M.Golden_BugListGenericEq_Test_Nil
+      return Golden_BugListGenericEq_Test_Nil
     elseif "Data.Generic.Rep∷Sum.Inr" == x["$ctor"] then
-      return M.Golden_BugListGenericEq_Test_Cons(x.value0)
+      return Golden_BugListGenericEq_Test_Cons(x.value0)
     else
       return error("No patterns matched")
     end
@@ -73,7 +72,8 @@ M.Golden_BugListGenericEq_Test_genericList = {
     end
   end
 }
-M.Golden_BugListGenericEq_Test_eqList = function(dictEq)
+local Golden_BugListGenericEq_Test_eqList
+Golden_BugListGenericEq_Test_eqList = function(dictEq)
   return {
     eq = function(x)
       return function(y)
@@ -102,15 +102,15 @@ M.Golden_BugListGenericEq_Test_eqList = function(dictEq)
               return "Data.Generic.Rep∷Sum.Inl" == v1_S_14["$ctor"]
             elseif "Data.Generic.Rep∷Sum.Inr" == v_S_13["$ctor"] then
               if "Data.Generic.Rep∷Sum.Inr" == v1_S_14["$ctor"] then
-                return (M.Data_Eq_eqRowCons_S_w(M.Data_Eq_eqRowCons_S_w({
+                return (Data_Eq_eqRowCons_S_w(Data_Eq_eqRowCons_S_w({
                   eqRecord = function()
                     return function() return function() return true end end
                   end
                 }, nil, {
                   reflectSymbol = function() return "tail" end
-                }, M.Golden_BugListGenericEq_Test_eqList(dictEq)), nil, {
+                }, Golden_BugListGenericEq_Test_eqList(dictEq)), nil, {
                   reflectSymbol = function() return "head" end
-                }, dictEq)).eqRecord(M.Type_Proxy_Proxy)(v_S_13.value0)(v1_S_14.value0)
+                }, dictEq)).eqRecord(Type_Proxy_Proxy)(v_S_13.value0)(v1_S_14.value0)
               else
                 return false
               end
@@ -135,16 +135,15 @@ M.Golden_BugListGenericEq_Test_eqList = function(dictEq)
     end
   }
 end
-M.Golden_BugListGenericEq_Test_eq = (M.Golden_BugListGenericEq_Test_eqList({
+local Golden_BugListGenericEq_Test_eq = (Golden_BugListGenericEq_Test_eqList({
   eq = function(r1_S_225_S_238)
     return function(r2_S_226_S_239) return r1_S_225_S_238 == r2_S_226_S_239 end
   end
 })).eq
-M.Golden_BugListGenericEq_Test_cons_S_w = function(head, tail)
-  return M.Golden_BugListGenericEq_Test_Cons({ head = head, tail = tail })
+local Golden_BugListGenericEq_Test_cons_S_w = function(head, tail)
+  return Golden_BugListGenericEq_Test_Cons({ head = head, tail = tail })
 end
 return (function()
-  local Golden_BugListGenericEq_Test_Nil, Golden_BugListGenericEq_Test_cons_S_w, Effect_Console_foreign, Golden_BugListGenericEq_Test_eq = M.Golden_BugListGenericEq_Test_Nil, M.Golden_BugListGenericEq_Test_cons_S_w, M.Effect_Console_foreign, M.Golden_BugListGenericEq_Test_eq
   local _ = (function()
     local a_S_2_S_270 = Golden_BugListGenericEq_Test_eq(Golden_BugListGenericEq_Test_Nil)(Golden_BugListGenericEq_Test_Nil)
     return Effect_Console_foreign.log((function()

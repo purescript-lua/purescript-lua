@@ -1,5 +1,4 @@
-local M = {}
-M.Golden_Annotations_M1_foreign = (function()
+local Golden_Annotations_M1_foreign = (function()
   local step = 2
   return {
     dontInlineClosure = function(i) return i + step end,
@@ -16,5 +15,5 @@ return {
     end)()
     if 1 == v_S_2 then return 2 else return v_S_2 end
   end,
-  inlineIntoMe2 = M.Golden_Annotations_M1_foreign.dontInlineClosure(M.Golden_Annotations_M1_foreign.inlineMeLambda(M.Golden_Annotations_M1_foreign.inlineMeLambda(17)))
+  inlineIntoMe2 = Golden_Annotations_M1_foreign.dontInlineClosure(Golden_Annotations_M1_foreign.inlineMeLambda(Golden_Annotations_M1_foreign.inlineMeLambda(17)))
 }

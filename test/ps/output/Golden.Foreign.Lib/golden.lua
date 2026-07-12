@@ -1,6 +1,5 @@
-local M = {}
-M.Golden_Foreign_Lib_foreign = { dead = -(100), alive = 100 }
+local Golden_Foreign_Lib_foreign = { dead = -(100), alive = 100 }
 return {
-  dead = M.Golden_Foreign_Lib_foreign.dead,
-  alive = M.Golden_Foreign_Lib_foreign.alive
+  dead = Golden_Foreign_Lib_foreign.dead,
+  alive = Golden_Foreign_Lib_foreign.alive
 }
