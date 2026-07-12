@@ -8,6 +8,12 @@ UberModule
         [ ( Nothing, Name "showIntImpl" ) ]
       ), Standalone
       ( QName
+        { qnameModuleName = ModuleName "Data.Show", qnameName = Name "showIntImpl"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
+        ( PropName "showIntImpl" )
+      ), Standalone
+      ( QName
         { qnameModuleName = ModuleName "Control.Monad.ST.Internal", qnameName = Name "foreign"
         }, ForeignImport Nothing
         ( ModuleName "Control.Monad.ST.Internal" ) ".spago/p/st/6d41fd264a05b9a089e79322b22b906597ea7c36/src/Control/Monad/ST/Internal.purs"
@@ -23,6 +29,12 @@ UberModule
         }, ForeignImport Nothing
         ( ModuleName "Effect.Console" ) ".spago/p/console/f82835a0b873aafe6bd7b14dd30cc150553d4ab9/src/Effect/Console.purs"
         [ ( Nothing, Name "log" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "log"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
+        ( PropName "log" )
       ), RecursiveGroup
       (
         ( QName
@@ -48,7 +60,7 @@ UberModule
             { qnameModuleName = ModuleName "Control.Monad.ST.Internal", qnameName = Name "bindST"
             }, LiteralObject Nothing
             [
-              ( PropName "bind", ObjectProp ( Just Always )
+              ( PropName "bind", ObjectProp Nothing
                 ( Ref Nothing
                   ( Imported ( ModuleName "Control.Monad.ST.Internal" ) ( Name "foreign" ) )
                 )
@@ -69,7 +81,7 @@ UberModule
             { qnameModuleName = ModuleName "Control.Monad.ST.Internal", qnameName = Name "applicativeST"
             }, LiteralObject Nothing
             [
-              ( PropName "pure", ObjectProp ( Just Always )
+              ( PropName "pure", ObjectProp Nothing
                 ( Ref Nothing
                   ( Imported ( ModuleName "Control.Monad.ST.Internal" ) ( Name "foreign" ) )
                 )
@@ -172,7 +184,7 @@ UberModule
                     ( ParamUnused Nothing :| [] )
                     ( LiteralObject Nothing
                       [
-                        ( PropName "map", ObjectProp ( Just Always )
+                        ( PropName "map", ObjectProp Nothing
                           ( Ref Nothing
                             ( Imported
                               ( ModuleName "Control.Monad.ST.Internal" )
@@ -239,12 +251,7 @@ UberModule
               ( Standalone
                 ( Nothing, Name "_", AppN Nothing
                   ( AppN Nothing
-                    ( ObjectProp ( Just Always )
-                      ( Ref Nothing
-                        ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) )
-                      )
-                      ( PropName "log" )
-                    )
+                    ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
                     ( Ref Nothing ( Local ( Name "a$671" ) ) :| [] )
                   )
                   ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
@@ -252,10 +259,7 @@ UberModule
               )
               ( AppN Nothing
                 ( AppN Nothing
-                  ( ObjectProp ( Just Always )
-                    ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
-                    ( PropName "log" )
-                  )
+                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
                   ( Ref Nothing ( Local ( Name "b$672" ) ) :| [] )
                 )
                 ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
@@ -330,15 +334,9 @@ UberModule
             [ Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
-                  ( ObjectProp ( Just Always )
-                    ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
-                    ( PropName "log" )
-                  )
+                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
                   ( AppN Nothing
-                    ( ObjectProp ( Just Always )
-                      ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
-                      ( PropName "showIntImpl" )
-                    )
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
                     ( AppN Nothing
                       ( Ref Nothing
                         ( Imported ( ModuleName "Golden.UncurriedLift.Test" ) ( Name "add3" ) )
@@ -353,15 +351,9 @@ UberModule
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
-                  ( ObjectProp ( Just Always )
-                    ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
-                    ( PropName "log" )
-                  )
+                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
                   ( AppN Nothing
-                    ( ObjectProp ( Just Always )
-                      ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
-                      ( PropName "showIntImpl" )
-                    )
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
                     ( AppN Nothing
                       ( Ref Nothing
                         ( Imported ( ModuleName "Golden.UncurriedLift.Test" ) ( Name "mul2" ) )
@@ -374,15 +366,9 @@ UberModule
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
-                  ( ObjectProp ( Just Always )
-                    ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
-                    ( PropName "log" )
-                  )
+                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
                   ( AppN Nothing
-                    ( ObjectProp ( Just Always )
-                      ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
-                      ( PropName "showIntImpl" )
-                    )
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
                     ( AppN Nothing
                       ( Ref Nothing
                         ( Imported ( ModuleName "Golden.UncurriedLift.Test" ) ( Name "mulByFn" ) )
@@ -395,15 +381,9 @@ UberModule
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
-                  ( ObjectProp ( Just Always )
-                    ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
-                    ( PropName "log" )
-                  )
+                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
                   ( AppN Nothing
-                    ( ObjectProp ( Just Always )
-                      ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
-                      ( PropName "showIntImpl" )
-                    )
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
                     ( AppN Nothing
                       ( Ref Nothing
                         ( Imported ( ModuleName "Golden.UncurriedLift.Test" ) ( Name "add3" ) )
@@ -418,15 +398,9 @@ UberModule
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
-                  ( ObjectProp ( Just Always )
-                    ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
-                    ( PropName "log" )
-                  )
+                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
                   ( AppN Nothing
-                    ( ObjectProp ( Just Always )
-                      ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
-                      ( PropName "showIntImpl" )
-                    )
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
                     ( AppN Nothing
                       ( Ref Nothing
                         ( Imported ( ModuleName "Golden.UncurriedLift.Test" ) ( Name "add3" ) )
@@ -443,17 +417,11 @@ UberModule
           )
           ( AppN Nothing
             ( AppN Nothing
-              ( ObjectProp ( Just Always )
-                ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
-                ( PropName "log" )
-              )
+              ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
               ( AppN Nothing
-                ( ObjectProp ( Just Always )
-                  ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
-                  ( PropName "showIntImpl" )
-                )
+                ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
                 ( AppN Nothing
-                  ( ObjectProp ( Just Always )
+                  ( ObjectProp Nothing
                     ( Ref Nothing
                       ( Imported ( ModuleName "Control.Monad.ST.Internal" ) ( Name "foreign" ) )
                     )

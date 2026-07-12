@@ -15,14 +15,14 @@ UberModule
       )
     ], uberModuleForeigns = [], uberModuleExports =
     [
-      ( Name "foo", ObjectProp ( Just Always )
+      ( Name "foo", ObjectProp Nothing
         ( Ref Nothing ( Imported ( ModuleName "Golden.Foreign.Test" ) ( Name "foreign" ) ) )
         ( PropName "foo" )
       ),
       ( Name "baz", LiteralArray Nothing
-        [ ObjectProp ( Just Always )
+        [ ObjectProp Nothing
           ( Ref Nothing ( Imported ( ModuleName "Golden.Foreign.Test" ) ( Name "foreign" ) ) )
-          ( PropName "boo" ), ObjectProp ( Just Always )
+          ( PropName "boo" ), ObjectProp Nothing
           ( Ref Nothing ( Imported ( ModuleName "Golden.Foreign.Lib" ) ( Name "foreign" ) ) )
           ( PropName "alive" )
         ]

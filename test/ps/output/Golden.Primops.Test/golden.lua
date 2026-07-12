@@ -3,6 +3,7 @@ local Data_Show_foreign = { showIntImpl = function(n) return tostring(n) end }
 local Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
 }
+local Effect_Console_log = Effect_Console_foreign.log
 local Data_HeytingAlgebra_heytingAlgebraBoolean
 Data_HeytingAlgebra_heytingAlgebraBoolean = {
   ff = false,
@@ -21,7 +22,7 @@ Data_HeytingAlgebra_heytingAlgebraBoolean = {
   _not_ = function(b_S_210) return not(b_S_210) end
 }
 local Effect_Console_logShow_S_w = function(dictShow, a)
-  return Effect_Console_foreign.log(dictShow.show(a))
+  return Effect_Console_log(dictShow.show(a))
 end
 local Golden_Primops_Test_sumTo_S_w = function(acc, n)
   while true do
@@ -84,7 +85,7 @@ return (function()
       end
     end
   }, { ["$ctor"] = "Data.Ordering∷Ordering.LT" })()
-  local _ = Effect_Console_foreign.log("foobar")()
+  local _ = Effect_Console_log("foobar")()
   return Effect_Console_logShow_S_w({
     show = function(v_S_117_S_260)
       if v_S_117_S_260 then

@@ -14,6 +14,14 @@ UberModule
         [ ( Nothing, Name "token" ) ]
       ), Standalone
       ( QName
+        { qnameModuleName = ModuleName "Golden.ForeignSharing.Token", qnameName = Name "token"
+        }, ObjectProp Nothing
+        ( Ref Nothing
+          ( Imported ( ModuleName "Golden.ForeignSharing.Token" ) ( Name "foreign" ) )
+        )
+        ( PropName "token" )
+      ), Standalone
+      ( QName
         { qnameModuleName = ModuleName "Golden.ForeignSharing.Test", qnameName = Name "foreign"
         }, ForeignImport Nothing
         ( ModuleName "Golden.ForeignSharing.Test" ) "src/Golden/ForeignSharing/Test.purs"
@@ -22,31 +30,25 @@ UberModule
     ], uberModuleForeigns = [], uberModuleExports =
     [
       ( Name "main", AppN Nothing
-        ( ObjectProp ( Just Always )
+        ( ObjectProp Nothing
           ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
           ( PropName "log" )
         )
         ( IfThenElse Nothing
           ( AppN Nothing
             ( AppN Nothing
-              ( ObjectProp ( Just Always )
+              ( ObjectProp Nothing
                 ( Ref Nothing
                   ( Imported ( ModuleName "Golden.ForeignSharing.Test" ) ( Name "foreign" ) )
                 )
                 ( PropName "same" )
               )
-              ( ObjectProp ( Just Always )
-                ( Ref Nothing
-                  ( Imported ( ModuleName "Golden.ForeignSharing.Token" ) ( Name "foreign" ) )
-                )
-                ( PropName "token" ) :| []
+              ( Ref Nothing
+                ( Imported ( ModuleName "Golden.ForeignSharing.Token" ) ( Name "token" ) ) :| []
               )
             )
-            ( ObjectProp ( Just Always )
-              ( Ref Nothing
-                ( Imported ( ModuleName "Golden.ForeignSharing.Token" ) ( Name "foreign" ) )
-              )
-              ( PropName "token" ) :| []
+            ( Ref Nothing
+              ( Imported ( ModuleName "Golden.ForeignSharing.Token" ) ( Name "token" ) ) :| []
             )
           )
           ( LiteralString Nothing "shared" )

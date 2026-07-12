@@ -86,6 +86,7 @@ import Control.Monad.Oops qualified as Oops
 import Data.Map.Strict qualified as Map
 import Data.Set qualified as Set
 import Data.Tagged (Tagged, untag)
+import Language.PureScript.Backend.IR.Inliner qualified as Inline
 import Language.PureScript.Backend.IR.Linker (UberModule (..))
 import Language.PureScript.Backend.IR.Names
   ( ModuleName
@@ -242,7 +243,15 @@ liftForeigns
       case expr of
         ObjectProp ann _ _ | qname `Set.member` allowlist →
           case liftAccessor sources qname of
-            Just lifted → pure (Right (qname, setAnn ann lifted))
+            -- A lifted body exists to beta-reduce at saturated call
+            -- sites, so it is marked @inline always@ here: without the
+            -- annotation a multi-use lifted body — an abstraction, not
+            -- a cheap projection — would stay a shared binding and its
+            -- call sites would never reduce (see Note [Inline
+            -- annotations and inlining heuristics]). An explicit
+            -- pragma still wins.
+            Just lifted →
+              pure (Right (qname, setAnn (ann <|> Just Inline.Always) lifted))
             Nothing → Oops.throw (NotLiftable qname)
         _ → pure (Left entry)
     let (keptForeigns, liftedBindings) = partitionEithers results

@@ -1,7 +1,9 @@
 local Data_Show_foreign = { showIntImpl = function(n) return tostring(n) end }
+local Data_Show_showIntImpl = Data_Show_foreign.showIntImpl
 local Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
 }
+local Effect_Console_log = Effect_Console_foreign.log
 local Data_Maybe_Nothing = { ["$ctor"] = "Data.Maybe∷Maybe.Nothing" }
 local Data_Maybe_Just = function(value0)
   return { ["$ctor"] = "Data.Maybe∷Maybe.Just", value0 = value0 }
@@ -24,10 +26,10 @@ local Golden_MaybeChain_Test_map_S_w = function(v_S_308, v1_S_309)
   end
 end
 return (function()
-  local _ = Effect_Console_foreign.log(Data_Show_foreign.showIntImpl(Data_Maybe_maybe_S_w(0, Golden_MaybeChain_Test_identity, Data_Maybe_maybe_S_w(Data_Maybe_Nothing, Data_Maybe_Just, Golden_MaybeChain_Test_map_S_w(function( x_S_0 )
+  local _ = Effect_Console_log(Data_Show_showIntImpl(Data_Maybe_maybe_S_w(0, Golden_MaybeChain_Test_identity, Data_Maybe_maybe_S_w(Data_Maybe_Nothing, Data_Maybe_Just, Golden_MaybeChain_Test_map_S_w(function( x_S_0 )
     return x_S_0
   end, Data_Maybe_Nothing)))))()
-  return Effect_Console_foreign.log(Data_Show_foreign.showIntImpl(Data_Maybe_maybe_S_w(0, Golden_MaybeChain_Test_identity, Data_Maybe_maybe_S_w(Data_Maybe_Nothing, Data_Maybe_Just, Golden_MaybeChain_Test_map_S_w(function( x0_S_1 )
+  return Effect_Console_log(Data_Show_showIntImpl(Data_Maybe_maybe_S_w(0, Golden_MaybeChain_Test_identity, Data_Maybe_maybe_S_w(Data_Maybe_Nothing, Data_Maybe_Just, Golden_MaybeChain_Test_map_S_w(function( x0_S_1 )
     return x0_S_1
   end, Data_Maybe_Just(42))))))()
 end)()

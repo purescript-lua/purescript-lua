@@ -12,6 +12,12 @@ UberModule
         }, ForeignImport Nothing
         ( ModuleName "Effect.Console" ) ".spago/p/console/f82835a0b873aafe6bd7b14dd30cc150553d4ab9/src/Effect/Console.purs"
         [ ( Nothing, Name "log" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "log"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
+        ( PropName "log" )
       ), RecursiveGroup
       (
         ( QName
@@ -84,10 +90,7 @@ UberModule
         }, AbsN Nothing
         ( ParamNamed Nothing ( Name "dictShow" ) :| [ ParamNamed Nothing ( Name "a" ) ] )
         ( AppN Nothing
-          ( ObjectProp ( Just Always )
-            ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
-            ( PropName "log" )
-          )
+          ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
           ( AppN Nothing
             ( ObjectProp Nothing
               ( Ref Nothing ( Local ( Name "dictShow" ) ) )
@@ -166,7 +169,7 @@ UberModule
                 ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow$w" ) ) )
                 ( LiteralObject Nothing
                   [
-                    ( PropName "show", ObjectProp ( Just Always )
+                    ( PropName "show", ObjectProp Nothing
                       ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
                       ( PropName "showIntImpl" )
                     )
@@ -272,10 +275,7 @@ UberModule
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
-                  ( ObjectProp ( Just Always )
-                    ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
-                    ( PropName "log" )
-                  )
+                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
                   ( LiteralString Nothing "foobar" :| [] )
                 )
                 ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )

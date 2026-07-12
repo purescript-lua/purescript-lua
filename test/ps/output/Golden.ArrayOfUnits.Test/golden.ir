@@ -36,11 +36,11 @@ UberModule
           { qnameModuleName = ModuleName "Data.Foldable", qnameName = Name "foldableArray"
           }, LiteralObject Nothing
           [
-            ( PropName "foldr", ObjectProp ( Just Always )
+            ( PropName "foldr", ObjectProp Nothing
               ( Ref Nothing ( Imported ( ModuleName "Data.Foldable" ) ( Name "foreign" ) ) )
               ( PropName "foldrArray" )
             ),
-            ( PropName "foldl", ObjectProp ( Just Always )
+            ( PropName "foldl", ObjectProp Nothing
               ( Ref Nothing ( Imported ( ModuleName "Data.Foldable" ) ( Name "foreign" ) ) )
               ( PropName "foldlArray" )
             ),
@@ -114,7 +114,7 @@ UberModule
             { qnameModuleName = ModuleName "Effect", qnameName = Name "bindEffect"
             }, LiteralObject Nothing
             [
-              ( PropName "bind", ObjectProp ( Just Always )
+              ( PropName "bind", ObjectProp Nothing
                 ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "foreign" ) ) )
                 ( PropName "bindE" )
               ),
@@ -131,7 +131,7 @@ UberModule
             { qnameModuleName = ModuleName "Effect", qnameName = Name "applicativeEffect"
             }, LiteralObject Nothing
             [
-              ( PropName "pure", ObjectProp ( Just Always )
+              ( PropName "pure", ObjectProp Nothing
                 ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "foreign" ) ) )
                 ( PropName "pureE" )
               ),
@@ -292,7 +292,7 @@ UberModule
         }, AbsN Nothing
         ( ParamNamed Nothing ( Name "dictShow" ) :| [ ParamNamed Nothing ( Name "a" ) ] )
         ( AppN Nothing
-          ( ObjectProp ( Just Always )
+          ( ObjectProp Nothing
             ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
             ( PropName "log" )
           )
@@ -437,7 +437,7 @@ UberModule
                 ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow$w" ) ) )
                 ( LiteralObject Nothing
                   [
-                    ( PropName "show", ObjectProp ( Just Always )
+                    ( PropName "show", ObjectProp Nothing
                       ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
                       ( PropName "showIntImpl" )
                     )

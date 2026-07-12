@@ -18,16 +18,17 @@ local Data_Show_foreign = {
 local Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
 }
+local Effect_Console_log = Effect_Console_foreign.log
 local Golden_CharLiterals_Test_show = Data_Show_foreign.showCharImpl
 return (function()
-  local _ = Effect_Console_foreign.log(Golden_CharLiterals_Test_show("\n"))()
-  local _ = Effect_Console_foreign.log(Golden_CharLiterals_Test_show("\t"))()
-  local _ = Effect_Console_foreign.log(Golden_CharLiterals_Test_show("\r"))()
-  local _ = Effect_Console_foreign.log(Golden_CharLiterals_Test_show("\'"))()
-  local _ = Effect_Console_foreign.log(Golden_CharLiterals_Test_show("\\"))()
-  local _ = Effect_Console_foreign.log(Golden_CharLiterals_Test_show("a"))()
-  local _ = Effect_Console_foreign.log("true")()
-  return Effect_Console_foreign.log((function()
+  local _ = Effect_Console_log(Golden_CharLiterals_Test_show("\n"))()
+  local _ = Effect_Console_log(Golden_CharLiterals_Test_show("\t"))()
+  local _ = Effect_Console_log(Golden_CharLiterals_Test_show("\r"))()
+  local _ = Effect_Console_log(Golden_CharLiterals_Test_show("\'"))()
+  local _ = Effect_Console_log(Golden_CharLiterals_Test_show("\\"))()
+  local _ = Effect_Console_log(Golden_CharLiterals_Test_show("a"))()
+  local _ = Effect_Console_log("true")()
+  return Effect_Console_log((function()
     local v_S_111_S_230 = "Data.Ordering∷Ordering.LT" == (function()
       if "\t" < "\n" then
         return "Data.Ordering∷Ordering.LT"

@@ -76,12 +76,20 @@ stages:
 A whole-binding pragma on a foreign name (@always@/@never@/@default@ only —
 there is no body to paste at an arity, nor a field to select) is drained
 into 'moduleForeigns' and reaches the linker, which binds each foreign name
-to an 'ObjectProp' accessor annotated with that pragma, defaulting to
-'Always' so the wrapper around the FFI object is inlined away unless a
-pragma says otherwise (see Note [Foreign bindings structure emitted by the
-Linker]). @never@ keeps the accessor as a shared binding — the way to
-declare sharing intent for an FFI value; an explicit @default@ resolves to
-the same built-in 'Always'.
+to an 'ObjectProp' accessor carrying that pragma alone (see
+Note [Foreign bindings structure emitted by the Linker]). An unannotated
+accessor dissolves into its use sites like any cheap projection, but the
+sharing is rebuilt at the end of the pipeline:
+'Language.PureScript.Backend.IR.Optimizer.shareForeignAccessors' re-binds a
+field read that survived at two or more sites, since a read repeated per
+site loses to a shared binding once stage-2 promotion turns that binding
+into a chunk local (issue #248). @always@ opts a name out of the re-binding
+— a per-site field read at any use count — and @never@ keeps the accessor a
+shared binding from the start, even when used once; an explicit @default@
+resolves to no annotation, same as leaving the pragma off. The lifted
+foreign bodies are the exception:
+'Language.PureScript.Backend.Lua.ForeignLift.liftForeigns' marks them
+@always@ itself, because they exist to beta-reduce at saturated call sites.
 
 The 'ForeignImport' expression itself — the table of a foreign module's
 exports — is the one shape the optimizer refuses to inline even when it is

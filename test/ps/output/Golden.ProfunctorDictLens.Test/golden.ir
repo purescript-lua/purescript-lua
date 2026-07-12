@@ -8,10 +8,22 @@ UberModule
         [ ( Nothing, Name "showIntImpl" ) ]
       ), Standalone
       ( QName
+        { qnameModuleName = ModuleName "Data.Show", qnameName = Name "showIntImpl"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
+        ( PropName "showIntImpl" )
+      ), Standalone
+      ( QName
         { qnameModuleName = ModuleName "Unsafe.Coerce", qnameName = Name "foreign"
         }, ForeignImport Nothing
         ( ModuleName "Unsafe.Coerce" ) ".spago/p/unsafe-coerce/7a4c95f14b8118d9fb052e130d6e862fa3f5166a/src/Unsafe/Coerce.purs"
         [ ( Nothing, Name "unsafeCoerce" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Unsafe.Coerce", qnameName = Name "unsafeCoerce"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Unsafe.Coerce" ) ( Name "foreign" ) ) )
+        ( PropName "unsafeCoerce" )
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "foreign"
@@ -20,10 +32,15 @@ UberModule
         [ ( Nothing, Name "log" ) ]
       ), Standalone
       ( QName
+        { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "log"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
+        ( PropName "log" )
+      ), Standalone
+      ( QName
         { qnameModuleName = ModuleName "Golden.ProfunctorDictLens.Test", qnameName = Name "unwrap"
-        }, ObjectProp ( Just Always )
-        ( Ref Nothing ( Imported ( ModuleName "Unsafe.Coerce" ) ( Name "foreign" ) ) )
-        ( PropName "unsafeCoerce" )
+        }, Ref Nothing
+        ( Imported ( ModuleName "Unsafe.Coerce" ) ( Name "unsafeCoerce" ) )
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.ProfunctorDictLens.Test", qnameName = Name "Wrapped"
@@ -64,15 +81,9 @@ UberModule
           ( Standalone
             ( Nothing, Name "_", AppN Nothing
               ( AppN Nothing
-                ( ObjectProp ( Just Always )
-                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
-                  ( PropName "log" )
-                )
+                ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
                 ( AppN Nothing
-                  ( ObjectProp ( Just Always )
-                    ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
-                    ( PropName "showIntImpl" )
-                  )
+                  ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
                   ( AppN Nothing
                     ( Ref Nothing
                       ( Imported ( ModuleName "Golden.ProfunctorDictLens.Test" ) ( Name "unwrap" ) )
@@ -97,15 +108,9 @@ UberModule
             [ Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
-                  ( ObjectProp ( Just Always )
-                    ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
-                    ( PropName "log" )
-                  )
+                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
                   ( AppN Nothing
-                    ( ObjectProp ( Just Always )
-                      ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
-                      ( PropName "showIntImpl" )
-                    )
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
                     ( AppN Nothing
                       ( Ref Nothing
                         ( Imported
@@ -134,33 +139,21 @@ UberModule
           )
           ( AppN Nothing
             ( AppN Nothing
-              ( ObjectProp ( Just Always )
-                ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
-                ( PropName "log" )
-              )
+              ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
               ( AppN Nothing
-                ( ObjectProp ( Just Always )
-                  ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
-                  ( PropName "showIntImpl" )
-                )
+                ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
                 ( AppN Nothing
                   ( Ref Nothing
                     ( Imported ( ModuleName "Golden.ProfunctorDictLens.Test" ) ( Name "unwrap" ) )
                   )
                   ( AppN Nothing
-                    ( ObjectProp ( Just Always )
-                      ( Ref Nothing
-                        ( Imported ( ModuleName "Unsafe.Coerce" ) ( Name "foreign" ) )
-                      )
-                      ( PropName "unsafeCoerce" )
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Unsafe.Coerce" ) ( Name "unsafeCoerce" ) )
                     )
                     ( PrimBinOp Nothing PrimSub
                       ( AppN Nothing
-                        ( ObjectProp ( Just Always )
-                          ( Ref Nothing
-                            ( Imported ( ModuleName "Unsafe.Coerce" ) ( Name "foreign" ) )
-                          )
-                          ( PropName "unsafeCoerce" )
+                        ( Ref Nothing
+                          ( Imported ( ModuleName "Unsafe.Coerce" ) ( Name "unsafeCoerce" ) )
                         )
                         ( LiteralInt Nothing 10 :| [] )
                       )

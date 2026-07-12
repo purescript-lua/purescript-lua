@@ -10,6 +10,7 @@ local Data_Show_foreign = {
     end
   end
 }
+local Data_Show_showIntImpl = Data_Show_foreign.showIntImpl
 local Data_Functor_foreign = {
   arrayMap = function(f)
     return function(arr)
@@ -23,7 +24,7 @@ local Data_Functor_foreign = {
 local Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
 }
-local Data_Show_showInt = { show = Data_Show_foreign.showIntImpl }
+local Data_Show_showInt = { show = Data_Show_showIntImpl }
 local Effect_Console_logShow_S_w = function(dictShow, a)
   return Effect_Console_foreign.log(dictShow.show(a))
 end
@@ -92,7 +93,7 @@ return (function()
   local _ = Effect_Console_logShow_S_w(Data_Show_showInt, Golden_Uncurry_Test_add3_S_w(10, 1, 2))()
   local _ = Effect_Console_logShow_S_w(Data_Show_showInt, Golden_Uncurry_Test_add3_S_w(1, 0, 41))()
   local _ = Effect_Console_logShow_S_w({
-    show = Data_Show_foreign.showArrayImpl(Data_Show_foreign.showIntImpl)
+    show = Data_Show_foreign.showArrayImpl(Data_Show_showIntImpl)
   }, Data_Functor_foreign.arrayMap(function(add3_S_p3_S_255)
     return Golden_Uncurry_Test_add3_S_w(1, 2, add3_S_p3_S_255)
   end)({ [1] = 1, [2] = 2, [3] = 3 }))()

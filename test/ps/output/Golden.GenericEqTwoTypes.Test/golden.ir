@@ -14,6 +14,12 @@ UberModule
         [ ( Nothing, Name "log" ) ]
       ), Standalone
       ( QName
+        { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "log"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
+        ( PropName "log" )
+      ), Standalone
+      ( QName
         { qnameModuleName = ModuleName "Type.Proxy", qnameName = Name "Proxy"
         }, Ctor Nothing ProductType
         ( ModuleName "Type.Proxy" )
@@ -132,7 +138,7 @@ UberModule
                       ) :|
                       [ Standalone
                         ( Nothing, Name "get", AppN Nothing
-                          ( ObjectProp ( Just Always )
+                          ( ObjectProp Nothing
                             ( Ref Nothing
                               ( Imported ( ModuleName "Record.Unsafe" ) ( Name "foreign" ) )
                             )
@@ -921,10 +927,7 @@ UberModule
                   ) :| []
                 )
                 ( AppN Nothing
-                  ( ObjectProp ( Just Always )
-                    ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
-                    ( PropName "log" )
-                  )
+                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
                   ( IfThenElse Nothing
                     ( Ref Nothing ( Local ( Name "a$2$300" ) ) )
                     ( LiteralString Nothing "true" )
@@ -985,12 +988,7 @@ UberModule
                     ) :| []
                   )
                   ( AppN Nothing
-                    ( ObjectProp ( Just Always )
-                      ( Ref Nothing
-                        ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) )
-                      )
-                      ( PropName "log" )
-                    )
+                    ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
                     ( IfThenElse Nothing
                       ( Ref Nothing ( Local ( Name "a$2$301" ) ) )
                       ( LiteralString Nothing "true" )
@@ -1086,12 +1084,7 @@ UberModule
                     ) :| []
                   )
                   ( AppN Nothing
-                    ( ObjectProp ( Just Always )
-                      ( Ref Nothing
-                        ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) )
-                      )
-                      ( PropName "log" )
-                    )
+                    ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
                     ( IfThenElse Nothing
                       ( Ref Nothing ( Local ( Name "a$2$302" ) ) )
                       ( LiteralString Nothing "true" )
@@ -1155,10 +1148,7 @@ UberModule
                 ) :| []
               )
               ( AppN Nothing
-                ( ObjectProp ( Just Always )
-                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
-                  ( PropName "log" )
-                )
+                ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
                 ( IfThenElse Nothing
                   ( Ref Nothing ( Local ( Name "a$2$303" ) ) )
                   ( LiteralString Nothing "true" )

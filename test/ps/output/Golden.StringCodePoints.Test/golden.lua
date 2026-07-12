@@ -28,6 +28,8 @@ local Data_Show_foreign = {
     end
   end
 }
+local Data_Show_showArrayImpl = Data_Show_foreign.showArrayImpl
+local Data_Show_showIntImpl = Data_Show_foreign.showIntImpl
 local Data_Functor_foreign = {
   arrayMap = function(f)
     return function(arr)
@@ -38,6 +40,7 @@ local Data_Functor_foreign = {
     end
   end
 }
+local Data_Functor_arrayMap = Data_Functor_foreign.arrayMap
 local Data_Bounded_foreign = {
   -- Lua 5.1 compatibility:
   -- * math.maxinteger/math.mininteger appeared in Lua 5.3; PureScript Int
@@ -48,6 +51,8 @@ local Data_Bounded_foreign = {
   topChar = "\255",
   bottomChar = "\0"
 }
+local Data_Bounded_bottomChar = Data_Bounded_foreign.bottomChar
+local Data_Bounded_topChar = Data_Bounded_foreign.topChar
 local Data_EuclideanRing_foreign = {
   -- math.maxinteger is Lua 5.3+; PureScript Int is 32-bit, hence the
   -- literal bound in intDegree.
@@ -67,6 +72,7 @@ local Data_EuclideanRing_foreign = {
   end
 }
 local Partial_Unsafe_foreign = { _unsafePartial = function(f) return f() end }
+local Partial_Unsafe__unsafePartial = Partial_Unsafe_foreign._unsafePartial
 local Data_Unfoldable_foreign = {
   unfoldrArrayImpl = function(isNothing)
     return function(fromJust)
@@ -124,6 +130,8 @@ local Data_Enum_foreign = {
     return string.char(240 + math.floor(n / 262144), 128 + math.floor(n / 4096) % 64, 128 + math.floor(n / 64) % 64, 128 + n % 64)
   end
 }
+local Data_Enum_fromCharCode = Data_Enum_foreign.fromCharCode
+local Data_Enum_toCharCode = Data_Enum_foreign.toCharCode
 local Data_String_Unsafe_foreign = {
   charAt = function(i)
     return function(s)
@@ -132,6 +140,7 @@ local Data_String_Unsafe_foreign = {
     end
   end
 }
+local Data_String_Unsafe_charAt = Data_String_Unsafe_foreign.charAt
 local Data_String_CodeUnits_foreign = {
   -- PureScript indices are 0-based, Lua string positions are 1-based;
   -- the exports below convert between the two. Pattern arguments are
@@ -142,6 +151,8 @@ local Data_String_CodeUnits_foreign = {
   length = function(s) return #(s) end,
   drop = function(n) return function(s) return s:sub(math.max(n, 0) + 1) end end
 }
+local Data_String_CodeUnits_length = Data_String_CodeUnits_foreign.length
+local Data_String_CodeUnits_singleton = Data_String_CodeUnits_foreign.singleton
 local Data_String_CodePoints_foreign = (function()
   -- In pslua a PureScript String is a Lua byte string holding UTF-8,
   -- so code-point operations decode/encode UTF-8 directly. The PureScript
@@ -247,6 +258,7 @@ local Data_String_CodePoints_foreign = (function()
     end
   }
 end)()
+local Data_String_CodePoints__codePointAt = Data_String_CodePoints_foreign._codePointAt
 local Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
 }
@@ -272,7 +284,7 @@ local Data_Eq_eqInt = {
     return function(r2_S_1491) return r1_S_1490 == r2_S_1491 end
   end
 }
-local Data_Show_showInt = { show = Data_Show_foreign.showIntImpl }
+local Data_Show_showInt = { show = Data_Show_showIntImpl }
 local Data_Ordering_LT = { ["$ctor"] = "Data.Ordering∷Ordering.LT" }
 local Data_Ordering_GT = { ["$ctor"] = "Data.Ordering∷Ordering.GT" }
 local Data_Ordering_EQ = { ["$ctor"] = "Data.Ordering∷Ordering.EQ" }
@@ -303,14 +315,14 @@ local Data_Maybe_Nothing = { ["$ctor"] = "Data.Maybe∷Maybe.Nothing" }
 local Data_Maybe_Just = function(value0)
   return { ["$ctor"] = "Data.Maybe∷Maybe.Just", value0 = value0 }
 end
-local Data_Enum_bottom1 = Data_Bounded_foreign.bottomChar
-local Data_Enum_top1 = Data_Bounded_foreign.topChar
+local Data_Enum_bottom1 = Data_Bounded_bottomChar
+local Data_Enum_top1 = Data_Bounded_topChar
 local Data_String_CodePoints_conj = Data_HeytingAlgebra_heytingAlgebraBoolean.conj
-local Data_String_CodePoints_fromEnum = Data_Enum_foreign.toCharCode
+local Data_String_CodePoints_fromEnum = Data_Enum_toCharCode
 local Data_String_CodePoints_unsafeCodePointAt0 = Data_String_CodePoints_foreign._unsafeCodePointAt0(function( s_S_27 )
-  local cu0_S_28 = Data_String_CodePoints_fromEnum(Data_String_Unsafe_foreign.charAt(0)(s_S_27))
+  local cu0_S_28 = Data_String_CodePoints_fromEnum(Data_String_Unsafe_charAt(0)(s_S_27))
   if Data_String_CodePoints_conj(Data_String_CodePoints_conj(Data_Ord_lessThanOrEq_S_w(Data_Ord_ordInt, 55296, cu0_S_28))(Data_Ord_lessThanOrEq_S_w(Data_Ord_ordInt, cu0_S_28, 56319)))("Data.Ordering∷Ordering.GT" == ((function(  )
-    local x_S_1474_S_1598 = Data_String_CodeUnits_foreign.length(s_S_27)
+    local x_S_1474_S_1598 = Data_String_CodeUnits_length(s_S_27)
     return function(y_S_1475_S_1599)
       if x_S_1474_S_1598 < y_S_1475_S_1599 then
         return Data_Ordering_LT
@@ -321,7 +333,7 @@ local Data_String_CodePoints_unsafeCodePointAt0 = Data_String_CodePoints_foreign
       end
     end
   end)()(1))["$ctor"]) then
-    local cu1_S_30 = Data_String_CodePoints_fromEnum(Data_String_Unsafe_foreign.charAt(1)(s_S_27))
+    local cu1_S_30 = Data_String_CodePoints_fromEnum(Data_String_Unsafe_charAt(1)(s_S_27))
     if Data_String_CodePoints_conj(Data_Ord_lessThanOrEq_S_w(Data_Ord_ordInt, 56320, cu1_S_30))(Data_Ord_lessThanOrEq_S_w(Data_Ord_ordInt, cu1_S_30, 57343)) then
       return (cu0_S_28 - 55296) * 1024 + (cu1_S_30 - 56320) + 65536
     else
@@ -333,10 +345,10 @@ local Data_String_CodePoints_unsafeCodePointAt0 = Data_String_CodePoints_foreign
 end)
 local Data_String_CodePoints_singletonFallback = function(v)
   if Data_Ord_lessThanOrEq_S_w(Data_Ord_ordInt, v, 65535) then
-    return Data_String_CodeUnits_foreign.singleton((function()
+    return Data_String_CodeUnits_singleton((function()
       local v_S_63_S_1762 = (function()
-        if Data_HeytingAlgebra_heytingAlgebraBoolean.conj(Data_Ord_greaterThanOrEq_S_w(Data_Ord_ordInt, v, Data_Enum_foreign.toCharCode(Data_Enum_bottom1)))(Data_Ord_lessThanOrEq_S_w(Data_Ord_ordInt, v, Data_Enum_foreign.toCharCode(Data_Enum_top1))) then
-          return Data_Maybe_Just(Data_Enum_foreign.fromCharCode(v))
+        if Data_HeytingAlgebra_heytingAlgebraBoolean.conj(Data_Ord_greaterThanOrEq_S_w(Data_Ord_ordInt, v, Data_Enum_toCharCode(Data_Enum_bottom1)))(Data_Ord_lessThanOrEq_S_w(Data_Ord_ordInt, v, Data_Enum_toCharCode(Data_Enum_top1))) then
+          return Data_Maybe_Just(Data_Enum_fromCharCode(v))
         else
           return Data_Maybe_Nothing
         end
@@ -344,10 +356,10 @@ local Data_String_CodePoints_singletonFallback = function(v)
       if "Data.Maybe∷Maybe.Just" == v_S_63_S_1762["$ctor"] then
         return v_S_63_S_1762.value0
       elseif "Data.Maybe∷Maybe.Nothing" == v_S_63_S_1762["$ctor"] then
-        if Data_Ord_lessThan_S_w(Data_Ord_ordInt, v, Data_Enum_foreign.toCharCode(Data_Bounded_foreign.bottomChar)) then
-          return Data_Bounded_foreign.bottomChar
+        if Data_Ord_lessThan_S_w(Data_Ord_ordInt, v, Data_Enum_toCharCode(Data_Bounded_bottomChar)) then
+          return Data_Bounded_bottomChar
         else
-          return Data_Bounded_foreign.topChar
+          return Data_Bounded_topChar
         end
       else
         return error("No patterns matched")
@@ -356,10 +368,10 @@ local Data_String_CodePoints_singletonFallback = function(v)
   else
     return (function()
       local x_S_1612_S_1699_S_1763 = Data_EuclideanRing_foreign.intDiv(v - 65536)(1024) + 55296
-      return Data_String_CodeUnits_foreign.singleton((function()
+      return Data_String_CodeUnits_singleton((function()
         local v_S_63_S_1764 = (function()
-          if Data_HeytingAlgebra_heytingAlgebraBoolean.conj(Data_Ord_greaterThanOrEq_S_w(Data_Ord_ordInt, x_S_1612_S_1699_S_1763, Data_Enum_foreign.toCharCode(Data_Enum_bottom1)))(Data_Ord_lessThanOrEq_S_w(Data_Ord_ordInt, x_S_1612_S_1699_S_1763, Data_Enum_foreign.toCharCode(Data_Enum_top1))) then
-            return Data_Maybe_Just(Data_Enum_foreign.fromCharCode(x_S_1612_S_1699_S_1763))
+          if Data_HeytingAlgebra_heytingAlgebraBoolean.conj(Data_Ord_greaterThanOrEq_S_w(Data_Ord_ordInt, x_S_1612_S_1699_S_1763, Data_Enum_toCharCode(Data_Enum_bottom1)))(Data_Ord_lessThanOrEq_S_w(Data_Ord_ordInt, x_S_1612_S_1699_S_1763, Data_Enum_toCharCode(Data_Enum_top1))) then
+            return Data_Maybe_Just(Data_Enum_fromCharCode(x_S_1612_S_1699_S_1763))
           else
             return Data_Maybe_Nothing
           end
@@ -367,10 +379,10 @@ local Data_String_CodePoints_singletonFallback = function(v)
         if "Data.Maybe∷Maybe.Just" == v_S_63_S_1764["$ctor"] then
           return v_S_63_S_1764.value0
         elseif "Data.Maybe∷Maybe.Nothing" == v_S_63_S_1764["$ctor"] then
-          if Data_Ord_lessThan_S_w(Data_Ord_ordInt, x_S_1612_S_1699_S_1763, Data_Enum_foreign.toCharCode(Data_Bounded_foreign.bottomChar)) then
-            return Data_Bounded_foreign.bottomChar
+          if Data_Ord_lessThan_S_w(Data_Ord_ordInt, x_S_1612_S_1699_S_1763, Data_Enum_toCharCode(Data_Bounded_bottomChar)) then
+            return Data_Bounded_bottomChar
           else
-            return Data_Bounded_foreign.topChar
+            return Data_Bounded_topChar
           end
         else
           return error("No patterns matched")
@@ -378,10 +390,10 @@ local Data_String_CodePoints_singletonFallback = function(v)
       end)())
     end)() .. (function()
       local x_S_1612_S_1699_S_1765 = Data_EuclideanRing_foreign.intMod(v - 65536)(1024) + 56320
-      return Data_String_CodeUnits_foreign.singleton((function()
+      return Data_String_CodeUnits_singleton((function()
         local v_S_63_S_1766 = (function()
-          if Data_HeytingAlgebra_heytingAlgebraBoolean.conj(Data_Ord_greaterThanOrEq_S_w(Data_Ord_ordInt, x_S_1612_S_1699_S_1765, Data_Enum_foreign.toCharCode(Data_Enum_bottom1)))(Data_Ord_lessThanOrEq_S_w(Data_Ord_ordInt, x_S_1612_S_1699_S_1765, Data_Enum_foreign.toCharCode(Data_Enum_top1))) then
-            return Data_Maybe_Just(Data_Enum_foreign.fromCharCode(x_S_1612_S_1699_S_1765))
+          if Data_HeytingAlgebra_heytingAlgebraBoolean.conj(Data_Ord_greaterThanOrEq_S_w(Data_Ord_ordInt, x_S_1612_S_1699_S_1765, Data_Enum_toCharCode(Data_Enum_bottom1)))(Data_Ord_lessThanOrEq_S_w(Data_Ord_ordInt, x_S_1612_S_1699_S_1765, Data_Enum_toCharCode(Data_Enum_top1))) then
+            return Data_Maybe_Just(Data_Enum_fromCharCode(x_S_1612_S_1699_S_1765))
           else
             return Data_Maybe_Nothing
           end
@@ -389,10 +401,10 @@ local Data_String_CodePoints_singletonFallback = function(v)
         if "Data.Maybe∷Maybe.Just" == v_S_63_S_1766["$ctor"] then
           return v_S_63_S_1766.value0
         elseif "Data.Maybe∷Maybe.Nothing" == v_S_63_S_1766["$ctor"] then
-          if Data_Ord_lessThan_S_w(Data_Ord_ordInt, x_S_1612_S_1699_S_1765, Data_Enum_foreign.toCharCode(Data_Bounded_foreign.bottomChar)) then
-            return Data_Bounded_foreign.bottomChar
+          if Data_Ord_lessThan_S_w(Data_Ord_ordInt, x_S_1612_S_1699_S_1765, Data_Enum_toCharCode(Data_Bounded_bottomChar)) then
+            return Data_Bounded_bottomChar
           else
-            return Data_Bounded_foreign.topChar
+            return Data_Bounded_topChar
           end
         else
           return error("No patterns matched")
@@ -424,7 +436,7 @@ local Data_String_CodePoints_ordCodePoint = {
 }
 local Data_String_CodePoints_drop_S_w
 local Data_String_CodePoints_uncons = function(s)
-  if Data_String_CodeUnits_foreign.length(s) == 0 then
+  if Data_String_CodeUnits_length(s) == 0 then
     return Data_Maybe_Nothing
   else
     return Data_Maybe_Just({
@@ -455,7 +467,7 @@ local Data_String_CodePoints_take_S_w = function(n, s)
   return Data_String_CodePoints_foreign._take(Data_String_CodePoints_takeFallback)(n)(s)
 end
 Data_String_CodePoints_drop_S_w = function(n, s)
-  return Data_String_CodeUnits_foreign.drop(Data_String_CodeUnits_foreign.length(Data_String_CodePoints_take_S_w(n, s)))(s)
+  return Data_String_CodeUnits_foreign.drop(Data_String_CodeUnits_length(Data_String_CodePoints_take_S_w(n, s)))(s)
 end
 local Data_String_CodePoints_toCodePointArray = Data_String_CodePoints_foreign._toCodePointArray(function( s_S_10 )
   return Data_Unfoldable_foreign.unfoldrArrayImpl(function(v2_S_1504_S_1528)
@@ -466,7 +478,7 @@ local Data_String_CodePoints_toCodePointArray = Data_String_CodePoints_foreign._
     else
       return error("No patterns matched")
     end
-  end)(Partial_Unsafe_foreign._unsafePartial(function()
+  end)(Partial_Unsafe__unsafePartial(function()
     return function(v_S_1575)
       if "Data.Maybe∷Maybe.Just" == v_S_1575["$ctor"] then
         return v_S_1575.value0
@@ -515,12 +527,12 @@ local Data_String_CodePoints_codePointAt_S_w = function(v, v1)
     elseif 0 == v then
       return Data_Maybe_Just(Data_String_CodePoints_unsafeCodePointAt0(v1))
     else
-      return Data_String_CodePoints_foreign._codePointAt(Data_String_CodePoints_codePointAtFallback)(Data_Maybe_Just)(Data_Maybe_Nothing)(Data_String_CodePoints_unsafeCodePointAt0)(v)(v1)
+      return Data_String_CodePoints__codePointAt(Data_String_CodePoints_codePointAtFallback)(Data_Maybe_Just)(Data_Maybe_Nothing)(Data_String_CodePoints_unsafeCodePointAt0)(v)(v1)
     end
   elseif 0 == v then
     return Data_Maybe_Just(Data_String_CodePoints_unsafeCodePointAt0(v1))
   else
-    return Data_String_CodePoints_foreign._codePointAt(Data_String_CodePoints_codePointAtFallback)(Data_Maybe_Just)(Data_Maybe_Nothing)(Data_String_CodePoints_unsafeCodePointAt0)(v)(v1)
+    return Data_String_CodePoints__codePointAt(Data_String_CodePoints_codePointAtFallback)(Data_Maybe_Just)(Data_Maybe_Nothing)(Data_String_CodePoints_unsafeCodePointAt0)(v)(v1)
   end
 end
 local Data_String_CodePoints_Lazy_enumCodePoint
@@ -559,10 +571,10 @@ local Effect_Console_logShow_S_w = function(dictShow, a)
 end
 local Golden_StringCodePoints_Test_fromEnum = Data_String_CodePoints_boundedEnumCodePoint.fromEnum
 local Golden_StringCodePoints_Test_showArray = {
-  show = Data_Show_foreign.showArrayImpl(Data_Show_foreign.showIntImpl)
+  show = Data_Show_showArrayImpl(Data_Show_showIntImpl)
 }
 M.Golden_StringCodePoints_Test_cp = function(x_S_1556_S_1666)
-  return Partial_Unsafe_foreign._unsafePartial(function()
+  return Partial_Unsafe__unsafePartial(function()
     return function(v_S_1536)
       if "Data.Maybe∷Maybe.Just" == v_S_1536["$ctor"] then
         return v_S_1536.value0
@@ -573,18 +585,18 @@ M.Golden_StringCodePoints_Test_cp = function(x_S_1556_S_1666)
   end)(Data_String_CodePoints_boundedEnumCodePoint.toEnum(x_S_1556_S_1666))
 end
 M.Golden_StringCodePoints_Test_codes = function(x_S_1556_S_1663)
-  return Data_Functor_foreign.arrayMap(Golden_StringCodePoints_Test_fromEnum)(Data_String_CodePoints_toCodePointArray(x_S_1556_S_1663))
+  return Data_Functor_arrayMap(Golden_StringCodePoints_Test_fromEnum)(Data_String_CodePoints_toCodePointArray(x_S_1556_S_1663))
 end
 return (function()
-  local _ = Effect_Console_logShow_S_w(Golden_StringCodePoints_Test_showArray, Data_Functor_foreign.arrayMap(Golden_StringCodePoints_Test_fromEnum)(Data_String_CodePoints_toCodePointArray("aéЯ𝐀z")))()
+  local _ = Effect_Console_logShow_S_w(Golden_StringCodePoints_Test_showArray, Data_Functor_arrayMap(Golden_StringCodePoints_Test_fromEnum)(Data_String_CodePoints_toCodePointArray("aéЯ𝐀z")))()
   local _ = Effect_Console_logShow_S_w(Data_Show_showInt, Data_Array_foreign.length(Data_String_CodePoints_toCodePointArray("aéЯ𝐀z")))()
-  local _ = Effect_Console_logShow_S_w(Data_Show_showInt, Data_String_CodeUnits_foreign.length("aéЯ𝐀z"))()
-  local _ = Effect_Console_logShow_S_w(Golden_StringCodePoints_Test_showArray, Data_Functor_foreign.arrayMap(Golden_StringCodePoints_Test_fromEnum)(Data_String_CodePoints_toCodePointArray(Data_String_CodePoints_take_S_w(2, "aéЯ𝐀z"))))()
-  local _ = Effect_Console_logShow_S_w(Golden_StringCodePoints_Test_showArray, Data_Functor_foreign.arrayMap(Golden_StringCodePoints_Test_fromEnum)(Data_String_CodePoints_toCodePointArray(Data_String_CodePoints_drop_S_w(2, "aéЯ𝐀z"))))()
+  local _ = Effect_Console_logShow_S_w(Data_Show_showInt, Data_String_CodeUnits_length("aéЯ𝐀z"))()
+  local _ = Effect_Console_logShow_S_w(Golden_StringCodePoints_Test_showArray, Data_Functor_arrayMap(Golden_StringCodePoints_Test_fromEnum)(Data_String_CodePoints_toCodePointArray(Data_String_CodePoints_take_S_w(2, "aéЯ𝐀z"))))()
+  local _ = Effect_Console_logShow_S_w(Golden_StringCodePoints_Test_showArray, Data_Functor_arrayMap(Golden_StringCodePoints_Test_fromEnum)(Data_String_CodePoints_toCodePointArray(Data_String_CodePoints_drop_S_w(2, "aéЯ𝐀z"))))()
   local _ = Effect_Console_logShow_S_w({
     show = function(v_S_1542_S_1719)
       if "Data.Maybe∷Maybe.Just" == v_S_1542_S_1719["$ctor"] then
-        return "(Just " .. Data_Show_foreign.showIntImpl(v_S_1542_S_1719.value0) .. ")"
+        return "(Just " .. Data_Show_showIntImpl(v_S_1542_S_1719.value0) .. ")"
       elseif "Data.Maybe∷Maybe.Nothing" == v_S_1542_S_1719["$ctor"] then
         return "Nothing"
       else
@@ -602,7 +614,7 @@ return (function()
   local _ = Effect_Console_logShow_S_w({
     show = function(v_S_1542_S_1727)
       if "Data.Maybe∷Maybe.Just" == v_S_1542_S_1727["$ctor"] then
-        return "(Just " .. Data_Show_foreign.showIntImpl(v_S_1542_S_1727.value0) .. ")"
+        return "(Just " .. Data_Show_showIntImpl(v_S_1542_S_1727.value0) .. ")"
       elseif "Data.Maybe∷Maybe.Nothing" == v_S_1542_S_1727["$ctor"] then
         return "Nothing"
       else
@@ -620,7 +632,7 @@ return (function()
   local _ = Effect_Console_logShow_S_w({
     show = function(v_S_1542_S_1735)
       if "Data.Maybe∷Maybe.Just" == v_S_1542_S_1735["$ctor"] then
-        return "(Just " .. Data_Show_foreign.showIntImpl(v_S_1542_S_1735.value0) .. ")"
+        return "(Just " .. Data_Show_showIntImpl(v_S_1542_S_1735.value0) .. ")"
       elseif "Data.Maybe∷Maybe.Nothing" == v_S_1542_S_1735["$ctor"] then
         return "Nothing"
       else
@@ -638,7 +650,7 @@ return (function()
   local _ = Effect_Console_logShow_S_w({
     show = function(v_S_1542_S_1746)
       if "Data.Maybe∷Maybe.Just" == v_S_1542_S_1746["$ctor"] then
-        return "(Just " .. Data_Show_foreign.showIntImpl(v_S_1542_S_1746.value0) .. ")"
+        return "(Just " .. Data_Show_showIntImpl(v_S_1542_S_1746.value0) .. ")"
       elseif "Data.Maybe∷Maybe.Nothing" == v_S_1542_S_1746["$ctor"] then
         return "Nothing"
       else
@@ -656,7 +668,7 @@ return (function()
   local _ = Effect_Console_logShow_S_w({
     show = function(v_S_1657)
       if "Data.Maybe∷Maybe.Just" == v_S_1657["$ctor"] then
-        return "(Just " .. Data_Show_foreign.showArrayImpl(Data_Show_foreign.showIntImpl)(v_S_1657.value0) .. ")"
+        return "(Just " .. Data_Show_showArrayImpl(Data_Show_showIntImpl)(v_S_1657.value0) .. ")"
       elseif "Data.Maybe∷Maybe.Nothing" == v_S_1657["$ctor"] then
         return "Nothing"
       else
@@ -666,7 +678,7 @@ return (function()
   }, (function()
     local v1_S_1540_S_1759 = Data_String_CodePoints_uncons("aéЯ𝐀z")
     if "Data.Maybe∷Maybe.Just" == v1_S_1540_S_1759["$ctor"] then
-      return Data_Maybe_Just(Data_Functor_foreign.arrayMap(Golden_StringCodePoints_Test_fromEnum)(Data_String_CodePoints_toCodePointArray(v1_S_1540_S_1759.value0.tail)))
+      return Data_Maybe_Just(Data_Functor_arrayMap(Golden_StringCodePoints_Test_fromEnum)(Data_String_CodePoints_toCodePointArray(v1_S_1540_S_1759.value0.tail)))
     else
       return Data_Maybe_Nothing
     end
@@ -682,7 +694,7 @@ return (function()
       end
     end
   }, Data_String_CodePoints_foreign._fromCodePointArray(Data_String_CodePoints_singletonFallback)(Data_String_CodePoints_toCodePointArray("aéЯ𝐀z")) == "aéЯ𝐀z")()
-  return Effect_Console_logShow_S_w(Golden_StringCodePoints_Test_showArray, Data_Functor_foreign.arrayMap(Golden_StringCodePoints_Test_fromEnum)(Data_String_CodePoints_toCodePointArray(Data_String_CodePoints_singleton(Partial_Unsafe_foreign._unsafePartial(function(  )
+  return Effect_Console_logShow_S_w(Golden_StringCodePoints_Test_showArray, Data_Functor_arrayMap(Golden_StringCodePoints_Test_fromEnum)(Data_String_CodePoints_toCodePointArray(Data_String_CodePoints_singleton(Partial_Unsafe__unsafePartial(function(  )
     return function(v_S_1536_S_1772)
       if "Data.Maybe∷Maybe.Just" == v_S_1536_S_1772["$ctor"] then
         return v_S_1536_S_1772.value0

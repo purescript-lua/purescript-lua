@@ -17,7 +17,7 @@ UberModule
           ( Ref Nothing ( Local ( Name "v$0" ) ) )
         )
       ),
-      ( Name "dontInlineClosure", ObjectProp ( Just Always )
+      ( Name "dontInlineClosure", ObjectProp Nothing
         ( Ref Nothing ( Imported ( ModuleName "Golden.Annotations.M1" ) ( Name "foreign" ) ) )
         ( PropName "dontInlineClosure" )
       ),

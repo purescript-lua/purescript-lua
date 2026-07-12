@@ -14,6 +14,12 @@ UberModule
         [ ( Nothing, Name "concatArray" ) ]
       ), Standalone
       ( QName
+        { qnameModuleName = ModuleName "Data.Semigroup", qnameName = Name "concatArray"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Data.Semigroup" ) ( Name "foreign" ) ) )
+        ( PropName "concatArray" )
+      ), Standalone
+      ( QName
         { qnameModuleName = ModuleName "Data.Show", qnameName = Name "foreign"
         }, ForeignImport Nothing
         ( ModuleName "Data.Show" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Show.purs"
@@ -35,9 +41,8 @@ UberModule
         { qnameModuleName = ModuleName "Data.Semigroup", qnameName = Name "semigroupArray"
         }, LiteralObject Nothing
         [
-          ( PropName "append", ObjectProp ( Just Always )
-            ( Ref Nothing ( Imported ( ModuleName "Data.Semigroup" ) ( Name "foreign" ) ) )
-            ( PropName "concatArray" )
+          ( PropName "append", Ref Nothing
+            ( Imported ( ModuleName "Data.Semigroup" ) ( Name "concatArray" ) )
           )
         ]
       ), Standalone
@@ -296,11 +301,8 @@ UberModule
                         )
                         ( AppN Nothing
                           ( AppN Nothing
-                            ( ObjectProp Nothing
-                              ( Ref Nothing
-                                ( Imported ( ModuleName "Data.Semigroup" ) ( Name "foreign" ) )
-                              )
-                              ( PropName "concatArray" )
+                            ( Ref Nothing
+                              ( Imported ( ModuleName "Data.Semigroup" ) ( Name "concatArray" ) )
                             )
                             ( ObjectProp Nothing
                               ( Ref Nothing ( Local ( Name "v1$523" ) ) )
@@ -7175,7 +7177,7 @@ UberModule
         { qnameModuleName = ModuleName "Golden.LongWriterBind.Test", qnameName = Name "compute"
         }, ObjectProp Nothing
         ( AppN Nothing
-          ( ObjectProp ( Just Always )
+          ( ObjectProp Nothing
             ( Ref Nothing ( Imported ( ModuleName "Unsafe.Coerce" ) ( Name "foreign" ) ) )
             ( PropName "unsafeCoerce" )
           )
@@ -7194,12 +7196,12 @@ UberModule
         ( Imported ( ModuleName "Golden.LongWriterBind.Test" ) ( Name "compute" ) )
       ),
       ( Name "main", AppN Nothing
-        ( ObjectProp ( Just Always )
+        ( ObjectProp Nothing
           ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
           ( PropName "log" )
         )
         ( AppN Nothing
-          ( ObjectProp ( Just Always )
+          ( ObjectProp Nothing
             ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
             ( PropName "showIntImpl" )
           )

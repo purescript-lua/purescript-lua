@@ -25,6 +25,7 @@ local Effect_foreign = {
   end,
   untilE = function(f) return function() while not(f()) do  end end end
 }
+local Effect_untilE = Effect_foreign.untilE
 local Effect_Ref_foreign = {
   _new = function(val) return function() return { value = val } end end,
   read = function(ref) return function() return ref.value end end,
@@ -32,7 +33,11 @@ local Effect_Ref_foreign = {
     return function(ref) return function() ref.value = val end end
   end
 }
+local Effect_Ref__new = Effect_Ref_foreign._new
+local Effect_Ref_read = Effect_Ref_foreign.read
+local Effect_Ref_write = Effect_Ref_foreign.write
 local Partial_Unsafe_foreign = { _unsafePartial = function(f) return f() end }
+local Partial_Unsafe__unsafePartial = Partial_Unsafe_foreign._unsafePartial
 local Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
 }
@@ -124,14 +129,14 @@ return (function()
       tailRecM = function(f_S_11)
         return function(a_S_12)
           return function()
-            local r_S_16 = Effect_bindEffect.bind(f_S_11(a_S_12))(Effect_Ref_foreign._new)()
-            local _ = Effect_foreign.untilE(function()
-              local v0_S_17 = Effect_Ref_foreign.read(r_S_16)()
+            local r_S_16 = Effect_bindEffect.bind(f_S_11(a_S_12))(Effect_Ref__new)()
+            local _ = Effect_untilE(function()
+              local v0_S_17 = Effect_Ref_read(r_S_16)()
               return (function()
                 if "Control.Monad.Rec.Class∷Step.Loop" == v0_S_17["$ctor"] then
                   return function()
                     local e_S_19 = f_S_11(v0_S_17.value0)()
-                    local _ = Effect_Ref_foreign.write(e_S_19)(r_S_16)()
+                    local _ = Effect_Ref_write(e_S_19)(r_S_16)()
                     return Control_Monad_Rec_Class_pure(false)()
                   end
                 elseif "Control.Monad.Rec.Class∷Step.Done" == v0_S_17["$ctor"] then
@@ -141,7 +146,7 @@ return (function()
                 end
               end)()()
             end)()
-            return Effect_functorEffect.map(Partial_Unsafe_foreign._unsafePartial(function(  )
+            return Effect_functorEffect.map(Partial_Unsafe__unsafePartial(function(  )
               return function(v_S_9_S_20)
                 if "Control.Monad.Rec.Class∷Step.Done" == v_S_9_S_20["$ctor"] then
                   return v_S_9_S_20.value0
@@ -149,7 +154,7 @@ return (function()
                   return error("No patterns matched")
                 end
               end
-            end))(Effect_Ref_foreign.read(r_S_16))()
+            end))(Effect_Ref_read(r_S_16))()
           end
         end
       end,
@@ -194,14 +199,14 @@ return (function()
       tailRecM = function(f_S_11_S_542)
         return function(a_S_12_S_543)
           return function()
-            local r_S_16_S_544 = Effect_bindEffect.bind(f_S_11_S_542(a_S_12_S_543))(Effect_Ref_foreign._new)()
-            local __S_545 = Effect_foreign.untilE(function()
-              local v0_S_17_S_546 = Effect_Ref_foreign.read(r_S_16_S_544)()
+            local r_S_16_S_544 = Effect_bindEffect.bind(f_S_11_S_542(a_S_12_S_543))(Effect_Ref__new)()
+            local __S_545 = Effect_untilE(function()
+              local v0_S_17_S_546 = Effect_Ref_read(r_S_16_S_544)()
               return (function()
                 if "Control.Monad.Rec.Class∷Step.Loop" == v0_S_17_S_546["$ctor"] then
                   return function()
                     local e_S_19_S_547 = f_S_11_S_542(v0_S_17_S_546.value0)()
-                    local __S_548 = Effect_Ref_foreign.write(e_S_19_S_547)(r_S_16_S_544)()
+                    local __S_548 = Effect_Ref_write(e_S_19_S_547)(r_S_16_S_544)()
                     return Control_Monad_Rec_Class_pure(false)()
                   end
                 elseif "Control.Monad.Rec.Class∷Step.Done" == v0_S_17_S_546["$ctor"] then
@@ -211,7 +216,7 @@ return (function()
                 end
               end)()()
             end)()
-            return Effect_functorEffect.map(Partial_Unsafe_foreign._unsafePartial(function(  )
+            return Effect_functorEffect.map(Partial_Unsafe__unsafePartial(function(  )
               return function(v_S_9_S_20_S_549)
                 if "Control.Monad.Rec.Class∷Step.Done" == v_S_9_S_20_S_549["$ctor"] then
                   return v_S_9_S_20_S_549.value0
@@ -219,7 +224,7 @@ return (function()
                   return error("No patterns matched")
                 end
               end
-            end))(Effect_Ref_foreign.read(r_S_16_S_544))()
+            end))(Effect_Ref_read(r_S_16_S_544))()
           end
         end
       end,

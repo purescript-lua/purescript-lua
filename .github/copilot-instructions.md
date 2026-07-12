@@ -258,19 +258,20 @@ which collapses `Array Unit` to an empty table.
 
 ## FFI foreign module shape
 
-Foreign `.lua` files have a header of `local` helpers followed by a single
-returned table. Each exported value **must be wrapped in parentheses**:
+Foreign `.lua` files are ordinary Lua 5.1 modules, parsed with the compiler's
+own Lua 5.1 parser: a header of `local` helpers followed by a single returned
+table of exports. Values need no special wrapping, and comments are allowed
+anywhere, including between table fields:
 
 ```lua
 local function helper(x) return x + 1 end
 
 return {
-  foo = (function(a) return helper(a) end),
-  bar = (function(a) return function(b) return a + b end end),
+  foo = function(a) return helper(a) end,
+  -- comments between fields are fine
+  bar = function(a) return function(b) return a + b end end,
 }
 ```
-
-Do not put `--` comments between table fields. The FFI parser rejects them.
 
 ---
 

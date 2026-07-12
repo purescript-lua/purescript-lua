@@ -9,11 +9,11 @@ UberModule
       )
     ], uberModuleForeigns = [], uberModuleExports =
     [
-      ( Name "dead", ObjectProp ( Just Always )
+      ( Name "dead", ObjectProp Nothing
         ( Ref Nothing ( Imported ( ModuleName "Golden.Foreign.Lib" ) ( Name "foreign" ) ) )
         ( PropName "dead" )
       ),
-      ( Name "alive", ObjectProp ( Just Always )
+      ( Name "alive", ObjectProp Nothing
         ( Ref Nothing ( Imported ( ModuleName "Golden.Foreign.Lib" ) ( Name "foreign" ) ) )
         ( PropName "alive" )
       )

@@ -12,14 +12,13 @@ local Data_Semigroup_foreign = {
     end
   end
 }
+local Data_Semigroup_concatArray = Data_Semigroup_foreign.concatArray
 local Data_Show_foreign = { showIntImpl = function(n) return tostring(n) end }
 local Unsafe_Coerce_foreign = { unsafeCoerce = function(x) return x end }
 local Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
 }
-local Data_Semigroup_semigroupArray = {
-  append = Data_Semigroup_foreign.concatArray
-}
+local Data_Semigroup_semigroupArray = { append = Data_Semigroup_concatArray }
 local Data_Tuple_Tuple = function(value0)
   return function(value1) return { value0 = value0, value1 = value1 } end
 end
@@ -74,7 +73,7 @@ local Golden_LongWriterBind_Test_discard = (function()
     return function(k_S_522)
       return dictBind_S_519.bind(v_S_521)(function(v1_S_523)
         return ((dictBind_S_519.Apply0()).Functor0()).map(function(v3_S_524)
-          return Data_Tuple_Tuple(v3_S_524.value0)(Data_Semigroup_foreign.concatArray(v1_S_523.value1)(v3_S_524.value1))
+          return Data_Tuple_Tuple(v3_S_524.value0)(Data_Semigroup_concatArray(v1_S_523.value1)(v3_S_524.value1))
         end)(k_S_522(v1_S_523.value0))
       end)
     end
