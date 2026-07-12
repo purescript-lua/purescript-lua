@@ -1,5 +1,4 @@
-local M = {}
-M.Golden_PatternMatching_Test2_bat = function(n)
+local Golden_PatternMatching_Test2_bat = function(n)
   while true do
     if "Golden.PatternMatching.Test1∷N.Zero" == n["$ctor"] then
       return 1
@@ -59,5 +58,5 @@ return {
       return 6
     end
   end,
-  bat = M.Golden_PatternMatching_Test2_bat
+  bat = Golden_PatternMatching_Test2_bat
 }

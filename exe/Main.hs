@@ -33,6 +33,7 @@ main = Utf8.withUtf8 do
     , outputIR
     , outputLuaAst
     , lintIR
+    , luaLimits
     , psOutputPath
     , appOrModule
     , runEntry
@@ -56,7 +57,7 @@ main = Utf8.withUtf8 do
     -- Stay silent in run mode so the program's own stdout isn't polluted (the
     -- output may be piped); Spago already logs the run/build phases itself.
     when (isNothing runEntry) $ putTextLn "PS Lua: compiling ..."
-    Backend.compileModules psOutputPath foreignDir lintIR entry
+    Backend.compileModules psOutputPath foreignDir lintIR luaLimits entry
       & handleModuleNotFoundError
       & handleModuleDecodingError
       & handleCoreFnError

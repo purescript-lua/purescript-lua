@@ -4,9 +4,9 @@ Date: 2026-07-07
 
 ## Status
 
-Accepted. Stage 1 (per-function field caching) is implemented; stage 2
-(budget-aware two-tier storage) is designed here and tracked in issue
-[#174].
+Accepted. Both stages of issue [#174] are implemented: stage 1
+(per-function field caching, `Lua.Localize`) and stage 2 (budget-aware
+two-tier storage, `Lua.Promote`).
 
 [#174]: https://github.com/purescript-lua/purescript-lua/issues/174
 
@@ -111,28 +111,64 @@ guides. The details that keep it sound and limit-proof:
   shadowing declarations (shapes only hand-written FFI could produce).
   Otherwise the chunk is left byte-identical.
 
-### Stage 2: two-tier storage with budget accounting (planned)
+### Stage 2: two-tier storage with budget accounting (implemented)
 
-Top-K bindings by static reference count are emitted as real chunk
-locals; the tail stays in `M`; exported bindings are mirrored into the
-export surface. Two budgets are computed over the finished Lua AST
-before printing:
+A Lua-level pass (`Language.PureScript.Backend.Lua.Promote`, run from
+`optimizeChunk` *before* stage 1) promotes top-level bindings to real
+chunk locals; the tail stays in `M`:
 
-1. **Locals**: a chunk-local counter with a ceiling of ~180 (200 minus
-   fixture locals and headroom). Overflow keeps the binding in `M`.
-2. **Upvalues**: the killer of the pre-#19 design. Accounting runs
-   bottom-up over the function tree:
-   `upvals(f) = |own outer-local references ∪ children's pass-through
-   demands|`. When a function proto would exceed ~55, individual
-   references are demoted — printed as `M.x` — while the binding stays
-   a local for everyone else.
+```lua
+local Data_Array_index = function(arr) … end
+local Data_Array_span = function(p, arr)
+  local v = Data_Array_index(arr)(i)
+  …
+return { span = Data_Array_span, … }
+```
 
-A program that fits the budgets (like `Data.Array` with 124 bindings)
-loses the `M` table entirely: pure locals, with the module export
-table referencing them directly. `K` for larger programs is chosen
-from #172's measurements. Stage 2 lands only with that measurement
-backing; until then stage 1's caching already removes the per-loop and
-per-call read cost where it matters.
+- **Selection (the locals budget).** A binding qualifies when its
+  field is initialized by exactly one top-level `M.x = e` statement,
+  is read at least once, and its name is not used as a variable
+  anywhere in the chunk — the promoted local keeps the field's name,
+  and on a collision (a shape only hand-written FFI produces) the pass
+  declines rather than renames. Qualifying bindings are promoted in
+  descending static read count while the chunk's local slots —
+  pre-existing declarations plus one per promotion — stay under the
+  locals ceiling; the original "top-K" knob from the issue *is* this
+  budget bound. Zero-read bindings stay in `M`: a local for a binding
+  nobody reads spends a scarce slot on a dead store.
+- **Upvalue accounting (the demotion budget).** The killer of the
+  pre-#19 design was pass-through accumulation, so the pass computes
+  every function proto's upvalue demand bottom-up:
+  `demand(f) = ownOuterRefs(f) ∪ {b ∈ demand(child) | b not bound by
+  f}`, counting *all* outer-local references (function locals and
+  parameters included), resolved lexically — a name referenced before
+  its declaration resolves outside it. When a proto's demand exceeds
+  the upvalue ceiling, promoted-binding references within its subtree
+  are demoted — printed as `M.x` again — cheapest reads first (ties to
+  the earlier-declared binding), and the binding is mirrored into the
+  table (`M.x = x` right after `local x = e`) so demoted reads still
+  observe it. Demoting swaps the binding's upvalue for `M`'s, so the
+  first demotion pays off only once `M` is already demanded; the
+  fitting loop accounts for that. The binding stays a local for every
+  proto that affords it.
+- **Recursion.** A binding read before its initializer — the
+  self-reference of a recursive function, or an earlier member of a
+  mutually recursive group — is pre-declared (`local x` before the
+  first referencing statement) and initialized by plain assignment;
+  only the forward-referenced group members are pre-declared.
+- **Preconditions.** Stage 1's chunk-wide stability precondition,
+  plus: the module table is declared exactly once, as `local M = {}`,
+  before any other occurrence of the name. Otherwise the chunk is left
+  byte-identical.
+- **Ordering.** Promotion runs before stage-1 caching: whatever stays
+  in `M` after promotion — the unpromoted tail plus demoted
+  references — is exactly what per-function caching still speeds up.
+
+A program that fits the budgets loses the `M` table entirely: pure
+locals, with the module export table referencing them directly. In the
+golden corpus 35 of 50 modules drop `M`; the rest keep it only to hold
+bindings that are written but never read (dead stores the IR-level DCE
+did not see).
 
 ## Rejected alternatives
 
@@ -146,13 +182,21 @@ per-call read cost where it matters.
 
 ## Consequences
 
-- Generated functions gain an entry `local … = M.…` statement when
-  they read fields repeatedly; goldens churn mechanically but runtime
+- In-budget programs emit no `M` table at all: inter-binding
+  references are upvalue/register accesses, and the export table
+  references the locals directly. Where a binding stays in `M`,
+  generated functions still gain stage-1 entry caches (`local … =
+  M.…`) for repeated reads; goldens churn mechanically but runtime
   behavior is unchanged (eval goldens are the check).
 - Hot loops produced by loopification (#181) read loop-invariant
   bindings from locals, which LuaJIT hoists into registers; the win
   compounds with uncurrying (#24) as real loops become traceable.
-- The `M` table remains the single upvalue of every generated closure
-  until stage 2; nothing about FFI, linking, or DCE changes.
-- The budgets live in `Localize.hs` as named constants; stage 2 reuses
-  the same ceilings for its chunk-level accounting.
+- Nothing about FFI, linking, or DCE changes. A binding that is
+  written but never read keeps `M` alive for the whole chunk;
+  eliminating such dead init stores would be a separate, Lua-level
+  DCE concern.
+- The hard target limits live in
+  `Language.PureScript.Backend.Lua.Limits` as a `LuaLimits` record,
+  configurable per target (`--max-locals` / `--max-upvalues`, Lua 5.1
+  defaults); both passes budget against working ceilings derived from
+  them (hard limit minus headroom, 180/55 by default).

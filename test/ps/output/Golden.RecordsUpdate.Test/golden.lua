@@ -6,11 +6,14 @@ local function PSLUA_object_update(o, patches)
   end
   return o_copy
 end
-local M = {}
-M.Golden_RecordsUpdate_Test_r = { x = 1, y = true, z = { z = "foo", p = "a" } }
+local Golden_RecordsUpdate_Test_r = {
+  x = 1,
+  y = true,
+  z = { z = "foo", p = "a" }
+}
 return {
-  r = M.Golden_RecordsUpdate_Test_r,
-  test1 = PSLUA_object_update(M.Golden_RecordsUpdate_Test_r, { x = 2 }),
+  r = Golden_RecordsUpdate_Test_r,
+  test1 = PSLUA_object_update(Golden_RecordsUpdate_Test_r, { x = 2 }),
   test2 = function(v_S_1) return PSLUA_object_update(v_S_1, { y = false }) end,
   test3 = function(v_S_2)
     return PSLUA_object_update(v_S_2, {

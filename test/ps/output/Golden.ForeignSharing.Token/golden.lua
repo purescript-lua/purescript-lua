@@ -1,3 +1,2 @@
-local M = {}
-M.Golden_ForeignSharing_Token_foreign = { token = {} }
-return { token = M.Golden_ForeignSharing_Token_foreign.token }
+local Golden_ForeignSharing_Token_foreign = { token = {} }
+return { token = Golden_ForeignSharing_Token_foreign.token }

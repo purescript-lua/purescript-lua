@@ -7,10 +7,12 @@ import Data.List.NonEmpty qualified as NE
 import Data.Tagged (Tagged (..))
 import Data.Text (splitOn)
 import Data.Text qualified as Text
+import Language.PureScript.Backend.Lua.Limits (LuaLimits (..), lua51Limits)
 import Language.PureScript.Backend.Types (AppOrModule (..))
 import Language.PureScript.Names qualified as PS
 import Options.Applicative
   ( Parser
+  , ReadM
   , eitherReader
   , execParser
   , flag
@@ -47,6 +49,7 @@ data Args = Args
   , outputIR ∷ Maybe ExtraOutput
   , outputLuaAst ∷ Maybe ExtraOutput
   , lintIR ∷ Tagged "lint-ir" Bool
+  , luaLimits ∷ LuaLimits
   , appOrModule ∷ AppOrModule
   , runEntry ∷ Maybe AppOrModule
   }
@@ -117,6 +120,30 @@ options = do
             <> linebreak
             <> bold "Default: false"
       ]
+  targetMaxLocals ←
+    option positiveInt . fold $
+      [ metavar "N"
+      , long "max-locals"
+      , value (maxLocals lua51Limits)
+      , helpDoc . Just $
+          "Target Lua VM's hard limit on local variables"
+            <> softbreak
+            <> "per function (LUAI_MAXVARS)."
+            <> linebreak
+            <> bold "Default: 200 (Lua 5.1)"
+      ]
+  targetMaxUpvalues ←
+    option positiveInt . fold $
+      [ metavar "N"
+      , long "max-upvalues"
+      , value (maxUpvalues lua51Limits)
+      , helpDoc . Just $
+          "Target Lua VM's hard limit on upvalues"
+            <> softbreak
+            <> "per function (LUAI_MAXUPVALUES)."
+            <> linebreak
+            <> bold "Default: 60 (Lua 5.1)"
+      ]
   appOrModule ←
     option (eitherReader parseAppOrModule) . fold $
       [ metavar "ENTRY"
@@ -150,7 +177,20 @@ options = do
             , green $ indent 2 "Example: Acme.App.main"
             ]
       ]
-  pure Args {..}
+  pure
+    Args
+      { luaLimits =
+          LuaLimits
+            { maxLocals = targetMaxLocals
+            , maxUpvalues = targetMaxUpvalues
+            }
+      , ..
+      }
+
+positiveInt ∷ ReadM Int
+positiveInt = eitherReader \s → case readMaybe s of
+  Just n | n > 0 → Right n
+  _ → Left ("expected a positive integer, got: " <> s)
 
 {- | `--run` must name an application entry point (`<Module>.<binding>`): there
 is nothing to execute without a binding, so a bare module name is rejected.

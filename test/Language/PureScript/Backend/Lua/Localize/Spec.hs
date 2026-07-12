@@ -4,6 +4,7 @@ module Language.PureScript.Backend.Lua.Localize.Spec where
 
 import Data.String.Interpolate (__i)
 import Data.Text qualified as Text
+import Language.PureScript.Backend.Lua.Limits (lua51Limits)
 import Language.PureScript.Backend.Lua.Localize
   ( localizeChunk
   , maxCachedFieldsPerFunction
@@ -282,7 +283,7 @@ spec = describe "Lua module-table field localization (#174)" do
             , "end"
             , "return { f = M.f }"
             ]
-    case localizeChunk [name|M|] (unsafeParseStatements source) of
+    case localizeChunk lua51Limits [name|M|] (unsafeParseStatements source) of
       [ _localM
         , Lua.Assign _vars (Lua.Ann (Lua.Function _params body) :| [])
         , _return
@@ -335,7 +336,7 @@ render =
 
 localizesTo ∷ HasCallStack ⇒ Text → Text → Expectation
 localizesTo source expected =
-  render (localizeChunk [name|M|] (unsafeParseStatements source))
+  render (localizeChunk lua51Limits [name|M|] (unsafeParseStatements source))
     `shouldBe` render (unsafeParseStatements expected)
 
 unchanged ∷ HasCallStack ⇒ Text → Expectation

@@ -3,8 +3,10 @@ module Language.PureScript.Backend.Lua.Optimizer where
 import Control.Monad.Trans.Accum (Accum, add, execAccum)
 import Data.Map qualified as Map
 import Language.PureScript.Backend.Lua.Fixture qualified as Fixture
+import Language.PureScript.Backend.Lua.Limits (LuaLimits)
 import Language.PureScript.Backend.Lua.Localize (localizeChunk)
 import Language.PureScript.Backend.Lua.Name qualified as Lua
+import Language.PureScript.Backend.Lua.Promote (promoteChunk)
 import Language.PureScript.Backend.Lua.Traversal
   ( everywhereExp
   , everywhereInChunkM
@@ -25,12 +27,18 @@ import Language.PureScript.Backend.Lua.Types
   )
 import Language.PureScript.Backend.Lua.Types qualified as Lua
 
-{- | Localization runs after the rewrite rules: projection folds can
-eliminate module-table reads, and the reads that remain are the ones
-worth counting and caching.
+{- | The storage passes run after the rewrite rules: projection folds
+can eliminate module-table reads, and the reads that remain are the
+ones worth counting. Promotion (stage 2) precedes localization
+(stage 1): whatever stays in the module table after promotion — the
+unpromoted tail plus demoted references — is exactly what per-function
+caching still speeds up.
 -}
-optimizeChunk ∷ Chunk → Chunk
-optimizeChunk = localizeChunk Fixture.moduleName . fmap optimizeStatement
+optimizeChunk ∷ LuaLimits → Chunk → Chunk
+optimizeChunk limits =
+  localizeChunk limits Fixture.moduleName
+    . promoteChunk limits Fixture.moduleName
+    . fmap optimizeStatement
 
 substituteVarForValue ∷ Lua.Name → Exp → Chunk → Chunk
 substituteVarForValue name inlinee =

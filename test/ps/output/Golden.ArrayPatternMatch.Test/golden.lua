@@ -1,6 +1,6 @@
 local M = {}
-M.Data_Show_foreign = { showIntImpl = function(n) return tostring(n) end }
-M.Effect_Console_foreign = {
+local Data_Show_foreign = { showIntImpl = function(n) return tostring(n) end }
+local Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
 }
 M.Golden_ArrayPatternMatch_Test_lastOfThree = function(v)
@@ -10,7 +10,6 @@ M.Golden_ArrayPatternMatch_Test_firstTwo = function(v)
   if 2 == #(v) then return v[1] + v[2] else return -1 end
 end
 return (function()
-  local Data_Show_foreign, Effect_Console_foreign = M.Data_Show_foreign, M.Effect_Console_foreign
   local _ = Effect_Console_foreign.log(Data_Show_foreign.showIntImpl((function()
     local v_S_235 = { [1] = 10, [2] = 20 }
     if 2 == #(v_S_235) then return v_S_235[1] + v_S_235[2] else return -1 end

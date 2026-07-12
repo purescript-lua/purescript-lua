@@ -1,7 +1,6 @@
-local M = {}
-M.Golden_Newtype_Test_NT = function(x) return x end
+local Golden_Newtype_Test_NT = function(x) return x end
 return {
-  NT = M.Golden_Newtype_Test_NT,
+  NT = Golden_Newtype_Test_NT,
   f = function(v_S_0) return v_S_0.foo end,
-  g = M.Golden_Newtype_Test_NT
+  g = Golden_Newtype_Test_NT
 }
