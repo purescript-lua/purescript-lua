@@ -14,16 +14,34 @@ UberModule
         [ ( Nothing, Name "showIntImpl" ) ]
       ), Standalone
       ( QName
+        { qnameModuleName = ModuleName "Data.Show", qnameName = Name "showIntImpl"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
+        ( PropName "showIntImpl" )
+      ), Standalone
+      ( QName
         { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "foreign"
         }, ForeignImport Nothing
         ( ModuleName "Effect.Console" ) ".spago/p/console/f82835a0b873aafe6bd7b14dd30cc150553d4ab9/src/Effect/Console.purs"
         [ ( Nothing, Name "log" ) ]
       ), Standalone
       ( QName
+        { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "log"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
+        ( PropName "log" )
+      ), Standalone
+      ( QName
         { qnameModuleName = ModuleName "Golden.FloatIn.Test", qnameName = Name "foreign"
         }, ForeignImport Nothing
         ( ModuleName "Golden.FloatIn.Test" ) "src/Golden/FloatIn/Test.purs"
         [ ( Nothing, Name "tick" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.FloatIn.Test", qnameName = Name "tick"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Golden.FloatIn.Test" ) ( Name "foreign" ) ) )
+        ( PropName "tick" )
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.FloatIn.Test", qnameName = Name "pickShared$w"
@@ -34,12 +52,7 @@ UberModule
           ( Let Nothing
             ( Standalone
               ( Nothing, Name "shared", AppN Nothing
-                ( ObjectProp ( Just Always )
-                  ( Ref Nothing
-                    ( Imported ( ModuleName "Golden.FloatIn.Test" ) ( Name "foreign" ) )
-                  )
-                  ( PropName "tick" )
-                )
+                ( Ref Nothing ( Imported ( ModuleName "Golden.FloatIn.Test" ) ( Name "tick" ) ) )
                 ( Ref Nothing ( Local ( Name "n" ) ) :| [] )
               ) :| []
             )
@@ -112,9 +125,8 @@ UberModule
       )
     ], uberModuleForeigns = [], uberModuleExports =
     [
-      ( Name "tick", ObjectProp ( Just Always )
-        ( Ref Nothing ( Imported ( ModuleName "Golden.FloatIn.Test" ) ( Name "foreign" ) ) )
-        ( PropName "tick" )
+      ( Name "tick", Ref Nothing
+        ( Imported ( ModuleName "Golden.FloatIn.Test" ) ( Name "tick" ) )
       ),
       ( Name "expensive", Ref Nothing
         ( Imported ( ModuleName "Golden.FloatIn.Test" ) ( Name "expensive" ) )
@@ -153,15 +165,9 @@ UberModule
           ( Standalone
             ( Nothing, Name "_", AppN Nothing
               ( AppN Nothing
-                ( ObjectProp ( Just Always )
-                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
-                  ( PropName "log" )
-                )
+                ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
                 ( AppN Nothing
-                  ( ObjectProp ( Just Always )
-                    ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
-                    ( PropName "showIntImpl" )
-                  )
+                  ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
                   ( AppN Nothing
                     ( Ref Nothing
                       ( Imported ( ModuleName "Golden.FloatIn.Test" ) ( Name "pick$w" ) )
@@ -175,15 +181,9 @@ UberModule
             [ Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
-                  ( ObjectProp ( Just Always )
-                    ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
-                    ( PropName "log" )
-                  )
+                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
                   ( AppN Nothing
-                    ( ObjectProp ( Just Always )
-                      ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
-                      ( PropName "showIntImpl" )
-                    )
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
                     ( AppN Nothing
                       ( Ref Nothing
                         ( Imported ( ModuleName "Golden.FloatIn.Test" ) ( Name "pick$w" ) )
@@ -196,15 +196,9 @@ UberModule
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
-                  ( ObjectProp ( Just Always )
-                    ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
-                    ( PropName "log" )
-                  )
+                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
                   ( AppN Nothing
-                    ( ObjectProp ( Just Always )
-                      ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
-                      ( PropName "showIntImpl" )
-                    )
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
                     ( AppN Nothing
                       ( Ref Nothing
                         ( Imported ( ModuleName "Golden.FloatIn.Test" ) ( Name "pickShared$w" ) )
@@ -219,15 +213,9 @@ UberModule
           )
           ( AppN Nothing
             ( AppN Nothing
-              ( ObjectProp ( Just Always )
-                ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
-                ( PropName "log" )
-              )
+              ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
               ( AppN Nothing
-                ( ObjectProp ( Just Always )
-                  ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
-                  ( PropName "showIntImpl" )
-                )
+                ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
                 ( AppN Nothing
                   ( Ref Nothing
                     ( Imported ( ModuleName "Golden.FloatIn.Test" ) ( Name "pickShared$w" ) )

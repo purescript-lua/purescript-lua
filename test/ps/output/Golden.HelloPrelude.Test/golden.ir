@@ -33,7 +33,7 @@ UberModule
             { qnameModuleName = ModuleName "Effect", qnameName = Name "bindEffect"
             }, LiteralObject Nothing
             [
-              ( PropName "bind", ObjectProp ( Just Always )
+              ( PropName "bind", ObjectProp Nothing
                 ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "foreign" ) ) )
                 ( PropName "bindE" )
               ),
@@ -50,7 +50,7 @@ UberModule
             { qnameModuleName = ModuleName "Effect", qnameName = Name "applicativeEffect"
             }, LiteralObject Nothing
             [
-              ( PropName "pure", ObjectProp ( Just Always )
+              ( PropName "pure", ObjectProp Nothing
                 ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "foreign" ) ) )
                 ( PropName "pureE" )
               ),

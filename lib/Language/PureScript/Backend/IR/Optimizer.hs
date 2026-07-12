@@ -1,6 +1,6 @@
 module Language.PureScript.Backend.IR.Optimizer where
 
-import Control.Lens (over, toListOf)
+import Control.Lens (over, toListOf, transformOf, universeOf)
 import Control.Monad.Writer.CPS (WriterT, runWriterT, tell)
 import Data.Foldable (foldrM)
 import Data.List qualified as List
@@ -13,10 +13,14 @@ import Language.PureScript.Backend.IR.DCE (eliminateDeadCode)
 import Language.PureScript.Backend.IR.FlattenDeepBinds (flattenDeepBindsM)
 import Language.PureScript.Backend.IR.FloatIn (floatIn)
 import Language.PureScript.Backend.IR.Inliner (Annotation (..))
-import Language.PureScript.Backend.IR.Linker (UberModule (..))
+import Language.PureScript.Backend.IR.Linker
+  ( UberModule (..)
+  , foreignAccessorQName
+  )
 import Language.PureScript.Backend.IR.MagicDo (magicDo)
 import Language.PureScript.Backend.IR.Names
   ( FieldName
+  , ModuleName
   , Name (..)
   , PropName
   , QName (..)
@@ -64,6 +68,7 @@ import Language.PureScript.Backend.IR.Types
   , literalString
   , paramName
   , primNot
+  , refImported
   , rewriteExpBottomUpM
   , setAnn
   , subexpressions
@@ -141,6 +146,13 @@ optimizerPipeline policy =
     -- Maybe/Either/Writer/State chains into straight-line code. Code growth
     -- is bounded by 'inlineSizeBudget'.
     RunFixpoint "specialize+dce" (specializePass :| [dcePass])
+  , -- Rebuild sharing for the foreign-accessor reads that dissolution
+    -- and the call-site pastes above duplicated: a read surviving at
+    -- two or more sites is re-bound to its linker name, which stage-2
+    -- promotion then turns into a chunk local (issue #248). Runs after
+    -- the last pass that can multiply reads and before the final
+    -- flattening. See 'shareForeignAccessors'.
+    RunPass shareAccessorsPass
   , -- Flatten the remaining deeply-nested expression trees (issues #104,
     -- #108): continuation/bind chains of any monad (lambda-lifted
     -- into $kont helpers) and applicative/flipped-bind application
@@ -194,6 +206,7 @@ optimizerPipeline policy =
       , passEnsures = guc
       }
   floatInPass = gucPass "float-in" floatIn
+  shareAccessorsPass = gucPass "share-accessors" shareForeignAccessors
   magicDoPass =
     Pass
       { passName = "magicDo"
@@ -240,6 +253,103 @@ mergeForeignsIntoBindings uberModule@UberModule {..} =
     , uberModuleBindings =
         map Standalone uberModuleForeigns <> uberModuleBindings
     }
+
+{- | Rebuild sharing for foreign-accessor reads duplicated during
+optimization (issue #248). An unannotated accessor dissolves into its
+use sites like any cheap projection (the Deref tier of
+Note [Complexity and Capture gate inlining]), and call-site inlining
+multiplies the pasted read further: a dictionary method resolved at
+several sites pastes one field read per site. A field read repeated per
+site loses to a shared binding once stage-2 promotion
+('Language.PureScript.Backend.Lua.Promote') turns that binding into a
+chunk local, so this pass counts the reads that survived the pipeline
+and re-binds every accessor whose read occurs at two or more sites to
+its linker name, rewriting the reads to references.
+
+Runs once, after the specialize fixpoint has finished pasting (see
+'optimizerPipeline'). Only unannotated reads participate: a read
+carrying @inline always@ is pasted per site on explicit request, and a
+@never@ accessor never dissolved in the first place (see
+Note [Inline annotations and inlining heuristics]). The re-bound
+accessor is inserted right after its module's 'ForeignImport' binding,
+where the module-init order guarantees the foreign table is already
+initialized; the reads it replaces sit in bindings placed after every
+foreign table ('mergeForeignsIntoBindings' front-loads them all) or in
+exports.
+-}
+shareForeignAccessors ∷ UberModule → UberModule
+shareForeignAccessors uber@UberModule {uberModuleBindings, uberModuleExports}
+  | Map.null shared = uber
+  | otherwise =
+      uber
+        { uberModuleBindings =
+            insertAccessorBindings
+              (fmap (fmap (fmap rewriteExp)) uberModuleBindings)
+        , uberModuleExports = fmap (fmap rewriteExp) uberModuleExports
+        }
+ where
+  -- Unannotated accessor reads, keyed by the QName the linker
+  -- originally bound the accessor to, with one representative
+  -- expression per key (every copy of a read is identical). Only reads
+  -- whose module still has its 'ForeignImport' binding participate —
+  -- always the case for a well-scoped module, since the read itself
+  -- references the foreign table.
+  shared ∷ Map QName Exp
+  shared =
+    Map.fromListWith (\_new old → old) accessorReads
+      `Map.restrictKeys` sharedNames
+   where
+    sharedNames =
+      Map.keysSet $
+        Map.filter (> 1) $
+          Map.fromListWith (+) [(qname, 1 ∷ Natural) | (qname, _) ← accessorReads]
+
+  accessorReads ∷ [(QName, Exp)]
+  accessorReads =
+    [ (qname, node)
+    | expr ←
+        (snd <$> (listGrouping =<< uberModuleBindings))
+          <> (snd <$> uberModuleExports)
+    , node ← universeOf subexpressions expr
+    , isNothing (getAnn node)
+    , Just qname ← [foreignAccessorQName node]
+    , qname `Set.notMember` boundNames
+    , qnameModuleName qname `Set.member` modulesWithForeign
+    ]
+
+  -- Top-level names already bound: an accessor kept by an @inline
+  -- never@ veto reaches this pass as a binding, and its reads are
+  -- already references.
+  boundNames ∷ Set QName
+  boundNames =
+    Set.fromList (fst <$> (listGrouping =<< uberModuleBindings))
+
+  modulesWithForeign ∷ Set ModuleName
+  modulesWithForeign =
+    Set.fromList
+      [ qnameModuleName qname
+      | Standalone (qname, ForeignImport {}) ← uberModuleBindings
+      ]
+
+  rewriteExp ∷ Exp → Exp
+  rewriteExp = transformOf subexpressions \node →
+    case foreignAccessorQName node of
+      Just qname@(QName modname name)
+        | isNothing (getAnn node)
+        , qname `Map.member` shared →
+            refImported modname name
+      _ → node
+
+  insertAccessorBindings
+    ∷ [Grouping (QName, Exp)] → [Grouping (QName, Exp)]
+  insertAccessorBindings = concatMap \case
+    grouping@(Standalone (qname, ForeignImport {})) →
+      grouping
+        : [ Standalone (accessor, rhs)
+          | (accessor, rhs) ← Map.toAscList shared
+          , qnameModuleName accessor == qnameModuleName qname
+          ]
+    grouping → [grouping]
 
 {- | Every inlining directive of the module, keyed by binding name.
 Collected once from the pristine module: later rewrites can drop an

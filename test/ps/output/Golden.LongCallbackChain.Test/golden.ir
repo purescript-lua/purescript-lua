@@ -5325,12 +5325,12 @@ UberModule
         ( Imported ( ModuleName "Golden.LongCallbackChain.Test" ) ( Name "compute" ) )
       ),
       ( Name "main", AppN Nothing
-        ( ObjectProp ( Just Always )
+        ( ObjectProp Nothing
           ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
           ( PropName "log" )
         )
         ( AppN Nothing
-          ( ObjectProp ( Just Always )
+          ( ObjectProp Nothing
             ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
             ( PropName "showIntImpl" )
           )

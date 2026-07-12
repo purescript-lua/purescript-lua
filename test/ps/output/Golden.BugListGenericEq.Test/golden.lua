@@ -5,6 +5,7 @@ local Record_Unsafe_foreign = {
 local Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
 }
+local Effect_Console_log = Effect_Console_foreign.log
 local Type_Proxy_Proxy = {}
 local Data_HeytingAlgebra_heytingAlgebraBoolean
 Data_HeytingAlgebra_heytingAlgebraBoolean = {
@@ -146,7 +147,7 @@ end
 return (function()
   local _ = (function()
     local a_S_2_S_270 = Golden_BugListGenericEq_Test_eq(Golden_BugListGenericEq_Test_Nil)(Golden_BugListGenericEq_Test_Nil)
-    return Effect_Console_foreign.log((function()
+    return Effect_Console_log((function()
       if a_S_2_S_270 then
         return "true"
       elseif false == a_S_2_S_270 then
@@ -158,7 +159,7 @@ return (function()
   end)()()
   local _ = (function()
     local a_S_2_S_271 = Golden_BugListGenericEq_Test_eq(Golden_BugListGenericEq_Test_cons_S_w(1, Golden_BugListGenericEq_Test_cons_S_w(2, Golden_BugListGenericEq_Test_Nil)))(Golden_BugListGenericEq_Test_cons_S_w(1, Golden_BugListGenericEq_Test_cons_S_w(2, Golden_BugListGenericEq_Test_Nil)))
-    return Effect_Console_foreign.log((function()
+    return Effect_Console_log((function()
       if a_S_2_S_271 then
         return "true"
       elseif false == a_S_2_S_271 then
@@ -170,7 +171,7 @@ return (function()
   end)()()
   return (function()
     local a_S_2_S_272 = Golden_BugListGenericEq_Test_eq(Golden_BugListGenericEq_Test_cons_S_w(1, Golden_BugListGenericEq_Test_Nil))(Golden_BugListGenericEq_Test_cons_S_w(2, Golden_BugListGenericEq_Test_Nil))
-    return Effect_Console_foreign.log((function()
+    return Effect_Console_log((function()
       if a_S_2_S_272 then
         return "true"
       elseif false == a_S_2_S_272 then

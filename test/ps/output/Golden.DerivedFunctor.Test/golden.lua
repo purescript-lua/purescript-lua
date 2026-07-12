@@ -1,8 +1,10 @@
 local M = {}
 local Data_Show_foreign = { showIntImpl = function(n) return tostring(n) end }
+local Data_Show_showIntImpl = Data_Show_foreign.showIntImpl
 local Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
 }
+local Effect_Console_log = Effect_Console_foreign.log
 local Golden_DerivedFunctor_Test_Leaf = {
   ["$ctor"] = "Golden.DerivedFunctor.Test∷Tree.Leaf"
 }
@@ -77,9 +79,9 @@ local Golden_DerivedFunctor_Test_fromRight_S_w = function(fallback, v)
   end
 end
 return (function()
-  local _ = Effect_Console_foreign.log(Data_Show_foreign.showIntImpl(Golden_DerivedFunctor_Test_fromRight_S_w(0, Golden_DerivedFunctor_Test_Right(42))))()
-  local _ = Effect_Console_foreign.log(Data_Show_foreign.showIntImpl(Golden_DerivedFunctor_Test_fromRight_S_w(7, Golden_DerivedFunctor_Test_Left("no"))))()
-  return Effect_Console_foreign.log(Data_Show_foreign.showIntImpl(Golden_DerivedFunctor_Test_sumTree(Golden_DerivedFunctor_Test_functorTree.map(function( v1_S_2 )
+  local _ = Effect_Console_log(Data_Show_showIntImpl(Golden_DerivedFunctor_Test_fromRight_S_w(0, Golden_DerivedFunctor_Test_Right(42))))()
+  local _ = Effect_Console_log(Data_Show_showIntImpl(Golden_DerivedFunctor_Test_fromRight_S_w(7, Golden_DerivedFunctor_Test_Left("no"))))()
+  return Effect_Console_log(Data_Show_showIntImpl(Golden_DerivedFunctor_Test_sumTree(Golden_DerivedFunctor_Test_functorTree.map(function( v1_S_2 )
     return v1_S_2 * 2
   end)(Golden_DerivedFunctor_Test_Node(Golden_DerivedFunctor_Test_Node(Golden_DerivedFunctor_Test_Leaf)(1)(Golden_DerivedFunctor_Test_Leaf))(2)(Golden_DerivedFunctor_Test_Node(Golden_DerivedFunctor_Test_Leaf)(3)(Golden_DerivedFunctor_Test_Leaf))))))()
 end)()

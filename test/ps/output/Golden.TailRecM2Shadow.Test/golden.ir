@@ -14,16 +14,42 @@ UberModule
         [ ( Nothing, Name "pureE" ), ( Nothing, Name "bindE" ), ( Nothing, Name "untilE" ) ]
       ), Standalone
       ( QName
+        { qnameModuleName = ModuleName "Effect", qnameName = Name "untilE" }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "foreign" ) ) )
+        ( PropName "untilE" )
+      ), Standalone
+      ( QName
         { qnameModuleName = ModuleName "Effect.Ref", qnameName = Name "foreign"
         }, ForeignImport Nothing
         ( ModuleName "Effect.Ref" ) ".spago/p/refs/ee6e959ec21b752622e105a14816e7983b21b9a5/src/Effect/Ref.purs"
         [ ( Nothing, Name "_new" ), ( Nothing, Name "read" ), ( Nothing, Name "write" ) ]
       ), Standalone
       ( QName
+        { qnameModuleName = ModuleName "Effect.Ref", qnameName = Name "_new" }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Effect.Ref" ) ( Name "foreign" ) ) )
+        ( PropName "_new" )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Effect.Ref", qnameName = Name "read" }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Effect.Ref" ) ( Name "foreign" ) ) )
+        ( PropName "read" )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Effect.Ref", qnameName = Name "write" }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Effect.Ref" ) ( Name "foreign" ) ) )
+        ( PropName "write" )
+      ), Standalone
+      ( QName
         { qnameModuleName = ModuleName "Partial.Unsafe", qnameName = Name "foreign"
         }, ForeignImport Nothing
         ( ModuleName "Partial.Unsafe" ) ".spago/p/partial/2f5c69b1de8f88f1fbc9b98281c9436088ae0789/src/Partial/Unsafe.purs"
         [ ( Nothing, Name "_unsafePartial" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Partial.Unsafe", qnameName = Name "_unsafePartial"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Partial.Unsafe" ) ( Name "foreign" ) ) )
+        ( PropName "_unsafePartial" )
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "foreign"
@@ -51,7 +77,7 @@ UberModule
             { qnameModuleName = ModuleName "Effect", qnameName = Name "bindEffect"
             }, LiteralObject Nothing
             [
-              ( PropName "bind", ObjectProp ( Just Always )
+              ( PropName "bind", ObjectProp Nothing
                 ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "foreign" ) ) )
                 ( PropName "bindE" )
               ),
@@ -68,7 +94,7 @@ UberModule
             { qnameModuleName = ModuleName "Effect", qnameName = Name "applicativeEffect"
             }, LiteralObject Nothing
             [
-              ( PropName "pure", ObjectProp ( Just Always )
+              ( PropName "pure", ObjectProp Nothing
                 ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "foreign" ) ) )
                 ( PropName "pureE" )
               ),
@@ -419,14 +445,11 @@ UberModule
                                             ( Ref Nothing ( Local ( Name "a$12" ) ) :| [] ) :| []
                                           )
                                         )
-                                        ( ObjectProp ( Just Always )
-                                          ( Ref Nothing
-                                            ( Imported
-                                              ( ModuleName "Effect.Ref" )
-                                              ( Name "foreign" )
-                                            )
-                                          )
-                                          ( PropName "_new" ) :| []
+                                        ( Ref Nothing
+                                          ( Imported
+                                            ( ModuleName "Effect.Ref" )
+                                            ( Name "_new" )
+                                          ) :| []
                                         )
                                       )
                                       ( Ref Nothing
@@ -439,14 +462,8 @@ UberModule
                                     [ Standalone
                                       ( Nothing, Name "_", AppN Nothing
                                         ( AppN Nothing
-                                          ( ObjectProp ( Just Always )
-                                            ( Ref Nothing
-                                              ( Imported
-                                                ( ModuleName "Effect" )
-                                                ( Name "foreign" )
-                                              )
-                                            )
-                                            ( PropName "untilE" )
+                                          ( Ref Nothing
+                                            ( Imported ( ModuleName "Effect" ) ( Name "untilE" ) )
                                           )
                                           ( AbsN Nothing
                                             ( ParamUnused Nothing :| [] )
@@ -454,14 +471,11 @@ UberModule
                                               ( Standalone
                                                 ( Nothing, Name "v0$17", AppN Nothing
                                                   ( AppN Nothing
-                                                    ( ObjectProp ( Just Always )
-                                                      ( Ref Nothing
-                                                        ( Imported
-                                                          ( ModuleName "Effect.Ref" )
-                                                          ( Name "foreign" )
-                                                        )
+                                                    ( Ref Nothing
+                                                      ( Imported
+                                                        ( ModuleName "Effect.Ref" )
+                                                        ( Name "read" )
                                                       )
-                                                      ( PropName "read" )
                                                     )
                                                     ( Ref Nothing ( Local ( Name "r$16" ) ) :| [] )
                                                   )
@@ -508,14 +522,11 @@ UberModule
                                                           ( Nothing, Name "_", AppN Nothing
                                                             ( AppN Nothing
                                                               ( AppN Nothing
-                                                                ( ObjectProp ( Just Always )
-                                                                  ( Ref Nothing
-                                                                    ( Imported
-                                                                      ( ModuleName "Effect.Ref" )
-                                                                      ( Name "foreign" )
-                                                                    )
+                                                                ( Ref Nothing
+                                                                  ( Imported
+                                                                    ( ModuleName "Effect.Ref" )
+                                                                    ( Name "write" )
                                                                   )
-                                                                  ( PropName "write" )
                                                                 )
                                                                 ( Ref Nothing
                                                                   ( Local ( Name "e$19" ) ) :| []
@@ -604,14 +615,11 @@ UberModule
                                           ( PropName "map" )
                                         )
                                         ( AppN Nothing
-                                          ( ObjectProp ( Just Always )
-                                            ( Ref Nothing
-                                              ( Imported
-                                                ( ModuleName "Partial.Unsafe" )
-                                                ( Name "foreign" )
-                                              )
+                                          ( Ref Nothing
+                                            ( Imported
+                                              ( ModuleName "Partial.Unsafe" )
+                                              ( Name "_unsafePartial" )
                                             )
-                                            ( PropName "_unsafePartial" )
                                           )
                                           ( AbsN Nothing
                                             ( ParamUnused Nothing :| [] )
@@ -635,14 +643,8 @@ UberModule
                                         )
                                       )
                                       ( AppN Nothing
-                                        ( ObjectProp ( Just Always )
-                                          ( Ref Nothing
-                                            ( Imported
-                                              ( ModuleName "Effect.Ref" )
-                                              ( Name "foreign" )
-                                            )
-                                          )
-                                          ( PropName "read" )
+                                        ( Ref Nothing
+                                          ( Imported ( ModuleName "Effect.Ref" ) ( Name "read" ) )
                                         )
                                         ( Ref Nothing ( Local ( Name "r$16" ) ) :| [] ) :| []
                                       )
@@ -809,12 +811,12 @@ UberModule
           )
           ( AppN Nothing
             ( AppN Nothing
-              ( ObjectProp ( Just Always )
+              ( ObjectProp Nothing
                 ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
                 ( PropName "log" )
               )
               ( AppN Nothing
-                ( ObjectProp ( Just Always )
+                ( ObjectProp Nothing
                   ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
                   ( PropName "showIntImpl" )
                 )
@@ -852,14 +854,11 @@ UberModule
                                                 ) :| []
                                               )
                                             )
-                                            ( ObjectProp ( Just Always )
-                                              ( Ref Nothing
-                                                ( Imported
-                                                  ( ModuleName "Effect.Ref" )
-                                                  ( Name "foreign" )
-                                                )
-                                              )
-                                              ( PropName "_new" ) :| []
+                                            ( Ref Nothing
+                                              ( Imported
+                                                ( ModuleName "Effect.Ref" )
+                                                ( Name "_new" )
+                                              ) :| []
                                             )
                                           )
                                           ( Ref Nothing
@@ -872,14 +871,11 @@ UberModule
                                         [ Standalone
                                           ( Nothing, Name "_$545", AppN Nothing
                                             ( AppN Nothing
-                                              ( ObjectProp ( Just Always )
-                                                ( Ref Nothing
-                                                  ( Imported
-                                                    ( ModuleName "Effect" )
-                                                    ( Name "foreign" )
-                                                  )
+                                              ( Ref Nothing
+                                                ( Imported
+                                                  ( ModuleName "Effect" )
+                                                  ( Name "untilE" )
                                                 )
-                                                ( PropName "untilE" )
                                               )
                                               ( AbsN Nothing
                                                 ( ParamUnused Nothing :| [] )
@@ -887,14 +883,11 @@ UberModule
                                                   ( Standalone
                                                     ( Nothing, Name "v0$17$546", AppN Nothing
                                                       ( AppN Nothing
-                                                        ( ObjectProp ( Just Always )
-                                                          ( Ref Nothing
-                                                            ( Imported
-                                                              ( ModuleName "Effect.Ref" )
-                                                              ( Name "foreign" )
-                                                            )
+                                                        ( Ref Nothing
+                                                          ( Imported
+                                                            ( ModuleName "Effect.Ref" )
+                                                            ( Name "read" )
                                                           )
-                                                          ( PropName "read" )
                                                         )
                                                         ( Ref Nothing
                                                           ( Local ( Name "r$16$544" ) ) :| []
@@ -945,14 +938,11 @@ UberModule
                                                               ( Nothing, Name "_$548", AppN Nothing
                                                                 ( AppN Nothing
                                                                   ( AppN Nothing
-                                                                    ( ObjectProp ( Just Always )
-                                                                      ( Ref Nothing
-                                                                        ( Imported
-                                                                          ( ModuleName "Effect.Ref" )
-                                                                          ( Name "foreign" )
-                                                                        )
+                                                                    ( Ref Nothing
+                                                                      ( Imported
+                                                                        ( ModuleName "Effect.Ref" )
+                                                                        ( Name "write" )
                                                                       )
-                                                                      ( PropName "write" )
                                                                     )
                                                                     ( Ref Nothing
                                                                       ( Local
@@ -1047,14 +1037,11 @@ UberModule
                                               ( PropName "map" )
                                             )
                                             ( AppN Nothing
-                                              ( ObjectProp ( Just Always )
-                                                ( Ref Nothing
-                                                  ( Imported
-                                                    ( ModuleName "Partial.Unsafe" )
-                                                    ( Name "foreign" )
-                                                  )
+                                              ( Ref Nothing
+                                                ( Imported
+                                                  ( ModuleName "Partial.Unsafe" )
+                                                  ( Name "_unsafePartial" )
                                                 )
-                                                ( PropName "_unsafePartial" )
                                               )
                                               ( AbsN Nothing
                                                 ( ParamUnused Nothing :| [] )
@@ -1084,14 +1071,11 @@ UberModule
                                             )
                                           )
                                           ( AppN Nothing
-                                            ( ObjectProp ( Just Always )
-                                              ( Ref Nothing
-                                                ( Imported
-                                                  ( ModuleName "Effect.Ref" )
-                                                  ( Name "foreign" )
-                                                )
+                                            ( Ref Nothing
+                                              ( Imported
+                                                ( ModuleName "Effect.Ref" )
+                                                ( Name "read" )
                                               )
-                                              ( PropName "read" )
                                             )
                                             ( Ref Nothing
                                               ( Local ( Name "r$16$544" ) ) :| []

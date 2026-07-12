@@ -4,6 +4,7 @@ local Record_Unsafe_foreign = {
 local Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
 }
+local Effect_Console_log = Effect_Console_foreign.log
 local Type_Proxy_Proxy = {}
 local Data_HeytingAlgebra_heytingAlgebraBoolean
 Data_HeytingAlgebra_heytingAlgebraBoolean = {
@@ -196,7 +197,7 @@ end
 return (function()
   local _ = (function()
     local a_S_2_S_300 = Golden_GenericEqTwoTypes_Test_eq1(Golden_GenericEqTwoTypes_Test_cons_S_w(1, Golden_GenericEqTwoTypes_Test_cons_S_w(2, Golden_GenericEqTwoTypes_Test_Nil)))(Golden_GenericEqTwoTypes_Test_cons_S_w(1, Golden_GenericEqTwoTypes_Test_cons_S_w(2, Golden_GenericEqTwoTypes_Test_Nil)))
-    return Effect_Console_foreign.log((function()
+    return Effect_Console_log((function()
       if a_S_2_S_300 then
         return "true"
       elseif false == a_S_2_S_300 then
@@ -208,7 +209,7 @@ return (function()
   end)()()
   local _ = (function()
     local a_S_2_S_301 = Golden_GenericEqTwoTypes_Test_eq1(Golden_GenericEqTwoTypes_Test_cons_S_w(1, Golden_GenericEqTwoTypes_Test_Nil))(Golden_GenericEqTwoTypes_Test_cons_S_w(2, Golden_GenericEqTwoTypes_Test_Nil))
-    return Effect_Console_foreign.log((function()
+    return Effect_Console_log((function()
       if a_S_2_S_301 then
         return "true"
       elseif false == a_S_2_S_301 then
@@ -220,7 +221,7 @@ return (function()
   end)()()
   local _ = (function()
     local a_S_2_S_302 = Golden_GenericEqTwoTypes_Test_eq(Golden_GenericEqTwoTypes_Test_node_S_w(Golden_GenericEqTwoTypes_Test_Leaf, 1, Golden_GenericEqTwoTypes_Test_node_S_w(Golden_GenericEqTwoTypes_Test_Leaf, 2, Golden_GenericEqTwoTypes_Test_Leaf)))(Golden_GenericEqTwoTypes_Test_node_S_w(Golden_GenericEqTwoTypes_Test_Leaf, 1, Golden_GenericEqTwoTypes_Test_node_S_w(Golden_GenericEqTwoTypes_Test_Leaf, 2, Golden_GenericEqTwoTypes_Test_Leaf)))
-    return Effect_Console_foreign.log((function()
+    return Effect_Console_log((function()
       if a_S_2_S_302 then
         return "true"
       elseif false == a_S_2_S_302 then
@@ -232,7 +233,7 @@ return (function()
   end)()()
   return (function()
     local a_S_2_S_303 = Golden_GenericEqTwoTypes_Test_eq(Golden_GenericEqTwoTypes_Test_node_S_w(Golden_GenericEqTwoTypes_Test_Leaf, 1, Golden_GenericEqTwoTypes_Test_Leaf))(Golden_GenericEqTwoTypes_Test_node_S_w(Golden_GenericEqTwoTypes_Test_Leaf, 2, Golden_GenericEqTwoTypes_Test_Leaf))
-    return Effect_Console_foreign.log((function()
+    return Effect_Console_log((function()
       if a_S_2_S_303 then
         return "true"
       elseif false == a_S_2_S_303 then

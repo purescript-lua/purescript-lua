@@ -37,6 +37,7 @@ import Language.PureScript.Backend.IR.Optimizer
 import Language.PureScript.Backend.IR.Supply (runSupply)
 import Language.PureScript.Backend.IR.Types
   ( AlgebraicType (ProductType, SumType)
+  , Ann
   , Capture (..)
   , Exp
   , Grouping (..)
@@ -1673,6 +1674,85 @@ spec = describe "IR Optimizer" do
             ]
       annotateShow optimized
       accessorKept === [(QName mainModule (Name "x"), Just Never)]
+
+  describe "shares multi-use foreign accessors (issue #248)" do
+    -- With stage-2 promotion a kept accessor binding becomes a chunk
+    -- local, so at two or more use sites the shared form beats a field
+    -- read repeated per site. An unannotated accessor therefore
+    -- dissolves only into a single use site; @inline always@ restores
+    -- per-site dissolution at any use count.
+    let mainModule = moduleNameFromString "Main"
+        moduleWith ∷ [Grouping (Ann, Name, Exp)] → [Name] → Ann → Module
+        moduleWith bindings exports foreignAnn =
+          Module
+            { moduleName = mainModule
+            , moduleBindings = bindings
+            , moduleImports = []
+            , moduleExports = exports
+            , moduleReExports = Map.empty
+            , moduleForeigns = [(foreignAnn, Name "x")]
+            , modulePath = "Main.purs"
+            }
+        checked =
+          either (fail . show) pure
+            . optimizedUberModuleChecked
+            . Linker.makeUberModule (LinkAsModule mainModule)
+            . pure
+        accessorBindings ∷ Linker.UberModule → [QName]
+        accessorBindings optimized =
+          [ qn
+          | Standalone (qn, ObjectProp {}) ←
+              Linker.uberModuleBindings optimized
+          ]
+        xAccessor ∷ Ann → Exp
+        xAccessor ann =
+          setAnn ann $
+            objectProp
+              (refImported mainModule (Name "foreign"))
+              (PropName "x")
+
+    it "keeps an unannotated accessor referenced twice" do
+      optimized ←
+        checked $
+          moduleWith
+            [ Standalone (noAnn, Name "a", refLocal (Name "x"))
+            , Standalone (noAnn, Name "b", refLocal (Name "x"))
+            ]
+            [Name "a", Name "b"]
+            noAnn
+      accessorBindings optimized `shouldBe` [QName mainModule (Name "x")]
+      -- Both use sites reference the shared binding instead of
+      -- re-reading the field off the foreign table.
+      Linker.uberModuleExports optimized
+        `shouldBe` [ (Name "a", refImported mainModule (Name "x"))
+                   , (Name "b", refImported mainModule (Name "x"))
+                   ]
+
+    it "dissolves an unannotated accessor used once" do
+      optimized ←
+        checked $
+          moduleWith
+            [Standalone (noAnn, Name "a", refLocal (Name "x"))]
+            [Name "a"]
+            noAnn
+      accessorBindings optimized `shouldBe` []
+      Linker.uberModuleExports optimized
+        `shouldBe` [(Name "a", xAccessor noAnn)]
+
+    it "dissolves a twice-referenced accessor annotated @inline always" do
+      optimized ←
+        checked $
+          moduleWith
+            [ Standalone (noAnn, Name "a", refLocal (Name "x"))
+            , Standalone (noAnn, Name "b", refLocal (Name "x"))
+            ]
+            [Name "a", Name "b"]
+            (Just Always)
+      accessorBindings optimized `shouldBe` []
+      Linker.uberModuleExports optimized
+        `shouldBe` [ (Name "a", xAccessor (Just Always))
+                   , (Name "b", xAccessor (Just Always))
+                   ]
 
   describe "counts free references against the live module (#143)" do
     -- Within a single 'optimizeModule' run the use-once check must consult

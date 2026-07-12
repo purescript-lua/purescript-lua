@@ -8,10 +8,22 @@ UberModule
         [ ( Nothing, Name "showIntImpl" ) ]
       ), Standalone
       ( QName
+        { qnameModuleName = ModuleName "Data.Show", qnameName = Name "showIntImpl"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
+        ( PropName "showIntImpl" )
+      ), Standalone
+      ( QName
         { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "foreign"
         }, ForeignImport Nothing
         ( ModuleName "Effect.Console" ) ".spago/p/console/f82835a0b873aafe6bd7b14dd30cc150553d4ab9/src/Effect/Console.purs"
         [ ( Nothing, Name "log" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "log"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
+        ( PropName "log" )
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Data.Maybe", qnameName = Name "Nothing"
@@ -92,15 +104,9 @@ UberModule
           ( Standalone
             ( Nothing, Name "_", AppN Nothing
               ( AppN Nothing
-                ( ObjectProp ( Just Always )
-                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
-                  ( PropName "log" )
-                )
+                ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
                 ( AppN Nothing
-                  ( ObjectProp ( Just Always )
-                    ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
-                    ( PropName "showIntImpl" )
-                  )
+                  ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
                   ( AppN Nothing
                     ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "maybe$w" ) ) )
                     ( LiteralInt Nothing 0 :|
@@ -136,15 +142,9 @@ UberModule
           )
           ( AppN Nothing
             ( AppN Nothing
-              ( ObjectProp ( Just Always )
-                ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
-                ( PropName "log" )
-              )
+              ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
               ( AppN Nothing
-                ( ObjectProp ( Just Always )
-                  ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
-                  ( PropName "showIntImpl" )
-                )
+                ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
                 ( AppN Nothing
                   ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "maybe$w" ) ) )
                   ( LiteralInt Nothing 0 :|

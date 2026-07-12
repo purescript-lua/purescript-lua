@@ -36,7 +36,7 @@ UberModule
         )
       ),
       ( Name "inlineIntoMe2", AppN Nothing
-        ( ObjectProp ( Just Always )
+        ( ObjectProp Nothing
           ( Ref Nothing ( Imported ( ModuleName "Golden.Annotations.M1" ) ( Name "foreign" ) ) )
           ( PropName "dontInlineClosure" )
         )

@@ -5,7 +5,6 @@ module Language.PureScript.Backend.IR.Linker where
 import Control.Lens (over)
 import Data.Graph (graphFromEdges', reverseTopSort)
 import Data.Set qualified as Set
-import Language.PureScript.Backend.IR.Inliner qualified as Inline
 import Language.PureScript.Backend.IR.Names
   ( ModuleName (..)
   , Name (..)
@@ -63,24 +62,25 @@ that downstream passes pattern-match by structure, so the producer here and the
 consumers must agree.
 
   * One 'ForeignImport' per module that has any foreigns, bound to the special
-    name @foreign@ (@QName moduleName (Name "foreign")@). It carries the module
+    name @foreign@ (@QName moduleName 'foreignName'@). It carries the module
     name, the source path, and the list of foreign names.
   * One 'ObjectProp' per foreign name, bound to @QName moduleName name@, that
     reads that name as a field off the @foreign@ import. It carries the name's
-    @inline@ pragma annotation when one is declared, and defaults to
-    'Inline.Always'.
+    @inline@ pragma annotation when one is declared and no annotation
+    otherwise, leaving the dissolve-or-share decision to the optimizer's use
+    count (see Note [Inline annotations and inlining heuristics]).
 
 'Language.PureScript.Backend.IR.DCE' depends on exactly these shapes: it splits
 the foreigns into 'ForeignImport's and 'ObjectProp's by pattern, and when it
 keeps a 'ForeignImport' it prunes the carried name list to the reachable names.
-Change either shape here and the DCE patterns silently stop matching.
+'Language.PureScript.Backend.IR.Optimizer.shareForeignAccessors' recognises
+dissolved copies of the accessor shape via 'foreignAccessorQName'. Change
+either shape here and those patterns silently stop matching.
 -}
 foreignBindings ∷ Module → [(QName, Exp)]
 foreignBindings Module {moduleName, modulePath, moduleForeigns} =
   foreignModuleBinding <> foreignNamesBindings
  where
-  foreignName = Name "foreign"
-
   foreignModuleBinding ∷ [(QName, Exp)] =
     [ ( QName moduleName foreignName
       , ForeignImport noAnn moduleName modulePath moduleForeigns
@@ -93,10 +93,29 @@ foreignBindings Module {moduleName, modulePath, moduleForeigns} =
     moduleForeigns <&> \(ann, name) →
       ( QName moduleName name
       , ObjectProp
-          (ann <|> Just Inline.Always)
+          ann
           (refImported moduleName foreignName)
           (PropName (nameToText name))
       )
+
+{- | The special name a module's 'ForeignImport' table is bound to
+(Note [Foreign bindings structure emitted by the Linker]). @foreign@ is a
+PureScript keyword, so no user-defined top-level binding can collide with it.
+-}
+foreignName ∷ Name
+foreignName = Name "foreign"
+
+{- | Recognise the accessor shape 'foreignBindings' emits — a field read off a
+module's @foreign@ import — and recover the 'QName' the accessor was bound
+to. Total on any expression: only the linker builds references to
+'foreignName', and the property name round-trips through 'nameToText' (see
+Note [Foreign bindings structure emitted by the Linker]).
+-}
+foreignAccessorQName ∷ RawExp ann → Maybe QName
+foreignAccessorQName = \case
+  ObjectProp _ann (Ref _refAnn (Imported modname name)) (PropName prop)
+    | name == foreignName → Just (QName modname (Name prop))
+  _ → Nothing
 
 qualifiedModuleBindings ∷ Module → [Grouping (QName, Exp)]
 qualifiedModuleBindings Module {moduleName, moduleBindings, moduleForeigns} =

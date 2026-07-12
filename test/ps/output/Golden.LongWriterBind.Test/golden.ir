@@ -35,7 +35,7 @@ UberModule
         { qnameModuleName = ModuleName "Data.Semigroup", qnameName = Name "semigroupArray"
         }, LiteralObject Nothing
         [
-          ( PropName "append", ObjectProp ( Just Always )
+          ( PropName "append", ObjectProp Nothing
             ( Ref Nothing ( Imported ( ModuleName "Data.Semigroup" ) ( Name "foreign" ) ) )
             ( PropName "concatArray" )
           )
@@ -7175,7 +7175,7 @@ UberModule
         { qnameModuleName = ModuleName "Golden.LongWriterBind.Test", qnameName = Name "compute"
         }, ObjectProp Nothing
         ( AppN Nothing
-          ( ObjectProp ( Just Always )
+          ( ObjectProp Nothing
             ( Ref Nothing ( Imported ( ModuleName "Unsafe.Coerce" ) ( Name "foreign" ) ) )
             ( PropName "unsafeCoerce" )
           )
@@ -7194,12 +7194,12 @@ UberModule
         ( Imported ( ModuleName "Golden.LongWriterBind.Test" ) ( Name "compute" ) )
       ),
       ( Name "main", AppN Nothing
-        ( ObjectProp ( Just Always )
+        ( ObjectProp Nothing
           ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
           ( PropName "log" )
         )
         ( AppN Nothing
-          ( ObjectProp ( Just Always )
+          ( ObjectProp Nothing
             ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
             ( PropName "showIntImpl" )
           )

@@ -7638,7 +7638,7 @@ UberModule
       ( QName
         { qnameModuleName = ModuleName "Golden.LongExceptBind.Test", qnameName = Name "compute"
         }, AppN Nothing
-        ( ObjectProp ( Just Always )
+        ( ObjectProp Nothing
           ( Ref Nothing ( Imported ( ModuleName "Unsafe.Coerce" ) ( Name "foreign" ) ) )
           ( PropName "unsafeCoerce" )
         )
@@ -7653,7 +7653,7 @@ UberModule
         ( Imported ( ModuleName "Golden.LongExceptBind.Test" ) ( Name "compute" ) )
       ),
       ( Name "main", AppN Nothing
-        ( ObjectProp ( Just Always )
+        ( ObjectProp Nothing
           ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
           ( PropName "log" )
         )

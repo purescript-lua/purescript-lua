@@ -2690,7 +2690,7 @@ UberModule
         ( Imported ( ModuleName "Golden.LongEitherBind.Test" ) ( Name "compute" ) )
       ),
       ( Name "main", AppN Nothing
-        ( ObjectProp ( Just Always )
+        ( ObjectProp Nothing
           ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
           ( PropName "log" )
         )

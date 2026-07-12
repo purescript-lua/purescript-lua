@@ -8,16 +8,44 @@ UberModule
         [ ( Nothing, Name "numSub" ) ]
       ), Standalone
       ( QName
+        { qnameModuleName = ModuleName "Data.Ring", qnameName = Name "numSub" }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Data.Ring" ) ( Name "foreign" ) ) )
+        ( PropName "numSub" )
+      ), Standalone
+      ( QName
         { qnameModuleName = ModuleName "Data.Number", qnameName = Name "foreign"
         }, ForeignImport Nothing
         ( ModuleName "Data.Number" ) ".spago/p/numbers/e1489d3cf8621a43bbe21fc9c182fede9411d440/src/Data/Number.purs"
         [ ( Nothing, Name "nan" ), ( Nothing, Name "isNaN" ), ( Nothing, Name "infinity" ) ]
       ), Standalone
       ( QName
+        { qnameModuleName = ModuleName "Data.Number", qnameName = Name "infinity"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Data.Number" ) ( Name "foreign" ) ) )
+        ( PropName "infinity" )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Number", qnameName = Name "isNaN"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Data.Number" ) ( Name "foreign" ) ) )
+        ( PropName "isNaN" )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Number", qnameName = Name "nan" }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Data.Number" ) ( Name "foreign" ) ) )
+        ( PropName "nan" )
+      ), Standalone
+      ( QName
         { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "foreign"
         }, ForeignImport Nothing
         ( ModuleName "Effect.Console" ) ".spago/p/console/f82835a0b873aafe6bd7b14dd30cc150553d4ab9/src/Effect/Console.purs"
         [ ( Nothing, Name "log" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "log"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
+        ( PropName "log" )
       )
     ], uberModuleForeigns = [], uberModuleExports =
     [
@@ -29,21 +57,12 @@ UberModule
               ( Let Nothing
                 ( Standalone
                   ( Nothing, Name "a$2$325", AppN Nothing
-                    ( ObjectProp ( Just Always )
-                      ( Ref Nothing ( Imported ( ModuleName "Data.Number" ) ( Name "foreign" ) ) )
-                      ( PropName "isNaN" )
-                    )
-                    ( ObjectProp ( Just Always )
-                      ( Ref Nothing ( Imported ( ModuleName "Data.Number" ) ( Name "foreign" ) ) )
-                      ( PropName "nan" ) :| []
-                    )
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Number" ) ( Name "isNaN" ) ) )
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Number" ) ( Name "nan" ) ) :| [] )
                   ) :| []
                 )
                 ( AppN Nothing
-                  ( ObjectProp ( Just Always )
-                    ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
-                    ( PropName "log" )
-                  )
+                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
                   ( IfThenElse Nothing
                     ( Ref Nothing ( Local ( Name "a$2$325" ) ) )
                     ( LiteralString Nothing "true" )
@@ -64,38 +83,20 @@ UberModule
                 ( Let Nothing
                   ( Standalone
                     ( Nothing, Name "a$2$327", AppN Nothing
-                      ( ObjectProp ( Just Always )
-                        ( Ref Nothing
-                          ( Imported ( ModuleName "Data.Number" ) ( Name "foreign" ) )
-                        )
-                        ( PropName "isNaN" )
-                      )
+                      ( Ref Nothing ( Imported ( ModuleName "Data.Number" ) ( Name "isNaN" ) ) )
                       ( AppN Nothing
                         ( AppN Nothing
-                          ( ObjectProp Nothing
-                            ( Ref Nothing
-                              ( Imported ( ModuleName "Data.Ring" ) ( Name "foreign" ) )
-                            )
-                            ( PropName "numSub" )
-                          )
+                          ( Ref Nothing ( Imported ( ModuleName "Data.Ring" ) ( Name "numSub" ) ) )
                           ( LiteralFloat Nothing 0.0 :| [] )
                         )
-                        ( ObjectProp ( Just Always )
-                          ( Ref Nothing
-                            ( Imported ( ModuleName "Data.Number" ) ( Name "foreign" ) )
-                          )
-                          ( PropName "nan" ) :| []
+                        ( Ref Nothing
+                          ( Imported ( ModuleName "Data.Number" ) ( Name "nan" ) ) :| []
                         ) :| []
                       )
                     ) :| []
                   )
                   ( AppN Nothing
-                    ( ObjectProp ( Just Always )
-                      ( Ref Nothing
-                        ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) )
-                      )
-                      ( PropName "log" )
-                    )
+                    ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
                     ( IfThenElse Nothing
                       ( Ref Nothing ( Local ( Name "a$2$327" ) ) )
                       ( LiteralString Nothing "true" )
@@ -115,43 +116,22 @@ UberModule
                 ( Let Nothing
                   ( Standalone
                     ( Nothing, Name "a$2$329", AppN Nothing
-                      ( ObjectProp ( Just Always )
-                        ( Ref Nothing
-                          ( Imported ( ModuleName "Data.Number" ) ( Name "foreign" ) )
-                        )
-                        ( PropName "isNaN" )
-                      )
+                      ( Ref Nothing ( Imported ( ModuleName "Data.Number" ) ( Name "isNaN" ) ) )
                       ( AppN Nothing
                         ( AppN Nothing
-                          ( ObjectProp Nothing
-                            ( Ref Nothing
-                              ( Imported ( ModuleName "Data.Ring" ) ( Name "foreign" ) )
-                            )
-                            ( PropName "numSub" )
-                          )
-                          ( ObjectProp ( Just Always )
-                            ( Ref Nothing
-                              ( Imported ( ModuleName "Data.Number" ) ( Name "foreign" ) )
-                            )
-                            ( PropName "infinity" ) :| []
+                          ( Ref Nothing ( Imported ( ModuleName "Data.Ring" ) ( Name "numSub" ) ) )
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Data.Number" ) ( Name "infinity" ) ) :| []
                           )
                         )
-                        ( ObjectProp ( Just Always )
-                          ( Ref Nothing
-                            ( Imported ( ModuleName "Data.Number" ) ( Name "foreign" ) )
-                          )
-                          ( PropName "infinity" ) :| []
+                        ( Ref Nothing
+                          ( Imported ( ModuleName "Data.Number" ) ( Name "infinity" ) ) :| []
                         ) :| []
                       )
                     ) :| []
                   )
                   ( AppN Nothing
-                    ( ObjectProp ( Just Always )
-                      ( Ref Nothing
-                        ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) )
-                      )
-                      ( PropName "log" )
-                    )
+                    ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
                     ( IfThenElse Nothing
                       ( Ref Nothing ( Local ( Name "a$2$329" ) ) )
                       ( LiteralString Nothing "true" )
@@ -171,22 +151,12 @@ UberModule
                 ( Let Nothing
                   ( Standalone
                     ( Nothing, Name "a$2$330", AppN Nothing
-                      ( ObjectProp ( Just Always )
-                        ( Ref Nothing
-                          ( Imported ( ModuleName "Data.Number" ) ( Name "foreign" ) )
-                        )
-                        ( PropName "isNaN" )
-                      )
+                      ( Ref Nothing ( Imported ( ModuleName "Data.Number" ) ( Name "isNaN" ) ) )
                       ( LiteralFloat Nothing 42.0 :| [] )
                     ) :| []
                   )
                   ( AppN Nothing
-                    ( ObjectProp ( Just Always )
-                      ( Ref Nothing
-                        ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) )
-                      )
-                      ( PropName "log" )
-                    )
+                    ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
                     ( IfThenElse Nothing
                       ( Ref Nothing ( Local ( Name "a$2$330" ) ) )
                       ( LiteralString Nothing "true" )
@@ -208,21 +178,14 @@ UberModule
             ( Let Nothing
               ( Standalone
                 ( Nothing, Name "a$2$331", AppN Nothing
-                  ( ObjectProp ( Just Always )
-                    ( Ref Nothing ( Imported ( ModuleName "Data.Number" ) ( Name "foreign" ) ) )
-                    ( PropName "isNaN" )
-                  )
-                  ( ObjectProp ( Just Always )
-                    ( Ref Nothing ( Imported ( ModuleName "Data.Number" ) ( Name "foreign" ) ) )
-                    ( PropName "infinity" ) :| []
+                  ( Ref Nothing ( Imported ( ModuleName "Data.Number" ) ( Name "isNaN" ) ) )
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Data.Number" ) ( Name "infinity" ) ) :| []
                   )
                 ) :| []
               )
               ( AppN Nothing
-                ( ObjectProp ( Just Always )
-                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
-                  ( PropName "log" )
-                )
+                ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
                 ( IfThenElse Nothing
                   ( Ref Nothing ( Local ( Name "a$2$331" ) ) )
                   ( LiteralString Nothing "true" )
