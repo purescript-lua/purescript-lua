@@ -132,29 +132,29 @@ UberModule
         ( Imported ( ModuleName "Golden.FloatIn.Test" ) ( Name "expensive" ) )
       ),
       ( Name "pick", AbsN Nothing
-        ( ParamNamed Nothing ( Name "pick$p1$216" ) :| [] )
+        ( ParamNamed Nothing ( Name "pick$p1$211" ) :| [] )
         ( AbsN Nothing
-          ( ParamNamed Nothing ( Name "pick$p2$217" ) :| [] )
+          ( ParamNamed Nothing ( Name "pick$p2$212" ) :| [] )
           ( AppN Nothing
             ( Ref Nothing ( Imported ( ModuleName "Golden.FloatIn.Test" ) ( Name "pick$w" ) ) )
             ( Ref Nothing
-              ( Local ( Name "pick$p1$216" ) ) :|
-              [ Ref Nothing ( Local ( Name "pick$p2$217" ) ) ]
+              ( Local ( Name "pick$p1$211" ) ) :|
+              [ Ref Nothing ( Local ( Name "pick$p2$212" ) ) ]
             )
           )
         )
       ),
       ( Name "pickShared", AbsN Nothing
-        ( ParamNamed Nothing ( Name "pickShared$p1$218" ) :| [] )
+        ( ParamNamed Nothing ( Name "pickShared$p1$213" ) :| [] )
         ( AbsN Nothing
-          ( ParamNamed Nothing ( Name "pickShared$p2$219" ) :| [] )
+          ( ParamNamed Nothing ( Name "pickShared$p2$214" ) :| [] )
           ( AppN Nothing
             ( Ref Nothing
               ( Imported ( ModuleName "Golden.FloatIn.Test" ) ( Name "pickShared$w" ) )
             )
             ( Ref Nothing
-              ( Local ( Name "pickShared$p1$218" ) ) :|
-              [ Ref Nothing ( Local ( Name "pickShared$p2$219" ) ) ]
+              ( Local ( Name "pickShared$p1$213" ) ) :|
+              [ Ref Nothing ( Local ( Name "pickShared$p2$214" ) ) ]
             )
           )
         )

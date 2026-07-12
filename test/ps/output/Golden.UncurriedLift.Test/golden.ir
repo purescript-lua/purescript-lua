@@ -17,12 +17,7 @@ UberModule
         { qnameModuleName = ModuleName "Control.Monad.ST.Internal", qnameName = Name "foreign"
         }, ForeignImport Nothing
         ( ModuleName "Control.Monad.ST.Internal" ) ".spago/p/st/6d41fd264a05b9a089e79322b22b906597ea7c36/src/Control/Monad/ST/Internal.purs"
-        [
-          ( Nothing, Name "map_" ),
-          ( Nothing, Name "pure_" ),
-          ( Nothing, Name "bind_" ),
-          ( Nothing, Name "run" )
-        ]
+        [ ( Nothing, Name "pure_" ), ( Nothing, Name "run" ) ]
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "foreign"
@@ -35,191 +30,14 @@ UberModule
         }, ObjectProp Nothing
         ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
         ( PropName "log" )
-      ), RecursiveGroup
-      (
-        ( QName
-          { qnameModuleName = ModuleName "Control.Monad.ST.Internal", qnameName = Name "monadST"
-          }, LiteralObject Nothing
-          [
-            ( PropName "Applicative0", AbsN Nothing
-              ( ParamUnused Nothing :| [] )
-              ( Ref Nothing
-                ( Imported ( ModuleName "Control.Monad.ST.Internal" ) ( Name "applicativeST" ) )
-              )
-            ),
-            ( PropName "Bind1", AbsN Nothing
-              ( ParamUnused Nothing :| [] )
-              ( Ref Nothing
-                ( Imported ( ModuleName "Control.Monad.ST.Internal" ) ( Name "bindST" ) )
-              )
-            )
-          ]
-        ) :|
-        [
-          ( QName
-            { qnameModuleName = ModuleName "Control.Monad.ST.Internal", qnameName = Name "bindST"
-            }, LiteralObject Nothing
-            [
-              ( PropName "bind", ObjectProp Nothing
-                ( Ref Nothing
-                  ( Imported ( ModuleName "Control.Monad.ST.Internal" ) ( Name "foreign" ) )
-                )
-                ( PropName "bind_" )
-              ),
-              ( PropName "Apply0", AbsN Nothing
-                ( ParamUnused Nothing :| [] )
-                ( AppN Nothing
-                  ( Ref Nothing
-                    ( Imported ( ModuleName "Control.Monad.ST.Internal" ) ( Name "Lazy_applyST" ) )
-                  )
-                  ( LiteralInt Nothing 0 :| [] )
-                )
-              )
-            ]
-          ),
-          ( QName
-            { qnameModuleName = ModuleName "Control.Monad.ST.Internal", qnameName = Name "applicativeST"
-            }, LiteralObject Nothing
-            [
-              ( PropName "pure", ObjectProp Nothing
-                ( Ref Nothing
-                  ( Imported ( ModuleName "Control.Monad.ST.Internal" ) ( Name "foreign" ) )
-                )
-                ( PropName "pure_" )
-              ),
-              ( PropName "Apply0", AbsN Nothing
-                ( ParamUnused Nothing :| [] )
-                ( AppN Nothing
-                  ( Ref Nothing
-                    ( Imported ( ModuleName "Control.Monad.ST.Internal" ) ( Name "Lazy_applyST" ) )
-                  )
-                  ( LiteralInt Nothing 0 :| [] )
-                )
-              )
-            ]
-          ),
-          ( QName
-            { qnameModuleName = ModuleName "Control.Monad.ST.Internal", qnameName = Name "Lazy_applyST"
-            }, AppN Nothing
-            ( AppN Nothing
-              ( Ref Nothing ( Local ( Name "PSLUA_runtime_lazy" ) ) )
-              ( LiteralString Nothing "applyST" :| [] )
-            )
-            ( AbsN Nothing
-              ( ParamUnused Nothing :| [] )
-              ( LiteralObject Nothing
-                [
-                  ( PropName "apply", Let Nothing
-                    ( Standalone
-                      ( Nothing, Name "bind$759", ObjectProp Nothing
-                        ( AppN Nothing
-                          ( ObjectProp Nothing
-                            ( Ref Nothing
-                              ( Imported
-                                ( ModuleName "Control.Monad.ST.Internal" )
-                                ( Name "monadST" )
-                              )
-                            )
-                            ( PropName "Bind1" )
-                          )
-                          ( Ref Nothing
-                            ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| []
-                          )
-                        )
-                        ( PropName "bind" )
-                      ) :| []
-                    )
-                    ( AbsN Nothing
-                      ( ParamNamed Nothing ( Name "f$760" ) :| [] )
-                      ( AbsN Nothing
-                        ( ParamNamed Nothing ( Name "a$761" ) :| [] )
-                        ( AppN Nothing
-                          ( AppN Nothing
-                            ( Ref Nothing ( Local ( Name "bind$759" ) ) )
-                            ( Ref Nothing ( Local ( Name "f$760" ) ) :| [] )
-                          )
-                          ( AbsN Nothing
-                            ( ParamNamed Nothing ( Name "f'$762" ) :| [] )
-                            ( AppN Nothing
-                              ( AppN Nothing
-                                ( Ref Nothing ( Local ( Name "bind$759" ) ) )
-                                ( Ref Nothing ( Local ( Name "a$761" ) ) :| [] )
-                              )
-                              ( AbsN Nothing
-                                ( ParamNamed Nothing ( Name "a'$763" ) :| [] )
-                                ( AppN Nothing
-                                  ( ObjectProp Nothing
-                                    ( AppN Nothing
-                                      ( ObjectProp Nothing
-                                        ( Ref Nothing
-                                          ( Imported
-                                            ( ModuleName "Control.Monad.ST.Internal" )
-                                            ( Name "monadST" )
-                                          )
-                                        )
-                                        ( PropName "Applicative0" )
-                                      )
-                                      ( Ref Nothing
-                                        ( Imported
-                                          ( ModuleName "Prim" )
-                                          ( Name "undefined" )
-                                        ) :| []
-                                      )
-                                    )
-                                    ( PropName "pure" )
-                                  )
-                                  ( AppN Nothing
-                                    ( Ref Nothing ( Local ( Name "f'$762" ) ) )
-                                    ( Ref Nothing ( Local ( Name "a'$763" ) ) :| [] ) :| []
-                                  )
-                                ) :| []
-                              )
-                            ) :| []
-                          )
-                        )
-                      )
-                    )
-                  ),
-                  ( PropName "Functor0", AbsN Nothing
-                    ( ParamUnused Nothing :| [] )
-                    ( LiteralObject Nothing
-                      [
-                        ( PropName "map", ObjectProp Nothing
-                          ( Ref Nothing
-                            ( Imported
-                              ( ModuleName "Control.Monad.ST.Internal" )
-                              ( Name "foreign" )
-                            )
-                          )
-                          ( PropName "map_" )
-                        )
-                      ]
-                    )
-                  )
-                ]
-              ) :| []
-            )
-          )
-        ]
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.UncurriedLift.Test", qnameName = Name "sumST"
         }, AbsN Nothing
         ( ParamNamed Nothing ( Name "a$705" ) :| [ ParamNamed Nothing ( Name "b$706" ) ] )
-        ( AppN Nothing
-          ( AppN Nothing
-            ( ObjectProp Nothing
-              ( Ref Nothing
-                ( Imported ( ModuleName "Control.Monad.ST.Internal" ) ( Name "applicativeST" ) )
-              )
-              ( PropName "pure" )
-            )
-            ( PrimBinOp Nothing PrimAdd
-              ( Ref Nothing ( Local ( Name "a$705" ) ) )
-              ( Ref Nothing ( Local ( Name "b$706" ) ) ) :| []
-            )
-          )
-          ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+        ( PrimBinOp Nothing PrimAdd
+          ( Ref Nothing ( Local ( Name "a$705" ) ) )
+          ( Ref Nothing ( Local ( Name "b$706" ) ) )
         )
       ), Standalone
       ( QName

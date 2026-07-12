@@ -73,18 +73,18 @@ UberModule
                   ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
                   ( Let Nothing
                     ( Standalone
-                      ( Nothing, Name "v$235", LiteralArray Nothing
+                      ( Nothing, Name "v$226", LiteralArray Nothing
                         [ LiteralInt Nothing 10, LiteralInt Nothing 20 ]
                       ) :| []
                     )
                     ( IfThenElse Nothing
                       ( Eq Nothing
                         ( LiteralInt Nothing 2 )
-                        ( ArrayLength Nothing ( Ref Nothing ( Local ( Name "v$235" ) ) ) )
+                        ( ArrayLength Nothing ( Ref Nothing ( Local ( Name "v$226" ) ) ) )
                       )
                       ( PrimBinOp Nothing PrimAdd
-                        ( ArrayIndex Nothing ( Ref Nothing ( Local ( Name "v$235" ) ) ) 0 )
-                        ( ArrayIndex Nothing ( Ref Nothing ( Local ( Name "v$235" ) ) ) 1 )
+                        ( ArrayIndex Nothing ( Ref Nothing ( Local ( Name "v$226" ) ) ) 0 )
+                        ( ArrayIndex Nothing ( Ref Nothing ( Local ( Name "v$226" ) ) ) 1 )
                       )
                       ( LiteralInt Nothing ( -1 ) )
                     ) :| []
@@ -101,18 +101,18 @@ UberModule
                     ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
                     ( Let Nothing
                       ( Standalone
-                        ( Nothing, Name "v$242", LiteralArray Nothing
+                        ( Nothing, Name "v$233", LiteralArray Nothing
                           [ LiteralInt Nothing 1, LiteralInt Nothing 2, LiteralInt Nothing 3 ]
                         ) :| []
                       )
                       ( IfThenElse Nothing
                         ( Eq Nothing
                           ( LiteralInt Nothing 2 )
-                          ( ArrayLength Nothing ( Ref Nothing ( Local ( Name "v$242" ) ) ) )
+                          ( ArrayLength Nothing ( Ref Nothing ( Local ( Name "v$233" ) ) ) )
                         )
                         ( PrimBinOp Nothing PrimAdd
-                          ( ArrayIndex Nothing ( Ref Nothing ( Local ( Name "v$242" ) ) ) 0 )
-                          ( ArrayIndex Nothing ( Ref Nothing ( Local ( Name "v$242" ) ) ) 1 )
+                          ( ArrayIndex Nothing ( Ref Nothing ( Local ( Name "v$233" ) ) ) 0 )
+                          ( ArrayIndex Nothing ( Ref Nothing ( Local ( Name "v$233" ) ) ) 1 )
                         )
                         ( LiteralInt Nothing ( -1 ) )
                       ) :| []
@@ -150,16 +150,16 @@ UberModule
                 ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
                 ( Let Nothing
                   ( Standalone
-                    ( Nothing, Name "v$256", LiteralArray Nothing
+                    ( Nothing, Name "v$247", LiteralArray Nothing
                       [ LiteralInt Nothing 7, LiteralInt Nothing 8, LiteralInt Nothing 9 ]
                     ) :| []
                   )
                   ( IfThenElse Nothing
                     ( Eq Nothing
                       ( LiteralInt Nothing 3 )
-                      ( ArrayLength Nothing ( Ref Nothing ( Local ( Name "v$256" ) ) ) )
+                      ( ArrayLength Nothing ( Ref Nothing ( Local ( Name "v$247" ) ) ) )
                     )
-                    ( ArrayIndex Nothing ( Ref Nothing ( Local ( Name "v$256" ) ) ) 2 )
+                    ( ArrayIndex Nothing ( Ref Nothing ( Local ( Name "v$247" ) ) ) 2 )
                     ( LiteralInt Nothing ( -1 ) )
                   ) :| []
                 ) :| []

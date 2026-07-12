@@ -22,16 +22,16 @@ UberModule
       ( QName
         { qnameModuleName = ModuleName "Golden.LongReaderBind.Test", qnameName = Name "add$w"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "x$469$501" ) :| [ ParamNamed Nothing ( Name "y$470$502" ) ] )
+        ( ParamNamed Nothing ( Name "x$472$504" ) :| [ ParamNamed Nothing ( Name "y$473$505" ) ] )
         ( PrimBinOp Nothing PrimAdd
-          ( Ref Nothing ( Local ( Name "x$469$501" ) ) )
-          ( Ref Nothing ( Local ( Name "y$470$502" ) ) )
+          ( Ref Nothing ( Local ( Name "x$472$504" ) ) )
+          ( Ref Nothing ( Local ( Name "y$473$505" ) ) )
         )
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.LongReaderBind.Test", qnameName = Name "go"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "r$512$551" ) :| [] )
+        ( ParamNamed Nothing ( Name "r$515$554" ) :| [] )
         ( AppN Nothing
           ( Ref Nothing ( Imported ( ModuleName "Golden.LongReaderBind.Test" ) ( Name "add$w" ) ) )
           ( AppN Nothing
@@ -39,10 +39,10 @@ UberModule
               ( Imported ( ModuleName "Golden.LongReaderBind.Test" ) ( Name "add$w" ) )
             )
             ( Ref Nothing
-              ( Local ( Name "r$512$551" ) ) :|
-              [ Ref Nothing ( Local ( Name "r$512$551" ) ) ]
+              ( Local ( Name "r$515$554" ) ) :|
+              [ Ref Nothing ( Local ( Name "r$515$554" ) ) ]
             ) :|
-            [ Ref Nothing ( Local ( Name "r$512$551" ) ) ]
+            [ Ref Nothing ( Local ( Name "r$515$554" ) ) ]
           )
         )
       ), Standalone

@@ -5,8 +5,8 @@ local Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
 }
 local Effect_Console_log = Effect_Console_foreign.log
-local Golden_Loopification_Test_sub_S_w = function(x_S_188_S_221, y_S_189_S_222)
-  return x_S_188_S_221 - y_S_189_S_222
+local Golden_Loopification_Test_sub_S_w = function(x_S_185_S_216, y_S_186_S_217)
+  return x_S_185_S_216 - y_S_186_S_217
 end
 local Golden_Loopification_Test_sumTo_S_w = function(acc, n)
   while true do
@@ -99,21 +99,21 @@ return (function()
   local _ = Effect_Console_log(Data_Show_showIntImpl(Golden_Loopification_Test_countdown(5)))()
   local _ = Effect_Console_log(Data_Show_showIntImpl(Golden_Loopification_Test_sumTo_S_w(0, 10)))()
   local _ = Effect_Console_log(Data_Show_showIntImpl((function()
-    local go_S_w_S_264
-    go_S_w_S_264 = function(acc_S_265, n_S_266)
+    local go_S_w_S_255
+    go_S_w_S_255 = function(acc_S_256, n_S_257)
       while true do
-        if n_S_266 == 0 then
-          return acc_S_265
+        if n_S_257 == 0 then
+          return acc_S_256
         else
-          acc_S_265, n_S_266 = acc_S_265 + n_S_266 * n_S_266, Golden_Loopification_Test_sub_S_w(n_S_266, 1)
+          acc_S_256, n_S_257 = acc_S_256 + n_S_257 * n_S_257, Golden_Loopification_Test_sub_S_w(n_S_257, 1)
         end
       end
     end
-    return go_S_w_S_264(0, 4)
+    return go_S_w_S_255(0, 4)
   end)()))()
   local _ = Effect_Console_log(Data_Show_showIntImpl(Golden_Loopification_Test_mc91(1)))()
-  local _ = Effect_Console_log(Data_Show_showIntImpl(Golden_Loopification_Test_sumCPS_S_w(5, function( x_S_228 )
-    return x_S_228
+  local _ = Effect_Console_log(Data_Show_showIntImpl(Golden_Loopification_Test_sumCPS_S_w(5, function( x_S_223 )
+    return x_S_223
   end)))()
   return Effect_Console_log(Data_Show_showIntImpl(Golden_Loopification_Test_countDrop_S_w(3, 99)))()
 end)()

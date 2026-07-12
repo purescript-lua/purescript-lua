@@ -32,6 +32,11 @@ UberModule
         [ ( Nothing, Name "pureE" ), ( Nothing, Name "bindE" ) ]
       ), Standalone
       ( QName
+        { qnameModuleName = ModuleName "Effect", qnameName = Name "pureE" }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "foreign" ) ) )
+        ( PropName "pureE" )
+      ), Standalone
+      ( QName
         { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "foreign"
         }, ForeignImport Nothing
         ( ModuleName "Effect.Console" ) ".spago/p/console/f82835a0b873aafe6bd7b14dd30cc150553d4ab9/src/Effect/Console.purs"
@@ -53,7 +58,7 @@ UberModule
             ( PropName "foldMap", AbsN Nothing
               ( ParamNamed Nothing ( Name "dictMonoid" ) :| [] )
               ( AbsN Nothing
-                ( ParamNamed Nothing ( Name "f$917" ) :| [] )
+                ( ParamNamed Nothing ( Name "f$914" ) :| [] )
                 ( AppN Nothing
                   ( AppN Nothing
                     ( ObjectProp Nothing
@@ -63,9 +68,9 @@ UberModule
                       ( PropName "foldr" )
                     )
                     ( AbsN Nothing
-                      ( ParamNamed Nothing ( Name "x$918" ) :| [] )
+                      ( ParamNamed Nothing ( Name "x$915" ) :| [] )
                       ( AbsN Nothing
-                        ( ParamNamed Nothing ( Name "acc$919" ) :| [] )
+                        ( ParamNamed Nothing ( Name "acc$916" ) :| [] )
                         ( AppN Nothing
                           ( AppN Nothing
                             ( ObjectProp Nothing
@@ -81,11 +86,11 @@ UberModule
                               ( PropName "append" )
                             )
                             ( AppN Nothing
-                              ( Ref Nothing ( Local ( Name "f$917" ) ) )
-                              ( Ref Nothing ( Local ( Name "x$918" ) ) :| [] ) :| []
+                              ( Ref Nothing ( Local ( Name "f$914" ) ) )
+                              ( Ref Nothing ( Local ( Name "x$915" ) ) :| [] ) :| []
                             )
                           )
-                          ( Ref Nothing ( Local ( Name "acc$919" ) ) :| [] )
+                          ( Ref Nothing ( Local ( Name "acc$916" ) ) :| [] )
                         )
                       ) :| []
                     )
@@ -137,9 +142,8 @@ UberModule
             { qnameModuleName = ModuleName "Effect", qnameName = Name "applicativeEffect"
             }, LiteralObject Nothing
             [
-              ( PropName "pure", ObjectProp Nothing
-                ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "foreign" ) ) )
-                ( PropName "pureE" )
+              ( PropName "pure", Ref Nothing
+                ( Imported ( ModuleName "Effect" ) ( Name "pureE" ) )
               ),
               ( PropName "Apply0", AbsN Nothing
                 ( ParamUnused Nothing :| [] )
@@ -162,9 +166,9 @@ UberModule
               ( LiteralObject Nothing
                 [
                   ( PropName "map", AbsN Nothing
-                    ( ParamNamed Nothing ( Name "f$707" ) :| [] )
+                    ( ParamNamed Nothing ( Name "f$704" ) :| [] )
                     ( AbsN Nothing
-                      ( ParamNamed Nothing ( Name "a$708" ) :| [] )
+                      ( ParamNamed Nothing ( Name "a$705" ) :| [] )
                       ( AppN Nothing
                         ( AppN Nothing
                           ( ObjectProp Nothing
@@ -182,16 +186,11 @@ UberModule
                             ( PropName "apply" )
                           )
                           ( AppN Nothing
-                            ( ObjectProp Nothing
-                              ( Ref Nothing
-                                ( Imported ( ModuleName "Effect" ) ( Name "applicativeEffect" ) )
-                              )
-                              ( PropName "pure" )
-                            )
-                            ( Ref Nothing ( Local ( Name "f$707" ) ) :| [] ) :| []
+                            ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "pureE" ) ) )
+                            ( Ref Nothing ( Local ( Name "f$704" ) ) :| [] ) :| []
                           )
                         )
-                        ( Ref Nothing ( Local ( Name "a$708" ) ) :| [] )
+                        ( Ref Nothing ( Local ( Name "a$705" ) ) :| [] )
                       )
                     )
                   )
@@ -338,11 +337,11 @@ UberModule
                         ( PropName "foldr" )
                       )
                       ( AbsN Nothing
-                        ( ParamNamed Nothing ( Name "x$940" ) :| [] )
+                        ( ParamNamed Nothing ( Name "x$938" ) :| [] )
                         ( AppN Nothing
                           ( Let Nothing
                             ( Standalone
-                              ( Nothing, Name "dictApply$925", AppN Nothing
+                              ( Nothing, Name "dictApply$923", AppN Nothing
                                 ( ObjectProp Nothing
                                   ( Ref Nothing
                                     ( Imported
@@ -358,13 +357,13 @@ UberModule
                               ) :| []
                             )
                             ( AbsN Nothing
-                              ( ParamNamed Nothing ( Name "a$926" ) :| [] )
+                              ( ParamNamed Nothing ( Name "a$924" ) :| [] )
                               ( AbsN Nothing
-                                ( ParamNamed Nothing ( Name "b$927" ) :| [] )
+                                ( ParamNamed Nothing ( Name "b$925" ) :| [] )
                                 ( AppN Nothing
                                   ( AppN Nothing
                                     ( ObjectProp Nothing
-                                      ( Ref Nothing ( Local ( Name "dictApply$925" ) ) )
+                                      ( Ref Nothing ( Local ( Name "dictApply$923" ) ) )
                                       ( PropName "apply" )
                                     )
                                     ( AppN Nothing
@@ -372,7 +371,7 @@ UberModule
                                         ( ObjectProp Nothing
                                           ( AppN Nothing
                                             ( ObjectProp Nothing
-                                              ( Ref Nothing ( Local ( Name "dictApply$925" ) ) )
+                                              ( Ref Nothing ( Local ( Name "dictApply$923" ) ) )
                                               ( PropName "Functor0" )
                                             )
                                             ( Ref Nothing
@@ -387,15 +386,15 @@ UberModule
                                         ( AbsN Nothing
                                           ( ParamUnused Nothing :| [] )
                                           ( AbsN Nothing
-                                            ( ParamNamed Nothing ( Name "x$934" ) :| [] )
-                                            ( Ref Nothing ( Local ( Name "x$934" ) ) )
+                                            ( ParamNamed Nothing ( Name "x$932" ) :| [] )
+                                            ( Ref Nothing ( Local ( Name "x$932" ) ) )
                                           ) :| []
                                         )
                                       )
-                                      ( Ref Nothing ( Local ( Name "a$926" ) ) :| [] ) :| []
+                                      ( Ref Nothing ( Local ( Name "a$924" ) ) :| [] ) :| []
                                     )
                                   )
-                                  ( Ref Nothing ( Local ( Name "b$927" ) ) :| [] )
+                                  ( Ref Nothing ( Local ( Name "b$925" ) ) :| [] )
                                 )
                               )
                             )
@@ -411,19 +410,14 @@ UberModule
                                   ( LiteralString Nothing "unit" )
                                 )
                               ] :|
-                              [ Ref Nothing ( Local ( Name "x$940" ) ) ]
+                              [ Ref Nothing ( Local ( Name "x$938" ) ) ]
                             ) :| []
                           )
                         ) :| []
                       )
                     )
                     ( AppN Nothing
-                      ( ObjectProp Nothing
-                        ( Ref Nothing
-                          ( Imported ( ModuleName "Effect" ) ( Name "applicativeEffect" ) )
-                        )
-                        ( PropName "pure" )
-                      )
+                      ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "pureE" ) ) )
                       ( Ref Nothing
                         ( Imported ( ModuleName "Data.Unit" ) ( Name "unit" ) ) :| []
                       ) :| []
@@ -454,12 +448,12 @@ UberModule
                           ( PropName "foldl" )
                         )
                         ( AbsN Nothing
-                          ( ParamNamed Nothing ( Name "c$372$914" ) :| [] )
+                          ( ParamNamed Nothing ( Name "c$372$911" ) :| [] )
                           ( AbsN Nothing
                             ( ParamUnused Nothing :| [] )
                             ( PrimBinOp Nothing PrimAdd
                               ( LiteralInt Nothing 1 )
-                              ( Ref Nothing ( Local ( Name "c$372$914" ) ) )
+                              ( Ref Nothing ( Local ( Name "c$372$911" ) ) )
                             )
                           ) :| []
                         )

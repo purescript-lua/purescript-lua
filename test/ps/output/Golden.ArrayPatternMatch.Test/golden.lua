@@ -13,18 +13,18 @@ M.Golden_ArrayPatternMatch_Test_firstTwo = function(v)
 end
 return (function()
   local _ = Effect_Console_log(Data_Show_showIntImpl((function()
-    local v_S_235 = { [1] = 10, [2] = 20 }
-    if 2 == #(v_S_235) then return v_S_235[1] + v_S_235[2] else return -1 end
+    local v_S_226 = { [1] = 10, [2] = 20 }
+    if 2 == #(v_S_226) then return v_S_226[1] + v_S_226[2] else return -1 end
   end)()))()
   local _ = Effect_Console_log(Data_Show_showIntImpl((function()
-    local v_S_242 = { [1] = 1, [2] = 2, [3] = 3 }
-    if 2 == #(v_S_242) then return v_S_242[1] + v_S_242[2] else return -1 end
+    local v_S_233 = { [1] = 1, [2] = 2, [3] = 3 }
+    if 2 == #(v_S_233) then return v_S_233[1] + v_S_233[2] else return -1 end
   end)()))()
   local _ = Effect_Console_log(Data_Show_showIntImpl((function()
     if 2 == #({}) then return ({})[1] + ({})[2] else return -1 end
   end)()))()
   return Effect_Console_log(Data_Show_showIntImpl((function()
-    local v_S_256 = { [1] = 7, [2] = 8, [3] = 9 }
-    if 3 == #(v_S_256) then return v_S_256[3] else return -1 end
+    local v_S_247 = { [1] = 7, [2] = 8, [3] = 9 }
+    if 3 == #(v_S_247) then return v_S_247[3] else return -1 end
   end)()))()
 end)()

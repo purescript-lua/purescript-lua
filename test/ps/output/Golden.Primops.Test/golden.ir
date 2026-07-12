@@ -59,28 +59,28 @@ UberModule
               )
             ),
             ( PropName "conj", AbsN Nothing
-              ( ParamNamed Nothing ( Name "b1$213" ) :| [] )
+              ( ParamNamed Nothing ( Name "b1$210" ) :| [] )
               ( AbsN Nothing
-                ( ParamNamed Nothing ( Name "b2$214" ) :| [] )
+                ( ParamNamed Nothing ( Name "b2$211" ) :| [] )
                 ( PrimBinOp Nothing PrimAnd
-                  ( Ref Nothing ( Local ( Name "b1$213" ) ) )
-                  ( Ref Nothing ( Local ( Name "b2$214" ) ) )
+                  ( Ref Nothing ( Local ( Name "b1$210" ) ) )
+                  ( Ref Nothing ( Local ( Name "b2$211" ) ) )
                 )
               )
             ),
             ( PropName "disj", AbsN Nothing
-              ( ParamNamed Nothing ( Name "b1$211" ) :| [] )
+              ( ParamNamed Nothing ( Name "b1$208" ) :| [] )
               ( AbsN Nothing
-                ( ParamNamed Nothing ( Name "b2$212" ) :| [] )
+                ( ParamNamed Nothing ( Name "b2$209" ) :| [] )
                 ( PrimBinOp Nothing PrimOr
-                  ( Ref Nothing ( Local ( Name "b1$211" ) ) )
-                  ( Ref Nothing ( Local ( Name "b2$212" ) ) )
+                  ( Ref Nothing ( Local ( Name "b1$208" ) ) )
+                  ( Ref Nothing ( Local ( Name "b2$209" ) ) )
                 )
               )
             ),
             ( PropName "not", AbsN Nothing
-              ( ParamNamed Nothing ( Name "b$210" ) :| [] )
-              ( PrimNot Nothing ( Ref Nothing ( Local ( Name "b$210" ) ) ) )
+              ( ParamNamed Nothing ( Name "b$207" ) :| [] )
+              ( PrimNot Nothing ( Ref Nothing ( Local ( Name "b$207" ) ) ) )
             )
           ]
         ) :| []
@@ -191,13 +191,13 @@ UberModule
                   ( LiteralObject Nothing
                     [
                       ( PropName "show", AbsN Nothing
-                        ( ParamNamed Nothing ( Name "v$117$250" ) :| [] )
+                        ( ParamNamed Nothing ( Name "v$114$241" ) :| [] )
                         ( IfThenElse Nothing
-                          ( Ref Nothing ( Local ( Name "v$117$250" ) ) )
+                          ( Ref Nothing ( Local ( Name "v$114$241" ) ) )
                           ( LiteralString Nothing "true" )
                           ( IfThenElse Nothing
                             ( Eq Nothing ( LiteralBool Nothing False )
-                              ( Ref Nothing ( Local ( Name "v$117$250" ) ) )
+                              ( Ref Nothing ( Local ( Name "v$114$241" ) ) )
                             )
                             ( LiteralString Nothing "false" )
                             ( Exception Nothing "No patterns matched" )
@@ -215,13 +215,13 @@ UberModule
                   ( LiteralObject Nothing
                     [
                       ( PropName "show", AbsN Nothing
-                        ( ParamNamed Nothing ( Name "v$117$254" ) :| [] )
+                        ( ParamNamed Nothing ( Name "v$114$245" ) :| [] )
                         ( IfThenElse Nothing
-                          ( Ref Nothing ( Local ( Name "v$117$254" ) ) )
+                          ( Ref Nothing ( Local ( Name "v$114$245" ) ) )
                           ( LiteralString Nothing "true" )
                           ( IfThenElse Nothing
                             ( Eq Nothing ( LiteralBool Nothing False )
-                              ( Ref Nothing ( Local ( Name "v$117$254" ) ) )
+                              ( Ref Nothing ( Local ( Name "v$114$245" ) ) )
                             )
                             ( LiteralString Nothing "false" )
                             ( Exception Nothing "No patterns matched" )
@@ -239,23 +239,23 @@ UberModule
                   ( LiteralObject Nothing
                     [
                       ( PropName "show", AbsN Nothing
-                        ( ParamNamed Nothing ( Name "v$116" ) :| [] )
+                        ( ParamNamed Nothing ( Name "v$113" ) :| [] )
                         ( IfThenElse Nothing
                           ( Eq Nothing
                             ( LiteralString Nothing "Data.Ordering∷Ordering.LT" )
-                            ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v$116" ) ) ) )
+                            ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v$113" ) ) ) )
                           )
                           ( LiteralString Nothing "LT" )
                           ( IfThenElse Nothing
                             ( Eq Nothing
                               ( LiteralString Nothing "Data.Ordering∷Ordering.GT" )
-                              ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v$116" ) ) ) )
+                              ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v$113" ) ) ) )
                             )
                             ( LiteralString Nothing "GT" )
                             ( IfThenElse Nothing
                               ( Eq Nothing
                                 ( LiteralString Nothing "Data.Ordering∷Ordering.EQ" )
-                                ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v$116" ) ) ) )
+                                ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v$113" ) ) ) )
                               )
                               ( LiteralString Nothing "EQ" )
                               ( Exception Nothing "No patterns matched" )
@@ -288,13 +288,13 @@ UberModule
               ( LiteralObject Nothing
                 [
                   ( PropName "show", AbsN Nothing
-                    ( ParamNamed Nothing ( Name "v$117$260" ) :| [] )
+                    ( ParamNamed Nothing ( Name "v$114$251" ) :| [] )
                     ( IfThenElse Nothing
-                      ( Ref Nothing ( Local ( Name "v$117$260" ) ) )
+                      ( Ref Nothing ( Local ( Name "v$114$251" ) ) )
                       ( LiteralString Nothing "true" )
                       ( IfThenElse Nothing
                         ( Eq Nothing ( LiteralBool Nothing False )
-                          ( Ref Nothing ( Local ( Name "v$117$260" ) ) )
+                          ( Ref Nothing ( Local ( Name "v$114$251" ) ) )
                         )
                         ( LiteralString Nothing "false" )
                         ( Exception Nothing "No patterns matched" )

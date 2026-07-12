@@ -1,27 +1,6 @@
-local function PSLUA_runtime_lazy(name)
-  return function(init)
-    local state = 0
-    local val = nil
-    return function()
-      if state == 2 then
-        return val
-      elseif state == 1 then
-        return error(name .. " was needed before it finished initializing")
-      else
-        state = 1
-        val = init()
-        state = 2
-        return val
-      end
-    end
-  end
-end
 local M = {}
 local Data_Show_foreign = { showIntImpl = function(n) return tostring(n) end }
 local Control_Monad_ST_Internal_foreign = {
-  map_ = function(f)
-    return function(a) return function() return f(a()) end end
-  end,
   pure_ = function(a) return function() return a end end,
   bind_ = function(a)
     return function(f) return function() return f(a())() end end
@@ -46,68 +25,34 @@ local Control_Monad_ST_Internal_run = Control_Monad_ST_Internal_foreign.run
 local Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
 }
-local Control_Monad_ST_Internal_bindST
-local Control_Monad_ST_Internal_applicativeST
-local Control_Monad_ST_Internal_monadST = {
-  Applicative0 = function() return Control_Monad_ST_Internal_applicativeST end,
-  Bind1 = function() return Control_Monad_ST_Internal_bindST end
-}
-local Control_Monad_ST_Internal_Lazy_applyST
-Control_Monad_ST_Internal_bindST = {
-  bind = Control_Monad_ST_Internal_foreign.bind_,
-  Apply0 = function() return Control_Monad_ST_Internal_Lazy_applyST(0) end
-}
-Control_Monad_ST_Internal_applicativeST = {
-  pure = Control_Monad_ST_Internal_foreign.pure_,
-  Apply0 = function() return Control_Monad_ST_Internal_Lazy_applyST(0) end
-}
-Control_Monad_ST_Internal_Lazy_applyST = PSLUA_runtime_lazy("applyST")(function(  )
-  return {
-    apply = (function()
-      local bind_S_445 = (Control_Monad_ST_Internal_monadST.Bind1()).bind
-      return function(f_S_446)
-        return function(a_S_447)
-          return bind_S_445(f_S_446)(function(fPrime_S_448)
-            return bind_S_445(a_S_447)(function(aPrime_S_449)
-              return (Control_Monad_ST_Internal_monadST.Applicative0()).pure(fPrime_S_448(aPrime_S_449))
-            end)
-          end)
-        end
-      end
-    end)(),
-    Functor0 = function()
-      return { map = Control_Monad_ST_Internal_foreign.map_ }
-    end
-  }
-end)
-local Golden_STDoBlock_Test_add_S_w = function(x_S_425_S_451, y_S_426_S_452)
-  return x_S_425_S_451 + y_S_426_S_452
+local Golden_STDoBlock_Test_add_S_w = function(x_S_425_S_445, y_S_426_S_446)
+  return x_S_425_S_445 + y_S_426_S_446
 end
 M.Golden_STDoBlock_Test_sumTwice = function(n)
   return Control_Monad_ST_Internal_run(function()
     local ref = Control_Monad_ST_Internal_new(0)()
-    local _ = Control_Monad_ST_Internal_modifyImpl(function(s_S_457)
-      local sPrime_S_458 = Golden_STDoBlock_Test_add_S_w(s_S_457, n)
-      return { state = sPrime_S_458, value = sPrime_S_458 }
+    local _ = Control_Monad_ST_Internal_modifyImpl(function(s_S_451)
+      local sPrime_S_452 = Golden_STDoBlock_Test_add_S_w(s_S_451, n)
+      return { state = sPrime_S_452, value = sPrime_S_452 }
     end)(ref)()
-    local _ = Control_Monad_ST_Internal_modifyImpl(function(s_S_460)
-      local sPrime_S_461 = Golden_STDoBlock_Test_add_S_w(s_S_460, n)
-      return { state = sPrime_S_461, value = sPrime_S_461 }
+    local _ = Control_Monad_ST_Internal_modifyImpl(function(s_S_454)
+      local sPrime_S_455 = Golden_STDoBlock_Test_add_S_w(s_S_454, n)
+      return { state = sPrime_S_455, value = sPrime_S_455 }
     end)(ref)()
     local total = Control_Monad_ST_Internal_read(ref)()
-    return Control_Monad_ST_Internal_applicativeST.pure(Golden_STDoBlock_Test_add_S_w(total, 1))()
+    return Golden_STDoBlock_Test_add_S_w(total, 1)
   end)
 end
 return Effect_Console_foreign.log(Data_Show_foreign.showIntImpl(Control_Monad_ST_Internal_run(function(  )
-  local ref_S_467 = Control_Monad_ST_Internal_new(0)()
-  local _ = Control_Monad_ST_Internal_modifyImpl(function(s_S_472)
-    local sPrime_S_473 = Golden_STDoBlock_Test_add_S_w(s_S_472, 5)
-    return { state = sPrime_S_473, value = sPrime_S_473 }
-  end)(ref_S_467)()
-  local _ = Control_Monad_ST_Internal_modifyImpl(function(s_S_475)
-    local sPrime_S_476 = Golden_STDoBlock_Test_add_S_w(s_S_475, 5)
-    return { state = sPrime_S_476, value = sPrime_S_476 }
-  end)(ref_S_467)()
-  local total_S_468 = Control_Monad_ST_Internal_read(ref_S_467)()
-  return Control_Monad_ST_Internal_applicativeST.pure(Golden_STDoBlock_Test_add_S_w(total_S_468, 1))()
+  local ref_S_457 = Control_Monad_ST_Internal_new(0)()
+  local _ = Control_Monad_ST_Internal_modifyImpl(function(s_S_462)
+    local sPrime_S_463 = Golden_STDoBlock_Test_add_S_w(s_S_462, 5)
+    return { state = sPrime_S_463, value = sPrime_S_463 }
+  end)(ref_S_457)()
+  local _ = Control_Monad_ST_Internal_modifyImpl(function(s_S_465)
+    local sPrime_S_466 = Golden_STDoBlock_Test_add_S_w(s_S_465, 5)
+    return { state = sPrime_S_466, value = sPrime_S_466 }
+  end)(ref_S_457)()
+  local total_S_458 = Control_Monad_ST_Internal_read(ref_S_457)()
+  return Golden_STDoBlock_Test_add_S_w(total_S_458, 1)
 end)))()
