@@ -1,5 +1,6 @@
 local M = {}
 local Data_Unit_foreign = { unit = {} }
+local Data_Unit_unit = Data_Unit_foreign.unit
 local Data_Show_foreign = { showIntImpl = function(n) return tostring(n) end }
 local Data_Show_showIntImpl = Data_Show_foreign.showIntImpl
 local Effect_Console_foreign = {
@@ -14,7 +15,7 @@ local Golden_FloatIn_Test_pickShared_S_w = function(useIt, n)
   if useIt then
     local shared = Golden_FloatIn_Test_tick(n)
     local f = function() return shared + shared end
-    return f(Data_Unit_foreign.unit) + f(Data_Unit_foreign.unit)
+    return f(Data_Unit_unit) + f(Data_Unit_unit)
   else
     return 0
   end

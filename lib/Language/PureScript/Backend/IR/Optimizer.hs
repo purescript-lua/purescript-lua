@@ -357,7 +357,11 @@ annotations after optimization.
 See Note [Inline annotations and inlining heuristics].
 -}
 data InlinePolicy = InlinePolicy
-  { policyNever ∷ Set QName
+  { policyAlways ∷ Set QName
+  {- ^ pasted at every use site; a bare-Ref alias to such a name is
+  never dissolved (issue #171)
+  -}
+  , policyNever ∷ Set QName
   -- ^ never pasted anywhere
   , policyArity ∷ Map QName Natural
   -- ^ pasted exactly at call sites applying at least N arguments
@@ -382,6 +386,7 @@ collectInlinePolicy UberModule {uberModuleBindings, uberModuleForeigns} =
   fromBinding (qname, expr) = rootPolicy <> fieldsPolicy
    where
     rootPolicy = case getAnn expr of
+      Just Always → mempty {policyAlways = Set.singleton qname}
       Just Never → mempty {policyNever = Set.singleton qname}
       Just (Arity n) → mempty {policyArity = Map.singleton qname n}
       _ → mempty
@@ -501,6 +506,27 @@ optimizeModule inlining policy UberModule {..} = runWriterT do
     qname `Set.member` policyNever policy
       || qname `Map.member` policyArity policy
 
+  -- The top-level counterpart of 'isInlinableExpr', diverging from it
+  -- twice (issue #171). The Always directive is consulted by name —
+  -- 'policyAlways', not the RHS root annotation, which an earlier paste
+  -- may have planted there: a binding that merely received an
+  -- always-annotated body must not itself turn unconditionally
+  -- inlinable. And a bare-Ref alias to an @inline always@ binding is
+  -- never dissolved: substituting it would multiply the target's use
+  -- sites right before Always pastes its body into every one of them,
+  -- destroying the alias that is the better materialization point on
+  -- both size and speed. The target's body pastes into the surviving
+  -- alias instead.
+  topLevelInlinable ∷ QName → Exp → Bool
+  topLevelInlinable qname expr =
+    qname `Set.member` policyAlways policy
+      || (isInlinableValue expr && not (aliasesAlwaysBinding expr))
+
+  aliasesAlwaysBinding ∷ Exp → Bool
+  aliasesAlwaysBinding = \case
+    Ref _ ref → maybe False (`Set.member` policyAlways policy) (refQName ref)
+    _ → False
+
   -- Whether 'withBinding' may drop a whole top-level binding by inlining it
   -- into its use sites. Off exactly when call-site inlining is on, because the
   -- two are unsound together: 'inlineEnv' is a snapshot taken before this run
@@ -545,7 +571,7 @@ optimizeModule inlining policy UberModule {..} = runWriterT do
         if mayInlineWholeBinding
           && not (vetoedWholeBinding qname)
           && not (isForeignImport expr)
-          && (isInlinableExpr expr || isUsedOnce)
+          && (topLevelInlinable qname expr || isUsedOnce)
           then do
             -- The binding is dropped from the module in favor of the
             -- substituted copies: a rewrite even when it had no
@@ -1703,9 +1729,21 @@ position.
 -- See Note [Inline annotations and inlining heuristics]
 -- and Note [Complexity and Capture gate inlining]
 isInlinableExpr ∷ Exp → Bool
-isInlinableExpr expr =
-  hasInlineAnnotation expr
-    || isRef expr
+isInlinableExpr expr = hasInlineAnnotation expr || isInlinableValue expr
+ where
+  hasInlineAnnotation ∷ Exp → Bool
+  hasInlineAnnotation =
+    getAnn >>> \case
+      Just Always → True
+      _ → False
+
+{- | The structural tiers of 'isInlinableExpr' — everything but the
+Always annotation, which the top-level inliner consults by name instead
+(see 'InlinePolicy' and issue #171).
+-}
+isInlinableValue ∷ Exp → Bool
+isInlinableValue expr =
+  isRef expr
     || isNonRecursiveLiteral expr
     || isCheapProjection expr
  where
@@ -1713,12 +1751,6 @@ isInlinableExpr expr =
   isRef = \case
     Ref {} → True
     _ → False
-
-  hasInlineAnnotation ∷ Exp → Bool
-  hasInlineAnnotation =
-    getAnn >>> \case
-      Just Always → True
-      _ → False
 
   -- The Deref tier. The explicit disjuncts above are subsumed for the
   -- shapes they share (a Ref, a short scalar), but kept: they also admit

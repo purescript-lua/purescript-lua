@@ -927,6 +927,46 @@ spec = describe "IR Optimizer" do
       annotateShow optimized
       fooKept === [QName mainModule (Name "foo")]
 
+  describe "keeps a bare-Ref alias to an @inline always binding (#171)" do
+    test "the alias stays the single materialization point" do
+      let semiringModule = moduleNameFromString "Data.Semiring"
+          mainModule = moduleNameFromString "Main"
+          intAddName = QName semiringModule (Name "intAdd")
+          addName = QName mainModule (Name "add")
+          -- The shape ForeignLift gives a lifted foreign: a lambda marked
+          -- @inline always@ so its call sites beta-reduce. Unary, so the
+          -- uncurry split leaves it alone and the test sees only the
+          -- alias interaction.
+          liftedIntAdd =
+            setAnn (Just Always) . abstraction (paramNamed (Name "x")) $
+              primBinOp PrimAdd (refLocal (Name "x")) (refLocal (Name "x"))
+          original =
+            Linker.UberModule
+              { uberModuleForeigns = []
+              , uberModuleBindings =
+                  [ Standalone (intAddName, liftedIntAdd)
+                  , Standalone
+                      (addName, refImported semiringModule (Name "intAdd"))
+                  ]
+              , uberModuleExports =
+                  [ (Name "main1", refImported mainModule (Name "add"))
+                  , (Name "main2", refImported mainModule (Name "add"))
+                  ]
+              }
+      optimized ←
+        either (fail . show) pure (optimizedUberModuleChecked original)
+      annotateShow optimized
+      -- Dissolving the alias would take the Always target's use sites
+      -- from one to two right before Always pastes its body into every
+      -- one of them. Instead the alias survives — the body materializes
+      -- once, in the alias — and both exports keep referencing it.
+      [qn | Standalone (qn, _) ← Linker.uberModuleBindings optimized]
+        === [addName]
+      Linker.uberModuleExports optimized
+        === [ (Name "main1", refImported mainModule (Name "add"))
+            , (Name "main2", refImported mainModule (Name "add"))
+            ]
+
   describe "gates inlining by Complexity and Capture (issue #231)" do
     let main' = moduleNameFromString "Main"
         ext = moduleNameFromString "Ext"
