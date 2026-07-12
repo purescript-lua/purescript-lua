@@ -215,18 +215,20 @@ mkForeigns = do
     ann ← useAnnotation (name, Nothing)
     -- A foreign value's implementation is opaque to the IR: an arity
     -- policy has no body to paste and an accessor no field to select.
-    when (isArity ann) do
-      throwContextualError $ UnsupportedForeignAnnotation name
+    -- Both are errors in a module-header pragma; from the directives
+    -- file they are ignored like every other entry that does not apply
+    -- to this build (see Note [Inliner annotations must all be consumed]).
+    resolved ← case ann of
+      Just (Inliner.Arity _)
+        | (name, Nothing) `Set.member` strictTargets →
+            throwContextualError $ UnsupportedForeignAnnotation name
+        | otherwise → pure Nothing
+      other → pure other
     accessors ← useAccessorAnnotations name
     for_ accessors \(accessor, _resolved) →
       when ((name, Just accessor) `Set.member` strictTargets) do
         throwContextualError $ UnsupportedForeignAnnotation name
-    pure (ann, name)
- where
-  isArity ∷ Ann → Bool
-  isArity = \case
-    Just (Inliner.Arity _) → True
-    _ → False
+    pure (resolved, name)
 
 collectDataDeclarations
   ∷ Map ModuleName (Cfn.Module Cfn.Ann)

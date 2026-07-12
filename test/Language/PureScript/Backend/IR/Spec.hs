@@ -177,6 +177,17 @@ spec = describe "IR representation" do
       translate mempty ["@inline ffi arity=1"] [] [PS.Ident "ffi"]
         `shouldFailWith` "foreign"
 
+    it "ignores a directives-file arity on a foreign binding" do
+      irModule ←
+        translateWith
+          ( directivesFor
+              [((Name "ffi", Nothing), Inliner.ModeAnnotation (Arity 1))]
+          )
+          []
+          []
+          [PS.Ident "ffi"]
+      moduleForeigns irModule `shouldBe` [(Nothing, Name "ffi")]
+
     it "rejects an accessor directive on a foreign binding" do
       translate mempty ["@inline ffi.method never"] [] [PS.Ident "ffi"]
         `shouldFailWith` "foreign"
@@ -702,11 +713,20 @@ translateModuleWith
   → [Cfn.Bind Cfn.Ann]
   → m Module
 translateModuleWith directives commentLines bindings =
-  either fail pure $ translate directives commentLines bindings []
+  translateWith directives commentLines bindings []
 
 translateForeign ∷ MonadFail m ⇒ [Text] → [PS.Ident] → m Module
-translateForeign commentLines foreigns =
-  either fail pure $ translate mempty commentLines [] foreigns
+translateForeign commentLines = translateWith mempty commentLines []
+
+translateWith
+  ∷ MonadFail m
+  ⇒ Inliner.Directives
+  → [Text]
+  → [Cfn.Bind Cfn.Ann]
+  → [PS.Ident]
+  → m Module
+translateWith directives commentLines bindings foreigns =
+  either fail pure $ translate directives commentLines bindings foreigns
 
 translate
   ∷ Inliner.Directives
