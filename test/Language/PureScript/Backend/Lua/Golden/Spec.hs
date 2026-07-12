@@ -11,6 +11,7 @@ import Data.Tagged (Tagged (..))
 import Data.Text qualified as Text
 import Language.PureScript.Backend.IR qualified as IR
 import Language.PureScript.Backend.IR.FlattenDeepBinds (flattenDeepBinds)
+import Language.PureScript.Backend.IR.Inliner qualified as Inliner
 import Language.PureScript.Backend.IR.Linker (LinkMode (..))
 import Language.PureScript.Backend.IR.Linker qualified as IR
 import Language.PureScript.Backend.IR.Linker qualified as Linker
@@ -35,6 +36,7 @@ import Path
   , filename
   , mkRelDir
   , parent
+  , parseRelDir
   , reldir
   , toFilePath
   , (</>)
@@ -71,6 +73,7 @@ import Test.Hspec
 import Test.Hspec.Extra (annotatingWith)
 import Test.Hspec.Golden (acceptableGolden, defaultGolden)
 import Test.Lua (luacParse)
+import Text.Megaparsec qualified as Megaparsec
 import Text.Pretty.Simple
   ( OutputOptions (..)
   , defaultOutputOptionsNoColor
@@ -287,11 +290,17 @@ compileCorefn outputDir uberModuleName = do
       & Oops.runOops
       & liftIO
 
+  -- An optional committed directives.txt next to the golden files
+  -- exercises the --directives input end-to-end.
+  directives ← case unTagged outputDir of
+    Abs root → readDirectivesFixture root uberModuleName
+    Rel root → readDirectivesFixture root uberModuleName
+
   let dataDecls = IR.collectDataDeclarations cfnModules
   modules ←
     forM (toList cfnModules) $
       either (fail . show) (pure . snd) . \cfnModule →
-        IR.mkModule mempty cfnModule dataDecls
+        IR.mkModule directives cfnModule dataDecls
   let uberModule = Linker.makeUberModule (LinkAsModule uberModuleName) modules
   -- Lift the allowlisted foreign exports to IR primops (issue #178) exactly
   -- as Backend.compileModules does, so the .ir goldens reflect the same
@@ -306,6 +315,26 @@ compileCorefn outputDir uberModuleName = do
   -- iteration), so each golden module doubles as a scope-invariant test of
   -- the whole pipeline.
   either (fail . show) pure (optimizedUberModuleChecked liftedModule)
+
+{- | Read the optional @directives.txt@ fixture sitting next to a golden
+module's golden files.
+-}
+readDirectivesFixture
+  ∷ (MonadIO m, MonadFail m)
+  ⇒ Path b Dir
+  → PS.ModuleName
+  → m Inliner.Directives
+readDirectivesFixture root moduleName = do
+  moduleDir ← liftIO . parseRelDir . toString $ PS.runModuleName moduleName
+  let fixture = root </> moduleDir </> $(mkRelFile "directives.txt")
+  exists ← doesFileExist fixture
+  if not exists
+    then pure mempty
+    else do
+      contents ← decodeUtf8 <$> readFileBS (toFilePath fixture)
+      let parser = Inliner.directivesFileParser <* Megaparsec.eof
+      either (fail . Megaparsec.errorBundlePretty) pure $
+        Megaparsec.parse parser (toFilePath fixture) contents
 
 compileIr
   ∷ (MonadIO m, MonadMask m)

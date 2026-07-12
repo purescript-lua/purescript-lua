@@ -132,8 +132,9 @@ mkModule directives cfnModule contextDataTypes = do
           , moduleForeigns
           }
 
--- | Parse the module-header pragmas, split by scope: local directives
--- (the highest-precedence source) and @export@-scoped ones (the lowest).
+{- | Parse the module-header pragmas, split by scope: local directives
+(the highest-precedence source) and @export@-scoped ones (the lowest).
+-}
 parseAnnotations
   ∷ Cfn.Module Cfn.Ann
   → Either
@@ -173,8 +174,9 @@ useAnnotation target = do
   put $ ctx {annotations = annotations'}
   pure $ join resolved
 
--- | Drain every accessor-form directive targeting the given binding name.
--- See Note [Inliner annotations must all be consumed].
+{- | Drain every accessor-form directive targeting the given binding name.
+See Note [Inliner annotations must all be consumed].
+-}
 useAccessorAnnotations ∷ Name → RepM [(Inliner.Accessor, Maybe Annotation)]
 useAccessorAnnotations name = do
   ctx ← get

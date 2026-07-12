@@ -2,6 +2,7 @@
 
 module Language.PureScript.Backend.IR.Spec where
 
+import Data.List qualified as List
 import Data.List.NonEmpty qualified as NE
 import Data.Map.Strict qualified as Map
 import Language.PureScript.Backend.IR
@@ -12,12 +13,10 @@ import Language.PureScript.Backend.IR
   , mkModule
   , runRepM
   )
-import Data.List qualified as List
 import Language.PureScript.Backend.IR.Inliner
   ( Annotation (Always, Arity, Never)
   )
 import Language.PureScript.Backend.IR.Inliner qualified as Inliner
-import Language.PureScript.Comments (Comment (LineComment))
 import Language.PureScript.Backend.IR.Names
   ( CtorName (..)
   , Name (..)
@@ -25,6 +24,7 @@ import Language.PureScript.Backend.IR.Names
   , TyName (..)
   )
 import Language.PureScript.Backend.IR.Types
+import Language.PureScript.Comments (Comment (LineComment))
 import Language.PureScript.CoreFn qualified as Cfn
 import Language.PureScript.Names qualified as PS
 import Language.PureScript.PSString qualified as PS
@@ -734,23 +734,26 @@ shouldFailWith result needle = case result of
   Left err → err `shouldSatisfy` (needle `List.isInfixOf`)
   Right _ → expectationFailure "translation unexpectedly succeeded"
 
--- | The root annotation of a standalone module binding, or 'Nothing'
--- when no binding of this name exists.
+{- | The root annotation of a standalone module binding, or 'Nothing'
+when no binding of this name exists.
+-}
 bindingRootAnn ∷ Name → Module → Maybe Ann
 bindingRootAnn name Module {moduleBindings} =
   listToMaybe
     [getAnn expr | Standalone (_ann, n, expr) ← moduleBindings, n == name]
 
--- | The annotation of an object-literal field inside a standalone module
--- binding, found at any lambda/let depth; 'Nothing' when no such field
--- exists.
+{- | The annotation of an object-literal field inside a standalone module
+binding, found at any lambda/let depth; 'Nothing' when no such field
+exists.
+-}
 fieldAnn ∷ Name → PropName → Module → Maybe Ann
 fieldAnn name label irModule = do
-  root ← listToMaybe
-    [ expr
-    | Standalone (_ann, n, expr) ← moduleBindings irModule
-    , n == name
-    ]
+  root ←
+    listToMaybe
+      [ expr
+      | Standalone (_ann, n, expr) ← moduleBindings irModule
+      , n == name
+      ]
   go root
  where
   go = \case

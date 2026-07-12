@@ -1,0 +1,85 @@
+UberModule
+  { uberModuleBindings =
+    [ Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Show", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Data.Show" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Show.purs"
+        [ ( Nothing, Name "showIntImpl" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Effect.Console" ) ".spago/p/console/f82835a0b873aafe6bd7b14dd30cc150553d4ab9/src/Effect/Console.purs"
+        [ ( Nothing, Name "log" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.DirectiveArity.Test", qnameName = Name "Op"
+        }, Ctor Nothing ProductType
+        ( ModuleName "Golden.DirectiveArity.Test" )
+        ( TyName "Op" )
+        ( CtorName "Op" )
+        [ FieldName "value0" ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.DirectiveArity.Test", qnameName = Name "runOp"
+        }, AbsN
+        ( Just ( Arity 1 ) )
+        ( ParamNamed Nothing ( Name "op" ) :| [] )
+        ( AbsN Nothing
+          ( ParamNamed Nothing ( Name "x" ) :| [] )
+          ( AppN Nothing
+            ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "op" ) ) ) ( PropName "value0" ) )
+            ( Ref Nothing ( Local ( Name "x" ) ) :| [] )
+          )
+        )
+      )
+    ], uberModuleForeigns = [], uberModuleExports =
+    [
+      ( Name "Op", Ref Nothing
+        ( Imported ( ModuleName "Golden.DirectiveArity.Test" ) ( Name "Op" ) )
+      ),
+      ( Name "runOp", Ref Nothing
+        ( Imported ( ModuleName "Golden.DirectiveArity.Test" ) ( Name "runOp" ) )
+      ),
+      ( Name "main", AbsN Nothing
+        ( ParamUnused Nothing :| [] )
+        ( Let Nothing
+          ( Standalone
+            ( Nothing, Name "_", AppN Nothing
+              ( AppN Nothing
+                ( ObjectProp ( Just Always )
+                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
+                  ( PropName "log" )
+                )
+                ( AppN Nothing
+                  ( ObjectProp ( Just Always )
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
+                    ( PropName "showIntImpl" )
+                  )
+                  ( LiteralInt Nothing 42 :| [] ) :| []
+                )
+              )
+              ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+            ) :| []
+          )
+          ( AppN Nothing
+            ( AppN Nothing
+              ( ObjectProp ( Just Always )
+                ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
+                ( PropName "log" )
+              )
+              ( AppN Nothing
+                ( ObjectProp ( Just Always )
+                  ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
+                  ( PropName "showIntImpl" )
+                )
+                ( LiteralInt Nothing 42 :| [] ) :| []
+              )
+            )
+            ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+          )
+        )
+      )
+    ]
+  }

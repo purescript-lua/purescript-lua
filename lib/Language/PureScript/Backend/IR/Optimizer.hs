@@ -8,13 +8,13 @@ import Data.List.NonEmpty qualified as NE
 import Data.Map qualified as Map
 import Data.Set qualified as Set
 import Data.Text qualified as Text
+import GHC.Generics (Generically (..))
 import Language.PureScript.Backend.IR.DCE (eliminateDeadCode)
 import Language.PureScript.Backend.IR.FlattenDeepBinds (flattenDeepBindsM)
 import Language.PureScript.Backend.IR.FloatIn (floatIn)
 import Language.PureScript.Backend.IR.Inliner (Annotation (..))
 import Language.PureScript.Backend.IR.Linker (UberModule (..))
 import Language.PureScript.Backend.IR.MagicDo (magicDo)
-import GHC.Generics (Generically (..))
 import Language.PureScript.Backend.IR.Names
   ( FieldName
   , Name (..)
@@ -280,8 +280,9 @@ collectInlinePolicy UberModule {uberModuleBindings, uberModuleForeigns} =
 
     fieldsPolicy = case objectFields expr of
       Just (depth, props)
-        | anns ← Map.fromList
-            [(prop, a) | (prop, value) ← props, Just a ← [getAnn value]]
+        | anns ←
+            Map.fromList
+              [(prop, a) | (prop, value) ← props, Just a ← [getAnn value]]
         , not (Map.null anns) →
             if depth == 0
               then mempty {policyFields = Map.singleton qname anns}
@@ -301,8 +302,9 @@ collectInlinePolicy UberModule {uberModuleBindings, uberModuleForeigns} =
       LiteralObject _ props → Just (depth, props)
       _ → Nothing
 
--- | Names the uncurry pass may not split: rewriting their call sites to
--- @$w@ worker calls would hide those sites from the name-keyed policies.
+{- | Names the uncurry pass may not split: rewriting their call sites to
+@$w@ worker calls would hide those sites from the name-keyed policies.
+-}
 uncurryVeto ∷ InlinePolicy → Set QName
 uncurryVeto InlinePolicy {policyNever, policyArity, policyAppliedFields} =
   policyNever <> Map.keysSet policyArity <> Map.keysSet policyAppliedFields
@@ -595,6 +597,7 @@ optimizedExpressionM policy env =
         `thenRewrite` reduceObjectProp
         `thenRewrite` sinkProjectionIntoLet
         `thenRewrite` reduceKnownConstructor
+        `thenRewrite` reduceKnownCtorRefRead env
         `thenRewrite` propagateKnownCtorThroughLet env
         `thenRewrite` resolveDictionaryProp policy env
         `thenRewrite` inlineAnnotatedProjection policy env
@@ -1048,10 +1051,61 @@ propagateKnownCtorThroughLet env = \case
             Ref daAnn (Local f)
       other → over subexpressions go other
 
-  fieldIndex ∷ [FieldName] → PropName → Maybe Natural
-  fieldIndex fields prop =
-    fromIntegral
-      <$> List.findIndex ((renderPropName prop ==) . renderFieldName) fields
+{- | The position of a record-projection label among a constructor's
+declared fields (@value0@, @value1@, …).
+-}
+fieldIndex ∷ [FieldName] → PropName → Maybe Natural
+fieldIndex fields prop =
+  fromIntegral
+    <$> List.findIndex ((renderPropName prop ==) . renderFieldName) fields
+
+{- | The through-a-reference companion of 'reduceKnownConstructor' — the
+relationship 'resolveDictionaryProp' bears to 'reduceObjectProp'. A
+user-written @Op f@ compiles to a saturated application of a /reference/
+to the @Op@ worker binding, which 'inlineSaturatedCall' deliberately
+leaves in place (its 'Ctor' RHS is not a lambda). A constructor-eliminating
+read over that spine — the shape a directive-driven paste exposes —
+would otherwise stall right before the fold: 'reduceKnownConstructor'
+needs an in-place 'Ctor' head and 'propagateKnownCtorThroughLet' needs
+the read behind a 'Let' binder. The reference is resolved through the
+environment only for its declared fields and tag — no 'Ctor' node is
+pasted — and discarded sibling arguments are dropped with the licence
+'reduceKnownConstructor' spells out. The folded value takes the read
+node's own annotation, not the argument's, for the reason spelled out
+on 'reduceObjectProp'.
+-}
+reduceKnownCtorRefRead ∷ Applicative m ⇒ InlineEnv → RewriteRuleM m Ann
+reduceKnownCtorRefRead env =
+  pure . \case
+    ObjectProp ann spine prop
+      | Just (_algTy, fields, args, _tag) ← saturatedCtorRefApp env spine
+      , Just i ← fieldIndex fields prop
+      , Just arg ← args !!? fromIntegral i →
+          Just (setAnn ann arg)
+    DataArgumentByIndex ann i spine
+      | Just (_algTy, _fields, args, _tag) ← saturatedCtorRefApp env spine
+      , Just arg ← args !!? fromIntegral i →
+          Just (setAnn ann arg)
+    -- Tag reads fold for sum types only, as in 'reduceKnownConstructor'.
+    ReflectCtor ann spine
+      | Just (SumType, _fields, _args, tag) ← saturatedCtorRefApp env spine →
+          Just (LiteralString ann tag)
+    _ → Nothing
+
+{- | A non-empty, saturated application spine whose head references a
+top-level constructor binding, resolved through the inline environment.
+The returned tag and field list come from the constructor's declaration;
+the arguments come from the spine.
+-}
+saturatedCtorRefApp
+  ∷ InlineEnv → Exp → Maybe (AlgebraicType, [FieldName], [Exp], Text)
+saturatedCtorRefApp env expr = case unwindApp expr of
+  (Ref _ ctorRef, args@(_ : _))
+    | Just (Ctor _ algTy modName tyName ctorName fields) ←
+        Map.lookup ctorRef env
+    , length args == length fields →
+        Just (algTy, fields, args, ctorId modName tyName ctorName)
+  _ → Nothing
 
 {- | Resolve a method projection off a known top-level dictionary (issue
 #180). When @dict@ is a reference to a top-level 'LiteralObject' binding,
@@ -1102,8 +1156,9 @@ fieldPolicy policy name prop =
     >>= (`Map.lookup` policyFields policy)
     >>= Map.lookup prop
 
--- | The @...label@ directive covering a projection out of an application
--- of a top-level binding.
+{- | The @...label@ directive covering a projection out of an application
+of a top-level binding.
+-}
 appliedFieldPolicy
   ∷ InlinePolicy → Qualified Name → PropName → Maybe Annotation
 appliedFieldPolicy policy name prop =

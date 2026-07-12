@@ -1,0 +1,299 @@
+UberModule
+  { uberModuleBindings =
+    [ Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Show", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Data.Show" ) ".spago/p/prelude/26c058c2a053cf4dd7240f0d822ec096c0fecbe1/src/Data/Show.purs"
+        [ ( Nothing, Name "showIntImpl" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Effect.Console" ) ".spago/p/console/f82835a0b873aafe6bd7b14dd30cc150553d4ab9/src/Effect/Console.purs"
+        [ ( Nothing, Name "log" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.DirectiveAccessor.Test", qnameName = Name "ops"
+        }, LiteralObject Nothing
+        [
+          ( PropName "add", AbsN Nothing
+            ( ParamNamed Nothing ( Name "a" ) :| [] )
+            ( AbsN Nothing
+              ( ParamNamed Nothing ( Name "b" ) :| [] )
+              ( PrimBinOp Nothing PrimAdd
+                ( Ref Nothing ( Local ( Name "a" ) ) )
+                ( Ref Nothing ( Local ( Name "b" ) ) )
+              )
+            )
+          ),
+          ( PropName "mul", AbsN ( Just Never )
+            ( ParamNamed Nothing ( Name "a0" ) :| [] )
+            ( AbsN Nothing
+              ( ParamNamed Nothing ( Name "b0" ) :| [] )
+              ( PrimBinOp Nothing PrimMul
+                ( Ref Nothing ( Local ( Name "a0" ) ) )
+                ( Ref Nothing ( Local ( Name "b0" ) ) )
+              )
+            )
+          )
+        ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.DirectiveAccessor.Test", qnameName = Name "mkOps"
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "n" ) :| [] )
+        ( LiteralObject Nothing
+          [
+            ( PropName "add", AbsN ( Just Always )
+              ( ParamNamed Nothing ( Name "a" ) :| [] )
+              ( AbsN Nothing
+                ( ParamNamed Nothing ( Name "b" ) :| [] )
+                ( PrimBinOp Nothing PrimAdd
+                  ( PrimBinOp Nothing PrimAdd
+                    ( PrimBinOp Nothing PrimAdd
+                      ( PrimBinOp Nothing PrimAdd
+                        ( PrimBinOp Nothing PrimAdd
+                          ( PrimBinOp Nothing PrimAdd
+                            ( PrimBinOp Nothing PrimAdd
+                              ( PrimBinOp Nothing PrimAdd
+                                ( Ref Nothing ( Local ( Name "a" ) ) )
+                                ( Ref Nothing ( Local ( Name "b" ) ) )
+                              )
+                              ( Ref Nothing ( Local ( Name "n" ) ) )
+                            )
+                            ( LiteralInt Nothing 10 )
+                          )
+                          ( LiteralInt Nothing 20 )
+                        )
+                        ( LiteralInt Nothing 30 )
+                      )
+                      ( LiteralInt Nothing 40 )
+                    )
+                    ( LiteralInt Nothing 50 )
+                  )
+                  ( LiteralInt Nothing 60 )
+                )
+              )
+            ),
+            ( PropName "sub", AbsN Nothing
+              ( ParamNamed Nothing ( Name "a0" ) :| [] )
+              ( AbsN Nothing
+                ( ParamNamed Nothing ( Name "b0" ) :| [] )
+                ( PrimBinOp Nothing PrimAdd
+                  ( PrimBinOp Nothing PrimAdd
+                    ( PrimBinOp Nothing PrimAdd
+                      ( PrimBinOp Nothing PrimAdd
+                        ( PrimBinOp Nothing PrimAdd
+                          ( PrimBinOp Nothing PrimAdd
+                            ( PrimBinOp Nothing PrimAdd
+                              ( PrimBinOp Nothing PrimSub
+                                ( Ref Nothing ( Local ( Name "a0" ) ) )
+                                ( Ref Nothing ( Local ( Name "b0" ) ) )
+                              )
+                              ( Ref Nothing ( Local ( Name "n" ) ) )
+                            )
+                            ( LiteralInt Nothing 10 )
+                          )
+                          ( LiteralInt Nothing 20 )
+                        )
+                        ( LiteralInt Nothing 30 )
+                      )
+                      ( LiteralInt Nothing 40 )
+                    )
+                    ( LiteralInt Nothing 50 )
+                  )
+                  ( LiteralInt Nothing 60 )
+                )
+              )
+            ),
+            ( PropName "mul", AbsN Nothing
+              ( ParamNamed Nothing ( Name "a1" ) :| [] )
+              ( AbsN Nothing
+                ( ParamNamed Nothing ( Name "b1" ) :| [] )
+                ( PrimBinOp Nothing PrimAdd
+                  ( PrimBinOp Nothing PrimAdd
+                    ( PrimBinOp Nothing PrimAdd
+                      ( PrimBinOp Nothing PrimAdd
+                        ( PrimBinOp Nothing PrimAdd
+                          ( PrimBinOp Nothing PrimAdd
+                            ( PrimBinOp Nothing PrimAdd
+                              ( PrimBinOp Nothing PrimMul
+                                ( Ref Nothing ( Local ( Name "a1" ) ) )
+                                ( Ref Nothing ( Local ( Name "b1" ) ) )
+                              )
+                              ( Ref Nothing ( Local ( Name "n" ) ) )
+                            )
+                            ( LiteralInt Nothing 10 )
+                          )
+                          ( LiteralInt Nothing 20 )
+                        )
+                        ( LiteralInt Nothing 30 )
+                      )
+                      ( LiteralInt Nothing 40 )
+                    )
+                    ( LiteralInt Nothing 50 )
+                  )
+                  ( LiteralInt Nothing 60 )
+                )
+              )
+            ),
+            ( PropName "divide", AbsN Nothing
+              ( ParamNamed Nothing ( Name "a2" ) :| [] )
+              ( AbsN Nothing
+                ( ParamNamed Nothing ( Name "b2" ) :| [] )
+                ( PrimBinOp Nothing PrimAdd
+                  ( PrimBinOp Nothing PrimAdd
+                    ( PrimBinOp Nothing PrimAdd
+                      ( PrimBinOp Nothing PrimAdd
+                        ( PrimBinOp Nothing PrimAdd
+                          ( PrimBinOp Nothing PrimAdd
+                            ( PrimBinOp Nothing PrimMul
+                              ( Ref Nothing ( Local ( Name "a2" ) ) )
+                              ( LiteralInt Nothing 2 )
+                            )
+                            ( PrimBinOp Nothing PrimMul
+                              ( Ref Nothing ( Local ( Name "b2" ) ) )
+                              ( LiteralInt Nothing 3 )
+                            )
+                          )
+                          ( Ref Nothing ( Local ( Name "n" ) ) )
+                        )
+                        ( LiteralInt Nothing 10 )
+                      )
+                      ( LiteralInt Nothing 20 )
+                    )
+                    ( LiteralInt Nothing 30 )
+                  )
+                  ( LiteralInt Nothing 40 )
+                )
+              )
+            )
+          ]
+        )
+      )
+    ], uberModuleForeigns = [], uberModuleExports =
+    [
+      ( Name "ops", Ref Nothing
+        ( Imported ( ModuleName "Golden.DirectiveAccessor.Test" ) ( Name "ops" ) )
+      ),
+      ( Name "mkOps", Ref Nothing
+        ( Imported ( ModuleName "Golden.DirectiveAccessor.Test" ) ( Name "mkOps" ) )
+      ),
+      ( Name "main", AbsN Nothing
+        ( ParamUnused Nothing :| [] )
+        ( Let Nothing
+          ( Standalone
+            ( Nothing, Name "_", AppN Nothing
+              ( AppN Nothing
+                ( ObjectProp ( Just Always )
+                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
+                  ( PropName "log" )
+                )
+                ( AppN Nothing
+                  ( ObjectProp ( Just Always )
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
+                    ( PropName "showIntImpl" )
+                  )
+                  ( AppN Nothing
+                    ( AppN Nothing
+                      ( ObjectProp Nothing
+                        ( Ref Nothing
+                          ( Imported ( ModuleName "Golden.DirectiveAccessor.Test" ) ( Name "ops" ) )
+                        )
+                        ( PropName "mul" )
+                      )
+                      ( LiteralInt Nothing 6 :| [] )
+                    )
+                    ( LiteralInt Nothing 7 :| [] ) :| []
+                  ) :| []
+                )
+              )
+              ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+            ) :|
+            [ Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( ObjectProp ( Just Always )
+                    ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
+                    ( PropName "log" )
+                  )
+                  ( AppN Nothing
+                    ( ObjectProp ( Just Always )
+                      ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
+                      ( PropName "showIntImpl" )
+                    )
+                    ( AppN Nothing
+                      ( AppN Nothing
+                        ( ObjectProp Nothing
+                          ( Ref Nothing
+                            ( Imported
+                              ( ModuleName "Golden.DirectiveAccessor.Test" )
+                              ( Name "ops" )
+                            )
+                          )
+                          ( PropName "mul" )
+                        )
+                        ( LiteralInt Nothing 2 :| [] )
+                      )
+                      ( LiteralInt Nothing 3 :| [] ) :| []
+                    ) :| []
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              ), Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( ObjectProp ( Just Always )
+                    ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
+                    ( PropName "log" )
+                  )
+                  ( AppN Nothing
+                    ( ObjectProp ( Just Always )
+                      ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
+                      ( PropName "showIntImpl" )
+                    )
+                    ( LiteralInt Nothing 252 :| [] ) :| []
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              )
+            ]
+          )
+          ( AppN Nothing
+            ( AppN Nothing
+              ( ObjectProp ( Just Always )
+                ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
+                ( PropName "log" )
+              )
+              ( AppN Nothing
+                ( ObjectProp ( Just Always )
+                  ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
+                  ( PropName "showIntImpl" )
+                )
+                ( AppN Nothing
+                  ( AppN Nothing
+                    ( ObjectProp Nothing
+                      ( AppN Nothing
+                        ( Ref Nothing
+                          ( Imported
+                            ( ModuleName "Golden.DirectiveAccessor.Test" )
+                            ( Name "mkOps" )
+                          )
+                        )
+                        ( LiteralInt Nothing 2 :| [] )
+                      )
+                      ( PropName "mul" )
+                    )
+                    ( LiteralInt Nothing 3 :| [] )
+                  )
+                  ( LiteralInt Nothing 4 :| [] ) :| []
+                ) :| []
+              )
+            )
+            ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+          )
+        )
+      )
+    ]
+  }

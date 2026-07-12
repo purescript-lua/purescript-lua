@@ -1,0 +1,5 @@
+-- Precedence fixture: the file beats @inline export (incr is inlined
+-- despite its exported never), and a local pragma beats the file
+-- (keep survives despite the always below).
+Golden.DirectivesFile.M1.incr always
+Golden.DirectivesFile.M1.keep always

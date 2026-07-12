@@ -46,6 +46,7 @@ data Args = Args
   { foreignPath ∷ Tagged "foreign" (SomeBase Dir)
   , psOutputPath ∷ Tagged "output" (SomeBase Dir)
   , luaOutputFile ∷ Tagged "output-lua" (SomeBase File)
+  , directivesFile ∷ Maybe (Tagged "directives" (SomeBase File))
   , outputIR ∷ Maybe ExtraOutput
   , outputLuaAst ∷ Maybe ExtraOutput
   , lintIR ∷ Tagged "lint-ir" Bool
@@ -94,6 +95,26 @@ options = do
             "Path to write compiled Lua file to."
               <> linebreak
               <> bold "Default: main.lua"
+        ]
+
+  directivesFile ←
+    optional . option (eitherReader (bimap displayException Tagged . parseSomeFile)) $
+      fold
+        [ metavar "DIRECTIVES-FILE"
+        , long "directives"
+        , helpDoc . Just $
+            vsep
+              [ "Path to a file with project-wide inlining directives,"
+                  <> softbreak
+                  <> "one per line:"
+                  <+> magenta "<Module>.<binding><accessor?> <mode>"
+              , "- accessor:" <+> magenta ".label" <+> "or" <+> magenta "...label"
+              , "- mode:" <+> magenta "default | never | always | arity=N"
+              , green $ indent 2 "Example: Data.Lens.over arity=2"
+              , "A local module-header pragma overrides the file;"
+                  <> softbreak
+                  <> "the file overrides @inline export pragmas."
+              ]
         ]
 
   outputLuaAst ←

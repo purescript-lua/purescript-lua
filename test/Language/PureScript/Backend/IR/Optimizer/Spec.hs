@@ -1565,6 +1565,50 @@ spec = describe "IR Optimizer" do
                    , (Name "main2", siteBare)
                    ]
 
+  describe "folds constructor reads through a reference (issue #232)" do
+    it "folds a field read over an applied constructor reference" do
+      -- A user-written `Op f` compiles to a reference to the Op worker;
+      -- a multi-use worker stays a binding, so the projection must fold
+      -- through the reference or the cascade stalls at (Op(f)).value0.
+      let mainModule = moduleNameFromString "Main"
+          extern = moduleNameFromString "Extern"
+          g = refImported extern (Name "g")
+          opName = QName mainModule (Name "Op")
+          opDef =
+            ctor
+              ProductType
+              mainModule
+              (TyName "Op")
+              (CtorName "Op")
+              [FieldName "value0"]
+          opRef = refImported mainModule (Name "Op")
+          wrap n =
+            abstraction (paramNamed (Name "x")) $
+              application (application g (literalInt n)) (refLocal (Name "x"))
+          site n x =
+            application
+              (objectProp (application opRef (wrap n)) (PropName "value0"))
+              (literalInt x)
+      optimized ←
+        either (fail . show) pure . optimizedUberModuleChecked $
+          Linker.UberModule
+            { uberModuleForeigns = []
+            , uberModuleBindings = [Standalone (opName, opDef)]
+            , uberModuleExports =
+                [(Name "main1", site 1 7), (Name "main2", site 2 9)]
+            }
+      Linker.uberModuleBindings optimized `shouldBe` []
+      Linker.uberModuleExports optimized
+        `shouldBe` [
+                     ( Name "main1"
+                     , application (application g (literalInt 1)) (literalInt 7)
+                     )
+                   ,
+                     ( Name "main2"
+                     , application (application g (literalInt 2)) (literalInt 9)
+                     )
+                   ]
+
   describe "keeps foreign module tables hoisted (issue #175)" do
     -- A foreign module's value table must stay a single shared binding:
     -- its export values (some of which are Lua table constructors with

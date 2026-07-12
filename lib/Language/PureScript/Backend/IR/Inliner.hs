@@ -18,30 +18,70 @@ import Text.Megaparsec.Char.Lexer qualified as ML
 
 {- Note [Inline annotations and inlining heuristics]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-An @\@inline <name> always@ / @\@inline <name> never@ pragma in a module comment
-travels to the optimizer's inlining decision through several stages:
+An inlining directive names a target and a mode:
 
-  1. 'pragmaParser' parses one pragma comment into a 'Pragma' (the bound 'Name'
-     and an 'Annotation').
-  2. 'Language.PureScript.Backend.IR.parseAnnotations' collects them into a
-     @Map Name Annotation@ in the translation context, and 'useAnnotation'
-     moves each into the annotated binding's 'Ann' as the binding is
-     translated (see Note [Inliner annotations must all be consumed]).
+  @\@inline [export] name accessor? mode@   (module-header pragma)
+  @Some.Module.name accessor? mode@         (a @--directives@ file line)
+
+  accessor ::= ".label" | "...label"
+  mode     ::= default | never | always | arity=N   (N > 0)
+
+The bare target names a whole binding. @.label@ names one field of a
+dictionary-record binding, @...label@ one field of the record a binding
+returns when applied (@f(x).label@) — a policy for one method instead of
+the whole record. Directives come from three explicit sources, layered by
+specificity (most specific wins, per target):
+
+  1. a local module-header pragma (no @export@) in the defining module;
+  2. the project-wide @--directives@ file;
+  3. an @\@inline export@ module-header pragma — a default the library
+     author ships with the module, overridable by the consumer's file.
+
+'resolveModes' performs exactly this layering; a winning @default@ still
+masks the lower tiers and resolves to no annotation — the built-in
+heuristics. Module-header pragmas name own-module bindings only and are
+validated strictly (a target matching nothing is an error); file entries
+are fully qualified and best-effort (a shared file may cover modules
+absent from the build). In a whole-program optimizer @export@ needs no
+transitivity machinery: the resolved annotation rides the binding into
+the uber-module, so it is simply the weakest explicit tier.
+
+The resolved winner travels to the optimizer's decision through several
+stages:
+
+  1. 'pragmaParser' / 'directivesFileParser' parse the sources;
+     'Language.PureScript.Backend.IR.parseAnnotations' collects the
+     header pragmas by scope, and 'Language.PureScript.Backend.IR.mkModule'
+     resolves them against the file slice into a
+     @Map Target (Maybe Annotation)@ in the translation context.
+  2. 'Language.PureScript.Backend.IR.useAnnotation' moves a whole-binding
+     winner into the binding root's 'Ann' as the binding is translated;
+     an accessor winner is stamped on the ann slot of the object-literal
+     field it selects (see Note [Inliner annotations must all be consumed]).
   3. From there the 'Annotation' rides along as the expression's @ann@.
-  4. The optimizer reads it back: @Just Always@ (via
-     'Language.PureScript.Backend.IR.Optimizer.isInlinableExpr') forces
-     inlining. For @Just Never@, 'optimizedUberModule' collects the annotated
-     binding names once up front (so the veto survives later rewrites that drop
-     the annotation off a binding's root) and refuses to inline them. @Nothing@
-     leaves the ref / small-literal / single-use heuristic to decide.
+  4. 'Language.PureScript.Backend.IR.Optimizer.collectInlinePolicy' reads
+     every annotation back once, from the pristine uber-module — later
+     rewrites may strip an annotation off its node, so decisions key off
+     names — and the optimizer consults the resulting policy:
 
-A pragma on a foreign name is drained into 'moduleForeigns' and reaches the
-linker, which binds each foreign name to an 'ObjectProp' accessor annotated
-with that pragma, defaulting to 'Inline.Always' so the wrapper around the FFI
-object is inlined away unless a pragma says otherwise (see
-Note [Foreign bindings structure emitted by the Linker]). @never@ keeps the
-accessor as a shared binding — the way to declare sharing intent for an FFI
-value.
+       * @Just Always@ on a root forces inlining ('isInlinableExpr');
+       * @Never@ names are never pasted ('withBinding', the call-site
+         rules, and the uncurry split all veto them);
+       * @Arity n@ names are pasted exactly at call sites applying at
+         least n arguments ('inlineSaturatedCall'), bypassing the size
+         budget, and are vetoed everywhere else;
+       * field policies gate the projection rules
+         ('resolveDictionaryProp', 'inlineAnnotatedProjection').
+
+A whole-binding pragma on a foreign name (@always@/@never@/@default@ only —
+there is no body to paste at an arity, nor a field to select) is drained
+into 'moduleForeigns' and reaches the linker, which binds each foreign name
+to an 'ObjectProp' accessor annotated with that pragma, defaulting to
+'Always' so the wrapper around the FFI object is inlined away unless a
+pragma says otherwise (see Note [Foreign bindings structure emitted by the
+Linker]). @never@ keeps the accessor as a shared binding — the way to
+declare sharing intent for an FFI value; an explicit @default@ resolves to
+the same built-in 'Always'.
 
 The 'ForeignImport' expression itself — the table of a foreign module's
 exports — is the one shape the optimizer refuses to inline even when it is
