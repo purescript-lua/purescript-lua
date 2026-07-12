@@ -593,9 +593,11 @@ optimizedExpressionM policy env =
   rewriteExpBottomUpM
     ( constantFolding
         `thenRewrite` reduceObjectProp
+        `thenRewrite` sinkProjectionIntoLet
         `thenRewrite` reduceKnownConstructor
         `thenRewrite` propagateKnownCtorThroughLet env
-        `thenRewrite` resolveDictionaryProp env
+        `thenRewrite` resolveDictionaryProp policy env
+        `thenRewrite` inlineAnnotatedProjection policy env
         `thenRewrite` inlineSaturatedCall policy env
         `thenRewrite` betaReduce
         `thenRewrite` removeUnreachableThenBranch
@@ -761,6 +763,22 @@ reduceObjectProp =
       Just case List.lookup prop (toList patches) of
         Just patched → setAnn ann patched
         Nothing → ObjectProp ann obj prop
+    _ → Nothing
+
+{- | @(let … in body).label ===> let … in body.label@
+
+Bindings evaluate first either way, so the move is behaviour-preserving
+under strict evaluation, and the label is static, so nothing can be
+captured. Pasting a record constructor into a projected application site
+(see 'inlineAnnotatedProjection') leaves exactly this shape behind once
+'betaReduce' let-binds a non-trivial argument; sinking the projection
+lets 'reduceObjectProp' finish the resolution.
+-}
+sinkProjectionIntoLet ∷ Applicative m ⇒ RewriteRuleM m Ann
+sinkProjectionIntoLet =
+  pure . \case
+    ObjectProp ann (Let letAnn binds body) prop →
+      Just $ Let letAnn binds (ObjectProp ann body prop)
     _ → Nothing
 
 {- | Case-of-known-constructor for algebraic types (issue #177), the
@@ -1055,16 +1073,98 @@ It declines a method that names its own dictionary (a superclass or
 recursive dictionary), which pasting would dangle or unfold forever, and one
 larger than 'inlineSizeBudget'. The result takes the projection's own
 annotation, never the method's, for the reason 'reduceObjectProp' spells out.
+
+A @.label@ directive on the field replaces the budget: @never@ declines
+outright, @always@ resolves regardless of size, and @arity=N@ defers to
+'inlineAnnotatedProjection', which requires the projection to be applied.
+The veto is best-effort rather than airtight: a dictionary referenced
+exactly once is pasted whole by the use-once path in 'optimizeModule', and
+'reduceObjectProp' then folds the projection without consulting any policy —
+harmless, since sharing is moot at a single use site.
 -}
-resolveDictionaryProp ∷ InlineEnv → RewriteRuleM SupplyM Ann
-resolveDictionaryProp env = \case
+resolveDictionaryProp ∷ InlinePolicy → InlineEnv → RewriteRuleM SupplyM Ann
+resolveDictionaryProp policy env = \case
   ObjectProp ann (Ref _ dictName) prop
     | Just (LiteralObject _ props) ← Map.lookup dictName env
     , Just method ← List.lookup prop props
     , countFreeRef dictName method == 0
-    , expSize method <= inlineSizeBudget →
+    , maybe
+        (expSize method <= inlineSizeBudget)
+        (== Always)
+        (fieldPolicy policy dictName prop) →
         Just . setAnn ann <$> freshenBinders method
   _ → pure Nothing
+
+-- | The @.label@ directive covering a projection of a top-level binding.
+fieldPolicy ∷ InlinePolicy → Qualified Name → PropName → Maybe Annotation
+fieldPolicy policy name prop =
+  refQName name
+    >>= (`Map.lookup` policyFields policy)
+    >>= Map.lookup prop
+
+-- | The @...label@ directive covering a projection out of an application
+-- of a top-level binding.
+appliedFieldPolicy
+  ∷ InlinePolicy → Qualified Name → PropName → Maybe Annotation
+appliedFieldPolicy policy name prop =
+  refQName name
+    >>= (`Map.lookup` policyAppliedFields policy)
+    >>= Map.lookup prop
+
+{- | Resolve a projection under an accessor-form directive (the
+@.label@ / @...label@ forms):
+
+  * @.label arity=N@ — @(dict.label) a₁ … aₖ@, @k ≥ N@: the method is read
+    out of the dictionary literal in the environment and pasted at the
+    head of the spine, exactly as 'resolveDictionaryProp' would paste it,
+    but only at a qualifying application.
+  * @...label always@ — @(f x…).label@: the record constructor @f@ is
+    pasted under the projection; 'betaReduce', 'sinkProjectionIntoLet'
+    and 'reduceObjectProp' then collapse the projection to the selected
+    field.
+  * @...label arity=N@ — @((f x…).label) a₁ … aₖ@, @k ≥ N@: the same
+    paste, gated on the arguments applied to the projection result.
+
+Like the arity path of 'inlineSaturatedCall', an explicit directive
+bypasses the size budget; the self-reference and 'pasteableRoot' guards
+stay, and every pasted copy drops its annotations' claim to the binding
+('setAnn' 'Nothing').
+-}
+inlineAnnotatedProjection ∷ InlinePolicy → InlineEnv → RewriteRuleM SupplyM Ann
+inlineAnnotatedProjection policy env expr = case expr of
+  ObjectProp ann inner label
+    | (Ref _ fname, innerArgs@(_ : _)) ← unwindApp inner
+    , Just Always ← appliedFieldPolicy policy fname label →
+        pasteCtor ann fname innerArgs label
+  (unwindApp → (ObjectProp ann inner label, args@(_ : _))) →
+    case inner of
+      Ref _ dictName
+        | Just (Arity n) ← fieldPolicy policy dictName label
+        , fromIntegral (length args) >= n
+        , Just (LiteralObject _ props) ← Map.lookup dictName env
+        , Just method ← List.lookup label props
+        , countFreeRef dictName method == 0 →
+            Just . rebuildSpine args . setAnn Nothing
+              <$> freshenBinders method
+      (unwindApp → (Ref _ fname, innerArgs@(_ : _)))
+        | Just (Arity n) ← appliedFieldPolicy policy fname label
+        , fromIntegral (length args) >= n → do
+            pasted ← pasteCtor ann fname innerArgs label
+            pure $ rebuildSpine args <$> pasted
+      _ → pure Nothing
+  _ → pure Nothing
+ where
+  pasteCtor
+    ∷ Ann → Qualified Name → [Exp] → PropName → SupplyM (Maybe Exp)
+  pasteCtor ann fname innerArgs label =
+    case Map.lookup fname env of
+      Just rhs
+        | countFreeRef fname rhs == 0
+        , pasteableRoot rhs → do
+            rhs' ← freshenBinders rhs
+            pure . Just $
+              ObjectProp ann (rebuildSpine innerArgs (setAnn Nothing rhs')) label
+      _ → pure Nothing
 
 {- | Inline a top-level lambda binding into a saturated call site (issue
 #180). When the head of an application spine references a top-level binding
@@ -1120,8 +1220,9 @@ inlineSaturatedCall policy env expr = case unwindApp expr of
   directedArity ∷ Qualified Name → Maybe Natural
   directedArity fname = refQName fname >>= (`Map.lookup` policyArity policy)
 
-  rebuildSpine ∷ [Exp] → Exp → Exp
-  rebuildSpine args head' = foldl' (\f a → AppN Nothing f (a :| [])) head' args
+-- | Re-apply the arguments 'unwindApp' peeled, as a unary spine.
+rebuildSpine ∷ [Exp] → Exp → Exp
+rebuildSpine args head' = foldl' (\f a → AppN Nothing f (a :| [])) head' args
 
 {- | 'inlineSaturatedCall' rebuilds the application spine as a unary chain,
 so pasting an n-ary lambda root would produce an under-applied redex the

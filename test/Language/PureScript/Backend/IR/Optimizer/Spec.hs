@@ -32,6 +32,7 @@ import Language.PureScript.Backend.IR.Optimizer
   , optimizedExpression
   , optimizedUberModule
   , optimizedUberModuleChecked
+  , sinkProjectionIntoLet
   )
 import Language.PureScript.Backend.IR.Supply (runSupply)
 import Language.PureScript.Backend.IR.Types
@@ -1403,6 +1404,166 @@ spec = describe "IR Optimizer" do
       namesOf optimized `shouldBe` ["f"]
       Linker.uberModuleExports optimized
         `shouldBe` [(Name "main1", applied2 1 2), (Name "main2", applied2 3 4)]
+
+  describe "honours accessor-form directives (issue #232)" do
+    let mainModule = moduleNameFromString "Main"
+        extern = moduleNameFromString "Extern"
+        g = refImported extern (Name "g")
+        m = PropName "m"
+        pad = PropName "pad"
+        checked = either (fail . show) pure . optimizedUberModuleChecked
+        namesOf uber =
+          [ name
+          | Standalone (QName _ (Name name), _) ←
+              Linker.uberModuleBindings uber
+          ]
+        addChain ∷ Exp → [Integer] → Exp
+        addChain = foldl' \acc i → primBinOp PrimAdd acc (literalInt i)
+        dictName = QName mainModule (Name "dict")
+        dictRef = refImported mainModule (Name "dict")
+        fName = QName mainModule (Name "f")
+        fRef = refImported mainModule (Name "f")
+        -- λd. {m: λx. d + x + 1 + … + 38, pad: d} — a dictionary
+        -- constructor whose size is far over 'inlineSizeBudget', so only
+        -- a directive can paste it. The field annotation goes on `m`.
+        bigCtor fieldAnn =
+          abstraction (paramNamed (Name "d")) $
+            literalObject
+              [
+                ( m
+                , setAnn fieldAnn . abstraction (paramNamed (Name "x")) $
+                    addChain
+                      ( primBinOp
+                          PrimAdd
+                          (refLocal (Name "d"))
+                          (refLocal (Name "x"))
+                      )
+                      [1 .. 38]
+                )
+              , (pad, refLocal (Name "d"))
+              ]
+
+    test "sinks a projection into a let" do
+      let obj =
+            literalObject [(m, literalInt 2), (pad, refLocal (Name "x"))]
+          bound = application g (literalInt 1)
+      runIdentity (sinkProjectionIntoLet (objectProp (let1 (Name "x") bound obj) m))
+        === Just (let1 (Name "x") bound (objectProp obj m))
+
+    it ".label never keeps the method behind the dictionary" do
+      -- Without the veto the small method resolves at both sites and
+      -- the dictionary is collected.
+      let dictDef =
+            literalObject
+              [
+                ( m
+                , setAnn (Just Never) . abstraction (paramNamed (Name "x")) $
+                    application g (refLocal (Name "x"))
+                )
+              ]
+          site x = application (objectProp dictRef m) (literalInt x)
+      optimized ←
+        checked
+          Linker.UberModule
+            { uberModuleForeigns = []
+            , uberModuleBindings = [Standalone (dictName, dictDef)]
+            , uberModuleExports =
+                [(Name "main1", site 1), (Name "main2", site 2)]
+            }
+      namesOf optimized `shouldBe` ["dict"]
+      Linker.uberModuleExports optimized
+        `shouldBe` [(Name "main1", site 1), (Name "main2", site 2)]
+
+    it ".label always resolves an over-budget method" do
+      let dictDef =
+            literalObject
+              [
+                ( m
+                , setAnn (Just Always) . abstraction (paramNamed (Name "x")) $
+                    addChain (refLocal (Name "x")) [1 .. 40]
+                )
+              ]
+          site x = application (objectProp dictRef m) (literalInt x)
+      optimized ←
+        checked
+          Linker.UberModule
+            { uberModuleForeigns = []
+            , uberModuleBindings = [Standalone (dictName, dictDef)]
+            , uberModuleExports =
+                [(Name "main1", site 0), (Name "main2", site 100)]
+            }
+      namesOf optimized `shouldBe` []
+      Linker.uberModuleExports optimized
+        `shouldBe` [ (Name "main1", literalInt 820)
+                   , (Name "main2", literalInt 920)
+                   ]
+
+    it ".label arity=1 resolves only applied projections" do
+      let dictDef =
+            literalObject
+              [
+                ( m
+                , setAnn (Just (Arity 1))
+                    . abstraction (paramNamed (Name "x"))
+                    $ application g (refLocal (Name "x"))
+                )
+              ]
+      optimized ←
+        checked
+          Linker.UberModule
+            { uberModuleForeigns = []
+            , uberModuleBindings = [Standalone (dictName, dictDef)]
+            , uberModuleExports =
+                [ (Name "main1", application (objectProp dictRef m) (literalInt 7))
+                , (Name "main2", objectProp dictRef m)
+                ]
+            }
+      namesOf optimized `shouldBe` ["dict"]
+      Linker.uberModuleExports optimized
+        `shouldBe` [ (Name "main1", application g (literalInt 7))
+                   , (Name "main2", objectProp dictRef m)
+                   ]
+
+    it "...label always resolves a field after application" do
+      let siteM =
+            application
+              (objectProp (application fRef (literalInt 3)) m)
+              (literalInt 4)
+          sitePad = objectProp (application fRef (literalInt 5)) pad
+      optimized ←
+        checked
+          Linker.UberModule
+            { uberModuleForeigns = []
+            , uberModuleBindings = [Standalone (fName, bigCtor (Just Always))]
+            , uberModuleExports =
+                [(Name "main1", siteM), (Name "main2", sitePad)]
+            }
+      namesOf optimized `shouldBe` ["f"]
+      Linker.uberModuleExports optimized
+        `shouldBe` [ (Name "main1", literalInt 748)
+                   , (Name "main2", sitePad)
+                   ]
+
+    it "...label arity=1 resolves only applied projections" do
+      let siteApplied =
+            application
+              (objectProp (application fRef (literalInt 3)) m)
+              (literalInt 4)
+          siteBare = objectProp (application fRef (literalInt 3)) m
+      optimized ←
+        checked
+          Linker.UberModule
+            { uberModuleForeigns = []
+            , uberModuleBindings =
+                [Standalone (fName, bigCtor (Just (Arity 1)))]
+            , uberModuleExports =
+                [(Name "main1", siteApplied), (Name "main2", siteBare)]
+            }
+      namesOf optimized `shouldBe` ["f"]
+      Linker.uberModuleExports optimized
+        `shouldBe` [ (Name "main1", literalInt 748)
+                   , (Name "main2", siteBare)
+                   ]
 
   describe "keeps foreign module tables hoisted (issue #175)" do
     -- A foreign module's value table must stay a single shared binding:
