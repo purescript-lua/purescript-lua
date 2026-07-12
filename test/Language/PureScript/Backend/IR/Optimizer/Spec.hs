@@ -305,10 +305,18 @@ spec = describe "IR Optimizer" do
 
     -- The end-to-end manifestation: a leaked `Just Always` makes an
     -- unrelated top-level binding unconditionally inlinable, so it gets
-    -- duplicated into every use site and dropped from the bindings.
+    -- duplicated into every use site and dropped from the bindings. The
+    -- field holds an annotated application — non-trivial, so nothing but
+    -- a leaked annotation could make `add` inlinable at two use sites (a
+    -- projection-shaped field inlines on its own merit through the Deref
+    -- tier of Note [Complexity and Capture gate inlining]).
     test "keeps a binding whose RHS folds to an annotated field" do
       let mainModule = moduleNameFromString "Main"
-          addExp = objectProp (literalObject [(foo, accessor)]) foo
+          annotatedCall =
+            setAnn
+              (Just Always)
+              (application (refImported dictModule (Name "mk")) (literalInt 1))
+          addExp = objectProp (literalObject [(foo, annotatedCall)]) foo
           original =
             Linker.UberModule
               { uberModuleForeigns = []
@@ -1034,7 +1042,8 @@ spec = describe "IR Optimizer" do
               { uberModuleForeigns = []
               , uberModuleBindings = [Standalone (hName, hExpr)]
               , uberModuleExports =
-                  [ ( Name "main"
+                  [
+                    ( Name "main"
                     , ifThenElse
                         (refImported ext (Name "cond"))
                         (application hRef (literalInt 1))

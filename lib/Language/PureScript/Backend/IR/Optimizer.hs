@@ -7,6 +7,7 @@ import Data.List qualified as List
 import Data.List.NonEmpty qualified as NE
 import Data.Map qualified as Map
 import Data.Set qualified as Set
+import Data.Text qualified as Text
 import Language.PureScript.Backend.IR.DCE (eliminateDeadCode)
 import Language.PureScript.Backend.IR.FlattenDeepBinds (flattenDeepBindsM)
 import Language.PureScript.Backend.IR.FloatIn (floatIn)
@@ -35,15 +36,18 @@ import Language.PureScript.Backend.IR.Supply (SupplyM, freshName, runSupply)
 import Language.PureScript.Backend.IR.Types
   ( AlgebraicType (SumType)
   , Ann
+  , Capture (..)
   , Exp
   , Grouping (..)
   , Parameter (..)
   , PrimOp (..)
   , RawExp (..)
   , RewriteRuleM
+  , Usage (..)
   , WasRewritten (..)
   , alphaEq
   , countFreeRef
+  , countFreeRefUsage
   , countFreeRefs
   , ctorId
   , freshenBinders
@@ -464,6 +468,61 @@ inlineSizeBudget = 64
 -- | Node count of an expression, for 'inlineSizeBudget'.
 expSize ∷ RawExp ann → Natural
 expSize e = 1 + sum (expSize <$> toListOf subexpressions e)
+
+{- | The largest expression the Deref and KnownSize inlining tiers paste
+(Note [Complexity and Capture gate inlining]), sized in IR nodes like
+'inlineSizeBudget' but far below it: these tiers admit duplication at
+every use site, so growth scales with the use count.
+-}
+smallInlineBudget ∷ Natural
+smallInlineBudget = 16
+
+{- | How costly an expression is to duplicate, ordered by escalation.
+Combines by taking the worse classification.
+See Note [Complexity and Capture gate inlining].
+-}
+data Complexity = Trivial | Deref | KnownSize | NonTrivial
+  deriving stock (Show, Eq, Ord)
+
+instance Semigroup Complexity where
+  (<>) = max
+
+instance Monoid Complexity where
+  mempty = Trivial
+
+{- | Bottom-up cost classification. 'Trivial': a reference or a
+scalar/empty literal.
+'Deref': a chain of cheap reads (projection, index, length, tag) over a
+Trivial base. 'KnownSize': an abstraction or a non-empty literal — a
+bounded allocation. Everything that computes is 'NonTrivial', and
+unlisted constructors deliberately land there, so a new node kind is
+conservative by default. A string literal above 128 characters counts
+as an allocation rather than a scalar: 'expSize' sees one node, but
+duplicating the payload is not free.
+-}
+complexityOf ∷ RawExp ann → Complexity
+complexityOf = \case
+  Ref {} → Trivial
+  LiteralInt {} → Trivial
+  LiteralFloat {} → Trivial
+  LiteralChar {} → Trivial
+  LiteralBool {} → Trivial
+  LiteralString _ann s
+    | Text.length s > 128 → KnownSize
+    | otherwise → Trivial
+  LiteralArray _ann exprs
+    | null exprs → Trivial
+    | otherwise → KnownSize <> foldMap complexityOf exprs
+  LiteralObject _ann props
+    | null props → Trivial
+    | otherwise → KnownSize <> foldMap (complexityOf . snd) props
+  ObjectProp _ann base _prop → Deref <> complexityOf base
+  ArrayIndex _ann base _idx → Deref <> complexityOf base
+  ArrayLength _ann base → Deref <> complexityOf base
+  ReflectCtor _ann base → Deref <> complexityOf base
+  DataArgumentByIndex _ann _idx base → Deref <> complexityOf base
+  AbsN _ann _params body → KnownSize <> complexityOf body
+  _ → NonTrivial
 
 {- | Pure wrapper for tests and standalone use: runs the rewrite with
 its own supply and no inlining environment. Production code uses
@@ -988,9 +1047,12 @@ inlineSaturatedCall env expr = case unwindApp expr of
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 'betaReduce' and 'inlineLocalBinding' decide whether to paste an expression
 into its use sites by the same test: paste only when re-evaluating it cannot
-multiply work — the expression is trivial ('isInlinableExpr': a Ref, a
-literal, or an @inline-always node) or it is used at most once. Otherwise the
-expression stays behind a single 'Let' binding.
+multiply work — the expression is cheap to re-evaluate ('isInlinableExpr': a
+Ref, a literal, an @inline always@ node, or the Deref tier of
+Note [Complexity and Capture gate inlining]), it is used at most once, or it
+is a small closed abstraction whose uses all sit outside branches and
+closures ('isDuplicatableClosedAbs', the KnownSize tier of the same Note).
+Otherwise the expression stays behind a single 'Let' binding.
 
 The two rules must agree, because they hand work to each other. When
 'betaReduce' declines to substitute a redex it rewrites it to
@@ -1006,8 +1068,9 @@ fixpoint in one bottom-up pass instead of oscillating.
 Fires only at exact arity: any other argument count on a literal lambda
 head is ill-formed ('WellApplied', Note [n-ary abstraction]). The unary
 redex is the singleton case. Each pair reduces by the shared guard: the
-argument is substituted when trivial or used at most once, and bound by
-a 'Let' otherwise; an argument at a 'ParamUnused' position is dropped
+argument is substituted when cheap, used at most once, or a small
+duplicatable closed abstraction, and bound by a 'Let' otherwise; an
+argument at a 'ParamUnused' position is dropped
 with its evaluation — the same call DCE makes when it drops an unused
 binding unconditionally. See Note [IR is assumed well-typed].
 -}
@@ -1044,7 +1107,10 @@ betaReduce = \case
     ParamUnused _ann → pure (body, letBinds)
     ParamNamed paramAnn name
       -- See Note [Beta reduction and local inlining share an inlining guard]
-      | isInlinableExpr arg || countFreeRef (Local name) body <= 1 →
+      | usage ← countFreeRefUsage (Local name) body
+      , isInlinableExpr arg
+          || usageTotal usage <= 1
+          || isDuplicatableClosedAbs arg usage →
           -- The λ is consumed by the rewrite, so the first inserted
           -- occurrence of the argument may keep its binder names
           -- ('substituteMoveM').
@@ -1229,19 +1295,72 @@ inlineLocalBinding rhsRefCounts grouping (body, inlined) =
         -- names it (the count map records no zero entries, and the binding's
         -- own RHS is excluded by the self-reference guard above).
         isInlinableExpr inlinee
-          || (occurrences == 1 && name `Map.notMember` rhsRefCounts) →
+          || ( (occurrences == 1 || isDuplicatableClosedAbs inlinee usage)
+                 && name `Map.notMember` rhsRefCounts
+             ) →
           -- The binding survives until DCE drops it, so the inserted copy
           -- must not reuse its binder names ('substituteCopyM').
           (,Rewritten) <$> substituteCopyM name inlinee body
       | otherwise → pure (body, inlined)
      where
+      usage ∷ Usage
+      usage = countFreeRefUsage name body
       occurrences ∷ Natural
-      occurrences = countFreeRef name body
+      occurrences = usageTotal usage
+
+{- Note [Complexity and Capture gate inlining]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Two small lattices refine the inlining heuristics beyond exact use
+counts and flat size ceilings (issue #231):
+
+  Complexity = Trivial < Deref < KnownSize < NonTrivial  ('complexityOf')
+  Capture = CaptureNone < CaptureBranch < CaptureClosure
+                                                   ('countFreeRefUsage')
+
+'Complexity' prices duplicating an expression; 'Capture' locates a
+binding's use sites relative to it. Together they admit two tiers past
+the use-count rule:
+
+  * Deref tier ('isInlinableExpr'): an expression of complexity at most
+    'Deref' and size under 'smallInlineBudget' pastes at any use count.
+    Re-reading a projection chain is semantics-preserving because
+    PureScript records and module tables are write-once; the
+    re-evaluation cost is a field read. The tier reaches all three
+    guard sites — 'withBinding', 'betaReduce', 'inlineLocalBinding' —
+    through the shared predicate.
+
+  * KnownSize tier ('isDuplicatableClosedAbs', the two local sites
+    only): a closed 'AbsN' under 'smallInlineBudget' whose bound name's
+    uses all sit at 'CaptureNone' is substituted even when used many
+    times, so a locally-bound combinator beta-reduces at every site.
+    The 'CaptureNone' condition refuses to move the lambda literal into
+    a branch or closure: paying a closure allocation per call of the
+    surrounding function is the LuaJIT trace-abort pathology of issue
+    #204, so closedness and small size alone do not admit duplication.
+
+A 'NonTrivial' body is admitted by neither tier, so it is never
+duplicated — under a branch, a closure, or anywhere else. It still
+inlines when used at most once: that is relocation, not duplication,
+and the FloatIn pass moves work into single branches deliberately.
+
+'withBinding' gets no KnownSize tier on purpose: an uber-module
+binding's uses sit inside other top-level functions — 'CaptureClosure'
+by construction — and saturated call sites of top-level lambdas are
+already served by the call-site inliner ('inlineSaturatedCall').
+
+Left for the follow-up analyses that need them: per-use-kind counters
+(call/access/case) and an admission for a projection used only in call
+position.
+-}
 
 -- See Note [Inline annotations and inlining heuristics]
+-- and Note [Complexity and Capture gate inlining]
 isInlinableExpr ∷ Exp → Bool
 isInlinableExpr expr =
-  hasInlineAnnotation expr || isRef expr || isNonRecursiveLiteral expr
+  hasInlineAnnotation expr
+    || isRef expr
+    || isNonRecursiveLiteral expr
+    || isCheapProjection expr
  where
   isRef ∷ RawExp a → Bool
   isRef = \case
@@ -1254,3 +1373,39 @@ isInlinableExpr expr =
       Just Always → True
       Just Never → False
       Nothing → False
+
+  -- The Deref tier. The explicit disjuncts above are subsumed for the
+  -- shapes they share (a Ref, a short scalar), but kept: they also admit
+  -- what the tier prices differently (a long string literal).
+  isCheapProjection ∷ Exp → Bool
+  isCheapProjection e =
+    complexityOf e <= Deref && expSize e < smallInlineBudget
+
+{- | The KnownSize tier of Note [Complexity and Capture gate inlining]:
+a small closed abstraction whose bound name is only used outside
+branches and closures may be pasted at every use site.
+-}
+isDuplicatableClosedAbs ∷ Exp → Usage → Bool
+isDuplicatableClosedAbs rhs Usage {usageCapture} =
+  isAbs rhs
+    && usageCapture == CaptureNone
+    && expSize rhs < smallInlineBudget
+    && isClosedExp rhs
+ where
+  isAbs ∷ RawExp a → Bool
+  isAbs = \case
+    AbsN {} → True
+    _ → False
+
+{- | No free local references. Imported references do not count: they
+are valid at any position in the module, so they survive being
+pasted anywhere.
+-}
+isClosedExp ∷ RawExp ann → Bool
+isClosedExp =
+  not . any isLocalName . Map.keys . countFreeRefs
+ where
+  isLocalName ∷ Qualified Name → Bool
+  isLocalName = \case
+    Local _ → True
+    _ → False
