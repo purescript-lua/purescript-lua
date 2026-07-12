@@ -1,0 +1,27 @@
+UberModule
+  { uberModuleBindings =
+    [ Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.DirectivesFile.M1", qnameName = Name "keep"
+        }, AbsN ( Just Never )
+        ( ParamNamed Nothing ( Name "x" ) :| [] )
+        ( PrimBinOp Nothing PrimAdd
+          ( Ref Nothing ( Local ( Name "x" ) ) )
+          ( LiteralInt Nothing 2 )
+        )
+      )
+    ], uberModuleForeigns = [], uberModuleExports =
+    [
+      ( Name "inlined", LiteralInt Nothing 5 ),
+      ( Name "kept", PrimBinOp Nothing PrimAdd
+        ( AppN Nothing
+          ( Ref Nothing ( Imported ( ModuleName "Golden.DirectivesFile.M1" ) ( Name "keep" ) ) )
+          ( LiteralInt Nothing 1 :| [] )
+        )
+        ( AppN Nothing
+          ( Ref Nothing ( Imported ( ModuleName "Golden.DirectivesFile.M1" ) ( Name "keep" ) ) )
+          ( LiteralInt Nothing 2 :| [] )
+        )
+      )
+    ]
+  }

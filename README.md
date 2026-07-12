@@ -12,7 +12,9 @@ https://github.com/purescript-lua/purescript-lua/discussions/categories/ideas
 - [x] Lua code bundling: emits either a Lua module (a file that returns a table with functions) or an application (a file that executes itself).
 - [x] FFI with Lua.
 - [x] Dead Code Elimination (DCE).
-- [x] Code inlining.
+- [x] Code inlining, tunable with graduated `@inline` directives
+      (`always`/`never`/`arity=N`, per-field accessors, and a project-wide
+      `--directives` file).
 - [x] [Package Set](https://github.com/purescript-lua/purescript-lua-package-sets) for PureScript/Lua libs.
 - [x] All core libs added to the package set.
 - [x] First-class [Spago](https://github.com/purescript/spago) backend: `spago build`, `spago run`, and `spago test` target Lua via `pslua`.
@@ -116,9 +118,10 @@ This will build and install executable `pslua.exe`
 C:\cabal\bin\pslua --help
 pslua - a PureScript backend for Lua
 
-Usage: pslua.exe [--foreign-path FOREIGN-PATH] [--ps-output PS-PATH]
-                 [--lua-output-file LUA-OUT-FILE] [--output-lua-ast]
-                 [--output-ir] [--lint-ir] [-e|--entry ENTRY] [--run ENTRY]
+Usage: pslua [--foreign-path FOREIGN-PATH] [--ps-output PS-PATH]
+             [--lua-output-file LUA-OUT-FILE] [--directives DIRECTIVES-FILE]
+             [--output-lua-ast] [--output-ir] [--lint-ir] [--max-locals N]
+             [--max-upvalues N] [-e|--entry ENTRY] [--run ENTRY]
 
   Compile PureScript's CoreFn to Lua
 
@@ -131,12 +134,26 @@ Available options:
   --lua-output-file LUA-OUT-FILE
                            Path to write compiled Lua file to.
                            Default: main.lua
+  --directives DIRECTIVES-FILE
+                           Path to a file with project-wide inlining directives,
+                           one per line: <Module>.<binding><accessor?> <mode>
+                           - accessor: .label or ...label
+                           - mode: default | never | always | arity=N
+                             Example: Data.Lens.over arity=2
+                           A local module-header pragma overrides the file;
+                           the file overrides @inline export pragmas.
   --output-lua-ast         Output Lua AST.
                            Default: false
   --output-ir              Output IR.
                            Default: false
   --lint-ir                Check IR invariants after every optimizer pass (debug).
                            Default: false
+  --max-locals N           Target Lua VM's hard limit on local variables
+                           per function (LUAI_MAXVARS).
+                           Default: 200 (Lua 5.1)
+  --max-upvalues N         Target Lua VM's hard limit on upvalues
+                           per function (LUAI_MAXUPVALUES).
+                           Default: 60 (Lua 5.1)
   -e,--entry ENTRY         Where to start compilation.
                            Could be one of the following formats:
                            - Application format: <Module>.<binding>
@@ -151,3 +168,43 @@ Available options:
                              Example: Acme.App.main
   -h,--help                Show this help text
 ```
+
+## Inlining directives
+
+The optimizer's inlining decisions can be tuned per binding with `@inline`
+directives. A directive names a target, optionally an accessor selecting one
+field of a record the binding is (or returns), and a mode:
+
+```
+@inline [export] name[.label|...label] (default | never | always | arity=N)
+```
+
+- `always` / `never` force or forbid inlining the target.
+- `arity=N` inlines the target only at call sites applying at least N
+  arguments — a partial application stays a shared reference. This is the
+  switch that starts an abstraction-elimination cascade: the pasted body
+  meets beta reduction and the case-of-known-constructor folds, so wrappers
+  like `runOp (Op f) x` collapse to `f x` at every saturated site.
+- `.label` targets one field of a dictionary-record binding, `...label` one
+  field of the record a binding returns when applied (`f(x).label`) — a
+  policy for a single method rather than the whole record.
+- `default` explicitly resets the target to the built-in heuristics, masking
+  any weaker directive.
+
+Directives come from three sources, most specific first:
+
+1. **Module-header pragmas** — comment lines above `module` in the defining
+   module, naming its own bindings: `-- @inline myBinding arity=2`.
+2. **A project directives file** (`--directives inline.txt`) — one directive
+   per line with fully-qualified names and no `@inline` prefix
+   (`Data.Lens.over arity=2`); `--` comments and blank lines are allowed.
+   Entries that match nothing in the build are ignored, so a shared file can
+   cover optional dependencies.
+3. **Exported pragmas** — `-- @inline export myBinding always` in the
+   defining module travels with the library as its author's recommendation.
+
+A local pragma beats the file, and the file beats an exported pragma, per
+target. Foreign bindings accept only whole-binding `always`/`never`/`default`
+(their implementation is opaque to the optimizer). Note that `spago run`
+re-invokes the backend without build-phase flags, so `--directives` (like all
+build flags) applies to `spago build` output, not to the `--run` re-link.

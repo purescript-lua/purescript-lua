@@ -5,6 +5,7 @@ import Control.Monad.Oops qualified as Oops
 import Data.Map qualified as Map
 import Data.Tagged (Tagged (..), untag)
 import Language.PureScript.Backend.IR qualified as IR
+import Language.PureScript.Backend.IR.Inliner qualified as Inliner
 import Language.PureScript.Backend.IR.Linker qualified as Linker
 import Language.PureScript.Backend.IR.Optimizer
   ( optimizedUberModule
@@ -40,14 +41,15 @@ compileModules
   → Tagged "foreign" (Path Abs Dir)
   → Tagged "lint-ir" Bool
   → LuaLimits
+  → Inliner.Directives
   → AppOrModule
   → ExceptT (Variant e) IO CompilationResult
-compileModules outputDir foreignDir lintIR limits appOrModule = do
+compileModules outputDir foreignDir lintIR limits directives appOrModule = do
   let entryModuleName = entryPointModule appOrModule
   cfnModules ← CoreFn.readModuleRecursively outputDir entryModuleName
   let dataDecls = IR.collectDataDeclarations cfnModules
   irResults ← forM (Map.toList cfnModules) \(_psModuleName, cfnModule) →
-    Oops.hoistEither $ IR.mkModule cfnModule dataDecls
+    Oops.hoistEither $ IR.mkModule directives cfnModule dataDecls
   let (needsRuntimeLazys, irModules) = unzip irResults
   let linkedModule = Linker.makeUberModule (linkerMode appOrModule) irModules
   -- Lift the allowlisted foreign exports to IR primops before optimizing, so

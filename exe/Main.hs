@@ -8,6 +8,7 @@ import Data.Text qualified as Text
 import Language.PureScript.Backend (CompilationResult (..))
 import Language.PureScript.Backend qualified as Backend
 import Language.PureScript.Backend.IR qualified as IR
+import Language.PureScript.Backend.IR.Inliner qualified as Inliner
 import Language.PureScript.Backend.IR.Pass
   ( PassCheckFailure
   , renderPassCheckFailure
@@ -24,6 +25,7 @@ import Path (Abs, Dir, Path, SomeBase (..), replaceExtension, toFilePath)
 import Path.IO qualified as Path
 import Prettyprinter (defaultLayoutOptions, layoutPretty)
 import Prettyprinter.Render.Text (renderIO)
+import Text.Megaparsec qualified as Megaparsec
 import Text.Pretty.Simple (pHPrint)
 
 main ∷ IO ()
@@ -31,6 +33,7 @@ main = Utf8.withUtf8 do
   Cli.Args
     { foreignPath
     , luaOutputFile
+    , directivesFile
     , outputIR
     , outputLuaAst
     , lintIR
@@ -47,6 +50,19 @@ main = Utf8.withUtf8 do
         Path.Abs a → pure a
         Path.Rel r → Path.makeAbsolute r
 
+  directives ← case directivesFile of
+    Nothing → pure mempty
+    Just (Tagged someFile) → do
+      path ←
+        case someFile of
+          Path.Abs a → pure a
+          Path.Rel r → Path.makeAbsolute r
+      contents ← decodeUtf8 <$> readFileBS (toFilePath path)
+      let parser = Inliner.directivesFileParser <* Megaparsec.eof
+      case Megaparsec.parse parser (toFilePath path) contents of
+        Left errorBundle → die $ Megaparsec.errorBundlePretty errorBundle
+        Right parsed → pure parsed
+
   -- `--run` overrides `--entry`: Spago's run phase invokes the backend a second
   -- time as `pslua --run <Entry>` (without the build-phase args), so the entry
   -- to compile comes from `--run` when present.
@@ -58,7 +74,13 @@ main = Utf8.withUtf8 do
     -- Stay silent in run mode so the program's own stdout isn't polluted (the
     -- output may be piped); Spago already logs the run/build phases itself.
     when (isNothing runEntry) $ putTextLn "PS Lua: compiling ..."
-    Backend.compileModules psOutputPath foreignDir lintIR luaLimits entry
+    Backend.compileModules
+      psOutputPath
+      foreignDir
+      lintIR
+      luaLimits
+      directives
+      entry
       & handleModuleNotFoundError
       & handleModuleDecodingError
       & handleCoreFnError

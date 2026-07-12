@@ -2,6 +2,7 @@
 
 module Language.PureScript.Backend.IR.Spec where
 
+import Data.List qualified as List
 import Data.List.NonEmpty qualified as NE
 import Data.Map.Strict qualified as Map
 import Language.PureScript.Backend.IR
@@ -9,8 +10,13 @@ import Language.PureScript.Backend.IR
   , RepM
   , collectDataDeclarations
   , mkCase
+  , mkModule
   , runRepM
   )
+import Language.PureScript.Backend.IR.Inliner
+  ( Annotation (Always, Arity, Never)
+  )
+import Language.PureScript.Backend.IR.Inliner qualified as Inliner
 import Language.PureScript.Backend.IR.Names
   ( CtorName (..)
   , Name (..)
@@ -18,13 +24,174 @@ import Language.PureScript.Backend.IR.Names
   , TyName (..)
   )
 import Language.PureScript.Backend.IR.Types
+import Language.PureScript.Comments (Comment (LineComment))
 import Language.PureScript.CoreFn qualified as Cfn
 import Language.PureScript.Names qualified as PS
 import Language.PureScript.PSString qualified as PS
-import Test.Hspec (Spec, describe, it, shouldBe)
+import Test.Hspec
+  ( Expectation
+  , Spec
+  , describe
+  , expectationFailure
+  , it
+  , shouldBe
+  , shouldSatisfy
+  )
 
 spec ∷ Spec
 spec = describe "IR representation" do
+  describe "module translation attaches inline directives" do
+    it "annotates an application-rooted binding" do
+      irModule ←
+        translateModule
+          ["@inline foo always"]
+          [Cfn.NonRec ann (PS.Ident "foo") (cfnApp (cfnImportedRef "bar") (cfnInt 1))]
+      bindingRootAnn (Name "foo") irModule `shouldBe` Just (Just Always)
+    it "annotates a variable-rooted binding" do
+      irModule ←
+        translateModule
+          ["@inline foo never"]
+          [Cfn.NonRec ann (PS.Ident "foo") (cfnImportedRef "bar")]
+      bindingRootAnn (Name "foo") irModule `shouldBe` Just (Just Never)
+
+    it "annotates a binding with an arity directive" do
+      irModule ←
+        translateModule
+          ["@inline foo arity=2"]
+          [Cfn.NonRec ann (PS.Ident "foo") (cfnImportedRef "bar")]
+      bindingRootAnn (Name "foo") irModule `shouldBe` Just (Just (Arity 2))
+
+    it "an explicit default attaches no annotation" do
+      irModule ←
+        translateModule
+          ["@inline foo default"]
+          [Cfn.NonRec ann (PS.Ident "foo") (cfnImportedRef "bar")]
+      bindingRootAnn (Name "foo") irModule `shouldBe` Just Nothing
+
+    it "attaches a field directive to a dictionary record field" do
+      irModule ←
+        translateModule
+          ["@inline dict.method never"]
+          [ Cfn.NonRec ann (PS.Ident "dict") $
+              cfnObject [("method", cfnInt 1), ("other", cfnInt 2)]
+          ]
+      fieldAnn (Name "dict") (PropName "method") irModule
+        `shouldBe` Just (Just Never)
+      fieldAnn (Name "dict") (PropName "other") irModule
+        `shouldBe` Just Nothing
+
+    it "attaches an applied-field directive under a lambda" do
+      irModule ←
+        translateModule
+          ["@inline mk...method always"]
+          [ Cfn.NonRec ann (PS.Ident "mk") $
+              Cfn.Abs ann (PS.Ident "x") $
+                cfnObject [("method", cfnInt 1)]
+          ]
+      fieldAnn (Name "mk") (PropName "method") irModule
+        `shouldBe` Just (Just Always)
+
+    it "rejects a field directive on a lambda binding" do
+      translate
+        mempty
+        ["@inline mk.method never"]
+        [ Cfn.NonRec ann (PS.Ident "mk") $
+            Cfn.Abs ann (PS.Ident "x") $
+              cfnObject [("method", cfnInt 1)]
+        ]
+        []
+        `shouldFailWith` "does not match the shape"
+
+    it "rejects an accessor directive naming a missing field" do
+      translate
+        mempty
+        ["@inline dict.ghost never"]
+        [ Cfn.NonRec ann (PS.Ident "dict") $
+            cfnObject [("method", cfnInt 1)]
+        ]
+        []
+        `shouldFailWith` "does not match the shape"
+
+    it "rejects a header directive naming a missing binding" do
+      translate
+        mempty
+        ["@inline ghost always"]
+        [Cfn.NonRec ann (PS.Ident "foo") (cfnInt 1)]
+        []
+        `shouldFailWith` "Unused annotations"
+
+    it "silently ignores unmatched directives-file entries" do
+      irModule ←
+        translateModuleWith
+          ( directivesFor
+              [ ((Name "ghost", Nothing), Inliner.ModeAnnotation Always)
+              ,
+                ( (Name "foo", Just (Inliner.Field (PropName "nope")))
+                , Inliner.ModeAnnotation Never
+                )
+              ]
+          )
+          []
+          [Cfn.NonRec ann (PS.Ident "foo") (cfnInt 1)]
+      bindingRootAnn (Name "foo") irModule `shouldBe` Just Nothing
+
+    it "applies a directives-file entry to its binding" do
+      irModule ←
+        translateModuleWith
+          (directivesFor [((Name "foo", Nothing), Inliner.ModeAnnotation Never)])
+          []
+          [Cfn.NonRec ann (PS.Ident "foo") (cfnImportedRef "bar")]
+      bindingRootAnn (Name "foo") irModule `shouldBe` Just (Just Never)
+
+    it "a local header directive beats the directives file" do
+      irModule ←
+        translateModuleWith
+          (directivesFor [((Name "foo", Nothing), Inliner.ModeAnnotation Never)])
+          ["@inline foo always"]
+          [Cfn.NonRec ann (PS.Ident "foo") (cfnImportedRef "bar")]
+      bindingRootAnn (Name "foo") irModule `shouldBe` Just (Just Always)
+
+    it "the directives file beats an exported header directive" do
+      irModule ←
+        translateModuleWith
+          (directivesFor [((Name "foo", Nothing), Inliner.ModeAnnotation Always)])
+          ["@inline export foo arity=1"]
+          [Cfn.NonRec ann (PS.Ident "foo") (cfnImportedRef "bar")]
+      bindingRootAnn (Name "foo") irModule `shouldBe` Just (Just Always)
+
+    it "an exported header directive applies when nothing overrides it" do
+      irModule ←
+        translateModule
+          ["@inline export foo arity=1"]
+          [Cfn.NonRec ann (PS.Ident "foo") (cfnImportedRef "bar")]
+      bindingRootAnn (Name "foo") irModule `shouldBe` Just (Just (Arity 1))
+
+    it "accepts always and never on a foreign binding" do
+      irModule ←
+        translateForeign
+          ["@inline ffi never"]
+          [PS.Ident "ffi"]
+      moduleForeigns irModule `shouldBe` [(Just Never, Name "ffi")]
+
+    it "rejects arity on a foreign binding" do
+      translate mempty ["@inline ffi arity=1"] [] [PS.Ident "ffi"]
+        `shouldFailWith` "foreign"
+
+    it "ignores a directives-file arity on a foreign binding" do
+      irModule ←
+        translateWith
+          ( directivesFor
+              [((Name "ffi", Nothing), Inliner.ModeAnnotation (Arity 1))]
+          )
+          []
+          []
+          [PS.Ident "ffi"]
+      moduleForeigns irModule `shouldBe` [(Nothing, Name "ffi")]
+
+    it "rejects an accessor directive on a foreign binding" do
+      translate mempty ["@inline ffi.method never"] [] [PS.Ident "ffi"]
+        `shouldFailWith` "foreign"
+
   describe "case expressions" do
     describe "singular" do
       it "null binder" do
@@ -531,9 +698,89 @@ runRepresentM rm =
           , lastGeneratedNameIndex = 0
           , needsRuntimeLazy = Any False
           , annotations = mempty
+          , headerTargets = mempty
           }
         rm
     )
+
+translateModule ∷ MonadFail m ⇒ [Text] → [Cfn.Bind Cfn.Ann] → m Module
+translateModule = translateModuleWith mempty
+
+translateModuleWith
+  ∷ MonadFail m
+  ⇒ Inliner.Directives
+  → [Text]
+  → [Cfn.Bind Cfn.Ann]
+  → m Module
+translateModuleWith directives commentLines bindings =
+  translateWith directives commentLines bindings []
+
+translateForeign ∷ MonadFail m ⇒ [Text] → [PS.Ident] → m Module
+translateForeign commentLines = translateWith mempty commentLines []
+
+translateWith
+  ∷ MonadFail m
+  ⇒ Inliner.Directives
+  → [Text]
+  → [Cfn.Bind Cfn.Ann]
+  → [PS.Ident]
+  → m Module
+translateWith directives commentLines bindings foreigns =
+  either fail pure $ translate directives commentLines bindings foreigns
+
+translate
+  ∷ Inliner.Directives
+  → [Text]
+  → [Cfn.Bind Cfn.Ann]
+  → [PS.Ident]
+  → Either String Module
+translate directives commentLines bindings foreigns =
+  bimap show snd $
+    mkModule
+      directives
+      cfnModule
+        { Cfn.moduleComments = LineComment <$> commentLines
+        , Cfn.moduleBindings = bindings
+        , Cfn.moduleForeign = foreigns
+        }
+      mempty
+
+directivesFor ∷ [(Inliner.Target, Inliner.Mode)] → Inliner.Directives
+directivesFor entries =
+  one (PS.ModuleName "M", Map.fromList entries)
+
+shouldFailWith ∷ HasCallStack ⇒ Either String Module → String → Expectation
+shouldFailWith result needle = case result of
+  Left err → err `shouldSatisfy` (needle `List.isInfixOf`)
+  Right _ → expectationFailure "translation unexpectedly succeeded"
+
+{- | The root annotation of a standalone module binding, or 'Nothing'
+when no binding of this name exists.
+-}
+bindingRootAnn ∷ Name → Module → Maybe Ann
+bindingRootAnn name Module {moduleBindings} =
+  listToMaybe
+    [getAnn expr | Standalone (_ann, n, expr) ← moduleBindings, n == name]
+
+{- | The annotation of an object-literal field inside a standalone module
+binding, found at any lambda/let depth; 'Nothing' when no such field
+exists.
+-}
+fieldAnn ∷ Name → PropName → Module → Maybe Ann
+fieldAnn name label irModule = do
+  root ←
+    listToMaybe
+      [ expr
+      | Standalone (_ann, n, expr) ← moduleBindings irModule
+      , n == name
+      ]
+  go root
+ where
+  go = \case
+    AbsN _a _params body → go body
+    Let _a _binds body → go body
+    LiteralObject _a props → getAnn <$> List.lookup label props
+    _ → Nothing
 
 --------------------------------------------------------------------------------
 -- Fixture ---------------------------------------------------------------------
@@ -562,6 +809,9 @@ cfnLocalIdent = PS.Qualified (PS.BySourcePos (PS.SourcePos 0 0)) . PS.Ident
 
 cfnRef ∷ Text → Cfn.Expr Cfn.Ann
 cfnRef = Cfn.Var ann . cfnLocalIdent
+
+cfnImportedRef ∷ Text → Cfn.Expr Cfn.Ann
+cfnImportedRef = Cfn.Var ann . cfnQualifyModule . PS.Ident
 
 cfnBool ∷ Bool → Cfn.Expr Cfn.Ann
 cfnBool b = Cfn.Literal ann (Cfn.BooleanLiteral b)

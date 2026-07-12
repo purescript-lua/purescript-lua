@@ -10,6 +10,7 @@ import Data.IntCast (intCast)
 import Data.List.NonEmpty ((<|))
 import Data.List.NonEmpty qualified as NE
 import Data.Map.Lazy qualified as Map
+import Data.Set qualified as Set
 import Data.Tagged (Tagged (Tagged))
 import Data.Text qualified as Text
 import Data.Traversable (for)
@@ -35,7 +36,9 @@ import Prelude hiding (identity, show)
 
 data Context = Context
   { annotations
-      ∷ Map Name Annotation
+      ∷ Map Inliner.Target (Maybe Annotation)
+  , headerTargets
+      ∷ Set Inliner.Target
   , contextModule
       ∷ Cfn.Module Cfn.Ann
   , contextDataTypes
@@ -66,15 +69,19 @@ instance MonadWriter Any RepM where
 
 {- Note [Inliner annotations must all be consumed]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-The @Map Name Annotation@ in the translation 'Context' is a linear resource.
-'parseAnnotations' fills it from the module's @\@inline@ pragmas, keyed by the
-binding name each pragma names; 'useAnnotation' removes an entry as it attaches
-the annotation to that binding; 'runRepM' then checks the map is empty and
-errors with 'UnusedAnnotations' if anything is left over.
+The @Map Target (Maybe Annotation)@ in the translation 'Context' is a linear
+resource. 'mkModule' fills it with the resolved directives targeting this
+module, keyed by the target each directive names; 'useAnnotation' /
+'useAccessorAnnotations' remove entries as they attach annotations to
+bindings; 'runRepM' then checks that no module-header target is left over
+and errors with 'UnusedAnnotations' otherwise.
 
 The leftover check is how a misspelled or misplaced pragma is reported: an
-@\@inline@ whose name matches no top-level binding is never drained, so it
-surfaces as an error instead of being silently ignored. See also
+@\@inline@ whose target matches no top-level binding is never drained, so it
+surfaces as an error instead of being silently ignored. Targets that came
+only from the @--directives@ file are exempt ('headerTargets' records which
+targets appeared in the module header): a project-wide or shipped directives
+file legitimately names bindings absent from the current build. See also
 Note [Inline annotations and inlining heuristics].
 -}
 runRepM
@@ -83,21 +90,26 @@ runRepM
   → Either CoreFnError (Tagged "needsRuntimeLazy" Bool, a)
 runRepM ctx (RepM m) = do
   (a, ctx') ← runStateT m ctx
-  let remainingAnnotations = annotations ctx'
+  let remainingAnnotations =
+        Map.restrictKeys (annotations ctx') (headerTargets ctx')
   unless (Map.null remainingAnnotations) do
     Left . CoreFnError (Cfn.moduleName (contextModule ctx)) $
       UnusedAnnotations remainingAnnotations
   pure (Tagged . getAny $ needsRuntimeLazy ctx', a)
 
 mkModule
-  ∷ Cfn.Module Cfn.Ann
+  ∷ Inliner.Directives
+  → Cfn.Module Cfn.Ann
   → Map (ModuleName, TyName) (AlgebraicType, Map CtorName [FieldName])
   → Either CoreFnError (Tagged "needsRuntimeLazy" Bool, Module)
-mkModule cfnModule contextDataTypes = do
-  annotations ← parseAnnotations cfnModule
+mkModule directives cfnModule contextDataTypes = do
+  (localModes, exportModes) ← parseAnnotations cfnModule
+  let fileModes =
+        Map.findWithDefault mempty (Cfn.moduleName cfnModule) directives
   runRepM
     Context
-      { annotations
+      { annotations = Inliner.resolveModes localModes fileModes exportModes
+      , headerTargets = Map.keysSet localModes <> Map.keysSet exportModes
       , contextModule = cfnModule
       , contextDataTypes
       , lastGeneratedNameIndex = 0
@@ -120,15 +132,31 @@ mkModule cfnModule contextDataTypes = do
           , moduleForeigns
           }
 
--- See Note [Inliner annotations must all be consumed]
-parseAnnotations ∷ Cfn.Module Cfn.Ann → Either CoreFnError (Map Name Annotation)
+{- | Parse the module-header pragmas, split by scope: local directives
+(the highest-precedence source) and @export@-scoped ones (the lowest).
+-}
+parseAnnotations
+  ∷ Cfn.Module Cfn.Ann
+  → Either
+      CoreFnError
+      (Map Inliner.Target Inliner.Mode, Map Inliner.Target Inliner.Mode)
 parseAnnotations currentModule =
   Cfn.moduleComments currentModule
     & foldMapM \case
       LineComment line → pure <$> parsePragmaLine line
       BlockComment block → traverse parsePragmaLine (lines block)
-    & fmap (Map.fromList . catMaybes)
+    & fmap (splitByScope . catMaybes)
  where
+  splitByScope
+    ∷ [Inliner.Pragma]
+    → (Map Inliner.Target Inliner.Mode, Map Inliner.Target Inliner.Mode)
+  splitByScope pragmas =
+    ( Map.fromList
+        [(t, m) | Inliner.Pragma Inliner.LocalScope t m ← pragmas]
+    , Map.fromList
+        [(t, m) | Inliner.Pragma Inliner.ExportScope t m ← pragmas]
+    )
+
   parsePragmaLine ∷ Text → Either CoreFnError (Maybe Inliner.Pragma)
   parsePragmaLine ln = do
     let parser = optional (Inliner.pragmaParser <* Megaparsec.eof)
@@ -137,14 +165,27 @@ parseAnnotations currentModule =
         (CoreFnError (Cfn.moduleName currentModule) . AnnotationParsingError)
 
 -- See Note [Inliner annotations must all be consumed]
-useAnnotation ∷ Name → RepM (Maybe Annotation)
-useAnnotation name = do
+useAnnotation ∷ Inliner.Target → RepM (Maybe Annotation)
+useAnnotation target = do
   ctx ← get
-  let (ann, annotations') =
+  let (resolved, annotations') =
         -- delete the annotation from the map returning the value
-        Map.updateLookupWithKey (\_ _ → Nothing) name (annotations ctx)
+        Map.updateLookupWithKey (\_ _ → Nothing) target (annotations ctx)
   put $ ctx {annotations = annotations'}
-  pure ann
+  pure $ join resolved
+
+{- | Drain every accessor-form directive targeting the given binding name.
+See Note [Inliner annotations must all be consumed].
+-}
+useAccessorAnnotations ∷ Name → RepM [(Inliner.Accessor, Maybe Annotation)]
+useAccessorAnnotations name = do
+  ctx ← get
+  let (matching, rest) =
+        Map.partitionWithKey
+          (\(n, accessor) _ → n == name && isJust accessor)
+          (annotations ctx)
+  put $ ctx {annotations = rest}
+  pure [(accessor, ann) | ((_, Just accessor), ann) ← Map.toList matching]
 
 mkImports ∷ RepM [ModuleName]
 mkImports = do
@@ -168,10 +209,26 @@ mkReExports =
 mkForeigns ∷ RepM [(Ann, Name)]
 mkForeigns = do
   idents ← gets (contextModule >>> Cfn.moduleForeign)
+  strictTargets ← gets headerTargets
   forM idents \ident → do
     let name = identToName ident
-    ann ← useAnnotation name
-    pure (ann, name)
+    ann ← useAnnotation (name, Nothing)
+    -- A foreign value's implementation is opaque to the IR: an arity
+    -- policy has no body to paste and an accessor no field to select.
+    -- Both are errors in a module-header pragma; from the directives
+    -- file they are ignored like every other entry that does not apply
+    -- to this build (see Note [Inliner annotations must all be consumed]).
+    resolved ← case ann of
+      Just (Inliner.Arity _)
+        | (name, Nothing) `Set.member` strictTargets →
+            throwContextualError $ UnsupportedForeignAnnotation name
+        | otherwise → pure Nothing
+      other → pure other
+    accessors ← useAccessorAnnotations name
+    for_ accessors \(accessor, _resolved) →
+      when ((name, Just accessor) `Set.member` strictTargets) do
+        throwContextualError $ UnsupportedForeignAnnotation name
+    pure (resolved, name)
 
 collectDataDeclarations
   ∷ Map ModuleName (Cfn.Module Cfn.Ann)
@@ -218,9 +275,10 @@ mkBinding ∷ Cfn.Bind Cfn.Ann → RepM Binding
 mkBinding = \case
   Cfn.NonRec _ann ident cfnExpr → do
     let name = identToName ident
-    ann ← useAnnotation name
+    ann ← useAnnotation (name, Nothing)
     expr ← makeExprAnnotated ann cfnExpr
-    pure $ Standalone (noAnn, name, expr)
+    annotated ← attachAccessorAnnotations name expr
+    pure $ Standalone (noAnn, name, annotated)
   Cfn.Rec bindingGroup → do
     modname ← gets $ contextModule >>> Cfn.moduleName
     bindings ← writer $ applyLazinessTransform modname bindingGroup
@@ -229,6 +287,61 @@ mkBinding = \case
       Just bs →
         RecursiveGroup <$> for bs \((_ann, ident), expr) →
           (noAnn,identToName ident,) <$> makeExpr expr
+
+{- | Attach every accessor-form directive targeting this binding to the ann
+slot of the object-literal field it selects. A directive whose accessor does
+not match the binding's shape is an error when it came from the module
+header, and is silently dropped when it came only from the @--directives@
+file (see Note [Inliner annotations must all be consumed]).
+-}
+attachAccessorAnnotations ∷ Name → Exp → RepM Exp
+attachAccessorAnnotations name expr = do
+  accessors ← useAccessorAnnotations name
+  strictTargets ← gets headerTargets
+  foldlM (attachOne strictTargets) expr accessors
+ where
+  attachOne
+    ∷ Set Inliner.Target
+    → Exp
+    → (Inliner.Accessor, Maybe Annotation)
+    → RepM Exp
+  attachOne strictTargets e (accessor, resolved) =
+    case attachFieldAnn accessor resolved e of
+      Just annotated → pure annotated
+      Nothing
+        | (name, Just accessor) `Set.member` strictTargets →
+            throwContextualError $ AnnotationAccessorMismatch name accessor
+        | otherwise → pure e
+
+{- | Stamp an annotation onto the object-literal field an accessor selects,
+walking down through lambda parameters and let bodies. A 'Inliner.Field'
+accessor requires the object literal outside any lambda (a plain dictionary
+record); an 'Inliner.AppliedField' accessor requires it under at least one
+lambda (a record constructed by application). 'Nothing' when the binding
+does not have the required shape.
+-}
+attachFieldAnn ∷ Inliner.Accessor → Ann → Exp → Maybe Exp
+attachFieldAnn accessor resolved = go 0
+ where
+  (depthOk, label) = case accessor of
+    Inliner.Field l → ((== 0), l)
+    Inliner.AppliedField l → ((>= 1), l)
+
+  go ∷ Int → Exp → Maybe Exp
+  go depth = \case
+    AbsN a params body →
+      AbsN a params <$> go (depth + length params) body
+    Let a binds body →
+      Let a binds <$> go depth body
+    LiteralObject a props
+      | depthOk depth
+      , any ((== label) . fst) props →
+          Just . LiteralObject a $
+            props <&> \(prop, value) →
+              if prop == label
+                then (prop, setAnn resolved value)
+                else (prop, value)
+    _ → Nothing
 
 makeExpr ∷ CfnExp → RepM Exp
 makeExpr = makeExprAnnotated Nothing
@@ -243,19 +356,25 @@ makeExprAnnotated ann cfnExpr =
     Cfn.Accessor _ann str expr →
       mkAccessor ann str expr
     Cfn.ObjectUpdate _ann expr patches →
-      mkObjectUpdate expr patches
+      annotate <$> mkObjectUpdate expr patches
     Cfn.Abs _ann ident expr →
       mkAbstraction ann ident expr
     Cfn.App _ann abstr arg →
-      mkApplication abstr arg
+      annotate <$> mkApplication abstr arg
     Cfn.Var _ann qualifiedIdent →
-      mkRef qualifiedIdent
+      annotate <$> mkRef qualifiedIdent
     Cfn.Case _ann exprs alternatives →
       case NE.nonEmpty alternatives of
         Just as → mkCase ann exprs as
         Nothing → throwContextualError $ EmptyCase cfnExpr
     Cfn.Let _ann binds exprs →
       mkLet ann binds exprs
+ where
+  -- These builders take no annotation of their own; stamp the root so a
+  -- directive on an application-, reference-, or update-rooted binding
+  -- is not lost.
+  annotate ∷ Exp → Exp
+  annotate = maybe id (const $ setAnn ann) ann
 
 mkLiteral ∷ Ann → Cfn.Literal CfnExp → RepM Exp
 mkLiteral ann = \case
@@ -853,7 +972,9 @@ data CoreFnErrorReason
       TyName
   | UnicodeDecodeError UnicodeException
   | AnnotationParsingError (Megaparsec.ParseErrorBundle Text Void)
-  | UnusedAnnotations (Map Name Annotation)
+  | UnusedAnnotations (Map Inliner.Target (Maybe Annotation))
+  | AnnotationAccessorMismatch Name Inliner.Accessor
+  | UnsupportedForeignAnnotation Name
 
 instance Show CoreFnErrorReason where
   show = \case
@@ -888,3 +1009,11 @@ instance Show CoreFnErrorReason where
       "Annotation parsing error: " <> Megaparsec.errorBundlePretty bundle
     UnusedAnnotations anns →
       "Unused annotations: " <> toString (pShow anns)
+    AnnotationAccessorMismatch name accessor →
+      "An @inline directive for "
+        <> toString (nameToText name <> Inliner.printAccessor accessor)
+        <> " does not match the shape of the binding"
+    UnsupportedForeignAnnotation name →
+      "Unsupported @inline directive for foreign binding "
+        <> toString (nameToText name)
+        <> ": a foreign value supports only always/never/default"

@@ -8,6 +8,7 @@ import Data.List.NonEmpty qualified as NE
 import Data.Map qualified as Map
 import Data.Set qualified as Set
 import Data.Text qualified as Text
+import GHC.Generics (Generically (..))
 import Language.PureScript.Backend.IR.DCE (eliminateDeadCode)
 import Language.PureScript.Backend.IR.FlattenDeepBinds (flattenDeepBindsM)
 import Language.PureScript.Backend.IR.FloatIn (floatIn)
@@ -18,8 +19,8 @@ import Language.PureScript.Backend.IR.Names
   ( FieldName
   , Name (..)
   , PropName
-  , QName
-  , Qualified (Local)
+  , QName (..)
+  , Qualified (Imported, Local)
   , qualifiedQName
   , renderFieldName
   , renderPropName
@@ -76,7 +77,7 @@ import Language.PureScript.Backend.IR.Uniquify (uniquifyNames)
 
 optimizedUberModule ∷ UberModule → UberModule
 optimizedUberModule uber =
-  runSupply (runSteps (optimizerPipeline (neverInlineNames uber)) uber)
+  runSupply (runSteps (optimizerPipeline (collectInlinePolicy uber)) uber)
 
 {- | 'optimizedUberModule' with every pass's contract checked by the
 linter, failing with the name of the offending pass. Used by the test
@@ -84,15 +85,16 @@ suite always, and by the CLI behind the @--lint-ir@ flag.
 -}
 optimizedUberModuleChecked ∷ UberModule → Either PassCheckFailure UberModule
 optimizedUberModuleChecked uber =
-  runSupply (runStepsChecked (optimizerPipeline (neverInlineNames uber)) uber)
+  runSupply
+    (runStepsChecked (optimizerPipeline (collectInlinePolicy uber)) uber)
 
-{- | The IR optimization pipeline. The argument is the set of @inline never@
-bindings, collected once from the pristine module before any pass runs:
-later rewrites may strip the annotation off a binding's root, so the veto
-keys off the name (see Note [Inline annotations and inlining heuristics]).
+{- | The IR optimization pipeline. The argument is the inlining policy
+collected once from the pristine module before any pass runs: later
+rewrites may strip annotations, so every directive keys off a name (see
+Note [Inline annotations and inlining heuristics]).
 -}
-optimizerPipeline ∷ Set QName → [Step]
-optimizerPipeline neverNames =
+optimizerPipeline ∷ InlinePolicy → [Step]
+optimizerPipeline policy =
   [ -- The entry pass (issue #139): establishes the global-uniqueness
     -- condition (GUC = 'UniqueBinders') that every
     -- following pass requires and preserves.
@@ -161,7 +163,7 @@ optimizerPipeline neverNames =
   optimizePass =
     Pass
       { passName = "optimize"
-      , passRun = optimizeModule SkipCallSites neverNames
+      , passRun = optimizeModule SkipCallSites policy
       , passRequires = guc
       , passEnsures = guc
       }
@@ -172,7 +174,7 @@ optimizerPipeline neverNames =
   specializePass =
     Pass
       { passName = "specialize"
-      , passRun = optimizeModule InlineCallSites neverNames
+      , passRun = optimizeModule InlineCallSites policy
       , passRequires = guc
       , passEnsures = guc
       }
@@ -187,7 +189,7 @@ optimizerPipeline neverNames =
   uncurryPass =
     Pass
       { passName = "uncurry"
-      , passRun = pure . uncurryWorkerWrapper neverNames
+      , passRun = pure . uncurryWorkerWrapper (uncurryVeto policy)
       , passRequires = guc
       , passEnsures = guc
       }
@@ -239,26 +241,73 @@ mergeForeignsIntoBindings uberModule@UberModule {..} =
         map Standalone uberModuleForeigns <> uberModuleBindings
     }
 
-{- | The top-level bindings annotated @inline never@, collected once from the
-pristine module. Later rewrites can drop the annotation off a binding's root
-expression (e.g. constant folding replaces it with a fresh node), so the veto
-must key off the name rather than re-reading the annotation after optimization.
+{- | Every inlining directive of the module, keyed by binding name.
+Collected once from the pristine module: later rewrites can drop an
+annotation off its node (e.g. constant folding replaces a binding's root
+with a fresh one), so decisions key off names rather than re-reading
+annotations after optimization.
 See Note [Inline annotations and inlining heuristics].
 -}
-neverInlineNames ∷ UberModule → Set QName
-neverInlineNames UberModule {uberModuleBindings, uberModuleForeigns} =
-  Set.fromList $
-    [ qname
-    | Standalone (qname, expr) ← uberModuleBindings
-    , getAnn expr == Just Never
-    ]
+data InlinePolicy = InlinePolicy
+  { policyNever ∷ Set QName
+  -- ^ never pasted anywhere
+  , policyArity ∷ Map QName Natural
+  -- ^ pasted exactly at call sites applying at least N arguments
+  , policyFields ∷ Map QName (Map PropName Annotation)
+  -- ^ @.label@ policies: fields of a dictionary record binding
+  , policyAppliedFields ∷ Map QName (Map PropName Annotation)
+  -- ^ @...label@ policies: fields of a record a binding returns
+  }
+  deriving stock (Generic, Show)
+  deriving (Semigroup, Monoid) via (Generically InlinePolicy)
+
+collectInlinePolicy ∷ UberModule → InlinePolicy
+collectInlinePolicy UberModule {uberModuleBindings, uberModuleForeigns} =
+  foldMap fromBinding $
+    [(qname, expr) | Standalone (qname, expr) ← uberModuleBindings]
       -- Foreign accessors merge into the bindings mid-pipeline
-      -- ('mergeForeignsIntoBindings'), after this set is collected, so
+      -- ('mergeForeignsIntoBindings'), after the policy is collected, so
       -- their annotations are read here.
-      <> [ qname
-         | (qname, expr) ← uberModuleForeigns
-         , getAnn expr == Just Never
-         ]
+      <> uberModuleForeigns
+ where
+  fromBinding ∷ (QName, Exp) → InlinePolicy
+  fromBinding (qname, expr) = rootPolicy <> fieldsPolicy
+   where
+    rootPolicy = case getAnn expr of
+      Just Never → mempty {policyNever = Set.singleton qname}
+      Just (Arity n) → mempty {policyArity = Map.singleton qname n}
+      _ → mempty
+
+    fieldsPolicy = case objectFields expr of
+      Just (depth, props)
+        | anns ←
+            Map.fromList
+              [(prop, a) | (prop, value) ← props, Just a ← [getAnn value]]
+        , not (Map.null anns) →
+            if depth == 0
+              then mempty {policyFields = Map.singleton qname anns}
+              else mempty {policyAppliedFields = Map.singleton qname anns}
+      _ → mempty
+
+  -- The object literal a binding evaluates or returns, along with the
+  -- number of lambda parameters peeled on the way to it — the shape
+  -- accessor annotations are attached to at translation.
+  objectFields ∷ Exp → Maybe (Int, [(PropName, Exp)])
+  objectFields = go 0
+   where
+    go ∷ Int → Exp → Maybe (Int, [(PropName, Exp)])
+    go depth = \case
+      AbsN _ params body → go (depth + length params) body
+      Let _ _ body → go depth body
+      LiteralObject _ props → Just (depth, props)
+      _ → Nothing
+
+{- | Names the uncurry pass may not split: rewriting their call sites to
+@$w@ worker calls would hide those sites from the name-keyed policies.
+-}
+uncurryVeto ∷ InlinePolicy → Set QName
+uncurryVeto InlinePolicy {policyNever, policyArity, policyAppliedFields} =
+  policyNever <> Map.keysSet policyArity <> Map.keysSet policyAppliedFields
 
 -- | Free-reference counts keyed by the referenced qualified name.
 type FreeRefs = Map (Qualified Name) Natural
@@ -300,10 +349,10 @@ references changed earlier in the same run (issue #143).
 -}
 optimizeModule
   ∷ CallSiteInlining
-  → Set QName
+  → InlinePolicy
   → UberModule
   → SupplyM (UberModule, WasRewritten)
-optimizeModule inlining neverNames UberModule {..} = runWriterT do
+optimizeModule inlining policy UberModule {..} = runWriterT do
   -- See Note [Incremental free-reference counting]
   let initialCounts =
         Map.unionsWith (+) (countFreeRefs . snd <$> uberModuleExports)
@@ -333,8 +382,16 @@ optimizeModule inlining neverNames UberModule {..} = runWriterT do
       Map.fromList
         [ (qualifiedQName qname, expr)
         | Standalone (qname, expr) ← uberModuleBindings
-        , qname `Set.notMember` neverNames
+        , qname `Set.notMember` policyNever policy
         ]
+
+  -- An @inline never@ name may not be pasted at all; an @inline arity=N@
+  -- name is pasted only at qualifying call sites — pasting the whole
+  -- binding would reach under-applied sites too.
+  vetoedWholeBinding ∷ QName → Bool
+  vetoedWholeBinding qname =
+    qname `Set.member` policyNever policy
+      || qname `Map.member` policyArity policy
 
   -- Whether 'withBinding' may drop a whole top-level binding by inlining it
   -- into its use sites. Off exactly when call-site inlining is on, because the
@@ -358,7 +415,7 @@ optimizeModule inlining neverNames UberModule {..} = runWriterT do
   -- the module, so a converged module reports 'Unmodified'.
   optimizeExp ∷ Exp → WriterT WasRewritten SupplyM Exp
   optimizeExp e = do
-    (e', rewritten) ← lift (optimizedExpressionM inlineEnv e)
+    (e', rewritten) ← lift (optimizedExpressionM policy inlineEnv e)
     e' <$ tell rewritten
 
   -- See Note [Incremental free-reference counting]
@@ -378,7 +435,7 @@ optimizeModule inlining neverNames UberModule {..} = runWriterT do
             occurrences = Map.findWithDefault 0 qn counts
             isUsedOnce = occurrences == 1
         if mayInlineWholeBinding
-          && qname `Set.notMember` neverNames
+          && not (vetoedWholeBinding qname)
           && not (isForeignImport expr)
           && (isInlinableExpr expr || isUsedOnce)
           then do
@@ -529,18 +586,22 @@ its own supply and no inlining environment. Production code uses
 'optimizedExpressionM' so all passes share one supply.
 -}
 optimizedExpression ∷ Exp → Exp
-optimizedExpression = runSupply . fmap fst . optimizedExpressionM mempty
+optimizedExpression = runSupply . fmap fst . optimizedExpressionM mempty mempty
 
-optimizedExpressionM ∷ InlineEnv → Exp → SupplyM (Exp, WasRewritten)
-optimizedExpressionM env =
+optimizedExpressionM
+  ∷ InlinePolicy → InlineEnv → Exp → SupplyM (Exp, WasRewritten)
+optimizedExpressionM policy env =
   -- See Note [Eta reduction is unsound]
   rewriteExpBottomUpM
     ( constantFolding
         `thenRewrite` reduceObjectProp
+        `thenRewrite` sinkProjectionIntoLet
         `thenRewrite` reduceKnownConstructor
+        `thenRewrite` reduceKnownCtorRefRead env
         `thenRewrite` propagateKnownCtorThroughLet env
-        `thenRewrite` resolveDictionaryProp env
-        `thenRewrite` inlineSaturatedCall env
+        `thenRewrite` resolveDictionaryProp policy env
+        `thenRewrite` inlineAnnotatedProjection policy env
+        `thenRewrite` inlineSaturatedCall policy env
         `thenRewrite` betaReduce
         `thenRewrite` removeUnreachableThenBranch
         `thenRewrite` removeUnreachableElseBranch
@@ -705,6 +766,22 @@ reduceObjectProp =
       Just case List.lookup prop (toList patches) of
         Just patched → setAnn ann patched
         Nothing → ObjectProp ann obj prop
+    _ → Nothing
+
+{- | @(let … in body).label ===> let … in body.label@
+
+Bindings evaluate first either way, so the move is behaviour-preserving
+under strict evaluation, and the label is static, so nothing can be
+captured. Pasting a record constructor into a projected application site
+(see 'inlineAnnotatedProjection') leaves exactly this shape behind once
+'betaReduce' let-binds a non-trivial argument; sinking the projection
+lets 'reduceObjectProp' finish the resolution.
+-}
+sinkProjectionIntoLet ∷ Applicative m ⇒ RewriteRuleM m Ann
+sinkProjectionIntoLet =
+  pure . \case
+    ObjectProp ann (Let letAnn binds body) prop →
+      Just $ Let letAnn binds (ObjectProp ann body prop)
     _ → Nothing
 
 {- | Case-of-known-constructor for algebraic types (issue #177), the
@@ -974,10 +1051,61 @@ propagateKnownCtorThroughLet env = \case
             Ref daAnn (Local f)
       other → over subexpressions go other
 
-  fieldIndex ∷ [FieldName] → PropName → Maybe Natural
-  fieldIndex fields prop =
-    fromIntegral
-      <$> List.findIndex ((renderPropName prop ==) . renderFieldName) fields
+{- | The position of a record-projection label among a constructor's
+declared fields (@value0@, @value1@, …).
+-}
+fieldIndex ∷ [FieldName] → PropName → Maybe Natural
+fieldIndex fields prop =
+  fromIntegral
+    <$> List.findIndex ((renderPropName prop ==) . renderFieldName) fields
+
+{- | The through-a-reference companion of 'reduceKnownConstructor' — the
+relationship 'resolveDictionaryProp' bears to 'reduceObjectProp'. A
+user-written @Op f@ compiles to a saturated application of a /reference/
+to the @Op@ worker binding, which 'inlineSaturatedCall' deliberately
+leaves in place (its 'Ctor' RHS is not a lambda). A constructor-eliminating
+read over that spine — the shape a directive-driven paste exposes —
+would otherwise stall right before the fold: 'reduceKnownConstructor'
+needs an in-place 'Ctor' head and 'propagateKnownCtorThroughLet' needs
+the read behind a 'Let' binder. The reference is resolved through the
+environment only for its declared fields and tag — no 'Ctor' node is
+pasted — and discarded sibling arguments are dropped with the licence
+'reduceKnownConstructor' spells out. The folded value takes the read
+node's own annotation, not the argument's, for the reason spelled out
+on 'reduceObjectProp'.
+-}
+reduceKnownCtorRefRead ∷ Applicative m ⇒ InlineEnv → RewriteRuleM m Ann
+reduceKnownCtorRefRead env =
+  pure . \case
+    ObjectProp ann spine prop
+      | Just (_algTy, fields, args, _tag) ← saturatedCtorRefApp env spine
+      , Just i ← fieldIndex fields prop
+      , Just arg ← args !!? fromIntegral i →
+          Just (setAnn ann arg)
+    DataArgumentByIndex ann i spine
+      | Just (_algTy, _fields, args, _tag) ← saturatedCtorRefApp env spine
+      , Just arg ← args !!? fromIntegral i →
+          Just (setAnn ann arg)
+    -- Tag reads fold for sum types only, as in 'reduceKnownConstructor'.
+    ReflectCtor ann spine
+      | Just (SumType, _fields, _args, tag) ← saturatedCtorRefApp env spine →
+          Just (LiteralString ann tag)
+    _ → Nothing
+
+{- | A non-empty, saturated application spine whose head references a
+top-level constructor binding, resolved through the inline environment.
+The returned tag and field list come from the constructor's declaration;
+the arguments come from the spine.
+-}
+saturatedCtorRefApp
+  ∷ InlineEnv → Exp → Maybe (AlgebraicType, [FieldName], [Exp], Text)
+saturatedCtorRefApp env expr = case unwindApp expr of
+  (Ref _ ctorRef, args@(_ : _))
+    | Just (Ctor _ algTy modName tyName ctorName fields) ←
+        Map.lookup ctorRef env
+    , length args == length fields →
+        Just (algTy, fields, args, ctorId modName tyName ctorName)
+  _ → Nothing
 
 {- | Resolve a method projection off a known top-level dictionary (issue
 #180). When @dict@ is a reference to a top-level 'LiteralObject' binding,
@@ -999,16 +1127,99 @@ It declines a method that names its own dictionary (a superclass or
 recursive dictionary), which pasting would dangle or unfold forever, and one
 larger than 'inlineSizeBudget'. The result takes the projection's own
 annotation, never the method's, for the reason 'reduceObjectProp' spells out.
+
+A @.label@ directive on the field replaces the budget: @never@ declines
+outright, @always@ resolves regardless of size, and @arity=N@ defers to
+'inlineAnnotatedProjection', which requires the projection to be applied.
+The veto is best-effort rather than airtight: a dictionary referenced
+exactly once is pasted whole by the use-once path in 'optimizeModule', and
+'reduceObjectProp' then folds the projection without consulting any policy —
+harmless, since sharing is moot at a single use site.
 -}
-resolveDictionaryProp ∷ InlineEnv → RewriteRuleM SupplyM Ann
-resolveDictionaryProp env = \case
+resolveDictionaryProp ∷ InlinePolicy → InlineEnv → RewriteRuleM SupplyM Ann
+resolveDictionaryProp policy env = \case
   ObjectProp ann (Ref _ dictName) prop
     | Just (LiteralObject _ props) ← Map.lookup dictName env
     , Just method ← List.lookup prop props
     , countFreeRef dictName method == 0
-    , expSize method <= inlineSizeBudget →
+    , maybe
+        (expSize method <= inlineSizeBudget)
+        (== Always)
+        (fieldPolicy policy dictName prop) →
         Just . setAnn ann <$> freshenBinders method
   _ → pure Nothing
+
+-- | The @.label@ directive covering a projection of a top-level binding.
+fieldPolicy ∷ InlinePolicy → Qualified Name → PropName → Maybe Annotation
+fieldPolicy policy name prop =
+  refQName name
+    >>= (`Map.lookup` policyFields policy)
+    >>= Map.lookup prop
+
+{- | The @...label@ directive covering a projection out of an application
+of a top-level binding.
+-}
+appliedFieldPolicy
+  ∷ InlinePolicy → Qualified Name → PropName → Maybe Annotation
+appliedFieldPolicy policy name prop =
+  refQName name
+    >>= (`Map.lookup` policyAppliedFields policy)
+    >>= Map.lookup prop
+
+{- | Resolve a projection under an accessor-form directive (the
+@.label@ / @...label@ forms):
+
+  * @.label arity=N@ — @(dict.label) a₁ … aₖ@, @k ≥ N@: the method is read
+    out of the dictionary literal in the environment and pasted at the
+    head of the spine, exactly as 'resolveDictionaryProp' would paste it,
+    but only at a qualifying application.
+  * @...label always@ — @(f x…).label@: the record constructor @f@ is
+    pasted under the projection; 'betaReduce', 'sinkProjectionIntoLet'
+    and 'reduceObjectProp' then collapse the projection to the selected
+    field.
+  * @...label arity=N@ — @((f x…).label) a₁ … aₖ@, @k ≥ N@: the same
+    paste, gated on the arguments applied to the projection result.
+
+Like the arity path of 'inlineSaturatedCall', an explicit directive
+bypasses the size budget; the self-reference and 'pasteableRoot' guards
+stay, and every pasted copy drops its annotations' claim to the binding
+('setAnn' 'Nothing').
+-}
+inlineAnnotatedProjection ∷ InlinePolicy → InlineEnv → RewriteRuleM SupplyM Ann
+inlineAnnotatedProjection policy env expr = case expr of
+  ObjectProp ann inner label
+    | (Ref _ fname, innerArgs@(_ : _)) ← unwindApp inner
+    , Just Always ← appliedFieldPolicy policy fname label →
+        pasteCtor ann fname innerArgs label
+  (unwindApp → (ObjectProp ann inner label, args@(_ : _))) →
+    case inner of
+      Ref _ dictName
+        | Just (Arity n) ← fieldPolicy policy dictName label
+        , fromIntegral (length args) >= n
+        , Just (LiteralObject _ props) ← Map.lookup dictName env
+        , Just method ← List.lookup label props
+        , countFreeRef dictName method == 0 →
+            Just . rebuildSpine args . setAnn Nothing
+              <$> freshenBinders method
+      (unwindApp → (Ref _ fname, innerArgs@(_ : _)))
+        | Just (Arity n) ← appliedFieldPolicy policy fname label
+        , fromIntegral (length args) >= n → do
+            pasted ← pasteCtor ann fname innerArgs label
+            pure $ rebuildSpine args <$> pasted
+      _ → pure Nothing
+  _ → pure Nothing
+ where
+  pasteCtor
+    ∷ Ann → Qualified Name → [Exp] → PropName → SupplyM (Maybe Exp)
+  pasteCtor ann fname innerArgs label =
+    case Map.lookup fname env of
+      Just rhs
+        | countFreeRef fname rhs == 0
+        , pasteableRoot rhs → do
+            rhs' ← freshenBinders rhs
+            pure . Just $
+              ObjectProp ann (rebuildSpine innerArgs (setAnn Nothing rhs')) label
+      _ → pure Nothing
 
 {- | Inline a top-level lambda binding into a saturated call site (issue
 #180). When the head of an application spine references a top-level binding
@@ -1027,21 +1238,64 @@ The rule declines a self-referential RHS, which cannot arise for a Standalone
 binding under GUC but must not be unfolded on the non-GUC input the rewrite
 also runs on (Note [Eta reduction is unsound] is the reason the environment
 holds no recursive-group members either).
+
+A binding under an @inline arity=N@ directive takes a different gate: the
+site qualifies by argument count alone — at least N arguments applied — and
+the explicit directive bypasses the size budget and the manifest-lambda
+requirement (pasting a non-lambda value duplicates work, which is exactly
+what the user signed for; in a pure language it is behaviour-preserving).
+Below N arguments nothing pastes, not even the default guards: the
+directive pins the binding as a shared reference at partial sites.
 -}
-inlineSaturatedCall ∷ InlineEnv → RewriteRuleM SupplyM Ann
-inlineSaturatedCall env expr = case unwindApp expr of
+inlineSaturatedCall ∷ InlinePolicy → InlineEnv → RewriteRuleM SupplyM Ann
+inlineSaturatedCall policy env expr = case unwindApp expr of
   (Ref _ fname, args)
     | not (null args)
-    , Just rhs ← Map.lookup fname env
-    , AbsN _ params _ ← rhs
-    , length args >= length params
-    , countFreeRef fname rhs == 0
-    , expSize rhs <= inlineSizeBudget →
-        Just . rebuildSpine args <$> freshenBinders rhs
+    , Just rhs ← Map.lookup fname env →
+        case directedArity fname of
+          Just arity
+            | fromIntegral (length args) >= arity
+            , countFreeRef fname rhs == 0
+            , not (isForeignImport rhs)
+            , pasteableRoot rhs →
+                -- The pasted copy is no longer the directed binding, so
+                -- it does not keep the directive annotation.
+                Just . rebuildSpine args . setAnn Nothing
+                  <$> freshenBinders rhs
+          Just _underApplied → pure Nothing
+          Nothing
+            | AbsN _ params _ ← rhs
+            , length args >= length params
+            , countFreeRef fname rhs == 0
+            , expSize rhs <= inlineSizeBudget →
+                Just . rebuildSpine args <$> freshenBinders rhs
+          _ → pure Nothing
   _ → pure Nothing
  where
-  rebuildSpine ∷ [Exp] → Exp → Exp
-  rebuildSpine args head' = foldl' (\f a → AppN Nothing f (a :| [])) head' args
+  directedArity ∷ Qualified Name → Maybe Natural
+  directedArity fname = refQName fname >>= (`Map.lookup` policyArity policy)
+
+-- | Re-apply the arguments 'unwindApp' peeled, as a unary spine.
+rebuildSpine ∷ [Exp] → Exp → Exp
+rebuildSpine args head' = foldl' (\f a → AppN Nothing f (a :| [])) head' args
+
+{- | 'inlineSaturatedCall' rebuilds the application spine as a unary chain,
+so pasting an n-ary lambda root would produce an under-applied redex the
+'WellApplied' lint rejects and exact-arity 'betaReduce' never repairs. Only
+unary chains and non-lambda roots may be pasted. Directive-marked names are
+excluded from the uncurry split ('uncurryVeto'), so their roots stay
+translation-produced unary chains and this guard does not fire in practice.
+-}
+pasteableRoot ∷ Exp → Bool
+pasteableRoot = \case
+  AbsN _ (_ :| (_ : _)) _ → False
+  _ → True
+
+-- | The 'QName' a reference resolves to, when it names a top-level binding.
+refQName ∷ Qualified Name → Maybe QName
+refQName = \case
+  Imported modname name → Just (QName modname name)
+  Local _ → Nothing
 
 {- Note [Beta reduction and local inlining share an inlining guard]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1371,8 +1625,7 @@ isInlinableExpr expr =
   hasInlineAnnotation =
     getAnn >>> \case
       Just Always → True
-      Just Never → False
-      Nothing → False
+      _ → False
 
   -- The Deref tier. The explicit disjuncts above are subsumed for the
   -- shapes they share (a Ref, a short scalar), but kept: they also admit
