@@ -52,18 +52,20 @@ and each one aborts LuaJIT trace recording (`NYI: bytecode FNEW`), which is
 what keeps curried hot code interpreted. The census is a pure function of
 the artifact, hence byte-stable.
 
-`trace_report` runs a macro spec hot and reports (a) the *set* of distinct
-trace-abort sites with reasons and (b) the end state of loop and
-function-entry bytecodes: LuaJIT rewrites an opcode to its `J*` form when
-it installs a trace there and to its `I*` form when it blacklists the spot.
-Raw abort *counts* are not reported: the retry-penalty step that leads to a
-blacklist draws on an entropy-seeded PRNG, so counts jitter across runs
-while the abort-site set and the opcode end state are far steadier. Steadier
-is not identical, though — a spot right at the hot-count boundary can
-root-trace in one process and not the next — so the report intersects
-several independent trials and keeps only what every trial agrees on (see
-below). Blacklisting is never logged by `-jv`/`-jdump`; the post-hoc opcode
-read is the only stable way to observe it.
+`trace_report` runs a macro spec hot under eager hot thresholds
+(`hotloop=1`, see the tool header: eager firing removes the counter
+warm-up during which per-process hash collisions can decay a counter
+forever) and reports (a) the *set* of distinct trace-abort sites with
+reasons and (b) the end state of loop and function-entry bytecodes:
+LuaJIT rewrites an opcode to its `J*` form when it installs a trace there
+and to its `I*` form when it blacklists the spot. Raw abort *counts* are
+not reported: the retry-penalty step that leads to a blacklist draws on
+an entropy-seeded PRNG, so counts jitter across runs while the abort-site
+set and the opcode end state are far steadier. Steadier is not identical,
+though — a residual spot can still resolve in one process and not the
+next — so the report takes a majority vote over several independent
+trials (see below). Blacklisting is never logged by `-jv`/`-jdump`; the
+post-hoc opcode read is the only stable way to observe it.
 
 Both reports record the LuaJIT version (`runtime:` header line): the abort
 reasons, the NYI set, and the opcode families are properties of a specific
@@ -77,9 +79,12 @@ rerun `./bench/ci --accept` and review the diff. And trace formation is not
 deterministic per process: LuaJIT's hot-counters live in a small hashed
 table keyed by bytecode address, and the retry penalty draws on an
 entropy-seeded PRNG, so a spot on the hot-count boundary can form a trace in
-one run and not the next. `trace_report.lua` absorbs this by intersecting
-several independent trials and reporting only the sites and end states every
-trial agrees on, so the marginal ones drop out; the canonical report is then
-stable by construction. The FNEW census has no such channel — it never runs
+one run and not the next. `trace_report.lua` absorbs this by taking a
+majority vote over several independent trials: a marginal spot is reported
+iff most processes form it, and the misreport odds decay binomially in the
+trial count for any per-process probability away from one half (the tool's
+header records the measured case that rules out a unanimity rule); the
+canonical report is then stable by construction. The FNEW census has no
+such channel — it never runs
 the code — so `./bench/ci` still generates it twice and compares byte for
 byte.

@@ -1,9 +1,12 @@
 spec: curried_step
 runtime: LuaJIT 2.1.1741730670
-workload: n=100000 reps=2 result=5000050000
+workload: n=100000 reps=4 result=5000050000
 aborts (distinct site -- reason):
+  Bench.CurriedStep.lua:12 -- NYI: bytecode FNEW
+  Bench.CurriedStep.lua:6 -- inner loop in root trace
 bytecode end state (J*=compiled, I*=blacklisted):
   Bench.CurriedStep.lua:5 JLOOP
+  curried_step.lua:10 JFUNCF
   curried_step.lua:12 JFORI
   curried_step.lua:12 JFORL
-counts: aborts=0 compiled=3 blacklisted=0
+counts: aborts=2 compiled=4 blacklisted=0

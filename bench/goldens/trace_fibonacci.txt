@@ -1,11 +1,10 @@
 spec: fibonacci
 runtime: LuaJIT 2.1.1741730670
-workload: n=30 reps=2 result=832040
+workload: n=30 reps=4 result=832040
 aborts (distinct site -- reason):
-  Bench.Fib.lua:5 -- call unroll limit reached
-  fibonacci.lua:11 -- call unroll limit reached
+  fibonacci.lua:19 -- NYI: bytecode FNEW
 bytecode end state (J*=compiled, I*=blacklisted):
   Bench.Fib.lua:1 JFUNCF
   Bench.Fib.lua:5 JFUNCF
   fibonacci.lua:11 JFUNCF
-counts: aborts=2 compiled=3 blacklisted=0
+counts: aborts=1 compiled=3 blacklisted=0

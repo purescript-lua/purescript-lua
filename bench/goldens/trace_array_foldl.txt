@@ -1,15 +1,21 @@
 spec: array_foldl
 runtime: LuaJIT 2.1.1741730670
-workload: n=5000000 reps=2 result=12500002500000
+workload: n=5000000 reps=4 result=125000250000
 aborts (distinct site -- reason):
+  Bench.ArrayFoldl.lua:19 -- NYI: bytecode FNEW
+  Bench.ArrayFoldl.lua:20 -- NYI: bytecode FNEW
+  Bench.ArrayFoldl.lua:28 -- inner loop in root trace
   Bench.ArrayFoldl.lua:50 -- NYI: bytecode FNEW
+  Bench.ArrayFoldl.lua:51 -- NYI: bytecode FNEW
+  Bench.ArrayFoldl.lua:51 -- NYI: bytecode UCLO
 bytecode end state (J*=compiled, I*=blacklisted):
   Bench.ArrayFoldl.lua:17 IFORL
   Bench.ArrayFoldl.lua:28 JLOOP
   Bench.ArrayFoldl.lua:49 IFUNCF
   Bench.ArrayFoldl.lua:50 JFUNCF
-  array_foldl.lua:13 JFORI
-  array_foldl.lua:13 JFORL
-  array_foldl.lua:17 JFORI
-  array_foldl.lua:17 JFORL
-counts: aborts=1 compiled=6 blacklisted=2
+  array_foldl.lua:23 JFUNCF
+  array_foldl.lua:25 JFORI
+  array_foldl.lua:25 JFORL
+  array_foldl.lua:29 JFORI
+  array_foldl.lua:29 JFORL
+counts: aborts=6 compiled=7 blacklisted=2
