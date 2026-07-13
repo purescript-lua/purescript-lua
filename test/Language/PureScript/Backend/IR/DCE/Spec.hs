@@ -31,6 +31,7 @@ import Language.PureScript.Backend.IR.Types
   , WasRewritten (..)
   , abstraction
   , application
+  , applicationN
   , countFreeRefs
   , exception
   , lets
@@ -40,6 +41,7 @@ import Language.PureScript.Backend.IR.Types
   , paramUnused
   , refImported
   , refLocal
+  , pattern EffectRunArg
   )
 import Language.PureScript.Backend.IR.Uniquify (uniquifyNamesInExpr)
 import Test.Hspec (Spec, describe, it)
@@ -193,6 +195,21 @@ spec = describe "IR Dead Code Elimination" do
                 (literalInt 3)
             )
     dceExpression expr === literalInt 3
+
+  -- An uncurried worker call that absorbed the effect-run marker as its
+  -- trailing argument (the late uncurry run, issue #200) is still an
+  -- effect statement: its binder is unreferenced, yet dropping it would
+  -- silently drop the side effect (see 'isEffectRun').
+  it "keeps an unreferenced statement running an n-ary effect" $ hedgehog do
+    let runW =
+          applicationN
+            (refImported mainModuleName (Name "act$w"))
+            (literalInt 1 :| [EffectRunArg noAnn])
+        expr =
+          lets
+            (Standalone (noAnn, Name "res", runW) :| [])
+            (literalInt 2)
+    dceExpression expr === expr
 
 --------------------------------------------------------------------------------
 -- Helpers ---------------------------------------------------------------------
