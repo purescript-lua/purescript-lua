@@ -445,9 +445,13 @@ pattern EffectRunArg ∷ ann → RawExp ann
 pattern EffectRunArg ann =
   Ref ann (Imported (ModuleName "Prim") (Name "$magicDoRun"))
 
-{- | Recognise an Effect/ST statement as magic-do emits it: running a thunk, the
-application @m EffectRunArg@ (see 'Language.PureScript.Backend.IR.MagicDo'). Its
-side effect is observable and its statement sequencing is size-managed by
+{- | Recognise an Effect/ST statement by its trailing 'EffectRunArg': running a
+thunk, the application @m EffectRunArg@ as magic-do emits it (see
+'Language.PureScript.Backend.IR.MagicDo'), or the n-ary worker call that
+absorbed the run — the late uncurry rerun rewrites the saturated spine
+@f(a)(b)(EffectRunArg)@ to @f$w(a, b, EffectRunArg)@ (issue #200). The marker
+never occurs in a non-trailing position, so a trailing one is precise. The
+statement's side effect is observable and its sequencing is size-managed by
 magic-do's chunking, so passes that run after magic-do must leave it alone:
 dead-code elimination keeps it even when its binder is unreferenced, beta
 reduction does not reduce through it (which would merge a chunk into its parent
@@ -457,7 +461,7 @@ copy would execute the effect twice).
 -}
 isEffectRun ∷ RawExp ann → Bool
 isEffectRun = \case
-  AppN _ _ (EffectRunArg _ :| []) → True
+  AppN _ _ args | EffectRunArg _ ← last args → True
   _ → False
 
 ctorId ∷ ModuleName → TyName → CtorName → Text

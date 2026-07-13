@@ -236,6 +236,20 @@ spec = describe "IR Optimizer" do
           original = let1 x runAct body
       optimizedExpression original `shouldBe` original
 
+    it "declines to inline a use-once n-ary worker effect run" do
+      -- The late uncurry run (issue #200) absorbs the marker into the
+      -- worker call as its trailing argument; the statement is still an
+      -- effect run and must stay a statement.
+      let m = moduleNameFromString "M"
+          x = Name "x"
+          runAct =
+            applicationN
+              (refImported m (Name "act$w"))
+              (literalInt 1 :| [EffectRunArg noAnn])
+          body = application (refImported m (Name "consume")) (refLocal x)
+          original = let1 x runAct body
+      optimizedExpression original `shouldBe` original
+
   -- The n-ary redex — one call binding every parameter of a literal
   -- 'AbsN' (Note [n-ary abstraction]). Reduces only at exact arity;
   -- each pair is decided by the same guard as the unary rule.

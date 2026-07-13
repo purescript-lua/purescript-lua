@@ -70,14 +70,37 @@ trailing run itself is kept unused and dropped by the Lua backend.
 
 == Pipeline placement
 
-Runs once, between the post-merge optimize\/dce fixpoint (so manifest
-arities are measured after inlining settles) and the post-uncurry
-fixpoint (which dead-code-eliminates wrappers with no remaining
-references and beta-reduces worker pastes), ahead of
+Runs twice. The early run sits between the post-merge optimize\/dce
+fixpoint (so manifest arities are measured after inlining settles) and
+the post-uncurry fixpoint (which dead-code-eliminates wrappers with no
+remaining references and beta-reduces worker pastes), ahead of
 floatIn\/magicDo\/flattenDeepBinds — the latter recognises the n-ary
 chains and spines this pass emits. Effect-shaped bindings are mostly
-left curried at this point: thunk-forcing call sites only appear once
-magicDo has run, so their spines are still partial here.
+left curried at that point: thunk-forcing call sites only appear once
+magicDo has run, so their spines are still partial there.
+
+The late run (issue #200) sits after flattenDeepBinds and catches the
+two saturated families that do not exist early: the effect-run spines
+magicDo completes — @f(a)(b)(EffectRunArg)@, saturating the manifest
+chain @λa.λb.λ_@ whose trailing thunk parameter the worker absorbs
+(the rewritten call is still an effect run, recognised by its trailing
+marker — see 'Language.PureScript.Backend.IR.Types.isEffectRun') — and
+the @$kont@ helpers minted by flattening, saturated by construction. A
+dce pass then drops the wrappers whose sites were all saturated.
+
+== Rerun
+
+The late run meets the early run's output, so the candidate
+classification distinguishes it: a binding whose manifest chain body is
+exactly the delegate call to its own worker ('delegatesTo') is a
+wrapper from an earlier run — it is not split again (that would mint a
+duplicate @\<f\>$w@ binding) but re-registers its arity, so saturated
+sites that appeared /between/ the runs (e.g. minted by call-site
+pastes) are still rewritten to the existing worker. A non-wrapper
+candidate whose @\<f\>$w@ name is nonetheless taken (call-site inlining
+can paste a worker's body back into its wrapper) is left alone
+entirely. On anything else a rerun is a no-op, so the pass stays
+idempotent.
 -}
 module Language.PureScript.Backend.IR.Uncurry
   ( uncurryWorkerWrapper
@@ -125,18 +148,42 @@ uncurryWorkerWrapper neverNames uber@UberModule {..} =
       { uberModuleBindings = bindings'
       , uberModuleExports = exports'
       }
-  , rewrittenIf (not (Map.null topSplit) || anyLocalSplit)
+  , rewrittenIf
+      (not (Map.null topSplit) || topDelegateSites || anyLocalRewrite)
   )
  where
-  -- Top-level candidates: manifest arity ≥ 2, not vetoed.
+  -- Names already bound at the top level: a candidate whose worker name
+  -- is among them was split by an earlier run of this pass (only this
+  -- pass mints @$w@ names) and may not mint the name a second time.
+  topLevelQNames ∷ Set QName
+  topLevelQNames =
+    Set.fromList (fst <$> (listGrouping =<< uberModuleBindings))
+
+  -- Top-level candidates: manifest arity ≥ 2, not vetoed — classified
+  -- against the output of an earlier run (see the module haddock's
+  -- Rerun section). A wrapper delegating to its own worker re-registers
+  -- its arity so saturated sites that appeared since the split still
+  -- reach the worker; a candidate whose worker name is otherwise taken
+  -- is left alone entirely; the rest split as usual.
+  topDelegating ∷ Map (Qualified Name) Int
   topParams ∷ Map (Qualified Name) (NonEmpty (Parameter Ann))
-  topParams =
-    Map.fromList
-      [ (Imported modname name, params)
-      | (QName modname name, expr) ← listGrouping =<< uberModuleBindings
-      , QName modname name `Set.notMember` neverNames
-      , Just (params, _body) ← [manifestChain expr]
-      ]
+  (topDelegating, topParams) =
+    bimap Map.fromList Map.fromList $
+      partitionEithers
+        [ classified
+        | (QName modname name, expr) ← listGrouping =<< uberModuleBindings
+        , QName modname name `Set.notMember` neverNames
+        , let qualified = Imported modname name
+        , Just (params, body) ← [manifestChain expr]
+        , classified ←
+            if delegatesTo (workerOf qualified) params body
+              then [Left (qualified, length params)]
+              else
+                [ Right (qualified, params)
+                | QName modname (workerName name)
+                    `Set.notMember` topLevelQNames
+                ]
+        ]
 
   -- One saturated site anywhere in the module qualifies a top-level
   -- candidate; sites are every binding right-hand side and every export.
@@ -147,7 +194,9 @@ uncurryWorkerWrapper neverNames uber@UberModule {..} =
 
   topCounts ∷ Map (Qualified Name) Int
   topCounts =
-    Map.unionsWith (+) (censusIn (length <$> topParams) <$> siteExprs)
+    Map.unionsWith
+      (+)
+      (censusIn (Map.union (length <$> topParams) topDelegating) <$> siteExprs)
 
   topSplit ∷ Map (Qualified Name) (NonEmpty (Parameter Ann))
   topSplit =
@@ -158,9 +207,18 @@ uncurryWorkerWrapper neverNames uber@UberModule {..} =
   topSplitArities ∷ Map (Qualified Name) Int
   topSplitArities = length <$> topSplit
 
+  -- Whether a saturated site of an already-split wrapper was rewritten
+  -- to its worker — a rewrite with no accompanying split, which the
+  -- 'WasRewritten' signal must still report.
+  topDelegateSites ∷ Bool
+  topDelegateSites =
+    any
+      (\q → Map.findWithDefault 0 q topCounts > 0)
+      (Map.keys topDelegating)
+
   processedBindings ∷ [Grouping (QName, Exp)]
-  bindingSplits ∷ [Bool]
-  (processedBindings, bindingSplits) =
+  bindingRewrites ∷ [Bool]
+  (processedBindings, bindingRewrites) =
     unzip (processGrouping <$> uberModuleBindings)
    where
     processGrouping ∷ Grouping (QName, Exp) → (Grouping (QName, Exp), Bool)
@@ -172,16 +230,16 @@ uncurryWorkerWrapper neverNames uber@UberModule {..} =
       processed = fmap (second processSite) grouping
 
   processedExports ∷ [(Name, Exp)]
-  exportSplits ∷ [Bool]
-  (processedExports, exportSplits) =
+  exportRewrites ∷ [Bool]
+  (processedExports, exportRewrites) =
     unzip
-      [ ((name, e), split)
+      [ ((name, e), rewrite)
       | (name, expr) ← uberModuleExports
-      , let (e, split) = processSite expr
+      , let (e, rewrite) = processSite expr
       ]
 
-  anyLocalSplit ∷ Bool
-  anyLocalSplit = or bindingSplits || or exportSplits
+  anyLocalRewrite ∷ Bool
+  anyLocalRewrite = or bindingRewrites || or exportRewrites
 
   exports' = processedExports
 
@@ -214,19 +272,48 @@ uncurryWorkerWrapper neverNames uber@UberModule {..} =
   -- sweep rewrite the saturated sites (top-level and local) and splice
   -- the qualifying Let bindings into worker/wrapper pairs.
   processSite ∷ Exp → (Exp, Bool)
-  processSite expr = (transformOf subexpressions step expr, splitsHappen)
+  processSite expr = (transformOf subexpressions step expr, siteRewrites)
    where
-    localParams ∷ Map Name (NonEmpty (Parameter Ann))
-    localParams =
-      Map.fromList
-        [ (name, params)
+    -- The site's Let binders, for the taken-name check: a local @$w@
+    -- name can only have been minted by an earlier run of this pass,
+    -- and it is always Let-bound.
+    letBoundNames ∷ Set Name
+    letBoundNames =
+      Set.fromList
+        [ name
         | Let _ groupings _ ← toListOf (cosmosOf subexpressions) expr
-        , (_ann, name, rhs) ← listGrouping =<< toList groupings
-        , Just (params, _body) ← [manifestChain rhs]
+        , (_ann, name, _rhs) ← listGrouping =<< toList groupings
         ]
 
+    -- Local candidates, classified like the top-level ones: delegating
+    -- wrappers re-register, candidates with a taken worker name are
+    -- left alone, the rest may split.
+    localDelegating ∷ Map Name Int
+    localParams ∷ Map Name (NonEmpty (Parameter Ann))
+    (localDelegating, localParams) =
+      bimap Map.fromList Map.fromList $
+        partitionEithers
+          [ classified
+          | Let _ groupings _ ← toListOf (cosmosOf subexpressions) expr
+          , (_ann, name, rhs) ← listGrouping =<< toList groupings
+          , Just (params, body) ← [manifestChain rhs]
+          , classified ←
+              if delegatesTo (Local (workerName name)) params body
+                then [Left (name, length params)]
+                else
+                  [ Right (name, params)
+                  | workerName name `Set.notMember` letBoundNames
+                  ]
+          ]
+
     localCounts ∷ Map (Qualified Name) Int
-    localCounts = censusIn (Map.mapKeys Local (length <$> localParams)) expr
+    localCounts =
+      censusIn
+        ( Map.mapKeys
+            Local
+            (Map.union (length <$> localParams) localDelegating)
+        )
+        expr
 
     localSplit ∷ Map Name (NonEmpty (Parameter Ann))
     localSplit =
@@ -234,12 +321,21 @@ uncurryWorkerWrapper neverNames uber@UberModule {..} =
         (\n _ → Map.findWithDefault 0 (Local n) localCounts > 0)
         localParams
 
-    splitsHappen ∷ Bool
-    splitsHappen = not (Map.null localSplit)
+    siteRewrites ∷ Bool
+    siteRewrites =
+      not (Map.null localSplit)
+        || any
+          (\n → Map.findWithDefault 0 (Local n) localCounts > 0)
+          (Map.keys localDelegating)
 
     actives ∷ Map (Qualified Name) Int
     actives =
-      Map.union topSplitArities (Map.mapKeys Local (length <$> localSplit))
+      Map.unions
+        [ topSplitArities
+        , topDelegating
+        , Map.mapKeys Local (length <$> localSplit)
+        , Map.mapKeys Local localDelegating
+        ]
 
     step ∷ Exp → Exp
     step e = case saturatedSite actives e of
@@ -350,6 +446,25 @@ manifestChain expr = case peel expr of
     -- worker and is not peeled.
     Abs _ann param body → first (param :) (peel body)
     e → ([], e)
+
+{- | Recognise the wrapper this pass itself built: the manifest chain's
+body is exactly the delegate call — the given worker reference applied
+to the chain's parameters in order. Used by the rerun classification
+(see the module haddock's Rerun section) to tell an already-split
+binding from a fresh candidate.
+-}
+delegatesTo ∷ Qualified Name → NonEmpty (Parameter Ann) → Exp → Bool
+delegatesTo workerRef params body = case body of
+  AppN _ann (Ref _refAnn ref) args →
+    ref == workerRef
+      && length args == length params
+      && and (NE.zipWith isParamRef params args)
+  _ → False
+ where
+  isParamRef ∷ Parameter Ann → Exp → Bool
+  isParamRef param arg = case (paramName param, arg) of
+    (Just name, Ref _ann (Local name')) → name == name'
+    _ → False
 
 {- | Match a saturated call site: a nested /unary/ application spine
 headed by a reference to a candidate, applying exactly as many

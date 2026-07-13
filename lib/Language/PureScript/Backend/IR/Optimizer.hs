@@ -112,8 +112,9 @@ optimizerPipeline policy =
   , RunFixpoint "optimize+dce-post-merge" (optimizePass :| [dcePass])
   , -- Split curried bindings into n-ary workers and curried wrappers
     -- and rewrite the saturated call sites to direct worker calls
-    -- (issue #24). Runs after the post-merge fixpoint, so manifest
-    -- arities are measured once inlining has settled. See
+    -- (issue #24) — the early of the pass's two runs (the late one
+    -- closes the pipeline). Runs after the post-merge fixpoint, so
+    -- manifest arities are measured once inlining has settled. See
     -- Language.PureScript.Backend.IR.Uncurry.
     RunPass uncurryPass
   , -- The post-uncurry fixpoint dead-code-eliminates wrappers with no
@@ -174,6 +175,21 @@ optimizerPipeline policy =
     -- likewise consumes and preserves the unique naming.
     -- See Language.PureScript.Backend.IR.FlattenDeepBinds.
     RunPass flattenDeepBindsPass
+  , -- The late uncurry run (issue #200): the same pass again, now that
+    -- the two saturated-site families invisible to the early run exist —
+    -- the effect-run spines magicDo completed (f(a)(b)(run), saturating
+    -- the effect function's manifest chain, thunk parameter included)
+    -- and the saturated-by-construction $kont helpers minted by the
+    -- flattening above. Bindings the early run split are recognised and
+    -- left split (see the Rerun section in
+    -- Language.PureScript.Backend.IR.Uncurry).
+    RunPass uncurryLatePass
+  , -- Drop the wrappers the late run left unreferenced. A single dce
+    -- pass, deliberately not an optimize+dce fixpoint like the early
+    -- run's: optimize's use-once inlining would paste the $kont workers
+    -- (each is called exactly once) back into their call sites round by
+    -- round, re-nesting exactly what flattenDeepBinds just flattened.
+    RunPass dcePass
   ]
  where
   uniquifyPass =
@@ -222,6 +238,7 @@ optimizerPipeline policy =
       , passRequires = guc
       , passEnsures = guc
       }
+  uncurryLatePass = uncurryPass {passName = "uncurry-late"}
   floatInPass = gucPass "float-in" floatIn
   shareAccessorsPass =
     gucPass "share-accessors" (shareForeignAccessors policy)
