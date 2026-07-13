@@ -256,6 +256,109 @@ spec = describe "IR Uncurry (worker/wrapper)" do
     -- …g2's same-named go is not.
     exprOf "g2" `shouldBe` siteWith partial
 
+  -- A rerun of the pass (issue #200) meets its own earlier output:
+  -- bindings already split must not split again — re-splitting a
+  -- wrapper would mint a second @f$w@ binding — yet a saturated site
+  -- that appeared since the first run should still reach the worker.
+  describe "on already-split bindings (rerun, issue #200)" do
+    it "rewrites a new saturated site of a wrapper to the existing worker" do
+      let bindings =
+            [ Standalone (qn "f$w", worker2)
+            , Standalone (qn "f", wrapper2)
+            ]
+          m = moduleOf bindings [(Name "main", saturatedCall)]
+      uncurryWorkerWrapper mempty m
+        `shouldBe` ( moduleOf
+                       bindings
+                       [
+                         ( Name "main"
+                         , applicationN fw (literalInt 1 :| [literalInt 2])
+                         )
+                       ]
+                   , Rewritten
+                   )
+
+    it "declines a candidate whose worker name is already bound" do
+      -- Not a wrapper — the body does not delegate to @f$w@ (e.g. the
+      -- worker's body was pasted back into the wrapper by call-site
+      -- inlining while other worker references survived) — yet the
+      -- name @f$w@ is taken: splitting would mint a duplicate binding.
+      let m =
+            moduleOf
+              [ Standalone (qn "f$w", worker2)
+              , Standalone (qn "f", def2)
+              ]
+              [(Name "main", saturatedCall)]
+      uncurryWorkerWrapper mempty m `shouldBe` (m, Unmodified)
+
+    it "rewrites a new saturated site of a local wrapper to its worker" do
+      let go = Name "go"
+          goWorker =
+            abstractionN
+              (paramNamed (Name "c") :| [paramNamed (Name "d")])
+              (eq (refLocal (Name "c")) (refLocal (Name "d")))
+          goWrapper =
+            abstraction
+              (paramNamed (Name "go$p1"))
+              ( abstraction
+                  (paramNamed (Name "go$p2"))
+                  ( applicationN
+                      (refLocal (Name "go$w"))
+                      (refLocal (Name "go$p1") :| [refLocal (Name "go$p2")])
+                  )
+              )
+          site =
+            application
+              (application (refLocal go) (literalInt 1))
+              (literalInt 2)
+          groupings =
+            Standalone (noAnn, Name "go$w", goWorker)
+              :| [Standalone (noAnn, go, goWrapper)]
+          m =
+            moduleOf
+              [Standalone (qn "g", lets groupings site)]
+              []
+          expected =
+            lets
+              groupings
+              ( applicationN
+                  (refLocal (Name "go$w"))
+                  (literalInt 1 :| [literalInt 2])
+              )
+      uncurryWorkerWrapper mempty m
+        `shouldBe` (moduleOf [Standalone (qn "g", expected)] [], Rewritten)
+
+    it "declines a local candidate whose worker name is bound in the site" do
+      let go = Name "go"
+          goDef =
+            abstraction
+              (paramNamed (Name "a"))
+              ( abstraction
+                  (paramNamed (Name "b"))
+                  (eq (refLocal (Name "a")) (refLocal (Name "b")))
+              )
+          taken =
+            abstractionN
+              (paramNamed (Name "c") :| [paramNamed (Name "d")])
+              (eq (refLocal (Name "c")) (refLocal (Name "d")))
+          site =
+            application
+              (application (refLocal go) (literalInt 1))
+              (literalInt 2)
+          m =
+            moduleOf
+              [ Standalone
+                  ( qn "g"
+                  , lets
+                      ( Standalone (noAnn, Name "go$w", taken)
+                          :| [Standalone (noAnn, go, goDef)]
+                      )
+                      site
+                  )
+              ]
+              []
+      uncurryWorkerWrapper mempty m `shouldBe` (m, Unmodified)
+
   -- The pass's module-level contract, over generated modules (see the
   -- generators below): whatever mix of candidates, vetoes and call
   -- shapes the module holds, the output lints clean, a second run is a
