@@ -15,13 +15,10 @@ UberModule
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Data.Either", qnameName = Name "append$w" }, AbsN Nothing
-        ( ParamNamed Nothing
-          ( Name "s1$299$331" ) :|
-          [ ParamNamed Nothing ( Name "s2$300$332" ) ]
-        )
+        ( ParamNamed Nothing ( Name "s1$331" ) :| [ ParamNamed Nothing ( Name "s2$332" ) ] )
         ( PrimBinOp Nothing PrimConcat
-          ( Ref Nothing ( Local ( Name "s1$299$331" ) ) )
-          ( Ref Nothing ( Local ( Name "s2$300$332" ) ) )
+          ( Ref Nothing ( Local ( Name "s1$331" ) ) )
+          ( Ref Nothing ( Local ( Name "s2$332" ) ) )
         )
       ), Standalone
       ( QName
@@ -35,10 +32,10 @@ UberModule
       ( QName
         { qnameModuleName = ModuleName "Golden.LongEitherBind.Test", qnameName = Name "add$w"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "x$297$326" ) :| [ ParamNamed Nothing ( Name "y$298$327" ) ] )
+        ( ParamNamed Nothing ( Name "x$326" ) :| [ ParamNamed Nothing ( Name "y$327" ) ] )
         ( PrimBinOp Nothing PrimAdd
-          ( Ref Nothing ( Local ( Name "x$297$326" ) ) )
-          ( Ref Nothing ( Local ( Name "y$298$327" ) ) )
+          ( Ref Nothing ( Local ( Name "x$326" ) ) )
+          ( Ref Nothing ( Local ( Name "y$327" ) ) )
         )
       ), Standalone
       ( QName

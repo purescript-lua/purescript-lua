@@ -5,8 +5,8 @@ local Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
 }
 local Effect_Console_log = Effect_Console_foreign.log
-local Golden_FieldCaching_Test_sub_S_w = function(x_S_185_S_214, y_S_186_S_215)
-  return x_S_185_S_214 - y_S_186_S_215
+local Golden_FieldCaching_Test_sub_S_w = function(x_S_214, y_S_215)
+  return x_S_214 - y_S_215
 end
 local Golden_FieldCaching_Test_weigh = function(x) return x * 2 + 1 end
 local Golden_FieldCaching_Test_sumLoop_S_w = function(acc, n)

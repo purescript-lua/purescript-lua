@@ -5,8 +5,8 @@ local Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
 }
 local Effect_Console_log = Effect_Console_foreign.log
-local Golden_Loopification_Test_sub_S_w = function(x_S_185_S_216, y_S_186_S_217)
-  return x_S_185_S_216 - y_S_186_S_217
+local Golden_Loopification_Test_sub_S_w = function(x_S_216, y_S_217)
+  return x_S_216 - y_S_217
 end
 local Golden_Loopification_Test_sumTo_S_w = function(acc, n)
   while true do

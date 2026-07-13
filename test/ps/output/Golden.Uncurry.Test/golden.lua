@@ -28,11 +28,11 @@ local Data_Show_showInt = { show = Data_Show_showIntImpl }
 local Effect_Console_logShow_S_w = function(dictShow, a)
   return Effect_Console_foreign.log(dictShow.show(a))
 end
-local Golden_Uncurry_Test_eq_S_w = function(r1_S_198_S_213, r2_S_199_S_214)
-  return r1_S_198_S_213 == r2_S_199_S_214
+local Golden_Uncurry_Test_eq_S_w = function(r1_S_213, r2_S_214)
+  return r1_S_213 == r2_S_214
 end
-local Golden_Uncurry_Test_sub_S_w = function(x_S_184_S_208, y_S_185_S_209)
-  return x_S_184_S_208 - y_S_185_S_209
+local Golden_Uncurry_Test_sub_S_w = function(x_S_208, y_S_209)
+  return x_S_208 - y_S_209
 end
 M.Golden_Uncurry_Test_sumTo = function(m)
   local go_S_w
@@ -74,7 +74,7 @@ M.Golden_Uncurry_Test_evenSteps = function(evenSteps_S_p1)
 end
 local Golden_Uncurry_Test_alwaysFirst_S_w = function(x) return x end
 local Golden_Uncurry_Test_adderOf_S_w = function(x, y)
-  return function(y_S_189_S_229) return x + y + y_S_189_S_229 end
+  return function(y_S_229) return x + y + y_S_229 end
 end
 local Golden_Uncurry_Test_add3_S_w = function(x, y, z) return x + y + z end
 M.Golden_Uncurry_Test_add3 = function(add3_S_p1)

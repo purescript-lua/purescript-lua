@@ -431,13 +431,13 @@ UberModule
       ( QName
         { qnameModuleName = ModuleName "Golden.LongStateBind.Test", qnameName = Name "get"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "x$540$1450" ) :| [] )
+        ( ParamNamed Nothing ( Name "x$1450" ) :| [] )
         ( AppN Nothing
           ( AppN Nothing
             ( Ref Nothing ( Imported ( ModuleName "Data.Tuple" ) ( Name "Tuple" ) ) )
-            ( Ref Nothing ( Local ( Name "x$540$1450" ) ) :| [] )
+            ( Ref Nothing ( Local ( Name "x$1450" ) ) :| [] )
           )
-          ( Ref Nothing ( Local ( Name "x$540$1450" ) ) :| [] )
+          ( Ref Nothing ( Local ( Name "x$1450" ) ) :| [] )
         )
       ), Standalone
       ( QName
@@ -451,10 +451,10 @@ UberModule
       ( QName
         { qnameModuleName = ModuleName "Golden.LongStateBind.Test", qnameName = Name "add$w"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "x$495$532" ) :| [ ParamNamed Nothing ( Name "y$496$533" ) ] )
+        ( ParamNamed Nothing ( Name "x$532" ) :| [ ParamNamed Nothing ( Name "y$533" ) ] )
         ( PrimBinOp Nothing PrimAdd
-          ( Ref Nothing ( Local ( Name "x$495$532" ) ) )
-          ( Ref Nothing ( Local ( Name "y$496$533" ) ) )
+          ( Ref Nothing ( Local ( Name "x$532" ) ) )
+          ( Ref Nothing ( Local ( Name "y$533" ) ) )
         )
       ), Standalone
       ( QName

@@ -25,8 +25,8 @@ local Control_Monad_ST_Internal_run = Control_Monad_ST_Internal_foreign.run
 local Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
 }
-local Golden_STDoBlock_Test_add_S_w = function(x_S_425_S_445, y_S_426_S_446)
-  return x_S_425_S_445 + y_S_426_S_446
+local Golden_STDoBlock_Test_add_S_w = function(x_S_445, y_S_446)
+  return x_S_445 + y_S_446
 end
 M.Golden_STDoBlock_Test_sumTwice = function(n)
   return Control_Monad_ST_Internal_run(function()

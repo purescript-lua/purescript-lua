@@ -43,15 +43,14 @@ local Data_Show_foreign = {
 local Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
 }
-local Data_Either_append_S_w = function(s1_S_299_S_331, s2_S_300_S_332)
-  return s1_S_299_S_331 .. s2_S_300_S_332
+local Data_Either_append_S_w = function(s1_S_331, s2_S_332)
+  return s1_S_331 .. s2_S_332
 end
 local Data_Either_Right = function(value0)
   return { "Data.Either∷Either.Right", value0 }
 end
-local Golden_LongEitherBind_Test_add_S_w = function( x_S_297_S_326
-, y_S_298_S_327 )
-  return x_S_297_S_326 + y_S_298_S_327
+local Golden_LongEitherBind_Test_add_S_w = function(x_S_326, y_S_327)
+  return x_S_326 + y_S_327
 end
 local Golden_LongEitherBind_Test_compute = (function()
   local x150 = (function()

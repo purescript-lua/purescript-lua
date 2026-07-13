@@ -55,22 +55,19 @@ UberModule
       ( QName
         { qnameModuleName = ModuleName "Golden.Uncurry.Test", qnameName = Name "eq$w"
         }, AbsN Nothing
-        ( ParamNamed Nothing
-          ( Name "r1$198$213" ) :|
-          [ ParamNamed Nothing ( Name "r2$199$214" ) ]
-        )
+        ( ParamNamed Nothing ( Name "r1$213" ) :| [ ParamNamed Nothing ( Name "r2$214" ) ] )
         ( Eq Nothing
-          ( Ref Nothing ( Local ( Name "r1$198$213" ) ) )
-          ( Ref Nothing ( Local ( Name "r2$199$214" ) ) )
+          ( Ref Nothing ( Local ( Name "r1$213" ) ) )
+          ( Ref Nothing ( Local ( Name "r2$214" ) ) )
         )
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.Uncurry.Test", qnameName = Name "sub$w"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "x$184$208" ) :| [ ParamNamed Nothing ( Name "y$185$209" ) ] )
+        ( ParamNamed Nothing ( Name "x$208" ) :| [ ParamNamed Nothing ( Name "y$209" ) ] )
         ( PrimBinOp Nothing PrimSub
-          ( Ref Nothing ( Local ( Name "x$184$208" ) ) )
-          ( Ref Nothing ( Local ( Name "y$185$209" ) ) )
+          ( Ref Nothing ( Local ( Name "x$208" ) ) )
+          ( Ref Nothing ( Local ( Name "y$209" ) ) )
         )
       ), Standalone
       ( QName
@@ -216,13 +213,13 @@ UberModule
         }, AbsN Nothing
         ( ParamNamed Nothing ( Name "x" ) :| [ ParamNamed Nothing ( Name "y" ) ] )
         ( AbsN Nothing
-          ( ParamNamed Nothing ( Name "y$189$229" ) :| [] )
+          ( ParamNamed Nothing ( Name "y$229" ) :| [] )
           ( PrimBinOp Nothing PrimAdd
             ( PrimBinOp Nothing PrimAdd
               ( Ref Nothing ( Local ( Name "x" ) ) )
               ( Ref Nothing ( Local ( Name "y" ) ) )
             )
-            ( Ref Nothing ( Local ( Name "y$189$229" ) ) )
+            ( Ref Nothing ( Local ( Name "y$229" ) ) )
           )
         )
       ), Standalone

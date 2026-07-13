@@ -16,10 +16,10 @@ UberModule
       ( QName
         { qnameModuleName = ModuleName "Golden.Fibonacci.Test", qnameName = Name "sub$w"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "x$185$208" ) :| [ ParamNamed Nothing ( Name "y$186$209" ) ] )
+        ( ParamNamed Nothing ( Name "x$208" ) :| [ ParamNamed Nothing ( Name "y$209" ) ] )
         ( PrimBinOp Nothing PrimSub
-          ( Ref Nothing ( Local ( Name "x$185$208" ) ) )
-          ( Ref Nothing ( Local ( Name "y$186$209" ) ) )
+          ( Ref Nothing ( Local ( Name "x$208" ) ) )
+          ( Ref Nothing ( Local ( Name "y$209" ) ) )
         )
       ), RecursiveGroup
       (

@@ -28,10 +28,10 @@ UberModule
       ( QName
         { qnameModuleName = ModuleName "Golden.Loopification.Test", qnameName = Name "sub$w"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "x$185$216" ) :| [ ParamNamed Nothing ( Name "y$186$217" ) ] )
+        ( ParamNamed Nothing ( Name "x$216" ) :| [ ParamNamed Nothing ( Name "y$217" ) ] )
         ( PrimBinOp Nothing PrimSub
-          ( Ref Nothing ( Local ( Name "x$185$216" ) ) )
-          ( Ref Nothing ( Local ( Name "y$186$217" ) ) )
+          ( Ref Nothing ( Local ( Name "x$216" ) ) )
+          ( Ref Nothing ( Local ( Name "y$217" ) ) )
         )
       ), RecursiveGroup
       (

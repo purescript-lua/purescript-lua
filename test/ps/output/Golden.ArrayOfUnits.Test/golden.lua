@@ -132,8 +132,8 @@ return (function()
     end)(Effect_pureE(Data_Unit_unit))(arr_S_0)()
     return Effect_Console_logShow_S_w({
       show = Data_Show_foreign.showIntImpl
-    }, Data_Foldable_foldableArray.foldl(function(c_S_372_S_911)
-      return function() return 1 + c_S_372_S_911 end
+    }, Data_Foldable_foldableArray.foldl(function(c_S_911)
+      return function() return 1 + c_S_911 end
     end)(0)(arr_S_0))()
   end
 end)()()

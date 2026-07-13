@@ -128,8 +128,8 @@ Golden_BugListGenericEq_Test_eqList = function(dictEq)
   }
 end
 local Golden_BugListGenericEq_Test_eq = (Golden_BugListGenericEq_Test_eqList({
-  eq = function(r1_S_222_S_233)
-    return function(r2_S_223_S_234) return r1_S_222_S_233 == r2_S_223_S_234 end
+  eq = function(r1_S_233)
+    return function(r2_S_234) return r1_S_233 == r2_S_234 end
   end
 })).eq
 local Golden_BugListGenericEq_Test_cons_S_w = function(head, tail)
@@ -137,11 +137,11 @@ local Golden_BugListGenericEq_Test_cons_S_w = function(head, tail)
 end
 return (function()
   local _ = (function()
-    local a_S_2_S_261 = Golden_BugListGenericEq_Test_eq(Golden_BugListGenericEq_Test_Nil)(Golden_BugListGenericEq_Test_Nil)
+    local a_S_261 = Golden_BugListGenericEq_Test_eq(Golden_BugListGenericEq_Test_Nil)(Golden_BugListGenericEq_Test_Nil)
     return Effect_Console_log((function()
-      if a_S_2_S_261 then
+      if a_S_261 then
         return "true"
-      elseif false == a_S_2_S_261 then
+      elseif false == a_S_261 then
         return "false"
       else
         return error("No patterns matched")
@@ -149,11 +149,11 @@ return (function()
     end)())
   end)()()
   local _ = (function()
-    local a_S_2_S_262 = Golden_BugListGenericEq_Test_eq(Golden_BugListGenericEq_Test_cons_S_w(1, Golden_BugListGenericEq_Test_cons_S_w(2, Golden_BugListGenericEq_Test_Nil)))(Golden_BugListGenericEq_Test_cons_S_w(1, Golden_BugListGenericEq_Test_cons_S_w(2, Golden_BugListGenericEq_Test_Nil)))
+    local a_S_262 = Golden_BugListGenericEq_Test_eq(Golden_BugListGenericEq_Test_cons_S_w(1, Golden_BugListGenericEq_Test_cons_S_w(2, Golden_BugListGenericEq_Test_Nil)))(Golden_BugListGenericEq_Test_cons_S_w(1, Golden_BugListGenericEq_Test_cons_S_w(2, Golden_BugListGenericEq_Test_Nil)))
     return Effect_Console_log((function()
-      if a_S_2_S_262 then
+      if a_S_262 then
         return "true"
-      elseif false == a_S_2_S_262 then
+      elseif false == a_S_262 then
         return "false"
       else
         return error("No patterns matched")
@@ -161,11 +161,11 @@ return (function()
     end)())
   end)()()
   return (function()
-    local a_S_2_S_263 = Golden_BugListGenericEq_Test_eq(Golden_BugListGenericEq_Test_cons_S_w(1, Golden_BugListGenericEq_Test_Nil))(Golden_BugListGenericEq_Test_cons_S_w(2, Golden_BugListGenericEq_Test_Nil))
+    local a_S_263 = Golden_BugListGenericEq_Test_eq(Golden_BugListGenericEq_Test_cons_S_w(1, Golden_BugListGenericEq_Test_Nil))(Golden_BugListGenericEq_Test_cons_S_w(2, Golden_BugListGenericEq_Test_Nil))
     return Effect_Console_log((function()
-      if a_S_2_S_263 then
+      if a_S_263 then
         return "true"
-      elseif false == a_S_2_S_263 then
+      elseif false == a_S_263 then
         return "false"
       else
         return error("No patterns matched")

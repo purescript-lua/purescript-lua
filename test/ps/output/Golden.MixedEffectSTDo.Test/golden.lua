@@ -41,9 +41,9 @@ return (function()
   local _ = Effect_Console_log("mixing Effect and ST")()
   local x_S_0 = Control_Monad_ST_Internal_run(function()
     local ref_S_456 = Control_Monad_ST_Internal_new(2)()
-    local _ = Control_Monad_ST_Internal_modifyImpl(function(s_S_8_S_458)
-      local sPrime_S_9_S_459 = s_S_8_S_458 * 2
-      return { state = sPrime_S_9_S_459, value = sPrime_S_9_S_459 }
+    local _ = Control_Monad_ST_Internal_modifyImpl(function(s_S_458)
+      local sPrime_S_459 = s_S_458 * 2
+      return { state = sPrime_S_459, value = sPrime_S_459 }
     end)(ref_S_456)()
     local n_S_457 = Control_Monad_ST_Internal_read(ref_S_456)()
     return n_S_457 + 3

@@ -16,10 +16,10 @@ UberModule
       ( QName
         { qnameModuleName = ModuleName "Golden.LongCallbackChain.Test", qnameName = Name "add$w"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "x$189$215" ) :| [ ParamNamed Nothing ( Name "y$190$216" ) ] )
+        ( ParamNamed Nothing ( Name "x$215" ) :| [ ParamNamed Nothing ( Name "y$216" ) ] )
         ( PrimBinOp Nothing PrimAdd
-          ( Ref Nothing ( Local ( Name "x$189$215" ) ) )
-          ( Ref Nothing ( Local ( Name "y$190$216" ) ) )
+          ( Ref Nothing ( Local ( Name "x$215" ) ) )
+          ( Ref Nothing ( Local ( Name "y$216" ) ) )
         )
       ), RecursiveGroup
       (

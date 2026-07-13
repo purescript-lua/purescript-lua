@@ -173,22 +173,20 @@ UberModule
                                 )
                               )
                               ( AbsN Nothing
-                                ( ParamNamed Nothing ( Name "s$8$458" ) :| [] )
+                                ( ParamNamed Nothing ( Name "s$458" ) :| [] )
                                 ( Let Nothing
                                   ( Standalone
-                                    ( Nothing, Name "s'$9$459", PrimBinOp Nothing PrimMul
-                                      ( Ref Nothing ( Local ( Name "s$8$458" ) ) )
+                                    ( Nothing, Name "s'$459", PrimBinOp Nothing PrimMul
+                                      ( Ref Nothing ( Local ( Name "s$458" ) ) )
                                       ( LiteralInt Nothing 2 )
                                     ) :| []
                                   )
                                   ( LiteralObject Nothing
                                     [
                                       ( PropName "state", Ref Nothing
-                                        ( Local ( Name "s'$9$459" ) )
+                                        ( Local ( Name "s'$459" ) )
                                       ),
-                                      ( PropName "value", Ref Nothing
-                                        ( Local ( Name "s'$9$459" ) )
-                                      )
+                                      ( PropName "value", Ref Nothing ( Local ( Name "s'$459" ) ) )
                                     ]
                                   )
                                 ) :| []

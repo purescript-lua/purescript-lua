@@ -3,9 +3,8 @@ local Data_Show_foreign = { showIntImpl = function(n) return tostring(n) end }
 local Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
 }
-local Golden_LongCallbackChain_Test_add_S_w = function( x_S_189_S_215
-, y_S_190_S_216 )
-  return x_S_189_S_215 + y_S_190_S_216
+local Golden_LongCallbackChain_Test_add_S_w = function(x_S_215, y_S_216)
+  return x_S_215 + y_S_216
 end
 local Golden_LongCallbackChain_Test_withInc_S_w = function(n, k)
   while true do

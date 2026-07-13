@@ -451,34 +451,32 @@ UberModule
                       [ LiteralObject Nothing
                         [
                           ( PropName "genericEq'", AbsN Nothing
-                            ( ParamNamed Nothing ( Name "v$7$271" ) :| [] )
+                            ( ParamNamed Nothing ( Name "v$271" ) :| [] )
                             ( AbsN Nothing
-                              ( ParamNamed Nothing ( Name "v1$8$272" ) :| [] )
+                              ( ParamNamed Nothing ( Name "v1$272" ) :| [] )
                               ( IfThenElse Nothing
                                 ( Eq Nothing
                                   ( LiteralString Nothing "Data.Generic.Rep∷Sum.Inl" )
-                                  ( ReflectCtor Nothing
-                                    ( Ref Nothing ( Local ( Name "v$7$271" ) ) )
-                                  )
+                                  ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v$271" ) ) ) )
                                 )
                                 ( Eq Nothing
                                   ( LiteralString Nothing "Data.Generic.Rep∷Sum.Inl" )
                                   ( ReflectCtor Nothing
-                                    ( Ref Nothing ( Local ( Name "v1$8$272" ) ) )
+                                    ( Ref Nothing ( Local ( Name "v1$272" ) ) )
                                   )
                                 )
                                 ( IfThenElse Nothing
                                   ( Eq Nothing
                                     ( LiteralString Nothing "Data.Generic.Rep∷Sum.Inr" )
                                     ( ReflectCtor Nothing
-                                      ( Ref Nothing ( Local ( Name "v$7$271" ) ) )
+                                      ( Ref Nothing ( Local ( Name "v$271" ) ) )
                                     )
                                   )
                                   ( IfThenElse Nothing
                                     ( Eq Nothing
                                       ( LiteralString Nothing "Data.Generic.Rep∷Sum.Inr" )
                                       ( ReflectCtor Nothing
-                                        ( Ref Nothing ( Local ( Name "v1$8$272" ) ) )
+                                        ( Ref Nothing ( Local ( Name "v1$272" ) ) )
                                       )
                                     )
                                     ( AppN Nothing
@@ -585,11 +583,11 @@ UberModule
                                           )
                                         )
                                         ( DataArgumentByIndex Nothing SumType 0
-                                          ( Ref Nothing ( Local ( Name "v$7$271" ) ) ) :| []
+                                          ( Ref Nothing ( Local ( Name "v$271" ) ) ) :| []
                                         )
                                       )
                                       ( DataArgumentByIndex Nothing SumType 0
-                                        ( Ref Nothing ( Local ( Name "v1$8$272" ) ) ) :| []
+                                        ( Ref Nothing ( Local ( Name "v1$272" ) ) ) :| []
                                       )
                                     ) ( LiteralBool Nothing False )
                                   ) ( LiteralBool Nothing False )
@@ -643,34 +641,32 @@ UberModule
                       [ LiteralObject Nothing
                         [
                           ( PropName "genericEq'", AbsN Nothing
-                            ( ParamNamed Nothing ( Name "v$7$249" ) :| [] )
+                            ( ParamNamed Nothing ( Name "v$249" ) :| [] )
                             ( AbsN Nothing
-                              ( ParamNamed Nothing ( Name "v1$8$250" ) :| [] )
+                              ( ParamNamed Nothing ( Name "v1$250" ) :| [] )
                               ( IfThenElse Nothing
                                 ( Eq Nothing
                                   ( LiteralString Nothing "Data.Generic.Rep∷Sum.Inl" )
-                                  ( ReflectCtor Nothing
-                                    ( Ref Nothing ( Local ( Name "v$7$249" ) ) )
-                                  )
+                                  ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v$249" ) ) ) )
                                 )
                                 ( Eq Nothing
                                   ( LiteralString Nothing "Data.Generic.Rep∷Sum.Inl" )
                                   ( ReflectCtor Nothing
-                                    ( Ref Nothing ( Local ( Name "v1$8$250" ) ) )
+                                    ( Ref Nothing ( Local ( Name "v1$250" ) ) )
                                   )
                                 )
                                 ( IfThenElse Nothing
                                   ( Eq Nothing
                                     ( LiteralString Nothing "Data.Generic.Rep∷Sum.Inr" )
                                     ( ReflectCtor Nothing
-                                      ( Ref Nothing ( Local ( Name "v$7$249" ) ) )
+                                      ( Ref Nothing ( Local ( Name "v$249" ) ) )
                                     )
                                   )
                                   ( IfThenElse Nothing
                                     ( Eq Nothing
                                       ( LiteralString Nothing "Data.Generic.Rep∷Sum.Inr" )
                                       ( ReflectCtor Nothing
-                                        ( Ref Nothing ( Local ( Name "v1$8$250" ) ) )
+                                        ( Ref Nothing ( Local ( Name "v1$250" ) ) )
                                       )
                                     )
                                     ( AppN Nothing
@@ -750,11 +746,11 @@ UberModule
                                           )
                                         )
                                         ( DataArgumentByIndex Nothing SumType 0
-                                          ( Ref Nothing ( Local ( Name "v$7$249" ) ) ) :| []
+                                          ( Ref Nothing ( Local ( Name "v$249" ) ) ) :| []
                                         )
                                       )
                                       ( DataArgumentByIndex Nothing SumType 0
-                                        ( Ref Nothing ( Local ( Name "v1$8$250" ) ) ) :| []
+                                        ( Ref Nothing ( Local ( Name "v1$250" ) ) ) :| []
                                       )
                                     ) ( LiteralBool Nothing False )
                                   ) ( LiteralBool Nothing False )
@@ -858,7 +854,7 @@ UberModule
             ( Nothing, Name "_", AppN Nothing
               ( Let Nothing
                 ( Standalone
-                  ( Nothing, Name "a$2$291", AppN Nothing
+                  ( Nothing, Name "a$291", AppN Nothing
                     ( AppN Nothing
                       ( Ref Nothing
                         ( Imported ( ModuleName "Golden.GenericEqTwoTypes.Test" ) ( Name "eq1" ) )
@@ -921,11 +917,11 @@ UberModule
                 ( AppN Nothing
                   ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
                   ( IfThenElse Nothing
-                    ( Ref Nothing ( Local ( Name "a$2$291" ) ) )
+                    ( Ref Nothing ( Local ( Name "a$291" ) ) )
                     ( LiteralString Nothing "true" )
                     ( IfThenElse Nothing
                       ( Eq Nothing ( LiteralBool Nothing False )
-                        ( Ref Nothing ( Local ( Name "a$2$291" ) ) )
+                        ( Ref Nothing ( Local ( Name "a$291" ) ) )
                       )
                       ( LiteralString Nothing "false" )
                       ( Exception Nothing "No patterns matched" )
@@ -939,7 +935,7 @@ UberModule
               ( Nothing, Name "_", AppN Nothing
                 ( Let Nothing
                   ( Standalone
-                    ( Nothing, Name "a$2$292", AppN Nothing
+                    ( Nothing, Name "a$292", AppN Nothing
                       ( AppN Nothing
                         ( Ref Nothing
                           ( Imported ( ModuleName "Golden.GenericEqTwoTypes.Test" ) ( Name "eq1" ) )
@@ -982,11 +978,11 @@ UberModule
                   ( AppN Nothing
                     ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
                     ( IfThenElse Nothing
-                      ( Ref Nothing ( Local ( Name "a$2$292" ) ) )
+                      ( Ref Nothing ( Local ( Name "a$292" ) ) )
                       ( LiteralString Nothing "true" )
                       ( IfThenElse Nothing
                         ( Eq Nothing ( LiteralBool Nothing False )
-                          ( Ref Nothing ( Local ( Name "a$2$292" ) ) )
+                          ( Ref Nothing ( Local ( Name "a$292" ) ) )
                         )
                         ( LiteralString Nothing "false" )
                         ( Exception Nothing "No patterns matched" )
@@ -999,7 +995,7 @@ UberModule
               ( Nothing, Name "_", AppN Nothing
                 ( Let Nothing
                   ( Standalone
-                    ( Nothing, Name "a$2$293", AppN Nothing
+                    ( Nothing, Name "a$293", AppN Nothing
                       ( AppN Nothing
                         ( Ref Nothing
                           ( Imported ( ModuleName "Golden.GenericEqTwoTypes.Test" ) ( Name "eq" ) )
@@ -1078,11 +1074,11 @@ UberModule
                   ( AppN Nothing
                     ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
                     ( IfThenElse Nothing
-                      ( Ref Nothing ( Local ( Name "a$2$293" ) ) )
+                      ( Ref Nothing ( Local ( Name "a$293" ) ) )
                       ( LiteralString Nothing "true" )
                       ( IfThenElse Nothing
                         ( Eq Nothing ( LiteralBool Nothing False )
-                          ( Ref Nothing ( Local ( Name "a$2$293" ) ) )
+                          ( Ref Nothing ( Local ( Name "a$293" ) ) )
                         )
                         ( LiteralString Nothing "false" )
                         ( Exception Nothing "No patterns matched" )
@@ -1097,7 +1093,7 @@ UberModule
           ( AppN Nothing
             ( Let Nothing
               ( Standalone
-                ( Nothing, Name "a$2$294", AppN Nothing
+                ( Nothing, Name "a$294", AppN Nothing
                   ( AppN Nothing
                     ( Ref Nothing
                       ( Imported ( ModuleName "Golden.GenericEqTwoTypes.Test" ) ( Name "eq" ) )
@@ -1142,11 +1138,11 @@ UberModule
               ( AppN Nothing
                 ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
                 ( IfThenElse Nothing
-                  ( Ref Nothing ( Local ( Name "a$2$294" ) ) )
+                  ( Ref Nothing ( Local ( Name "a$294" ) ) )
                   ( LiteralString Nothing "true" )
                   ( IfThenElse Nothing
                     ( Eq Nothing ( LiteralBool Nothing False )
-                      ( Ref Nothing ( Local ( Name "a$2$294" ) ) )
+                      ( Ref Nothing ( Local ( Name "a$294" ) ) )
                     )
                     ( LiteralString Nothing "false" )
                     ( Exception Nothing "No patterns matched" )

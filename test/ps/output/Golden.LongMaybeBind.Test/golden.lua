@@ -4,8 +4,8 @@ local Data_Show_foreign = { showIntImpl = function(n) return tostring(n) end }
 local Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
 }
-local Data_Maybe_append_S_w = function(s1_S_286_S_314, s2_S_287_S_315)
-  return s1_S_286_S_314 .. s2_S_287_S_315
+local Data_Maybe_append_S_w = function(s1_S_314, s2_S_315)
+  return s1_S_314 .. s2_S_315
 end
 local Data_Maybe_Just = function(value0)
   return { "Data.Maybe∷Maybe.Just", value0 }
@@ -19,8 +19,8 @@ local Golden_LongMaybeBind_Test_bind_S_w = function(v_S_303, v1_S_304)
     return error("No patterns matched")
   end
 end
-local Golden_LongMaybeBind_Test_add_S_w = function(x_S_284_S_309, y_S_285_S_310)
-  return x_S_284_S_309 + y_S_285_S_310
+local Golden_LongMaybeBind_Test_add_S_w = function(x_S_309, y_S_310)
+  return x_S_309 + y_S_310
 end
 local Golden_LongMaybeBind_Test_compute = (function()
   local _S_kont320 = function(x1_S_321)

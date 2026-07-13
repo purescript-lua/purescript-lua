@@ -51,10 +51,10 @@ return (function()
     show = Data_Show_foreign.showIntImpl
   }, Golden_Primops_Test_sumTo_S_w(0, 5))()
   local _ = Effect_Console_logShow_S_w({
-    show = function(v_S_114_S_241)
-      if v_S_114_S_241 then
+    show = function(v_S_241)
+      if v_S_241 then
         return "true"
-      elseif false == v_S_114_S_241 then
+      elseif false == v_S_241 then
         return "false"
       else
         return error("No patterns matched")
@@ -62,10 +62,10 @@ return (function()
     end
   }, true)()
   local _ = Effect_Console_logShow_S_w({
-    show = function(v_S_114_S_245)
-      if v_S_114_S_245 then
+    show = function(v_S_245)
+      if v_S_245 then
         return "true"
-      elseif false == v_S_114_S_245 then
+      elseif false == v_S_245 then
         return "false"
       else
         return error("No patterns matched")
@@ -87,10 +87,10 @@ return (function()
   }, { "Data.Ordering∷Ordering.LT" })()
   local _ = Effect_Console_log("foobar")()
   return Effect_Console_logShow_S_w({
-    show = function(v_S_114_S_251)
-      if v_S_114_S_251 then
+    show = function(v_S_251)
+      if v_S_251 then
         return "true"
-      elseif false == v_S_114_S_251 then
+      elseif false == v_S_251 then
         return "false"
       else
         return error("No patterns matched")

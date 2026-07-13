@@ -21,13 +21,10 @@ UberModule
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Data.Either", qnameName = Name "append$w" }, AbsN Nothing
-        ( ParamNamed Nothing
-          ( Name "s1$516$557" ) :|
-          [ ParamNamed Nothing ( Name "s2$517$558" ) ]
-        )
+        ( ParamNamed Nothing ( Name "s1$557" ) :| [ ParamNamed Nothing ( Name "s2$558" ) ] )
         ( PrimBinOp Nothing PrimConcat
-          ( Ref Nothing ( Local ( Name "s1$516$557" ) ) )
-          ( Ref Nothing ( Local ( Name "s2$517$558" ) ) )
+          ( Ref Nothing ( Local ( Name "s1$557" ) ) )
+          ( Ref Nothing ( Local ( Name "s2$558" ) ) )
         )
       ), Standalone
       ( QName
@@ -429,7 +426,7 @@ UberModule
             ( LiteralObject Nothing
               [
                 ( PropName "pure", AbsN Nothing
-                  ( ParamNamed Nothing ( Name "x$578$591" ) :| [] )
+                  ( ParamNamed Nothing ( Name "x$591" ) :| [] )
                   ( AppN Nothing
                     ( ObjectProp Nothing
                       ( AppN Nothing
@@ -445,7 +442,7 @@ UberModule
                     )
                     ( AppN Nothing
                       ( Ref Nothing ( Imported ( ModuleName "Data.Either" ) ( Name "Right" ) ) )
-                      ( Ref Nothing ( Local ( Name "x$578$591" ) ) :| [] ) :| []
+                      ( Ref Nothing ( Local ( Name "x$591" ) ) :| [] ) :| []
                     )
                   )
                 ),
@@ -480,10 +477,10 @@ UberModule
       ( QName
         { qnameModuleName = ModuleName "Golden.LongExceptBind.Test", qnameName = Name "add$w"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "x$514$552" ) :| [ ParamNamed Nothing ( Name "y$515$553" ) ] )
+        ( ParamNamed Nothing ( Name "x$552" ) :| [ ParamNamed Nothing ( Name "y$553" ) ] )
         ( PrimBinOp Nothing PrimAdd
-          ( Ref Nothing ( Local ( Name "x$514$552" ) ) )
-          ( Ref Nothing ( Local ( Name "y$515$553" ) ) )
+          ( Ref Nothing ( Local ( Name "x$552" ) ) )
+          ( Ref Nothing ( Local ( Name "y$553" ) ) )
         )
       ), Standalone
       ( QName

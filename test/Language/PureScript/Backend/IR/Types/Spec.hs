@@ -277,6 +277,15 @@ spec = describe "Types" do
           (paramNamed (Name "x$0"))
           (application (refLocal (Name "x$0")) (refLocal y))
 
+    it "freshens a previously-freshened binder without compounding the suffix" do
+      -- Two paste generations of the same binder end in a single
+      -- \$<n> suffix, not one $<n> group per generation.
+      runSupply
+        ( freshenBinders (abstraction (paramNamed x) (refLocal x))
+            >>= freshenBinders
+        )
+        `shouldBe` abstraction (paramNamed (Name "x$1")) (refLocal (Name "x$1"))
+
     prop "is an alpha-renaming of GUC-shaped input" do
       e ← forAll Gen.scopedExp
       let guc = uniquifyNamesInExpr e
