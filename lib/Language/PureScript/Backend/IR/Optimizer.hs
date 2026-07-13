@@ -9,6 +9,7 @@ import Data.Map qualified as Map
 import Data.Set qualified as Set
 import Data.Text qualified as Text
 import GHC.Generics (Generically (..))
+import Language.PureScript.Backend.IR.CSE (eliminateCommonSubexpressions)
 import Language.PureScript.Backend.IR.DCE (eliminateDeadCode)
 import Language.PureScript.Backend.IR.EffectNames (canonicalizeEffectApp)
 import Language.PureScript.Backend.IR.FlattenDeepBinds (flattenDeepBindsM)
@@ -54,6 +55,7 @@ import Language.PureScript.Backend.IR.Types
   , countFreeRefUsage
   , countFreeRefs
   , ctorId
+  , expSize
   , freshenBinders
   , getAnn
   , isEffectRun
@@ -155,6 +157,15 @@ optimizerPipeline policy =
     -- the last pass that can multiply reads and before the final
     -- flattening. See 'shareForeignAccessors'.
     RunPass shareAccessorsPass
+  , -- Rebuild sharing within one body for the pure repeats the pastes
+    -- above left behind (issue #183): alpha-equivalent effect-free
+    -- subexpressions of a block are hoisted into a shared Let. Runs
+    -- after the last duplicating pass and after share-accessors (so
+    -- accessor reads are already references to top-level names, not
+    -- grabbed per body here), and outside any fixpoint: the Deref tier
+    -- of inlineLocalBindings would paste hoisted projections straight
+    -- back. See Language.PureScript.Backend.IR.CSE.
+    RunPass csePass
   , -- Flatten the remaining deeply-nested expression trees (issues #104,
     -- #108): continuation/bind chains of any monad (lambda-lifted
     -- into $kont helpers) and applicative/flipped-bind application
@@ -214,6 +225,14 @@ optimizerPipeline policy =
   floatInPass = gucPass "float-in" floatIn
   shareAccessorsPass =
     gucPass "share-accessors" (shareForeignAccessors policy)
+  csePass =
+    Pass
+      { passName = "cse"
+      , passRun =
+          conservatively . eliminateCommonSubexpressions (policyAlways policy)
+      , passRequires = guc
+      , passEnsures = guc
+      }
   magicDoPass = gucPass "magicDo" magicDo
   flattenDeepBindsPass =
     Pass
@@ -668,17 +687,14 @@ data CallSiteInlining = InlineCallSites | SkipCallSites
 type InlineEnv = Map (Qualified Name) Exp
 
 {- | The largest expression the call-site inliner will paste, GHC's
-unfolding-use-threshold analogue, sized in IR nodes. Code growth is the
-transform's main risk (issue #180); this bounds it. Deliberately generous
-enough to admit an uncurried monad-method worker (a folded Maybe/Either
-match), the payload the cascade is built to collapse.
+unfolding-use-threshold analogue, sized in IR nodes ('expSize'). Code
+growth is the transform's main risk (issue #180); this bounds it.
+Deliberately generous enough to admit an uncurried monad-method worker
+(a folded Maybe/Either match), the payload the cascade is built to
+collapse.
 -}
 inlineSizeBudget ∷ Natural
 inlineSizeBudget = 64
-
--- | Node count of an expression, for 'inlineSizeBudget'.
-expSize ∷ RawExp ann → Natural
-expSize e = 1 + sum (expSize <$> toListOf subexpressions e)
 
 {- | The largest expression the Deref and KnownSize inlining tiers paste
 (Note [Complexity and Capture gate inlining]), sized in IR nodes like

@@ -1122,9 +1122,18 @@ spec = describe "IR Optimizer" do
               }
       optimized ← checked original
       annotateShow optimized
+      -- The Deref tier pastes the read at every site, so the top-level
+      -- binding is gone; the CSE pass (#183) then rebinds the pasted
+      -- read locally, within the one body that repeats it.
       Linker.uberModuleBindings optimized === []
+      let cseRef = refLocal (Name "$cse0")
       Linker.uberModuleExports optimized
-        === [(Name "main", application (application dExpr dExpr) dExpr)]
+        === [
+              ( Name "main"
+              , let1 (Name "$cse0") dExpr $
+                  application (application cseRef cseRef) cseRef
+              )
+            ]
 
     test "keeps a multi-use non-trivial binding shared across branches" do
       let hName = QName main' (Name "h")
