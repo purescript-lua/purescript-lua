@@ -15,13 +15,10 @@ UberModule
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Data.Maybe", qnameName = Name "append$w" }, AbsN Nothing
-        ( ParamNamed Nothing
-          ( Name "s1$286$318" ) :|
-          [ ParamNamed Nothing ( Name "s2$287$319" ) ]
-        )
+        ( ParamNamed Nothing ( Name "s1$318" ) :| [ ParamNamed Nothing ( Name "s2$319" ) ] )
         ( PrimBinOp Nothing PrimConcat
-          ( Ref Nothing ( Local ( Name "s1$286$318" ) ) )
-          ( Ref Nothing ( Local ( Name "s2$287$319" ) ) )
+          ( Ref Nothing ( Local ( Name "s1$318" ) ) )
+          ( Ref Nothing ( Local ( Name "s2$319" ) ) )
         )
       ), Standalone
       ( QName
@@ -35,22 +32,22 @@ UberModule
       ( QName
         { qnameModuleName = ModuleName "Golden.LongBindFlipped.Test", qnameName = Name "bindFlipped$w"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "b$135$308" ) :| [ ParamNamed Nothing ( Name "a$136$309" ) ] )
+        ( ParamNamed Nothing ( Name "b$308" ) :| [ ParamNamed Nothing ( Name "a$309" ) ] )
         ( IfThenElse Nothing
           ( Eq Nothing
             ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
-            ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "a$136$309" ) ) ) )
+            ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "a$309" ) ) ) )
           )
           ( AppN Nothing
-            ( Ref Nothing ( Local ( Name "b$135$308" ) ) )
+            ( Ref Nothing ( Local ( Name "b$308" ) ) )
             ( DataArgumentByIndex Nothing SumType 0
-              ( Ref Nothing ( Local ( Name "a$136$309" ) ) ) :| []
+              ( Ref Nothing ( Local ( Name "a$309" ) ) ) :| []
             )
           )
           ( IfThenElse Nothing
             ( Eq Nothing
               ( LiteralString Nothing "Data.Maybe∷Maybe.Nothing" )
-              ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "a$136$309" ) ) ) )
+              ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "a$309" ) ) ) )
             )
             ( Ctor Nothing SumType
               ( ModuleName "Data.Maybe" )

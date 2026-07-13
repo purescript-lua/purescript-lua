@@ -106,12 +106,12 @@ Control_Monad_State_Trans_applicativeStateT = function(dictMonad)
 end
 local Golden_LongStateBind_Test_bindStateT = Control_Monad_State_Trans_bindStateT(Data_Identity_monadIdentity)
 local Golden_LongStateBind_Test_bind = Golden_LongStateBind_Test_bindStateT.bind
-local Golden_LongStateBind_Test_get = function(x_S_540_S_1450)
-  return Data_Tuple_Tuple(x_S_540_S_1450)(x_S_540_S_1450)
+local Golden_LongStateBind_Test_get = function(x_S_1450)
+  return Data_Tuple_Tuple(x_S_1450)(x_S_1450)
 end
 local Golden_LongStateBind_Test_discard = Golden_LongStateBind_Test_bindStateT.bind
-local Golden_LongStateBind_Test_add_S_w = function(x_S_495_S_532, y_S_496_S_533)
-  return x_S_495_S_532 + y_S_496_S_533
+local Golden_LongStateBind_Test_add_S_w = function(x_S_532, y_S_533)
+  return x_S_532 + y_S_533
 end
 local Golden_LongStateBind_Test_go = (function()
   local _S_kont1460 = function(x1_S_1461)

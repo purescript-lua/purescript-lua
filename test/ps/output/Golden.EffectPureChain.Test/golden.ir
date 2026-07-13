@@ -28,13 +28,10 @@ UberModule
       ( QName
         { qnameModuleName = ModuleName "Golden.EffectPureChain.Test", qnameName = Name "append$w"
         }, AbsN Nothing
-        ( ParamNamed Nothing
-          ( Name "s1$192$212" ) :|
-          [ ParamNamed Nothing ( Name "s2$193$213" ) ]
-        )
+        ( ParamNamed Nothing ( Name "s1$212" ) :| [ ParamNamed Nothing ( Name "s2$213" ) ] )
         ( PrimBinOp Nothing PrimConcat
-          ( Ref Nothing ( Local ( Name "s1$192$212" ) ) )
-          ( Ref Nothing ( Local ( Name "s2$193$213" ) ) )
+          ( Ref Nothing ( Local ( Name "s1$212" ) ) )
+          ( Ref Nothing ( Local ( Name "s2$213" ) ) )
         )
       ), Standalone
       ( QName

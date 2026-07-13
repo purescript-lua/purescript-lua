@@ -2,17 +2,16 @@ local Data_Show_foreign = { showIntImpl = function(n) return tostring(n) end }
 local Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
 }
-local Data_Maybe_append_S_w = function(s1_S_286_S_318, s2_S_287_S_319)
-  return s1_S_286_S_318 .. s2_S_287_S_319
+local Data_Maybe_append_S_w = function(s1_S_318, s2_S_319)
+  return s1_S_318 .. s2_S_319
 end
 local Data_Maybe_Just = function(value0)
   return { "Data.Maybe∷Maybe.Just", value0 }
 end
-local Golden_LongBindFlipped_Test_bindFlipped_S_w = function( b_S_135_S_308
-, a_S_136_S_309 )
-  if "Data.Maybe∷Maybe.Just" == a_S_136_S_309[1] then
-    return b_S_135_S_308(a_S_136_S_309[2])
-  elseif "Data.Maybe∷Maybe.Nothing" == a_S_136_S_309[1] then
+local Golden_LongBindFlipped_Test_bindFlipped_S_w = function(b_S_308, a_S_309)
+  if "Data.Maybe∷Maybe.Just" == a_S_309[1] then
+    return b_S_308(a_S_309[2])
+  elseif "Data.Maybe∷Maybe.Nothing" == a_S_309[1] then
     return { "Data.Maybe∷Maybe.Nothing" }
   else
     return error("No patterns matched")

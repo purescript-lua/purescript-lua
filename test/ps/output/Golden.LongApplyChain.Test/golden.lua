@@ -2,8 +2,8 @@ local Data_Show_foreign = { showIntImpl = function(n) return tostring(n) end }
 local Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
 }
-local Data_Maybe_append_S_w = function(s1_S_295_S_314, s2_S_296_S_315)
-  return s1_S_295_S_314 .. s2_S_296_S_315
+local Data_Maybe_append_S_w = function(s1_S_314, s2_S_315)
+  return s1_S_314 .. s2_S_315
 end
 local Data_Maybe_Nothing = { "Data.Maybe∷Maybe.Nothing" }
 local Data_Maybe_Just = function(value0)

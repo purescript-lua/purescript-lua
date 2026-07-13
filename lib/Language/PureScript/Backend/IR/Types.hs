@@ -12,11 +12,13 @@ import Control.Lens
   , traverseOf
   )
 import Control.Monad.Writer.CPS (runWriterT, tell)
+import Data.Char qualified as Char
 import Data.Deriving (deriveEq1, deriveOrd1)
 import Data.Map qualified as Map
 import Data.MonoidMap (MonoidMap)
 import Data.MonoidMap qualified as MMap
 import Data.Set qualified as Set
+import Data.Text qualified as Text
 import Data.Traversable (mapAccumM)
 import Language.PureScript.Backend.IR.Inliner qualified as Inliner
 import Language.PureScript.Backend.IR.Names
@@ -1122,7 +1124,22 @@ freshenBinders = go Map.empty
     other → traverseOf subexpressions (go renames) other
 
   freshNameFor ∷ Name → SupplyM Name
-  freshNameFor name = freshName (nameToText name <> "$")
+  freshNameFor name = freshName (stripFreshSuffix (nameToText name) <> "$")
+
+  -- Strip every trailing @$\<digits\>@ group before minting, so a
+  -- binder freshened across several paste generations grows one
+  -- @$\<n\>@ suffix total instead of one group per generation:
+  -- @x$1602$1686@ strips to @x@ before the next mint appends its own
+  -- counter. A bare digit-suffix name from 'uniquifyNames' (e.g. @x0@)
+  -- has no @$@ before its digits, so it passes through unchanged.
+  stripFreshSuffix ∷ Text → Text
+  stripFreshSuffix t
+    | Text.null digits = t
+    | Just t' ← Text.stripSuffix "$" prefix = stripFreshSuffix t'
+    | otherwise = t
+   where
+    digits = Text.takeWhileEnd Char.isDigit t
+    prefix = Text.dropEnd (Text.length digits) t
 
 {- | Substitution under the GUC discipline: replace every occurrence of
 the variable with the replacement. There is no scope threading: under

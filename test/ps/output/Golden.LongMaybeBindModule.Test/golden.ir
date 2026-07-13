@@ -53,10 +53,10 @@ UberModule
       ( QName
         { qnameModuleName = ModuleName "Golden.LongMaybeBindModule.Test", qnameName = Name "add$w"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "x$559$584" ) :| [ ParamNamed Nothing ( Name "y$560$585" ) ] )
+        ( ParamNamed Nothing ( Name "x$584" ) :| [ ParamNamed Nothing ( Name "y$585" ) ] )
         ( PrimBinOp Nothing PrimAdd
-          ( Ref Nothing ( Local ( Name "x$559$584" ) ) )
-          ( Ref Nothing ( Local ( Name "y$560$585" ) ) )
+          ( Ref Nothing ( Local ( Name "x$584" ) ) )
+          ( Ref Nothing ( Local ( Name "y$585" ) ) )
         )
       )
     ], uberModuleForeigns = [], uberModuleExports =

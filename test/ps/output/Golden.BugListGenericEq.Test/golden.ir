@@ -486,12 +486,12 @@ UberModule
           ( LiteralObject Nothing
             [
               ( PropName "eq", AbsN Nothing
-                ( ParamNamed Nothing ( Name "r1$222$233" ) :| [] )
+                ( ParamNamed Nothing ( Name "r1$233" ) :| [] )
                 ( AbsN Nothing
-                  ( ParamNamed Nothing ( Name "r2$223$234" ) :| [] )
+                  ( ParamNamed Nothing ( Name "r2$234" ) :| [] )
                   ( Eq Nothing
-                    ( Ref Nothing ( Local ( Name "r1$222$233" ) ) )
-                    ( Ref Nothing ( Local ( Name "r2$223$234" ) ) )
+                    ( Ref Nothing ( Local ( Name "r1$233" ) ) )
+                    ( Ref Nothing ( Local ( Name "r2$234" ) ) )
                   )
                 )
               )
@@ -546,7 +546,7 @@ UberModule
             ( Nothing, Name "_", AppN Nothing
               ( Let Nothing
                 ( Standalone
-                  ( Nothing, Name "a$2$261", AppN Nothing
+                  ( Nothing, Name "a$261", AppN Nothing
                     ( AppN Nothing
                       ( Ref Nothing
                         ( Imported ( ModuleName "Golden.BugListGenericEq.Test" ) ( Name "eq" ) )
@@ -569,11 +569,11 @@ UberModule
                 ( AppN Nothing
                   ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
                   ( IfThenElse Nothing
-                    ( Ref Nothing ( Local ( Name "a$2$261" ) ) )
+                    ( Ref Nothing ( Local ( Name "a$261" ) ) )
                     ( LiteralString Nothing "true" )
                     ( IfThenElse Nothing
                       ( Eq Nothing ( LiteralBool Nothing False )
-                        ( Ref Nothing ( Local ( Name "a$2$261" ) ) )
+                        ( Ref Nothing ( Local ( Name "a$261" ) ) )
                       )
                       ( LiteralString Nothing "false" )
                       ( Exception Nothing "No patterns matched" )
@@ -587,7 +587,7 @@ UberModule
               ( Nothing, Name "_", AppN Nothing
                 ( Let Nothing
                   ( Standalone
-                    ( Nothing, Name "a$2$262", AppN Nothing
+                    ( Nothing, Name "a$262", AppN Nothing
                       ( AppN Nothing
                         ( Ref Nothing
                           ( Imported ( ModuleName "Golden.BugListGenericEq.Test" ) ( Name "eq" ) )
@@ -650,11 +650,11 @@ UberModule
                   ( AppN Nothing
                     ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
                     ( IfThenElse Nothing
-                      ( Ref Nothing ( Local ( Name "a$2$262" ) ) )
+                      ( Ref Nothing ( Local ( Name "a$262" ) ) )
                       ( LiteralString Nothing "true" )
                       ( IfThenElse Nothing
                         ( Eq Nothing ( LiteralBool Nothing False )
-                          ( Ref Nothing ( Local ( Name "a$2$262" ) ) )
+                          ( Ref Nothing ( Local ( Name "a$262" ) ) )
                         )
                         ( LiteralString Nothing "false" )
                         ( Exception Nothing "No patterns matched" )
@@ -669,7 +669,7 @@ UberModule
           ( AppN Nothing
             ( Let Nothing
               ( Standalone
-                ( Nothing, Name "a$2$263", AppN Nothing
+                ( Nothing, Name "a$263", AppN Nothing
                   ( AppN Nothing
                     ( Ref Nothing
                       ( Imported ( ModuleName "Golden.BugListGenericEq.Test" ) ( Name "eq" ) )
@@ -700,11 +700,11 @@ UberModule
               ( AppN Nothing
                 ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
                 ( IfThenElse Nothing
-                  ( Ref Nothing ( Local ( Name "a$2$263" ) ) )
+                  ( Ref Nothing ( Local ( Name "a$263" ) ) )
                   ( LiteralString Nothing "true" )
                   ( IfThenElse Nothing
                     ( Eq Nothing ( LiteralBool Nothing False )
-                      ( Ref Nothing ( Local ( Name "a$2$263" ) ) )
+                      ( Ref Nothing ( Local ( Name "a$263" ) ) )
                     )
                     ( LiteralString Nothing "false" )
                     ( Exception Nothing "No patterns matched" )

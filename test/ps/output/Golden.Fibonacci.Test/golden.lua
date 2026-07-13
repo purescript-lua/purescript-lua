@@ -2,8 +2,8 @@ local Data_Show_foreign = { showIntImpl = function(n) return tostring(n) end }
 local Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
 }
-local Golden_Fibonacci_Test_sub_S_w = function(x_S_185_S_208, y_S_186_S_209)
-  return x_S_185_S_208 - y_S_186_S_209
+local Golden_Fibonacci_Test_sub_S_w = function(x_S_208, y_S_209)
+  return x_S_208 - y_S_209
 end
 local Golden_Fibonacci_Test_fib
 Golden_Fibonacci_Test_fib = function(v)

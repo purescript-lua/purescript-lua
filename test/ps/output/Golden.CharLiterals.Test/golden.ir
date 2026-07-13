@@ -118,7 +118,7 @@ UberModule
               ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
               ( Let Nothing
                 ( Standalone
-                  ( Nothing, Name "v$108$221", Eq Nothing
+                  ( Nothing, Name "v$221", Eq Nothing
                     ( LiteralString Nothing "Data.Ordering∷Ordering.LT" )
                     ( IfThenElse Nothing
                       ( PrimBinOp Nothing PrimLt
@@ -131,11 +131,11 @@ UberModule
                   ) :| []
                 )
                 ( IfThenElse Nothing
-                  ( Ref Nothing ( Local ( Name "v$108$221" ) ) )
+                  ( Ref Nothing ( Local ( Name "v$221" ) ) )
                   ( LiteralString Nothing "true" )
                   ( IfThenElse Nothing
                     ( Eq Nothing ( LiteralBool Nothing False )
-                      ( Ref Nothing ( Local ( Name "v$108$221" ) ) )
+                      ( Ref Nothing ( Local ( Name "v$221" ) ) )
                     )
                     ( LiteralString Nothing "false" )
                     ( Exception Nothing "No patterns matched" )

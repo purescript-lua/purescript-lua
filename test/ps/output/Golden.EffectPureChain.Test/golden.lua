@@ -5,9 +5,8 @@ local Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
 }
 local Effect_Console_log = Effect_Console_foreign.log
-local Golden_EffectPureChain_Test_append_S_w = function( s1_S_192_S_212
-, s2_S_193_S_213 )
-  return s1_S_192_S_212 .. s2_S_193_S_213
+local Golden_EffectPureChain_Test_append_S_w = function(s1_S_212, s2_S_213)
+  return s1_S_212 .. s2_S_213
 end
 local Golden_EffectPureChain_Test_show = Data_Show_showIntImpl
 M.Golden_EffectPureChain_Test_count = function(n)

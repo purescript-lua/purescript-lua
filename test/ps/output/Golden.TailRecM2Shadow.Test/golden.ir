@@ -241,10 +241,10 @@ UberModule
       ( QName
         { qnameModuleName = ModuleName "Golden.TailRecM2Shadow.Test", qnameName = Name "add$w"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "x$454$488" ) :| [ ParamNamed Nothing ( Name "y$455$489" ) ] )
+        ( ParamNamed Nothing ( Name "x$488" ) :| [ ParamNamed Nothing ( Name "y$489" ) ] )
         ( PrimBinOp Nothing PrimAdd
-          ( Ref Nothing ( Local ( Name "x$454$488" ) ) )
-          ( Ref Nothing ( Local ( Name "y$455$489" ) ) )
+          ( Ref Nothing ( Local ( Name "x$488" ) ) )
+          ( Ref Nothing ( Local ( Name "y$489" ) ) )
         )
       ), Standalone
       ( QName
@@ -591,16 +591,16 @@ UberModule
                                           ( AbsN Nothing
                                             ( ParamUnused Nothing :| [] )
                                             ( AbsN Nothing
-                                              ( ParamNamed Nothing ( Name "v$9$20" ) :| [] )
+                                              ( ParamNamed Nothing ( Name "v$20" ) :| [] )
                                               ( IfThenElse Nothing
                                                 ( Eq Nothing
                                                   ( LiteralString Nothing "Control.Monad.Rec.Class∷Step.Done" )
                                                   ( ReflectCtor Nothing
-                                                    ( Ref Nothing ( Local ( Name "v$9$20" ) ) )
+                                                    ( Ref Nothing ( Local ( Name "v$20" ) ) )
                                                   )
                                                 )
                                                 ( DataArgumentByIndex Nothing SumType 0
-                                                  ( Ref Nothing ( Local ( Name "v$9$20" ) ) )
+                                                  ( Ref Nothing ( Local ( Name "v$20" ) ) )
                                                 )
                                                 ( Exception Nothing "No patterns matched" )
                                               )
@@ -669,14 +669,14 @@ UberModule
                                 ( PropName "tailRecM" )
                               )
                               ( AbsN Nothing
-                                ( ParamNamed Nothing ( Name "o$480$507" ) :| [] )
+                                ( ParamNamed Nothing ( Name "o$507" ) :| [] )
                                 ( IfThenElse Nothing
                                   ( Eq Nothing
                                     ( LiteralString Nothing "Data.Ordering∷Ordering.LT" )
                                     ( IfThenElse Nothing
                                       ( PrimBinOp Nothing PrimLt
                                         ( ObjectProp Nothing
-                                          ( Ref Nothing ( Local ( Name "o$480$507" ) ) )
+                                          ( Ref Nothing ( Local ( Name "o$507" ) ) )
                                           ( PropName "b" )
                                         )
                                         ( Ref Nothing ( Local ( Name "n$506" ) ) )
@@ -685,7 +685,7 @@ UberModule
                                       ( IfThenElse Nothing
                                         ( Eq Nothing
                                           ( ObjectProp Nothing
-                                            ( Ref Nothing ( Local ( Name "o$480$507" ) ) )
+                                            ( Ref Nothing ( Local ( Name "o$507" ) ) )
                                             ( PropName "b" )
                                           )
                                           ( Ref Nothing ( Local ( Name "n$506" ) ) )
@@ -714,10 +714,10 @@ UberModule
                                               )
                                             )
                                             ( ObjectProp Nothing
-                                              ( Ref Nothing ( Local ( Name "o$480$507" ) ) )
+                                              ( Ref Nothing ( Local ( Name "o$507" ) ) )
                                               ( PropName "a" ) :|
                                               [ ObjectProp Nothing
-                                                ( Ref Nothing ( Local ( Name "o$480$507" ) ) )
+                                                ( Ref Nothing ( Local ( Name "o$507" ) ) )
                                                 ( PropName "b" )
                                               ]
                                             )
@@ -730,7 +730,7 @@ UberModule
                                               )
                                             )
                                             ( ObjectProp Nothing
-                                              ( Ref Nothing ( Local ( Name "o$480$507" ) ) )
+                                              ( Ref Nothing ( Local ( Name "o$507" ) ) )
                                               ( PropName "b" ) :|
                                               [ LiteralInt Nothing 1 ]
                                             )
@@ -749,7 +749,7 @@ UberModule
                                         [ FieldName "value0" ]
                                       )
                                       ( ObjectProp Nothing
-                                        ( Ref Nothing ( Local ( Name "o$480$507" ) ) )
+                                        ( Ref Nothing ( Local ( Name "o$507" ) ) )
                                         ( PropName "a" ) :| []
                                       ) :| []
                                     )

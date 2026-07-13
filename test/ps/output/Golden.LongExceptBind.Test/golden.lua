@@ -44,8 +44,8 @@ local Unsafe_Coerce_foreign = { unsafeCoerce = function(x) return x end }
 local Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
 }
-local Data_Either_append_S_w = function(s1_S_516_S_557, s2_S_517_S_558)
-  return s1_S_516_S_557 .. s2_S_517_S_558
+local Data_Either_append_S_w = function(s1_S_557, s2_S_558)
+  return s1_S_557 .. s2_S_558
 end
 local Data_Either_Left = function(value0)
   return { "Data.Either∷Either.Left", value0 }
@@ -147,8 +147,8 @@ Control_Monad_Except_Trans_applyExceptT = function(dictMonad)
 end
 Control_Monad_Except_Trans_applicativeExceptT = function(dictMonad)
   return {
-    pure = function(x_S_578_S_591)
-      return (dictMonad.Applicative0()).pure(Data_Either_Right(x_S_578_S_591))
+    pure = function(x_S_591)
+      return (dictMonad.Applicative0()).pure(Data_Either_Right(x_S_591))
     end,
     Apply0 = function()
       return Control_Monad_Except_Trans_applyExceptT(dictMonad)
@@ -156,9 +156,8 @@ Control_Monad_Except_Trans_applicativeExceptT = function(dictMonad)
   }
 end
 local Golden_LongExceptBind_Test_bind = (Control_Monad_Except_Trans_bindExceptT(Data_Identity_monadIdentity)).bind
-local Golden_LongExceptBind_Test_add_S_w = function( x_S_514_S_552
-, y_S_515_S_553 )
-  return x_S_514_S_552 + y_S_515_S_553
+local Golden_LongExceptBind_Test_add_S_w = function(x_S_552, y_S_553)
+  return x_S_552 + y_S_553
 end
 local Golden_LongExceptBind_Test_go = (function()
   local _S_kont796 = function(x1_S_797)

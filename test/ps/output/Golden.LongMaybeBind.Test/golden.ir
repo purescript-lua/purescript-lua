@@ -27,13 +27,10 @@ UberModule
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Data.Maybe", qnameName = Name "append$w" }, AbsN Nothing
-        ( ParamNamed Nothing
-          ( Name "s1$286$314" ) :|
-          [ ParamNamed Nothing ( Name "s2$287$315" ) ]
-        )
+        ( ParamNamed Nothing ( Name "s1$314" ) :| [ ParamNamed Nothing ( Name "s2$315" ) ] )
         ( PrimBinOp Nothing PrimConcat
-          ( Ref Nothing ( Local ( Name "s1$286$314" ) ) )
-          ( Ref Nothing ( Local ( Name "s2$287$315" ) ) )
+          ( Ref Nothing ( Local ( Name "s1$314" ) ) )
+          ( Ref Nothing ( Local ( Name "s2$315" ) ) )
         )
       ), Standalone
       ( QName
@@ -76,10 +73,10 @@ UberModule
       ( QName
         { qnameModuleName = ModuleName "Golden.LongMaybeBind.Test", qnameName = Name "add$w"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "x$284$309" ) :| [ ParamNamed Nothing ( Name "y$285$310" ) ] )
+        ( ParamNamed Nothing ( Name "x$309" ) :| [ ParamNamed Nothing ( Name "y$310" ) ] )
         ( PrimBinOp Nothing PrimAdd
-          ( Ref Nothing ( Local ( Name "x$284$309" ) ) )
-          ( Ref Nothing ( Local ( Name "y$285$310" ) ) )
+          ( Ref Nothing ( Local ( Name "x$309" ) ) )
+          ( Ref Nothing ( Local ( Name "y$310" ) ) )
         )
       ), Standalone
       ( QName

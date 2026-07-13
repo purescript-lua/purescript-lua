@@ -12,9 +12,8 @@ local Golden_LongMaybeBindModule_Test_bind_S_w = function(v_S_578, v1_S_579)
     return error("No patterns matched")
   end
 end
-local Golden_LongMaybeBindModule_Test_add_S_w = function( x_S_559_S_584
-, y_S_560_S_585 )
-  return x_S_559_S_584 + y_S_560_S_585
+local Golden_LongMaybeBindModule_Test_add_S_w = function(x_S_584, y_S_585)
+  return x_S_584 + y_S_585
 end
 return {
   compute = (function()

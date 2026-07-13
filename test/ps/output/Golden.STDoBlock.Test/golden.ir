@@ -53,10 +53,10 @@ UberModule
       ( QName
         { qnameModuleName = ModuleName "Golden.STDoBlock.Test", qnameName = Name "add$w"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "x$425$445" ) :| [ ParamNamed Nothing ( Name "y$426$446" ) ] )
+        ( ParamNamed Nothing ( Name "x$445" ) :| [ ParamNamed Nothing ( Name "y$446" ) ] )
         ( PrimBinOp Nothing PrimAdd
-          ( Ref Nothing ( Local ( Name "x$425$445" ) ) )
-          ( Ref Nothing ( Local ( Name "y$426$446" ) ) )
+          ( Ref Nothing ( Local ( Name "x$445" ) ) )
+          ( Ref Nothing ( Local ( Name "y$446" ) ) )
         )
       ), Standalone
       ( QName
