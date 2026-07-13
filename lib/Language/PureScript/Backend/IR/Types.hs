@@ -9,6 +9,7 @@ import Control.Lens
   , makePrisms
   , prism'
   , rewriteMOf
+  , toListOf
   , traverseOf
   )
 import Control.Monad.Writer.CPS (runWriterT, tell)
@@ -641,6 +642,10 @@ subexpressions go = \case
   IfThenElse ann p th el →
     IfThenElse ann <$> go p <*> go th <*> go el
   e → pure e
+
+-- | Node count of an expression, the size measure of the IR heuristics.
+expSize ∷ RawExp ann → Natural
+expSize e = 1 + sum (expSize <$> toListOf subexpressions e)
 
 {- | A rewrite rule: 'Nothing' when the rule does not apply to the node,
 'Just' the rewritten node when it fired.

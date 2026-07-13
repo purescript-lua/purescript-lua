@@ -22,24 +22,31 @@ UberModule
           ( Name "v" ) :|
           [ ParamNamed Nothing ( Name "v1" ), ParamNamed Nothing ( Name "v2" ) ]
         )
-        ( IfThenElse Nothing
-          ( Eq Nothing
-            ( LiteralString Nothing "Data.Maybe∷Maybe.Nothing" )
-            ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v2" ) ) ) )
+        ( Let Nothing
+          ( Standalone
+            ( Nothing, Name "$cse292", ReflectCtor Nothing
+              ( Ref Nothing ( Local ( Name "v2" ) ) )
+            ) :| []
           )
-          ( Ref Nothing ( Local ( Name "v" ) ) )
           ( IfThenElse Nothing
             ( Eq Nothing
-              ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
-              ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v2" ) ) ) )
+              ( LiteralString Nothing "Data.Maybe∷Maybe.Nothing" )
+              ( Ref Nothing ( Local ( Name "$cse292" ) ) )
             )
-            ( AppN Nothing
-              ( Ref Nothing ( Local ( Name "v1" ) ) )
-              ( DataArgumentByIndex Nothing SumType 0
-                ( Ref Nothing ( Local ( Name "v2" ) ) ) :| []
+            ( Ref Nothing ( Local ( Name "v" ) ) )
+            ( IfThenElse Nothing
+              ( Eq Nothing
+                ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
+                ( Ref Nothing ( Local ( Name "$cse292" ) ) )
               )
+              ( AppN Nothing
+                ( Ref Nothing ( Local ( Name "v1" ) ) )
+                ( DataArgumentByIndex Nothing SumType 0
+                  ( Ref Nothing ( Local ( Name "v2" ) ) ) :| []
+                )
+              )
+              ( Exception Nothing "No patterns matched" )
             )
-            ( Exception Nothing "No patterns matched" )
           )
         )
       ), Standalone

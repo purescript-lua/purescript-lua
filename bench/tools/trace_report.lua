@@ -12,25 +12,34 @@
 --     blacklists the spot. Blacklisting itself is never logged, so this
 --     post-hoc read is the only stable way to observe it.
 --
--- Both signals are canonicalized across independent trials: a site or an
--- end state is reported only when every trial agrees on it. LuaJIT's
--- hot-counters live in a small hashed table keyed by bytecode address, and
--- the retry penalty draws on an entropy-seeded PRNG, so a spot sitting
--- right at the hot-count boundary -- e.g. a nested closure entry that a
--- caller's loop trace usually swallows but occasionally root-traces -- can
--- form a trace in one process and not the next. Intersecting N trials drops
--- those marginal spots and keeps the ones every run reaches the same way.
--- Decisive spots (hot loops, blacklisted entries, reliably root-traced
--- workers) are stable across every run, so the intersection preserves them;
--- only the boundary noise is removed. This is why ./bench/ci no longer needs
--- to generate each trace report twice and compare -- the canonical report is
--- stable by construction rather than by luck.
+-- Both signals are canonicalized across independent trials by majority
+-- vote: a site or an end state is reported when more than half the trials
+-- observe it. LuaJIT's hot-counters live in a small hashed table keyed by
+-- bytecode address, and the retry penalty draws on an entropy-seeded PRNG,
+-- so a spot sitting right at the hot-count boundary -- e.g. an export
+-- wrapper's entry whose root trace completes in most processes but not
+-- all -- forms a trace with some per-process probability p. Decisive
+-- spots (hot loops, blacklisted entries, reliably root-traced workers)
+-- have p at 0 or 1, and the vote reports them exactly as any rule would;
+-- the vote exists for the marginal ones, where its misreport odds decay
+-- binomially in the trial count for any p away from one half. A unanimity
+-- rule has no such zone of stability near p = 1: the Bench.BindChain run
+-- wrapper measures p ~ 0.9 (present in 27 of 30 trials), which unanimity
+-- turns into a ~0.9^9 coin flip per report, with no pinnable golden on
+-- either side. Note that p belongs to the whole process layout, not the
+-- spot alone: even the length of the artifact's chunk-name string shifts
+-- allocation addresses enough to move counter aliasing -- the same
+-- artifact measures p ~ 0.05 when loaded through a shorter relative path.
+-- ./bench/ci runs everything from the repository root, so the goldens pin
+-- the counters for that layout. The canonical report is stable by
+-- construction, so ./bench/ci verifies each report once.
 --
 -- usage:
 --   luajit trace_report.lua <bench/macro/NAME.lua>          canonical report
 --   luajit trace_report.lua <bench/macro/NAME.lua> --trial  one raw trial
 -- The trial count defaults to 9 and can be overridden with the environment
 -- variable BENCH_TRACE_TRIALS (mainly to reproduce the raw flake with 1).
+-- Keep it odd: a strict majority cannot tie.
 -- luacheck: read globals jit
 local jutil = require("jit.util")
 local vmdef = require("jit.vmdef")
@@ -66,8 +75,26 @@ do
   end
 end
 
+-- How many times the workload runs per trial. The spec's drive and ideal
+-- entries are called exactly this many times, and the eager hot-call
+-- threshold below fires at two calls, so reps must exceed two with slack:
+-- at reps = 2 those entries sit exactly on the threshold and whether they
+-- (and the abort sites their first trace records) resolve is a race.
+local reps = 4
+
 -- One trial: drive the spec hot and return its measured signals.
 local function measure(spec_path)
+  -- Eager hot thresholds: with the default (56/112 undecayed bumps) a
+  -- counter must accumulate, and LuaJIT's hot-counters live in a small
+  -- hashed table keyed by bytecode address, so whether a spot ever fires
+  -- can hinge on a per-process address dice roll (a colliding hotter
+  -- counter decays the victim's forever). At threshold 1 a spot fires on
+  -- its first bumps, before any collision can decay it, so every
+  -- hot-countable spot resolves to a decisive end state: a traceable body
+  -- completes its first trace (J*), an untraceable one aborts through its
+  -- penalty ladder and blacklists (I*). The report measures which bytecode
+  -- shapes can trace, not warmup timing, so eager firing loses nothing.
+  jit.opt.start("hotloop=1")
   local spec_name = spec_path:match("([^/]+)%.lua$")
   local spec_chunk = assert(loadfile(spec_path))
   local spec = spec_chunk()
@@ -115,7 +142,7 @@ local function measure(spec_path)
 
   jit.attach(on_trace, "trace")
   local checksum
-  for _ = 1, 2 do
+  for _ = 1, reps do
     checksum = spec.drive(mod, spec.n)
     spec.ideal(spec.n)
   end
@@ -134,7 +161,12 @@ local function measure(spec_path)
   return {
     spec = spec_name,
     runtime = jit.version,
-    workload = string.format("n=%.0f reps=2 result=%s", spec.n, tostring(checksum)),
+    workload = string.format(
+      "n=%.0f reps=%d result=%s",
+      spec.n,
+      reps,
+      tostring(checksum)
+    ),
     aborts = aborts,
     states = states,
   }
@@ -187,12 +219,12 @@ if arg[2] == "--trial" then
   return
 end
 
--- Canonical mode: intersect the signals of N independent trials. Each trial
--- is a fresh luajit process, since bytecode rewrites and the JIT's PRNG
--- state persist for the life of a process -- looping in-process would just
--- re-read the first trial's end state. Reading each trial's report back
--- keeps the report format in one place (print_report) instead of splitting
--- it between the tool and the shell harness.
+-- Canonical mode: majority vote over the signals of N independent trials.
+-- Each trial is a fresh luajit process, since bytecode rewrites and the
+-- JIT's PRNG state persist for the life of a process -- looping in-process
+-- would just re-read the first trial's end state. Reading each trial's
+-- report back keeps the report format in one place (print_report) instead
+-- of splitting it between the tool and the shell harness.
 local trials = tonumber(os.getenv("BENCH_TRACE_TRIALS")) or 9
 if trials < 1 then
   trials = 1
@@ -240,15 +272,29 @@ local function run_trial(index)
   return parse_report(text)
 end
 
-local function intersect(into, other)
-  for key in pairs(into) do
-    if not other[key] then
-      into[key] = nil
-    end
+-- Tally how often each item shows up across trials; 'values' remembers
+-- the item's mapped value (the opcode for states, 'true' for aborts).
+local function tally(votes, values, items)
+  for key, value in pairs(items) do
+    votes[key] = (votes[key] or 0) + 1
+    values[key] = value
   end
 end
 
+-- Keep the items a strict majority of trials agree on.
+local function elect(votes, values)
+  local elected = {}
+  for key, count in pairs(votes) do
+    if 2 * count > trials then
+      elected[key] = values[key]
+    end
+  end
+  return elected
+end
+
 local canonical
+local abortVotes, abortValues = {}, {}
+local stateVotes, stateValues = {}, {}
 for index = 1, trials do
   local trial = run_trial(index)
   if not canonical then
@@ -256,7 +302,7 @@ for index = 1, trials do
   else
     -- The header is derived from the spec and a deterministic checksum, so a
     -- divergence here is a real bug (e.g. a nondeterministic result), not
-    -- trace-formation noise -- surface it instead of silently intersecting.
+    -- trace-formation noise -- surface it instead of silently out-voting it.
     if
       trial.spec ~= canonical.spec
       or trial.runtime ~= canonical.runtime
@@ -268,8 +314,10 @@ for index = 1, trials do
       ))
       os.exit(1)
     end
-    intersect(canonical.aborts, trial.aborts)
-    intersect(canonical.states, trial.states)
   end
+  tally(abortVotes, abortValues, trial.aborts)
+  tally(stateVotes, stateValues, trial.states)
 end
+canonical.aborts = elect(abortVotes, abortValues)
+canonical.states = elect(stateVotes, stateValues)
 print_report(canonical)

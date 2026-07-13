@@ -196,7 +196,65 @@ UberModule
         ( ParamUnused Nothing :| [] )
         ( Let Nothing
           ( Standalone
-            ( Nothing, Name "_", AppN Nothing
+            ( Nothing, Name "$cse348", ObjectProp Nothing
+              ( Ref Nothing
+                ( Imported ( ModuleName "Golden.DirectiveAccessor.Test" ) ( Name "ops" ) )
+              )
+              ( PropName "mul" )
+            ) :| []
+          )
+          ( Let Nothing
+            ( Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+                  ( AppN Nothing
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
+                    ( AppN Nothing
+                      ( AppN Nothing
+                        ( Ref Nothing ( Local ( Name "$cse348" ) ) )
+                        ( LiteralInt Nothing 6 :| [] )
+                      )
+                      ( LiteralInt Nothing 7 :| [] ) :| []
+                    ) :| []
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              ) :|
+              [ Standalone
+                ( Nothing, Name "_", AppN Nothing
+                  ( AppN Nothing
+                    ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+                    ( AppN Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) )
+                      )
+                      ( AppN Nothing
+                        ( AppN Nothing
+                          ( Ref Nothing ( Local ( Name "$cse348" ) ) )
+                          ( LiteralInt Nothing 2 :| [] )
+                        )
+                        ( LiteralInt Nothing 3 :| [] ) :| []
+                      ) :| []
+                    )
+                  )
+                  ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+                ), Standalone
+                ( Nothing, Name "_", AppN Nothing
+                  ( AppN Nothing
+                    ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+                    ( AppN Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) )
+                      )
+                      ( LiteralInt Nothing 252 :| [] ) :| []
+                    )
+                  )
+                  ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+                )
+              ]
+            )
+            ( AppN Nothing
               ( AppN Nothing
                 ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
                 ( AppN Nothing
@@ -204,82 +262,25 @@ UberModule
                   ( AppN Nothing
                     ( AppN Nothing
                       ( ObjectProp Nothing
-                        ( Ref Nothing
-                          ( Imported ( ModuleName "Golden.DirectiveAccessor.Test" ) ( Name "ops" ) )
+                        ( AppN Nothing
+                          ( Ref Nothing
+                            ( Imported
+                              ( ModuleName "Golden.DirectiveAccessor.Test" )
+                              ( Name "mkOps" )
+                            )
+                          )
+                          ( LiteralInt Nothing 2 :| [] )
                         )
                         ( PropName "mul" )
                       )
-                      ( LiteralInt Nothing 6 :| [] )
+                      ( LiteralInt Nothing 3 :| [] )
                     )
-                    ( LiteralInt Nothing 7 :| [] ) :| []
+                    ( LiteralInt Nothing 4 :| [] ) :| []
                   ) :| []
                 )
               )
               ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
-            ) :|
-            [ Standalone
-              ( Nothing, Name "_", AppN Nothing
-                ( AppN Nothing
-                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
-                  ( AppN Nothing
-                    ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
-                    ( AppN Nothing
-                      ( AppN Nothing
-                        ( ObjectProp Nothing
-                          ( Ref Nothing
-                            ( Imported
-                              ( ModuleName "Golden.DirectiveAccessor.Test" )
-                              ( Name "ops" )
-                            )
-                          )
-                          ( PropName "mul" )
-                        )
-                        ( LiteralInt Nothing 2 :| [] )
-                      )
-                      ( LiteralInt Nothing 3 :| [] ) :| []
-                    ) :| []
-                  )
-                )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
-              ), Standalone
-              ( Nothing, Name "_", AppN Nothing
-                ( AppN Nothing
-                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
-                  ( AppN Nothing
-                    ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
-                    ( LiteralInt Nothing 252 :| [] ) :| []
-                  )
-                )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
-              )
-            ]
-          )
-          ( AppN Nothing
-            ( AppN Nothing
-              ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
-              ( AppN Nothing
-                ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
-                ( AppN Nothing
-                  ( AppN Nothing
-                    ( ObjectProp Nothing
-                      ( AppN Nothing
-                        ( Ref Nothing
-                          ( Imported
-                            ( ModuleName "Golden.DirectiveAccessor.Test" )
-                            ( Name "mkOps" )
-                          )
-                        )
-                        ( LiteralInt Nothing 2 :| [] )
-                      )
-                      ( PropName "mul" )
-                    )
-                    ( LiteralInt Nothing 3 :| [] )
-                  )
-                  ( LiteralInt Nothing 4 :| [] ) :| []
-                ) :| []
-              )
             )
-            ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
           )
         )
       )

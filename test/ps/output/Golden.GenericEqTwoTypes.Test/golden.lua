@@ -52,7 +52,8 @@ local Data_Generic_Rep_Inr = function(value0)
 end
 local Data_Generic_Rep_NoArguments = {}
 local Data_Eq_Generic_genericEq_S_w = function(dictGeneric, dictGenericEq, x, y)
-  return dictGenericEq.genericEqPrime(dictGeneric.from(x))(dictGeneric.from(y))
+  local _S_cse295 = dictGeneric.from
+  return dictGenericEq.genericEqPrime(_S_cse295(x))(_S_cse295(y))
 end
 local Golden_GenericEqTwoTypes_Test_Leaf = {
   "Golden.GenericEqTwoTypes.Test∷Tree.Leaf"
@@ -75,18 +76,20 @@ local Golden_GenericEqTwoTypes_Test_node_S_w = function(left, value, right)
 end
 local Golden_GenericEqTwoTypes_Test_genericTree = {
   to = function(x)
-    if "Data.Generic.Rep∷Sum.Inl" == x[1] then
+    local _S_cse296 = x[1]
+    if "Data.Generic.Rep∷Sum.Inl" == _S_cse296 then
       return Golden_GenericEqTwoTypes_Test_Leaf
-    elseif "Data.Generic.Rep∷Sum.Inr" == x[1] then
+    elseif "Data.Generic.Rep∷Sum.Inr" == _S_cse296 then
       return Golden_GenericEqTwoTypes_Test_Node(x[2])
     else
       return error("No patterns matched")
     end
   end,
   from = function(x0)
-    if "Golden.GenericEqTwoTypes.Test∷Tree.Leaf" == x0[1] then
+    local _S_cse297 = x0[1]
+    if "Golden.GenericEqTwoTypes.Test∷Tree.Leaf" == _S_cse297 then
       return Data_Generic_Rep_Inl(Data_Generic_Rep_NoArguments)
-    elseif "Golden.GenericEqTwoTypes.Test∷Tree.Node" == x0[1] then
+    elseif "Golden.GenericEqTwoTypes.Test∷Tree.Node" == _S_cse297 then
       return Data_Generic_Rep_Inr(x0[2])
     else
       return error("No patterns matched")
@@ -95,18 +98,20 @@ local Golden_GenericEqTwoTypes_Test_genericTree = {
 }
 local Golden_GenericEqTwoTypes_Test_genericList = {
   to = function(x)
-    if "Data.Generic.Rep∷Sum.Inl" == x[1] then
+    local _S_cse298 = x[1]
+    if "Data.Generic.Rep∷Sum.Inl" == _S_cse298 then
       return Golden_GenericEqTwoTypes_Test_Nil
-    elseif "Data.Generic.Rep∷Sum.Inr" == x[1] then
+    elseif "Data.Generic.Rep∷Sum.Inr" == _S_cse298 then
       return Golden_GenericEqTwoTypes_Test_Cons(x[2])
     else
       return error("No patterns matched")
     end
   end,
   from = function(x0)
-    if "Golden.GenericEqTwoTypes.Test∷List.Nil" == x0[1] then
+    local _S_cse299 = x0[1]
+    if "Golden.GenericEqTwoTypes.Test∷List.Nil" == _S_cse299 then
       return Data_Generic_Rep_Inl(Data_Generic_Rep_NoArguments)
-    elseif "Golden.GenericEqTwoTypes.Test∷List.Cons" == x0[1] then
+    elseif "Golden.GenericEqTwoTypes.Test∷List.Cons" == _S_cse299 then
       return Data_Generic_Rep_Inr(x0[2])
     else
       return error("No patterns matched")
@@ -121,10 +126,12 @@ Golden_GenericEqTwoTypes_Test_eqTree = function(dictEq)
         return Data_Eq_Generic_genericEq_S_w(Golden_GenericEqTwoTypes_Test_genericTree, {
           genericEqPrime = function(v_S_271)
             return function(v1_S_272)
-              if "Data.Generic.Rep∷Sum.Inl" == v_S_271[1] then
-                return "Data.Generic.Rep∷Sum.Inl" == v1_S_272[1]
-              elseif "Data.Generic.Rep∷Sum.Inr" == v_S_271[1] then
-                if "Data.Generic.Rep∷Sum.Inr" == v1_S_272[1] then
+              local _S_cse301 = v1_S_272[1]
+              local _S_cse300 = v_S_271[1]
+              if "Data.Generic.Rep∷Sum.Inl" == _S_cse300 then
+                return "Data.Generic.Rep∷Sum.Inl" == _S_cse301
+              elseif "Data.Generic.Rep∷Sum.Inr" == _S_cse300 then
+                if "Data.Generic.Rep∷Sum.Inr" == _S_cse301 then
                   return (Data_Eq_eqRowCons_S_w(Data_Eq_eqRowCons_S_w(Data_Eq_eqRowCons_S_w({
                     eqRecord = function()
                       return function() return function() return true end end
@@ -158,10 +165,12 @@ Golden_GenericEqTwoTypes_Test_eqList = function(dictEq)
         return Data_Eq_Generic_genericEq_S_w(Golden_GenericEqTwoTypes_Test_genericList, {
           genericEqPrime = function(v_S_249)
             return function(v1_S_250)
-              if "Data.Generic.Rep∷Sum.Inl" == v_S_249[1] then
-                return "Data.Generic.Rep∷Sum.Inl" == v1_S_250[1]
-              elseif "Data.Generic.Rep∷Sum.Inr" == v_S_249[1] then
-                if "Data.Generic.Rep∷Sum.Inr" == v1_S_250[1] then
+              local _S_cse303 = v1_S_250[1]
+              local _S_cse302 = v_S_249[1]
+              if "Data.Generic.Rep∷Sum.Inl" == _S_cse302 then
+                return "Data.Generic.Rep∷Sum.Inl" == _S_cse303
+              elseif "Data.Generic.Rep∷Sum.Inr" == _S_cse302 then
+                if "Data.Generic.Rep∷Sum.Inr" == _S_cse303 then
                   return (Data_Eq_eqRowCons_S_w(Data_Eq_eqRowCons_S_w({
                     eqRecord = function()
                       return function() return function() return true end end

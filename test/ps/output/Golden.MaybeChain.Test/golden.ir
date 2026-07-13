@@ -46,24 +46,31 @@ UberModule
           ( Name "v" ) :|
           [ ParamNamed Nothing ( Name "v1" ), ParamNamed Nothing ( Name "v2" ) ]
         )
-        ( IfThenElse Nothing
-          ( Eq Nothing
-            ( LiteralString Nothing "Data.Maybe∷Maybe.Nothing" )
-            ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v2" ) ) ) )
+        ( Let Nothing
+          ( Standalone
+            ( Nothing, Name "$cse316", ReflectCtor Nothing
+              ( Ref Nothing ( Local ( Name "v2" ) ) )
+            ) :| []
           )
-          ( Ref Nothing ( Local ( Name "v" ) ) )
           ( IfThenElse Nothing
             ( Eq Nothing
-              ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
-              ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v2" ) ) ) )
+              ( LiteralString Nothing "Data.Maybe∷Maybe.Nothing" )
+              ( Ref Nothing ( Local ( Name "$cse316" ) ) )
             )
-            ( AppN Nothing
-              ( Ref Nothing ( Local ( Name "v1" ) ) )
-              ( DataArgumentByIndex Nothing SumType 0
-                ( Ref Nothing ( Local ( Name "v2" ) ) ) :| []
+            ( Ref Nothing ( Local ( Name "v" ) ) )
+            ( IfThenElse Nothing
+              ( Eq Nothing
+                ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
+                ( Ref Nothing ( Local ( Name "$cse316" ) ) )
               )
+              ( AppN Nothing
+                ( Ref Nothing ( Local ( Name "v1" ) ) )
+                ( DataArgumentByIndex Nothing SumType 0
+                  ( Ref Nothing ( Local ( Name "v2" ) ) ) :| []
+                )
+              )
+              ( Exception Nothing "No patterns matched" )
             )
-            ( Exception Nothing "No patterns matched" )
           )
         )
       ), Standalone
@@ -100,7 +107,59 @@ UberModule
         ( ParamUnused Nothing :| [] )
         ( Let Nothing
           ( Standalone
-            ( Nothing, Name "_", AppN Nothing
+            ( Nothing, Name "$cse317", AbsN Nothing
+              ( ParamNamed Nothing ( Name "x$0" ) :| [] )
+              ( Ref Nothing ( Local ( Name "x$0" ) ) )
+            ) :| []
+          )
+          ( Let Nothing
+            ( Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+                  ( AppN Nothing
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
+                    ( AppN Nothing
+                      ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "maybe$w" ) ) )
+                      ( LiteralInt Nothing 0 :|
+                        [ Ref Nothing
+                          ( Imported
+                            ( ModuleName "Golden.MaybeChain.Test" )
+                            ( Name "identity" )
+                          ), AppN Nothing
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Data.Maybe" ) ( Name "maybe$w" ) )
+                          )
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) :|
+                            [ Ref Nothing
+                              ( Imported
+                                ( ModuleName "Data.Maybe" )
+                                ( Name "Just" )
+                              ), AppN Nothing
+                              ( Ref Nothing
+                                ( Imported
+                                  ( ModuleName "Golden.MaybeChain.Test" )
+                                  ( Name "map$w" )
+                                )
+                              )
+                              ( Ref Nothing
+                                ( Local ( Name "$cse317" ) ) :|
+                                [ Ref Nothing
+                                  ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) )
+                                ]
+                              )
+                            ]
+                          )
+                        ]
+                      ) :| []
+                    ) :| []
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              ) :| []
+            )
+            ( AppN Nothing
               ( AppN Nothing
                 ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
                 ( AppN Nothing
@@ -121,11 +180,13 @@ UberModule
                             ( Ref Nothing
                               ( Imported ( ModuleName "Golden.MaybeChain.Test" ) ( Name "map$w" ) )
                             )
-                            ( AbsN Nothing
-                              ( ParamNamed Nothing ( Name "x$0" ) :| [] )
-                              ( Ref Nothing ( Local ( Name "x$0" ) ) ) :|
-                              [ Ref Nothing
-                                ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) )
+                            ( Ref Nothing
+                              ( Local ( Name "$cse317" ) ) :|
+                              [ AppN Nothing
+                                ( Ref Nothing
+                                  ( Imported ( ModuleName "Data.Maybe" ) ( Name "Just" ) )
+                                )
+                                ( LiteralInt Nothing 42 :| [] )
                               ]
                             )
                           ]
@@ -136,47 +197,7 @@ UberModule
                 )
               )
               ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
-            ) :| []
-          )
-          ( AppN Nothing
-            ( AppN Nothing
-              ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
-              ( AppN Nothing
-                ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
-                ( AppN Nothing
-                  ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "maybe$w" ) ) )
-                  ( LiteralInt Nothing 0 :|
-                    [ Ref Nothing
-                      ( Imported
-                        ( ModuleName "Golden.MaybeChain.Test" )
-                        ( Name "identity" )
-                      ), AppN Nothing
-                      ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "maybe$w" ) ) )
-                      ( Ref Nothing
-                        ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) :|
-                        [ Ref Nothing
-                          ( Imported ( ModuleName "Data.Maybe" ) ( Name "Just" ) ), AppN Nothing
-                          ( Ref Nothing
-                            ( Imported ( ModuleName "Golden.MaybeChain.Test" ) ( Name "map$w" ) )
-                          )
-                          ( AbsN Nothing
-                            ( ParamNamed Nothing ( Name "x0$1" ) :| [] )
-                            ( Ref Nothing ( Local ( Name "x0$1" ) ) ) :|
-                            [ AppN Nothing
-                              ( Ref Nothing
-                                ( Imported ( ModuleName "Data.Maybe" ) ( Name "Just" ) )
-                              )
-                              ( LiteralInt Nothing 42 :| [] )
-                            ]
-                          )
-                        ]
-                      )
-                    ]
-                  ) :| []
-                ) :| []
-              )
             )
-            ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
           )
         )
       )

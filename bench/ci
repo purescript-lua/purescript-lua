@@ -5,8 +5,8 @@
 # the artifact, so it is generated twice and compared to prove byte-stability
 # outright. The trace report is nondeterministic per process (hot-count
 # aliasing plus an entropy-seeded penalty PRNG), so trace_report.lua makes it
-# stable by intersecting independent trials rather than by hoping two runs
-# agree. Pass --accept after a deliberate codegen change to rewrite the
+# stable by majority vote over independent trials rather than by hoping two
+# runs agree. Pass --accept after a deliberate codegen change to rewrite the
 # oracles from the current output.
 set -euo pipefail
 cd "$(dirname "$0")/.."

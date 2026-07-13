@@ -1,5 +1,6 @@
 module Main where
 
+import Language.PureScript.Backend.IR.CSE.Spec qualified as CSE
 import Language.PureScript.Backend.IR.DCE.Spec qualified as IrDce
 import Language.PureScript.Backend.IR.FlattenDeepBinds.Spec qualified as FlattenDeepBinds
 import Language.PureScript.Backend.IR.FloatIn.Spec qualified as FloatIn
@@ -58,5 +59,6 @@ main = hspec do
   NestingCheck.spec
   FlattenDeepBinds.spec
   FloatIn.spec
+  CSE.spec
   Output.spec
   PSString.spec
