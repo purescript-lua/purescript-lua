@@ -57,17 +57,9 @@ UberModule
             ( IfThenElse Nothing
               ( Eq Nothing ( LiteralString Nothing "" ) ( Ref Nothing ( Local ( Name "v1" ) ) ) )
               ( LiteralInt Nothing 1 )
-              ( IfThenElse Nothing
-                ( Eq Nothing ( LiteralInt Nothing 0 ) ( Ref Nothing ( Local ( Name "v" ) ) ) )
-                ( LiteralInt Nothing 2 )
-                ( LiteralInt Nothing 3 )
-              )
-            )
-            ( IfThenElse Nothing
-              ( Eq Nothing ( LiteralInt Nothing 0 ) ( Ref Nothing ( Local ( Name "v" ) ) ) )
               ( LiteralInt Nothing 2 )
-              ( LiteralInt Nothing 3 )
             )
+            ( LiteralInt Nothing 3 )
           )
         )
       ), Standalone
@@ -83,32 +75,9 @@ UberModule
               ( Eq Nothing ( LiteralInt Nothing 1 ) ( Ref Nothing ( Local ( Name "v1" ) ) ) )
               ( LiteralInt Nothing 1 )
               ( IfThenElse Nothing
-                ( Eq Nothing ( LiteralInt Nothing 2 ) ( Ref Nothing ( Local ( Name "v" ) ) ) )
-                ( IfThenElse Nothing
-                  ( Eq Nothing ( LiteralInt Nothing 2 ) ( Ref Nothing ( Local ( Name "v1" ) ) ) )
-                  ( LiteralInt Nothing 2 )
-                  ( IfThenElse Nothing
-                    ( Eq Nothing ( LiteralInt Nothing 1 ) ( Ref Nothing ( Local ( Name "v" ) ) ) )
-                    ( IfThenElse Nothing
-                      ( Eq Nothing
-                        ( LiteralInt Nothing 2 )
-                        ( Ref Nothing ( Local ( Name "v1" ) ) )
-                      )
-                      ( LiteralInt Nothing 3 )
-                      ( LiteralInt Nothing 4 )
-                    )
-                    ( LiteralInt Nothing 4 )
-                  )
-                )
-                ( IfThenElse Nothing
-                  ( Eq Nothing ( LiteralInt Nothing 1 ) ( Ref Nothing ( Local ( Name "v" ) ) ) )
-                  ( IfThenElse Nothing
-                    ( Eq Nothing ( LiteralInt Nothing 2 ) ( Ref Nothing ( Local ( Name "v1" ) ) ) )
-                    ( LiteralInt Nothing 3 )
-                    ( LiteralInt Nothing 4 )
-                  )
-                  ( LiteralInt Nothing 4 )
-                )
+                ( Eq Nothing ( LiteralInt Nothing 2 ) ( Ref Nothing ( Local ( Name "v1" ) ) ) )
+                ( LiteralInt Nothing 3 )
+                ( LiteralInt Nothing 4 )
               )
             )
             ( IfThenElse Nothing
@@ -116,25 +85,9 @@ UberModule
               ( IfThenElse Nothing
                 ( Eq Nothing ( LiteralInt Nothing 2 ) ( Ref Nothing ( Local ( Name "v1" ) ) ) )
                 ( LiteralInt Nothing 2 )
-                ( IfThenElse Nothing
-                  ( Eq Nothing ( LiteralInt Nothing 1 ) ( Ref Nothing ( Local ( Name "v" ) ) ) )
-                  ( IfThenElse Nothing
-                    ( Eq Nothing ( LiteralInt Nothing 2 ) ( Ref Nothing ( Local ( Name "v1" ) ) ) )
-                    ( LiteralInt Nothing 3 )
-                    ( LiteralInt Nothing 4 )
-                  )
-                  ( LiteralInt Nothing 4 )
-                )
-              )
-              ( IfThenElse Nothing
-                ( Eq Nothing ( LiteralInt Nothing 1 ) ( Ref Nothing ( Local ( Name "v" ) ) ) )
-                ( IfThenElse Nothing
-                  ( Eq Nothing ( LiteralInt Nothing 2 ) ( Ref Nothing ( Local ( Name "v1" ) ) ) )
-                  ( LiteralInt Nothing 3 )
-                  ( LiteralInt Nothing 4 )
-                )
                 ( LiteralInt Nothing 4 )
               )
+              ( LiteralInt Nothing 4 )
             )
           )
         )
@@ -190,21 +143,7 @@ UberModule
                     ( LiteralInt Nothing 2 )
                     ( LiteralInt Nothing 4 )
                   )
-                  ( IfThenElse Nothing
-                    ( Eq Nothing
-                      ( LiteralString Nothing "Golden.CasePruning.Test∷T.A" )
-                      ( Ref Nothing ( Local ( Name "$cse222" ) ) )
-                    )
-                    ( IfThenElse Nothing
-                      ( Eq Nothing
-                        ( LiteralString Nothing "Golden.CasePruning.Test∷T.B" )
-                        ( Ref Nothing ( Local ( Name "$cse223" ) ) )
-                      )
-                      ( LiteralInt Nothing 3 )
-                      ( LiteralInt Nothing 4 )
-                    )
-                    ( LiteralInt Nothing 4 )
-                  )
+                  ( LiteralInt Nothing 4 )
                 )
               )
             )

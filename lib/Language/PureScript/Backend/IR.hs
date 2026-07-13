@@ -508,8 +508,8 @@ Data:
     'nestedMatches' for a constructor's or literal's fields.
   * 'CaseClause' is one source alternative: its outstanding 'Match'es, its
     result (or guarded results), and the bindings accumulated as matches pass.
-  * 'MatchHistory' records, per scrutinee expression, which constructor was
-    tested and whether the test succeeded; see the pruning paragraph.
+  * 'MatchHistory' records, per scrutinee expression, the outcome of every
+    test already performed on it; see the pruning paragraph.
 
 Pipeline:
 
@@ -540,13 +540,16 @@ several outstanding matches, pick the one shared by the most other clauses
 ('countAffectedClauses'). Testing a shared sub-value first lets one test serve
 many clauses, which keeps the tree small.
 
-Match-history pruning ('MatchHistory'): a constructor test on a given scrutinee
-is remembered as positive or negative. A later match on the same scrutinee is
-then pruned: a constructor already known to match proceeds without re-testing;
-one ruled out (a sibling matched positively, or this one matched negatively)
-falls straight through to the next clause. A 'ProductType' has one constructor,
-so it needs no tag test at all; a 'SumType' emits the @reflectCtor == ctorId@
-test.
+Match-history pruning ('MatchHistory'): every test emitted on a given
+scrutinee — a constructor tag, a literal equality, an array length — is
+remembered as positive or negative, and the records accumulate. A later test
+on the same scrutinee is pruned when the history already decides it
+('testOutcome'): a test known to have passed proceeds without re-testing; one
+known to have failed, or excluded by a mutually exclusive sibling that passed
+(a different tag of the same type, a different literal of the same kind, a
+different array length — 'mutuallyExclusive'), falls straight through to the
+next clause. A 'ProductType' has one constructor, so it needs no tag test at
+all; a 'SumType' emits the @reflectCtor == ctorId@ test.
 -}
 
 mkCase ∷ Ann → [CfnExp] → NonEmpty (Cfn.CaseAlternative Cfn.Ann) → RepM Exp
@@ -634,59 +637,38 @@ mkCaseClauses = mkClauses Map.empty
                     (Standalone . (noAnn,,expr) <$> matchBinds)
                       <> clauseBindings clause
                 }
+            -- Emit a test for the focused pattern unless the history
+            -- already decides its outcome; otherwise remember the
+            -- outcome on both branches.
+            testFocus test = case testOutcome expr matchPat history of
+              TestKnownTrue → nextMatch history clause'
+              TestKnownFalse → nextClause history
+              TestUnknown →
+                ifThenElse test
+                  <$> nextMatch (remember expr matchPat True history) clause'
+                  <*> nextClause (remember expr matchPat False history)
          in case matchPat of
               PatAny →
                 nextMatch history clause'
               PatArrayLength (intCast → len) →
-                ifThenElse (literalInt len `eq` arrayLength expr)
-                  <$> nextMatch history clause'
-                  <*> nextClause history
+                testFocus (literalInt len `eq` arrayLength expr)
               PatInteger i →
-                ifThenElse (literalInt i `eq` expr)
-                  <$> nextMatch history clause'
-                  <*> nextClause history
+                testFocus (literalInt i `eq` expr)
               PatFloating d →
-                ifThenElse (literalFloat d `eq` expr)
-                  <$> nextMatch history clause'
-                  <*> nextClause history
+                testFocus (literalFloat d `eq` expr)
               PatString s →
-                ifThenElse (literalString s `eq` expr)
-                  <$> nextMatch history clause'
-                  <*> nextClause history
+                testFocus (literalString s `eq` expr)
               PatChar c →
-                ifThenElse (literalChar c `eq` expr)
-                  <$> nextMatch history clause'
-                  <*> nextClause history
+                testFocus (literalChar c `eq` expr)
               PatBoolean b →
-                ifThenElse (literalBool b `eq` expr)
-                  <$> nextMatch history clause'
-                  <*> nextClause history
-              PatCtor algTy mn ty ctr → case Map.lookup expr history of
-                Just (ctr', True) →
-                  if ctr' == ctr
-                    then -- This constructor matched positively before,
-                    -- proceed matching nested constructors.
-                      nextMatch history clause'
-                    else -- Other constructor matched positively before,
-                    -- this one can't match, proceed to next clause.
-                      nextClause history
-                Just (ctr', False)
-                  | ctr' == ctr →
-                      -- This constructor matched negatively before,
-                      -- proceed to the next clause.
-                      nextClause history
-                _ →
-                  case algTy of
-                    ProductType → nextMatch (history' True) clause'
-                    SumType →
-                      -- Either this constructor is matched for the first time,
-                      -- or other constructor didn't pass the match before.
-                      ifThenElse
-                        (literalString (ctorId mn ty ctr) `eq` reflectCtor expr)
-                        <$> nextMatch (history' True) clause'
-                        <*> nextClause (history' False)
-                 where
-                  history' b = Map.insert expr (ctr, b) history
+                testFocus (literalBool b `eq` expr)
+              PatCtor algTy mn ty ctr → case algTy of
+                -- A product type has a single constructor: the tag test
+                -- is a tautology, nothing to emit or remember.
+                ProductType → nextMatch history clause'
+                SumType →
+                  testFocus
+                    (literalString (ctorId mn ty ctr) `eq` reflectCtor expr)
    where
     nextMatch hist clause = mkClause hist clause heuristic nextClause
 
@@ -745,7 +727,7 @@ data Pattern
   | PatChar Char
   | PatBoolean Bool
   | PatArrayLength Int
-  deriving stock (Eq, Show)
+  deriving stock (Eq, Ord, Show)
 
 data Step
   = TakeIndex Natural
@@ -873,7 +855,46 @@ mkBinder matchExp = go mempty
         }
 
 -- See Note [Compiling case expressions to decision trees] (history pruning)
-type MatchHistory = Map Exp (CtorName, Bool)
+type MatchHistory = Map Exp (Map Pattern Bool)
+
+data TestOutcome = TestKnownTrue | TestKnownFalse | TestUnknown
+
+{- | What the accumulated 'MatchHistory' already implies about testing
+a pattern against a scrutinee: a repeated test keeps its recorded
+outcome, and a positive outcome of a mutually exclusive sibling test
+decides this one negatively.
+-}
+testOutcome ∷ Exp → Pattern → MatchHistory → TestOutcome
+testOutcome scrutinee pat history =
+  case Map.lookup scrutinee history of
+    Nothing → TestUnknown
+    Just tests → case Map.lookup pat tests of
+      Just True → TestKnownTrue
+      Just False → TestKnownFalse
+      Nothing
+        | any (mutuallyExclusive pat) positives → TestKnownFalse
+        | otherwise → TestUnknown
+       where
+        positives = Map.keys (Map.filter id tests)
+
+remember ∷ Exp → Pattern → Bool → MatchHistory → MatchHistory
+remember scrutinee pat outcome =
+  Map.insertWith Map.union scrutinee (Map.singleton pat outcome)
+
+{- | Whether two pattern tests on the same scrutinee cannot both
+succeed: a value equals at most one literal of its kind, carries at
+most one constructor tag, and an array has exactly one length.
+-}
+mutuallyExclusive ∷ Pattern → Pattern → Bool
+mutuallyExclusive = curry \case
+  (PatCtor _ _ _ c1, PatCtor _ _ _ c2) → c1 /= c2
+  (PatInteger a, PatInteger b) → a /= b
+  (PatFloating a, PatFloating b) → a /= b
+  (PatString a, PatString b) → a /= b
+  (PatChar a, PatChar b) → a /= b
+  (PatBoolean a, PatBoolean b) → a /= b
+  (PatArrayLength a, PatArrayLength b) → a /= b
+  _ → False
 
 alternativeToClauses
   ∷ [Exp] → Cfn.CaseAlternative Cfn.Ann → RepM CaseClause

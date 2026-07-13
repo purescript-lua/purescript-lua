@@ -16,19 +16,19 @@ UberModule
         ( CtorName "N" ) []
       ),
       ( Name "d", AbsN Nothing
-        ( ParamNamed Nothing ( Name "m$34" ) :| [] )
+        ( ParamNamed Nothing ( Name "m$10" ) :| [] )
         ( AbsN Nothing
-          ( ParamNamed Nothing ( Name "n$35" ) :| [] )
+          ( ParamNamed Nothing ( Name "n$11" ) :| [] )
           ( AbsN Nothing
-            ( ParamNamed Nothing ( Name "x$36" ) :| [] )
+            ( ParamNamed Nothing ( Name "x$12" ) :| [] )
             ( Let Nothing
               ( Standalone
-                ( Nothing, Name "v$37", AbsN Nothing
+                ( Nothing, Name "v$13", AbsN Nothing
                   ( ParamUnused Nothing :| [] )
                   ( IfThenElse Nothing
                     ( Eq Nothing
                       ( LiteralChar Nothing 'y' )
-                      ( Ref Nothing ( Local ( Name "x$36" ) ) )
+                      ( Ref Nothing ( Local ( Name "x$12" ) ) )
                     )
                     ( LiteralInt Nothing 0 )
                     ( LiteralInt Nothing 1 )
@@ -38,33 +38,33 @@ UberModule
               ( IfThenElse Nothing
                 ( Eq Nothing
                   ( LiteralChar Nothing 'x' )
-                  ( Ref Nothing ( Local ( Name "x$36" ) ) )
+                  ( Ref Nothing ( Local ( Name "x$12" ) ) )
                 )
                 ( IfThenElse Nothing
                   ( Eq Nothing
                     ( LiteralString Nothing "Golden.CaseStatements.Test∷M.J" )
-                    ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "m$34" ) ) ) )
+                    ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "m$10" ) ) ) )
                   )
                   ( IfThenElse Nothing
                     ( Eq Nothing
                       ( LiteralString Nothing "Golden.CaseStatements.Test∷M.N" )
-                      ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "n$35" ) ) ) )
+                      ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "n$11" ) ) ) )
                     )
                     ( DataArgumentByIndex Nothing SumType 0
-                      ( Ref Nothing ( Local ( Name "m$34" ) ) )
+                      ( Ref Nothing ( Local ( Name "m$10" ) ) )
                     )
                     ( AppN Nothing
-                      ( Ref Nothing ( Local ( Name "v$37" ) ) )
+                      ( Ref Nothing ( Local ( Name "v$13" ) ) )
                       ( LiteralBool Nothing True :| [] )
                     )
                   )
                   ( AppN Nothing
-                    ( Ref Nothing ( Local ( Name "v$37" ) ) )
+                    ( Ref Nothing ( Local ( Name "v$13" ) ) )
                     ( LiteralBool Nothing True :| [] )
                   )
                 )
                 ( AppN Nothing
-                  ( Ref Nothing ( Local ( Name "v$37" ) ) )
+                  ( Ref Nothing ( Local ( Name "v$13" ) ) )
                   ( LiteralBool Nothing True :| [] )
                 )
               )

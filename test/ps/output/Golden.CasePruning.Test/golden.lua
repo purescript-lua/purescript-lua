@@ -9,43 +9,15 @@ local Golden_CasePruning_Test_B = { "Golden.CasePruning.Test∷T.B" }
 local Golden_CasePruning_Test_C = { "Golden.CasePruning.Test∷T.C" }
 local Golden_CasePruning_Test_literalRetest = function(v)
   return function(v1)
-    if 0 == v then
-      if "" == v1 then return 1 elseif 0 == v then return 2 else return 3 end
-    elseif 0 == v then
-      return 2
-    else
-      return 3
-    end
+    if 0 == v then if "" == v1 then return 1 else return 2 end else return 3 end
   end
 end
 local Golden_CasePruning_Test_literalNegatives = function(v)
   return function(v1)
     if 1 == v then
-      if 1 == v1 then
-        return 1
-      elseif 2 == v then
-        if 2 == v1 then
-          return 2
-        elseif 1 == v then
-          if 2 == v1 then return 3 else return 4 end
-        else
-          return 4
-        end
-      elseif 1 == v then
-        if 2 == v1 then return 3 else return 4 end
-      else
-        return 4
-      end
+      if 1 == v1 then return 1 elseif 2 == v1 then return 3 else return 4 end
     elseif 2 == v then
-      if 2 == v1 then
-        return 2
-      elseif 1 == v then
-        if 2 == v1 then return 3 else return 4 end
-      else
-        return 4
-      end
-    elseif 1 == v then
-      if 2 == v1 then return 3 else return 4 end
+      if 2 == v1 then return 2 else return 4 end
     else
       return 4
     end
@@ -66,12 +38,6 @@ local Golden_CasePruning_Test_ctorRetest = function(v)
     elseif "Golden.CasePruning.Test∷T.B" == _S_cse222 then
       if "Golden.CasePruning.Test∷T.B" == _S_cse223 then
         return 2
-      else
-        return 4
-      end
-    elseif "Golden.CasePruning.Test∷T.A" == _S_cse222 then
-      if "Golden.CasePruning.Test∷T.B" == _S_cse223 then
-        return 3
       else
         return 4
       end
