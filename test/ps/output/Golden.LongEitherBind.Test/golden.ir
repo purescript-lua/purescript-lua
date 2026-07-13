@@ -44,7 +44,7 @@ UberModule
         ( Standalone
           ( Nothing, Name "x150", Let Nothing
             ( Standalone
-              ( Nothing, Name "$tmp1237", AppN Nothing
+              ( Nothing, Name "$tmp1239", AppN Nothing
                 ( Ref Nothing
                   ( Imported ( ModuleName "Golden.LongEitherBind.Test" ) ( Name "add$w" ) )
                 )
@@ -392,7 +392,7 @@ UberModule
                 )
               ) :|
               [ Standalone
-                ( Nothing, Name "$tmp1238", AppN Nothing
+                ( Nothing, Name "$tmp1240", AppN Nothing
                   ( Ref Nothing
                     ( Imported ( ModuleName "Golden.LongEitherBind.Test" ) ( Name "add$w" ) )
                   )
@@ -662,7 +662,7 @@ UberModule
                                                                                                 )
                                                                                                 ( Ref Nothing
                                                                                                   ( Local
-                                                                                                    ( Name "$tmp1237" )
+                                                                                                    ( Name "$tmp1239" )
                                                                                                   ) :|
                                                                                                   [ LiteralInt Nothing 1 ]
                                                                                                 ) :|
@@ -745,7 +745,7 @@ UberModule
                     [ LiteralInt Nothing 1 ]
                   )
                 ), Standalone
-                ( Nothing, Name "$tmp1239", AppN Nothing
+                ( Nothing, Name "$tmp1241", AppN Nothing
                   ( Ref Nothing
                     ( Imported ( ModuleName "Golden.LongEitherBind.Test" ) ( Name "add$w" ) )
                   )
@@ -1015,7 +1015,7 @@ UberModule
                                                                                                 )
                                                                                                 ( Ref Nothing
                                                                                                   ( Local
-                                                                                                    ( Name "$tmp1238" )
+                                                                                                    ( Name "$tmp1240" )
                                                                                                   ) :|
                                                                                                   [ LiteralInt Nothing 1 ]
                                                                                                 ) :|
@@ -1287,7 +1287,7 @@ UberModule
                                                                       )
                                                                       ( Ref Nothing
                                                                         ( Local
-                                                                          ( Name "$tmp1239" )
+                                                                          ( Name "$tmp1241" )
                                                                         ) :|
                                                                         [ LiteralInt Nothing 1 ]
                                                                       ) :|
@@ -1352,7 +1352,7 @@ UberModule
         )
         ( Let Nothing
           ( Standalone
-            ( Nothing, Name "$tmp1240", AppN Nothing
+            ( Nothing, Name "$tmp1242", AppN Nothing
               ( Ref Nothing
                 ( Imported ( ModuleName "Golden.LongEitherBind.Test" ) ( Name "add$w" ) )
               )
@@ -1700,7 +1700,7 @@ UberModule
               )
             ) :|
             [ Standalone
-              ( Nothing, Name "$tmp1241", AppN Nothing
+              ( Nothing, Name "$tmp1243", AppN Nothing
                 ( Ref Nothing
                   ( Imported ( ModuleName "Golden.LongEitherBind.Test" ) ( Name "add$w" ) )
                 )
@@ -1967,7 +1967,7 @@ UberModule
                                                                                               )
                                                                                               ( Ref Nothing
                                                                                                 ( Local
-                                                                                                  ( Name "$tmp1240" )
+                                                                                                  ( Name "$tmp1242" )
                                                                                                 ) :|
                                                                                                 [ LiteralInt Nothing 1 ]
                                                                                               ) :|
@@ -2050,7 +2050,7 @@ UberModule
                   [ LiteralInt Nothing 1 ]
                 )
               ), Standalone
-              ( Nothing, Name "$tmp1242", AppN Nothing
+              ( Nothing, Name "$tmp1244", AppN Nothing
                 ( Ref Nothing
                   ( Imported ( ModuleName "Golden.LongEitherBind.Test" ) ( Name "add$w" ) )
                 )
@@ -2317,7 +2317,7 @@ UberModule
                                                                                               )
                                                                                               ( Ref Nothing
                                                                                                 ( Local
-                                                                                                  ( Name "$tmp1241" )
+                                                                                                  ( Name "$tmp1243" )
                                                                                                 ) :|
                                                                                                 [ LiteralInt Nothing 1 ]
                                                                                               ) :|
@@ -2613,7 +2613,7 @@ UberModule
                                                                             )
                                                                             ( Ref Nothing
                                                                               ( Local
-                                                                                ( Name "$tmp1242" )
+                                                                                ( Name "$tmp1244" )
                                                                               ) :|
                                                                               [ LiteralInt Nothing 1 ]
                                                                             ) :|
@@ -2686,71 +2686,75 @@ UberModule
       ( Name "compute", Ref Nothing
         ( Imported ( ModuleName "Golden.LongEitherBind.Test" ) ( Name "compute" ) )
       ),
-      ( Name "main", AppN Nothing
-        ( ObjectProp Nothing
-          ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
-          ( PropName "log" )
+      ( Name "main", Let Nothing
+        ( Standalone
+          ( Nothing, Name "$cse1238", DataArgumentByIndex Nothing SumType 0
+            ( Ref Nothing
+              ( Imported ( ModuleName "Golden.LongEitherBind.Test" ) ( Name "compute" ) )
+            )
+          ) :| []
         )
-        ( IfThenElse Nothing
-          ( Eq Nothing
-            ( LiteralString Nothing "Data.Either∷Either.Left" )
-            ( ReflectCtor Nothing
+        ( Let Nothing
+          ( Standalone
+            ( Nothing, Name "$cse1237", ReflectCtor Nothing
               ( Ref Nothing
                 ( Imported ( ModuleName "Golden.LongEitherBind.Test" ) ( Name "compute" ) )
               )
-            )
+            ) :| []
           )
           ( AppN Nothing
-            ( Ref Nothing ( Imported ( ModuleName "Data.Either" ) ( Name "append$w" ) ) )
-            ( LiteralString Nothing "(Left " :|
-              [ AppN Nothing
+            ( ObjectProp Nothing
+              ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
+              ( PropName "log" )
+            )
+            ( IfThenElse Nothing
+              ( Eq Nothing
+                ( LiteralString Nothing "Data.Either∷Either.Left" )
+                ( Ref Nothing ( Local ( Name "$cse1237" ) ) )
+              )
+              ( AppN Nothing
                 ( Ref Nothing ( Imported ( ModuleName "Data.Either" ) ( Name "append$w" ) ) )
-                ( AppN Nothing
-                  ( ObjectProp Nothing
-                    ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
-                    ( PropName "showStringImpl" )
-                  )
-                  ( DataArgumentByIndex Nothing SumType 0
-                    ( Ref Nothing
-                      ( Imported ( ModuleName "Golden.LongEitherBind.Test" ) ( Name "compute" ) )
-                    ) :| []
-                  ) :|
-                  [ LiteralString Nothing ")" ]
+                ( LiteralString Nothing "(Left " :|
+                  [ AppN Nothing
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Either" ) ( Name "append$w" ) ) )
+                    ( AppN Nothing
+                      ( ObjectProp Nothing
+                        ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
+                        ( PropName "showStringImpl" )
+                      )
+                      ( Ref Nothing ( Local ( Name "$cse1238" ) ) :| [] ) :|
+                      [ LiteralString Nothing ")" ]
+                    )
+                  ]
                 )
-              ]
+              )
+              ( IfThenElse Nothing
+                ( Eq Nothing
+                  ( LiteralString Nothing "Data.Either∷Either.Right" )
+                  ( Ref Nothing ( Local ( Name "$cse1237" ) ) )
+                )
+                ( AppN Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Data.Either" ) ( Name "append$w" ) ) )
+                  ( LiteralString Nothing "(Right " :|
+                    [ AppN Nothing
+                      ( Ref Nothing ( Imported ( ModuleName "Data.Either" ) ( Name "append$w" ) ) )
+                      ( AppN Nothing
+                        ( ObjectProp Nothing
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) )
+                          )
+                          ( PropName "showIntImpl" )
+                        )
+                        ( Ref Nothing ( Local ( Name "$cse1238" ) ) :| [] ) :|
+                        [ LiteralString Nothing ")" ]
+                      )
+                    ]
+                  )
+                )
+                ( Exception Nothing "No patterns matched" )
+              ) :| []
             )
           )
-          ( IfThenElse Nothing
-            ( Eq Nothing
-              ( LiteralString Nothing "Data.Either∷Either.Right" )
-              ( ReflectCtor Nothing
-                ( Ref Nothing
-                  ( Imported ( ModuleName "Golden.LongEitherBind.Test" ) ( Name "compute" ) )
-                )
-              )
-            )
-            ( AppN Nothing
-              ( Ref Nothing ( Imported ( ModuleName "Data.Either" ) ( Name "append$w" ) ) )
-              ( LiteralString Nothing "(Right " :|
-                [ AppN Nothing
-                  ( Ref Nothing ( Imported ( ModuleName "Data.Either" ) ( Name "append$w" ) ) )
-                  ( AppN Nothing
-                    ( ObjectProp Nothing
-                      ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
-                      ( PropName "showIntImpl" )
-                    )
-                    ( DataArgumentByIndex Nothing SumType 0
-                      ( Ref Nothing
-                        ( Imported ( ModuleName "Golden.LongEitherBind.Test" ) ( Name "compute" ) )
-                      ) :| []
-                    ) :|
-                    [ LiteralString Nothing ")" ]
-                  )
-                ]
-              )
-            )
-            ( Exception Nothing "No patterns matched" )
-          ) :| []
         )
       )
     ]

@@ -164,173 +164,159 @@ UberModule
         ( ParamUnused Nothing :| [] )
         ( Let Nothing
           ( Standalone
-            ( Nothing, Name "_", AppN Nothing
-              ( AppN Nothing
-                ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow$w" ) ) )
-                ( LiteralObject Nothing
-                  [
-                    ( PropName "show", ObjectProp Nothing
-                      ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
-                      ( PropName "showIntImpl" )
-                    )
-                  ] :|
-                  [ AppN Nothing
-                    ( Ref Nothing
-                      ( Imported ( ModuleName "Golden.Primops.Test" ) ( Name "sumTo$w" ) )
-                    )
-                    ( LiteralInt Nothing 0 :| [ LiteralInt Nothing 5 ] )
-                  ]
-                )
-              )
-              ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
-            ) :|
-            [ Standalone
-              ( Nothing, Name "_", AppN Nothing
-                ( AppN Nothing
-                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow$w" ) ) )
-                  ( LiteralObject Nothing
-                    [
-                      ( PropName "show", AbsN Nothing
-                        ( ParamNamed Nothing ( Name "v$241" ) :| [] )
-                        ( IfThenElse Nothing
-                          ( Ref Nothing ( Local ( Name "v$241" ) ) )
-                          ( LiteralString Nothing "true" )
-                          ( IfThenElse Nothing
-                            ( Eq Nothing ( LiteralBool Nothing False )
-                              ( Ref Nothing ( Local ( Name "v$241" ) ) )
-                            )
-                            ( LiteralString Nothing "false" )
-                            ( Exception Nothing "No patterns matched" )
-                          )
-                        )
+            ( Nothing, Name "$cse252", LiteralObject Nothing
+              [
+                ( PropName "show", AbsN Nothing
+                  ( ParamNamed Nothing ( Name "v$241" ) :| [] )
+                  ( IfThenElse Nothing
+                    ( Ref Nothing ( Local ( Name "v$241" ) ) )
+                    ( LiteralString Nothing "true" )
+                    ( IfThenElse Nothing
+                      ( Eq Nothing ( LiteralBool Nothing False )
+                        ( Ref Nothing ( Local ( Name "v$241" ) ) )
                       )
-                    ] :| [ LiteralBool Nothing True ]
+                      ( LiteralString Nothing "false" )
+                      ( Exception Nothing "No patterns matched" )
+                    )
                   )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
-              ), Standalone
+              ]
+            ) :| []
+          )
+          ( Let Nothing
+            ( Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
                   ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow$w" ) ) )
                   ( LiteralObject Nothing
                     [
-                      ( PropName "show", AbsN Nothing
-                        ( ParamNamed Nothing ( Name "v$245" ) :| [] )
-                        ( IfThenElse Nothing
-                          ( Ref Nothing ( Local ( Name "v$245" ) ) )
-                          ( LiteralString Nothing "true" )
-                          ( IfThenElse Nothing
-                            ( Eq Nothing ( LiteralBool Nothing False )
-                              ( Ref Nothing ( Local ( Name "v$245" ) ) )
-                            )
-                            ( LiteralString Nothing "false" )
-                            ( Exception Nothing "No patterns matched" )
-                          )
-                        )
-                      )
-                    ] :| [ LiteralBool Nothing True ]
-                  )
-                )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
-              ), Standalone
-              ( Nothing, Name "_", AppN Nothing
-                ( AppN Nothing
-                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow$w" ) ) )
-                  ( LiteralObject Nothing
-                    [
-                      ( PropName "show", AbsN Nothing
-                        ( ParamNamed Nothing ( Name "v$113" ) :| [] )
-                        ( IfThenElse Nothing
-                          ( Eq Nothing
-                            ( LiteralString Nothing "Data.Ordering∷Ordering.LT" )
-                            ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v$113" ) ) ) )
-                          )
-                          ( LiteralString Nothing "LT" )
-                          ( IfThenElse Nothing
-                            ( Eq Nothing
-                              ( LiteralString Nothing "Data.Ordering∷Ordering.GT" )
-                              ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v$113" ) ) ) )
-                            )
-                            ( LiteralString Nothing "GT" )
-                            ( IfThenElse Nothing
-                              ( Eq Nothing
-                                ( LiteralString Nothing "Data.Ordering∷Ordering.EQ" )
-                                ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v$113" ) ) ) )
-                              )
-                              ( LiteralString Nothing "EQ" )
-                              ( Exception Nothing "No patterns matched" )
-                            )
-                          )
-                        )
+                      ( PropName "show", ObjectProp Nothing
+                        ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
+                        ( PropName "showIntImpl" )
                       )
                     ] :|
-                    [ Ctor Nothing SumType
-                      ( ModuleName "Data.Ordering" )
-                      ( TyName "Ordering" )
-                      ( CtorName "LT" ) []
+                    [ AppN Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Golden.Primops.Test" ) ( Name "sumTo$w" ) )
+                      )
+                      ( LiteralInt Nothing 0 :| [ LiteralInt Nothing 5 ] )
                     ]
                   )
                 )
                 ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
-              ), Standalone
-              ( Nothing, Name "_", AppN Nothing
-                ( AppN Nothing
-                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
-                  ( LiteralString Nothing "foobar" :| [] )
+              ) :|
+              [ Standalone
+                ( Nothing, Name "_", AppN Nothing
+                  ( AppN Nothing
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow$w" ) )
+                    )
+                    ( Ref Nothing ( Local ( Name "$cse252" ) ) :| [ LiteralBool Nothing True ] )
+                  )
+                  ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+                ), Standalone
+                ( Nothing, Name "_", AppN Nothing
+                  ( AppN Nothing
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow$w" ) )
+                    )
+                    ( Ref Nothing ( Local ( Name "$cse252" ) ) :| [ LiteralBool Nothing True ] )
+                  )
+                  ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+                ), Standalone
+                ( Nothing, Name "_", AppN Nothing
+                  ( AppN Nothing
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow$w" ) )
+                    )
+                    ( LiteralObject Nothing
+                      [
+                        ( PropName "show", AbsN Nothing
+                          ( ParamNamed Nothing ( Name "v$113" ) :| [] )
+                          ( Let Nothing
+                            ( Standalone
+                              ( Nothing, Name "$cse253", ReflectCtor Nothing
+                                ( Ref Nothing ( Local ( Name "v$113" ) ) )
+                              ) :| []
+                            )
+                            ( IfThenElse Nothing
+                              ( Eq Nothing
+                                ( LiteralString Nothing "Data.Ordering∷Ordering.LT" )
+                                ( Ref Nothing ( Local ( Name "$cse253" ) ) )
+                              )
+                              ( LiteralString Nothing "LT" )
+                              ( IfThenElse Nothing
+                                ( Eq Nothing
+                                  ( LiteralString Nothing "Data.Ordering∷Ordering.GT" )
+                                  ( Ref Nothing ( Local ( Name "$cse253" ) ) )
+                                )
+                                ( LiteralString Nothing "GT" )
+                                ( IfThenElse Nothing
+                                  ( Eq Nothing
+                                    ( LiteralString Nothing "Data.Ordering∷Ordering.EQ" )
+                                    ( Ref Nothing ( Local ( Name "$cse253" ) ) )
+                                  )
+                                  ( LiteralString Nothing "EQ" )
+                                  ( Exception Nothing "No patterns matched" )
+                                )
+                              )
+                            )
+                          )
+                        )
+                      ] :|
+                      [ Ctor Nothing SumType
+                        ( ModuleName "Data.Ordering" )
+                        ( TyName "Ordering" )
+                        ( CtorName "LT" ) []
+                      ]
+                    )
+                  )
+                  ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+                ), Standalone
+                ( Nothing, Name "_", AppN Nothing
+                  ( AppN Nothing
+                    ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+                    ( LiteralString Nothing "foobar" :| [] )
+                  )
+                  ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
-              )
-            ]
-          )
-          ( AppN Nothing
-            ( AppN Nothing
-              ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow$w" ) ) )
-              ( LiteralObject Nothing
-                [
-                  ( PropName "show", AbsN Nothing
-                    ( ParamNamed Nothing ( Name "v$251" ) :| [] )
-                    ( IfThenElse Nothing
-                      ( Ref Nothing ( Local ( Name "v$251" ) ) )
-                      ( LiteralString Nothing "true" )
-                      ( IfThenElse Nothing
-                        ( Eq Nothing ( LiteralBool Nothing False )
-                          ( Ref Nothing ( Local ( Name "v$251" ) ) )
-                        )
-                        ( LiteralString Nothing "false" )
-                        ( Exception Nothing "No patterns matched" )
-                      )
-                    )
-                  )
-                ] :|
-                [ AppN Nothing
-                  ( AppN Nothing
-                    ( ObjectProp Nothing
-                      ( Ref Nothing
-                        ( Imported
-                          ( ModuleName "Data.HeytingAlgebra" )
-                          ( Name "heytingAlgebraBoolean" )
-                        )
-                      )
-                      ( PropName "conj" )
-                    )
-                    ( LiteralBool Nothing True :| [] )
-                  )
-                  ( AppN Nothing
-                    ( ObjectProp Nothing
-                      ( Ref Nothing
-                        ( Imported
-                          ( ModuleName "Data.HeytingAlgebra" )
-                          ( Name "heytingAlgebraBoolean" )
-                        )
-                      )
-                      ( PropName "not" )
-                    )
-                    ( LiteralBool Nothing False :| [] ) :| []
-                  )
-                ]
-              )
+              ]
             )
-            ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+            ( AppN Nothing
+              ( AppN Nothing
+                ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow$w" ) ) )
+                ( Ref Nothing
+                  ( Local ( Name "$cse252" ) ) :|
+                  [ AppN Nothing
+                    ( AppN Nothing
+                      ( ObjectProp Nothing
+                        ( Ref Nothing
+                          ( Imported
+                            ( ModuleName "Data.HeytingAlgebra" )
+                            ( Name "heytingAlgebraBoolean" )
+                          )
+                        )
+                        ( PropName "conj" )
+                      )
+                      ( LiteralBool Nothing True :| [] )
+                    )
+                    ( AppN Nothing
+                      ( ObjectProp Nothing
+                        ( Ref Nothing
+                          ( Imported
+                            ( ModuleName "Data.HeytingAlgebra" )
+                            ( Name "heytingAlgebraBoolean" )
+                          )
+                        )
+                        ( PropName "not" )
+                      )
+                      ( LiteralBool Nothing False :| [] ) :| []
+                    )
+                  ]
+                )
+              )
+              ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+            )
           )
         )
       )

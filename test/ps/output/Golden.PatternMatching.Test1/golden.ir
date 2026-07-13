@@ -26,100 +26,100 @@ UberModule
       ),
       ( Name "pat", AbsN Nothing
         ( ParamNamed Nothing ( Name "e$2" ) :| [] )
-        ( IfThenElse Nothing
-          ( Eq Nothing
-            ( LiteralString Nothing "Golden.PatternMatching.Test1∷E.Not" )
-            ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "e$2" ) ) ) )
+        ( Let Nothing
+          ( Standalone
+            ( Nothing, Name "$cse6", DataArgumentByIndex Nothing SumType 0
+              ( Ref Nothing ( Local ( Name "e$2" ) ) )
+            ) :| []
           )
-          ( IfThenElse Nothing
-            ( Eq Nothing
-              ( LiteralString Nothing "Golden.PatternMatching.Test1∷E.Num" )
-              ( ReflectCtor Nothing
-                ( DataArgumentByIndex Nothing SumType 0 ( Ref Nothing ( Local ( Name "e$2" ) ) ) )
-              )
-            )
-            ( IfThenElse Nothing
-              ( Eq Nothing
-                ( LiteralString Nothing "Golden.PatternMatching.Test1∷N.Succ" )
-                ( ReflectCtor Nothing
-                  ( DataArgumentByIndex Nothing SumType 0
-                    ( DataArgumentByIndex Nothing SumType 0
-                      ( Ref Nothing ( Local ( Name "e$2" ) ) )
-                    )
-                  )
-                )
-              )
-              ( LiteralInt Nothing 1 )
-              ( IfThenElse Nothing
-                ( Eq Nothing
-                  ( LiteralString Nothing "Golden.PatternMatching.Test1∷N.Zero" )
-                  ( ReflectCtor Nothing
-                    ( DataArgumentByIndex Nothing SumType 0
-                      ( DataArgumentByIndex Nothing SumType 0
-                        ( Ref Nothing ( Local ( Name "e$2" ) ) )
-                      )
-                    )
-                  )
-                )
-                ( LiteralInt Nothing 2 )
-                ( LiteralInt Nothing 6 )
-              )
+          ( Let Nothing
+            ( Standalone
+              ( Nothing, Name "$cse5", ReflectCtor Nothing
+                ( Ref Nothing ( Local ( Name "e$2" ) ) )
+              ) :| []
             )
             ( IfThenElse Nothing
               ( Eq Nothing
                 ( LiteralString Nothing "Golden.PatternMatching.Test1∷E.Not" )
-                ( ReflectCtor Nothing
-                  ( DataArgumentByIndex Nothing SumType 0 ( Ref Nothing ( Local ( Name "e$2" ) ) ) )
-                )
+                ( Ref Nothing ( Local ( Name "$cse5" ) ) )
               )
               ( IfThenElse Nothing
                 ( Eq Nothing
                   ( LiteralString Nothing "Golden.PatternMatching.Test1∷E.Num" )
-                  ( ReflectCtor Nothing
-                    ( DataArgumentByIndex Nothing SumType 0
-                      ( DataArgumentByIndex Nothing SumType 0
-                        ( Ref Nothing ( Local ( Name "e$2" ) ) )
-                      )
-                    )
-                  )
+                  ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "$cse6" ) ) ) )
                 )
                 ( IfThenElse Nothing
                   ( Eq Nothing
                     ( LiteralString Nothing "Golden.PatternMatching.Test1∷N.Succ" )
                     ( ReflectCtor Nothing
                       ( DataArgumentByIndex Nothing SumType 0
-                        ( DataArgumentByIndex Nothing SumType 0
-                          ( DataArgumentByIndex Nothing SumType 0
-                            ( Ref Nothing ( Local ( Name "e$2" ) ) )
-                          )
-                        )
+                        ( Ref Nothing ( Local ( Name "$cse6" ) ) )
                       )
                     )
                   )
-                  ( LiteralInt Nothing 3 )
+                  ( LiteralInt Nothing 1 )
+                  ( IfThenElse Nothing
+                    ( Eq Nothing
+                      ( LiteralString Nothing "Golden.PatternMatching.Test1∷N.Zero" )
+                      ( ReflectCtor Nothing
+                        ( DataArgumentByIndex Nothing SumType 0
+                          ( Ref Nothing ( Local ( Name "$cse6" ) ) )
+                        )
+                      )
+                    )
+                    ( LiteralInt Nothing 2 )
+                    ( LiteralInt Nothing 6 )
+                  )
+                )
+                ( IfThenElse Nothing
+                  ( Eq Nothing
+                    ( LiteralString Nothing "Golden.PatternMatching.Test1∷E.Not" )
+                    ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "$cse6" ) ) ) )
+                  )
+                  ( IfThenElse Nothing
+                    ( Eq Nothing
+                      ( LiteralString Nothing "Golden.PatternMatching.Test1∷E.Num" )
+                      ( ReflectCtor Nothing
+                        ( DataArgumentByIndex Nothing SumType 0
+                          ( Ref Nothing ( Local ( Name "$cse6" ) ) )
+                        )
+                      )
+                    )
+                    ( IfThenElse Nothing
+                      ( Eq Nothing
+                        ( LiteralString Nothing "Golden.PatternMatching.Test1∷N.Succ" )
+                        ( ReflectCtor Nothing
+                          ( DataArgumentByIndex Nothing SumType 0
+                            ( DataArgumentByIndex Nothing SumType 0
+                              ( Ref Nothing ( Local ( Name "$cse6" ) ) )
+                            )
+                          )
+                        )
+                      )
+                      ( LiteralInt Nothing 3 )
+                      ( LiteralInt Nothing 6 )
+                    )
+                    ( LiteralInt Nothing 6 )
+                  )
                   ( LiteralInt Nothing 6 )
+                )
+              )
+              ( IfThenElse Nothing
+                ( Eq Nothing
+                  ( LiteralString Nothing "Golden.PatternMatching.Test1∷E.Num" )
+                  ( Ref Nothing ( Local ( Name "$cse5" ) ) )
+                )
+                ( IfThenElse Nothing
+                  ( Eq Nothing
+                    ( LiteralString Nothing "Golden.PatternMatching.Test1∷N.Succ" )
+                    ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "$cse6" ) ) ) )
+                  )
+                  ( LiteralInt Nothing 4 )
+                  ( LiteralInt Nothing 5 )
                 )
                 ( LiteralInt Nothing 6 )
               )
-              ( LiteralInt Nothing 6 )
             )
-          )
-          ( IfThenElse Nothing
-            ( Eq Nothing
-              ( LiteralString Nothing "Golden.PatternMatching.Test1∷E.Num" )
-              ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "e$2" ) ) ) )
-            )
-            ( IfThenElse Nothing
-              ( Eq Nothing
-                ( LiteralString Nothing "Golden.PatternMatching.Test1∷N.Succ" )
-                ( ReflectCtor Nothing
-                  ( DataArgumentByIndex Nothing SumType 0 ( Ref Nothing ( Local ( Name "e$2" ) ) ) )
-                )
-              )
-              ( LiteralInt Nothing 4 )
-              ( LiteralInt Nothing 5 )
-            )
-            ( LiteralInt Nothing 6 )
           )
         )
       ),

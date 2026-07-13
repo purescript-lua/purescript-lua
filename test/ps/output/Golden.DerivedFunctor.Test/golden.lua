@@ -23,9 +23,10 @@ local Golden_DerivedFunctor_Test_Right = function(value0)
 end
 local Golden_DerivedFunctor_Test_sumTree
 Golden_DerivedFunctor_Test_sumTree = function(v)
-  if "Golden.DerivedFunctor.Test∷Tree.Leaf" == v[1] then
+  local _S_cse241 = v[1]
+  if "Golden.DerivedFunctor.Test∷Tree.Leaf" == _S_cse241 then
     return 0
-  elseif "Golden.DerivedFunctor.Test∷Tree.Node" == v[1] then
+  elseif "Golden.DerivedFunctor.Test∷Tree.Node" == _S_cse241 then
     return Golden_DerivedFunctor_Test_sumTree(v[2]) + v[3] + Golden_DerivedFunctor_Test_sumTree(v[4])
   else
     return error("No patterns matched")
@@ -35,10 +36,12 @@ local Golden_DerivedFunctor_Test_functorTree
 Golden_DerivedFunctor_Test_functorTree = {
   map = function(f)
     return function(m)
-      if "Golden.DerivedFunctor.Test∷Tree.Leaf" == m[1] then
+      local _S_cse243 = Golden_DerivedFunctor_Test_functorTree.map
+      local _S_cse242 = m[1]
+      if "Golden.DerivedFunctor.Test∷Tree.Leaf" == _S_cse242 then
         return Golden_DerivedFunctor_Test_Leaf
-      elseif "Golden.DerivedFunctor.Test∷Tree.Node" == m[1] then
-        return Golden_DerivedFunctor_Test_Node(Golden_DerivedFunctor_Test_functorTree.map(f)(m[2]))(f(m[3]))(Golden_DerivedFunctor_Test_functorTree.map(f)(m[4]))
+      elseif "Golden.DerivedFunctor.Test∷Tree.Node" == _S_cse242 then
+        return Golden_DerivedFunctor_Test_Node(_S_cse243(f)(m[2]))(f(m[3]))(_S_cse243(f)(m[4]))
       else
         return error("No patterns matched")
       end
@@ -48,10 +51,12 @@ Golden_DerivedFunctor_Test_functorTree = {
 M.Golden_DerivedFunctor_Test_functorEither = {
   map = function(f)
     return function(m)
-      if "Golden.DerivedFunctor.Test∷Either.Left" == m[1] then
-        return Golden_DerivedFunctor_Test_Left(m[2])
-      elseif "Golden.DerivedFunctor.Test∷Either.Right" == m[1] then
-        return Golden_DerivedFunctor_Test_Right(f(m[2]))
+      local _S_cse245 = m[2]
+      local _S_cse244 = m[1]
+      if "Golden.DerivedFunctor.Test∷Either.Left" == _S_cse244 then
+        return Golden_DerivedFunctor_Test_Left(_S_cse245)
+      elseif "Golden.DerivedFunctor.Test∷Either.Right" == _S_cse244 then
+        return Golden_DerivedFunctor_Test_Right(f(_S_cse245))
       else
         return error("No patterns matched")
       end
@@ -59,9 +64,10 @@ M.Golden_DerivedFunctor_Test_functorEither = {
   end
 }
 local Golden_DerivedFunctor_Test_fromRight_S_w = function(fallback, v)
-  if "Golden.DerivedFunctor.Test∷Either.Left" == v[1] then
+  local _S_cse246 = v[1]
+  if "Golden.DerivedFunctor.Test∷Either.Left" == _S_cse246 then
     return fallback
-  elseif "Golden.DerivedFunctor.Test∷Either.Right" == v[1] then
+  elseif "Golden.DerivedFunctor.Test∷Either.Right" == _S_cse246 then
     return v[2]
   else
     return error("No patterns matched")

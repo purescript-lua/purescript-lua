@@ -30,29 +30,25 @@ local Golden_STDoBlock_Test_add_S_w = function(x_S_445, y_S_446)
 end
 M.Golden_STDoBlock_Test_sumTwice = function(n)
   return Control_Monad_ST_Internal_run(function()
-    local ref = Control_Monad_ST_Internal_new(0)()
-    local _ = Control_Monad_ST_Internal_modifyImpl(function(s_S_451)
+    local _S_cse467 = function(s_S_451)
       local sPrime_S_452 = Golden_STDoBlock_Test_add_S_w(s_S_451, n)
       return { state = sPrime_S_452, value = sPrime_S_452 }
-    end)(ref)()
-    local _ = Control_Monad_ST_Internal_modifyImpl(function(s_S_454)
-      local sPrime_S_455 = Golden_STDoBlock_Test_add_S_w(s_S_454, n)
-      return { state = sPrime_S_455, value = sPrime_S_455 }
-    end)(ref)()
+    end
+    local ref = Control_Monad_ST_Internal_new(0)()
+    local _ = Control_Monad_ST_Internal_modifyImpl(_S_cse467)(ref)()
+    local _ = Control_Monad_ST_Internal_modifyImpl(_S_cse467)(ref)()
     local total = Control_Monad_ST_Internal_read(ref)()
     return Golden_STDoBlock_Test_add_S_w(total, 1)
   end)
 end
 return Effect_Console_foreign.log(Data_Show_foreign.showIntImpl(Control_Monad_ST_Internal_run(function(  )
-  local ref_S_457 = Control_Monad_ST_Internal_new(0)()
-  local _ = Control_Monad_ST_Internal_modifyImpl(function(s_S_462)
+  local _S_cse468 = function(s_S_462)
     local sPrime_S_463 = Golden_STDoBlock_Test_add_S_w(s_S_462, 5)
     return { state = sPrime_S_463, value = sPrime_S_463 }
-  end)(ref_S_457)()
-  local _ = Control_Monad_ST_Internal_modifyImpl(function(s_S_465)
-    local sPrime_S_466 = Golden_STDoBlock_Test_add_S_w(s_S_465, 5)
-    return { state = sPrime_S_466, value = sPrime_S_466 }
-  end)(ref_S_457)()
+  end
+  local ref_S_457 = Control_Monad_ST_Internal_new(0)()
+  local _ = Control_Monad_ST_Internal_modifyImpl(_S_cse468)(ref_S_457)()
+  local _ = Control_Monad_ST_Internal_modifyImpl(_S_cse468)(ref_S_457)()
   local total_S_458 = Control_Monad_ST_Internal_read(ref_S_457)()
   return Golden_STDoBlock_Test_add_S_w(total_S_458, 1)
 end)))()

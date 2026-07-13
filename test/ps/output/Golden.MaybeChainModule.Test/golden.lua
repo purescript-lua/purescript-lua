@@ -3,9 +3,10 @@ local Data_Maybe_Just = function(value0)
   return { "Data.Maybe∷Maybe.Just", value0 }
 end
 local Data_Maybe_maybe_S_w = function(v, v1, v2)
-  if "Data.Maybe∷Maybe.Nothing" == v2[1] then
+  local _S_cse292 = v2[1]
+  if "Data.Maybe∷Maybe.Nothing" == _S_cse292 then
     return v
-  elseif "Data.Maybe∷Maybe.Just" == v2[1] then
+  elseif "Data.Maybe∷Maybe.Just" == _S_cse292 then
     return v1(v2[2])
   else
     return error("No patterns matched")

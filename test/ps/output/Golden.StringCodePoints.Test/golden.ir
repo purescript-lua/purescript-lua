@@ -574,35 +574,54 @@ UberModule
         { qnameModuleName = ModuleName "Data.String.CodePoints", qnameName = Name "singletonFallback"
         }, AbsN Nothing
         ( ParamNamed Nothing ( Name "v" ) :| [] )
-        ( IfThenElse Nothing
-          ( AppN Nothing
-            ( Ref Nothing ( Imported ( ModuleName "Data.Ord" ) ( Name "lessThanOrEq$w" ) ) )
-            ( Ref Nothing
-              ( Imported ( ModuleName "Data.Ord" ) ( Name "ordInt" ) ) :|
-              [ Ref Nothing ( Local ( Name "v" ) ), LiteralInt Nothing 65535 ]
-            )
+        ( Let Nothing
+          ( Standalone
+            ( Nothing, Name "$cse1761", ObjectProp Nothing
+              ( Ref Nothing
+                ( Imported ( ModuleName "Data.HeytingAlgebra" ) ( Name "heytingAlgebraBoolean" ) )
+              )
+              ( PropName "conj" )
+            ) :| []
           )
-          ( AppN Nothing
-            ( Ref Nothing
-              ( Imported ( ModuleName "Data.String.CodeUnits" ) ( Name "singleton" ) )
+          ( IfThenElse Nothing
+            ( AppN Nothing
+              ( Ref Nothing ( Imported ( ModuleName "Data.Ord" ) ( Name "lessThanOrEq$w" ) ) )
+              ( Ref Nothing
+                ( Imported ( ModuleName "Data.Ord" ) ( Name "ordInt" ) ) :|
+                [ Ref Nothing ( Local ( Name "v" ) ), LiteralInt Nothing 65535 ]
+              )
             )
-            ( Let Nothing
-              ( Standalone
-                ( Nothing, Name "v$1749", IfThenElse Nothing
-                  ( AppN Nothing
+            ( AppN Nothing
+              ( Ref Nothing
+                ( Imported ( ModuleName "Data.String.CodeUnits" ) ( Name "singleton" ) )
+              )
+              ( Let Nothing
+                ( Standalone
+                  ( Nothing, Name "v$1749", IfThenElse Nothing
                     ( AppN Nothing
-                      ( ObjectProp Nothing
-                        ( Ref Nothing
-                          ( Imported
-                            ( ModuleName "Data.HeytingAlgebra" )
-                            ( Name "heytingAlgebraBoolean" )
+                      ( AppN Nothing
+                        ( Ref Nothing ( Local ( Name "$cse1761" ) ) )
+                        ( AppN Nothing
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Data.Ord" ) ( Name "greaterThanOrEq$w" ) )
                           )
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Data.Ord" ) ( Name "ordInt" ) ) :|
+                            [ Ref Nothing
+                              ( Local ( Name "v" ) ), AppN Nothing
+                              ( Ref Nothing
+                                ( Imported ( ModuleName "Data.Enum" ) ( Name "toCharCode" ) )
+                              )
+                              ( Ref Nothing
+                                ( Imported ( ModuleName "Data.Enum" ) ( Name "bottom1" ) ) :| []
+                              )
+                            ]
+                          ) :| []
                         )
-                        ( PropName "conj" )
                       )
                       ( AppN Nothing
                         ( Ref Nothing
-                          ( Imported ( ModuleName "Data.Ord" ) ( Name "greaterThanOrEq$w" ) )
+                          ( Imported ( ModuleName "Data.Ord" ) ( Name "lessThanOrEq$w" ) )
                         )
                         ( Ref Nothing
                           ( Imported ( ModuleName "Data.Ord" ) ( Name "ordInt" ) ) :|
@@ -612,124 +631,118 @@ UberModule
                               ( Imported ( ModuleName "Data.Enum" ) ( Name "toCharCode" ) )
                             )
                             ( Ref Nothing
-                              ( Imported ( ModuleName "Data.Enum" ) ( Name "bottom1" ) ) :| []
+                              ( Imported ( ModuleName "Data.Enum" ) ( Name "top1" ) ) :| []
                             )
                           ]
                         ) :| []
                       )
                     )
                     ( AppN Nothing
-                      ( Ref Nothing
-                        ( Imported ( ModuleName "Data.Ord" ) ( Name "lessThanOrEq$w" ) )
+                      ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Just" ) ) )
+                      ( AppN Nothing
+                        ( Ref Nothing
+                          ( Imported ( ModuleName "Data.Enum" ) ( Name "fromCharCode" ) )
+                        )
+                        ( Ref Nothing ( Local ( Name "v" ) ) :| [] ) :| []
                       )
-                      ( Ref Nothing
-                        ( Imported ( ModuleName "Data.Ord" ) ( Name "ordInt" ) ) :|
-                        [ Ref Nothing
-                          ( Local ( Name "v" ) ), AppN Nothing
-                          ( Ref Nothing
-                            ( Imported ( ModuleName "Data.Enum" ) ( Name "toCharCode" ) )
-                          )
-                          ( Ref Nothing
-                            ( Imported ( ModuleName "Data.Enum" ) ( Name "top1" ) ) :| []
-                          )
-                        ]
-                      ) :| []
                     )
-                  )
-                  ( AppN Nothing
-                    ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Just" ) ) )
-                    ( AppN Nothing
-                      ( Ref Nothing
-                        ( Imported ( ModuleName "Data.Enum" ) ( Name "fromCharCode" ) )
-                      )
-                      ( Ref Nothing ( Local ( Name "v" ) ) :| [] ) :| []
-                    )
-                  )
-                  ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) )
-                ) :| []
-              )
-              ( IfThenElse Nothing
-                ( Eq Nothing
-                  ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
-                  ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v$1749" ) ) ) )
-                )
-                ( DataArgumentByIndex Nothing SumType 0
-                  ( Ref Nothing ( Local ( Name "v$1749" ) ) )
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) )
+                  ) :| []
                 )
                 ( IfThenElse Nothing
                   ( Eq Nothing
-                    ( LiteralString Nothing "Data.Maybe∷Maybe.Nothing" )
+                    ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
                     ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v$1749" ) ) ) )
                   )
+                  ( DataArgumentByIndex Nothing SumType 0
+                    ( Ref Nothing ( Local ( Name "v$1749" ) ) )
+                  )
                   ( IfThenElse Nothing
-                    ( AppN Nothing
-                      ( Ref Nothing ( Imported ( ModuleName "Data.Ord" ) ( Name "lessThan$w" ) ) )
-                      ( Ref Nothing
-                        ( Imported ( ModuleName "Data.Ord" ) ( Name "ordInt" ) ) :|
-                        [ Ref Nothing
-                          ( Local ( Name "v" ) ), AppN Nothing
-                          ( Ref Nothing
-                            ( Imported ( ModuleName "Data.Enum" ) ( Name "toCharCode" ) )
-                          )
-                          ( Ref Nothing
-                            ( Imported ( ModuleName "Data.Bounded" ) ( Name "bottomChar" ) ) :| []
-                          )
-                        ]
-                      )
+                    ( Eq Nothing
+                      ( LiteralString Nothing "Data.Maybe∷Maybe.Nothing" )
+                      ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v$1749" ) ) ) )
                     )
-                    ( Ref Nothing
-                      ( Imported ( ModuleName "Data.Bounded" ) ( Name "bottomChar" ) )
-                    )
-                    ( Ref Nothing ( Imported ( ModuleName "Data.Bounded" ) ( Name "topChar" ) ) )
-                  )
-                  ( Exception Nothing "No patterns matched" )
-                )
-              ) :| []
-            )
-          )
-          ( PrimBinOp Nothing PrimConcat
-            ( Let Nothing
-              ( Standalone
-                ( Nothing, Name "x$1750", PrimBinOp Nothing PrimAdd
-                  ( AppN Nothing
-                    ( AppN Nothing
-                      ( ObjectProp Nothing
+                    ( IfThenElse Nothing
+                      ( AppN Nothing
                         ( Ref Nothing
-                          ( Imported ( ModuleName "Data.EuclideanRing" ) ( Name "foreign" ) )
+                          ( Imported ( ModuleName "Data.Ord" ) ( Name "lessThan$w" ) )
                         )
-                        ( PropName "intDiv" )
+                        ( Ref Nothing
+                          ( Imported ( ModuleName "Data.Ord" ) ( Name "ordInt" ) ) :|
+                          [ Ref Nothing
+                            ( Local ( Name "v" ) ), AppN Nothing
+                            ( Ref Nothing
+                              ( Imported ( ModuleName "Data.Enum" ) ( Name "toCharCode" ) )
+                            )
+                            ( Ref Nothing
+                              ( Imported ( ModuleName "Data.Bounded" ) ( Name "bottomChar" ) ) :| []
+                            )
+                          ]
+                        )
                       )
-                      ( PrimBinOp Nothing PrimSub
-                        ( Ref Nothing ( Local ( Name "v" ) ) )
-                        ( LiteralInt Nothing 65536 ) :| []
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Data.Bounded" ) ( Name "bottomChar" ) )
                       )
+                      ( Ref Nothing ( Imported ( ModuleName "Data.Bounded" ) ( Name "topChar" ) ) )
                     )
-                    ( LiteralInt Nothing 1024 :| [] )
+                    ( Exception Nothing "No patterns matched" )
                   )
-                  ( LiteralInt Nothing 55296 )
                 ) :| []
               )
-              ( AppN Nothing
-                ( Ref Nothing
-                  ( Imported ( ModuleName "Data.String.CodeUnits" ) ( Name "singleton" ) )
-                )
-                ( Let Nothing
-                  ( Standalone
-                    ( Nothing, Name "v$1751", IfThenElse Nothing
+            )
+            ( PrimBinOp Nothing PrimConcat
+              ( Let Nothing
+                ( Standalone
+                  ( Nothing, Name "x$1750", PrimBinOp Nothing PrimAdd
+                    ( AppN Nothing
                       ( AppN Nothing
+                        ( ObjectProp Nothing
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Data.EuclideanRing" ) ( Name "foreign" ) )
+                          )
+                          ( PropName "intDiv" )
+                        )
+                        ( PrimBinOp Nothing PrimSub
+                          ( Ref Nothing ( Local ( Name "v" ) ) )
+                          ( LiteralInt Nothing 65536 ) :| []
+                        )
+                      )
+                      ( LiteralInt Nothing 1024 :| [] )
+                    )
+                    ( LiteralInt Nothing 55296 )
+                  ) :| []
+                )
+                ( AppN Nothing
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Data.String.CodeUnits" ) ( Name "singleton" ) )
+                  )
+                  ( Let Nothing
+                    ( Standalone
+                      ( Nothing, Name "v$1751", IfThenElse Nothing
                         ( AppN Nothing
-                          ( ObjectProp Nothing
-                            ( Ref Nothing
-                              ( Imported
-                                ( ModuleName "Data.HeytingAlgebra" )
-                                ( Name "heytingAlgebraBoolean" )
+                          ( AppN Nothing
+                            ( Ref Nothing ( Local ( Name "$cse1761" ) ) )
+                            ( AppN Nothing
+                              ( Ref Nothing
+                                ( Imported ( ModuleName "Data.Ord" ) ( Name "greaterThanOrEq$w" ) )
                               )
+                              ( Ref Nothing
+                                ( Imported ( ModuleName "Data.Ord" ) ( Name "ordInt" ) ) :|
+                                [ Ref Nothing
+                                  ( Local ( Name "x$1750" ) ), AppN Nothing
+                                  ( Ref Nothing
+                                    ( Imported ( ModuleName "Data.Enum" ) ( Name "toCharCode" ) )
+                                  )
+                                  ( Ref Nothing
+                                    ( Imported ( ModuleName "Data.Enum" ) ( Name "bottom1" ) ) :| []
+                                  )
+                                ]
+                              ) :| []
                             )
-                            ( PropName "conj" )
                           )
                           ( AppN Nothing
                             ( Ref Nothing
-                              ( Imported ( ModuleName "Data.Ord" ) ( Name "greaterThanOrEq$w" ) )
+                              ( Imported ( ModuleName "Data.Ord" ) ( Name "lessThanOrEq$w" ) )
                             )
                             ( Ref Nothing
                               ( Imported ( ModuleName "Data.Ord" ) ( Name "ordInt" ) ) :|
@@ -739,131 +752,123 @@ UberModule
                                   ( Imported ( ModuleName "Data.Enum" ) ( Name "toCharCode" ) )
                                 )
                                 ( Ref Nothing
-                                  ( Imported ( ModuleName "Data.Enum" ) ( Name "bottom1" ) ) :| []
+                                  ( Imported ( ModuleName "Data.Enum" ) ( Name "top1" ) ) :| []
                                 )
                               ]
                             ) :| []
                           )
                         )
                         ( AppN Nothing
-                          ( Ref Nothing
-                            ( Imported ( ModuleName "Data.Ord" ) ( Name "lessThanOrEq$w" ) )
+                          ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Just" ) ) )
+                          ( AppN Nothing
+                            ( Ref Nothing
+                              ( Imported ( ModuleName "Data.Enum" ) ( Name "fromCharCode" ) )
+                            )
+                            ( Ref Nothing ( Local ( Name "x$1750" ) ) :| [] ) :| []
                           )
-                          ( Ref Nothing
-                            ( Imported ( ModuleName "Data.Ord" ) ( Name "ordInt" ) ) :|
-                            [ Ref Nothing
-                              ( Local ( Name "x$1750" ) ), AppN Nothing
-                              ( Ref Nothing
-                                ( Imported ( ModuleName "Data.Enum" ) ( Name "toCharCode" ) )
-                              )
-                              ( Ref Nothing
-                                ( Imported ( ModuleName "Data.Enum" ) ( Name "top1" ) ) :| []
-                              )
-                            ]
-                          ) :| []
                         )
-                      )
-                      ( AppN Nothing
-                        ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Just" ) ) )
-                        ( AppN Nothing
-                          ( Ref Nothing
-                            ( Imported ( ModuleName "Data.Enum" ) ( Name "fromCharCode" ) )
-                          )
-                          ( Ref Nothing ( Local ( Name "x$1750" ) ) :| [] ) :| []
-                        )
-                      )
-                      ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) )
-                    ) :| []
-                  )
-                  ( IfThenElse Nothing
-                    ( Eq Nothing
-                      ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
-                      ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v$1751" ) ) ) )
-                    )
-                    ( DataArgumentByIndex Nothing SumType 0
-                      ( Ref Nothing ( Local ( Name "v$1751" ) ) )
+                        ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) )
+                      ) :| []
                     )
                     ( IfThenElse Nothing
                       ( Eq Nothing
-                        ( LiteralString Nothing "Data.Maybe∷Maybe.Nothing" )
+                        ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
                         ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v$1751" ) ) ) )
                       )
+                      ( DataArgumentByIndex Nothing SumType 0
+                        ( Ref Nothing ( Local ( Name "v$1751" ) ) )
+                      )
                       ( IfThenElse Nothing
-                        ( AppN Nothing
-                          ( Ref Nothing
-                            ( Imported ( ModuleName "Data.Ord" ) ( Name "lessThan$w" ) )
+                        ( Eq Nothing
+                          ( LiteralString Nothing "Data.Maybe∷Maybe.Nothing" )
+                          ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v$1751" ) ) ) )
+                        )
+                        ( IfThenElse Nothing
+                          ( AppN Nothing
+                            ( Ref Nothing
+                              ( Imported ( ModuleName "Data.Ord" ) ( Name "lessThan$w" ) )
+                            )
+                            ( Ref Nothing
+                              ( Imported ( ModuleName "Data.Ord" ) ( Name "ordInt" ) ) :|
+                              [ Ref Nothing
+                                ( Local ( Name "x$1750" ) ), AppN Nothing
+                                ( Ref Nothing
+                                  ( Imported ( ModuleName "Data.Enum" ) ( Name "toCharCode" ) )
+                                )
+                                ( Ref Nothing
+                                  ( Imported
+                                    ( ModuleName "Data.Bounded" )
+                                    ( Name "bottomChar" )
+                                  ) :| []
+                                )
+                              ]
+                            )
                           )
                           ( Ref Nothing
-                            ( Imported ( ModuleName "Data.Ord" ) ( Name "ordInt" ) ) :|
-                            [ Ref Nothing
-                              ( Local ( Name "x$1750" ) ), AppN Nothing
-                              ( Ref Nothing
-                                ( Imported ( ModuleName "Data.Enum" ) ( Name "toCharCode" ) )
-                              )
-                              ( Ref Nothing
-                                ( Imported
-                                  ( ModuleName "Data.Bounded" )
-                                  ( Name "bottomChar" )
-                                ) :| []
-                              )
-                            ]
+                            ( Imported ( ModuleName "Data.Bounded" ) ( Name "bottomChar" ) )
+                          )
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Data.Bounded" ) ( Name "topChar" ) )
                           )
                         )
-                        ( Ref Nothing
-                          ( Imported ( ModuleName "Data.Bounded" ) ( Name "bottomChar" ) )
+                        ( Exception Nothing "No patterns matched" )
+                      )
+                    ) :| []
+                  )
+                )
+              )
+              ( Let Nothing
+                ( Standalone
+                  ( Nothing, Name "x$1752", PrimBinOp Nothing PrimAdd
+                    ( AppN Nothing
+                      ( AppN Nothing
+                        ( ObjectProp Nothing
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Data.EuclideanRing" ) ( Name "foreign" ) )
+                          )
+                          ( PropName "intMod" )
                         )
-                        ( Ref Nothing
-                          ( Imported ( ModuleName "Data.Bounded" ) ( Name "topChar" ) )
+                        ( PrimBinOp Nothing PrimSub
+                          ( Ref Nothing ( Local ( Name "v" ) ) )
+                          ( LiteralInt Nothing 65536 ) :| []
                         )
                       )
-                      ( Exception Nothing "No patterns matched" )
+                      ( LiteralInt Nothing 1024 :| [] )
                     )
+                    ( LiteralInt Nothing 56320 )
                   ) :| []
                 )
-              )
-            )
-            ( Let Nothing
-              ( Standalone
-                ( Nothing, Name "x$1752", PrimBinOp Nothing PrimAdd
-                  ( AppN Nothing
-                    ( AppN Nothing
-                      ( ObjectProp Nothing
-                        ( Ref Nothing
-                          ( Imported ( ModuleName "Data.EuclideanRing" ) ( Name "foreign" ) )
-                        )
-                        ( PropName "intMod" )
-                      )
-                      ( PrimBinOp Nothing PrimSub
-                        ( Ref Nothing ( Local ( Name "v" ) ) )
-                        ( LiteralInt Nothing 65536 ) :| []
-                      )
-                    )
-                    ( LiteralInt Nothing 1024 :| [] )
+                ( AppN Nothing
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Data.String.CodeUnits" ) ( Name "singleton" ) )
                   )
-                  ( LiteralInt Nothing 56320 )
-                ) :| []
-              )
-              ( AppN Nothing
-                ( Ref Nothing
-                  ( Imported ( ModuleName "Data.String.CodeUnits" ) ( Name "singleton" ) )
-                )
-                ( Let Nothing
-                  ( Standalone
-                    ( Nothing, Name "v$1753", IfThenElse Nothing
-                      ( AppN Nothing
+                  ( Let Nothing
+                    ( Standalone
+                      ( Nothing, Name "v$1753", IfThenElse Nothing
                         ( AppN Nothing
-                          ( ObjectProp Nothing
-                            ( Ref Nothing
-                              ( Imported
-                                ( ModuleName "Data.HeytingAlgebra" )
-                                ( Name "heytingAlgebraBoolean" )
+                          ( AppN Nothing
+                            ( Ref Nothing ( Local ( Name "$cse1761" ) ) )
+                            ( AppN Nothing
+                              ( Ref Nothing
+                                ( Imported ( ModuleName "Data.Ord" ) ( Name "greaterThanOrEq$w" ) )
                               )
+                              ( Ref Nothing
+                                ( Imported ( ModuleName "Data.Ord" ) ( Name "ordInt" ) ) :|
+                                [ Ref Nothing
+                                  ( Local ( Name "x$1752" ) ), AppN Nothing
+                                  ( Ref Nothing
+                                    ( Imported ( ModuleName "Data.Enum" ) ( Name "toCharCode" ) )
+                                  )
+                                  ( Ref Nothing
+                                    ( Imported ( ModuleName "Data.Enum" ) ( Name "bottom1" ) ) :| []
+                                  )
+                                ]
+                              ) :| []
                             )
-                            ( PropName "conj" )
                           )
                           ( AppN Nothing
                             ( Ref Nothing
-                              ( Imported ( ModuleName "Data.Ord" ) ( Name "greaterThanOrEq$w" ) )
+                              ( Imported ( ModuleName "Data.Ord" ) ( Name "lessThanOrEq$w" ) )
                             )
                             ( Ref Nothing
                               ( Imported ( ModuleName "Data.Ord" ) ( Name "ordInt" ) ) :|
@@ -873,86 +878,69 @@ UberModule
                                   ( Imported ( ModuleName "Data.Enum" ) ( Name "toCharCode" ) )
                                 )
                                 ( Ref Nothing
-                                  ( Imported ( ModuleName "Data.Enum" ) ( Name "bottom1" ) ) :| []
+                                  ( Imported ( ModuleName "Data.Enum" ) ( Name "top1" ) ) :| []
                                 )
                               ]
                             ) :| []
                           )
                         )
                         ( AppN Nothing
-                          ( Ref Nothing
-                            ( Imported ( ModuleName "Data.Ord" ) ( Name "lessThanOrEq$w" ) )
+                          ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Just" ) ) )
+                          ( AppN Nothing
+                            ( Ref Nothing
+                              ( Imported ( ModuleName "Data.Enum" ) ( Name "fromCharCode" ) )
+                            )
+                            ( Ref Nothing ( Local ( Name "x$1752" ) ) :| [] ) :| []
                           )
-                          ( Ref Nothing
-                            ( Imported ( ModuleName "Data.Ord" ) ( Name "ordInt" ) ) :|
-                            [ Ref Nothing
-                              ( Local ( Name "x$1752" ) ), AppN Nothing
-                              ( Ref Nothing
-                                ( Imported ( ModuleName "Data.Enum" ) ( Name "toCharCode" ) )
-                              )
-                              ( Ref Nothing
-                                ( Imported ( ModuleName "Data.Enum" ) ( Name "top1" ) ) :| []
-                              )
-                            ]
-                          ) :| []
                         )
-                      )
-                      ( AppN Nothing
-                        ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Just" ) ) )
-                        ( AppN Nothing
-                          ( Ref Nothing
-                            ( Imported ( ModuleName "Data.Enum" ) ( Name "fromCharCode" ) )
-                          )
-                          ( Ref Nothing ( Local ( Name "x$1752" ) ) :| [] ) :| []
-                        )
-                      )
-                      ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) )
-                    ) :| []
-                  )
-                  ( IfThenElse Nothing
-                    ( Eq Nothing
-                      ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
-                      ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v$1753" ) ) ) )
-                    )
-                    ( DataArgumentByIndex Nothing SumType 0
-                      ( Ref Nothing ( Local ( Name "v$1753" ) ) )
+                        ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) )
+                      ) :| []
                     )
                     ( IfThenElse Nothing
                       ( Eq Nothing
-                        ( LiteralString Nothing "Data.Maybe∷Maybe.Nothing" )
+                        ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
                         ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v$1753" ) ) ) )
                       )
-                      ( IfThenElse Nothing
-                        ( AppN Nothing
-                          ( Ref Nothing
-                            ( Imported ( ModuleName "Data.Ord" ) ( Name "lessThan$w" ) )
-                          )
-                          ( Ref Nothing
-                            ( Imported ( ModuleName "Data.Ord" ) ( Name "ordInt" ) ) :|
-                            [ Ref Nothing
-                              ( Local ( Name "x$1752" ) ), AppN Nothing
-                              ( Ref Nothing
-                                ( Imported ( ModuleName "Data.Enum" ) ( Name "toCharCode" ) )
-                              )
-                              ( Ref Nothing
-                                ( Imported
-                                  ( ModuleName "Data.Bounded" )
-                                  ( Name "bottomChar" )
-                                ) :| []
-                              )
-                            ]
-                          )
-                        )
-                        ( Ref Nothing
-                          ( Imported ( ModuleName "Data.Bounded" ) ( Name "bottomChar" ) )
-                        )
-                        ( Ref Nothing
-                          ( Imported ( ModuleName "Data.Bounded" ) ( Name "topChar" ) )
-                        )
+                      ( DataArgumentByIndex Nothing SumType 0
+                        ( Ref Nothing ( Local ( Name "v$1753" ) ) )
                       )
-                      ( Exception Nothing "No patterns matched" )
-                    )
-                  ) :| []
+                      ( IfThenElse Nothing
+                        ( Eq Nothing
+                          ( LiteralString Nothing "Data.Maybe∷Maybe.Nothing" )
+                          ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v$1753" ) ) ) )
+                        )
+                        ( IfThenElse Nothing
+                          ( AppN Nothing
+                            ( Ref Nothing
+                              ( Imported ( ModuleName "Data.Ord" ) ( Name "lessThan$w" ) )
+                            )
+                            ( Ref Nothing
+                              ( Imported ( ModuleName "Data.Ord" ) ( Name "ordInt" ) ) :|
+                              [ Ref Nothing
+                                ( Local ( Name "x$1752" ) ), AppN Nothing
+                                ( Ref Nothing
+                                  ( Imported ( ModuleName "Data.Enum" ) ( Name "toCharCode" ) )
+                                )
+                                ( Ref Nothing
+                                  ( Imported
+                                    ( ModuleName "Data.Bounded" )
+                                    ( Name "bottomChar" )
+                                  ) :| []
+                                )
+                              ]
+                            )
+                          )
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Data.Bounded" ) ( Name "bottomChar" ) )
+                          )
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Data.Bounded" ) ( Name "topChar" ) )
+                          )
+                        )
+                        ( Exception Nothing "No patterns matched" )
+                      )
+                    ) :| []
+                  )
                 )
               )
             )
@@ -1216,17 +1204,24 @@ UberModule
                         )
                         ( AbsN Nothing
                           ( ParamNamed Nothing ( Name "v2$1519" ) :| [] )
-                          ( IfThenElse Nothing
-                            ( Eq Nothing
-                              ( LiteralString Nothing "Data.Maybe∷Maybe.Nothing" )
-                              ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v2$1519" ) ) ) )
-                            ) ( LiteralBool Nothing True )
+                          ( Let Nothing
+                            ( Standalone
+                              ( Nothing, Name "$cse1762", ReflectCtor Nothing
+                                ( Ref Nothing ( Local ( Name "v2$1519" ) ) )
+                              ) :| []
+                            )
                             ( IfThenElse Nothing
                               ( Eq Nothing
-                                ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
-                                ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v2$1519" ) ) ) )
-                              ) ( LiteralBool Nothing False )
-                              ( Exception Nothing "No patterns matched" )
+                                ( LiteralString Nothing "Data.Maybe∷Maybe.Nothing" )
+                                ( Ref Nothing ( Local ( Name "$cse1762" ) ) )
+                              ) ( LiteralBool Nothing True )
+                              ( IfThenElse Nothing
+                                ( Eq Nothing
+                                  ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
+                                  ( Ref Nothing ( Local ( Name "$cse1762" ) ) )
+                                ) ( LiteralBool Nothing False )
+                                ( Exception Nothing "No patterns matched" )
+                              )
                             )
                           ) :| []
                         )
@@ -1778,7 +1773,581 @@ UberModule
         ( ParamUnused Nothing :| [] )
         ( Let Nothing
           ( Standalone
-            ( Nothing, Name "_", AppN Nothing
+            ( Nothing, Name "$cse1763", LiteralObject Nothing
+              [
+                ( PropName "show", AbsN Nothing
+                  ( ParamNamed Nothing ( Name "v$1706" ) :| [] )
+                  ( Let Nothing
+                    ( Standalone
+                      ( Nothing, Name "$cse1764", ReflectCtor Nothing
+                        ( Ref Nothing ( Local ( Name "v$1706" ) ) )
+                      ) :| []
+                    )
+                    ( IfThenElse Nothing
+                      ( Eq Nothing
+                        ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
+                        ( Ref Nothing ( Local ( Name "$cse1764" ) ) )
+                      )
+                      ( PrimBinOp Nothing PrimConcat
+                        ( LiteralString Nothing "(Just " )
+                        ( PrimBinOp Nothing PrimConcat
+                          ( AppN Nothing
+                            ( Ref Nothing
+                              ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) )
+                            )
+                            ( DataArgumentByIndex Nothing SumType 0
+                              ( Ref Nothing ( Local ( Name "v$1706" ) ) ) :| []
+                            )
+                          )
+                          ( LiteralString Nothing ")" )
+                        )
+                      )
+                      ( IfThenElse Nothing
+                        ( Eq Nothing
+                          ( LiteralString Nothing "Data.Maybe∷Maybe.Nothing" )
+                          ( Ref Nothing ( Local ( Name "$cse1764" ) ) )
+                        )
+                        ( LiteralString Nothing "Nothing" )
+                        ( Exception Nothing "No patterns matched" )
+                      )
+                    )
+                  )
+                )
+              ]
+            ) :| []
+          )
+          ( Let Nothing
+            ( Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow$w" ) ) )
+                  ( Ref Nothing
+                    ( Imported
+                      ( ModuleName "Golden.StringCodePoints.Test" )
+                      ( Name "showArray" )
+                    ) :|
+                    [ AppN Nothing
+                      ( AppN Nothing
+                        ( Ref Nothing
+                          ( Imported ( ModuleName "Data.Functor" ) ( Name "arrayMap" ) )
+                        )
+                        ( Ref Nothing
+                          ( Imported
+                            ( ModuleName "Golden.StringCodePoints.Test" )
+                            ( Name "fromEnum" )
+                          ) :| []
+                        )
+                      )
+                      ( AppN Nothing
+                        ( Ref Nothing
+                          ( Imported
+                            ( ModuleName "Data.String.CodePoints" )
+                            ( Name "toCodePointArray" )
+                          )
+                        )
+                        ( LiteralString Nothing "aéЯ𝐀z" :| [] ) :| []
+                      )
+                    ]
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              ) :|
+              [ Standalone
+                ( Nothing, Name "_", AppN Nothing
+                  ( AppN Nothing
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow$w" ) )
+                    )
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Data.Show" ) ( Name "showInt" ) ) :|
+                      [ AppN Nothing
+                        ( ObjectProp Nothing
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Data.Array" ) ( Name "foreign" ) )
+                          )
+                          ( PropName "length" )
+                        )
+                        ( AppN Nothing
+                          ( Ref Nothing
+                            ( Imported
+                              ( ModuleName "Data.String.CodePoints" )
+                              ( Name "toCodePointArray" )
+                            )
+                          )
+                          ( LiteralString Nothing "aéЯ𝐀z" :| [] ) :| []
+                        )
+                      ]
+                    )
+                  )
+                  ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+                ), Standalone
+                ( Nothing, Name "_", AppN Nothing
+                  ( AppN Nothing
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow$w" ) )
+                    )
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Data.Show" ) ( Name "showInt" ) ) :|
+                      [ AppN Nothing
+                        ( Ref Nothing
+                          ( Imported ( ModuleName "Data.String.CodeUnits" ) ( Name "length" ) )
+                        )
+                        ( LiteralString Nothing "aéЯ𝐀z" :| [] )
+                      ]
+                    )
+                  )
+                  ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+                ), Standalone
+                ( Nothing, Name "_", AppN Nothing
+                  ( AppN Nothing
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow$w" ) )
+                    )
+                    ( Ref Nothing
+                      ( Imported
+                        ( ModuleName "Golden.StringCodePoints.Test" )
+                        ( Name "showArray" )
+                      ) :|
+                      [ AppN Nothing
+                        ( AppN Nothing
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Data.Functor" ) ( Name "arrayMap" ) )
+                          )
+                          ( Ref Nothing
+                            ( Imported
+                              ( ModuleName "Golden.StringCodePoints.Test" )
+                              ( Name "fromEnum" )
+                            ) :| []
+                          )
+                        )
+                        ( AppN Nothing
+                          ( Ref Nothing
+                            ( Imported
+                              ( ModuleName "Data.String.CodePoints" )
+                              ( Name "toCodePointArray" )
+                            )
+                          )
+                          ( AppN Nothing
+                            ( Ref Nothing
+                              ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "take$w" ) )
+                            )
+                            ( LiteralInt Nothing 2 :| [ LiteralString Nothing "aéЯ𝐀z" ] ) :| []
+                          ) :| []
+                        )
+                      ]
+                    )
+                  )
+                  ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+                ), Standalone
+                ( Nothing, Name "_", AppN Nothing
+                  ( AppN Nothing
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow$w" ) )
+                    )
+                    ( Ref Nothing
+                      ( Imported
+                        ( ModuleName "Golden.StringCodePoints.Test" )
+                        ( Name "showArray" )
+                      ) :|
+                      [ AppN Nothing
+                        ( AppN Nothing
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Data.Functor" ) ( Name "arrayMap" ) )
+                          )
+                          ( Ref Nothing
+                            ( Imported
+                              ( ModuleName "Golden.StringCodePoints.Test" )
+                              ( Name "fromEnum" )
+                            ) :| []
+                          )
+                        )
+                        ( AppN Nothing
+                          ( Ref Nothing
+                            ( Imported
+                              ( ModuleName "Data.String.CodePoints" )
+                              ( Name "toCodePointArray" )
+                            )
+                          )
+                          ( AppN Nothing
+                            ( Ref Nothing
+                              ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "drop$w" ) )
+                            )
+                            ( LiteralInt Nothing 2 :| [ LiteralString Nothing "aéЯ𝐀z" ] ) :| []
+                          ) :| []
+                        )
+                      ]
+                    )
+                  )
+                  ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+                ), Standalone
+                ( Nothing, Name "_", AppN Nothing
+                  ( AppN Nothing
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow$w" ) )
+                    )
+                    ( Ref Nothing
+                      ( Local ( Name "$cse1763" ) ) :|
+                      [ Let Nothing
+                        ( Standalone
+                          ( Nothing, Name "v1$1704", AppN Nothing
+                            ( Ref Nothing
+                              ( Imported
+                                ( ModuleName "Data.String.CodePoints" )
+                                ( Name "codePointAt$w" )
+                              )
+                            )
+                            ( LiteralInt Nothing 0 :| [ LiteralString Nothing "aéЯ𝐀z" ] )
+                          ) :| []
+                        )
+                        ( IfThenElse Nothing
+                          ( Eq Nothing
+                            ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
+                            ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v1$1704" ) ) ) )
+                          )
+                          ( AppN Nothing
+                            ( Ref Nothing
+                              ( Imported ( ModuleName "Data.Maybe" ) ( Name "Just" ) )
+                            )
+                            ( AppN Nothing
+                              ( Ref Nothing
+                                ( Imported
+                                  ( ModuleName "Golden.StringCodePoints.Test" )
+                                  ( Name "fromEnum" )
+                                )
+                              )
+                              ( DataArgumentByIndex Nothing SumType 0
+                                ( Ref Nothing ( Local ( Name "v1$1704" ) ) ) :| []
+                              ) :| []
+                            )
+                          )
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) )
+                          )
+                        )
+                      ]
+                    )
+                  )
+                  ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+                ), Standalone
+                ( Nothing, Name "_", AppN Nothing
+                  ( AppN Nothing
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow$w" ) )
+                    )
+                    ( Ref Nothing
+                      ( Local ( Name "$cse1763" ) ) :|
+                      [ Let Nothing
+                        ( Standalone
+                          ( Nothing, Name "v1$1712", AppN Nothing
+                            ( Ref Nothing
+                              ( Imported
+                                ( ModuleName "Data.String.CodePoints" )
+                                ( Name "codePointAt$w" )
+                              )
+                            )
+                            ( LiteralInt Nothing 3 :| [ LiteralString Nothing "aéЯ𝐀z" ] )
+                          ) :| []
+                        )
+                        ( IfThenElse Nothing
+                          ( Eq Nothing
+                            ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
+                            ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v1$1712" ) ) ) )
+                          )
+                          ( AppN Nothing
+                            ( Ref Nothing
+                              ( Imported ( ModuleName "Data.Maybe" ) ( Name "Just" ) )
+                            )
+                            ( AppN Nothing
+                              ( Ref Nothing
+                                ( Imported
+                                  ( ModuleName "Golden.StringCodePoints.Test" )
+                                  ( Name "fromEnum" )
+                                )
+                              )
+                              ( DataArgumentByIndex Nothing SumType 0
+                                ( Ref Nothing ( Local ( Name "v1$1712" ) ) ) :| []
+                              ) :| []
+                            )
+                          )
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) )
+                          )
+                        )
+                      ]
+                    )
+                  )
+                  ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+                ), Standalone
+                ( Nothing, Name "_", AppN Nothing
+                  ( AppN Nothing
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow$w" ) )
+                    )
+                    ( Ref Nothing
+                      ( Local ( Name "$cse1763" ) ) :|
+                      [ Let Nothing
+                        ( Standalone
+                          ( Nothing, Name "v1$1720", AppN Nothing
+                            ( Ref Nothing
+                              ( Imported
+                                ( ModuleName "Data.String.CodePoints" )
+                                ( Name "codePointAt$w" )
+                              )
+                            )
+                            ( LiteralInt Nothing 5 :| [ LiteralString Nothing "aéЯ𝐀z" ] )
+                          ) :| []
+                        )
+                        ( IfThenElse Nothing
+                          ( Eq Nothing
+                            ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
+                            ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v1$1720" ) ) ) )
+                          )
+                          ( AppN Nothing
+                            ( Ref Nothing
+                              ( Imported ( ModuleName "Data.Maybe" ) ( Name "Just" ) )
+                            )
+                            ( AppN Nothing
+                              ( Ref Nothing
+                                ( Imported
+                                  ( ModuleName "Golden.StringCodePoints.Test" )
+                                  ( Name "fromEnum" )
+                                )
+                              )
+                              ( DataArgumentByIndex Nothing SumType 0
+                                ( Ref Nothing ( Local ( Name "v1$1720" ) ) ) :| []
+                              ) :| []
+                            )
+                          )
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) )
+                          )
+                        )
+                      ]
+                    )
+                  )
+                  ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+                ), Standalone
+                ( Nothing, Name "_", AppN Nothing
+                  ( AppN Nothing
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow$w" ) )
+                    )
+                    ( Ref Nothing
+                      ( Local ( Name "$cse1763" ) ) :|
+                      [ Let Nothing
+                        ( Standalone
+                          ( Nothing, Name "v1$1731", AppN Nothing
+                            ( Ref Nothing
+                              ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "uncons" ) )
+                            )
+                            ( LiteralString Nothing "aéЯ𝐀z" :| [] )
+                          ) :| []
+                        )
+                        ( IfThenElse Nothing
+                          ( Eq Nothing
+                            ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
+                            ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v1$1731" ) ) ) )
+                          )
+                          ( AppN Nothing
+                            ( Ref Nothing
+                              ( Imported ( ModuleName "Data.Maybe" ) ( Name "Just" ) )
+                            )
+                            ( AppN Nothing
+                              ( Ref Nothing
+                                ( Imported
+                                  ( ModuleName "Golden.StringCodePoints.Test" )
+                                  ( Name "fromEnum" )
+                                )
+                              )
+                              ( ObjectProp Nothing
+                                ( DataArgumentByIndex Nothing SumType 0
+                                  ( Ref Nothing ( Local ( Name "v1$1731" ) ) )
+                                )
+                                ( PropName "head" ) :| []
+                              ) :| []
+                            )
+                          )
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) )
+                          )
+                        )
+                      ]
+                    )
+                  )
+                  ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+                ), Standalone
+                ( Nothing, Name "_", AppN Nothing
+                  ( AppN Nothing
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow$w" ) )
+                    )
+                    ( LiteralObject Nothing
+                      [
+                        ( PropName "show", AbsN Nothing
+                          ( ParamNamed Nothing ( Name "v$1644" ) :| [] )
+                          ( Let Nothing
+                            ( Standalone
+                              ( Nothing, Name "$cse1765", ReflectCtor Nothing
+                                ( Ref Nothing ( Local ( Name "v$1644" ) ) )
+                              ) :| []
+                            )
+                            ( IfThenElse Nothing
+                              ( Eq Nothing
+                                ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
+                                ( Ref Nothing ( Local ( Name "$cse1765" ) ) )
+                              )
+                              ( PrimBinOp Nothing PrimConcat
+                                ( LiteralString Nothing "(Just " )
+                                ( PrimBinOp Nothing PrimConcat
+                                  ( AppN Nothing
+                                    ( AppN Nothing
+                                      ( Ref Nothing
+                                        ( Imported
+                                          ( ModuleName "Data.Show" )
+                                          ( Name "showArrayImpl" )
+                                        )
+                                      )
+                                      ( Ref Nothing
+                                        ( Imported
+                                          ( ModuleName "Data.Show" )
+                                          ( Name "showIntImpl" )
+                                        ) :| []
+                                      )
+                                    )
+                                    ( DataArgumentByIndex Nothing SumType 0
+                                      ( Ref Nothing ( Local ( Name "v$1644" ) ) ) :| []
+                                    )
+                                  )
+                                  ( LiteralString Nothing ")" )
+                                )
+                              )
+                              ( IfThenElse Nothing
+                                ( Eq Nothing
+                                  ( LiteralString Nothing "Data.Maybe∷Maybe.Nothing" )
+                                  ( Ref Nothing ( Local ( Name "$cse1765" ) ) )
+                                )
+                                ( LiteralString Nothing "Nothing" )
+                                ( Exception Nothing "No patterns matched" )
+                              )
+                            )
+                          )
+                        )
+                      ] :|
+                      [ Let Nothing
+                        ( Standalone
+                          ( Nothing, Name "v1$1746", AppN Nothing
+                            ( Ref Nothing
+                              ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "uncons" ) )
+                            )
+                            ( LiteralString Nothing "aéЯ𝐀z" :| [] )
+                          ) :| []
+                        )
+                        ( IfThenElse Nothing
+                          ( Eq Nothing
+                            ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
+                            ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v1$1746" ) ) ) )
+                          )
+                          ( AppN Nothing
+                            ( Ref Nothing
+                              ( Imported ( ModuleName "Data.Maybe" ) ( Name "Just" ) )
+                            )
+                            ( AppN Nothing
+                              ( AppN Nothing
+                                ( Ref Nothing
+                                  ( Imported ( ModuleName "Data.Functor" ) ( Name "arrayMap" ) )
+                                )
+                                ( Ref Nothing
+                                  ( Imported
+                                    ( ModuleName "Golden.StringCodePoints.Test" )
+                                    ( Name "fromEnum" )
+                                  ) :| []
+                                )
+                              )
+                              ( AppN Nothing
+                                ( Ref Nothing
+                                  ( Imported
+                                    ( ModuleName "Data.String.CodePoints" )
+                                    ( Name "toCodePointArray" )
+                                  )
+                                )
+                                ( ObjectProp Nothing
+                                  ( DataArgumentByIndex Nothing SumType 0
+                                    ( Ref Nothing ( Local ( Name "v1$1746" ) ) )
+                                  )
+                                  ( PropName "tail" ) :| []
+                                ) :| []
+                              ) :| []
+                            )
+                          )
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) )
+                          )
+                        )
+                      ]
+                    )
+                  )
+                  ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+                ), Standalone
+                ( Nothing, Name "_", AppN Nothing
+                  ( AppN Nothing
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow$w" ) )
+                    )
+                    ( LiteralObject Nothing
+                      [
+                        ( PropName "show", AbsN Nothing
+                          ( ParamNamed Nothing ( Name "v$1235" ) :| [] )
+                          ( IfThenElse Nothing
+                            ( Ref Nothing ( Local ( Name "v$1235" ) ) )
+                            ( LiteralString Nothing "true" )
+                            ( IfThenElse Nothing
+                              ( Eq Nothing ( LiteralBool Nothing False )
+                                ( Ref Nothing ( Local ( Name "v$1235" ) ) )
+                              )
+                              ( LiteralString Nothing "false" )
+                              ( Exception Nothing "No patterns matched" )
+                            )
+                          )
+                        )
+                      ] :|
+                      [ Eq Nothing
+                        ( AppN Nothing
+                          ( AppN Nothing
+                            ( ObjectProp Nothing
+                              ( Ref Nothing
+                                ( Imported
+                                  ( ModuleName "Data.String.CodePoints" )
+                                  ( Name "foreign" )
+                                )
+                              )
+                              ( PropName "_fromCodePointArray" )
+                            )
+                            ( Ref Nothing
+                              ( Imported
+                                ( ModuleName "Data.String.CodePoints" )
+                                ( Name "singletonFallback" )
+                              ) :| []
+                            )
+                          )
+                          ( AppN Nothing
+                            ( Ref Nothing
+                              ( Imported
+                                ( ModuleName "Data.String.CodePoints" )
+                                ( Name "toCodePointArray" )
+                              )
+                            )
+                            ( LiteralString Nothing "aéЯ𝐀z" :| [] ) :| []
+                          )
+                        )
+                        ( LiteralString Nothing "aéЯ𝐀z" )
+                      ]
+                    )
+                  )
+                  ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+                )
+              ]
+            )
+            ( AppN Nothing
               ( AppN Nothing
                 ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow$w" ) ) )
                 ( Ref Nothing
@@ -1805,653 +2374,54 @@ UberModule
                           ( Name "toCodePointArray" )
                         )
                       )
-                      ( LiteralString Nothing "aéЯ𝐀z" :| [] ) :| []
+                      ( AppN Nothing
+                        ( Ref Nothing
+                          ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "singleton" ) )
+                        )
+                        ( AppN Nothing
+                          ( AppN Nothing
+                            ( Ref Nothing
+                              ( Imported ( ModuleName "Partial.Unsafe" ) ( Name "_unsafePartial" ) )
+                            )
+                            ( AbsN Nothing
+                              ( ParamUnused Nothing :| [] )
+                              ( AbsN Nothing
+                                ( ParamNamed Nothing ( Name "v$1759" ) :| [] )
+                                ( IfThenElse Nothing
+                                  ( Eq Nothing
+                                    ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
+                                    ( ReflectCtor Nothing
+                                      ( Ref Nothing ( Local ( Name "v$1759" ) ) )
+                                    )
+                                  )
+                                  ( DataArgumentByIndex Nothing SumType 0
+                                    ( Ref Nothing ( Local ( Name "v$1759" ) ) )
+                                  )
+                                  ( Exception Nothing "No patterns matched" )
+                                )
+                              ) :| []
+                            )
+                          )
+                          ( AppN Nothing
+                            ( ObjectProp Nothing
+                              ( Ref Nothing
+                                ( Imported
+                                  ( ModuleName "Data.String.CodePoints" )
+                                  ( Name "boundedEnumCodePoint" )
+                                )
+                              )
+                              ( PropName "toEnum" )
+                            )
+                            ( LiteralInt Nothing 119808 :| [] ) :| []
+                          ) :| []
+                        ) :| []
+                      ) :| []
                     )
                   ]
                 )
               )
               ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
-            ) :|
-            [ Standalone
-              ( Nothing, Name "_", AppN Nothing
-                ( AppN Nothing
-                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow$w" ) ) )
-                  ( Ref Nothing
-                    ( Imported ( ModuleName "Data.Show" ) ( Name "showInt" ) ) :|
-                    [ AppN Nothing
-                      ( ObjectProp Nothing
-                        ( Ref Nothing ( Imported ( ModuleName "Data.Array" ) ( Name "foreign" ) ) )
-                        ( PropName "length" )
-                      )
-                      ( AppN Nothing
-                        ( Ref Nothing
-                          ( Imported
-                            ( ModuleName "Data.String.CodePoints" )
-                            ( Name "toCodePointArray" )
-                          )
-                        )
-                        ( LiteralString Nothing "aéЯ𝐀z" :| [] ) :| []
-                      )
-                    ]
-                  )
-                )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
-              ), Standalone
-              ( Nothing, Name "_", AppN Nothing
-                ( AppN Nothing
-                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow$w" ) ) )
-                  ( Ref Nothing
-                    ( Imported ( ModuleName "Data.Show" ) ( Name "showInt" ) ) :|
-                    [ AppN Nothing
-                      ( Ref Nothing
-                        ( Imported ( ModuleName "Data.String.CodeUnits" ) ( Name "length" ) )
-                      )
-                      ( LiteralString Nothing "aéЯ𝐀z" :| [] )
-                    ]
-                  )
-                )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
-              ), Standalone
-              ( Nothing, Name "_", AppN Nothing
-                ( AppN Nothing
-                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow$w" ) ) )
-                  ( Ref Nothing
-                    ( Imported
-                      ( ModuleName "Golden.StringCodePoints.Test" )
-                      ( Name "showArray" )
-                    ) :|
-                    [ AppN Nothing
-                      ( AppN Nothing
-                        ( Ref Nothing
-                          ( Imported ( ModuleName "Data.Functor" ) ( Name "arrayMap" ) )
-                        )
-                        ( Ref Nothing
-                          ( Imported
-                            ( ModuleName "Golden.StringCodePoints.Test" )
-                            ( Name "fromEnum" )
-                          ) :| []
-                        )
-                      )
-                      ( AppN Nothing
-                        ( Ref Nothing
-                          ( Imported
-                            ( ModuleName "Data.String.CodePoints" )
-                            ( Name "toCodePointArray" )
-                          )
-                        )
-                        ( AppN Nothing
-                          ( Ref Nothing
-                            ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "take$w" ) )
-                          )
-                          ( LiteralInt Nothing 2 :| [ LiteralString Nothing "aéЯ𝐀z" ] ) :| []
-                        ) :| []
-                      )
-                    ]
-                  )
-                )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
-              ), Standalone
-              ( Nothing, Name "_", AppN Nothing
-                ( AppN Nothing
-                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow$w" ) ) )
-                  ( Ref Nothing
-                    ( Imported
-                      ( ModuleName "Golden.StringCodePoints.Test" )
-                      ( Name "showArray" )
-                    ) :|
-                    [ AppN Nothing
-                      ( AppN Nothing
-                        ( Ref Nothing
-                          ( Imported ( ModuleName "Data.Functor" ) ( Name "arrayMap" ) )
-                        )
-                        ( Ref Nothing
-                          ( Imported
-                            ( ModuleName "Golden.StringCodePoints.Test" )
-                            ( Name "fromEnum" )
-                          ) :| []
-                        )
-                      )
-                      ( AppN Nothing
-                        ( Ref Nothing
-                          ( Imported
-                            ( ModuleName "Data.String.CodePoints" )
-                            ( Name "toCodePointArray" )
-                          )
-                        )
-                        ( AppN Nothing
-                          ( Ref Nothing
-                            ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "drop$w" ) )
-                          )
-                          ( LiteralInt Nothing 2 :| [ LiteralString Nothing "aéЯ𝐀z" ] ) :| []
-                        ) :| []
-                      )
-                    ]
-                  )
-                )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
-              ), Standalone
-              ( Nothing, Name "_", AppN Nothing
-                ( AppN Nothing
-                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow$w" ) ) )
-                  ( LiteralObject Nothing
-                    [
-                      ( PropName "show", AbsN Nothing
-                        ( ParamNamed Nothing ( Name "v$1706" ) :| [] )
-                        ( IfThenElse Nothing
-                          ( Eq Nothing
-                            ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
-                            ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v$1706" ) ) ) )
-                          )
-                          ( PrimBinOp Nothing PrimConcat
-                            ( LiteralString Nothing "(Just " )
-                            ( PrimBinOp Nothing PrimConcat
-                              ( AppN Nothing
-                                ( Ref Nothing
-                                  ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) )
-                                )
-                                ( DataArgumentByIndex Nothing SumType 0
-                                  ( Ref Nothing ( Local ( Name "v$1706" ) ) ) :| []
-                                )
-                              )
-                              ( LiteralString Nothing ")" )
-                            )
-                          )
-                          ( IfThenElse Nothing
-                            ( Eq Nothing
-                              ( LiteralString Nothing "Data.Maybe∷Maybe.Nothing" )
-                              ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v$1706" ) ) ) )
-                            )
-                            ( LiteralString Nothing "Nothing" )
-                            ( Exception Nothing "No patterns matched" )
-                          )
-                        )
-                      )
-                    ] :|
-                    [ Let Nothing
-                      ( Standalone
-                        ( Nothing, Name "v1$1704", AppN Nothing
-                          ( Ref Nothing
-                            ( Imported
-                              ( ModuleName "Data.String.CodePoints" )
-                              ( Name "codePointAt$w" )
-                            )
-                          )
-                          ( LiteralInt Nothing 0 :| [ LiteralString Nothing "aéЯ𝐀z" ] )
-                        ) :| []
-                      )
-                      ( IfThenElse Nothing
-                        ( Eq Nothing
-                          ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
-                          ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v1$1704" ) ) ) )
-                        )
-                        ( AppN Nothing
-                          ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Just" ) ) )
-                          ( AppN Nothing
-                            ( Ref Nothing
-                              ( Imported
-                                ( ModuleName "Golden.StringCodePoints.Test" )
-                                ( Name "fromEnum" )
-                              )
-                            )
-                            ( DataArgumentByIndex Nothing SumType 0
-                              ( Ref Nothing ( Local ( Name "v1$1704" ) ) ) :| []
-                            ) :| []
-                          )
-                        )
-                        ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) )
-                      )
-                    ]
-                  )
-                )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
-              ), Standalone
-              ( Nothing, Name "_", AppN Nothing
-                ( AppN Nothing
-                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow$w" ) ) )
-                  ( LiteralObject Nothing
-                    [
-                      ( PropName "show", AbsN Nothing
-                        ( ParamNamed Nothing ( Name "v$1714" ) :| [] )
-                        ( IfThenElse Nothing
-                          ( Eq Nothing
-                            ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
-                            ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v$1714" ) ) ) )
-                          )
-                          ( PrimBinOp Nothing PrimConcat
-                            ( LiteralString Nothing "(Just " )
-                            ( PrimBinOp Nothing PrimConcat
-                              ( AppN Nothing
-                                ( Ref Nothing
-                                  ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) )
-                                )
-                                ( DataArgumentByIndex Nothing SumType 0
-                                  ( Ref Nothing ( Local ( Name "v$1714" ) ) ) :| []
-                                )
-                              )
-                              ( LiteralString Nothing ")" )
-                            )
-                          )
-                          ( IfThenElse Nothing
-                            ( Eq Nothing
-                              ( LiteralString Nothing "Data.Maybe∷Maybe.Nothing" )
-                              ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v$1714" ) ) ) )
-                            )
-                            ( LiteralString Nothing "Nothing" )
-                            ( Exception Nothing "No patterns matched" )
-                          )
-                        )
-                      )
-                    ] :|
-                    [ Let Nothing
-                      ( Standalone
-                        ( Nothing, Name "v1$1712", AppN Nothing
-                          ( Ref Nothing
-                            ( Imported
-                              ( ModuleName "Data.String.CodePoints" )
-                              ( Name "codePointAt$w" )
-                            )
-                          )
-                          ( LiteralInt Nothing 3 :| [ LiteralString Nothing "aéЯ𝐀z" ] )
-                        ) :| []
-                      )
-                      ( IfThenElse Nothing
-                        ( Eq Nothing
-                          ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
-                          ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v1$1712" ) ) ) )
-                        )
-                        ( AppN Nothing
-                          ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Just" ) ) )
-                          ( AppN Nothing
-                            ( Ref Nothing
-                              ( Imported
-                                ( ModuleName "Golden.StringCodePoints.Test" )
-                                ( Name "fromEnum" )
-                              )
-                            )
-                            ( DataArgumentByIndex Nothing SumType 0
-                              ( Ref Nothing ( Local ( Name "v1$1712" ) ) ) :| []
-                            ) :| []
-                          )
-                        )
-                        ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) )
-                      )
-                    ]
-                  )
-                )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
-              ), Standalone
-              ( Nothing, Name "_", AppN Nothing
-                ( AppN Nothing
-                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow$w" ) ) )
-                  ( LiteralObject Nothing
-                    [
-                      ( PropName "show", AbsN Nothing
-                        ( ParamNamed Nothing ( Name "v$1722" ) :| [] )
-                        ( IfThenElse Nothing
-                          ( Eq Nothing
-                            ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
-                            ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v$1722" ) ) ) )
-                          )
-                          ( PrimBinOp Nothing PrimConcat
-                            ( LiteralString Nothing "(Just " )
-                            ( PrimBinOp Nothing PrimConcat
-                              ( AppN Nothing
-                                ( Ref Nothing
-                                  ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) )
-                                )
-                                ( DataArgumentByIndex Nothing SumType 0
-                                  ( Ref Nothing ( Local ( Name "v$1722" ) ) ) :| []
-                                )
-                              )
-                              ( LiteralString Nothing ")" )
-                            )
-                          )
-                          ( IfThenElse Nothing
-                            ( Eq Nothing
-                              ( LiteralString Nothing "Data.Maybe∷Maybe.Nothing" )
-                              ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v$1722" ) ) ) )
-                            )
-                            ( LiteralString Nothing "Nothing" )
-                            ( Exception Nothing "No patterns matched" )
-                          )
-                        )
-                      )
-                    ] :|
-                    [ Let Nothing
-                      ( Standalone
-                        ( Nothing, Name "v1$1720", AppN Nothing
-                          ( Ref Nothing
-                            ( Imported
-                              ( ModuleName "Data.String.CodePoints" )
-                              ( Name "codePointAt$w" )
-                            )
-                          )
-                          ( LiteralInt Nothing 5 :| [ LiteralString Nothing "aéЯ𝐀z" ] )
-                        ) :| []
-                      )
-                      ( IfThenElse Nothing
-                        ( Eq Nothing
-                          ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
-                          ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v1$1720" ) ) ) )
-                        )
-                        ( AppN Nothing
-                          ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Just" ) ) )
-                          ( AppN Nothing
-                            ( Ref Nothing
-                              ( Imported
-                                ( ModuleName "Golden.StringCodePoints.Test" )
-                                ( Name "fromEnum" )
-                              )
-                            )
-                            ( DataArgumentByIndex Nothing SumType 0
-                              ( Ref Nothing ( Local ( Name "v1$1720" ) ) ) :| []
-                            ) :| []
-                          )
-                        )
-                        ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) )
-                      )
-                    ]
-                  )
-                )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
-              ), Standalone
-              ( Nothing, Name "_", AppN Nothing
-                ( AppN Nothing
-                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow$w" ) ) )
-                  ( LiteralObject Nothing
-                    [
-                      ( PropName "show", AbsN Nothing
-                        ( ParamNamed Nothing ( Name "v$1733" ) :| [] )
-                        ( IfThenElse Nothing
-                          ( Eq Nothing
-                            ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
-                            ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v$1733" ) ) ) )
-                          )
-                          ( PrimBinOp Nothing PrimConcat
-                            ( LiteralString Nothing "(Just " )
-                            ( PrimBinOp Nothing PrimConcat
-                              ( AppN Nothing
-                                ( Ref Nothing
-                                  ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) )
-                                )
-                                ( DataArgumentByIndex Nothing SumType 0
-                                  ( Ref Nothing ( Local ( Name "v$1733" ) ) ) :| []
-                                )
-                              )
-                              ( LiteralString Nothing ")" )
-                            )
-                          )
-                          ( IfThenElse Nothing
-                            ( Eq Nothing
-                              ( LiteralString Nothing "Data.Maybe∷Maybe.Nothing" )
-                              ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v$1733" ) ) ) )
-                            )
-                            ( LiteralString Nothing "Nothing" )
-                            ( Exception Nothing "No patterns matched" )
-                          )
-                        )
-                      )
-                    ] :|
-                    [ Let Nothing
-                      ( Standalone
-                        ( Nothing, Name "v1$1731", AppN Nothing
-                          ( Ref Nothing
-                            ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "uncons" ) )
-                          )
-                          ( LiteralString Nothing "aéЯ𝐀z" :| [] )
-                        ) :| []
-                      )
-                      ( IfThenElse Nothing
-                        ( Eq Nothing
-                          ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
-                          ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v1$1731" ) ) ) )
-                        )
-                        ( AppN Nothing
-                          ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Just" ) ) )
-                          ( AppN Nothing
-                            ( Ref Nothing
-                              ( Imported
-                                ( ModuleName "Golden.StringCodePoints.Test" )
-                                ( Name "fromEnum" )
-                              )
-                            )
-                            ( ObjectProp Nothing
-                              ( DataArgumentByIndex Nothing SumType 0
-                                ( Ref Nothing ( Local ( Name "v1$1731" ) ) )
-                              )
-                              ( PropName "head" ) :| []
-                            ) :| []
-                          )
-                        )
-                        ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) )
-                      )
-                    ]
-                  )
-                )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
-              ), Standalone
-              ( Nothing, Name "_", AppN Nothing
-                ( AppN Nothing
-                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow$w" ) ) )
-                  ( LiteralObject Nothing
-                    [
-                      ( PropName "show", AbsN Nothing
-                        ( ParamNamed Nothing ( Name "v$1644" ) :| [] )
-                        ( IfThenElse Nothing
-                          ( Eq Nothing
-                            ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
-                            ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v$1644" ) ) ) )
-                          )
-                          ( PrimBinOp Nothing PrimConcat
-                            ( LiteralString Nothing "(Just " )
-                            ( PrimBinOp Nothing PrimConcat
-                              ( AppN Nothing
-                                ( AppN Nothing
-                                  ( Ref Nothing
-                                    ( Imported ( ModuleName "Data.Show" ) ( Name "showArrayImpl" ) )
-                                  )
-                                  ( Ref Nothing
-                                    ( Imported
-                                      ( ModuleName "Data.Show" )
-                                      ( Name "showIntImpl" )
-                                    ) :| []
-                                  )
-                                )
-                                ( DataArgumentByIndex Nothing SumType 0
-                                  ( Ref Nothing ( Local ( Name "v$1644" ) ) ) :| []
-                                )
-                              )
-                              ( LiteralString Nothing ")" )
-                            )
-                          )
-                          ( IfThenElse Nothing
-                            ( Eq Nothing
-                              ( LiteralString Nothing "Data.Maybe∷Maybe.Nothing" )
-                              ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v$1644" ) ) ) )
-                            )
-                            ( LiteralString Nothing "Nothing" )
-                            ( Exception Nothing "No patterns matched" )
-                          )
-                        )
-                      )
-                    ] :|
-                    [ Let Nothing
-                      ( Standalone
-                        ( Nothing, Name "v1$1746", AppN Nothing
-                          ( Ref Nothing
-                            ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "uncons" ) )
-                          )
-                          ( LiteralString Nothing "aéЯ𝐀z" :| [] )
-                        ) :| []
-                      )
-                      ( IfThenElse Nothing
-                        ( Eq Nothing
-                          ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
-                          ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v1$1746" ) ) ) )
-                        )
-                        ( AppN Nothing
-                          ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Just" ) ) )
-                          ( AppN Nothing
-                            ( AppN Nothing
-                              ( Ref Nothing
-                                ( Imported ( ModuleName "Data.Functor" ) ( Name "arrayMap" ) )
-                              )
-                              ( Ref Nothing
-                                ( Imported
-                                  ( ModuleName "Golden.StringCodePoints.Test" )
-                                  ( Name "fromEnum" )
-                                ) :| []
-                              )
-                            )
-                            ( AppN Nothing
-                              ( Ref Nothing
-                                ( Imported
-                                  ( ModuleName "Data.String.CodePoints" )
-                                  ( Name "toCodePointArray" )
-                                )
-                              )
-                              ( ObjectProp Nothing
-                                ( DataArgumentByIndex Nothing SumType 0
-                                  ( Ref Nothing ( Local ( Name "v1$1746" ) ) )
-                                )
-                                ( PropName "tail" ) :| []
-                              ) :| []
-                            ) :| []
-                          )
-                        )
-                        ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) )
-                      )
-                    ]
-                  )
-                )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
-              ), Standalone
-              ( Nothing, Name "_", AppN Nothing
-                ( AppN Nothing
-                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow$w" ) ) )
-                  ( LiteralObject Nothing
-                    [
-                      ( PropName "show", AbsN Nothing
-                        ( ParamNamed Nothing ( Name "v$1235" ) :| [] )
-                        ( IfThenElse Nothing
-                          ( Ref Nothing ( Local ( Name "v$1235" ) ) )
-                          ( LiteralString Nothing "true" )
-                          ( IfThenElse Nothing
-                            ( Eq Nothing ( LiteralBool Nothing False )
-                              ( Ref Nothing ( Local ( Name "v$1235" ) ) )
-                            )
-                            ( LiteralString Nothing "false" )
-                            ( Exception Nothing "No patterns matched" )
-                          )
-                        )
-                      )
-                    ] :|
-                    [ Eq Nothing
-                      ( AppN Nothing
-                        ( AppN Nothing
-                          ( ObjectProp Nothing
-                            ( Ref Nothing
-                              ( Imported
-                                ( ModuleName "Data.String.CodePoints" )
-                                ( Name "foreign" )
-                              )
-                            )
-                            ( PropName "_fromCodePointArray" )
-                          )
-                          ( Ref Nothing
-                            ( Imported
-                              ( ModuleName "Data.String.CodePoints" )
-                              ( Name "singletonFallback" )
-                            ) :| []
-                          )
-                        )
-                        ( AppN Nothing
-                          ( Ref Nothing
-                            ( Imported
-                              ( ModuleName "Data.String.CodePoints" )
-                              ( Name "toCodePointArray" )
-                            )
-                          )
-                          ( LiteralString Nothing "aéЯ𝐀z" :| [] ) :| []
-                        )
-                      )
-                      ( LiteralString Nothing "aéЯ𝐀z" )
-                    ]
-                  )
-                )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
-              )
-            ]
-          )
-          ( AppN Nothing
-            ( AppN Nothing
-              ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow$w" ) ) )
-              ( Ref Nothing
-                ( Imported ( ModuleName "Golden.StringCodePoints.Test" ) ( Name "showArray" ) ) :|
-                [ AppN Nothing
-                  ( AppN Nothing
-                    ( Ref Nothing ( Imported ( ModuleName "Data.Functor" ) ( Name "arrayMap" ) ) )
-                    ( Ref Nothing
-                      ( Imported
-                        ( ModuleName "Golden.StringCodePoints.Test" )
-                        ( Name "fromEnum" )
-                      ) :| []
-                    )
-                  )
-                  ( AppN Nothing
-                    ( Ref Nothing
-                      ( Imported
-                        ( ModuleName "Data.String.CodePoints" )
-                        ( Name "toCodePointArray" )
-                      )
-                    )
-                    ( AppN Nothing
-                      ( Ref Nothing
-                        ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "singleton" ) )
-                      )
-                      ( AppN Nothing
-                        ( AppN Nothing
-                          ( Ref Nothing
-                            ( Imported ( ModuleName "Partial.Unsafe" ) ( Name "_unsafePartial" ) )
-                          )
-                          ( AbsN Nothing
-                            ( ParamUnused Nothing :| [] )
-                            ( AbsN Nothing
-                              ( ParamNamed Nothing ( Name "v$1759" ) :| [] )
-                              ( IfThenElse Nothing
-                                ( Eq Nothing
-                                  ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
-                                  ( ReflectCtor Nothing
-                                    ( Ref Nothing ( Local ( Name "v$1759" ) ) )
-                                  )
-                                )
-                                ( DataArgumentByIndex Nothing SumType 0
-                                  ( Ref Nothing ( Local ( Name "v$1759" ) ) )
-                                )
-                                ( Exception Nothing "No patterns matched" )
-                              )
-                            ) :| []
-                          )
-                        )
-                        ( AppN Nothing
-                          ( ObjectProp Nothing
-                            ( Ref Nothing
-                              ( Imported
-                                ( ModuleName "Data.String.CodePoints" )
-                                ( Name "boundedEnumCodePoint" )
-                              )
-                            )
-                            ( PropName "toEnum" )
-                          )
-                          ( LiteralInt Nothing 119808 :| [] ) :| []
-                        ) :| []
-                      ) :| []
-                    ) :| []
-                  )
-                ]
-              )
             )
-            ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
           )
         )
       ),

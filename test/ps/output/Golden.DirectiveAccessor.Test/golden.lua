@@ -25,8 +25,9 @@ local Golden_DirectiveAccessor_Test_mkOps = function(n)
   }
 end
 return (function()
-  local _ = Effect_Console_log(Data_Show_showIntImpl(Golden_DirectiveAccessor_Test_ops.mul(6)(7)))()
-  local _ = Effect_Console_log(Data_Show_showIntImpl(Golden_DirectiveAccessor_Test_ops.mul(2)(3)))()
+  local _S_cse348 = Golden_DirectiveAccessor_Test_ops.mul
+  local _ = Effect_Console_log(Data_Show_showIntImpl(_S_cse348(6)(7)))()
+  local _ = Effect_Console_log(Data_Show_showIntImpl(_S_cse348(2)(3)))()
   local _ = Effect_Console_log(Data_Show_showIntImpl(252))()
   return Effect_Console_log(Data_Show_showIntImpl((Golden_DirectiveAccessor_Test_mkOps(2)).mul(3)(4)))()
 end)()

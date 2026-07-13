@@ -89,10 +89,12 @@ M.Golden_TailRecM2Shadow_Test_sumFrom = function(dictMonadRec)
   return function(b)
     return function(n)
       return dictMonadRec.tailRecM(function(o_S_480)
+        local _S_cse510 = o_S_480.a
+        local _S_cse509 = o_S_480.b
         if "Data.Ordering∷Ordering.LT" == (function()
-          if o_S_480.b < n then
+          if _S_cse509 < n then
             return "Data.Ordering∷Ordering.LT"
-          elseif o_S_480.b == n then
+          elseif _S_cse509 == n then
             return "Data.Ordering∷Ordering.EQ"
           else
             return "Data.Ordering∷Ordering.GT"
@@ -101,13 +103,13 @@ M.Golden_TailRecM2Shadow_Test_sumFrom = function(dictMonadRec)
           return pure((function(value0)
             return { "Control.Monad.Rec.Class∷Step.Loop", value0 }
           end)({
-            a = Golden_TailRecM2Shadow_Test_add_S_w(o_S_480.a, o_S_480.b),
-            b = Golden_TailRecM2Shadow_Test_add_S_w(o_S_480.b, 1)
+            a = Golden_TailRecM2Shadow_Test_add_S_w(_S_cse510, _S_cse509),
+            b = Golden_TailRecM2Shadow_Test_add_S_w(_S_cse509, 1)
           }))
         else
           return pure((function(value0)
             return { "Control.Monad.Rec.Class∷Step.Done", value0 }
-          end)(o_S_480.a))
+          end)(_S_cse510))
         end
       end)({ a = b, b = 0 })
     end
@@ -154,10 +156,12 @@ return (function()
     return function(b_S_505)
       return function(n_S_506)
         return dictMonadRec_S_503.tailRecM(function(o_S_507)
+          local _S_cse512 = o_S_507.a
+          local _S_cse511 = o_S_507.b
           if "Data.Ordering∷Ordering.LT" == (function()
-            if o_S_507.b < n_S_506 then
+            if _S_cse511 < n_S_506 then
               return "Data.Ordering∷Ordering.LT"
-            elseif o_S_507.b == n_S_506 then
+            elseif _S_cse511 == n_S_506 then
               return "Data.Ordering∷Ordering.EQ"
             else
               return "Data.Ordering∷Ordering.GT"
@@ -166,13 +170,13 @@ return (function()
             return pure_S_504((function(value0)
               return { "Control.Monad.Rec.Class∷Step.Loop", value0 }
             end)({
-              a = Golden_TailRecM2Shadow_Test_add_S_w(o_S_507.a, o_S_507.b),
-              b = Golden_TailRecM2Shadow_Test_add_S_w(o_S_507.b, 1)
+              a = Golden_TailRecM2Shadow_Test_add_S_w(_S_cse512, _S_cse511),
+              b = Golden_TailRecM2Shadow_Test_add_S_w(_S_cse511, 1)
             }))
           else
             return pure_S_504((function(value0)
               return { "Control.Monad.Rec.Class∷Step.Done", value0 }
-            end)(o_S_507.a))
+            end)(_S_cse512))
           end
         end)({ a = b_S_505, b = 0 })
       end
