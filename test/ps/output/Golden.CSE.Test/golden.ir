@@ -1,0 +1,317 @@
+UberModule
+  { uberModuleBindings =
+    [ Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Semigroup", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Data.Semigroup" ) ".spago/p/prelude/5718c84fdde6247749cb053e816df696c30fe691/src/Data/Semigroup.purs"
+        [ ( Nothing, Name "concatArray" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Semigroup", qnameName = Name "concatArray"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Data.Semigroup" ) ( Name "foreign" ) ) )
+        ( PropName "concatArray" )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Show", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Data.Show" ) ".spago/p/prelude/5718c84fdde6247749cb053e816df696c30fe691/src/Data/Show.purs"
+        [ ( Nothing, Name "showIntImpl" ), ( Nothing, Name "showArrayImpl" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Show", qnameName = Name "showArrayImpl"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
+        ( PropName "showArrayImpl" )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Show", qnameName = Name "showIntImpl"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
+        ( PropName "showIntImpl" )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Functor", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Data.Functor" ) ".spago/p/prelude/5718c84fdde6247749cb053e816df696c30fe691/src/Data/Functor.purs"
+        [ ( Nothing, Name "arrayMap" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Functor", qnameName = Name "arrayMap"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Data.Functor" ) ( Name "foreign" ) ) )
+        ( PropName "arrayMap" )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Effect.Console" ) ".spago/p/console/f82835a0b873aafe6bd7b14dd30cc150553d4ab9/src/Effect/Console.purs"
+        [ ( Nothing, Name "log" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "log"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
+        ( PropName "log" )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.CSE.Test", qnameName = Name "runTwice"
+        }, AbsN ( Just Never )
+        ( ParamNamed Nothing ( Name "r" ) :| [] )
+        ( AbsN Nothing
+          ( ParamNamed Nothing ( Name "x" ) :| [] )
+          ( AppN Nothing
+            ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "r" ) ) ) ( PropName "run" ) )
+            ( AppN Nothing
+              ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "r" ) ) ) ( PropName "run" ) )
+              ( Ref Nothing ( Local ( Name "x" ) ) :| [] ) :| []
+            )
+          )
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.CSE.Test", qnameName = Name "catBoth"
+        }, AbsN ( Just Never )
+        ( ParamNamed Nothing ( Name "f" ) :| [] )
+        ( AppN Nothing
+          ( AppN Nothing
+            ( Ref Nothing ( Imported ( ModuleName "Data.Semigroup" ) ( Name "concatArray" ) ) )
+            ( AppN Nothing
+              ( Ref Nothing ( Local ( Name "f" ) ) )
+              ( LiteralArray Nothing
+                [ LiteralInt Nothing 1, LiteralInt Nothing 2, LiteralInt Nothing 3 ] :| []
+              ) :| []
+            )
+          )
+          ( AppN Nothing
+            ( Ref Nothing ( Local ( Name "f" ) ) )
+            ( LiteralArray Nothing
+              [ LiteralInt Nothing 1, LiteralInt Nothing 2, LiteralInt Nothing 3 ] :| []
+            ) :| []
+          )
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.CSE.Test", qnameName = Name "addToAll"
+        }, AbsN ( Just Never )
+        ( ParamNamed Nothing ( Name "n" ) :| [] )
+        ( AbsN Nothing
+          ( ParamNamed Nothing ( Name "xs" ) :| [] )
+          ( AppN Nothing
+            ( AppN Nothing
+              ( Ref Nothing ( Imported ( ModuleName "Data.Semigroup" ) ( Name "concatArray" ) ) )
+              ( AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Data.Functor" ) ( Name "arrayMap" ) ) )
+                  ( AbsN Nothing
+                    ( ParamNamed Nothing ( Name "i" ) :| [] )
+                    ( PrimBinOp Nothing PrimAdd
+                      ( Ref Nothing ( Local ( Name "i" ) ) )
+                      ( Ref Nothing ( Local ( Name "n" ) ) )
+                    ) :| []
+                  )
+                )
+                ( Ref Nothing ( Local ( Name "xs" ) ) :| [] ) :| []
+              )
+            )
+            ( AppN Nothing
+              ( AppN Nothing
+                ( Ref Nothing ( Imported ( ModuleName "Data.Functor" ) ( Name "arrayMap" ) ) )
+                ( AbsN Nothing
+                  ( ParamNamed Nothing ( Name "i0" ) :| [] )
+                  ( PrimBinOp Nothing PrimAdd
+                    ( Ref Nothing ( Local ( Name "i0" ) ) )
+                    ( Ref Nothing ( Local ( Name "n" ) ) )
+                  ) :| []
+                )
+              )
+              ( Ref Nothing ( Local ( Name "xs" ) ) :| [] ) :| []
+            )
+          )
+        )
+      )
+    ], uberModuleForeigns = [], uberModuleExports =
+    [
+      ( Name "addToAll", Ref Nothing
+        ( Imported ( ModuleName "Golden.CSE.Test" ) ( Name "addToAll" ) )
+      ),
+      ( Name "runTwice", Ref Nothing
+        ( Imported ( ModuleName "Golden.CSE.Test" ) ( Name "runTwice" ) )
+      ),
+      ( Name "catBoth", Ref Nothing
+        ( Imported ( ModuleName "Golden.CSE.Test" ) ( Name "catBoth" ) )
+      ),
+      ( Name "main", AbsN Nothing
+        ( ParamUnused Nothing :| [] )
+        ( Let Nothing
+          ( Standalone
+            ( Nothing, Name "_", AppN Nothing
+              ( AppN Nothing
+                ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+                ( AppN Nothing
+                  ( AppN Nothing
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Data.Show" ) ( Name "showArrayImpl" ) )
+                    )
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) :| []
+                    )
+                  )
+                  ( AppN Nothing
+                    ( AppN Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Golden.CSE.Test" ) ( Name "addToAll" ) )
+                      )
+                      ( LiteralInt Nothing 10 :| [] )
+                    )
+                    ( LiteralArray Nothing
+                      [ LiteralInt Nothing 1, LiteralInt Nothing 2 ] :| []
+                    ) :| []
+                  ) :| []
+                )
+              )
+              ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+            ) :|
+            [ Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+                  ( AppN Nothing
+                    ( AppN Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Data.Show" ) ( Name "showArrayImpl" ) )
+                      )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) :| []
+                      )
+                    )
+                    ( AppN Nothing
+                      ( AppN Nothing
+                        ( Ref Nothing
+                          ( Imported ( ModuleName "Golden.CSE.Test" ) ( Name "addToAll" ) )
+                        )
+                        ( LiteralInt Nothing 20 :| [] )
+                      )
+                      ( LiteralArray Nothing [ LiteralInt Nothing 3 ] :| [] ) :| []
+                    ) :| []
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              ), Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+                  ( AppN Nothing
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
+                    ( AppN Nothing
+                      ( AppN Nothing
+                        ( Ref Nothing
+                          ( Imported ( ModuleName "Golden.CSE.Test" ) ( Name "runTwice" ) )
+                        )
+                        ( LiteralObject Nothing
+                          [
+                            ( PropName "run", AbsN Nothing
+                              ( ParamNamed Nothing ( Name "i$0" ) :| [] )
+                              ( PrimBinOp Nothing PrimMul
+                                ( Ref Nothing ( Local ( Name "i$0" ) ) )
+                                ( LiteralInt Nothing 2 )
+                              )
+                            )
+                          ] :| []
+                        )
+                      )
+                      ( LiteralInt Nothing 3 :| [] ) :| []
+                    ) :| []
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              ), Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+                  ( AppN Nothing
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
+                    ( AppN Nothing
+                      ( AppN Nothing
+                        ( Ref Nothing
+                          ( Imported ( ModuleName "Golden.CSE.Test" ) ( Name "runTwice" ) )
+                        )
+                        ( LiteralObject Nothing
+                          [
+                            ( PropName "run", AbsN Nothing
+                              ( ParamNamed Nothing ( Name "i0$1" ) :| [] )
+                              ( PrimBinOp Nothing PrimSub
+                                ( Ref Nothing ( Local ( Name "i0$1" ) ) )
+                                ( LiteralInt Nothing 1 )
+                              )
+                            )
+                          ] :| []
+                        )
+                      )
+                      ( LiteralInt Nothing 10 :| [] ) :| []
+                    ) :| []
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              ), Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+                  ( AppN Nothing
+                    ( AppN Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Data.Show" ) ( Name "showArrayImpl" ) )
+                      )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) :| []
+                      )
+                    )
+                    ( AppN Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Golden.CSE.Test" ) ( Name "catBoth" ) )
+                      )
+                      ( AppN Nothing
+                        ( Ref Nothing
+                          ( Imported ( ModuleName "Data.Functor" ) ( Name "arrayMap" ) )
+                        )
+                        ( AbsN Nothing
+                          ( ParamNamed Nothing ( Name "v$2" ) :| [] )
+                          ( PrimBinOp Nothing PrimMul
+                            ( Ref Nothing ( Local ( Name "v$2" ) ) )
+                            ( LiteralInt Nothing 3 )
+                          ) :| []
+                        ) :| []
+                      ) :| []
+                    ) :| []
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              )
+            ]
+          )
+          ( AppN Nothing
+            ( AppN Nothing
+              ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+              ( AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showArrayImpl" ) ) )
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) :| []
+                  )
+                )
+                ( AppN Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Golden.CSE.Test" ) ( Name "catBoth" ) ) )
+                  ( AbsN Nothing
+                    ( ParamNamed Nothing ( Name "x$216" ) :| [] )
+                    ( Ref Nothing ( Local ( Name "x$216" ) ) ) :| []
+                  ) :| []
+                ) :| []
+              )
+            )
+            ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+          )
+        )
+      )
+    ]
+  }
