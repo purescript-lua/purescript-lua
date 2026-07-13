@@ -41,8 +41,6 @@ return {
         return 3
       elseif "Golden.PatternMatching.Test2∷N.Add" == _S_cse2[1] then
         return 4
-      elseif "Golden.PatternMatching.Test2∷N.Zero" == _S_cse2[1] then
-        return 5
       else
         return 6
       end

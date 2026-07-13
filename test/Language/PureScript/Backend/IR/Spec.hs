@@ -558,11 +558,9 @@ spec = describe "IR representation" do
         case 'x', 'y' of         if 'a' == 'x' then
           'a', 'b' -> 1    ==>     if 'b' == 'y' then
           'e',  _  -> 0              1
-                                   else
-                                     if 'e' == 'x' then
-                                      0
-                                     else
-                                      exception "no patterns matched"
+                                   else -- 'e' == 'x' is excluded by
+                                        -- the positive 'a' == 'x'
+                                     exception "no patterns matched"
                                  else
                                    if 'e' == 'x' then
                                      0
@@ -593,11 +591,7 @@ spec = describe "IR representation" do
                     ( ifThenElse
                         (literalChar 'b' `eq` literalChar 'y')
                         (literalInt 1)
-                        ( ifThenElse
-                            (literalChar 'e' `eq` literalChar 'x')
-                            (literalInt 0)
-                            (exception "No patterns matched")
-                        )
+                        (exception "No patterns matched")
                     )
                     ( ifThenElse
                         (literalChar 'e' `eq` literalChar 'x')

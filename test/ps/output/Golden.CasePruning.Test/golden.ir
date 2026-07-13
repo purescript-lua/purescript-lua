@@ -1,0 +1,470 @@
+UberModule
+  { uberModuleBindings =
+    [ Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Show", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Data.Show" ) ".spago/p/prelude/5718c84fdde6247749cb053e816df696c30fe691/src/Data/Show.purs"
+        [ ( Nothing, Name "showIntImpl" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Show", qnameName = Name "showIntImpl"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
+        ( PropName "showIntImpl" )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Effect.Console" ) ".spago/p/console/f82835a0b873aafe6bd7b14dd30cc150553d4ab9/src/Effect/Console.purs"
+        [ ( Nothing, Name "log" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "log"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
+        ( PropName "log" )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.CasePruning.Test", qnameName = Name "A"
+        }, Ctor Nothing SumType
+        ( ModuleName "Golden.CasePruning.Test" )
+        ( TyName "T" )
+        ( CtorName "A" ) []
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.CasePruning.Test", qnameName = Name "B"
+        }, Ctor Nothing SumType
+        ( ModuleName "Golden.CasePruning.Test" )
+        ( TyName "T" )
+        ( CtorName "B" ) []
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.CasePruning.Test", qnameName = Name "C"
+        }, Ctor Nothing SumType
+        ( ModuleName "Golden.CasePruning.Test" )
+        ( TyName "T" )
+        ( CtorName "C" ) []
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.CasePruning.Test", qnameName = Name "literalRetest"
+        }, AbsN ( Just Never )
+        ( ParamNamed Nothing ( Name "v" ) :| [] )
+        ( AbsN Nothing
+          ( ParamNamed Nothing ( Name "v1" ) :| [] )
+          ( IfThenElse Nothing
+            ( Eq Nothing ( LiteralInt Nothing 0 ) ( Ref Nothing ( Local ( Name "v" ) ) ) )
+            ( IfThenElse Nothing
+              ( Eq Nothing ( LiteralString Nothing "" ) ( Ref Nothing ( Local ( Name "v1" ) ) ) )
+              ( LiteralInt Nothing 1 )
+              ( LiteralInt Nothing 2 )
+            )
+            ( LiteralInt Nothing 3 )
+          )
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.CasePruning.Test", qnameName = Name "literalNegatives"
+        }, AbsN ( Just Never )
+        ( ParamNamed Nothing ( Name "v" ) :| [] )
+        ( AbsN Nothing
+          ( ParamNamed Nothing ( Name "v1" ) :| [] )
+          ( IfThenElse Nothing
+            ( Eq Nothing ( LiteralInt Nothing 1 ) ( Ref Nothing ( Local ( Name "v" ) ) ) )
+            ( IfThenElse Nothing
+              ( Eq Nothing ( LiteralInt Nothing 1 ) ( Ref Nothing ( Local ( Name "v1" ) ) ) )
+              ( LiteralInt Nothing 1 )
+              ( IfThenElse Nothing
+                ( Eq Nothing ( LiteralInt Nothing 2 ) ( Ref Nothing ( Local ( Name "v1" ) ) ) )
+                ( LiteralInt Nothing 3 )
+                ( LiteralInt Nothing 4 )
+              )
+            )
+            ( IfThenElse Nothing
+              ( Eq Nothing ( LiteralInt Nothing 2 ) ( Ref Nothing ( Local ( Name "v" ) ) ) )
+              ( IfThenElse Nothing
+                ( Eq Nothing ( LiteralInt Nothing 2 ) ( Ref Nothing ( Local ( Name "v1" ) ) ) )
+                ( LiteralInt Nothing 2 )
+                ( LiteralInt Nothing 4 )
+              )
+              ( LiteralInt Nothing 4 )
+            )
+          )
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.CasePruning.Test", qnameName = Name "ctorRetest"
+        }, AbsN ( Just Never )
+        ( ParamNamed Nothing ( Name "v" ) :| [] )
+        ( AbsN Nothing
+          ( ParamNamed Nothing ( Name "v1" ) :| [] )
+          ( Let Nothing
+            ( Standalone
+              ( Nothing, Name "$cse223", ReflectCtor Nothing
+                ( Ref Nothing ( Local ( Name "v1" ) ) )
+              ) :| []
+            )
+            ( Let Nothing
+              ( Standalone
+                ( Nothing, Name "$cse222", ReflectCtor Nothing
+                  ( Ref Nothing ( Local ( Name "v" ) ) )
+                ) :| []
+              )
+              ( IfThenElse Nothing
+                ( Eq Nothing
+                  ( LiteralString Nothing "Golden.CasePruning.Test∷T.A" )
+                  ( Ref Nothing ( Local ( Name "$cse222" ) ) )
+                )
+                ( IfThenElse Nothing
+                  ( Eq Nothing
+                    ( LiteralString Nothing "Golden.CasePruning.Test∷T.A" )
+                    ( Ref Nothing ( Local ( Name "$cse223" ) ) )
+                  )
+                  ( LiteralInt Nothing 1 )
+                  ( IfThenElse Nothing
+                    ( Eq Nothing
+                      ( LiteralString Nothing "Golden.CasePruning.Test∷T.B" )
+                      ( Ref Nothing ( Local ( Name "$cse223" ) ) )
+                    )
+                    ( LiteralInt Nothing 3 )
+                    ( LiteralInt Nothing 4 )
+                  )
+                )
+                ( IfThenElse Nothing
+                  ( Eq Nothing
+                    ( LiteralString Nothing "Golden.CasePruning.Test∷T.B" )
+                    ( Ref Nothing ( Local ( Name "$cse222" ) ) )
+                  )
+                  ( IfThenElse Nothing
+                    ( Eq Nothing
+                      ( LiteralString Nothing "Golden.CasePruning.Test∷T.B" )
+                      ( Ref Nothing ( Local ( Name "$cse223" ) ) )
+                    )
+                    ( LiteralInt Nothing 2 )
+                    ( LiteralInt Nothing 4 )
+                  )
+                  ( LiteralInt Nothing 4 )
+                )
+              )
+            )
+          )
+        )
+      )
+    ], uberModuleForeigns = [], uberModuleExports =
+    [
+      ( Name "literalRetest", Ref Nothing
+        ( Imported ( ModuleName "Golden.CasePruning.Test" ) ( Name "literalRetest" ) )
+      ),
+      ( Name "A", Ref Nothing ( Imported ( ModuleName "Golden.CasePruning.Test" ) ( Name "A" ) ) ),
+      ( Name "B", Ref Nothing ( Imported ( ModuleName "Golden.CasePruning.Test" ) ( Name "B" ) ) ),
+      ( Name "C", Ref Nothing ( Imported ( ModuleName "Golden.CasePruning.Test" ) ( Name "C" ) ) ),
+      ( Name "ctorRetest", Ref Nothing
+        ( Imported ( ModuleName "Golden.CasePruning.Test" ) ( Name "ctorRetest" ) )
+      ),
+      ( Name "literalNegatives", Ref Nothing
+        ( Imported ( ModuleName "Golden.CasePruning.Test" ) ( Name "literalNegatives" ) )
+      ),
+      ( Name "main", AbsN Nothing
+        ( ParamUnused Nothing :| [] )
+        ( Let Nothing
+          ( Standalone
+            ( Nothing, Name "_", AppN Nothing
+              ( AppN Nothing
+                ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+                ( AppN Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
+                  ( AppN Nothing
+                    ( AppN Nothing
+                      ( Ref Nothing
+                        ( Imported
+                          ( ModuleName "Golden.CasePruning.Test" )
+                          ( Name "literalRetest" )
+                        )
+                      )
+                      ( LiteralInt Nothing 0 :| [] )
+                    )
+                    ( LiteralString Nothing "" :| [] ) :| []
+                  ) :| []
+                )
+              )
+              ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+            ) :|
+            [ Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+                  ( AppN Nothing
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
+                    ( AppN Nothing
+                      ( AppN Nothing
+                        ( Ref Nothing
+                          ( Imported
+                            ( ModuleName "Golden.CasePruning.Test" )
+                            ( Name "literalRetest" )
+                          )
+                        )
+                        ( LiteralInt Nothing 0 :| [] )
+                      )
+                      ( LiteralString Nothing "x" :| [] ) :| []
+                    ) :| []
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              ), Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+                  ( AppN Nothing
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
+                    ( AppN Nothing
+                      ( AppN Nothing
+                        ( Ref Nothing
+                          ( Imported
+                            ( ModuleName "Golden.CasePruning.Test" )
+                            ( Name "literalRetest" )
+                          )
+                        )
+                        ( LiteralInt Nothing 5 :| [] )
+                      )
+                      ( LiteralString Nothing "" :| [] ) :| []
+                    ) :| []
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              ), Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+                  ( AppN Nothing
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
+                    ( AppN Nothing
+                      ( AppN Nothing
+                        ( Ref Nothing
+                          ( Imported
+                            ( ModuleName "Golden.CasePruning.Test" )
+                            ( Name "ctorRetest" )
+                          )
+                        )
+                        ( Ref Nothing
+                          ( Imported ( ModuleName "Golden.CasePruning.Test" ) ( Name "A" ) ) :| []
+                        )
+                      )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Golden.CasePruning.Test" ) ( Name "A" ) ) :| []
+                      ) :| []
+                    ) :| []
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              ), Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+                  ( AppN Nothing
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
+                    ( AppN Nothing
+                      ( AppN Nothing
+                        ( Ref Nothing
+                          ( Imported
+                            ( ModuleName "Golden.CasePruning.Test" )
+                            ( Name "ctorRetest" )
+                          )
+                        )
+                        ( Ref Nothing
+                          ( Imported ( ModuleName "Golden.CasePruning.Test" ) ( Name "B" ) ) :| []
+                        )
+                      )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Golden.CasePruning.Test" ) ( Name "B" ) ) :| []
+                      ) :| []
+                    ) :| []
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              ), Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+                  ( AppN Nothing
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
+                    ( AppN Nothing
+                      ( AppN Nothing
+                        ( Ref Nothing
+                          ( Imported
+                            ( ModuleName "Golden.CasePruning.Test" )
+                            ( Name "ctorRetest" )
+                          )
+                        )
+                        ( Ref Nothing
+                          ( Imported ( ModuleName "Golden.CasePruning.Test" ) ( Name "A" ) ) :| []
+                        )
+                      )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Golden.CasePruning.Test" ) ( Name "B" ) ) :| []
+                      ) :| []
+                    ) :| []
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              ), Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+                  ( AppN Nothing
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
+                    ( AppN Nothing
+                      ( AppN Nothing
+                        ( Ref Nothing
+                          ( Imported
+                            ( ModuleName "Golden.CasePruning.Test" )
+                            ( Name "ctorRetest" )
+                          )
+                        )
+                        ( Ref Nothing
+                          ( Imported ( ModuleName "Golden.CasePruning.Test" ) ( Name "A" ) ) :| []
+                        )
+                      )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Golden.CasePruning.Test" ) ( Name "C" ) ) :| []
+                      ) :| []
+                    ) :| []
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              ), Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+                  ( AppN Nothing
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
+                    ( AppN Nothing
+                      ( AppN Nothing
+                        ( Ref Nothing
+                          ( Imported
+                            ( ModuleName "Golden.CasePruning.Test" )
+                            ( Name "ctorRetest" )
+                          )
+                        )
+                        ( Ref Nothing
+                          ( Imported ( ModuleName "Golden.CasePruning.Test" ) ( Name "C" ) ) :| []
+                        )
+                      )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Golden.CasePruning.Test" ) ( Name "C" ) ) :| []
+                      ) :| []
+                    ) :| []
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              ), Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+                  ( AppN Nothing
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
+                    ( AppN Nothing
+                      ( AppN Nothing
+                        ( Ref Nothing
+                          ( Imported
+                            ( ModuleName "Golden.CasePruning.Test" )
+                            ( Name "literalNegatives" )
+                          )
+                        )
+                        ( LiteralInt Nothing 1 :| [] )
+                      )
+                      ( LiteralInt Nothing 1 :| [] ) :| []
+                    ) :| []
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              ), Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+                  ( AppN Nothing
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
+                    ( AppN Nothing
+                      ( AppN Nothing
+                        ( Ref Nothing
+                          ( Imported
+                            ( ModuleName "Golden.CasePruning.Test" )
+                            ( Name "literalNegatives" )
+                          )
+                        )
+                        ( LiteralInt Nothing 2 :| [] )
+                      )
+                      ( LiteralInt Nothing 2 :| [] ) :| []
+                    ) :| []
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              ), Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+                  ( AppN Nothing
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
+                    ( AppN Nothing
+                      ( AppN Nothing
+                        ( Ref Nothing
+                          ( Imported
+                            ( ModuleName "Golden.CasePruning.Test" )
+                            ( Name "literalNegatives" )
+                          )
+                        )
+                        ( LiteralInt Nothing 1 :| [] )
+                      )
+                      ( LiteralInt Nothing 2 :| [] ) :| []
+                    ) :| []
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              ), Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+                  ( AppN Nothing
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
+                    ( AppN Nothing
+                      ( AppN Nothing
+                        ( Ref Nothing
+                          ( Imported
+                            ( ModuleName "Golden.CasePruning.Test" )
+                            ( Name "literalNegatives" )
+                          )
+                        )
+                        ( LiteralInt Nothing 1 :| [] )
+                      )
+                      ( LiteralInt Nothing 3 :| [] ) :| []
+                    ) :| []
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              )
+            ]
+          )
+          ( AppN Nothing
+            ( AppN Nothing
+              ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+              ( AppN Nothing
+                ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
+                ( AppN Nothing
+                  ( AppN Nothing
+                    ( Ref Nothing
+                      ( Imported
+                        ( ModuleName "Golden.CasePruning.Test" )
+                        ( Name "literalNegatives" )
+                      )
+                    )
+                    ( LiteralInt Nothing 3 :| [] )
+                  )
+                  ( LiteralInt Nothing 3 :| [] ) :| []
+                ) :| []
+              )
+            )
+            ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+          )
+        )
+      )
+    ]
+  }

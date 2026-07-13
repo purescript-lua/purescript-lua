@@ -113,14 +113,7 @@ UberModule
                       ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "$cse2" ) ) ) )
                     )
                     ( LiteralInt Nothing 4 )
-                    ( IfThenElse Nothing
-                      ( Eq Nothing
-                        ( LiteralString Nothing "Golden.PatternMatching.Test2∷N.Zero" )
-                        ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "$cse2" ) ) ) )
-                      )
-                      ( LiteralInt Nothing 5 )
-                      ( LiteralInt Nothing 6 )
-                    )
+                    ( LiteralInt Nothing 6 )
                   )
                 )
               )
