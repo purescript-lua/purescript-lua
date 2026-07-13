@@ -14,6 +14,7 @@ import Data.Set qualified as Set
 import Data.Tagged (Tagged (Tagged))
 import Data.Text qualified as Text
 import Data.Traversable (for)
+import Language.PureScript.Backend.IR.EffectNames (canonicalizeEffectApp)
 import Language.PureScript.Backend.IR.Inliner (Annotation)
 import Language.PureScript.Backend.IR.Inliner qualified as Inliner
 import Language.PureScript.Backend.IR.Names
@@ -458,7 +459,13 @@ mkApplication ∷ CfnExp → CfnExp → RepM Exp
 mkApplication e1 e2 =
   if isNewtype (Cfn.extractAnn e1)
     then makeExpr e2
-    else application <$> makeExpr e1 <*> makeExpr e2
+    else canonicalize <$> (application <$> makeExpr e1 <*> makeExpr e2)
+ where
+  -- Tier 1 of Note [Canonical Effect/ST heads]: applications build
+  -- bottom-up, so a nested dictionary pair canonicalizes at its
+  -- innermost application and the enclosing builds compose.
+  canonicalize ∷ Exp → Exp
+  canonicalize expr = fromMaybe expr (canonicalizeEffectApp expr)
 
 mkQualifiedIdent ∷ PS.Qualified PS.Ident → RepM (Qualified Name)
 mkQualifiedIdent (PS.Qualified by ident) =

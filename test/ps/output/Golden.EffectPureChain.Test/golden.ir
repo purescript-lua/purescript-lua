@@ -1,0 +1,207 @@
+UberModule
+  { uberModuleBindings =
+    [ Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Show", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Data.Show" ) ".spago/p/prelude/5718c84fdde6247749cb053e816df696c30fe691/src/Data/Show.purs"
+        [ ( Nothing, Name "showIntImpl" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Show", qnameName = Name "showIntImpl"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
+        ( PropName "showIntImpl" )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Effect.Console" ) ".spago/p/console/f82835a0b873aafe6bd7b14dd30cc150553d4ab9/src/Effect/Console.purs"
+        [ ( Nothing, Name "log" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "log"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
+        ( PropName "log" )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.EffectPureChain.Test", qnameName = Name "append$w"
+        }, AbsN Nothing
+        ( ParamNamed Nothing
+          ( Name "s1$192$212" ) :|
+          [ ParamNamed Nothing ( Name "s2$193$213" ) ]
+        )
+        ( PrimBinOp Nothing PrimConcat
+          ( Ref Nothing ( Local ( Name "s1$192$212" ) ) )
+          ( Ref Nothing ( Local ( Name "s2$193$213" ) ) )
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.EffectPureChain.Test", qnameName = Name "show"
+        }, Ref Nothing
+        ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.EffectPureChain.Test", qnameName = Name "count"
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "n" ) :| [] )
+        ( AbsN Nothing
+          ( ParamUnused Nothing :| [] )
+          ( Let Nothing
+            ( Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+                  ( AppN Nothing
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Golden.EffectPureChain.Test" ) ( Name "append$w" ) )
+                    )
+                    ( LiteralString Nothing "counting from " :|
+                      [ AppN Nothing
+                        ( Ref Nothing
+                          ( Imported ( ModuleName "Golden.EffectPureChain.Test" ) ( Name "show" ) )
+                        )
+                        ( Ref Nothing ( Local ( Name "n" ) ) :| [] )
+                      ]
+                    ) :| []
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              ) :|
+              [ Standalone
+                ( Nothing, Name "x", PrimBinOp Nothing PrimAdd
+                  ( Ref Nothing ( Local ( Name "n" ) ) )
+                  ( LiteralInt Nothing 1 )
+                ), Standalone
+                ( Nothing, Name "_", AppN Nothing
+                  ( AppN Nothing
+                    ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+                    ( AppN Nothing
+                      ( Ref Nothing
+                        ( Imported
+                          ( ModuleName "Golden.EffectPureChain.Test" )
+                          ( Name "append$w" )
+                        )
+                      )
+                      ( LiteralString Nothing "got " :|
+                        [ AppN Nothing
+                          ( Ref Nothing
+                            ( Imported
+                              ( ModuleName "Golden.EffectPureChain.Test" )
+                              ( Name "show" )
+                            )
+                          )
+                          ( Ref Nothing ( Local ( Name "x" ) ) :| [] )
+                        ]
+                      ) :| []
+                    )
+                  )
+                  ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+                )
+              ]
+            )
+            ( PrimBinOp Nothing PrimAdd
+              ( Ref Nothing ( Local ( Name "x" ) ) )
+              ( PrimBinOp Nothing PrimMul
+                ( Ref Nothing ( Local ( Name "x" ) ) )
+                ( LiteralInt Nothing 2 )
+              )
+            )
+          )
+        )
+      )
+    ], uberModuleForeigns = [], uberModuleExports =
+    [
+      ( Name "count", Ref Nothing
+        ( Imported ( ModuleName "Golden.EffectPureChain.Test" ) ( Name "count" ) )
+      ),
+      ( Name "main", AbsN Nothing
+        ( ParamUnused Nothing :| [] )
+        ( Let Nothing
+          ( Standalone
+            ( Nothing, Name "total$0", AppN Nothing
+              ( AbsN Nothing
+                ( ParamUnused Nothing :| [] )
+                ( Let Nothing
+                  ( Standalone
+                    ( Nothing, Name "_", AppN Nothing
+                      ( AppN Nothing
+                        ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+                        ( AppN Nothing
+                          ( Ref Nothing
+                            ( Imported
+                              ( ModuleName "Golden.EffectPureChain.Test" )
+                              ( Name "append$w" )
+                            )
+                          )
+                          ( LiteralString Nothing "counting from " :|
+                            [ AppN Nothing
+                              ( Ref Nothing
+                                ( Imported
+                                  ( ModuleName "Golden.EffectPureChain.Test" )
+                                  ( Name "show" )
+                                )
+                              )
+                              ( LiteralInt Nothing 20 :| [] )
+                            ]
+                          ) :| []
+                        )
+                      )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
+                    ) :|
+                    [ Standalone
+                      ( Nothing, Name "x$222", LiteralInt Nothing 21 ), Standalone
+                      ( Nothing, Name "_", AppN Nothing
+                        ( AppN Nothing
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) )
+                          )
+                          ( AppN Nothing
+                            ( Ref Nothing
+                              ( Imported
+                                ( ModuleName "Golden.EffectPureChain.Test" )
+                                ( Name "append$w" )
+                              )
+                            )
+                            ( LiteralString Nothing "got " :|
+                              [ AppN Nothing
+                                ( Ref Nothing
+                                  ( Imported
+                                    ( ModuleName "Golden.EffectPureChain.Test" )
+                                    ( Name "show" )
+                                  )
+                                )
+                                ( Ref Nothing ( Local ( Name "x$222" ) ) :| [] )
+                              ]
+                            ) :| []
+                          )
+                        )
+                        ( Ref Nothing
+                          ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                        )
+                      )
+                    ]
+                  )
+                  ( LiteralInt Nothing 63 )
+                )
+              )
+              ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+            ) :| []
+          )
+          ( AppN Nothing
+            ( AppN Nothing
+              ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+              ( AppN Nothing
+                ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
+                ( Ref Nothing ( Local ( Name "total$0" ) ) :| [] ) :| []
+              )
+            )
+            ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+          )
+        )
+      )
+    ]
+  }

@@ -78,6 +78,7 @@ import Language.PureScript.Backend.IR.Types
   , refLocal
   , reflectCtor
   , setAnn
+  , pattern EffectRunArg
   )
 import Language.PureScript.Backend.IR.Uniquify (uniquifyNamesInExpr)
 import Test.Hspec
@@ -176,6 +177,64 @@ spec = describe "IR Optimizer" do
       let original =
             application (abstraction (paramNamed x) (literalInt 7)) nonTrivial
       optimizedExpression original `shouldBe` literalInt 7
+
+  -- The optimizer half of the Effect/ST canonicalization (see
+  -- Note [Canonical Effect/ST heads]): a dictionary reference that is
+  -- Local inside its defining module at translation time only becomes
+  -- Imported once the linker requalifies it, so the same rewrite runs
+  -- as an optimizer rule too.
+  describe "canonicalizes linker-requalified Effect/ST heads" do
+    let cb = moduleNameFromString "Control.Bind"
+        eff = moduleNameFromString "Effect"
+        cmsi = moduleNameFromString "Control.Monad.ST.Internal"
+        bind = refImported cb (Name "bind")
+        discard = refImported cb (Name "discard")
+        discardUnit = refImported cb (Name "discardUnit")
+        purE =
+          refImported (moduleNameFromString "Control.Applicative") (Name "pure")
+        effBindE = refImported eff (Name "bindE")
+
+    it "rewrites a bind·dictionary pair exposed after linking" do
+      optimizedExpression (application bind (refImported eff (Name "bindEffect")))
+        `shouldBe` effBindE
+
+    it "rewrites the discard·discardUnit·dictionary triple" do
+      optimizedExpression
+        ( application
+            (application discard discardUnit)
+            (refImported cmsi (Name "bindST"))
+        )
+        `shouldBe` refImported cmsi (Name "bind_")
+
+    it "rewrites a pure·dictionary pair" do
+      optimizedExpression
+        (application purE (refImported cmsi (Name "applicativeST")))
+        `shouldBe` refImported cmsi (Name "pure_")
+
+    it "is idempotent" do
+      optimizedExpression effBindE `shouldBe` effBindE
+
+    it "leaves a non-Effect dictionary alone" do
+      let original =
+            application
+              bind
+              (refImported (moduleNameFromString "Data.Maybe") (Name "bindMaybe"))
+      optimizedExpression original `shouldBe` original
+
+  -- A magic-do effect run (@m $magicDoRun@, see 'isEffectRun') bound by a
+  -- Let statement is kept by dead-code elimination even when its binder
+  -- is unreferenced, so pasting its RHS into the body leaves two copies —
+  -- the surviving statement and the pasted one — and the effect executes
+  -- twice.
+  describe "local inlining leaves magic-do effect runs in place" do
+    it "declines to inline a use-once effect-run binding" do
+      let m = moduleNameFromString "M"
+          x = Name "x"
+          runAct =
+            application (refImported m (Name "act")) (EffectRunArg noAnn)
+          body = application (refImported m (Name "consume")) (refLocal x)
+          original = let1 x runAct body
+      optimizedExpression original `shouldBe` original
 
   -- The n-ary redex — one call binding every parameter of a literal
   -- 'AbsN' (Note [n-ary abstraction]). Reduces only at exact arity;

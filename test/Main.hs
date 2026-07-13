@@ -6,6 +6,7 @@ import Language.PureScript.Backend.IR.FloatIn.Spec qualified as FloatIn
 import Language.PureScript.Backend.IR.Inliner.Spec qualified as Inliner
 import Language.PureScript.Backend.IR.Linker.Spec qualified as IRLinker
 import Language.PureScript.Backend.IR.Linter.Spec qualified as IRLinter
+import Language.PureScript.Backend.IR.MagicDo.Spec qualified as MagicDo
 import Language.PureScript.Backend.IR.Optimizer.Spec qualified as IROptimizer
 import Language.PureScript.Backend.IR.Pass.Spec qualified as IRPass
 import Language.PureScript.Backend.IR.Spec qualified as IR
@@ -38,6 +39,7 @@ main = hspec do
   Types.spec
   IRLinker.spec
   IRLinter.spec
+  MagicDo.spec
   IROptimizer.spec
   IRPass.spec
   IRUncurry.spec

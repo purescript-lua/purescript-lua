@@ -28,10 +28,10 @@ UberModule
       ( QName
         { qnameModuleName = ModuleName "Golden.FieldCaching.Test", qnameName = Name "sub$w"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "x$188$219" ) :| [ ParamNamed Nothing ( Name "y$189$220" ) ] )
+        ( ParamNamed Nothing ( Name "x$185$214" ) :| [ ParamNamed Nothing ( Name "y$186$215" ) ] )
         ( PrimBinOp Nothing PrimSub
-          ( Ref Nothing ( Local ( Name "x$188$219" ) ) )
-          ( Ref Nothing ( Local ( Name "y$189$220" ) ) )
+          ( Ref Nothing ( Local ( Name "x$185$214" ) ) )
+          ( Ref Nothing ( Local ( Name "y$186$215" ) ) )
         )
       ), Standalone
       ( QName
@@ -327,7 +327,7 @@ UberModule
                     ( Imported ( ModuleName "Golden.FieldCaching.Test" ) ( Name "apply2" ) )
                   )
                   ( AbsN Nothing
-                    ( ParamNamed Nothing ( Name "y$263" ) :| [] )
+                    ( ParamNamed Nothing ( Name "y$254" ) :| [] )
                     ( PrimBinOp Nothing PrimAdd
                       ( AppN Nothing
                         ( Ref Nothing
@@ -339,7 +339,7 @@ UberModule
                         ( Ref Nothing
                           ( Imported ( ModuleName "Golden.FieldCaching.Test" ) ( Name "weigh" ) )
                         )
-                        ( Ref Nothing ( Local ( Name "y$263" ) ) :| [] )
+                        ( Ref Nothing ( Local ( Name "y$254" ) ) :| [] )
                       )
                     ) :| []
                   ) :| []

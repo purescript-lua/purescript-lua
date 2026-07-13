@@ -10,6 +10,7 @@ import Data.Set qualified as Set
 import Data.Text qualified as Text
 import GHC.Generics (Generically (..))
 import Language.PureScript.Backend.IR.DCE (eliminateDeadCode)
+import Language.PureScript.Backend.IR.EffectNames (canonicalizeEffectApp)
 import Language.PureScript.Backend.IR.FlattenDeepBinds (flattenDeepBindsM)
 import Language.PureScript.Backend.IR.FloatIn (floatIn)
 import Language.PureScript.Backend.IR.Inliner (Annotation (..))
@@ -129,10 +130,13 @@ optimizerPipeline policy =
     -- (which see the final placement of every Let). See
     -- Language.PureScript.Backend.IR.FloatIn.
     RunPass floatInPass
-  , -- Magic-do is the final lowering (issue #46): it relies on the unique
-    -- naming established by 'uniquifyNames' and preserves it, and must run
-    -- after dead-code elimination so the statements it introduces for
-    -- `discard` are not dropped as dead. See
+  , -- Magic-do (issue #46) recognises Effect/ST chains by their canonical
+    -- heads (Note [Canonical Effect/ST heads]) and relies on the unique
+    -- naming established by 'uniquifyNames', which it preserves. It runs
+    -- after the optimize fixpoints so dissolution has exposed the
+    -- canonical heads at the use sites; the `local _ =` statements it
+    -- introduces for `discard` are effect runs, which the passes that
+    -- follow leave alone (see 'isEffectRun'). See
     -- Language.PureScript.Backend.IR.MagicDo.
     RunPass magicDoPass
   , -- Budgeted call-site inlining of dictionary methods (issue #180), the
@@ -168,8 +172,12 @@ optimizerPipeline policy =
       , passRequires = wellScoped
       , passEnsures = guc
       }
-  -- The pre-magicDo optimize pass does no call-site inlining: an inlined
-  -- Effect/ST @bind@ is one magicDo can no longer recognise (issue #180).
+  -- The pre-magicDo optimize pass does no call-site inlining (issue
+  -- #180). MagicDo's name-keyed recognition (issue #182) does not
+  -- depend on it — the canonical heads are foreigns no call-site paste
+  -- can dismantle — so the skip is conservative caution against
+  -- reshaping the chains before they are lowered; flipping it is
+  -- follow-up work.
   optimizePass =
     Pass
       { passName = "optimize"
@@ -206,13 +214,7 @@ optimizerPipeline policy =
   floatInPass = gucPass "float-in" floatIn
   shareAccessorsPass =
     gucPass "share-accessors" (shareForeignAccessors policy)
-  magicDoPass =
-    Pass
-      { passName = "magicDo"
-      , passRun = conservatively . magicDo
-      , passRequires = guc
-      , passEnsures = guc
-      }
+  magicDoPass = gucPass "magicDo" magicDo
   flattenDeepBindsPass =
     Pass
       { passName = "flattenDeepBinds"
@@ -496,8 +498,8 @@ optimizeModule inlining policy UberModule {..} = runWriterT do
   -- the pristine input bindings, a stable snapshot for this run; the
   -- specialize+dce fixpoint rebuilds it each round as bindings settle. Empty
   -- when call-site inlining is off, so the two inline rules never fire — the
-  -- pre-magicDo runs, where inlining an Effect/ST @bind@ would rob magicDo of
-  -- the un-inlined chain it recognises (see 'optimizerPipeline').
+  -- pre-magicDo runs, which keep the Effect/ST chains unreshaped until
+  -- magicDo lowers them (see 'optimizerPipeline').
   inlineEnv ∷ InlineEnv
   inlineEnv = case inlining of
     SkipCallSites → mempty
@@ -745,7 +747,8 @@ optimizedExpressionM
 optimizedExpressionM policy env =
   -- See Note [Eta reduction is unsound]
   rewriteExpBottomUpM
-    ( constantFolding
+    ( canonicalizeEffectHead
+        `thenRewrite` constantFolding
         `thenRewrite` reduceObjectProp
         `thenRewrite` sinkProjectionIntoLet
         `thenRewrite` reduceKnownConstructor
@@ -762,6 +765,16 @@ optimizedExpressionM policy env =
         `thenRewrite` reduceBooleanIf
         `thenRewrite` inlineLocalBindings
     )
+
+{- | Tier 2 of Note [Canonical Effect/ST heads]: rewrite an Effect/ST
+dictionary application into a reference to the real foreign method. The
+translation tier cannot see a dictionary reference that is 'Local'
+inside its defining module — it only becomes 'Imported' once the
+linker requalifies it — and alias dissolution can expose further pairs
+mid-pipeline. Strictly shrinking (two nodes to one), so fixpoint-safe.
+-}
+canonicalizeEffectHead ∷ Applicative m ⇒ RewriteRuleM m Ann
+canonicalizeEffectHead = pure . canonicalizeEffectApp
 
 {- Note [IR is assumed well-typed]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1675,6 +1688,11 @@ inlineLocalBinding rhsRefCounts grouping (body, inlined) =
     Standalone (_ann, Local → name, inlinee)
       | occurrences > 0
       , countFreeRef name inlinee == 0 -- no self-reference, see above
+      , -- A magic-do effect run must stay a statement: dead-code
+        -- elimination keeps the binding even when the paste leaves it
+        -- unreferenced (see 'isEffectRun'), so a pasted copy would be a
+        -- second execution of the effect, not a relocation.
+        not (isEffectRun inlinee)
       , -- See Note [Beta reduction and local inlining share an inlining guard].
         -- A non-trivial inlinee a sibling grouping's RHS also references must
         -- not be inlined: substitution reaches only the body, so the sibling

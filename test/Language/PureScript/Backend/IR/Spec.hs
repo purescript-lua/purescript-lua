@@ -19,6 +19,7 @@ import Language.PureScript.Backend.IR.Inliner
 import Language.PureScript.Backend.IR.Inliner qualified as Inliner
 import Language.PureScript.Backend.IR.Names
   ( CtorName (..)
+  , ModuleName (..)
   , Name (..)
   , PropName (..)
   , TyName (..)
@@ -191,6 +192,77 @@ spec = describe "IR representation" do
     it "rejects an accessor directive on a foreign binding" do
       translate mempty ["@inline ffi.method never"] [] [PS.Ident "ffi"]
         `shouldFailWith` "foreign"
+
+  -- See Note [Canonical Effect/ST heads]
+  describe "canonicalizes Effect/ST dictionary applications" do
+    let bind = cfnFrom "Control.Bind" "bind"
+        discard = cfnFrom "Control.Bind" "discard"
+        discardUnit = cfnFrom "Control.Bind" "discardUnit"
+        purE = cfnFrom "Control.Applicative" "pure"
+        bindEffect = cfnFrom "Effect" "bindEffect"
+        applicativeEffect = cfnFrom "Effect" "applicativeEffect"
+        bindST = cfnFrom "Control.Monad.ST.Internal" "bindST"
+        applicativeST = cfnFrom "Control.Monad.ST.Internal" "applicativeST"
+        effBindE = refImported (ModuleName "Effect") (Name "bindE")
+        effPureE = refImported (ModuleName "Effect") (Name "pureE")
+        stBind_ =
+          refImported (ModuleName "Control.Monad.ST.Internal") (Name "bind_")
+        stPure_ =
+          refImported (ModuleName "Control.Monad.ST.Internal") (Name "pure_")
+
+    it "rewrites a saturated Effect bind to the real foreign" do
+      expr ←
+        translateBinding $
+          cfnApp (cfnApp (cfnApp bind bindEffect) (cfnRef "m")) (cfnRef "k")
+      expr
+        `shouldBe` application
+          (application effBindE (refLocal (Name "m")))
+          (refLocal (Name "k"))
+
+    it "rewrites a saturated ST bind to the real foreign" do
+      expr ←
+        translateBinding $
+          cfnApp (cfnApp (cfnApp bind bindST) (cfnRef "m")) (cfnRef "k")
+      expr
+        `shouldBe` application
+          (application stBind_ (refLocal (Name "m")))
+          (refLocal (Name "k"))
+
+    it "rewrites a partially applied CSE float" do
+      -- purs CSE floats @discard discardUnit bindEffect@ to the module
+      -- top level; the bare dictionary application must canonicalize
+      -- without any chain arguments present.
+      expr ← translateBinding $ cfnApp (cfnApp discard discardUnit) bindEffect
+      expr `shouldBe` effBindE
+
+    it "rewrites a discard·discardUnit·bindST triple" do
+      expr ← translateBinding $ cfnApp (cfnApp discard discardUnit) bindST
+      expr `shouldBe` stBind_
+
+    it "rewrites Effect and ST pure to the real foreigns" do
+      effExpr ← translateBinding $ cfnApp (cfnApp purE applicativeEffect) (cfnInt 1)
+      effExpr `shouldBe` application effPureE (literalInt 1)
+      stExpr ← translateBinding $ cfnApp (cfnApp purE applicativeST) (cfnInt 1)
+      stExpr `shouldBe` application stPure_ (literalInt 1)
+
+    it "leaves a non-Effect dictionary alone" do
+      let bindMaybe = cfnFrom "Data.Maybe" "bindMaybe"
+      expr ← translateBinding $ cfnApp bind bindMaybe
+      expr
+        `shouldBe` application
+          (refImported (ModuleName "Control.Bind") (Name "bind"))
+          (refImported (ModuleName "Data.Maybe") (Name "bindMaybe"))
+
+    it "leaves a module-local dictionary reference alone" do
+      -- Inside the defining module the dictionary reference is Local at
+      -- translation time (e.g. Effect's own CSE floats); it only becomes
+      -- Imported after the linker requalifies it, so it is the
+      -- optimizer rewrite rule that canonicalizes it, not translation.
+      expr ← translateBinding $ cfnApp bind (cfnRef "bindEffect")
+      expr
+        `shouldBe` application
+          (refImported (ModuleName "Control.Bind") (Name "bind"))
+          (refLocal (Name "bindEffect"))
 
   describe "case expressions" do
     describe "singular" do
@@ -754,6 +826,15 @@ shouldFailWith result needle = case result of
   Left err → err `shouldSatisfy` (needle `List.isInfixOf`)
   Right _ → expectationFailure "translation unexpectedly succeeded"
 
+-- | Translate a one-binding module and return the binding's expression.
+translateBinding ∷ MonadFail m ⇒ Cfn.Expr Cfn.Ann → m Exp
+translateBinding cfnExpr = do
+  irModule ←
+    translateModule [] [Cfn.NonRec ann (PS.Ident "foo") cfnExpr]
+  case moduleBindings irModule of
+    [Standalone (_ann, Name "foo", expr)] → pure expr
+    other → fail ("unexpected bindings: " <> show other)
+
 {- | The root annotation of a standalone module binding, or 'Nothing'
 when no binding of this name exists.
 -}
@@ -812,6 +893,12 @@ cfnRef = Cfn.Var ann . cfnLocalIdent
 
 cfnImportedRef ∷ Text → Cfn.Expr Cfn.Ann
 cfnImportedRef = Cfn.Var ann . cfnQualifyModule . PS.Ident
+
+-- | A reference qualified by the given module.
+cfnFrom ∷ Text → Text → Cfn.Expr Cfn.Ann
+cfnFrom modname ident =
+  Cfn.Var ann $
+    PS.Qualified (PS.ByModuleName (PS.ModuleName modname)) (PS.Ident ident)
 
 cfnBool ∷ Bool → Cfn.Expr Cfn.Ann
 cfnBool b = Cfn.Literal ann (Cfn.BooleanLiteral b)

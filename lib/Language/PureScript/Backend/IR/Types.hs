@@ -27,6 +27,7 @@ import Language.PureScript.Backend.IR.Names
   , PropName
   , Qualified (..)
   , TyName (renderTyName)
+  , discardName
   , runModuleName
   )
 import Language.PureScript.Backend.IR.Supply (SupplyM, freshName)
@@ -431,8 +432,11 @@ but only this one marks an /effect run/. Giving magic-do its own token lets
 coincidentally nullary thunks that share the @f Prim.undefined@ shape: a
 superclass-dictionary accessor or a newtype coercion (@runIdentity@) inlined off
 a non-Effect monad (@State@\/@Writer@). Conflating the two kept beta reduction
-from collapsing those pure thunks, bloating the output (issue #180). The @$@ in
-the name cannot collide with a PureScript identifier.
+from collapsing those pure thunks, bloating the output (issue #180). The marker
+is also the anchor of magic-do's pure run peephole: an application of a
+canonical @pure@ to this argument collapses to @pure@'s own argument (see
+'Language.PureScript.Backend.IR.MagicDo'). The @$@ in the name cannot collide
+with a PureScript identifier.
 -}
 pattern EffectRunArg ∷ ann → RawExp ann
 pattern EffectRunArg ann =
@@ -442,9 +446,11 @@ pattern EffectRunArg ann =
 application @m EffectRunArg@ (see 'Language.PureScript.Backend.IR.MagicDo'). Its
 side effect is observable and its statement sequencing is size-managed by
 magic-do's chunking, so passes that run after magic-do must leave it alone:
-dead-code elimination keeps it even when its binder is unreferenced, and beta
+dead-code elimination keeps it even when its binder is unreferenced, beta
 reduction does not reduce through it (which would merge a chunk into its parent
-and overflow Lua's local-variable limit).
+and overflow Lua's local-variable limit), and local inlining does not paste a
+run bound by a Let statement into the body (the kept statement plus the pasted
+copy would execute the effect twice).
 -}
 isEffectRun ∷ RawExp ann → Bool
 isEffectRun = \case
@@ -722,6 +728,10 @@ rewriteExpTopDownM rule = visit
     rule expression >>= \case
       Just expression' → visit expression'
       Nothing → traverseOf subexpressions visit expression
+
+-- | Pure 'rewriteExpTopDownM'.
+rewriteExpTopDown ∷ RewriteRule ann → RawExp ann → RawExp ann
+rewriteExpTopDown rule = runIdentity . rewriteExpTopDownM (pure . rule)
 
 countFreeRefs ∷ RawExp ann → Map (Qualified Name) Natural
 countFreeRefs = fmap getSum . MMap.toMap . countFreeRefs' mempty
@@ -1089,6 +1099,12 @@ freshenBinders = go Map.empty
     Let ann binds body → do
       -- Under unique binders no Let name can be referenced before it is
       -- bound, so all the groupings can enter the rename map up front.
+      -- The discard binder `_` stays out of the map: it is exempt from
+      -- the uniqueness invariant, so one Let can bind it several times
+      -- (magic-do's discard statements), and a single name-keyed entry
+      -- would rename every one of them to the same fresh name — a
+      -- genuine duplicate the exemption no longer covers. Nothing may
+      -- reference it, so it needs no rename at all.
       renames' ←
         foldlM
           ( \rs name → do
@@ -1096,7 +1112,7 @@ freshenBinders = go Map.empty
               pure (Map.insert name name' rs)
           )
           renames
-          (bindingNames =<< toList binds)
+          (filter (/= discardName) (bindingNames =<< toList binds))
       let renameBound (bindAnn, name, expr) =
             (bindAnn,Map.findWithDefault name name renames',)
               <$> go renames' expr

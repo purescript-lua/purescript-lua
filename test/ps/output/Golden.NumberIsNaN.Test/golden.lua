@@ -16,11 +16,11 @@ local Effect_Console_foreign = {
 local Effect_Console_log = Effect_Console_foreign.log
 return (function()
   local _ = (function()
-    local a_S_2_S_325 = Data_Number_isNaN(Data_Number_nan)
+    local a_S_2_S_316 = Data_Number_isNaN(Data_Number_nan)
     return Effect_Console_log((function()
-      if a_S_2_S_325 then
+      if a_S_2_S_316 then
         return "true"
-      elseif false == a_S_2_S_325 then
+      elseif false == a_S_2_S_316 then
         return "false"
       else
         return error("No patterns matched")
@@ -28,11 +28,11 @@ return (function()
     end)())
   end)()()
   local _ = (function()
-    local a_S_2_S_327 = Data_Number_isNaN(Data_Ring_numSub(0.0)(Data_Number_nan))
+    local a_S_2_S_318 = Data_Number_isNaN(Data_Ring_numSub(0.0)(Data_Number_nan))
     return Effect_Console_log((function()
-      if a_S_2_S_327 then
+      if a_S_2_S_318 then
         return "true"
-      elseif false == a_S_2_S_327 then
+      elseif false == a_S_2_S_318 then
         return "false"
       else
         return error("No patterns matched")
@@ -40,11 +40,11 @@ return (function()
     end)())
   end)()()
   local _ = (function()
-    local a_S_2_S_329 = Data_Number_isNaN(Data_Ring_numSub(Data_Number_infinity)(Data_Number_infinity))
+    local a_S_2_S_320 = Data_Number_isNaN(Data_Ring_numSub(Data_Number_infinity)(Data_Number_infinity))
     return Effect_Console_log((function()
-      if a_S_2_S_329 then
+      if a_S_2_S_320 then
         return "true"
-      elseif false == a_S_2_S_329 then
+      elseif false == a_S_2_S_320 then
         return "false"
       else
         return error("No patterns matched")
@@ -52,11 +52,11 @@ return (function()
     end)())
   end)()()
   local _ = (function()
-    local a_S_2_S_330 = Data_Number_isNaN(42.0)
+    local a_S_2_S_321 = Data_Number_isNaN(42.0)
     return Effect_Console_log((function()
-      if a_S_2_S_330 then
+      if a_S_2_S_321 then
         return "true"
-      elseif false == a_S_2_S_330 then
+      elseif false == a_S_2_S_321 then
         return "false"
       else
         return error("No patterns matched")
@@ -64,11 +64,11 @@ return (function()
     end)())
   end)()()
   return (function()
-    local a_S_2_S_331 = Data_Number_isNaN(Data_Number_infinity)
+    local a_S_2_S_322 = Data_Number_isNaN(Data_Number_infinity)
     return Effect_Console_log((function()
-      if a_S_2_S_331 then
+      if a_S_2_S_322 then
         return "true"
-      elseif false == a_S_2_S_331 then
+      elseif false == a_S_2_S_322 then
         return "false"
       else
         return error("No patterns matched")

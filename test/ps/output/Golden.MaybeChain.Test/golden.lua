@@ -17,10 +17,10 @@ local Data_Maybe_maybe_S_w = function(v, v1, v2)
     return error("No patterns matched")
   end
 end
-local Golden_MaybeChain_Test_identity = function(x_S_313) return x_S_313 end
-local Golden_MaybeChain_Test_map_S_w = function(v_S_308, v1_S_309)
-  if "Data.Maybe∷Maybe.Just" == v1_S_309[1] then
-    return Data_Maybe_Just(v_S_308(v1_S_309[2]))
+local Golden_MaybeChain_Test_identity = function(x_S_309) return x_S_309 end
+local Golden_MaybeChain_Test_map_S_w = function(v_S_305, v1_S_306)
+  if "Data.Maybe∷Maybe.Just" == v1_S_306[1] then
+    return Data_Maybe_Just(v_S_305(v1_S_306[2]))
   else
     return Data_Maybe_Nothing
   end

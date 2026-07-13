@@ -5,8 +5,8 @@ local Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
 }
 local Effect_Console_log = Effect_Console_foreign.log
-local Golden_FieldCaching_Test_sub_S_w = function(x_S_188_S_219, y_S_189_S_220)
-  return x_S_188_S_219 - y_S_189_S_220
+local Golden_FieldCaching_Test_sub_S_w = function(x_S_185_S_214, y_S_186_S_215)
+  return x_S_185_S_214 - y_S_186_S_215
 end
 local Golden_FieldCaching_Test_weigh = function(x) return x * 2 + 1 end
 local Golden_FieldCaching_Test_sumLoop_S_w = function(acc, n)
@@ -55,7 +55,7 @@ return (function()
   local _ = Effect_Console_log(Data_Show_showIntImpl(Golden_FieldCaching_Test_weigh(10)))()
   local _ = Effect_Console_log(Data_Show_showIntImpl(Golden_FieldCaching_Test_sumLoop_S_w(0, 4)))()
   local _ = Effect_Console_log(Data_Show_showIntImpl(Golden_FieldCaching_Test_weigh(Golden_FieldCaching_Test_sub_S_w(5, 1)) + Golden_FieldCaching_Test_weigh(Golden_FieldCaching_Test_sub_S_w(5, 2))))()
-  return Effect_Console_log(Data_Show_showIntImpl(Golden_FieldCaching_Test_apply2(function( y_S_263 )
-    return Golden_FieldCaching_Test_weigh(5) + Golden_FieldCaching_Test_weigh(y_S_263)
+  return Effect_Console_log(Data_Show_showIntImpl(Golden_FieldCaching_Test_apply2(function( y_S_254 )
+    return Golden_FieldCaching_Test_weigh(5) + Golden_FieldCaching_Test_weigh(y_S_254)
   end)))()
 end)()

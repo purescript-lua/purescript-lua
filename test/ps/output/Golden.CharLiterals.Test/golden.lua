@@ -29,16 +29,16 @@ return (function()
   local _ = Effect_Console_log(Golden_CharLiterals_Test_show("a"))()
   local _ = Effect_Console_log("true")()
   return Effect_Console_log((function()
-    local v_S_111_S_230 = "Data.Ordering∷Ordering.LT" == (function()
+    local v_S_108_S_221 = "Data.Ordering∷Ordering.LT" == (function()
       if "\t" < "\n" then
         return "Data.Ordering∷Ordering.LT"
       else
         return "Data.Ordering∷Ordering.GT"
       end
     end)()
-    if v_S_111_S_230 then
+    if v_S_108_S_221 then
       return "true"
-    elseif false == v_S_111_S_230 then
+    elseif false == v_S_108_S_221 then
       return "false"
     else
       return error("No patterns matched")
