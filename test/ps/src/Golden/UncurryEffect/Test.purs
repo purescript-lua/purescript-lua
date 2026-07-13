@@ -2,9 +2,15 @@
 -- | only exist once magicDo has rewritten do-blocks into explicit
 -- | thunk-forcing. A unary effect action sits below the split threshold
 -- | before magicDo (manifest arity 1) and above it after (λn.λ_), so
--- | only the late run can split it — absorbing the thunk parameter into
--- | the worker, which turns every statement call `tick(n)()` into the
--- | single call `tick$w(n)`. The eval oracle pins runtime behavior.
+-- | only the late run can split it, absorbing the thunk parameter into
+-- | the worker. `countdown` demonstrates the split — recursive bindings
+-- | are never inlined, so its statement sites become the single call
+-- | `countdown$w(n)` instead of `countdown(n)()`. `tick` pins the other
+-- | legitimate outcome for a small non-recursive action: the specialize
+-- | pass pastes its body into the saturated statement sites before the
+-- | late run sees them, eliminating those calls altogether (the binding
+-- | survives as an export, still curried). The eval oracle pins runtime
+-- | behavior.
 module Golden.UncurryEffect.Test where
 
 import Prelude
@@ -12,9 +18,11 @@ import Prelude
 import Effect (Effect)
 import Effect.Console (log, logShow)
 
--- Manifest arity 1 before magicDo — never an early-run candidate —
--- and 2 after. Statement sites absorb the effect-run marker into a
--- direct worker call.
+-- Manifest arity 1 before magicDo, so never an early-run candidate.
+-- Its body is under the call-site inline budget: the specialize pass
+-- pastes it into the statement sites before the late run can split it,
+-- so no worker appears and the executed statements are the pasted
+-- bodies. The exported binding itself stays curried.
 tick :: Int -> Effect Unit
 tick n = do
   log "tick"
