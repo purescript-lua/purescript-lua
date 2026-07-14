@@ -4,11 +4,9 @@ workload: n=100000 reps=4 result=1500000
 aborts (distinct site -- reason):
   Bench.EffectStep.lua:10 -- NYI: bytecode FNEW
   Bench.EffectStep.lua:12 -- NYI: bytecode FNEW
-  Bench.EffectStep.lua:48 -- NYI: bytecode FNEW
-  Bench.EffectStep.lua:49 -- NYI: bytecode UCLO
-  Bench.EffectStep.lua:53 -- NYI: bytecode FNEW
-  Bench.EffectStep.lua:54 -- NYI: bytecode FNEW
-  Bench.EffectStep.lua:66 -- NYI: bytecode FNEW
+  Bench.EffectStep.lua:45 -- NYI: bytecode FNEW
+  Bench.EffectStep.lua:46 -- NYI: bytecode FNEW
+  Bench.EffectStep.lua:58 -- NYI: bytecode FNEW
   Bench.EffectStep.lua:9 -- NYI: bytecode FNEW
 bytecode end state (J*=compiled, I*=blacklisted):
   Bench.EffectStep.lua:10 IFUNCF
@@ -20,9 +18,8 @@ bytecode end state (J*=compiled, I*=blacklisted):
   Bench.EffectStep.lua:36 IFUNCF
   Bench.EffectStep.lua:37 IFUNCF
   Bench.EffectStep.lua:39 IFUNCF
-  Bench.EffectStep.lua:40 JFUNCF
   Bench.EffectStep.lua:9 JFUNCF
   effect_step.lua:11 JFUNCF
   effect_step.lua:13 JFORI
   effect_step.lua:13 JFORL
-counts: aborts=8 compiled=7 blacklisted=7
+counts: aborts=6 compiled=6 blacklisted=7
