@@ -91,15 +91,7 @@ M.Golden_TailRecM2Shadow_Test_sumFrom = function(dictMonadRec)
       return dictMonadRec.tailRecM(function(o_S_480)
         local _S_cse510 = o_S_480.a
         local _S_cse509 = o_S_480.b
-        if "Data.Ordering∷Ordering.LT" == (function()
-          if _S_cse509 < n then
-            return "Data.Ordering∷Ordering.LT"
-          elseif _S_cse509 == n then
-            return "Data.Ordering∷Ordering.EQ"
-          else
-            return "Data.Ordering∷Ordering.GT"
-          end
-        end)() then
+        if _S_cse509 < n then
           return pure((function(value0)
             return { "Control.Monad.Rec.Class∷Step.Loop", value0 }
           end)({
@@ -158,15 +150,7 @@ return (function()
         return dictMonadRec_S_503.tailRecM(function(o_S_507)
           local _S_cse512 = o_S_507.a
           local _S_cse511 = o_S_507.b
-          if "Data.Ordering∷Ordering.LT" == (function()
-            if _S_cse511 < n_S_506 then
-              return "Data.Ordering∷Ordering.LT"
-            elseif _S_cse511 == n_S_506 then
-              return "Data.Ordering∷Ordering.EQ"
-            else
-              return "Data.Ordering∷Ordering.GT"
-            end
-          end)() then
+          if _S_cse511 < n_S_506 then
             return pure_S_504((function(value0)
               return { "Control.Monad.Rec.Class∷Step.Loop", value0 }
             end)({

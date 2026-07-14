@@ -297,23 +297,9 @@ UberModule
                           ) :| []
                         )
                         ( IfThenElse Nothing
-                          ( Eq Nothing
-                            ( LiteralString Nothing "Data.Ordering∷Ordering.LT" )
-                            ( IfThenElse Nothing
-                              ( PrimBinOp Nothing PrimLt
-                                ( Ref Nothing ( Local ( Name "$cse509" ) ) )
-                                ( Ref Nothing ( Local ( Name "n" ) ) )
-                              )
-                              ( LiteralString Nothing "Data.Ordering∷Ordering.LT" )
-                              ( IfThenElse Nothing
-                                ( Eq Nothing
-                                  ( Ref Nothing ( Local ( Name "$cse509" ) ) )
-                                  ( Ref Nothing ( Local ( Name "n" ) ) )
-                                )
-                                ( LiteralString Nothing "Data.Ordering∷Ordering.EQ" )
-                                ( LiteralString Nothing "Data.Ordering∷Ordering.GT" )
-                              )
-                            )
+                          ( PrimBinOp Nothing PrimLt
+                            ( Ref Nothing ( Local ( Name "$cse509" ) ) )
+                            ( Ref Nothing ( Local ( Name "n" ) ) )
                           )
                           ( AppN Nothing
                             ( Ref Nothing ( Local ( Name "pure" ) ) )
@@ -687,23 +673,9 @@ UberModule
                                       ) :| []
                                     )
                                     ( IfThenElse Nothing
-                                      ( Eq Nothing
-                                        ( LiteralString Nothing "Data.Ordering∷Ordering.LT" )
-                                        ( IfThenElse Nothing
-                                          ( PrimBinOp Nothing PrimLt
-                                            ( Ref Nothing ( Local ( Name "$cse511" ) ) )
-                                            ( Ref Nothing ( Local ( Name "n$506" ) ) )
-                                          )
-                                          ( LiteralString Nothing "Data.Ordering∷Ordering.LT" )
-                                          ( IfThenElse Nothing
-                                            ( Eq Nothing
-                                              ( Ref Nothing ( Local ( Name "$cse511" ) ) )
-                                              ( Ref Nothing ( Local ( Name "n$506" ) ) )
-                                            )
-                                            ( LiteralString Nothing "Data.Ordering∷Ordering.EQ" )
-                                            ( LiteralString Nothing "Data.Ordering∷Ordering.GT" )
-                                          )
-                                        )
+                                      ( PrimBinOp Nothing PrimLt
+                                        ( Ref Nothing ( Local ( Name "$cse511" ) ) )
+                                        ( Ref Nothing ( Local ( Name "n$506" ) ) )
                                       )
                                       ( AppN Nothing
                                         ( Ref Nothing ( Local ( Name "pure$504" ) ) )

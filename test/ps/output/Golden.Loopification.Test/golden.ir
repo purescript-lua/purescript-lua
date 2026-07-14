@@ -174,19 +174,15 @@ UberModule
           }, AbsN Nothing
           ( ParamNamed Nothing ( Name "n" ) :| [] )
           ( IfThenElse Nothing
-            ( Eq Nothing
-              ( LiteralString Nothing "Data.Ordering∷Ordering.GT" )
-              ( IfThenElse Nothing
+            ( PrimBinOp Nothing PrimAnd
+              ( PrimNot Nothing
                 ( PrimBinOp Nothing PrimLt
                   ( Ref Nothing ( Local ( Name "n" ) ) )
                   ( LiteralInt Nothing 100 )
                 )
-                ( LiteralString Nothing "Data.Ordering∷Ordering.LT" )
-                ( IfThenElse Nothing
-                  ( Eq Nothing ( Ref Nothing ( Local ( Name "n" ) ) ) ( LiteralInt Nothing 100 ) )
-                  ( LiteralString Nothing "Data.Ordering∷Ordering.EQ" )
-                  ( LiteralString Nothing "Data.Ordering∷Ordering.GT" )
-                )
+              )
+              ( PrimNot Nothing
+                ( Eq Nothing ( Ref Nothing ( Local ( Name "n" ) ) ) ( LiteralInt Nothing 100 ) )
               )
             )
             ( AppN Nothing
@@ -218,19 +214,15 @@ UberModule
           }, AbsN Nothing
           ( ParamNamed Nothing ( Name "n" ) :| [] )
           ( IfThenElse Nothing
-            ( Eq Nothing
-              ( LiteralString Nothing "Data.Ordering∷Ordering.GT" )
-              ( IfThenElse Nothing
+            ( PrimBinOp Nothing PrimAnd
+              ( PrimNot Nothing
                 ( PrimBinOp Nothing PrimLt
                   ( Ref Nothing ( Local ( Name "n" ) ) )
                   ( LiteralInt Nothing 0 )
                 )
-                ( LiteralString Nothing "Data.Ordering∷Ordering.LT" )
-                ( IfThenElse Nothing
-                  ( Eq Nothing ( Ref Nothing ( Local ( Name "n" ) ) ) ( LiteralInt Nothing 0 ) )
-                  ( LiteralString Nothing "Data.Ordering∷Ordering.EQ" )
-                  ( LiteralString Nothing "Data.Ordering∷Ordering.GT" )
-                )
+              )
+              ( PrimNot Nothing
+                ( Eq Nothing ( Ref Nothing ( Local ( Name "n" ) ) ) ( LiteralInt Nothing 0 ) )
               )
             )
             ( AppN Nothing

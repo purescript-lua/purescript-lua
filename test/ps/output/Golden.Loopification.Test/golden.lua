@@ -53,15 +53,7 @@ end
 local Golden_Loopification_Test_mc91
 Golden_Loopification_Test_mc91 = function(n)
   while true do
-    if "Data.Ordering∷Ordering.GT" == (function()
-      if n < 100 then
-        return "Data.Ordering∷Ordering.LT"
-      elseif n == 100 then
-        return "Data.Ordering∷Ordering.EQ"
-      else
-        return "Data.Ordering∷Ordering.GT"
-      end
-    end)() then
+    if not(n < 100) and n ~= 100 then
       return Golden_Loopification_Test_sub_S_w(n, 10)
     else
       n = Golden_Loopification_Test_mc91(n + 11)
@@ -70,15 +62,7 @@ Golden_Loopification_Test_mc91 = function(n)
 end
 local Golden_Loopification_Test_countdown = function(n)
   while true do
-    if "Data.Ordering∷Ordering.GT" == (function()
-      if n < 0 then
-        return "Data.Ordering∷Ordering.LT"
-      elseif n == 0 then
-        return "Data.Ordering∷Ordering.EQ"
-      else
-        return "Data.Ordering∷Ordering.GT"
-      end
-    end)() then
+    if not(n < 0) and n ~= 0 then
       n = Golden_Loopification_Test_sub_S_w(n, 1)
     else
       return 0

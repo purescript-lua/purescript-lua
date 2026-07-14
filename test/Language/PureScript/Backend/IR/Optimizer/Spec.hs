@@ -32,6 +32,7 @@ import Language.PureScript.Backend.IR.Optimizer
   , optimizedExpression
   , optimizedUberModule
   , optimizedUberModuleChecked
+  , pushIfCondIntoBranches
   , shareForeignAccessors
   , sinkProjectionIntoLet
   )
@@ -871,6 +872,20 @@ spec = describe "IR Optimizer" do
         `shouldBe` literalBool True
       optimizedExpression (primBinOp PrimOr (literalBool False) x) `shouldBe` x
 
+    it "collapses an identity second operand of and/or" do
+      -- x and true / x or false evaluate x either way and x is a Bool,
+      -- so the literal is pure ceremony. The annihilator duals (x and
+      -- false, x or true) are left alone: folding them would skip x.
+      let x = refLocal (Name "x")
+      optimizedExpression (primBinOp PrimAnd x (literalBool True))
+        `shouldBe` x
+      optimizedExpression (primBinOp PrimOr x (literalBool False))
+        `shouldBe` x
+      let andFalse = primBinOp PrimAnd x (literalBool False)
+          orTrue = primBinOp PrimOr x (literalBool True)
+      optimizedExpression andFalse `shouldBe` andFalse
+      optimizedExpression orTrue `shouldBe` orTrue
+
     it "folds bottom-up through nested primops" do
       let original =
             primBinOp
@@ -917,6 +932,133 @@ spec = describe "IR Optimizer" do
       optimizedExpression
         (ifThenElse (literalBool True) (literalBool False) (literalBool True))
         `shouldBe` literalBool False
+
+  -- An if with exactly one boolean-literal branch is a boolean operator
+  -- in disguise; Lua's and/or short-circuit exactly like the branches
+  -- did, so the fold preserves what evaluates and in which order.
+  describe "collapses a half-literal boolean if to and/or (#203)" do
+    let p = primBinOp PrimLt (refLocal (Name "a")) (refLocal (Name "b"))
+        r = refLocal (Name "r")
+
+    it "reduces if p then True else r to p or r" do
+      optimizedExpression (ifThenElse p (literalBool True) r)
+        `shouldBe` primBinOp PrimOr p r
+
+    it "reduces if p then False else r to not p and r" do
+      optimizedExpression (ifThenElse p (literalBool False) r)
+        `shouldBe` primBinOp PrimAnd (primNot p) r
+
+    it "reduces if p then r else True to not p or r" do
+      optimizedExpression (ifThenElse p r (literalBool True))
+        `shouldBe` primBinOp PrimOr (primNot p) r
+
+    it "reduces if p then r else False to p and r" do
+      optimizedExpression (ifThenElse p r (literalBool False))
+        `shouldBe` primBinOp PrimAnd p r
+
+    it "leaves an if with no boolean-literal branch alone" do
+      let original = ifThenElse p r (refLocal (Name "s"))
+      optimizedExpression original `shouldBe` original
+
+  -- Case-of-case over the IfThenElse decision tree: a boolean-returning
+  -- tree consumed in a strict position (an Eq against a literal, or the
+  -- condition of another if) sits in expression position, where codegen
+  -- wraps it in an IIFE allocated per evaluation.
+  describe "pushes case-of-case over the decision tree (#203)" do
+    let m = moduleNameFromString "M"
+        n = refLocal (Name "n")
+        lt = literalString "Data.Ordering∷Ordering.LT"
+        eqTag = literalString "Data.Ordering∷Ordering.EQ"
+        gt = literalString "Data.Ordering∷Ordering.GT"
+        isNeg = primBinOp PrimLt n (literalInt 0)
+        isZero = eq n (literalInt 0)
+        -- The shape an inlined Ord comparison leaves once the tag read
+        -- distributes over it: an if-tree of Ordering tag strings.
+        orderingTree = ifThenElse isNeg lt (ifThenElse isZero eqTag gt)
+
+    it "folds a literal comparison through the decision tree" do
+      -- The Golden.LongCallbackChain shape: every leaf folds against the
+      -- literal, so the whole comparison collapses to a flat condition.
+      optimizedExpression (eq lt orderingTree) `shouldBe` isNeg
+
+    it "folds the flipped orientation of the comparison" do
+      optimizedExpression (eq orderingTree lt) `shouldBe` isNeg
+
+    it "collapses a GT comparison to a flat boolean expression" do
+      -- Two leaves fold to False and one to True, so the collapsed tree
+      -- is a half-literal if; the and/or fold then flattens it, leaving
+      -- no decision tree in expression position at all.
+      optimizedExpression (eq gt orderingTree)
+        `shouldBe` primBinOp PrimAnd (primNot isNeg) (primNot isZero)
+
+    it "leaves the comparison alone when a leaf cannot fold" do
+      -- A non-literal leaf would survive as a residual comparison, so
+      -- the push must decline entirely.
+      let original =
+            eq lt (ifThenElse isNeg lt (refLocal (Name "other")))
+      optimizedExpression original `shouldBe` original
+
+    it "pushes an if condition into branches when they are trivial" do
+      -- Non-literal inner branches: the push duplicates x and y, so it
+      -- fires only because both are trivial to re-emit.
+      let p = refLocal (Name "p")
+          q = refLocal (Name "q")
+          c = refLocal (Name "c")
+          original =
+            ifThenElse (ifThenElse c p q) (literalInt 1) (literalInt 2)
+      optimizedExpression original
+        `shouldBe` ifThenElse
+          c
+          (ifThenElse p (literalInt 1) (literalInt 2))
+          (ifThenElse q (literalInt 1) (literalInt 2))
+
+    it "keeps the if in condition position over non-trivial branches" do
+      -- Neither guard holds: the inner branches are not literals and
+      -- duplicating the outer branches would duplicate real work.
+      let p = refLocal (Name "p")
+          q = refLocal (Name "q")
+          c = refLocal (Name "c")
+          work name = application (refImported m name) (literalInt 1)
+          original =
+            ifThenElse
+              (ifThenElse c p q)
+              (work (Name "f"))
+              (work (Name "g"))
+      optimizedExpression original `shouldBe` original
+
+    -- The literal arm is unreachable through 'optimizedExpression': an
+    -- inner if with two literal boolean branches is collapsed bottom-up
+    -- by the boolean-if rules before the outer node is inspected. The
+    -- rule is applied directly so its own guard is pinned, not its
+    -- neighbours'.
+    it "pushes literal inner branches (direct rule application)" do
+      let c = refLocal (Name "c")
+          x = literalInt 1
+          y = literalInt 2
+          original =
+            ifThenElse
+              (ifThenElse c (literalBool True) (literalBool False))
+              x
+              y
+      runIdentity (pushIfCondIntoBranches original)
+        `shouldBe` Just
+          ( ifThenElse
+              c
+              (ifThenElse (literalBool True) x y)
+              (ifThenElse (literalBool False) x y)
+          )
+
+    it "declines non-trivial branches directly (guard pin)" do
+      let c = refLocal (Name "c")
+          p = refLocal (Name "p")
+          q = refLocal (Name "q")
+          work name = application (refImported m name) (literalInt 1)
+          original =
+            ifThenElse
+              (ifThenElse c p q)
+              (work (Name "f"))
+              (work (Name "g"))
+      runIdentity (pushIfCondIntoBranches original) `shouldBe` Nothing
 
   describe "inlines expressions" do
     test "inlines literals" do

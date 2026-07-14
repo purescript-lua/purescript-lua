@@ -118,16 +118,9 @@ UberModule
               ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
               ( Let Nothing
                 ( Standalone
-                  ( Nothing, Name "v$221", Eq Nothing
-                    ( LiteralString Nothing "Data.Ordering∷Ordering.LT" )
-                    ( IfThenElse Nothing
-                      ( PrimBinOp Nothing PrimLt
-                        ( LiteralChar Nothing '\x9' )
-                        ( LiteralChar Nothing ' ' )
-                      )
-                      ( LiteralString Nothing "Data.Ordering∷Ordering.LT" )
-                      ( LiteralString Nothing "Data.Ordering∷Ordering.GT" )
-                    )
+                  ( Nothing, Name "v$221", PrimBinOp Nothing PrimLt
+                    ( LiteralChar Nothing '\x9' )
+                    ( LiteralChar Nothing ' ' )
                   ) :| []
                 )
                 ( IfThenElse Nothing

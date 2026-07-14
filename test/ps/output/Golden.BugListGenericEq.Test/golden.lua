@@ -99,22 +99,16 @@ Golden_BugListGenericEq_Test_eqList = function(dictEq)
             local _S_cse269 = v_S_13[1]
             if "Data.Generic.Rep∷Sum.Inl" == _S_cse269 then
               return "Data.Generic.Rep∷Sum.Inl" == _S_cse270
-            elseif "Data.Generic.Rep∷Sum.Inr" == _S_cse269 then
-              if "Data.Generic.Rep∷Sum.Inr" == _S_cse270 then
-                return (Data_Eq_eqRowCons_S_w(Data_Eq_eqRowCons_S_w({
-                  eqRecord = function()
-                    return function() return function() return true end end
-                  end
-                }, nil, {
-                  reflectSymbol = function() return "tail" end
-                }, Golden_BugListGenericEq_Test_eqList(dictEq)), nil, {
-                  reflectSymbol = function() return "head" end
-                }, dictEq)).eqRecord(Type_Proxy_Proxy)(v_S_13[2])(v1_S_14[2])
-              else
-                return false
-              end
             else
-              return false
+              return "Data.Generic.Rep∷Sum.Inr" == _S_cse269 and ("Data.Generic.Rep∷Sum.Inr" == _S_cse270 and (Data_Eq_eqRowCons_S_w(Data_Eq_eqRowCons_S_w({
+                eqRecord = function()
+                  return function() return function() return true end end
+                end
+              }, nil, {
+                reflectSymbol = function() return "tail" end
+              }, Golden_BugListGenericEq_Test_eqList(dictEq)), nil, {
+                reflectSymbol = function() return "head" end
+              }, dictEq)).eqRecord(Type_Proxy_Proxy)(v_S_13[2])(v1_S_14[2]))
             end
           end
         end)()((function()

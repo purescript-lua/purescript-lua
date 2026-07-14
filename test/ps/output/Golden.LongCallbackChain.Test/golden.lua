@@ -8,15 +8,7 @@ local Golden_LongCallbackChain_Test_add_S_w = function(x_S_215, y_S_216)
 end
 local Golden_LongCallbackChain_Test_withInc_S_w = function(n, k)
   while true do
-    if "Data.Ordering∷Ordering.LT" == (function()
-      if n < 0 then
-        return "Data.Ordering∷Ordering.LT"
-      elseif n == 0 then
-        return "Data.Ordering∷Ordering.EQ"
-      else
-        return "Data.Ordering∷Ordering.GT"
-      end
-    end)() then
+    if n < 0 then
       n, k = Golden_LongCallbackChain_Test_add_S_w(n, 1), k
     else
       return k(Golden_LongCallbackChain_Test_add_S_w(n, 1))

@@ -1204,16 +1204,18 @@ UberModule
                                 ( Ref Nothing ( Local ( Name "v2$1518" ) ) )
                               ) :| []
                             )
-                            ( IfThenElse Nothing
+                            ( PrimBinOp Nothing PrimOr
                               ( Eq Nothing
                                 ( LiteralString Nothing "Data.Maybe∷Maybe.Nothing" )
                                 ( Ref Nothing ( Local ( Name "$cse1761" ) ) )
-                              ) ( LiteralBool Nothing True )
-                              ( IfThenElse Nothing
-                                ( Eq Nothing
-                                  ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
-                                  ( Ref Nothing ( Local ( Name "$cse1761" ) ) )
-                                ) ( LiteralBool Nothing False )
+                              )
+                              ( PrimBinOp Nothing PrimAnd
+                                ( PrimNot Nothing
+                                  ( Eq Nothing
+                                    ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
+                                    ( Ref Nothing ( Local ( Name "$cse1761" ) ) )
+                                  )
+                                )
                                 ( Exception Nothing "No patterns matched" )
                               )
                             )

@@ -472,13 +472,7 @@ end
 local Data_String_CodePoints_toCodePointArray = Data_String_CodePoints_foreign._toCodePointArray(function( s_S_7 )
   return Data_Unfoldable_foreign.unfoldrArrayImpl(function(v2_S_1518)
     local _S_cse1761 = v2_S_1518[1]
-    if "Data.Maybe∷Maybe.Nothing" == _S_cse1761 then
-      return true
-    elseif "Data.Maybe∷Maybe.Just" == _S_cse1761 then
-      return false
-    else
-      return error("No patterns matched")
-    end
+    return "Data.Maybe∷Maybe.Nothing" == _S_cse1761 or "Data.Maybe∷Maybe.Just" ~= _S_cse1761 and error("No patterns matched")
   end)(Partial_Unsafe__unsafePartial(function()
     return function(v_S_1564)
       if "Data.Maybe∷Maybe.Just" == v_S_1564[1] then
