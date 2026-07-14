@@ -377,12 +377,12 @@ UberModule
                                       ( LiteralString Nothing "Data.Generic.Rep∷Sum.Inl" )
                                       ( Ref Nothing ( Local ( Name "$cse270" ) ) )
                                     )
-                                    ( IfThenElse Nothing
+                                    ( PrimBinOp Nothing PrimAnd
                                       ( Eq Nothing
                                         ( LiteralString Nothing "Data.Generic.Rep∷Sum.Inr" )
                                         ( Ref Nothing ( Local ( Name "$cse269" ) ) )
                                       )
-                                      ( IfThenElse Nothing
+                                      ( PrimBinOp Nothing PrimAnd
                                         ( Eq Nothing
                                           ( LiteralString Nothing "Data.Generic.Rep∷Sum.Inr" )
                                           ( Ref Nothing ( Local ( Name "$cse270" ) ) )
@@ -470,8 +470,8 @@ UberModule
                                           ( DataArgumentByIndex Nothing SumType 0
                                             ( Ref Nothing ( Local ( Name "v1$14" ) ) ) :| []
                                           )
-                                        ) ( LiteralBool Nothing False )
-                                      ) ( LiteralBool Nothing False )
+                                        )
+                                      )
                                     )
                                   )
                                 )

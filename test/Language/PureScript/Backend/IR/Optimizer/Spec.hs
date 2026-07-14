@@ -872,6 +872,20 @@ spec = describe "IR Optimizer" do
         `shouldBe` literalBool True
       optimizedExpression (primBinOp PrimOr (literalBool False) x) `shouldBe` x
 
+    it "collapses an identity second operand of and/or" do
+      -- x and true / x or false evaluate x either way and x is a Bool,
+      -- so the literal is pure ceremony. The annihilator duals (x and
+      -- false, x or true) are left alone: folding them would skip x.
+      let x = refLocal (Name "x")
+      optimizedExpression (primBinOp PrimAnd x (literalBool True))
+        `shouldBe` x
+      optimizedExpression (primBinOp PrimOr x (literalBool False))
+        `shouldBe` x
+      let andFalse = primBinOp PrimAnd x (literalBool False)
+          orTrue = primBinOp PrimOr x (literalBool True)
+      optimizedExpression andFalse `shouldBe` andFalse
+      optimizedExpression orTrue `shouldBe` orTrue
+
     it "folds bottom-up through nested primops" do
       let original =
             primBinOp
@@ -919,6 +933,33 @@ spec = describe "IR Optimizer" do
         (ifThenElse (literalBool True) (literalBool False) (literalBool True))
         `shouldBe` literalBool False
 
+  -- An if with exactly one boolean-literal branch is a boolean operator
+  -- in disguise; Lua's and/or short-circuit exactly like the branches
+  -- did, so the fold preserves what evaluates and in which order.
+  describe "collapses a half-literal boolean if to and/or (#203)" do
+    let p = primBinOp PrimLt (refLocal (Name "a")) (refLocal (Name "b"))
+        r = refLocal (Name "r")
+
+    it "reduces if p then True else r to p or r" do
+      optimizedExpression (ifThenElse p (literalBool True) r)
+        `shouldBe` primBinOp PrimOr p r
+
+    it "reduces if p then False else r to not p and r" do
+      optimizedExpression (ifThenElse p (literalBool False) r)
+        `shouldBe` primBinOp PrimAnd (primNot p) r
+
+    it "reduces if p then r else True to not p or r" do
+      optimizedExpression (ifThenElse p r (literalBool True))
+        `shouldBe` primBinOp PrimOr (primNot p) r
+
+    it "reduces if p then r else False to p and r" do
+      optimizedExpression (ifThenElse p r (literalBool False))
+        `shouldBe` primBinOp PrimAnd p r
+
+    it "leaves an if with no boolean-literal branch alone" do
+      let original = ifThenElse p r (refLocal (Name "s"))
+      optimizedExpression original `shouldBe` original
+
   -- Case-of-case over the IfThenElse decision tree: a boolean-returning
   -- tree consumed in a strict position (an Eq against a literal, or the
   -- condition of another if) sits in expression position, where codegen
@@ -942,6 +983,13 @@ spec = describe "IR Optimizer" do
 
     it "folds the flipped orientation of the comparison" do
       optimizedExpression (eq orderingTree lt) `shouldBe` isNeg
+
+    it "collapses a GT comparison to a flat boolean expression" do
+      -- Two leaves fold to False and one to True, so the collapsed tree
+      -- is a half-literal if; the and/or fold then flattens it, leaving
+      -- no decision tree in expression position at all.
+      optimizedExpression (eq gt orderingTree)
+        `shouldBe` primBinOp PrimAnd (primNot isNeg) (primNot isZero)
 
     it "leaves the comparison alone when a leaf cannot fold" do
       -- A non-literal leaf would survive as a residual comparison, so

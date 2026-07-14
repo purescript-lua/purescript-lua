@@ -21,7 +21,7 @@ local Golden_UncurryEffect_Test_countdown_S_w = function(n)
     return Effect_Console_log(Data_Show_showIntImpl(n))()
   end)()
   return (function()
-    if (function() if n < 1 then return false else return n ~= 1 end end)() then
+    if not(n < 1) and n ~= 1 then
       return Golden_UncurryEffect_Test_countdown(n - 1)
     else
       return Effect_Console_log("done")

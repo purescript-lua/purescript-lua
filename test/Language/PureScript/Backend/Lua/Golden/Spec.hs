@@ -179,6 +179,9 @@ spec = do
                   , "--no-unused" -- TODO: harden eventually
                   , "--no-redefined" -- generated code shadows freely (e.g.
                   -- inlined library fallbacks reusing a parameter name)
+                  , "--ignore 581" -- suggests not (x < y) → x >= y, the
+                  -- NaN-unsafe inverse codegen deliberately never emits;
+                  -- not-over-comparison is the boolean-if folds' sound shape
                   , "--no-max-line-length"
                   , "--formatter plain"
                   , "--allow-defined"

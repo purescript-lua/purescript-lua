@@ -125,11 +125,13 @@ UberModule
             )
             ( AppN Nothing
               ( IfThenElse Nothing
-                ( IfThenElse Nothing
-                  ( PrimBinOp Nothing PrimLt
-                    ( Ref Nothing ( Local ( Name "n" ) ) )
-                    ( LiteralInt Nothing 1 )
-                  ) ( LiteralBool Nothing False )
+                ( PrimBinOp Nothing PrimAnd
+                  ( PrimNot Nothing
+                    ( PrimBinOp Nothing PrimLt
+                      ( Ref Nothing ( Local ( Name "n" ) ) )
+                      ( LiteralInt Nothing 1 )
+                    )
+                  )
                   ( PrimNot Nothing
                     ( Eq Nothing ( Ref Nothing ( Local ( Name "n" ) ) ) ( LiteralInt Nothing 1 ) )
                   )

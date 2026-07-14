@@ -130,24 +130,18 @@ Golden_GenericEqTwoTypes_Test_eqTree = function(dictEq)
               local _S_cse300 = v_S_271[1]
               if "Data.Generic.Rep∷Sum.Inl" == _S_cse300 then
                 return "Data.Generic.Rep∷Sum.Inl" == _S_cse301
-              elseif "Data.Generic.Rep∷Sum.Inr" == _S_cse300 then
-                if "Data.Generic.Rep∷Sum.Inr" == _S_cse301 then
-                  return (Data_Eq_eqRowCons_S_w(Data_Eq_eqRowCons_S_w(Data_Eq_eqRowCons_S_w({
-                    eqRecord = function()
-                      return function() return function() return true end end
-                    end
-                  }, nil, {
-                    reflectSymbol = function() return "value" end
-                  }, dictEq), nil, {
-                    reflectSymbol = function() return "right" end
-                  }, Golden_GenericEqTwoTypes_Test_eqTree(dictEq)), nil, {
-                    reflectSymbol = function() return "left" end
-                  }, Golden_GenericEqTwoTypes_Test_eqTree(dictEq))).eqRecord(Type_Proxy_Proxy)(v_S_271[2])(v1_S_272[2])
-                else
-                  return false
-                end
               else
-                return false
+                return "Data.Generic.Rep∷Sum.Inr" == _S_cse300 and ("Data.Generic.Rep∷Sum.Inr" == _S_cse301 and (Data_Eq_eqRowCons_S_w(Data_Eq_eqRowCons_S_w(Data_Eq_eqRowCons_S_w({
+                  eqRecord = function()
+                    return function() return function() return true end end
+                  end
+                }, nil, {
+                  reflectSymbol = function() return "value" end
+                }, dictEq), nil, {
+                  reflectSymbol = function() return "right" end
+                }, Golden_GenericEqTwoTypes_Test_eqTree(dictEq)), nil, {
+                  reflectSymbol = function() return "left" end
+                }, Golden_GenericEqTwoTypes_Test_eqTree(dictEq))).eqRecord(Type_Proxy_Proxy)(v_S_271[2])(v1_S_272[2]))
               end
             end
           end
@@ -169,22 +163,16 @@ Golden_GenericEqTwoTypes_Test_eqList = function(dictEq)
               local _S_cse302 = v_S_249[1]
               if "Data.Generic.Rep∷Sum.Inl" == _S_cse302 then
                 return "Data.Generic.Rep∷Sum.Inl" == _S_cse303
-              elseif "Data.Generic.Rep∷Sum.Inr" == _S_cse302 then
-                if "Data.Generic.Rep∷Sum.Inr" == _S_cse303 then
-                  return (Data_Eq_eqRowCons_S_w(Data_Eq_eqRowCons_S_w({
-                    eqRecord = function()
-                      return function() return function() return true end end
-                    end
-                  }, nil, {
-                    reflectSymbol = function() return "tail" end
-                  }, Golden_GenericEqTwoTypes_Test_eqList(dictEq)), nil, {
-                    reflectSymbol = function() return "head" end
-                  }, dictEq)).eqRecord(Type_Proxy_Proxy)(v_S_249[2])(v1_S_250[2])
-                else
-                  return false
-                end
               else
-                return false
+                return "Data.Generic.Rep∷Sum.Inr" == _S_cse302 and ("Data.Generic.Rep∷Sum.Inr" == _S_cse303 and (Data_Eq_eqRowCons_S_w(Data_Eq_eqRowCons_S_w({
+                  eqRecord = function()
+                    return function() return function() return true end end
+                  end
+                }, nil, {
+                  reflectSymbol = function() return "tail" end
+                }, Golden_GenericEqTwoTypes_Test_eqList(dictEq)), nil, {
+                  reflectSymbol = function() return "head" end
+                }, dictEq)).eqRecord(Type_Proxy_Proxy)(v_S_249[2])(v1_S_250[2]))
               end
             end
           end

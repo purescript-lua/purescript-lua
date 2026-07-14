@@ -68,6 +68,7 @@ import Language.PureScript.Backend.IR.Types
   , literalInt
   , literalString
   , paramName
+  , primBinOp
   , primNot
   , refImported
   , rewriteExpBottomUpM
@@ -864,7 +865,12 @@ primops]). The per-operator caveats:
     collapse a known-boolean first operand (@true and b == b@,
     @false or b == b@, and the two annihilators): sound because Lua
     @and@/@or@ short-circuit, so dropping the second operand is exactly
-    what the runtime does.
+    what the runtime does. An identity /second/ operand (@a and true@,
+    @a or false@) also folds to @a@ — nothing is skipped, and the
+    literal cannot change a boolean @a@'s value (see Note [IR is
+    assumed well-typed]). The annihilator duals (@a and false@,
+    @a or true@) are left to the runtime, since folding them would skip
+    @a@'s evaluation.
 -}
 
 -- | The IEEE-double exactness ceiling; integer folds bail beyond it.
@@ -894,9 +900,11 @@ foldPrimBinOp op l r = case (op, l, r) of
   (PrimAnd, LiteralBool _ a, LiteralBool _ b) → Just (literalBool (a && b))
   (PrimAnd, LiteralBool _ True, b) → Just b
   (PrimAnd, LiteralBool _ False, _) → Just (literalBool False)
+  (PrimAnd, a, LiteralBool _ True) → Just a
   (PrimOr, LiteralBool _ a, LiteralBool _ b) → Just (literalBool (a || b))
   (PrimOr, LiteralBool _ True, _) → Just (literalBool True)
   (PrimOr, LiteralBool _ False, b) → Just b
+  (PrimOr, a, LiteralBool _ False) → Just a
   _ → Nothing
  where
   intFold ∷ Integer → Integer → Integer → Maybe Exp
@@ -1638,19 +1646,32 @@ flipNegatedIf =
       Just (IfThenElse ann cond elseBranch thenBranch)
     _ → Nothing
 
-{- | Collapse an if whose branches are the two boolean literals to the
-condition or its negation:
+{- | Collapse an if with boolean-literal branches into boolean
+operators. Two literal branches make the if the condition or its
+negation:
 
   * @if p then True else False@ ⟶ @p@;
   * @if p then False else True@ ⟶ @not p@ (a 'PrimNot' — a node the IR
     only gained with the primops of issue #178).
 
-Every 'Ord' comparison and @/=@ decays to this shape: their 'case' over
-the result compiles to a two-way boolean decision tree, so once the
-foreign comparison bodies lift to primops (#178) it is the dominant
-residual. @p@ is a 'Bool' evaluated once with pure literal branches, so
-the rewrite is semantics-preserving (see Note [IR is assumed
-well-typed]).
+One literal branch makes it a short-circuiting operator (issue #203);
+the other branch is a 'Bool' too, pinned by the literal (see
+Note [IR is assumed well-typed]):
+
+  * @if p then True else b@ ⟶ @p or b@;
+  * @if p then False else b@ ⟶ @not p and b@;
+  * @if p then a else True@ ⟶ @not p or a@;
+  * @if p then a else False@ ⟶ @p and a@.
+
+Every 'Ord' comparison and @/=@ decays to the two-literal shape: their
+'case' over the result compiles to a two-way boolean decision tree, so
+once the foreign comparison bodies lift to primops (#178) it is the
+dominant residual. The half-literal shapes are what a pushed comparison
+('pushEqIntoIfBranches') collapses to when the tree has more than one
+leaf folding the same way. Lua's @and@\/@or@ short-circuit, so each
+fold evaluates exactly what the branches evaluated, in the same order —
+and unlike a branch, an operator survives in condition position without
+an IIFE.
 -}
 reduceBooleanIf ∷ Applicative m ⇒ RewriteRuleM m Ann
 reduceBooleanIf =
@@ -1659,6 +1680,14 @@ reduceBooleanIf =
       Just cond
     IfThenElse _ cond (LiteralBool _ False) (LiteralBool _ True) →
       Just (primNot cond)
+    IfThenElse _ cond (LiteralBool _ True) elseBranch →
+      Just (primBinOp PrimOr cond elseBranch)
+    IfThenElse _ cond (LiteralBool _ False) elseBranch →
+      Just (primBinOp PrimAnd (primNot cond) elseBranch)
+    IfThenElse _ cond thenBranch (LiteralBool _ True) →
+      Just (primBinOp PrimOr (primNot cond) thenBranch)
+    IfThenElse _ cond thenBranch (LiteralBool _ False) →
+      Just (primBinOp PrimAnd cond thenBranch)
     _ → Nothing
 
 removeUnreachableThenBranch ∷ Applicative m ⇒ RewriteRuleM m Ann

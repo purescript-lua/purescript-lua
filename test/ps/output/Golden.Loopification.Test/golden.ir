@@ -174,11 +174,13 @@ UberModule
           }, AbsN Nothing
           ( ParamNamed Nothing ( Name "n" ) :| [] )
           ( IfThenElse Nothing
-            ( IfThenElse Nothing
-              ( PrimBinOp Nothing PrimLt
-                ( Ref Nothing ( Local ( Name "n" ) ) )
-                ( LiteralInt Nothing 100 )
-              ) ( LiteralBool Nothing False )
+            ( PrimBinOp Nothing PrimAnd
+              ( PrimNot Nothing
+                ( PrimBinOp Nothing PrimLt
+                  ( Ref Nothing ( Local ( Name "n" ) ) )
+                  ( LiteralInt Nothing 100 )
+                )
+              )
               ( PrimNot Nothing
                 ( Eq Nothing ( Ref Nothing ( Local ( Name "n" ) ) ) ( LiteralInt Nothing 100 ) )
               )
@@ -212,11 +214,13 @@ UberModule
           }, AbsN Nothing
           ( ParamNamed Nothing ( Name "n" ) :| [] )
           ( IfThenElse Nothing
-            ( IfThenElse Nothing
-              ( PrimBinOp Nothing PrimLt
-                ( Ref Nothing ( Local ( Name "n" ) ) )
-                ( LiteralInt Nothing 0 )
-              ) ( LiteralBool Nothing False )
+            ( PrimBinOp Nothing PrimAnd
+              ( PrimNot Nothing
+                ( PrimBinOp Nothing PrimLt
+                  ( Ref Nothing ( Local ( Name "n" ) ) )
+                  ( LiteralInt Nothing 0 )
+                )
+              )
               ( PrimNot Nothing
                 ( Eq Nothing ( Ref Nothing ( Local ( Name "n" ) ) ) ( LiteralInt Nothing 0 ) )
               )
