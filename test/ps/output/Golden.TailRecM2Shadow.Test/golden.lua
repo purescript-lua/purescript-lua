@@ -56,9 +56,9 @@ Effect_applicativeEffect = {
 }
 local Effect_Lazy_functorEffect = PSLUA_runtime_lazy("functorEffect")(function()
   return {
-    map = function(f_S_236)
-      return function(a_S_237)
-        return (Effect_applicativeEffect.Apply0()).apply(Effect_pureE(f_S_236))(a_S_237)
+    map = function(f_S_238)
+      return function(a_S_239)
+        return (Effect_applicativeEffect.Apply0()).apply(Effect_pureE(f_S_238))(a_S_239)
       end
     end
   }
@@ -66,12 +66,12 @@ end)
 Effect_Lazy_applyEffect = PSLUA_runtime_lazy("applyEffect")(function()
   return {
     apply = (function()
-      local bind_S_219 = (Effect_monadEffect.Bind1()).bind
-      return function(f_S_221)
-        return function(a_S_222)
-          return bind_S_219(f_S_221)(function(fPrime_S_223)
-            return bind_S_219(a_S_222)(function(aPrime_S_224)
-              return (Effect_monadEffect.Applicative0()).pure(fPrime_S_223(aPrime_S_224))
+      local bind_S_221 = (Effect_monadEffect.Bind1()).bind
+      return function(f_S_223)
+        return function(a_S_224)
+          return bind_S_221(f_S_223)(function(fPrime_S_225)
+            return bind_S_221(a_S_224)(function(aPrime_S_226)
+              return (Effect_monadEffect.Applicative0()).pure(fPrime_S_225(aPrime_S_226))
             end)
           end)
         end
@@ -81,27 +81,26 @@ Effect_Lazy_applyEffect = PSLUA_runtime_lazy("applyEffect")(function()
   }
 end)
 local Effect_functorEffect = Effect_Lazy_functorEffect(0)
-local Golden_TailRecM2Shadow_Test_add_S_w = function(x_S_488, y_S_489)
-  return x_S_488 + y_S_489
+local Golden_TailRecM2Shadow_Test_add_S_w = function(x_S_492, y_S_493)
+  return x_S_492 + y_S_493
 end
 M.Golden_TailRecM2Shadow_Test_sumFrom = function(dictMonadRec)
   local pure = ((dictMonadRec.Monad0()).Applicative0()).pure
   return function(b)
     return function(n)
-      return dictMonadRec.tailRecM(function(o_S_480)
-        local _S_cse510 = o_S_480.a
-        local _S_cse509 = o_S_480.b
-        if _S_cse509 < n then
-          return pure((function(value0)
-            return { "Control.Monad.Rec.Class∷Step.Loop", value0 }
-          end)({
-            a = Golden_TailRecM2Shadow_Test_add_S_w(_S_cse510, _S_cse509),
-            b = Golden_TailRecM2Shadow_Test_add_S_w(_S_cse509, 1)
-          }))
+      return dictMonadRec.tailRecM(function(o_S_482)
+        local _S_cse514 = o_S_482.a
+        local _S_cse513 = o_S_482.b
+        if _S_cse513 < n then
+          return pure({
+            "Control.Monad.Rec.Class∷Step.Loop",
+            {
+              a = Golden_TailRecM2Shadow_Test_add_S_w(_S_cse514, _S_cse513),
+              b = Golden_TailRecM2Shadow_Test_add_S_w(_S_cse513, 1)
+            }
+          })
         else
-          return pure((function(value0)
-            return { "Control.Monad.Rec.Class∷Step.Done", value0 }
-          end)(_S_cse510))
+          return pure({ "Control.Monad.Rec.Class∷Step.Done", _S_cse514 })
         end
       end)({ a = b, b = 0 })
     end
@@ -109,7 +108,7 @@ M.Golden_TailRecM2Shadow_Test_sumFrom = function(dictMonadRec)
 end
 return (function()
   local r_S_0 = (function()
-    local dictMonadRec_S_503 = {
+    local dictMonadRec_S_507 = {
       tailRecM = function(f_S_11)
         return function(a_S_12)
           return function()
@@ -144,25 +143,27 @@ return (function()
       end,
       Monad0 = function() return Effect_monadEffect end
     }
-    local pure_S_504 = ((dictMonadRec_S_503.Monad0()).Applicative0()).pure
-    return function(b_S_505)
-      return function(n_S_506)
-        return dictMonadRec_S_503.tailRecM(function(o_S_507)
-          local _S_cse512 = o_S_507.a
-          local _S_cse511 = o_S_507.b
-          if _S_cse511 < n_S_506 then
-            return pure_S_504((function(value0)
-              return { "Control.Monad.Rec.Class∷Step.Loop", value0 }
-            end)({
-              a = Golden_TailRecM2Shadow_Test_add_S_w(_S_cse512, _S_cse511),
-              b = Golden_TailRecM2Shadow_Test_add_S_w(_S_cse511, 1)
-            }))
+    local pure_S_508 = ((dictMonadRec_S_507.Monad0()).Applicative0()).pure
+    return function(b_S_509)
+      return function(n_S_510)
+        return dictMonadRec_S_507.tailRecM(function(o_S_511)
+          local _S_cse516 = o_S_511.a
+          local _S_cse515 = o_S_511.b
+          if _S_cse515 < n_S_510 then
+            return pure_S_508({
+              "Control.Monad.Rec.Class∷Step.Loop",
+              {
+                a = Golden_TailRecM2Shadow_Test_add_S_w(_S_cse516, _S_cse515),
+                b = Golden_TailRecM2Shadow_Test_add_S_w(_S_cse515, 1)
+              }
+            })
           else
-            return pure_S_504((function(value0)
-              return { "Control.Monad.Rec.Class∷Step.Done", value0 }
-            end)(_S_cse512))
+            return pure_S_508({
+              "Control.Monad.Rec.Class∷Step.Done",
+              _S_cse516
+            })
           end
-        end)({ a = b_S_505, b = 0 })
+        end)({ a = b_S_509, b = 0 })
       end
     end
   end)()(0)(5)()

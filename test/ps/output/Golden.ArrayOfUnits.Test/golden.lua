@@ -56,10 +56,10 @@ Data_Foldable_foldableArray = {
   foldr = Data_Foldable_foreign.foldrArray,
   foldl = Data_Foldable_foreign.foldlArray,
   foldMap = function(dictMonoid)
-    return function(f_S_914)
-      return Data_Foldable_foldableArray.foldr(function(x_S_915)
-        return function(acc_S_916)
-          return (dictMonoid.Semigroup0()).append(f_S_914(x_S_915))(acc_S_916)
+    return function(f_S_916)
+      return Data_Foldable_foldableArray.foldr(function(x_S_917)
+        return function(acc_S_918)
+          return (dictMonoid.Semigroup0()).append(f_S_916(x_S_917))(acc_S_918)
         end
       end)(dictMonoid.mempty)
     end
@@ -82,9 +82,9 @@ Effect_applicativeEffect = {
 }
 local Effect_Lazy_functorEffect = PSLUA_runtime_lazy("functorEffect")(function()
   return {
-    map = function(f_S_704)
-      return function(a_S_705)
-        return (Effect_applicativeEffect.Apply0()).apply(Effect_pureE(f_S_704))(a_S_705)
+    map = function(f_S_706)
+      return function(a_S_707)
+        return (Effect_applicativeEffect.Apply0()).apply(Effect_pureE(f_S_706))(a_S_707)
       end
     end
   }
@@ -92,12 +92,12 @@ end)
 Effect_Lazy_applyEffect = PSLUA_runtime_lazy("applyEffect")(function()
   return {
     apply = (function()
-      local bind_S_687 = (Effect_monadEffect.Bind1()).bind
-      return function(f_S_689)
-        return function(a_S_690)
-          return bind_S_687(f_S_689)(function(fPrime_S_691)
-            return bind_S_687(a_S_690)(function(aPrime_S_692)
-              return (Effect_monadEffect.Applicative0()).pure(fPrime_S_691(aPrime_S_692))
+      local bind_S_689 = (Effect_monadEffect.Bind1()).bind
+      return function(f_S_691)
+        return function(a_S_692)
+          return bind_S_689(f_S_691)(function(fPrime_S_693)
+            return bind_S_689(a_S_692)(function(aPrime_S_694)
+              return (Effect_monadEffect.Applicative0()).pure(fPrime_S_693(aPrime_S_694))
             end)
           end)
         end
@@ -116,24 +116,24 @@ return (function()
     [3] = Data_Unit_unit
   }
   return function()
-    local _ = Data_Foldable_foldableArray.foldr(function(x_S_938)
+    local _ = Data_Foldable_foldableArray.foldr(function(x_S_940)
       return (function()
-        local dictApply_S_923 = Effect_applicativeEffect.Apply0()
-        return function(a_S_924)
-          return function(b_S_925)
-            return dictApply_S_923.apply((dictApply_S_923.Functor0()).map(function(  )
-              return function(x_S_932) return x_S_932 end
-            end)(a_S_924))(b_S_925)
+        local dictApply_S_925 = Effect_applicativeEffect.Apply0()
+        return function(a_S_926)
+          return function(b_S_927)
+            return dictApply_S_925.apply((dictApply_S_925.Functor0()).map(function(  )
+              return function(x_S_934) return x_S_934 end
+            end)(a_S_926))(b_S_927)
           end
         end
       end)()(Effect_Console_logShow_S_w({
         show = function() return "unit" end
-      }, x_S_938))
+      }, x_S_940))
     end)(Effect_pureE(Data_Unit_unit))(arr_S_0)()
     return Effect_Console_logShow_S_w({
       show = Data_Show_foreign.showIntImpl
-    }, Data_Foldable_foldableArray.foldl(function(c_S_911)
-      return function() return 1 + c_S_911 end
+    }, Data_Foldable_foldableArray.foldl(function(c_S_913)
+      return function() return 1 + c_S_913 end
     end)(0)(arr_S_0))()
   end
 end)()()

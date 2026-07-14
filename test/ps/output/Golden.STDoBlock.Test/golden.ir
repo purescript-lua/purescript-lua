@@ -53,10 +53,10 @@ UberModule
       ( QName
         { qnameModuleName = ModuleName "Golden.STDoBlock.Test", qnameName = Name "add$w"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "x$445" ) :| [ ParamNamed Nothing ( Name "y$446" ) ] )
+        ( ParamNamed Nothing ( Name "x$447" ) :| [ ParamNamed Nothing ( Name "y$448" ) ] )
         ( PrimBinOp Nothing PrimAdd
-          ( Ref Nothing ( Local ( Name "x$445" ) ) )
-          ( Ref Nothing ( Local ( Name "y$446" ) ) )
+          ( Ref Nothing ( Local ( Name "x$447" ) ) )
+          ( Ref Nothing ( Local ( Name "y$448" ) ) )
         )
       ), Standalone
       ( QName
@@ -69,24 +69,24 @@ UberModule
             ( ParamUnused Nothing :| [] )
             ( Let Nothing
               ( Standalone
-                ( Nothing, Name "$cse467", AbsN Nothing
-                  ( ParamNamed Nothing ( Name "s$451" ) :| [] )
+                ( Nothing, Name "$cse469", AbsN Nothing
+                  ( ParamNamed Nothing ( Name "s$453" ) :| [] )
                   ( Let Nothing
                     ( Standalone
-                      ( Nothing, Name "s'$452", AppN Nothing
+                      ( Nothing, Name "s'$454", AppN Nothing
                         ( Ref Nothing
                           ( Imported ( ModuleName "Golden.STDoBlock.Test" ) ( Name "add$w" ) )
                         )
                         ( Ref Nothing
-                          ( Local ( Name "s$451" ) ) :|
+                          ( Local ( Name "s$453" ) ) :|
                           [ Ref Nothing ( Local ( Name "n" ) ) ]
                         )
                       ) :| []
                     )
                     ( LiteralObject Nothing
                       [
-                        ( PropName "state", Ref Nothing ( Local ( Name "s'$452" ) ) ),
-                        ( PropName "value", Ref Nothing ( Local ( Name "s'$452" ) ) )
+                        ( PropName "state", Ref Nothing ( Local ( Name "s'$454" ) ) ),
+                        ( PropName "value", Ref Nothing ( Local ( Name "s'$454" ) ) )
                       ]
                     )
                   )
@@ -113,7 +113,7 @@ UberModule
                               ( Name "modifyImpl" )
                             )
                           )
-                          ( Ref Nothing ( Local ( Name "$cse467" ) ) :| [] )
+                          ( Ref Nothing ( Local ( Name "$cse469" ) ) :| [] )
                         )
                         ( Ref Nothing ( Local ( Name "ref" ) ) :| [] )
                       )
@@ -130,7 +130,7 @@ UberModule
                               ( Name "modifyImpl" )
                             )
                           )
-                          ( Ref Nothing ( Local ( Name "$cse467" ) ) :| [] )
+                          ( Ref Nothing ( Local ( Name "$cse469" ) ) :| [] )
                         )
                         ( Ref Nothing ( Local ( Name "ref" ) ) :| [] )
                       )
@@ -183,21 +183,21 @@ UberModule
               ( ParamUnused Nothing :| [] )
               ( Let Nothing
                 ( Standalone
-                  ( Nothing, Name "$cse468", AbsN Nothing
-                    ( ParamNamed Nothing ( Name "s$462" ) :| [] )
+                  ( Nothing, Name "$cse470", AbsN Nothing
+                    ( ParamNamed Nothing ( Name "s$464" ) :| [] )
                     ( Let Nothing
                       ( Standalone
-                        ( Nothing, Name "s'$463", AppN Nothing
+                        ( Nothing, Name "s'$465", AppN Nothing
                           ( Ref Nothing
                             ( Imported ( ModuleName "Golden.STDoBlock.Test" ) ( Name "add$w" ) )
                           )
-                          ( Ref Nothing ( Local ( Name "s$462" ) ) :| [ LiteralInt Nothing 5 ] )
+                          ( Ref Nothing ( Local ( Name "s$464" ) ) :| [ LiteralInt Nothing 5 ] )
                         ) :| []
                       )
                       ( LiteralObject Nothing
                         [
-                          ( PropName "state", Ref Nothing ( Local ( Name "s'$463" ) ) ),
-                          ( PropName "value", Ref Nothing ( Local ( Name "s'$463" ) ) )
+                          ( PropName "state", Ref Nothing ( Local ( Name "s'$465" ) ) ),
+                          ( PropName "value", Ref Nothing ( Local ( Name "s'$465" ) ) )
                         ]
                       )
                     )
@@ -205,7 +205,7 @@ UberModule
                 )
                 ( Let Nothing
                   ( Standalone
-                    ( Nothing, Name "ref$457", AppN Nothing
+                    ( Nothing, Name "ref$459", AppN Nothing
                       ( AppN Nothing
                         ( Ref Nothing
                           ( Imported ( ModuleName "Control.Monad.ST.Internal" ) ( Name "new" ) )
@@ -226,9 +226,9 @@ UberModule
                                 ( Name "modifyImpl" )
                               )
                             )
-                            ( Ref Nothing ( Local ( Name "$cse468" ) ) :| [] )
+                            ( Ref Nothing ( Local ( Name "$cse470" ) ) :| [] )
                           )
-                          ( Ref Nothing ( Local ( Name "ref$457" ) ) :| [] )
+                          ( Ref Nothing ( Local ( Name "ref$459" ) ) :| [] )
                         )
                         ( Ref Nothing
                           ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
@@ -243,20 +243,20 @@ UberModule
                                 ( Name "modifyImpl" )
                               )
                             )
-                            ( Ref Nothing ( Local ( Name "$cse468" ) ) :| [] )
+                            ( Ref Nothing ( Local ( Name "$cse470" ) ) :| [] )
                           )
-                          ( Ref Nothing ( Local ( Name "ref$457" ) ) :| [] )
+                          ( Ref Nothing ( Local ( Name "ref$459" ) ) :| [] )
                         )
                         ( Ref Nothing
                           ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
                         )
                       ), Standalone
-                      ( Nothing, Name "total$458", AppN Nothing
+                      ( Nothing, Name "total$460", AppN Nothing
                         ( AppN Nothing
                           ( Ref Nothing
                             ( Imported ( ModuleName "Control.Monad.ST.Internal" ) ( Name "read" ) )
                           )
-                          ( Ref Nothing ( Local ( Name "ref$457" ) ) :| [] )
+                          ( Ref Nothing ( Local ( Name "ref$459" ) ) :| [] )
                         )
                         ( Ref Nothing
                           ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
@@ -268,7 +268,7 @@ UberModule
                     ( Ref Nothing
                       ( Imported ( ModuleName "Golden.STDoBlock.Test" ) ( Name "add$w" ) )
                     )
-                    ( Ref Nothing ( Local ( Name "total$458" ) ) :| [ LiteralInt Nothing 1 ] )
+                    ( Ref Nothing ( Local ( Name "total$460" ) ) :| [ LiteralInt Nothing 1 ] )
                   )
                 )
               ) :| []

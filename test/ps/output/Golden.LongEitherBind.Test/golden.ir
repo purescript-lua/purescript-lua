@@ -22,14 +22,6 @@ UberModule
         )
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Data.Either", qnameName = Name "Right"
-        }, Ctor Nothing SumType
-        ( ModuleName "Data.Either" )
-        ( TyName "Either" )
-        ( CtorName "Right" )
-        [ FieldName "value0" ]
-      ), Standalone
-      ( QName
         { qnameModuleName = ModuleName "Golden.LongEitherBind.Test", qnameName = Name "add$w"
         }, AbsN Nothing
         ( ParamNamed Nothing ( Name "x$326" ) :| [ ParamNamed Nothing ( Name "y$327" ) ] )
@@ -44,7 +36,7 @@ UberModule
         ( Standalone
           ( Nothing, Name "x150", Let Nothing
             ( Standalone
-              ( Nothing, Name "$tmp1239", AppN Nothing
+              ( Nothing, Name "$tmp1541", AppN Nothing
                 ( Ref Nothing
                   ( Imported ( ModuleName "Golden.LongEitherBind.Test" ) ( Name "add$w" ) )
                 )
@@ -392,7 +384,7 @@ UberModule
                 )
               ) :|
               [ Standalone
-                ( Nothing, Name "$tmp1240", AppN Nothing
+                ( Nothing, Name "$tmp1542", AppN Nothing
                   ( Ref Nothing
                     ( Imported ( ModuleName "Golden.LongEitherBind.Test" ) ( Name "add$w" ) )
                   )
@@ -662,7 +654,7 @@ UberModule
                                                                                                 )
                                                                                                 ( Ref Nothing
                                                                                                   ( Local
-                                                                                                    ( Name "$tmp1239" )
+                                                                                                    ( Name "$tmp1541" )
                                                                                                   ) :|
                                                                                                   [ LiteralInt Nothing 1 ]
                                                                                                 ) :|
@@ -745,7 +737,7 @@ UberModule
                     [ LiteralInt Nothing 1 ]
                   )
                 ), Standalone
-                ( Nothing, Name "$tmp1241", AppN Nothing
+                ( Nothing, Name "$tmp1543", AppN Nothing
                   ( Ref Nothing
                     ( Imported ( ModuleName "Golden.LongEitherBind.Test" ) ( Name "add$w" ) )
                   )
@@ -1015,7 +1007,7 @@ UberModule
                                                                                                 )
                                                                                                 ( Ref Nothing
                                                                                                   ( Local
-                                                                                                    ( Name "$tmp1240" )
+                                                                                                    ( Name "$tmp1542" )
                                                                                                   ) :|
                                                                                                   [ LiteralInt Nothing 1 ]
                                                                                                 ) :|
@@ -1287,7 +1279,7 @@ UberModule
                                                                       )
                                                                       ( Ref Nothing
                                                                         ( Local
-                                                                          ( Name "$tmp1241" )
+                                                                          ( Name "$tmp1543" )
                                                                         ) :|
                                                                         [ LiteralInt Nothing 1 ]
                                                                       ) :|
@@ -1350,357 +1342,13 @@ UberModule
             )
           ) :| []
         )
-        ( Let Nothing
-          ( Standalone
-            ( Nothing, Name "$tmp1242", AppN Nothing
-              ( Ref Nothing
-                ( Imported ( ModuleName "Golden.LongEitherBind.Test" ) ( Name "add$w" ) )
-              )
-              ( AppN Nothing
-                ( Ref Nothing
-                  ( Imported ( ModuleName "Golden.LongEitherBind.Test" ) ( Name "add$w" ) )
-                )
-                ( AppN Nothing
-                  ( Ref Nothing
-                    ( Imported ( ModuleName "Golden.LongEitherBind.Test" ) ( Name "add$w" ) )
-                  )
-                  ( AppN Nothing
-                    ( Ref Nothing
-                      ( Imported ( ModuleName "Golden.LongEitherBind.Test" ) ( Name "add$w" ) )
-                    )
-                    ( AppN Nothing
-                      ( Ref Nothing
-                        ( Imported ( ModuleName "Golden.LongEitherBind.Test" ) ( Name "add$w" ) )
-                      )
-                      ( AppN Nothing
-                        ( Ref Nothing
-                          ( Imported ( ModuleName "Golden.LongEitherBind.Test" ) ( Name "add$w" ) )
-                        )
-                        ( AppN Nothing
-                          ( Ref Nothing
-                            ( Imported
-                              ( ModuleName "Golden.LongEitherBind.Test" )
-                              ( Name "add$w" )
-                            )
-                          )
-                          ( AppN Nothing
-                            ( Ref Nothing
-                              ( Imported
-                                ( ModuleName "Golden.LongEitherBind.Test" )
-                                ( Name "add$w" )
-                              )
-                            )
-                            ( AppN Nothing
-                              ( Ref Nothing
-                                ( Imported
-                                  ( ModuleName "Golden.LongEitherBind.Test" )
-                                  ( Name "add$w" )
-                                )
-                              )
-                              ( AppN Nothing
-                                ( Ref Nothing
-                                  ( Imported
-                                    ( ModuleName "Golden.LongEitherBind.Test" )
-                                    ( Name "add$w" )
-                                  )
-                                )
-                                ( AppN Nothing
-                                  ( Ref Nothing
-                                    ( Imported
-                                      ( ModuleName "Golden.LongEitherBind.Test" )
-                                      ( Name "add$w" )
-                                    )
-                                  )
-                                  ( AppN Nothing
-                                    ( Ref Nothing
-                                      ( Imported
-                                        ( ModuleName "Golden.LongEitherBind.Test" )
-                                        ( Name "add$w" )
-                                      )
-                                    )
-                                    ( AppN Nothing
-                                      ( Ref Nothing
-                                        ( Imported
-                                          ( ModuleName "Golden.LongEitherBind.Test" )
-                                          ( Name "add$w" )
-                                        )
-                                      )
-                                      ( AppN Nothing
-                                        ( Ref Nothing
-                                          ( Imported
-                                            ( ModuleName "Golden.LongEitherBind.Test" )
-                                            ( Name "add$w" )
-                                          )
-                                        )
-                                        ( AppN Nothing
-                                          ( Ref Nothing
-                                            ( Imported
-                                              ( ModuleName "Golden.LongEitherBind.Test" )
-                                              ( Name "add$w" )
-                                            )
-                                          )
-                                          ( AppN Nothing
-                                            ( Ref Nothing
-                                              ( Imported
-                                                ( ModuleName "Golden.LongEitherBind.Test" )
-                                                ( Name "add$w" )
-                                              )
-                                            )
-                                            ( AppN Nothing
-                                              ( Ref Nothing
-                                                ( Imported
-                                                  ( ModuleName "Golden.LongEitherBind.Test" )
-                                                  ( Name "add$w" )
-                                                )
-                                              )
-                                              ( AppN Nothing
-                                                ( Ref Nothing
-                                                  ( Imported
-                                                    ( ModuleName "Golden.LongEitherBind.Test" )
-                                                    ( Name "add$w" )
-                                                  )
-                                                )
-                                                ( AppN Nothing
-                                                  ( Ref Nothing
-                                                    ( Imported
-                                                      ( ModuleName "Golden.LongEitherBind.Test" )
-                                                      ( Name "add$w" )
-                                                    )
-                                                  )
-                                                  ( AppN Nothing
-                                                    ( Ref Nothing
-                                                      ( Imported
-                                                        ( ModuleName "Golden.LongEitherBind.Test" )
-                                                        ( Name "add$w" )
-                                                      )
-                                                    )
-                                                    ( AppN Nothing
-                                                      ( Ref Nothing
-                                                        ( Imported
-                                                          ( ModuleName "Golden.LongEitherBind.Test" )
-                                                          ( Name "add$w" )
-                                                        )
-                                                      )
-                                                      ( AppN Nothing
-                                                        ( Ref Nothing
-                                                          ( Imported
-                                                            ( ModuleName "Golden.LongEitherBind.Test" )
-                                                            ( Name "add$w" )
-                                                          )
-                                                        )
-                                                        ( AppN Nothing
-                                                          ( Ref Nothing
-                                                            ( Imported
-                                                              ( ModuleName "Golden.LongEitherBind.Test" )
-                                                              ( Name "add$w" )
-                                                            )
-                                                          )
-                                                          ( AppN Nothing
-                                                            ( Ref Nothing
-                                                              ( Imported
-                                                                ( ModuleName "Golden.LongEitherBind.Test" )
-                                                                ( Name "add$w" )
-                                                              )
-                                                            )
-                                                            ( AppN Nothing
-                                                              ( Ref Nothing
-                                                                ( Imported
-                                                                  ( ModuleName "Golden.LongEitherBind.Test" )
-                                                                  ( Name "add$w" )
-                                                                )
-                                                              )
-                                                              ( AppN Nothing
-                                                                ( Ref Nothing
-                                                                  ( Imported
-                                                                    ( ModuleName "Golden.LongEitherBind.Test" )
-                                                                    ( Name "add$w" )
-                                                                  )
-                                                                )
-                                                                ( AppN Nothing
-                                                                  ( Ref Nothing
-                                                                    ( Imported
-                                                                      ( ModuleName "Golden.LongEitherBind.Test" )
-                                                                      ( Name "add$w" )
-                                                                    )
-                                                                  )
-                                                                  ( AppN Nothing
-                                                                    ( Ref Nothing
-                                                                      ( Imported
-                                                                        ( ModuleName "Golden.LongEitherBind.Test" )
-                                                                        ( Name "add$w" )
-                                                                      )
-                                                                    )
-                                                                    ( AppN Nothing
-                                                                      ( Ref Nothing
-                                                                        ( Imported
-                                                                          ( ModuleName "Golden.LongEitherBind.Test" )
-                                                                          ( Name "add$w" )
-                                                                        )
-                                                                      )
-                                                                      ( AppN Nothing
-                                                                        ( Ref Nothing
-                                                                          ( Imported
-                                                                            ( ModuleName "Golden.LongEitherBind.Test" )
-                                                                            ( Name "add$w" )
-                                                                          )
-                                                                        )
-                                                                        ( AppN Nothing
-                                                                          ( Ref Nothing
-                                                                            ( Imported
-                                                                              ( ModuleName "Golden.LongEitherBind.Test" )
-                                                                              ( Name "add$w" )
-                                                                            )
-                                                                          )
-                                                                          ( AppN Nothing
-                                                                            ( Ref Nothing
-                                                                              ( Imported
-                                                                                ( ModuleName "Golden.LongEitherBind.Test" )
-                                                                                ( Name "add$w" )
-                                                                              )
-                                                                            )
-                                                                            ( AppN Nothing
-                                                                              ( Ref Nothing
-                                                                                ( Imported
-                                                                                  ( ModuleName "Golden.LongEitherBind.Test" )
-                                                                                  ( Name "add$w" )
-                                                                                )
-                                                                              )
-                                                                              ( AppN Nothing
-                                                                                ( Ref Nothing
-                                                                                  ( Imported
-                                                                                    ( ModuleName "Golden.LongEitherBind.Test" )
-                                                                                    ( Name "add$w" )
-                                                                                  )
-                                                                                )
-                                                                                ( AppN Nothing
-                                                                                  ( Ref Nothing
-                                                                                    ( Imported
-                                                                                      ( ModuleName "Golden.LongEitherBind.Test" )
-                                                                                      ( Name "add$w" )
-                                                                                    )
-                                                                                  )
-                                                                                  ( AppN Nothing
-                                                                                    ( Ref Nothing
-                                                                                      ( Imported
-                                                                                        ( ModuleName "Golden.LongEitherBind.Test" )
-                                                                                        ( Name "add$w" )
-                                                                                      )
-                                                                                    )
-                                                                                    ( AppN Nothing
-                                                                                      ( Ref Nothing
-                                                                                        ( Imported
-                                                                                          ( ModuleName "Golden.LongEitherBind.Test" )
-                                                                                          ( Name "add$w" )
-                                                                                        )
-                                                                                      )
-                                                                                      ( AppN Nothing
-                                                                                        ( Ref Nothing
-                                                                                          ( Imported
-                                                                                            ( ModuleName "Golden.LongEitherBind.Test" )
-                                                                                            ( Name "add$w" )
-                                                                                          )
-                                                                                        )
-                                                                                        ( AppN Nothing
-                                                                                          ( Ref Nothing
-                                                                                            ( Imported
-                                                                                              ( ModuleName "Golden.LongEitherBind.Test" )
-                                                                                              ( Name "add$w" )
-                                                                                            )
-                                                                                          )
-                                                                                          ( AppN Nothing
-                                                                                            ( Ref Nothing
-                                                                                              ( Imported
-                                                                                                ( ModuleName "Golden.LongEitherBind.Test" )
-                                                                                                ( Name "add$w" )
-                                                                                              )
-                                                                                            )
-                                                                                            ( Ref Nothing
-                                                                                              ( Local
-                                                                                                ( Name "x150" )
-                                                                                              ) :|
-                                                                                              [ LiteralInt Nothing 1 ]
-                                                                                            ) :|
-                                                                                            [ LiteralInt Nothing 1 ]
-                                                                                          ) :|
-                                                                                          [ LiteralInt Nothing 1 ]
-                                                                                        ) :|
-                                                                                        [ LiteralInt Nothing 1 ]
-                                                                                      ) :|
-                                                                                      [ LiteralInt Nothing 1 ]
-                                                                                    ) :|
-                                                                                    [ LiteralInt Nothing 1 ]
-                                                                                  ) :|
-                                                                                  [ LiteralInt Nothing 1 ]
-                                                                                ) :|
-                                                                                [ LiteralInt Nothing 1 ]
-                                                                              ) :|
-                                                                              [ LiteralInt Nothing 1 ]
-                                                                            ) :|
-                                                                            [ LiteralInt Nothing 1 ]
-                                                                          ) :|
-                                                                          [ LiteralInt Nothing 1 ]
-                                                                        ) :|
-                                                                        [ LiteralInt Nothing 1 ]
-                                                                      ) :|
-                                                                      [ LiteralInt Nothing 1 ]
-                                                                    ) :|
-                                                                    [ LiteralInt Nothing 1 ]
-                                                                  ) :|
-                                                                  [ LiteralInt Nothing 1 ]
-                                                                ) :|
-                                                                [ LiteralInt Nothing 1 ]
-                                                              ) :|
-                                                              [ LiteralInt Nothing 1 ]
-                                                            ) :|
-                                                            [ LiteralInt Nothing 1 ]
-                                                          ) :|
-                                                          [ LiteralInt Nothing 1 ]
-                                                        ) :|
-                                                        [ LiteralInt Nothing 1 ]
-                                                      ) :|
-                                                      [ LiteralInt Nothing 1 ]
-                                                    ) :|
-                                                    [ LiteralInt Nothing 1 ]
-                                                  ) :|
-                                                  [ LiteralInt Nothing 1 ]
-                                                ) :|
-                                                [ LiteralInt Nothing 1 ]
-                                              ) :|
-                                              [ LiteralInt Nothing 1 ]
-                                            ) :|
-                                            [ LiteralInt Nothing 1 ]
-                                          ) :|
-                                          [ LiteralInt Nothing 1 ]
-                                        ) :|
-                                        [ LiteralInt Nothing 1 ]
-                                      ) :|
-                                      [ LiteralInt Nothing 1 ]
-                                    ) :|
-                                    [ LiteralInt Nothing 1 ]
-                                  ) :|
-                                  [ LiteralInt Nothing 1 ]
-                                ) :|
-                                [ LiteralInt Nothing 1 ]
-                              ) :|
-                              [ LiteralInt Nothing 1 ]
-                            ) :|
-                            [ LiteralInt Nothing 1 ]
-                          ) :|
-                          [ LiteralInt Nothing 1 ]
-                        ) :|
-                        [ LiteralInt Nothing 1 ]
-                      ) :|
-                      [ LiteralInt Nothing 1 ]
-                    ) :|
-                    [ LiteralInt Nothing 1 ]
-                  ) :|
-                  [ LiteralInt Nothing 1 ]
-                ) :|
-                [ LiteralInt Nothing 1 ]
-              )
-            ) :|
-            [ Standalone
-              ( Nothing, Name "$tmp1243", AppN Nothing
+        ( Ctor Nothing SumType
+          ( ModuleName "Data.Either" )
+          ( TyName "Either" )
+          ( CtorName "Right" )
+          [ Let Nothing
+            ( Standalone
+              ( Nothing, Name "$tmp1544", AppN Nothing
                 ( Ref Nothing
                   ( Imported ( ModuleName "Golden.LongEitherBind.Test" ) ( Name "add$w" ) )
                 )
@@ -1967,7 +1615,7 @@ UberModule
                                                                                               )
                                                                                               ( Ref Nothing
                                                                                                 ( Local
-                                                                                                  ( Name "$tmp1242" )
+                                                                                                  ( Name "x150" )
                                                                                                 ) :|
                                                                                                 [ LiteralInt Nothing 1 ]
                                                                                               ) :|
@@ -2049,12 +1697,9 @@ UberModule
                   ) :|
                   [ LiteralInt Nothing 1 ]
                 )
-              ), Standalone
-              ( Nothing, Name "$tmp1244", AppN Nothing
-                ( Ref Nothing
-                  ( Imported ( ModuleName "Golden.LongEitherBind.Test" ) ( Name "add$w" ) )
-                )
-                ( AppN Nothing
+              ) :|
+              [ Standalone
+                ( Nothing, Name "$tmp1545", AppN Nothing
                   ( Ref Nothing
                     ( Imported ( ModuleName "Golden.LongEitherBind.Test" ) ( Name "add$w" ) )
                   )
@@ -2315,9 +1960,18 @@ UberModule
                                                                                                   ( Name "add$w" )
                                                                                                 )
                                                                                               )
-                                                                                              ( Ref Nothing
-                                                                                                ( Local
-                                                                                                  ( Name "$tmp1243" )
+                                                                                              ( AppN Nothing
+                                                                                                ( Ref Nothing
+                                                                                                  ( Imported
+                                                                                                    ( ModuleName "Golden.LongEitherBind.Test" )
+                                                                                                    ( Name "add$w" )
+                                                                                                  )
+                                                                                                )
+                                                                                                ( Ref Nothing
+                                                                                                  ( Local
+                                                                                                    ( Name "$tmp1544" )
+                                                                                                  ) :|
+                                                                                                  [ LiteralInt Nothing 1 ]
                                                                                                 ) :|
                                                                                                 [ LiteralInt Nothing 1 ]
                                                                                               ) :|
@@ -2396,14 +2050,363 @@ UberModule
                       [ LiteralInt Nothing 1 ]
                     ) :|
                     [ LiteralInt Nothing 1 ]
-                  ) :|
-                  [ LiteralInt Nothing 1 ]
+                  )
+                ), Standalone
+                ( Nothing, Name "$tmp1546", AppN Nothing
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Golden.LongEitherBind.Test" ) ( Name "add$w" ) )
+                  )
+                  ( AppN Nothing
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Golden.LongEitherBind.Test" ) ( Name "add$w" ) )
+                    )
+                    ( AppN Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Golden.LongEitherBind.Test" ) ( Name "add$w" ) )
+                      )
+                      ( AppN Nothing
+                        ( Ref Nothing
+                          ( Imported ( ModuleName "Golden.LongEitherBind.Test" ) ( Name "add$w" ) )
+                        )
+                        ( AppN Nothing
+                          ( Ref Nothing
+                            ( Imported
+                              ( ModuleName "Golden.LongEitherBind.Test" )
+                              ( Name "add$w" )
+                            )
+                          )
+                          ( AppN Nothing
+                            ( Ref Nothing
+                              ( Imported
+                                ( ModuleName "Golden.LongEitherBind.Test" )
+                                ( Name "add$w" )
+                              )
+                            )
+                            ( AppN Nothing
+                              ( Ref Nothing
+                                ( Imported
+                                  ( ModuleName "Golden.LongEitherBind.Test" )
+                                  ( Name "add$w" )
+                                )
+                              )
+                              ( AppN Nothing
+                                ( Ref Nothing
+                                  ( Imported
+                                    ( ModuleName "Golden.LongEitherBind.Test" )
+                                    ( Name "add$w" )
+                                  )
+                                )
+                                ( AppN Nothing
+                                  ( Ref Nothing
+                                    ( Imported
+                                      ( ModuleName "Golden.LongEitherBind.Test" )
+                                      ( Name "add$w" )
+                                    )
+                                  )
+                                  ( AppN Nothing
+                                    ( Ref Nothing
+                                      ( Imported
+                                        ( ModuleName "Golden.LongEitherBind.Test" )
+                                        ( Name "add$w" )
+                                      )
+                                    )
+                                    ( AppN Nothing
+                                      ( Ref Nothing
+                                        ( Imported
+                                          ( ModuleName "Golden.LongEitherBind.Test" )
+                                          ( Name "add$w" )
+                                        )
+                                      )
+                                      ( AppN Nothing
+                                        ( Ref Nothing
+                                          ( Imported
+                                            ( ModuleName "Golden.LongEitherBind.Test" )
+                                            ( Name "add$w" )
+                                          )
+                                        )
+                                        ( AppN Nothing
+                                          ( Ref Nothing
+                                            ( Imported
+                                              ( ModuleName "Golden.LongEitherBind.Test" )
+                                              ( Name "add$w" )
+                                            )
+                                          )
+                                          ( AppN Nothing
+                                            ( Ref Nothing
+                                              ( Imported
+                                                ( ModuleName "Golden.LongEitherBind.Test" )
+                                                ( Name "add$w" )
+                                              )
+                                            )
+                                            ( AppN Nothing
+                                              ( Ref Nothing
+                                                ( Imported
+                                                  ( ModuleName "Golden.LongEitherBind.Test" )
+                                                  ( Name "add$w" )
+                                                )
+                                              )
+                                              ( AppN Nothing
+                                                ( Ref Nothing
+                                                  ( Imported
+                                                    ( ModuleName "Golden.LongEitherBind.Test" )
+                                                    ( Name "add$w" )
+                                                  )
+                                                )
+                                                ( AppN Nothing
+                                                  ( Ref Nothing
+                                                    ( Imported
+                                                      ( ModuleName "Golden.LongEitherBind.Test" )
+                                                      ( Name "add$w" )
+                                                    )
+                                                  )
+                                                  ( AppN Nothing
+                                                    ( Ref Nothing
+                                                      ( Imported
+                                                        ( ModuleName "Golden.LongEitherBind.Test" )
+                                                        ( Name "add$w" )
+                                                      )
+                                                    )
+                                                    ( AppN Nothing
+                                                      ( Ref Nothing
+                                                        ( Imported
+                                                          ( ModuleName "Golden.LongEitherBind.Test" )
+                                                          ( Name "add$w" )
+                                                        )
+                                                      )
+                                                      ( AppN Nothing
+                                                        ( Ref Nothing
+                                                          ( Imported
+                                                            ( ModuleName "Golden.LongEitherBind.Test" )
+                                                            ( Name "add$w" )
+                                                          )
+                                                        )
+                                                        ( AppN Nothing
+                                                          ( Ref Nothing
+                                                            ( Imported
+                                                              ( ModuleName "Golden.LongEitherBind.Test" )
+                                                              ( Name "add$w" )
+                                                            )
+                                                          )
+                                                          ( AppN Nothing
+                                                            ( Ref Nothing
+                                                              ( Imported
+                                                                ( ModuleName "Golden.LongEitherBind.Test" )
+                                                                ( Name "add$w" )
+                                                              )
+                                                            )
+                                                            ( AppN Nothing
+                                                              ( Ref Nothing
+                                                                ( Imported
+                                                                  ( ModuleName "Golden.LongEitherBind.Test" )
+                                                                  ( Name "add$w" )
+                                                                )
+                                                              )
+                                                              ( AppN Nothing
+                                                                ( Ref Nothing
+                                                                  ( Imported
+                                                                    ( ModuleName "Golden.LongEitherBind.Test" )
+                                                                    ( Name "add$w" )
+                                                                  )
+                                                                )
+                                                                ( AppN Nothing
+                                                                  ( Ref Nothing
+                                                                    ( Imported
+                                                                      ( ModuleName "Golden.LongEitherBind.Test" )
+                                                                      ( Name "add$w" )
+                                                                    )
+                                                                  )
+                                                                  ( AppN Nothing
+                                                                    ( Ref Nothing
+                                                                      ( Imported
+                                                                        ( ModuleName "Golden.LongEitherBind.Test" )
+                                                                        ( Name "add$w" )
+                                                                      )
+                                                                    )
+                                                                    ( AppN Nothing
+                                                                      ( Ref Nothing
+                                                                        ( Imported
+                                                                          ( ModuleName "Golden.LongEitherBind.Test" )
+                                                                          ( Name "add$w" )
+                                                                        )
+                                                                      )
+                                                                      ( AppN Nothing
+                                                                        ( Ref Nothing
+                                                                          ( Imported
+                                                                            ( ModuleName "Golden.LongEitherBind.Test" )
+                                                                            ( Name "add$w" )
+                                                                          )
+                                                                        )
+                                                                        ( AppN Nothing
+                                                                          ( Ref Nothing
+                                                                            ( Imported
+                                                                              ( ModuleName "Golden.LongEitherBind.Test" )
+                                                                              ( Name "add$w" )
+                                                                            )
+                                                                          )
+                                                                          ( AppN Nothing
+                                                                            ( Ref Nothing
+                                                                              ( Imported
+                                                                                ( ModuleName "Golden.LongEitherBind.Test" )
+                                                                                ( Name "add$w" )
+                                                                              )
+                                                                            )
+                                                                            ( AppN Nothing
+                                                                              ( Ref Nothing
+                                                                                ( Imported
+                                                                                  ( ModuleName "Golden.LongEitherBind.Test" )
+                                                                                  ( Name "add$w" )
+                                                                                )
+                                                                              )
+                                                                              ( AppN Nothing
+                                                                                ( Ref Nothing
+                                                                                  ( Imported
+                                                                                    ( ModuleName "Golden.LongEitherBind.Test" )
+                                                                                    ( Name "add$w" )
+                                                                                  )
+                                                                                )
+                                                                                ( AppN Nothing
+                                                                                  ( Ref Nothing
+                                                                                    ( Imported
+                                                                                      ( ModuleName "Golden.LongEitherBind.Test" )
+                                                                                      ( Name "add$w" )
+                                                                                    )
+                                                                                  )
+                                                                                  ( AppN Nothing
+                                                                                    ( Ref Nothing
+                                                                                      ( Imported
+                                                                                        ( ModuleName "Golden.LongEitherBind.Test" )
+                                                                                        ( Name "add$w" )
+                                                                                      )
+                                                                                    )
+                                                                                    ( AppN Nothing
+                                                                                      ( Ref Nothing
+                                                                                        ( Imported
+                                                                                          ( ModuleName "Golden.LongEitherBind.Test" )
+                                                                                          ( Name "add$w" )
+                                                                                        )
+                                                                                      )
+                                                                                      ( AppN Nothing
+                                                                                        ( Ref Nothing
+                                                                                          ( Imported
+                                                                                            ( ModuleName "Golden.LongEitherBind.Test" )
+                                                                                            ( Name "add$w" )
+                                                                                          )
+                                                                                        )
+                                                                                        ( AppN Nothing
+                                                                                          ( Ref Nothing
+                                                                                            ( Imported
+                                                                                              ( ModuleName "Golden.LongEitherBind.Test" )
+                                                                                              ( Name "add$w" )
+                                                                                            )
+                                                                                          )
+                                                                                          ( AppN Nothing
+                                                                                            ( Ref Nothing
+                                                                                              ( Imported
+                                                                                                ( ModuleName "Golden.LongEitherBind.Test" )
+                                                                                                ( Name "add$w" )
+                                                                                              )
+                                                                                            )
+                                                                                            ( AppN Nothing
+                                                                                              ( Ref Nothing
+                                                                                                ( Imported
+                                                                                                  ( ModuleName "Golden.LongEitherBind.Test" )
+                                                                                                  ( Name "add$w" )
+                                                                                                )
+                                                                                              )
+                                                                                              ( AppN Nothing
+                                                                                                ( Ref Nothing
+                                                                                                  ( Imported
+                                                                                                    ( ModuleName "Golden.LongEitherBind.Test" )
+                                                                                                    ( Name "add$w" )
+                                                                                                  )
+                                                                                                )
+                                                                                                ( Ref Nothing
+                                                                                                  ( Local
+                                                                                                    ( Name "$tmp1545" )
+                                                                                                  ) :|
+                                                                                                  [ LiteralInt Nothing 1 ]
+                                                                                                ) :|
+                                                                                                [ LiteralInt Nothing 1 ]
+                                                                                              ) :|
+                                                                                              [ LiteralInt Nothing 1 ]
+                                                                                            ) :|
+                                                                                            [ LiteralInt Nothing 1 ]
+                                                                                          ) :|
+                                                                                          [ LiteralInt Nothing 1 ]
+                                                                                        ) :|
+                                                                                        [ LiteralInt Nothing 1 ]
+                                                                                      ) :|
+                                                                                      [ LiteralInt Nothing 1 ]
+                                                                                    ) :|
+                                                                                    [ LiteralInt Nothing 1 ]
+                                                                                  ) :|
+                                                                                  [ LiteralInt Nothing 1 ]
+                                                                                ) :|
+                                                                                [ LiteralInt Nothing 1 ]
+                                                                              ) :|
+                                                                              [ LiteralInt Nothing 1 ]
+                                                                            ) :|
+                                                                            [ LiteralInt Nothing 1 ]
+                                                                          ) :|
+                                                                          [ LiteralInt Nothing 1 ]
+                                                                        ) :|
+                                                                        [ LiteralInt Nothing 1 ]
+                                                                      ) :|
+                                                                      [ LiteralInt Nothing 1 ]
+                                                                    ) :|
+                                                                    [ LiteralInt Nothing 1 ]
+                                                                  ) :|
+                                                                  [ LiteralInt Nothing 1 ]
+                                                                ) :|
+                                                                [ LiteralInt Nothing 1 ]
+                                                              ) :|
+                                                              [ LiteralInt Nothing 1 ]
+                                                            ) :|
+                                                            [ LiteralInt Nothing 1 ]
+                                                          ) :|
+                                                          [ LiteralInt Nothing 1 ]
+                                                        ) :|
+                                                        [ LiteralInt Nothing 1 ]
+                                                      ) :|
+                                                      [ LiteralInt Nothing 1 ]
+                                                    ) :|
+                                                    [ LiteralInt Nothing 1 ]
+                                                  ) :|
+                                                  [ LiteralInt Nothing 1 ]
+                                                ) :|
+                                                [ LiteralInt Nothing 1 ]
+                                              ) :|
+                                              [ LiteralInt Nothing 1 ]
+                                            ) :|
+                                            [ LiteralInt Nothing 1 ]
+                                          ) :|
+                                          [ LiteralInt Nothing 1 ]
+                                        ) :|
+                                        [ LiteralInt Nothing 1 ]
+                                      ) :|
+                                      [ LiteralInt Nothing 1 ]
+                                    ) :|
+                                    [ LiteralInt Nothing 1 ]
+                                  ) :|
+                                  [ LiteralInt Nothing 1 ]
+                                ) :|
+                                [ LiteralInt Nothing 1 ]
+                              ) :|
+                              [ LiteralInt Nothing 1 ]
+                            ) :|
+                            [ LiteralInt Nothing 1 ]
+                          ) :|
+                          [ LiteralInt Nothing 1 ]
+                        ) :|
+                        [ LiteralInt Nothing 1 ]
+                      ) :|
+                      [ LiteralInt Nothing 1 ]
+                    ) :|
+                    [ LiteralInt Nothing 1 ]
+                  )
                 )
-              )
-            ]
-          )
-          ( AppN Nothing
-            ( Ref Nothing ( Imported ( ModuleName "Data.Either" ) ( Name "Right" ) ) )
+              ]
+            )
             ( AppN Nothing
               ( Ref Nothing
                 ( Imported ( ModuleName "Golden.LongEitherBind.Test" ) ( Name "add$w" ) )
@@ -2613,7 +2616,7 @@ UberModule
                                                                             )
                                                                             ( Ref Nothing
                                                                               ( Local
-                                                                                ( Name "$tmp1244" )
+                                                                                ( Name "$tmp1546" )
                                                                               ) :|
                                                                               [ LiteralInt Nothing 1 ]
                                                                             ) :|
@@ -2676,9 +2679,9 @@ UberModule
                     [ LiteralInt Nothing 1 ]
                   )
                 ]
-              ) :| []
+              )
             )
-          )
+          ]
         )
       )
     ], uberModuleForeigns = [], uberModuleExports =
@@ -2688,7 +2691,7 @@ UberModule
       ),
       ( Name "main", Let Nothing
         ( Standalone
-          ( Nothing, Name "$cse1238", DataArgumentByIndex Nothing SumType 0
+          ( Nothing, Name "$cse1540", DataArgumentByIndex Nothing SumType 0
             ( Ref Nothing
               ( Imported ( ModuleName "Golden.LongEitherBind.Test" ) ( Name "compute" ) )
             )
@@ -2696,7 +2699,7 @@ UberModule
         )
         ( Let Nothing
           ( Standalone
-            ( Nothing, Name "$cse1237", ReflectCtor Nothing
+            ( Nothing, Name "$cse1539", ReflectCtor Nothing
               ( Ref Nothing
                 ( Imported ( ModuleName "Golden.LongEitherBind.Test" ) ( Name "compute" ) )
               )
@@ -2710,7 +2713,7 @@ UberModule
             ( IfThenElse Nothing
               ( Eq Nothing
                 ( LiteralString Nothing "Data.Either∷Either.Left" )
-                ( Ref Nothing ( Local ( Name "$cse1237" ) ) )
+                ( Ref Nothing ( Local ( Name "$cse1539" ) ) )
               )
               ( AppN Nothing
                 ( Ref Nothing ( Imported ( ModuleName "Data.Either" ) ( Name "append$w" ) ) )
@@ -2722,7 +2725,7 @@ UberModule
                         ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
                         ( PropName "showStringImpl" )
                       )
-                      ( Ref Nothing ( Local ( Name "$cse1238" ) ) :| [] ) :|
+                      ( Ref Nothing ( Local ( Name "$cse1540" ) ) :| [] ) :|
                       [ LiteralString Nothing ")" ]
                     )
                   ]
@@ -2731,7 +2734,7 @@ UberModule
               ( IfThenElse Nothing
                 ( Eq Nothing
                   ( LiteralString Nothing "Data.Either∷Either.Right" )
-                  ( Ref Nothing ( Local ( Name "$cse1237" ) ) )
+                  ( Ref Nothing ( Local ( Name "$cse1539" ) ) )
                 )
                 ( AppN Nothing
                   ( Ref Nothing ( Imported ( ModuleName "Data.Either" ) ( Name "append$w" ) ) )
@@ -2745,7 +2748,7 @@ UberModule
                           )
                           ( PropName "showIntImpl" )
                         )
-                        ( Ref Nothing ( Local ( Name "$cse1238" ) ) :| [] ) :|
+                        ( Ref Nothing ( Local ( Name "$cse1540" ) ) :| [] ) :|
                         [ LiteralString Nothing ")" ]
                       )
                     ]

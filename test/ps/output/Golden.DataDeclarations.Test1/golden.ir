@@ -6,45 +6,73 @@ UberModule
         ( TyName "Unit" )
         ( CtorName "U" ) []
       ),
-      ( Name "P3", Ctor Nothing ProductType
-        ( ModuleName "Golden.DataDeclarations.Test1" )
-        ( TyName "TProduct" )
-        ( CtorName "P3" )
-        [ FieldName "value0", FieldName "value1", FieldName "value2" ]
+      ( Name "P3", AbsN Nothing
+        ( ParamNamed Nothing ( Name "value0$1" ) :| [] )
+        ( AbsN Nothing
+          ( ParamNamed Nothing ( Name "value1$2" ) :| [] )
+          ( AbsN Nothing
+            ( ParamNamed Nothing ( Name "value2$3" ) :| [] )
+            ( Ctor Nothing ProductType
+              ( ModuleName "Golden.DataDeclarations.Test1" )
+              ( TyName "TProduct" )
+              ( CtorName "P3" )
+              [ Ref Nothing
+                ( Local ( Name "value0$1" ) ), Ref Nothing
+                ( Local ( Name "value1$2" ) ), Ref Nothing
+                ( Local ( Name "value2$3" ) )
+              ]
+            )
+          )
+        )
       ),
-      ( Name "PF", Ctor Nothing ProductType
-        ( ModuleName "Golden.DataDeclarations.Test1" )
-        ( TyName "TProductWithFields" )
-        ( CtorName "PF" )
-        [ FieldName "value0" ]
+      ( Name "PF", AbsN Nothing
+        ( ParamNamed Nothing ( Name "value0$4" ) :| [] )
+        ( Ctor Nothing ProductType
+          ( ModuleName "Golden.DataDeclarations.Test1" )
+          ( TyName "TProductWithFields" )
+          ( CtorName "PF" )
+          [ Ref Nothing ( Local ( Name "value0$4" ) ) ]
+        )
       ),
       ( Name "S0", Ctor Nothing SumType
         ( ModuleName "Golden.DataDeclarations.Test1" )
         ( TyName "TSum" )
         ( CtorName "S0" ) []
       ),
-      ( Name "S1", Ctor Nothing SumType
-        ( ModuleName "Golden.DataDeclarations.Test1" )
-        ( TyName "TSum" )
-        ( CtorName "S1" )
-        [ FieldName "value0" ]
+      ( Name "S1", AbsN Nothing
+        ( ParamNamed Nothing ( Name "value0$7" ) :| [] )
+        ( Ctor Nothing SumType
+          ( ModuleName "Golden.DataDeclarations.Test1" )
+          ( TyName "TSum" )
+          ( CtorName "S1" )
+          [ Ref Nothing ( Local ( Name "value0$7" ) ) ]
+        )
       ),
-      ( Name "S2", Ctor Nothing SumType
-        ( ModuleName "Golden.DataDeclarations.Test1" )
-        ( TyName "TSum" )
-        ( CtorName "S2" )
-        [ FieldName "value0", FieldName "value1" ]
+      ( Name "S2", AbsN Nothing
+        ( ParamNamed Nothing ( Name "value0$5" ) :| [] )
+        ( AbsN Nothing
+          ( ParamNamed Nothing ( Name "value1$6" ) :| [] )
+          ( Ctor Nothing SumType
+            ( ModuleName "Golden.DataDeclarations.Test1" )
+            ( TyName "TSum" )
+            ( CtorName "S2" )
+            [ Ref Nothing ( Local ( Name "value0$5" ) ), Ref Nothing ( Local ( Name "value1$6" ) ) ]
+          )
+        )
       ),
       ( Name "Nop", Ctor Nothing SumType
         ( ModuleName "Golden.DataDeclarations.Test1" )
         ( TyName "Rec" )
         ( CtorName "Nop" ) []
       ),
-      ( Name "More", Ctor Nothing SumType
-        ( ModuleName "Golden.DataDeclarations.Test1" )
-        ( TyName "Rec" )
-        ( CtorName "More" )
-        [ FieldName "value0" ]
+      ( Name "More", AbsN Nothing
+        ( ParamNamed Nothing ( Name "value0$0" ) :| [] )
+        ( Ctor Nothing SumType
+          ( ModuleName "Golden.DataDeclarations.Test1" )
+          ( TyName "Rec" )
+          ( CtorName "More" )
+          [ Ref Nothing ( Local ( Name "value0$0" ) ) ]
+        )
       ),
       ( Name "CtorSameName", Ctor Nothing ProductType
         ( ModuleName "Golden.DataDeclarations.Test1" )

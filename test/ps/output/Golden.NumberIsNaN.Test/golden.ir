@@ -56,7 +56,7 @@ UberModule
             ( Nothing, Name "_", AppN Nothing
               ( Let Nothing
                 ( Standalone
-                  ( Nothing, Name "a$316", AppN Nothing
+                  ( Nothing, Name "a$318", AppN Nothing
                     ( Ref Nothing ( Imported ( ModuleName "Data.Number" ) ( Name "isNaN" ) ) )
                     ( Ref Nothing ( Imported ( ModuleName "Data.Number" ) ( Name "nan" ) ) :| [] )
                   ) :| []
@@ -64,11 +64,11 @@ UberModule
                 ( AppN Nothing
                   ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
                   ( IfThenElse Nothing
-                    ( Ref Nothing ( Local ( Name "a$316" ) ) )
+                    ( Ref Nothing ( Local ( Name "a$318" ) ) )
                     ( LiteralString Nothing "true" )
                     ( IfThenElse Nothing
                       ( Eq Nothing ( LiteralBool Nothing False )
-                        ( Ref Nothing ( Local ( Name "a$316" ) ) )
+                        ( Ref Nothing ( Local ( Name "a$318" ) ) )
                       )
                       ( LiteralString Nothing "false" )
                       ( Exception Nothing "No patterns matched" )
@@ -82,7 +82,7 @@ UberModule
               ( Nothing, Name "_", AppN Nothing
                 ( Let Nothing
                   ( Standalone
-                    ( Nothing, Name "a$318", AppN Nothing
+                    ( Nothing, Name "a$320", AppN Nothing
                       ( Ref Nothing ( Imported ( ModuleName "Data.Number" ) ( Name "isNaN" ) ) )
                       ( AppN Nothing
                         ( AppN Nothing
@@ -91,41 +91,6 @@ UberModule
                         )
                         ( Ref Nothing
                           ( Imported ( ModuleName "Data.Number" ) ( Name "nan" ) ) :| []
-                        ) :| []
-                      )
-                    ) :| []
-                  )
-                  ( AppN Nothing
-                    ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
-                    ( IfThenElse Nothing
-                      ( Ref Nothing ( Local ( Name "a$318" ) ) )
-                      ( LiteralString Nothing "true" )
-                      ( IfThenElse Nothing
-                        ( Eq Nothing ( LiteralBool Nothing False )
-                          ( Ref Nothing ( Local ( Name "a$318" ) ) )
-                        )
-                        ( LiteralString Nothing "false" )
-                        ( Exception Nothing "No patterns matched" )
-                      ) :| []
-                    )
-                  )
-                )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
-              ), Standalone
-              ( Nothing, Name "_", AppN Nothing
-                ( Let Nothing
-                  ( Standalone
-                    ( Nothing, Name "a$320", AppN Nothing
-                      ( Ref Nothing ( Imported ( ModuleName "Data.Number" ) ( Name "isNaN" ) ) )
-                      ( AppN Nothing
-                        ( AppN Nothing
-                          ( Ref Nothing ( Imported ( ModuleName "Data.Ring" ) ( Name "numSub" ) ) )
-                          ( Ref Nothing
-                            ( Imported ( ModuleName "Data.Number" ) ( Name "infinity" ) ) :| []
-                          )
-                        )
-                        ( Ref Nothing
-                          ( Imported ( ModuleName "Data.Number" ) ( Name "infinity" ) ) :| []
                         ) :| []
                       )
                     ) :| []
@@ -150,7 +115,42 @@ UberModule
               ( Nothing, Name "_", AppN Nothing
                 ( Let Nothing
                   ( Standalone
-                    ( Nothing, Name "a$321", AppN Nothing
+                    ( Nothing, Name "a$322", AppN Nothing
+                      ( Ref Nothing ( Imported ( ModuleName "Data.Number" ) ( Name "isNaN" ) ) )
+                      ( AppN Nothing
+                        ( AppN Nothing
+                          ( Ref Nothing ( Imported ( ModuleName "Data.Ring" ) ( Name "numSub" ) ) )
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Data.Number" ) ( Name "infinity" ) ) :| []
+                          )
+                        )
+                        ( Ref Nothing
+                          ( Imported ( ModuleName "Data.Number" ) ( Name "infinity" ) ) :| []
+                        ) :| []
+                      )
+                    ) :| []
+                  )
+                  ( AppN Nothing
+                    ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+                    ( IfThenElse Nothing
+                      ( Ref Nothing ( Local ( Name "a$322" ) ) )
+                      ( LiteralString Nothing "true" )
+                      ( IfThenElse Nothing
+                        ( Eq Nothing ( LiteralBool Nothing False )
+                          ( Ref Nothing ( Local ( Name "a$322" ) ) )
+                        )
+                        ( LiteralString Nothing "false" )
+                        ( Exception Nothing "No patterns matched" )
+                      ) :| []
+                    )
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              ), Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( Let Nothing
+                  ( Standalone
+                    ( Nothing, Name "a$323", AppN Nothing
                       ( Ref Nothing ( Imported ( ModuleName "Data.Number" ) ( Name "isNaN" ) ) )
                       ( LiteralFloat Nothing 42.0 :| [] )
                     ) :| []
@@ -158,11 +158,11 @@ UberModule
                   ( AppN Nothing
                     ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
                     ( IfThenElse Nothing
-                      ( Ref Nothing ( Local ( Name "a$321" ) ) )
+                      ( Ref Nothing ( Local ( Name "a$323" ) ) )
                       ( LiteralString Nothing "true" )
                       ( IfThenElse Nothing
                         ( Eq Nothing ( LiteralBool Nothing False )
-                          ( Ref Nothing ( Local ( Name "a$321" ) ) )
+                          ( Ref Nothing ( Local ( Name "a$323" ) ) )
                         )
                         ( LiteralString Nothing "false" )
                         ( Exception Nothing "No patterns matched" )
@@ -177,7 +177,7 @@ UberModule
           ( AppN Nothing
             ( Let Nothing
               ( Standalone
-                ( Nothing, Name "a$322", AppN Nothing
+                ( Nothing, Name "a$324", AppN Nothing
                   ( Ref Nothing ( Imported ( ModuleName "Data.Number" ) ( Name "isNaN" ) ) )
                   ( Ref Nothing
                     ( Imported ( ModuleName "Data.Number" ) ( Name "infinity" ) ) :| []
@@ -187,11 +187,11 @@ UberModule
               ( AppN Nothing
                 ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
                 ( IfThenElse Nothing
-                  ( Ref Nothing ( Local ( Name "a$322" ) ) )
+                  ( Ref Nothing ( Local ( Name "a$324" ) ) )
                   ( LiteralString Nothing "true" )
                   ( IfThenElse Nothing
                     ( Eq Nothing ( LiteralBool Nothing False )
-                      ( Ref Nothing ( Local ( Name "a$322" ) ) )
+                      ( Ref Nothing ( Local ( Name "a$324" ) ) )
                     )
                     ( LiteralString Nothing "false" )
                     ( Exception Nothing "No patterns matched" )

@@ -9,12 +9,14 @@ UberModule
         ( CtorName "Nothing" ) []
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Data.Maybe", qnameName = Name "Just"
-        }, Ctor Nothing SumType
-        ( ModuleName "Data.Maybe" )
-        ( TyName "Maybe" )
-        ( CtorName "Just" )
-        [ FieldName "value0" ]
+        { qnameModuleName = ModuleName "Data.Maybe", qnameName = Name "Just" }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "value0" ) :| [] )
+        ( Ctor Nothing SumType
+          ( ModuleName "Data.Maybe" )
+          ( TyName "Maybe" )
+          ( CtorName "Just" )
+          [ Ref Nothing ( Local ( Name "value0" ) ) ]
+        )
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Data.Maybe", qnameName = Name "maybe$w" }, AbsN Nothing
@@ -24,20 +26,20 @@ UberModule
         )
         ( Let Nothing
           ( Standalone
-            ( Nothing, Name "$cse292", ReflectCtor Nothing
+            ( Nothing, Name "$cse296", ReflectCtor Nothing
               ( Ref Nothing ( Local ( Name "v2" ) ) )
             ) :| []
           )
           ( IfThenElse Nothing
             ( Eq Nothing
               ( LiteralString Nothing "Data.Maybe∷Maybe.Nothing" )
-              ( Ref Nothing ( Local ( Name "$cse292" ) ) )
+              ( Ref Nothing ( Local ( Name "$cse296" ) ) )
             )
             ( Ref Nothing ( Local ( Name "v" ) ) )
             ( IfThenElse Nothing
               ( Eq Nothing
                 ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
-                ( Ref Nothing ( Local ( Name "$cse292" ) ) )
+                ( Ref Nothing ( Local ( Name "$cse296" ) ) )
               )
               ( AppN Nothing
                 ( Ref Nothing ( Local ( Name "v1" ) ) )
@@ -53,26 +55,28 @@ UberModule
       ( QName
         { qnameModuleName = ModuleName "Golden.MaybeChainModule.Test", qnameName = Name "identity"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "x$287" ) :| [] )
-        ( Ref Nothing ( Local ( Name "x$287" ) ) )
+        ( ParamNamed Nothing ( Name "x$289" ) :| [] )
+        ( Ref Nothing ( Local ( Name "x$289" ) ) )
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.MaybeChainModule.Test", qnameName = Name "map$w"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "v$284" ) :| [ ParamNamed Nothing ( Name "v1$285" ) ] )
+        ( ParamNamed Nothing ( Name "v$286" ) :| [ ParamNamed Nothing ( Name "v1$287" ) ] )
         ( IfThenElse Nothing
           ( Eq Nothing
             ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
-            ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v1$285" ) ) ) )
+            ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v1$287" ) ) ) )
           )
-          ( AppN Nothing
-            ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Just" ) ) )
-            ( AppN Nothing
-              ( Ref Nothing ( Local ( Name "v$284" ) ) )
+          ( Ctor Nothing SumType
+            ( ModuleName "Data.Maybe" )
+            ( TyName "Maybe" )
+            ( CtorName "Just" )
+            [ AppN Nothing
+              ( Ref Nothing ( Local ( Name "v$286" ) ) )
               ( DataArgumentByIndex Nothing SumType 0
-                ( Ref Nothing ( Local ( Name "v1$285" ) ) ) :| []
-              ) :| []
-            )
+                ( Ref Nothing ( Local ( Name "v1$287" ) ) ) :| []
+              )
+            ]
           )
           ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) )
         )
@@ -124,9 +128,11 @@ UberModule
                 ( AbsN Nothing
                   ( ParamNamed Nothing ( Name "x$0" ) :| [] )
                   ( Ref Nothing ( Local ( Name "x$0" ) ) ) :|
-                  [ AppN Nothing
-                    ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Just" ) ) )
-                    ( LiteralInt Nothing 42 :| [] )
+                  [ Ctor Nothing SumType
+                    ( ModuleName "Data.Maybe" )
+                    ( TyName "Maybe" )
+                    ( CtorName "Just" )
+                    [ LiteralInt Nothing 42 ]
                   ]
                 )
               ]

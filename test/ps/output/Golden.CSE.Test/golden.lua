@@ -1,3 +1,4 @@
+local M = {}
 local Data_Semigroup_foreign = {
   concatArray = function(xs)
     return function(ys)
@@ -41,39 +42,39 @@ local Effect_Console_foreign = {
 }
 local Effect_Console_log = Effect_Console_foreign.log
 local Golden_CSE_Test_Zero = { "Golden.CSE.Test∷N.Zero" }
-local Golden_CSE_Test_Succ = function(value0)
+M.Golden_CSE_Test_Succ = function(value0)
   return { "Golden.CSE.Test∷N.Succ", value0 }
 end
-local Golden_CSE_Test_Num = function(value0)
+M.Golden_CSE_Test_Num = function(value0)
   return { "Golden.CSE.Test∷E.Num", value0 }
 end
-local Golden_CSE_Test_Not = function(value0)
+M.Golden_CSE_Test_Not = function(value0)
   return { "Golden.CSE.Test∷E.Not", value0 }
 end
 local Golden_CSE_Test_runTwice = function(r)
-  return function(x) local _S_cse247 = r.run return _S_cse247(_S_cse247(x)) end
+  return function(x) local _S_cse255 = r.run return _S_cse255(_S_cse255(x)) end
 end
 local Golden_CSE_Test_classify = function(e)
-  local _S_cse249 = e[2]
-  local _S_cse248 = e[1]
-  if "Golden.CSE.Test∷E.Not" == _S_cse248 then
-    if "Golden.CSE.Test∷E.Num" == _S_cse249[1] then
-      if "Golden.CSE.Test∷N.Zero" == _S_cse249[2][1] then
+  local _S_cse257 = e[2]
+  local _S_cse256 = e[1]
+  if "Golden.CSE.Test∷E.Not" == _S_cse256 then
+    if "Golden.CSE.Test∷E.Num" == _S_cse257[1] then
+      if "Golden.CSE.Test∷N.Zero" == _S_cse257[2][1] then
         return 0
-      elseif "Golden.CSE.Test∷N.Succ" == _S_cse249[2][1] then
+      elseif "Golden.CSE.Test∷N.Succ" == _S_cse257[2][1] then
         return 1
       else
         return error("No patterns matched")
       end
-    elseif "Golden.CSE.Test∷E.Not" == _S_cse249[1] then
+    elseif "Golden.CSE.Test∷E.Not" == _S_cse257[1] then
       return 2
     else
       return error("No patterns matched")
     end
-  elseif "Golden.CSE.Test∷E.Num" == _S_cse248 then
-    if "Golden.CSE.Test∷N.Zero" == _S_cse249[1] then
+  elseif "Golden.CSE.Test∷E.Num" == _S_cse256 then
+    if "Golden.CSE.Test∷N.Zero" == _S_cse257[1] then
       return 3
-    elseif "Golden.CSE.Test∷N.Succ" == _S_cse249[1] then
+    elseif "Golden.CSE.Test∷N.Succ" == _S_cse257[1] then
       return 4
     else
       return error("No patterns matched")
@@ -83,16 +84,18 @@ local Golden_CSE_Test_classify = function(e)
   end
 end
 local Golden_CSE_Test_catBoth = function(f)
-  local _S_cse250 = { [1] = 1, [2] = 2, [3] = 3 }
-  return Data_Semigroup_concatArray(f(_S_cse250))(f(_S_cse250))
+  local _S_cse258 = { [1] = 1, [2] = 2, [3] = 3 }
+  return Data_Semigroup_concatArray(f(_S_cse258))(f(_S_cse258))
 end
 local Golden_CSE_Test_addToAll = function(n)
   return function(xs)
-    local _S_cse251 = function(i) return i + n end
-    return Data_Semigroup_concatArray(Data_Functor_arrayMap(_S_cse251)(xs))(Data_Functor_arrayMap(_S_cse251)(xs))
+    local _S_cse259 = function(i) return i + n end
+    return Data_Semigroup_concatArray(Data_Functor_arrayMap(_S_cse259)(xs))(Data_Functor_arrayMap(_S_cse259)(xs))
   end
 end
 return (function()
+  local _S_cse261 = { "Golden.CSE.Test∷E.Num", Golden_CSE_Test_Zero }
+  local _S_cse260 = { "Golden.CSE.Test∷E.Not", _S_cse261 }
   local _ = Effect_Console_log(Data_Show_showArrayImpl(Data_Show_showIntImpl)(Golden_CSE_Test_addToAll(10)({
     [1] = 1,
     [2] = 2
@@ -112,8 +115,14 @@ return (function()
   local _ = Effect_Console_log(Data_Show_showArrayImpl(Data_Show_showIntImpl)(Golden_CSE_Test_catBoth(function( x_S_216 )
     return x_S_216
   end)))()
-  local _ = Effect_Console_log(Data_Show_showIntImpl(Golden_CSE_Test_classify(Golden_CSE_Test_Num(Golden_CSE_Test_Zero))))()
-  local _ = Effect_Console_log(Data_Show_showIntImpl(Golden_CSE_Test_classify(Golden_CSE_Test_Num(Golden_CSE_Test_Succ(Golden_CSE_Test_Zero)))))()
-  local _ = Effect_Console_log(Data_Show_showIntImpl(Golden_CSE_Test_classify(Golden_CSE_Test_Not(Golden_CSE_Test_Num(Golden_CSE_Test_Zero)))))()
-  return Effect_Console_log(Data_Show_showIntImpl(Golden_CSE_Test_classify(Golden_CSE_Test_Not(Golden_CSE_Test_Not(Golden_CSE_Test_Num(Golden_CSE_Test_Zero))))))()
+  local _ = Effect_Console_log(Data_Show_showIntImpl(Golden_CSE_Test_classify(_S_cse261)))()
+  local _ = Effect_Console_log(Data_Show_showIntImpl(Golden_CSE_Test_classify({
+    "Golden.CSE.Test∷E.Num",
+    { "Golden.CSE.Test∷N.Succ", Golden_CSE_Test_Zero }
+  })))()
+  local _ = Effect_Console_log(Data_Show_showIntImpl(Golden_CSE_Test_classify(_S_cse260)))()
+  return Effect_Console_log(Data_Show_showIntImpl(Golden_CSE_Test_classify({
+    "Golden.CSE.Test∷E.Not",
+    _S_cse260
+  })))()
 end)()

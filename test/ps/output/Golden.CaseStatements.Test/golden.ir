@@ -4,11 +4,14 @@ UberModule
       ( Name "a", LiteralInt Nothing 1 ),
       ( Name "b", LiteralChar Nothing 'b' ),
       ( Name "c", LiteralInt Nothing 42 ),
-      ( Name "J", Ctor Nothing SumType
-        ( ModuleName "Golden.CaseStatements.Test" )
-        ( TyName "M" )
-        ( CtorName "J" )
-        [ FieldName "value0" ]
+      ( Name "J", AbsN Nothing
+        ( ParamNamed Nothing ( Name "value0$16" ) :| [] )
+        ( Ctor Nothing SumType
+          ( ModuleName "Golden.CaseStatements.Test" )
+          ( TyName "M" )
+          ( CtorName "J" )
+          [ Ref Nothing ( Local ( Name "value0$16" ) ) ]
+        )
       ),
       ( Name "N", Ctor Nothing SumType
         ( ModuleName "Golden.CaseStatements.Test" )
