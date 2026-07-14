@@ -1,8 +1,7 @@
 -- Building a three-field data value per element and reading its fields back.
--- Each saturated constructor application is a curried closure chain, so
--- constructing one value allocates a closure per field past the first (an
--- FNEW under LuaJIT, aborting the trace) before the table is built. The
--- ideal variant does the same work by building the table directly.
+-- The ideal variant does the same work with the table built inline, so the
+-- gap between the two isolates whatever the compiled constructor still pays
+-- per element on top of the raw table build.
 return {
   artifact = "Bench.CtorBuild",
   n = 1e6,
