@@ -19,8 +19,9 @@ none existed. The pass therefore only touches forms that are effect-free
   * lambda literals ('AbsN') — closure allocation is pure;
   * non-empty array\/object literals whose elements are themselves
     effect-free values;
-  * saturated 'Ctor' applications of effect-free values (an unsaturated
-    spine is a runtime call and is left alone);
+  * in-place 'Ctor' nodes (saturated by construction) whose field
+    arguments are themselves effect-free values — a partial application
+    is a runtime call of the curried wrapper and is left alone;
   * single reads over never-nil bases ('ObjectProp', 'ArrayIndex',
     'ArrayLength', 'ReflectCtor', 'DataArgumentByIndex' over a 'Ref' or
     a record-read chain) — records and data values are write-once, so a
@@ -142,7 +143,6 @@ import Language.PureScript.Backend.IR.Types
   , noAnn
   , setAnn
   , subexpressions
-  , unwindApp
   )
 
 {- | The first argument is the @inline always@ name set of the module's
@@ -394,15 +394,14 @@ isRefProjection = \case
     ObjectProp _ base _ → isNilSafeBase base
     _ → False
 
-{- | The arguments of a saturated literal-'Ctor'-headed application
-spine (a nullary constructor is the bare 'Ctor' node). A spine headed
-by a /reference/ to a constructor binding is a call like any other and
-deliberately not recognised.
+{- | The field arguments of an in-place 'Ctor' node, which is saturated by
+construction (see Note [Constructor applications are saturated]). A partial
+application is a call of the curried wrapper — a 'Ref'-headed spine, a call
+like any other — and is deliberately not recognised.
 -}
 saturatedCtorApp ∷ RawExp ann → Maybe [RawExp ann]
-saturatedCtorApp e = case unwindApp e of
-  (Ctor _ _ _ _ _ fields, args)
-    | length args == length fields → Just args
+saturatedCtorApp = \case
+  Ctor _ _ _ _ _ args → Just args
   _ → Nothing
 
 --------------------------------------------------------------------------------

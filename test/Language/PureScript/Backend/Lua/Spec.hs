@@ -39,6 +39,12 @@ spec = describe "Lua.fromUberModule" do
     rendered `shouldSatisfy` Text.isInfixOf "{ \"M∷T.C\", value0 }"
     rendered `shouldSatisfy` (not . Text.isInfixOf "$ctor")
 
+  it "parenthesises a call in the final constructor field" do
+    rendered ← compileExportedExpr ctorAppFieldExpr
+    -- The call is the last positional row, so it is wrapped to one value
+    -- rather than splicing its results into the table.
+    rendered `shouldSatisfy` Text.isInfixOf "{ \"M∷T.C\", (f(x)) }"
+
   it "lowers a tag read to index [1]" do
     rendered ← compileExportedExpr (absN ["x"] (IR.reflectCtor (ref "x")))
     rendered `shouldSatisfy` Text.isInfixOf "x[1]"
@@ -423,11 +429,30 @@ absN names body = case names of
       body
   [] → error "absN: needs at least one parameter"
 
+{- | An arity-1 constructor as a manifest lambda over the saturated 'Ctor'
+of its parameter — the shape 'mkConstructor' emits — so the codegen tests
+exercise the in-place 'Ctor' table build inside the function body.
+-}
 ctorExpr ∷ IR.AlgebraicType → IR.Exp
 ctorExpr algebraicTy =
-  IR.ctor
-    algebraicTy
-    (IR.ModuleName "M")
-    (IR.TyName "T")
-    (IR.CtorName "C")
-    [IR.FieldName "value0"]
+  absN ["value0"] $
+    IR.ctor
+      algebraicTy
+      (IR.ModuleName "M")
+      (IR.TyName "T")
+      (IR.CtorName "C")
+      [ref "value0"]
+
+{- | A constructor whose only field is a function call @f x@, so the final
+positional row is a multi-valued expression that must be parenthesised to
+one value (see 'Language.PureScript.Backend.Lua.parenLastMultiValued').
+-}
+ctorAppFieldExpr ∷ IR.Exp
+ctorAppFieldExpr =
+  absN ["f", "x"] $
+    IR.ctor
+      IR.SumType
+      (IR.ModuleName "M")
+      (IR.TyName "T")
+      (IR.CtorName "C")
+      [IR.application (ref "f") (ref "x")]

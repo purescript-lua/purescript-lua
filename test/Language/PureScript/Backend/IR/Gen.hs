@@ -76,22 +76,20 @@ exp =
     , (1, Gen.subtermM exp (pure . IR.primNot))
     ]
  where
-  -- A saturated constructor application: exactly one argument per field
-  -- (nullary ctor ⇒ a bare 'Ctor'), returned along with its algebraic
-  -- type. This is the shape the #177 case-of-known-constructor fold
-  -- matches on, so the fold-firing input reaches the 'exp'-based suites
-  -- too.
+  -- A saturated constructor node (0–3 field arguments; the node is
+  -- saturated by construction), returned along with its algebraic type.
+  -- This is the shape the #177 case-of-known-constructor fold matches on,
+  -- so the fold-firing input reaches the 'exp'-based suites too.
   genCtorApp = do
     algTy ← Gen.enumBounded
-    fields ← Gen.list (Range.linear 0 3) fieldName
+    args ← Gen.list (Range.linear 0 3) exp
     ctorExp ←
       IR.ctor algTy
         <$> moduleName
         <*> tyName
         <*> ctorName
-        <*> pure fields
-    args ← forM fields \_field → exp
-    pure (algTy, foldl' IR.application ctorExp args)
+        <*> pure args
+    pure (algTy, ctorExp)
   -- A field read carrying the constructor's own algebraic type most of
   -- the time (the #177 fold requires the match); occasionally an
   -- independent one, fuzzing the fold's decline path.
@@ -162,23 +160,22 @@ scopedExpIn scope =
     ]
  where
   scopedRef = IR.refLocal <$> Gen.element (Set.toList scope)
-  -- A saturated constructor application: exactly one argument per field
-  -- (nullary ctor ⇒ a bare 'Ctor'), returned along with its algebraic
-  -- type. A 'Ctor' node binds nothing and references no 'Scope' entry,
-  -- so every argument just reuses the incoming scope — the same category
-  -- as application / if / object. This is the shape the #177
+  -- A saturated constructor node (0–3 field arguments; the node is
+  -- saturated by construction), returned along with its algebraic type.
+  -- A 'Ctor' node binds nothing and references no 'Scope' entry, so every
+  -- argument just reuses the incoming scope — the same category as
+  -- application / if / object. This is the shape the #177
   -- case-of-known-constructor fold matches on.
   genCtorApp = do
     algTy ← Gen.enumBounded
-    fields ← Gen.list (Range.linear 0 3) fieldName
+    args ← Gen.list (Range.linear 0 3) (scopedExpIn scope)
     ctorExp ←
       IR.ctor algTy
         <$> moduleName
         <*> tyName
         <*> ctorName
-        <*> pure fields
-    args ← forM fields \_field → scopedExpIn scope
-    pure (algTy, foldl' IR.application ctorExp args)
+        <*> pure args
+    pure (algTy, ctorExp)
   -- A field read carrying the constructor's own algebraic type most of
   -- the time (the #177 fold requires the match); occasionally an
   -- independent one, fuzzing the fold's decline path.
@@ -285,6 +282,11 @@ nonRecursiveExp =
 exception ∷ MonadGen m ⇒ m IR.Exp
 exception = IR.exception <$> Gen.text (Range.linear 0 10) Gen.unicode
 
+{- | A nullary constructor, a genuine leaf: a saturated 'Ctor' carries its
+field arguments as sub-expressions, so only the zero-field case belongs
+among the non-recursive leaves. Constructors with arguments are generated
+by the recursive @genCtorApp@ in 'exp' and 'scopedExpIn'.
+-}
 ctor ∷ MonadGen m ⇒ m IR.Exp
 ctor =
   IR.ctor
@@ -292,7 +294,7 @@ ctor =
     <*> moduleName
     <*> tyName
     <*> ctorName
-    <*> Gen.list (Range.linear 0 10) fieldName
+    <*> pure []
 
 literalNonRecursiveExp ∷ MonadGen m ⇒ m IR.Exp
 literalNonRecursiveExp =

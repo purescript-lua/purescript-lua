@@ -9,7 +9,6 @@ import Language.PureScript.Backend.IR.Linker (UberModule (..))
 import Language.PureScript.Backend.IR.Linter (lintUniqueBinders, lintWellScoped)
 import Language.PureScript.Backend.IR.Names
   ( CtorName (CtorName)
-  , FieldName (FieldName)
   , ModuleName
   , Name (Name)
   , PropName (PropName)
@@ -187,9 +186,7 @@ spec = describe "CSE" do
     cseExpression expr `shouldBe` expr
 
   it "hoists a saturated constructor application of effect-free values" do
-    let just =
-          ctor SumType mn (TyName "Maybe") (CtorName "Just") [FieldName "v0"]
-        justR = application just r
+    let justR = ctor SumType mn (TyName "Maybe") (CtorName "Just") [r]
         expr = application (application f justR) justR
         expected =
           lets
@@ -198,21 +195,16 @@ spec = describe "CSE" do
     cseExpression expr `shouldBe` expected
 
   it "does not hoist an unsaturated constructor application" do
-    let pair =
-          ctor
-            SumType
-            mn
-            (TyName "Pair")
-            (CtorName "Pair")
-            [FieldName "v0", FieldName "v1"]
-        partial = application pair r
+    -- A partial application is a call of the curried wrapper — a
+    -- reference-headed spine (an unsaturated 'Ctor' node is
+    -- unrepresentable), which CSE declines like any other call.
+    let partial = application (refImported mn (Name "Pair")) r
         expr = application (application f partial) partial
     cseExpression expr `shouldBe` expr
 
   it "does not hoist a constructor application of effectful arguments" do
-    let just =
-          ctor SumType mn (TyName "Maybe") (CtorName "Just") [FieldName "v0"]
-        justCall = application just (application f r)
+    let justCall =
+          ctor SumType mn (TyName "Maybe") (CtorName "Just") [application f r]
         expr = application (application f justCall) justCall
     cseExpression expr `shouldBe` expr
 
