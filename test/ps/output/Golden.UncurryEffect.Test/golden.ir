@@ -125,22 +125,13 @@ UberModule
             )
             ( AppN Nothing
               ( IfThenElse Nothing
-                ( Eq Nothing
-                  ( LiteralString Nothing "Data.Ordering∷Ordering.GT" )
-                  ( IfThenElse Nothing
-                    ( PrimBinOp Nothing PrimLt
-                      ( Ref Nothing ( Local ( Name "n" ) ) )
-                      ( LiteralInt Nothing 1 )
-                    )
-                    ( LiteralString Nothing "Data.Ordering∷Ordering.LT" )
-                    ( IfThenElse Nothing
-                      ( Eq Nothing
-                        ( Ref Nothing ( Local ( Name "n" ) ) )
-                        ( LiteralInt Nothing 1 )
-                      )
-                      ( LiteralString Nothing "Data.Ordering∷Ordering.EQ" )
-                      ( LiteralString Nothing "Data.Ordering∷Ordering.GT" )
-                    )
+                ( IfThenElse Nothing
+                  ( PrimBinOp Nothing PrimLt
+                    ( Ref Nothing ( Local ( Name "n" ) ) )
+                    ( LiteralInt Nothing 1 )
+                  ) ( LiteralBool Nothing False )
+                  ( PrimNot Nothing
+                    ( Eq Nothing ( Ref Nothing ( Local ( Name "n" ) ) ) ( LiteralInt Nothing 1 ) )
                   )
                 )
                 ( AppN Nothing

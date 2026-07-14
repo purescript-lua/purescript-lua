@@ -26,15 +26,7 @@ local Effect_Console_logShow_S_w = function(dictShow, a)
 end
 local Golden_Primops_Test_sumTo_S_w = function(acc, n)
   while true do
-    if "Data.Ordering∷Ordering.GT" == (function()
-      if n < 0 then
-        return "Data.Ordering∷Ordering.LT"
-      elseif n == 0 then
-        return "Data.Ordering∷Ordering.EQ"
-      else
-        return "Data.Ordering∷Ordering.GT"
-      end
-    end)() then
+    if (function() if n < 0 then return false else return n ~= 0 end end)() then
       acc, n = acc + n, n - 1
     else
       return acc

@@ -796,6 +796,8 @@ optimizedExpressionM policy env =
         `thenRewrite` removeIfWithEqualBranches
         `thenRewrite` flipNegatedIf
         `thenRewrite` reduceBooleanIf
+        `thenRewrite` pushEqIntoIfBranches
+        `thenRewrite` pushIfCondIntoBranches
         `thenRewrite` inlineLocalBindings
     )
 
@@ -821,19 +823,12 @@ assumption the type checker would not already guarantee.
 constantFolding ∷ Applicative m ⇒ RewriteRuleM m Ann
 constantFolding =
   pure . \case
-    Eq _ (LiteralBool _ a) (LiteralBool _ b) →
-      Just $ literalBool $ a == b
+    Eq _ a b
+      | Just result ← foldEqLiterals a b →
+          Just $ literalBool result
     Eq _ (LiteralBool _ True) b →
       -- 'b' must be of type Bool; see Note [IR is assumed well-typed]
       Just b
-    Eq _ (LiteralInt _ a) (LiteralInt _ b) →
-      Just $ literalBool $ a == b
-    Eq _ (LiteralFloat _ a) (LiteralFloat _ b) →
-      Just $ literalBool $ a == b
-    Eq _ (LiteralChar _ a) (LiteralChar _ b) →
-      Just $ literalBool $ a == b
-    Eq _ (LiteralString _ a) (LiteralString _ b) →
-      Just $ literalBool $ a == b
     -- See Note [IR primops] and Note [Folding primops follows Lua 5.1]
     PrimBinOp _ op a b → foldPrimBinOp op a b
     PrimNot _ a → foldPrimNot a
@@ -932,6 +927,20 @@ foldPrimNot ∷ Exp → Maybe Exp
 foldPrimNot = \case
   LiteralBool _ b → Just (literalBool (not b))
   PrimNot _ e → Just e
+  _ → Nothing
+
+{- | Fold an equality of two scalar literals, or 'Nothing' when either
+side is not a scalar literal. Two literals of different kinds also
+decline: such a comparison is ill-typed input (see Note [IR is assumed
+well-typed]), not a provable inequality.
+-}
+foldEqLiterals ∷ RawExp ann → RawExp ann' → Maybe Bool
+foldEqLiterals l r = case (l, r) of
+  (LiteralBool _ a, LiteralBool _ b) → Just (a == b)
+  (LiteralInt _ a, LiteralInt _ b) → Just (a == b)
+  (LiteralFloat _ a, LiteralFloat _ b) → Just (a == b)
+  (LiteralChar _ a, LiteralChar _ b) → Just (a == b)
+  (LiteralString _ a, LiteralString _ b) → Just (a == b)
   _ → Nothing
 
 {- | Folds a record projection into the record constructor:
@@ -1664,6 +1673,92 @@ removeUnreachableElseBranch e = pure case e of
   IfThenElse _ann (LiteralBool _ True) thenBranch _unreachable →
     Just thenBranch
   _ → Nothing
+
+{- | Case-of-case over a comparison (issue #203), the 'Eq' sibling of
+'reduceKnownConstructor'\'s tag-read distribution: a scalar literal
+compared against an 'IfThenElse' tree distributes into the branches,
+where each leaf comparison meets 'constantFolding' and the boolean-if
+rules collapse the tree to a flat condition. Without the push the tree
+sits in expression position — an IIFE in the generated Lua, allocated
+and called per evaluation — the shape an inlined 'Ord' comparison
+leaves behind once the tag read distributes over its 'Ordering'
+decision tree (issue #180). Guarded by 'eqFoldsThrough', mirroring
+'reflectFoldsThrough': the rule fires only when every leaf folds, so it
+never leaves a residual comparison behind, and the duplicated operand
+is a scalar literal, free to re-emit. Evaluation order is preserved:
+the branch conditions ran before the comparison and still do. Each push
+strictly shrinks the tree under the 'Eq', so the rewrite terminates.
+-}
+pushEqIntoIfBranches ∷ Applicative m ⇒ RewriteRuleM m Ann
+pushEqIntoIfBranches =
+  pure . \case
+    Eq ann lit (IfThenElse ifAnn cond t e)
+      | eqFoldsThrough lit t
+      , eqFoldsThrough lit e →
+          Just $ IfThenElse ifAnn cond (Eq ann lit t) (Eq ann lit e)
+    Eq ann (IfThenElse ifAnn cond t e) lit
+      | eqFoldsThrough lit t
+      , eqFoldsThrough lit e →
+          Just $ IfThenElse ifAnn cond (Eq ann t lit) (Eq ann e lit)
+    _ → Nothing
+
+{- | Whether comparing this expression against the literal folds away
+completely: it is a scalar literal of the same kind (the comparison
+folds to a boolean), or an 'IfThenElse' whose branches both do. Only
+then does 'pushEqIntoIfBranches' distribute a comparison into an
+'IfThenElse', so the rewrite never trades one expression-position tree
+for another.
+-}
+eqFoldsThrough ∷ RawExp ann → RawExp ann' → Bool
+eqFoldsThrough lit = go
+ where
+  go = \case
+    IfThenElse _ann _cond t e → go t && go e
+    leaf → isJust (foldEqLiterals lit leaf)
+
+{- | Case-of-case over an 'IfThenElse' whose condition is itself an
+'IfThenElse' decision tree (issue #203):
+
+@
+IfThenElse (IfThenElse c a b) x y
+  ==> IfThenElse c (IfThenElse a x y) (IfThenElse b x y)
+@
+
+The tree in condition position — an IIFE in the generated Lua — becomes
+statement-position ifs, and evaluation order is preserved exactly: @c@,
+then @a@ or @b@, then @x@ or @y@. The unrestricted transformation would
+need join points to avoid duplicating @x@ and @y@, so the rewrite is
+restricted to the shapes where pushing cannot duplicate work:
+
+  * @a@ and @b@ are boolean literals: the residual ifs are folded right
+    away by 'removeUnreachableThenBranch'\/'removeUnreachableElseBranch'
+    and each of @x@, @y@ survives in exactly one copy;
+
+  * alternatively @x@ and @y@ are trivial by the 'isInlinableValue'
+    test — free to re-emit, and binder-free, so the copies cannot break
+    the unique-binders invariant.
+
+Each push strictly shrinks the expression in condition position, so the
+rewrite terminates.
+-}
+pushIfCondIntoBranches ∷ Applicative m ⇒ RewriteRuleM m Ann
+pushIfCondIntoBranches =
+  pure . \case
+    IfThenElse ann (IfThenElse condAnn c a b) x y
+      | (isBoolLiteral a && isBoolLiteral b)
+          || (isInlinableValue x && isInlinableValue y) →
+          Just $
+            IfThenElse
+              condAnn
+              c
+              (IfThenElse ann a x y)
+              (IfThenElse ann b x y)
+    _ → Nothing
+ where
+  isBoolLiteral ∷ RawExp ann → Bool
+  isBoolLiteral = \case
+    LiteralBool {} → True
+    _ → False
 
 -- Inlining is a tricky business:
 -- https://www.microsoft.com/en-us/research/wp-content/uploads/2002/07/inline.pdf

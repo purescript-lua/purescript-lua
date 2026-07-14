@@ -30,15 +30,7 @@ M.Golden_FieldCaching_Test_pair = function(n)
   return Golden_FieldCaching_Test_weigh(n) + Golden_FieldCaching_Test_weigh(n + 1)
 end
 M.Golden_FieldCaching_Test_fibby = function(n)
-  if "Data.Ordering∷Ordering.LT" == (function()
-    if n < 2 then
-      return "Data.Ordering∷Ordering.LT"
-    elseif n == 2 then
-      return "Data.Ordering∷Ordering.EQ"
-    else
-      return "Data.Ordering∷Ordering.GT"
-    end
-  end)() then
+  if n < 2 then
     return n
   else
     return Golden_FieldCaching_Test_weigh(Golden_FieldCaching_Test_sub_S_w(n, 1)) + Golden_FieldCaching_Test_weigh(Golden_FieldCaching_Test_sub_S_w(n, 2))
