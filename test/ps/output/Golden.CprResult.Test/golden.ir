@@ -1,0 +1,618 @@
+UberModule
+  { uberModuleBindings =
+    [ Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Show", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Data.Show" ) ".spago/p/prelude/5718c84fdde6247749cb053e816df696c30fe691/src/Data/Show.purs"
+        [ ( Nothing, Name "showIntImpl" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Show", qnameName = Name "showIntImpl"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
+        ( PropName "showIntImpl" )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Effect.Console" ) ".spago/p/console/f82835a0b873aafe6bd7b14dd30cc150553d4ab9/src/Effect/Console.purs"
+        [ ( Nothing, Name "log" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "log"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
+        ( PropName "log" )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Tuple", qnameName = Name "append$w" }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "s1$386" ) :| [ ParamNamed Nothing ( Name "s2$387" ) ] )
+        ( PrimBinOp Nothing PrimConcat
+          ( Ref Nothing ( Local ( Name "s1$386" ) ) )
+          ( Ref Nothing ( Local ( Name "s2$387" ) ) )
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Tuple", qnameName = Name "Tuple$w" }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "value0" ) :| [ ParamNamed Nothing ( Name "value1" ) ] )
+        ( Ctor Nothing ProductType
+          ( ModuleName "Data.Tuple" )
+          ( TyName "Tuple" )
+          ( CtorName "Tuple" )
+          [ Ref Nothing ( Local ( Name "value0" ) ), Ref Nothing ( Local ( Name "value1" ) ) ]
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.CprResult.Test", qnameName = Name "step"
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "s" ) :| [] )
+        ( AppN Nothing
+          ( Ref Nothing ( Imported ( ModuleName "Data.Tuple" ) ( Name "Tuple$w" ) ) )
+          ( PrimBinOp Nothing PrimMul
+            ( Ref Nothing ( Local ( Name "s" ) ) )
+            ( LiteralInt Nothing 2 ) :|
+            [ PrimBinOp Nothing PrimAdd
+              ( Ref Nothing ( Local ( Name "s" ) ) )
+              ( LiteralInt Nothing 1 )
+            ]
+          )
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.CprResult.Test", qnameName = Name "useStep"
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "n" ) :| [] )
+        ( PrimBinOp Nothing PrimAdd
+          ( PrimBinOp Nothing PrimMul
+            ( Ref Nothing ( Local ( Name "n" ) ) )
+            ( LiteralInt Nothing 2 )
+          )
+          ( PrimBinOp Nothing PrimAdd
+            ( Ref Nothing ( Local ( Name "n" ) ) )
+            ( LiteralInt Nothing 1 )
+          )
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.CprResult.Test", qnameName = Name "pair"
+        }, AppN Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Data.Tuple" ) ( Name "Tuple$w" ) ) )
+        ( LiteralInt Nothing 20 :| [ LiteralInt Nothing 11 ] )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.CprResult.Test", qnameName = Name "branchy"
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "n" ) :| [] )
+        ( IfThenElse Nothing
+          ( PrimBinOp Nothing PrimAnd
+            ( PrimNot Nothing
+              ( PrimBinOp Nothing PrimLt
+                ( Ref Nothing ( Local ( Name "n" ) ) )
+                ( LiteralInt Nothing 0 )
+              )
+            )
+            ( PrimNot Nothing
+              ( Eq Nothing ( Ref Nothing ( Local ( Name "n" ) ) ) ( LiteralInt Nothing 0 ) )
+            )
+          )
+          ( Let Nothing
+            ( Standalone
+              ( Nothing, Name "b1", PrimBinOp Nothing PrimAdd
+                ( Ref Nothing ( Local ( Name "n" ) ) )
+                ( LiteralInt Nothing 7 )
+              ) :|
+              [ Standalone
+                ( Nothing, Name "b2", PrimBinOp Nothing PrimAdd
+                  ( Ref Nothing ( Local ( Name "b1" ) ) )
+                  ( Ref Nothing ( Local ( Name "n" ) ) )
+                ), Standalone
+                ( Nothing, Name "b3", PrimBinOp Nothing PrimSub
+                  ( Ref Nothing ( Local ( Name "b2" ) ) )
+                  ( LiteralInt Nothing 4 )
+                ), Standalone
+                ( Nothing, Name "b4", PrimBinOp Nothing PrimAdd
+                  ( Ref Nothing ( Local ( Name "b3" ) ) )
+                  ( Ref Nothing ( Local ( Name "b1" ) ) )
+                ), Standalone
+                ( Nothing, Name "b5", PrimBinOp Nothing PrimAdd
+                  ( Ref Nothing ( Local ( Name "b4" ) ) )
+                  ( Ref Nothing ( Local ( Name "b2" ) ) )
+                ), Standalone
+                ( Nothing, Name "b6", PrimBinOp Nothing PrimSub
+                  ( Ref Nothing ( Local ( Name "b5" ) ) )
+                  ( Ref Nothing ( Local ( Name "b3" ) ) )
+                ), Standalone
+                ( Nothing, Name "b7", PrimBinOp Nothing PrimAdd
+                  ( Ref Nothing ( Local ( Name "b6" ) ) )
+                  ( Ref Nothing ( Local ( Name "b4" ) ) )
+                )
+              ]
+            )
+            ( AppN Nothing
+              ( Ref Nothing ( Imported ( ModuleName "Data.Tuple" ) ( Name "Tuple$w" ) ) )
+              ( PrimBinOp Nothing PrimAdd
+                ( PrimBinOp Nothing PrimAdd
+                  ( PrimBinOp Nothing PrimAdd
+                    ( Ref Nothing ( Local ( Name "b1" ) ) )
+                    ( Ref Nothing ( Local ( Name "b3" ) ) )
+                  )
+                  ( Ref Nothing ( Local ( Name "b5" ) ) )
+                )
+                ( Ref Nothing ( Local ( Name "b7" ) ) ) :|
+                [ PrimBinOp Nothing PrimAdd
+                  ( PrimBinOp Nothing PrimAdd
+                    ( PrimBinOp Nothing PrimAdd
+                      ( Ref Nothing ( Local ( Name "b2" ) ) )
+                      ( Ref Nothing ( Local ( Name "b4" ) ) )
+                    )
+                    ( Ref Nothing ( Local ( Name "b6" ) ) )
+                  )
+                  ( PrimBinOp Nothing PrimSub
+                    ( Ref Nothing ( Local ( Name "b7" ) ) )
+                    ( Ref Nothing ( Local ( Name "b5" ) ) )
+                  )
+                ]
+              )
+            )
+          )
+          ( Let Nothing
+            ( Standalone
+              ( Nothing, Name "c1", PrimBinOp Nothing PrimSub
+                ( LiteralInt Nothing 3 )
+                ( Ref Nothing ( Local ( Name "n" ) ) )
+              ) :|
+              [ Standalone
+                ( Nothing, Name "c2", PrimBinOp Nothing PrimAdd
+                  ( Ref Nothing ( Local ( Name "c1" ) ) )
+                  ( LiteralInt Nothing 5 )
+                ), Standalone
+                ( Nothing, Name "c3", PrimBinOp Nothing PrimSub
+                  ( Ref Nothing ( Local ( Name "c2" ) ) )
+                  ( Ref Nothing ( Local ( Name "n" ) ) )
+                ), Standalone
+                ( Nothing, Name "c4", PrimBinOp Nothing PrimAdd
+                  ( Ref Nothing ( Local ( Name "c3" ) ) )
+                  ( Ref Nothing ( Local ( Name "c1" ) ) )
+                ), Standalone
+                ( Nothing, Name "c5", PrimBinOp Nothing PrimAdd
+                  ( Ref Nothing ( Local ( Name "c4" ) ) )
+                  ( Ref Nothing ( Local ( Name "c2" ) ) )
+                ), Standalone
+                ( Nothing, Name "c6", PrimBinOp Nothing PrimSub
+                  ( Ref Nothing ( Local ( Name "c5" ) ) )
+                  ( Ref Nothing ( Local ( Name "c3" ) ) )
+                ), Standalone
+                ( Nothing, Name "c7", PrimBinOp Nothing PrimAdd
+                  ( Ref Nothing ( Local ( Name "c6" ) ) )
+                  ( Ref Nothing ( Local ( Name "c4" ) ) )
+                )
+              ]
+            )
+            ( AppN Nothing
+              ( Ref Nothing ( Imported ( ModuleName "Data.Tuple" ) ( Name "Tuple$w" ) ) )
+              ( PrimBinOp Nothing PrimAdd
+                ( PrimBinOp Nothing PrimAdd
+                  ( PrimBinOp Nothing PrimAdd
+                    ( Ref Nothing ( Local ( Name "c1" ) ) )
+                    ( Ref Nothing ( Local ( Name "c3" ) ) )
+                  )
+                  ( Ref Nothing ( Local ( Name "c5" ) ) )
+                )
+                ( Ref Nothing ( Local ( Name "c7" ) ) ) :|
+                [ PrimBinOp Nothing PrimAdd
+                  ( PrimBinOp Nothing PrimAdd
+                    ( PrimBinOp Nothing PrimAdd
+                      ( Ref Nothing ( Local ( Name "c2" ) ) )
+                      ( Ref Nothing ( Local ( Name "c4" ) ) )
+                    )
+                    ( Ref Nothing ( Local ( Name "c6" ) ) )
+                  )
+                  ( PrimBinOp Nothing PrimSub
+                    ( Ref Nothing ( Local ( Name "c7" ) ) )
+                    ( Ref Nothing ( Local ( Name "c5" ) ) )
+                  )
+                ]
+              )
+            )
+          )
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.CprResult.Test", qnameName = Name "keepBranchy"
+        }, AppN Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Golden.CprResult.Test" ) ( Name "branchy" ) ) )
+        ( LiteralInt Nothing 3 :| [] )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.CprResult.Test", qnameName = Name "useBranchy"
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "n" ) :| [] )
+        ( Let Nothing
+          ( Standalone
+            ( Nothing, Name "v", AppN Nothing
+              ( Ref Nothing
+                ( Imported ( ModuleName "Golden.CprResult.Test" ) ( Name "branchy" ) )
+              )
+              ( Ref Nothing ( Local ( Name "n" ) ) :| [] )
+            ) :| []
+          )
+          ( PrimBinOp Nothing PrimSub
+            ( DataArgumentByIndex Nothing ProductType 0 ( Ref Nothing ( Local ( Name "v" ) ) ) )
+            ( DataArgumentByIndex Nothing ProductType 1 ( Ref Nothing ( Local ( Name "v" ) ) ) )
+          )
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.CprResult.Test", qnameName = Name "big"
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "n" ) :| [] )
+        ( Let Nothing
+          ( Standalone
+            ( Nothing, Name "a1", PrimBinOp Nothing PrimAdd
+              ( Ref Nothing ( Local ( Name "n" ) ) )
+              ( LiteralInt Nothing 1 )
+            ) :|
+            [ Standalone
+              ( Nothing, Name "a2", PrimBinOp Nothing PrimAdd
+                ( Ref Nothing ( Local ( Name "a1" ) ) )
+                ( LiteralInt Nothing 3 )
+              ), Standalone
+              ( Nothing, Name "a3", PrimBinOp Nothing PrimSub
+                ( Ref Nothing ( Local ( Name "a2" ) ) )
+                ( Ref Nothing ( Local ( Name "n" ) ) )
+              ), Standalone
+              ( Nothing, Name "a4", PrimBinOp Nothing PrimAdd
+                ( Ref Nothing ( Local ( Name "a3" ) ) )
+                ( Ref Nothing ( Local ( Name "a1" ) ) )
+              ), Standalone
+              ( Nothing, Name "a5", PrimBinOp Nothing PrimAdd
+                ( Ref Nothing ( Local ( Name "a4" ) ) )
+                ( LiteralInt Nothing 2 )
+              ), Standalone
+              ( Nothing, Name "a6", PrimBinOp Nothing PrimAdd
+                ( Ref Nothing ( Local ( Name "a5" ) ) )
+                ( Ref Nothing ( Local ( Name "a2" ) ) )
+              ), Standalone
+              ( Nothing, Name "a7", PrimBinOp Nothing PrimSub
+                ( Ref Nothing ( Local ( Name "a6" ) ) )
+                ( Ref Nothing ( Local ( Name "a3" ) ) )
+              ), Standalone
+              ( Nothing, Name "a8", PrimBinOp Nothing PrimAdd
+                ( Ref Nothing ( Local ( Name "a7" ) ) )
+                ( Ref Nothing ( Local ( Name "a4" ) ) )
+              ), Standalone
+              ( Nothing, Name "a9", PrimBinOp Nothing PrimAdd
+                ( Ref Nothing ( Local ( Name "a8" ) ) )
+                ( LiteralInt Nothing 1 )
+              ), Standalone
+              ( Nothing, Name "a10", PrimBinOp Nothing PrimSub
+                ( Ref Nothing ( Local ( Name "a9" ) ) )
+                ( Ref Nothing ( Local ( Name "a5" ) ) )
+              ), Standalone
+              ( Nothing, Name "a11", PrimBinOp Nothing PrimAdd
+                ( Ref Nothing ( Local ( Name "a10" ) ) )
+                ( Ref Nothing ( Local ( Name "a6" ) ) )
+              ), Standalone
+              ( Nothing, Name "a12", PrimBinOp Nothing PrimSub
+                ( Ref Nothing ( Local ( Name "a11" ) ) )
+                ( Ref Nothing ( Local ( Name "a7" ) ) )
+              ), Standalone
+              ( Nothing, Name "a13", PrimBinOp Nothing PrimAdd
+                ( Ref Nothing ( Local ( Name "a12" ) ) )
+                ( Ref Nothing ( Local ( Name "a8" ) ) )
+              ), Standalone
+              ( Nothing, Name "a14", PrimBinOp Nothing PrimAdd
+                ( Ref Nothing ( Local ( Name "a13" ) ) )
+                ( Ref Nothing ( Local ( Name "a9" ) ) )
+              ), Standalone
+              ( Nothing, Name "a15", PrimBinOp Nothing PrimSub
+                ( Ref Nothing ( Local ( Name "a14" ) ) )
+                ( Ref Nothing ( Local ( Name "a10" ) ) )
+              )
+            ]
+          )
+          ( AppN Nothing
+            ( Ref Nothing ( Imported ( ModuleName "Data.Tuple" ) ( Name "Tuple$w" ) ) )
+            ( PrimBinOp Nothing PrimAdd
+              ( PrimBinOp Nothing PrimAdd
+                ( PrimBinOp Nothing PrimAdd
+                  ( PrimBinOp Nothing PrimAdd
+                    ( PrimBinOp Nothing PrimAdd
+                      ( PrimBinOp Nothing PrimAdd
+                        ( PrimBinOp Nothing PrimAdd
+                          ( Ref Nothing ( Local ( Name "a1" ) ) )
+                          ( Ref Nothing ( Local ( Name "a3" ) ) )
+                        )
+                        ( Ref Nothing ( Local ( Name "a5" ) ) )
+                      )
+                      ( Ref Nothing ( Local ( Name "a7" ) ) )
+                    )
+                    ( Ref Nothing ( Local ( Name "a9" ) ) )
+                  )
+                  ( Ref Nothing ( Local ( Name "a11" ) ) )
+                )
+                ( Ref Nothing ( Local ( Name "a13" ) ) )
+              )
+              ( Ref Nothing ( Local ( Name "a15" ) ) ) :|
+              [ PrimBinOp Nothing PrimAdd
+                ( PrimBinOp Nothing PrimAdd
+                  ( PrimBinOp Nothing PrimAdd
+                    ( PrimBinOp Nothing PrimAdd
+                      ( PrimBinOp Nothing PrimAdd
+                        ( PrimBinOp Nothing PrimAdd
+                          ( PrimBinOp Nothing PrimAdd
+                            ( Ref Nothing ( Local ( Name "a2" ) ) )
+                            ( Ref Nothing ( Local ( Name "a4" ) ) )
+                          )
+                          ( Ref Nothing ( Local ( Name "a6" ) ) )
+                        )
+                        ( Ref Nothing ( Local ( Name "a8" ) ) )
+                      )
+                      ( Ref Nothing ( Local ( Name "a10" ) ) )
+                    )
+                    ( Ref Nothing ( Local ( Name "a12" ) ) )
+                  )
+                  ( Ref Nothing ( Local ( Name "a14" ) ) )
+                )
+                ( PrimBinOp Nothing PrimAdd
+                  ( Ref Nothing ( Local ( Name "a15" ) ) )
+                  ( Ref Nothing ( Local ( Name "a11" ) ) )
+                )
+              ]
+            )
+          )
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.CprResult.Test", qnameName = Name "useBig"
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "n" ) :| [] )
+        ( Let Nothing
+          ( Standalone
+            ( Nothing, Name "v", AppN Nothing
+              ( Ref Nothing ( Imported ( ModuleName "Golden.CprResult.Test" ) ( Name "big" ) ) )
+              ( Ref Nothing ( Local ( Name "n" ) ) :| [] )
+            ) :| []
+          )
+          ( PrimBinOp Nothing PrimAdd
+            ( DataArgumentByIndex Nothing ProductType 0 ( Ref Nothing ( Local ( Name "v" ) ) ) )
+            ( DataArgumentByIndex Nothing ProductType 1 ( Ref Nothing ( Local ( Name "v" ) ) ) )
+          )
+        )
+      )
+    ], uberModuleForeigns = [], uberModuleExports =
+    [
+      ( Name "step", Ref Nothing
+        ( Imported ( ModuleName "Golden.CprResult.Test" ) ( Name "step" ) )
+      ),
+      ( Name "useStep", Ref Nothing
+        ( Imported ( ModuleName "Golden.CprResult.Test" ) ( Name "useStep" ) )
+      ),
+      ( Name "pair", Ref Nothing
+        ( Imported ( ModuleName "Golden.CprResult.Test" ) ( Name "pair" ) )
+      ),
+      ( Name "branchy", Ref Nothing
+        ( Imported ( ModuleName "Golden.CprResult.Test" ) ( Name "branchy" ) )
+      ),
+      ( Name "useBranchy", Ref Nothing
+        ( Imported ( ModuleName "Golden.CprResult.Test" ) ( Name "useBranchy" ) )
+      ),
+      ( Name "keepBranchy", Ref Nothing
+        ( Imported ( ModuleName "Golden.CprResult.Test" ) ( Name "keepBranchy" ) )
+      ),
+      ( Name "big", Ref Nothing
+        ( Imported ( ModuleName "Golden.CprResult.Test" ) ( Name "big" ) )
+      ),
+      ( Name "useBig", Ref Nothing
+        ( Imported ( ModuleName "Golden.CprResult.Test" ) ( Name "useBig" ) )
+      ),
+      ( Name "main", AbsN Nothing
+        ( ParamUnused Nothing :| [] )
+        ( Let Nothing
+          ( Standalone
+            ( Nothing, Name "_", AppN Nothing
+              ( AppN Nothing
+                ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+                ( AppN Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
+                  ( LiteralInt Nothing 16 :| [] ) :| []
+                )
+              )
+              ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+            ) :|
+            [ Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+                  ( AppN Nothing
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Tuple" ) ( Name "append$w" ) ) )
+                    ( LiteralString Nothing "(Tuple " :|
+                      [ AppN Nothing
+                        ( Ref Nothing
+                          ( Imported ( ModuleName "Data.Tuple" ) ( Name "append$w" ) )
+                        )
+                        ( AppN Nothing
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) )
+                          )
+                          ( DataArgumentByIndex Nothing ProductType 0
+                            ( Ref Nothing
+                              ( Imported ( ModuleName "Golden.CprResult.Test" ) ( Name "pair" ) )
+                            ) :| []
+                          ) :|
+                          [ AppN Nothing
+                            ( Ref Nothing
+                              ( Imported ( ModuleName "Data.Tuple" ) ( Name "append$w" ) )
+                            )
+                            ( LiteralString Nothing " " :|
+                              [ AppN Nothing
+                                ( Ref Nothing
+                                  ( Imported ( ModuleName "Data.Tuple" ) ( Name "append$w" ) )
+                                )
+                                ( AppN Nothing
+                                  ( Ref Nothing
+                                    ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) )
+                                  )
+                                  ( DataArgumentByIndex Nothing ProductType 1
+                                    ( Ref Nothing
+                                      ( Imported
+                                        ( ModuleName "Golden.CprResult.Test" )
+                                        ( Name "pair" )
+                                      )
+                                    ) :| []
+                                  ) :|
+                                  [ LiteralString Nothing ")" ]
+                                )
+                              ]
+                            )
+                          ]
+                        )
+                      ]
+                    ) :| []
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              ), Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+                  ( AppN Nothing
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
+                    ( Let Nothing
+                      ( Standalone
+                        ( Nothing, Name "v$531", AppN Nothing
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Golden.CprResult.Test" ) ( Name "branchy" ) )
+                          )
+                          ( LiteralInt Nothing 7 :| [] )
+                        ) :| []
+                      )
+                      ( PrimBinOp Nothing PrimSub
+                        ( DataArgumentByIndex Nothing ProductType 0
+                          ( Ref Nothing ( Local ( Name "v$531" ) ) )
+                        )
+                        ( DataArgumentByIndex Nothing ProductType 1
+                          ( Ref Nothing ( Local ( Name "v$531" ) ) )
+                        )
+                      ) :| []
+                    ) :| []
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              ), Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+                  ( AppN Nothing
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
+                    ( Let Nothing
+                      ( Standalone
+                        ( Nothing, Name "v$536", AppN Nothing
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Golden.CprResult.Test" ) ( Name "branchy" ) )
+                          )
+                          ( LiteralInt Nothing ( -7 ) :| [] )
+                        ) :| []
+                      )
+                      ( PrimBinOp Nothing PrimSub
+                        ( DataArgumentByIndex Nothing ProductType 0
+                          ( Ref Nothing ( Local ( Name "v$536" ) ) )
+                        )
+                        ( DataArgumentByIndex Nothing ProductType 1
+                          ( Ref Nothing ( Local ( Name "v$536" ) ) )
+                        )
+                      ) :| []
+                    ) :| []
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              ), Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+                  ( AppN Nothing
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Tuple" ) ( Name "append$w" ) ) )
+                    ( LiteralString Nothing "(Tuple " :|
+                      [ AppN Nothing
+                        ( Ref Nothing
+                          ( Imported ( ModuleName "Data.Tuple" ) ( Name "append$w" ) )
+                        )
+                        ( AppN Nothing
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) )
+                          )
+                          ( DataArgumentByIndex Nothing ProductType 0
+                            ( Ref Nothing
+                              ( Imported
+                                ( ModuleName "Golden.CprResult.Test" )
+                                ( Name "keepBranchy" )
+                              )
+                            ) :| []
+                          ) :|
+                          [ AppN Nothing
+                            ( Ref Nothing
+                              ( Imported ( ModuleName "Data.Tuple" ) ( Name "append$w" ) )
+                            )
+                            ( LiteralString Nothing " " :|
+                              [ AppN Nothing
+                                ( Ref Nothing
+                                  ( Imported ( ModuleName "Data.Tuple" ) ( Name "append$w" ) )
+                                )
+                                ( AppN Nothing
+                                  ( Ref Nothing
+                                    ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) )
+                                  )
+                                  ( DataArgumentByIndex Nothing ProductType 1
+                                    ( Ref Nothing
+                                      ( Imported
+                                        ( ModuleName "Golden.CprResult.Test" )
+                                        ( Name "keepBranchy" )
+                                      )
+                                    ) :| []
+                                  ) :|
+                                  [ LiteralString Nothing ")" ]
+                                )
+                              ]
+                            )
+                          ]
+                        )
+                      ]
+                    ) :| []
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              )
+            ]
+          )
+          ( AppN Nothing
+            ( AppN Nothing
+              ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+              ( AppN Nothing
+                ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
+                ( Let Nothing
+                  ( Standalone
+                    ( Nothing, Name "v$538", AppN Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Golden.CprResult.Test" ) ( Name "big" ) )
+                      )
+                      ( LiteralInt Nothing 3 :| [] )
+                    ) :| []
+                  )
+                  ( PrimBinOp Nothing PrimAdd
+                    ( DataArgumentByIndex Nothing ProductType 0
+                      ( Ref Nothing ( Local ( Name "v$538" ) ) )
+                    )
+                    ( DataArgumentByIndex Nothing ProductType 1
+                      ( Ref Nothing ( Local ( Name "v$538" ) ) )
+                    )
+                  ) :| []
+                ) :| []
+              )
+            )
+            ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+          )
+        )
+      )
+    ]
+  }
