@@ -10,6 +10,7 @@ import Data.Set qualified as Set
 import Data.Text qualified as Text
 import GHC.Generics (Generically (..))
 import Language.PureScript.Backend.IR.CSE (eliminateCommonSubexpressions)
+import Language.PureScript.Backend.IR.Cpr (cprWorkerWrapper)
 import Language.PureScript.Backend.IR.DCE (eliminateDeadCode)
 import Language.PureScript.Backend.IR.EffectNames (canonicalizeEffectApp)
 import Language.PureScript.Backend.IR.FlattenDeepBinds (flattenDeepBindsM)
@@ -168,6 +169,28 @@ optimizerPipeline policy =
     -- the per-binding cap in Language.PureScript.Backend.IR.SpecConstr
     -- keeps the minting finite.
     RunFixpoint "specialize+dce" (specializePass :| [dcePass, specConstrPass])
+  , -- CPR worker/wrapper on results (issue #206): split every binding
+    -- whose every return path builds one fixed saturated constructor
+    -- into a worker returning the fields as Lua multiple values plus a
+    -- rebox wrapper, rewriting the let-bound deconstructing sites to
+    -- direct worker calls behind an in-place rebox. Runs after the
+    -- specialize fixpoint — the monadic chains are collapsed and the
+    -- call-pattern specializations are minted, so the constructor-tailed
+    -- candidates and their deconstructing sites are maximal — and before
+    -- shareAccessors/cse/flattenDeepBinds, which must tolerate, but never
+    -- create, the Values/LetValues nodes. See
+    -- Language.PureScript.Backend.IR.Cpr.
+    RunPass cprPass
+  , -- Cancel the reboxes the split planted: floatLetValuesFromLetRhs
+    -- surfaces each one as a let-bound constructor, where the
+    -- known-constructor folds meet the site's eliminating reads and
+    -- the product dissolves; dce then drops the wrappers whose every
+    -- site went to the worker directly. Same members as the fixpoint
+    -- above, so call-pattern specialization keeps firing on shapes the
+    -- cancellation exposes.
+    RunFixpoint
+      "specialize+dce-post-cpr"
+      (specializePass :| [dcePass, specConstrPass])
   , -- Rebuild sharing for the foreign-accessor reads that dissolution
     -- and the call-site pastes above duplicated: a read surviving at
     -- two or more sites is re-bound to its linker name, which stage-2
@@ -263,6 +286,15 @@ optimizerPipeline policy =
       , passEnsures = guc
       }
   uncurryLatePass = uncurryPass {passName = "uncurry-late"}
+  -- The veto is shared with the uncurrying pass: both splits hide a
+  -- name's call sites from the name-keyed inline policies.
+  cprPass =
+    Pass
+      { passName = "cpr"
+      , passRun = cprWorkerWrapper (uncurryVeto policy)
+      , passRequires = guc
+      , passEnsures = guc
+      }
   floatInPass = gucPass "float-in" floatIn
   shareAccessorsPass =
     gucPass "share-accessors" (shareForeignAccessors policy)
@@ -1153,18 +1185,31 @@ sinkReadIntoLetValues =
       Just $ LetValues lvAnn ps rhs (ReflectCtor ann inner)
     _ → Nothing
 
-{- | Whether the expression contains a 'Values' node anywhere — the mark
-of a CPR worker body. Pasting such a body through the call-site inliner
-is declined: rebuilt as a unary spine and beta-reduced, its 'Values'
-tails would land under an expression-position redex, where a branchy
-body lowers to a per-call IIFE (a closure allocation and a trace abort,
-the exact cost the split removes) and a leaked 'Values' in a
-single-value slot is silent truncation (Note [Multi-value results]).
-The named worker call is already cheap and allocation-free.
+{- | Whether the expression contains a multi-value node anywhere — the
+mark of a CPR worker ('Values') or wrapper ('LetValues') body. Pasting
+either through the call-site inliner is declined: rebuilt as a unary
+spine and beta-reduced, a worker's 'Values' tails would land under an
+expression-position redex — where a branchy body lowers to a per-call
+IIFE (a closure allocation and a trace abort, the exact cost the split
+removes) and a leaked 'Values' in a single-value slot is silent
+truncation (Note [Multi-value results]) — and a wrapper's 'LetValues'
+rebox in expression position lowers to the same per-call IIFE, worse
+than the shared wrapper call it replaced. The named worker call is
+already cheap and allocation-free; the sites worth unboxing were
+rewritten by the split itself.
 -}
-containsValues ∷ RawExp ann → Bool
-containsValues e =
-  not (null [() | Values {} ← universeOf subexpressions e])
+containsMultiValue ∷ RawExp ann → Bool
+containsMultiValue e =
+  not
+    ( null
+        [ ()
+        | node ← universeOf subexpressions e
+        , case node of
+            Values {} → True
+            LetValues {} → True
+            _ → False
+        ]
+    )
 
 {- | Case-of-known-constructor for algebraic types (issue #177), the
 'reduceObjectProp' twin for data constructors:
@@ -1559,8 +1604,8 @@ inlineSaturatedCall policy env expr = case unwindApp expr of
   (Ref _ fname, args)
     | not (null args)
     , Just rhs ← Map.lookup fname env
-    , -- A CPR worker body is never pasted (see 'containsValues').
-      not (containsValues rhs) →
+    , -- A multi-value body is never pasted (see 'containsMultiValue').
+      not (containsMultiValue rhs) →
         case directedArity fname of
           Just arity
             | fromIntegral (length args) >= arity
@@ -2071,8 +2116,8 @@ isDuplicatableClosedAbs rhs Usage {usageCapture} =
     && usageCapture == CaptureNone
     && expSize rhs < smallInlineBudget
     && isClosedExp rhs
-    -- A CPR worker body is never pasted (see 'containsValues').
-    && not (containsValues rhs)
+    -- A multi-value body is never pasted (see 'containsMultiValue').
+    && not (containsMultiValue rhs)
  where
   isAbs ∷ RawExp a → Bool
   isAbs = \case

@@ -56,8 +56,8 @@ straight from the multi-value call.
 A candidate with no such site is left alone: every caller consumes the
 product whole, so a split would only add an unbox/rebox hop per call. A
 result that flows away as a value keeps going through the wrapper
-(which stays a plain reference — 'containsValues' keeps the inliner
-from pasting worker bodies; a pasted wrapper would place its rebox in
+(which stays a plain reference — 'containsMultiValue' keeps the inliner
+from pasting worker and wrapper bodies; a pasted wrapper would place its rebox in
 expression position and lower to a per-call IIFE).
 
 Reads reaching the call directly (@DataArgumentByIndex i (f a)@,
