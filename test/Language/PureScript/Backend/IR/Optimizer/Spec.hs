@@ -18,7 +18,6 @@ import Language.PureScript.Backend.IR.Linter
   )
 import Language.PureScript.Backend.IR.Names
   ( CtorName (..)
-  , FieldName (..)
   , Name (..)
   , PropName (..)
   , QName (..)
@@ -33,6 +32,7 @@ import Language.PureScript.Backend.IR.Optimizer
   , optimizedUberModule
   , optimizedUberModuleChecked
   , pushIfCondIntoBranches
+  , reduceKnownCtorRefRead
   , shareForeignAccessors
   , sinkProjectionIntoLet
   )
@@ -419,21 +419,20 @@ spec = describe "IR Optimizer" do
     let maybeMod = moduleNameFromString "Data.Maybe"
         maybeTy = TyName "Maybe"
         justName = CtorName "Just"
-        justCtor = ctor SumType maybeMod maybeTy justName [FieldName "value0"]
-        just = application justCtor
+        just a = ctor SumType maybeMod maybeTy justName [a]
         justTag = ctorId maybeMod maybeTy justName
 
         tupleMod = moduleNameFromString "Data.Tuple"
         tupleTy = TyName "Tuple"
         tupleName = CtorName "Tuple"
-        tupleCtor =
-          ctor
-            ProductType
-            tupleMod
-            tupleTy
-            tupleName
-            [FieldName "value0", FieldName "value1"]
-        tuple a = application (application tupleCtor a)
+        tuple a b = ctor ProductType tupleMod tupleTy tupleName [a, b]
+        -- The curried wrapper the translation emits for Tuple: the manifest
+        -- lambda chain over the saturated node (see
+        -- Note [Constructor applications are saturated]).
+        tupleChain =
+          abstraction (paramNamed (Name "value0")) $
+            abstraction (paramNamed (Name "value1")) $
+              tuple (refLocal (Name "value0")) (refLocal (Name "value1"))
 
     it "reduces a saturated sum-type tag read to the tag string" do
       optimizedExpression (reflectCtor (just (literalInt 1)))
@@ -462,14 +461,88 @@ spec = describe "IR Optimizer" do
       optimizedExpression original `shouldBe` literalBool True
 
     it "declines a partially applied constructor" do
-      -- One argument against a two-field constructor: still a function,
-      -- so the field read must not fire.
-      let original =
+      -- One argument against the two-field Tuple wrapper: still a
+      -- function. The wrapper reference resolves through the environment,
+      -- but the application is unsaturated, so the field read must not
+      -- fire.
+      let env = Map.fromList [(Imported tupleMod (Name "Tuple"), tupleChain)]
+          original =
             dataArgumentByIndex
               ProductType
               0
-              (application tupleCtor (literalInt 1))
-      optimizedExpression original `shouldBe` original
+              (application (refImported tupleMod (Name "Tuple")) (literalInt 1))
+      runIdentity (reduceKnownCtorRefRead env original) `shouldBe` Nothing
+
+    it "folds a field read over a saturated curried wrapper spine" do
+      -- The pre-uncurry site shape: a curried unary spine over the
+      -- wrapper reference, saturated. The resolver reads the wrapper's
+      -- declared arity out of the environment and the fold takes the
+      -- argument without pasting any 'Ctor' node.
+      let env = Map.fromList [(Imported tupleMod (Name "Tuple"), tupleChain)]
+          original =
+            dataArgumentByIndex ProductType 1 $
+              application
+                (application (refImported tupleMod (Name "Tuple")) (literalInt 1))
+                (literalInt 2)
+      runIdentity (reduceKnownCtorRefRead env original)
+        `shouldBe` Just (literalInt 2)
+
+    it "folds a field read over an n-ary worker call" do
+      -- The post-uncurry site shape (#201): the early uncurry run
+      -- rewrites a saturated site into a single n-ary call of the worker
+      -- @AppN (Ref Tuple$w) [a, b]@, which 'unwindApp' does not flatten —
+      -- the resolver must recognise it directly or the folds silently
+      -- stop firing once uncurrying has run.
+      let worker =
+            abstractionN
+              (paramNamed (Name "p1") :| [paramNamed (Name "p2")])
+              (tuple (refLocal (Name "p1")) (refLocal (Name "p2")))
+          env = Map.fromList [(Imported tupleMod (Name "Tuple$w"), worker)]
+          original =
+            dataArgumentByIndex ProductType 1 $
+              applicationN
+                (refImported tupleMod (Name "Tuple$w"))
+                (literalInt 1 :| [literalInt 2])
+      runIdentity (reduceKnownCtorRefRead env original)
+        `shouldBe` Just (literalInt 2)
+
+    it "folds a tag read through the wrapper-to-worker delegate hop" do
+      -- The uncurry split leaves the curried wrapper delegating to the
+      -- worker: @Tuple = λp₁. λp₂. Tuple$w(p₁, p₂)@. A saturated spine
+      -- over the wrapper resolves through the hop to the worker's
+      -- constructor declaration.
+      let sumMod = moduleNameFromString "M"
+          sumTy = TyName "S"
+          sumName = CtorName "K"
+          kTag = ctorId sumMod sumTy sumName
+          worker =
+            abstractionN
+              (paramNamed (Name "p1") :| [paramNamed (Name "p2")])
+              ( ctor
+                  SumType
+                  sumMod
+                  sumTy
+                  sumName
+                  [refLocal (Name "p1"), refLocal (Name "p2")]
+              )
+          wrapper =
+            abstraction (paramNamed (Name "q1")) $
+              abstraction (paramNamed (Name "q2")) $
+                applicationN
+                  (refImported sumMod (Name "K$w"))
+                  (refLocal (Name "q1") :| [refLocal (Name "q2")])
+          env =
+            Map.fromList
+              [ (Imported sumMod (Name "K"), wrapper)
+              , (Imported sumMod (Name "K$w"), worker)
+              ]
+          original =
+            reflectCtor $
+              application
+                (application (refImported sumMod (Name "K")) (literalInt 1))
+                (literalInt 2)
+      runIdentity (reduceKnownCtorRefRead env original)
+        `shouldBe` Just (literalString kTag)
 
     it "declines a product-type tag read" do
       -- Product constructors carry no tag slot at runtime (a product tag
@@ -522,8 +595,7 @@ spec = describe "IR Optimizer" do
       ty ← forAll Gen.tyName
       cn ← forAll Gen.ctorName
       let args = before <> [kept] <> after
-          fields = FieldName . show <$> [1 .. length args]
-          app = foldl' application (ctor algTy modName ty cn fields) args
+          app = ctor algTy modName ty cn args
           index = fromIntegral (length before)
       -- Equality to the kept argument alone proves the siblings are
       -- dropped, not Let-bound or duplicated.
@@ -534,8 +606,7 @@ spec = describe "IR Optimizer" do
       modName ← forAll Gen.moduleName
       ty ← forAll Gen.tyName
       cn ← forAll Gen.ctorName
-      let fields = FieldName . show <$> [1 .. length args]
-          app = foldl' application (ctor SumType modName ty cn fields) args
+      let app = ctor SumType modName ty cn args
       optimizedExpression (reflectCtor app) === literalString (ctorId modName ty cn)
 
   describe "propagates a known constructor through a let (#214)" do
@@ -544,21 +615,17 @@ spec = describe "IR Optimizer" do
         maybeTy = TyName "Maybe"
         justName = CtorName "Just"
         nothingName = CtorName "Nothing"
-        justCtor = ctor SumType maybeMod maybeTy justName [FieldName "value0"]
+        just a = ctor SumType maybeMod maybeTy justName [a]
+        -- The manifest lambda chain the translation emits for the Just
+        -- binding (see Note [Constructor applications are saturated]).
+        justChain =
+          abstraction (paramNamed (Name "value0")) $
+            just (refLocal (Name "value0"))
         nothingCtor = ctor SumType maybeMod maybeTy nothingName []
-        just = application justCtor
         justTag = ctorId maybeMod maybeTy justName
         nothingTag = ctorId maybeMod maybeTy nothingName
 
         tupleMod = moduleNameFromString "Data.Tuple"
-        tupleTy = TyName "Tuple"
-        tupleCtor =
-          ctor
-            ProductType
-            tupleMod
-            tupleTy
-            (CtorName "Tuple")
-            [FieldName "value0", FieldName "value1"]
 
         -- An application: re-evaluating it would repeat the work, so it is
         -- the shape the field-binder must not duplicate.
@@ -625,11 +692,16 @@ spec = describe "IR Optimizer" do
       optimizedExpression original `shouldBe` original
 
     it "declines a partially applied constructor binding" do
-      -- Tuple has two fields; one argument leaves it a function, so the
-      -- binding is not a saturated constructor.
+      -- Tuple has two fields; one argument leaves the wrapper call a
+      -- function, so the binding is not a saturated constructor value.
       let original =
-            let1 (Name "v") (application tupleCtor (literalInt 1)) $
-              eq
+            let1
+              (Name "v")
+              ( application
+                  (refImported tupleMod (Name "Tuple"))
+                  (literalInt 1)
+              )
+              $ eq
                 (dataArgumentByIndex ProductType 0 (refLocal (Name "v")))
                 (dataArgumentByIndex ProductType 0 (refLocal (Name "v")))
       optimizedExpression original `shouldBe` original
@@ -701,12 +773,12 @@ spec = describe "IR Optimizer" do
       -- exercises it.
       arity ← forAll (Gen.int (Range.linear 0 3))
       index ← forAll (Gen.integral (Range.linear 0 5))
-      let fields =
-            [FieldName (Text.pack ("value" <> show k)) | k ← [0 .. arity - 1]]
-          ctorApp =
-            foldl'
-              application
-              (ctor SumType m (TyName "T") (CtorName "K") fields)
+      let ctorApp =
+            ctor
+              SumType
+              m
+              (TyName "T")
+              (CtorName "K")
               (replicate arity (literalInt 1))
           original =
             let1 (Name "v") ctorApp $
@@ -715,16 +787,15 @@ spec = describe "IR Optimizer" do
 
     it "resolves a let-bound constructor worker reference, then folds (#180)" do
       -- A user-written `Just x` compiles to `App (Ref Data.Maybe.Just) x`: a
-      -- reference to the top-level constructor worker, whose RHS is a bare
-      -- 'Ctor' node rather than a lambda, so 'inlineSaturatedCall' leaves it in
-      -- place (pasting it would only rebuild the same value the reference
-      -- already denotes, more deeply nested). Unless the fold resolves the
-      -- reference through the inline environment, the tag test an inlined bind
+      -- reference to the top-level constructor binding — the manifest lambda
+      -- chain over the saturated 'Ctor' node (see Note [Constructor
+      -- applications are saturated]). Unless the fold resolves the reference
+      -- through the inline environment, the tag test an inlined bind
       -- introduces never folds and the collapsed monadic chain stays a
       -- deeply-nested if/let tree that overflows Lua's parser-nesting cap
       -- (issue #180 -- the shape 'Golden.LongEitherBind' exercises end to end).
       --
-      -- The worker is referenced twice (the export 'mkJust' keeps a second
+      -- The binding is referenced twice (the export 'mkJust' keeps a second
       -- use) so whole-binding inlining cannot fold it away as used-once and
       -- hand the direct-'Ctor' path a constructor node -- which would mask the
       -- reference resolution this test pins. Runs through the checked pipeline
@@ -749,7 +820,7 @@ spec = describe "IR Optimizer" do
           Linker.UberModule
             { uberModuleForeigns = []
             , uberModuleBindings =
-                [ Standalone (QName maybeMod (Name "Just"), justCtor)
+                [ Standalone (QName maybeMod (Name "Just"), justChain)
                 , Standalone (QName mainMod (Name "main"), body)
                 ]
             , uberModuleExports =
@@ -1710,9 +1781,7 @@ spec = describe "IR Optimizer" do
       -- paste leaves the same let residue under a field read, which must
       -- sink for the case-of-known-constructor fold to reach the ctor.
       let ctorApp =
-            application
-              (ctor SumType extern (TyName "T") (CtorName "K") [FieldName "value0"])
-              (refLocal (Name "x"))
+            ctor SumType extern (TyName "T") (CtorName "K") [refLocal (Name "x")]
           bound = application g (literalInt 1)
       runIdentity
         ( sinkProjectionIntoLet
@@ -1837,20 +1906,22 @@ spec = describe "IR Optimizer" do
 
   describe "folds constructor reads through a reference (issue #232)" do
     it "folds a field read over an applied constructor reference" do
-      -- A user-written `Op f` compiles to a reference to the Op worker;
-      -- a multi-use worker stays a binding, so the field read must fold
-      -- through the reference or the cascade stalls at reading Op(f).
+      -- A user-written `Op f` compiles to a reference to the top-level Op
+      -- binding (the manifest lambda chain over the saturated 'Ctor'); the
+      -- field read must fold through the reference or the cascade stalls
+      -- at reading Op(f).
       let mainModule = moduleNameFromString "Main"
           extern = moduleNameFromString "Extern"
           g = refImported extern (Name "g")
           opName = QName mainModule (Name "Op")
           opDef =
-            ctor
-              ProductType
-              mainModule
-              (TyName "Op")
-              (CtorName "Op")
-              [FieldName "value0"]
+            abstraction (paramNamed (Name "value0")) $
+              ctor
+                ProductType
+                mainModule
+                (TyName "Op")
+                (CtorName "Op")
+                [refLocal (Name "value0")]
           opRef = refImported mainModule (Name "Op")
           wrap n =
             abstraction (paramNamed (Name "x")) $
@@ -2154,18 +2225,12 @@ spec = describe "IR Optimizer" do
       let uberName = moduleNameFromString "Main"
           linkMode = LinkAsModule uberName
           mkUber = Linker.makeUberModule linkMode . pure . wrapInModule
-          boxCtor =
-            ctor
-              ProductType
-              uberName
-              (TyName "Box")
-              (CtorName "Box")
-              [FieldName "value0"]
+          box a = ctor ProductType uberName (TyName "Box") (CtorName "Box") [a]
           original =
             mkUber $
               let1
                 name
-                (application boxCtor (literalInt 1))
+                (box (literalInt 1))
                 (dataArgumentByIndex ProductType 0 (refLocal name))
           expected =
             Linker.UberModule
@@ -2186,14 +2251,13 @@ spec = describe "IR Optimizer" do
           mkUber = Linker.makeUberModule linkMode . pure . wrapInModule
           maybeTy = TyName "Maybe"
           justName = CtorName "Just"
-          justCtor =
-            ctor SumType uberName maybeTy justName [FieldName "value0"]
+          just a = ctor SumType uberName maybeTy justName [a]
           tag = ctorId uberName maybeTy justName
           original =
             mkUber $
               let1
                 name
-                (application justCtor (literalInt 1))
+                (just (literalInt 1))
                 (eq (reflectCtor (refLocal name)) (literalString tag))
           expected =
             Linker.UberModule

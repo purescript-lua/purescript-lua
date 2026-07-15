@@ -2,7 +2,9 @@ return {
   a = 1,
   b = "b",
   c = 42,
-  J = function(value0) return { "Golden.CaseStatements.Test∷M.J", value0 } end,
+  J = function(value0_S_16)
+    return { "Golden.CaseStatements.Test∷M.J", value0_S_16 }
+  end,
   N = { "Golden.CaseStatements.Test∷M.N" },
   d = function(m_S_10)
     return function(n_S_11)

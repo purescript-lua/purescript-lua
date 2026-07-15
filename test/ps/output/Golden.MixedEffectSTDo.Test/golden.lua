@@ -40,13 +40,13 @@ end
 return (function()
   local _ = Effect_Console_log("mixing Effect and ST")()
   local x_S_0 = Control_Monad_ST_Internal_run(function()
-    local ref_S_456 = Control_Monad_ST_Internal_new(2)()
-    local _ = Control_Monad_ST_Internal_modifyImpl(function(s_S_458)
-      local sPrime_S_459 = s_S_458 * 2
-      return { state = sPrime_S_459, value = sPrime_S_459 }
-    end)(ref_S_456)()
-    local n_S_457 = Control_Monad_ST_Internal_read(ref_S_456)()
-    return n_S_457 + 3
+    local ref_S_458 = Control_Monad_ST_Internal_new(2)()
+    local _ = Control_Monad_ST_Internal_modifyImpl(function(s_S_460)
+      local sPrime_S_461 = s_S_460 * 2
+      return { state = sPrime_S_461, value = sPrime_S_461 }
+    end)(ref_S_458)()
+    local n_S_459 = Control_Monad_ST_Internal_read(ref_S_458)()
+    return n_S_459 + 3
   end)
   local _ = Effect_Console_log(Data_Show_foreign.showIntImpl(x_S_0))()
   return Effect_Console_log("done")()

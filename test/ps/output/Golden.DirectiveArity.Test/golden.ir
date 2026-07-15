@@ -27,11 +27,14 @@ UberModule
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.DirectiveArity.Test", qnameName = Name "Op"
-        }, Ctor Nothing ProductType
-        ( ModuleName "Golden.DirectiveArity.Test" )
-        ( TyName "Op" )
-        ( CtorName "Op" )
-        [ FieldName "value0" ]
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "value0" ) :| [] )
+        ( Ctor Nothing ProductType
+          ( ModuleName "Golden.DirectiveArity.Test" )
+          ( TyName "Op" )
+          ( CtorName "Op" )
+          [ Ref Nothing ( Local ( Name "value0" ) ) ]
+        )
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.DirectiveArity.Test", qnameName = Name "runOp"

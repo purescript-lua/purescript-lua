@@ -24,7 +24,6 @@ import Data.Traversable (mapAccumM)
 import Language.PureScript.Backend.IR.Inliner qualified as Inliner
 import Language.PureScript.Backend.IR.Names
   ( CtorName (renderCtorName)
-  , FieldName
   , ModuleName (ModuleName)
   , Name (Name, nameToText)
   , PropName
@@ -161,7 +160,12 @@ data RawExp ann
   | LiteralBool ann Bool
   | LiteralArray ann [RawExp ann]
   | LiteralObject ann [(PropName, RawExp ann)]
-  | Ctor ann AlgebraicType ModuleName TyName CtorName [FieldName]
+  | {- | A saturated constructor application: the arguments are the
+    constructor's fields, in declaration order, and there are always
+    exactly as many as the constructor declares. See
+    Note [Constructor applications are saturated].
+    -}
+    Ctor ann AlgebraicType ModuleName TyName CtorName [RawExp ann]
   | ReflectCtor ann (RawExp ann)
   | Eq ann (RawExp ann) (RawExp ann)
   | -- | See Note [IR primops]
@@ -180,6 +184,27 @@ data RawExp ann
   | IfThenElse ann (RawExp ann) (RawExp ann) (RawExp ann)
   | Exception ann Text
   | ForeignImport ann ModuleName FilePath [(ann, Name)]
+
+{- Note [Constructor applications are saturated]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+A 'Ctor' node carries its field values directly, and always all of them:
+the argument count equals the constructor's declared arity. It is a value
+(a table build), never a function — so it is never the head of an 'AppN',
+and the linter's @WellApplied@ check rejects any application whose head is
+a 'Ctor' ("Language.PureScript.Backend.IR.Linter.lintWellApplied").
+
+Translation ('mkConstructor') establishes the invariant by emitting a
+constructor of arity n as a manifest chain of n unary lambdas whose body is
+the saturated 'Ctor' of references to those parameters — the same shape a
+user-written curried function has, so the uncurrying worker/wrapper split
+("Language.PureScript.Backend.IR.Uncurry") turns an arity-≥2 constructor
+into an n-ary worker @λ(p₁,…,pₙ). Ctor [p₁,…,pₙ]@ plus a curried wrapper,
+and 'inlineSaturatedCall' pastes an arity-1 constructor at its saturated
+sites, beta-reducing to an in-place 'Ctor'. A partial application stays a
+call of the curried wrapper. Every rewrite that builds a 'Ctor' preserves
+saturation; the case-of-known-constructor folds (see 'reduceKnownConstructor'
+and 'resolveKnownCtorApp' in the optimizer) rely on it.
+-}
 
 {- Note [n-ary application]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -382,8 +407,8 @@ setAnn ann = \case
   LiteralBool _ b → LiteralBool ann b
   LiteralArray _ es → LiteralArray ann es
   LiteralObject _ props → LiteralObject ann props
-  Ctor _ algTy modName tyName ctorName fields →
-    Ctor ann algTy modName tyName ctorName fields
+  Ctor _ algTy modName tyName ctorName args →
+    Ctor ann algTy modName tyName ctorName args
   ReflectCtor _ e → ReflectCtor ann e
   Eq _ l r → Eq ann l r
   PrimBinOp _ op l r → PrimBinOp ann op l r
@@ -496,7 +521,7 @@ objectProp = ObjectProp noAnn
 objectUpdate ∷ Exp → NonEmpty (PropName, Exp) → Exp
 objectUpdate = ObjectUpdate noAnn
 
-ctor ∷ AlgebraicType → ModuleName → TyName → CtorName → [FieldName] → Exp
+ctor ∷ AlgebraicType → ModuleName → TyName → CtorName → [Exp] → Exp
 ctor = Ctor noAnn
 
 abstraction ∷ Parameter Ann → Exp → Exp
@@ -617,6 +642,8 @@ subexpressions go = \case
     LiteralArray ann <$> traverse go as
   LiteralObject ann props →
     LiteralObject ann <$> traverse (traverse go) props
+  Ctor ann algTy modName tyName ctorName args →
+    Ctor ann algTy modName tyName ctorName <$> traverse go args
   ReflectCtor ann a →
     ReflectCtor ann <$> go a
   DataArgumentByIndex ann algTy idx a →
@@ -944,6 +971,14 @@ alphaEq = go 0 Map.empty Map.empty
       annL == annR
         && go lvl scopeL scopeR aL aR
         && goProps lvl scopeL scopeR (toList patchesL) (toList patchesR)
+    (Ctor annL algTyL modL tyL ctorL argsL, Ctor annR algTyR modR tyR ctorR argsR) →
+      annL == annR
+        && algTyL == algTyR
+        && modL == modR
+        && tyL == tyR
+        && ctorL == ctorR
+        && length argsL == length argsR
+        && and (zipWith (go lvl scopeL scopeR) argsL argsR)
     (ReflectCtor annL aL, ReflectCtor annR aR) →
       annL == annR && go lvl scopeL scopeR aL aR
     (Eq annL aL bL, Eq annR aR bR) →

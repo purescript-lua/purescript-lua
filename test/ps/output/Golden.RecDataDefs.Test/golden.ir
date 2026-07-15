@@ -10,11 +10,14 @@ UberModule
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.RecDataDefs.Test", qnameName = Name "AB"
-        }, Ctor Nothing SumType
-        ( ModuleName "Golden.RecDataDefs.Test" )
-        ( TyName "A" )
-        ( CtorName "AB" )
-        [ FieldName "value0" ]
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "value0" ) :| [] )
+        ( Ctor Nothing SumType
+          ( ModuleName "Golden.RecDataDefs.Test" )
+          ( TyName "A" )
+          ( CtorName "AB" )
+          [ Ref Nothing ( Local ( Name "value0" ) ) ]
+        )
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.RecDataDefs.Test", qnameName = Name "B"
@@ -25,17 +28,22 @@ UberModule
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.RecDataDefs.Test", qnameName = Name "BA"
-        }, Ctor Nothing SumType
-        ( ModuleName "Golden.RecDataDefs.Test" )
-        ( TyName "B" )
-        ( CtorName "BA" )
-        [ FieldName "value0" ]
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "value0" ) :| [] )
+        ( Ctor Nothing SumType
+          ( ModuleName "Golden.RecDataDefs.Test" )
+          ( TyName "B" )
+          ( CtorName "BA" )
+          [ Ref Nothing ( Local ( Name "value0" ) ) ]
+        )
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.RecDataDefs.Test", qnameName = Name "ab"
-        }, AppN Nothing
-        ( Ref Nothing ( Imported ( ModuleName "Golden.RecDataDefs.Test" ) ( Name "AB" ) ) )
-        ( Ref Nothing ( Imported ( ModuleName "Golden.RecDataDefs.Test" ) ( Name "B" ) ) :| [] )
+        }, Ctor Nothing SumType
+        ( ModuleName "Golden.RecDataDefs.Test" )
+        ( TyName "A" )
+        ( CtorName "AB" )
+        [ Ref Nothing ( Imported ( ModuleName "Golden.RecDataDefs.Test" ) ( Name "B" ) ) ]
       )
     ], uberModuleForeigns = [], uberModuleExports =
     [
@@ -52,9 +60,11 @@ UberModule
       ( Name "ab", Ref Nothing
         ( Imported ( ModuleName "Golden.RecDataDefs.Test" ) ( Name "ab" ) )
       ),
-      ( Name "ba", AppN Nothing
-        ( Ref Nothing ( Imported ( ModuleName "Golden.RecDataDefs.Test" ) ( Name "BA" ) ) )
-        ( Ref Nothing ( Imported ( ModuleName "Golden.RecDataDefs.Test" ) ( Name "ab" ) ) :| [] )
+      ( Name "ba", Ctor Nothing SumType
+        ( ModuleName "Golden.RecDataDefs.Test" )
+        ( TyName "B" )
+        ( CtorName "BA" )
+        [ Ref Nothing ( Imported ( ModuleName "Golden.RecDataDefs.Test" ) ( Name "ab" ) ) ]
       )
     ]
   }

@@ -151,7 +151,7 @@ UberModule
                   ( ParamUnused Nothing :| [] )
                   ( Let Nothing
                     ( Standalone
-                      ( Nothing, Name "ref$456", AppN Nothing
+                      ( Nothing, Name "ref$458", AppN Nothing
                         ( AppN Nothing
                           ( Ref Nothing
                             ( Imported ( ModuleName "Control.Monad.ST.Internal" ) ( Name "new" ) )
@@ -173,32 +173,32 @@ UberModule
                                 )
                               )
                               ( AbsN Nothing
-                                ( ParamNamed Nothing ( Name "s$458" ) :| [] )
+                                ( ParamNamed Nothing ( Name "s$460" ) :| [] )
                                 ( Let Nothing
                                   ( Standalone
-                                    ( Nothing, Name "s'$459", PrimBinOp Nothing PrimMul
-                                      ( Ref Nothing ( Local ( Name "s$458" ) ) )
+                                    ( Nothing, Name "s'$461", PrimBinOp Nothing PrimMul
+                                      ( Ref Nothing ( Local ( Name "s$460" ) ) )
                                       ( LiteralInt Nothing 2 )
                                     ) :| []
                                   )
                                   ( LiteralObject Nothing
                                     [
                                       ( PropName "state", Ref Nothing
-                                        ( Local ( Name "s'$459" ) )
+                                        ( Local ( Name "s'$461" ) )
                                       ),
-                                      ( PropName "value", Ref Nothing ( Local ( Name "s'$459" ) ) )
+                                      ( PropName "value", Ref Nothing ( Local ( Name "s'$461" ) ) )
                                     ]
                                   )
                                 ) :| []
                               )
                             )
-                            ( Ref Nothing ( Local ( Name "ref$456" ) ) :| [] )
+                            ( Ref Nothing ( Local ( Name "ref$458" ) ) :| [] )
                           )
                           ( Ref Nothing
                             ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
                           )
                         ), Standalone
-                        ( Nothing, Name "n$457", AppN Nothing
+                        ( Nothing, Name "n$459", AppN Nothing
                           ( AppN Nothing
                             ( Ref Nothing
                               ( Imported
@@ -206,7 +206,7 @@ UberModule
                                 ( Name "read" )
                               )
                             )
-                            ( Ref Nothing ( Local ( Name "ref$456" ) ) :| [] )
+                            ( Ref Nothing ( Local ( Name "ref$458" ) ) :| [] )
                           )
                           ( Ref Nothing
                             ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
@@ -215,7 +215,7 @@ UberModule
                       ]
                     )
                     ( PrimBinOp Nothing PrimAdd
-                      ( Ref Nothing ( Local ( Name "n$457" ) ) )
+                      ( Ref Nothing ( Local ( Name "n$459" ) ) )
                       ( LiteralInt Nothing 3 )
                     )
                   ) :| []

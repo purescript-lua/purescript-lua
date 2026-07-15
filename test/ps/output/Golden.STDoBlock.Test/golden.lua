@@ -25,30 +25,30 @@ local Control_Monad_ST_Internal_run = Control_Monad_ST_Internal_foreign.run
 local Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
 }
-local Golden_STDoBlock_Test_add_S_w = function(x_S_445, y_S_446)
-  return x_S_445 + y_S_446
+local Golden_STDoBlock_Test_add_S_w = function(x_S_447, y_S_448)
+  return x_S_447 + y_S_448
 end
 M.Golden_STDoBlock_Test_sumTwice = function(n)
   return Control_Monad_ST_Internal_run(function()
-    local _S_cse467 = function(s_S_451)
-      local sPrime_S_452 = Golden_STDoBlock_Test_add_S_w(s_S_451, n)
-      return { state = sPrime_S_452, value = sPrime_S_452 }
+    local _S_cse469 = function(s_S_453)
+      local sPrime_S_454 = Golden_STDoBlock_Test_add_S_w(s_S_453, n)
+      return { state = sPrime_S_454, value = sPrime_S_454 }
     end
     local ref = Control_Monad_ST_Internal_new(0)()
-    local _ = Control_Monad_ST_Internal_modifyImpl(_S_cse467)(ref)()
-    local _ = Control_Monad_ST_Internal_modifyImpl(_S_cse467)(ref)()
+    local _ = Control_Monad_ST_Internal_modifyImpl(_S_cse469)(ref)()
+    local _ = Control_Monad_ST_Internal_modifyImpl(_S_cse469)(ref)()
     local total = Control_Monad_ST_Internal_read(ref)()
     return Golden_STDoBlock_Test_add_S_w(total, 1)
   end)
 end
 return Effect_Console_foreign.log(Data_Show_foreign.showIntImpl(Control_Monad_ST_Internal_run(function(  )
-  local _S_cse468 = function(s_S_462)
-    local sPrime_S_463 = Golden_STDoBlock_Test_add_S_w(s_S_462, 5)
-    return { state = sPrime_S_463, value = sPrime_S_463 }
+  local _S_cse470 = function(s_S_464)
+    local sPrime_S_465 = Golden_STDoBlock_Test_add_S_w(s_S_464, 5)
+    return { state = sPrime_S_465, value = sPrime_S_465 }
   end
-  local ref_S_457 = Control_Monad_ST_Internal_new(0)()
-  local _ = Control_Monad_ST_Internal_modifyImpl(_S_cse468)(ref_S_457)()
-  local _ = Control_Monad_ST_Internal_modifyImpl(_S_cse468)(ref_S_457)()
-  local total_S_458 = Control_Monad_ST_Internal_read(ref_S_457)()
-  return Golden_STDoBlock_Test_add_S_w(total_S_458, 1)
+  local ref_S_459 = Control_Monad_ST_Internal_new(0)()
+  local _ = Control_Monad_ST_Internal_modifyImpl(_S_cse470)(ref_S_459)()
+  local _ = Control_Monad_ST_Internal_modifyImpl(_S_cse470)(ref_S_459)()
+  local total_S_460 = Control_Monad_ST_Internal_read(ref_S_459)()
+  return Golden_STDoBlock_Test_add_S_w(total_S_460, 1)
 end)))()

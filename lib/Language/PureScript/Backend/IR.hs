@@ -411,13 +411,21 @@ mkConstructor cfnAnn ann properTyName properCtorName fields = do
     if isNewtype cfnAnn
       then identity
       else
-        Ctor
-          ann
-          algTy
-          contextModuleName
-          tyName
-          (mkCtorName properCtorName)
-          (mkFieldName <$> fields)
+        -- A constructor of arity n is a manifest chain of n unary lambdas
+        -- over the saturated 'Ctor' of references to those parameters (the
+        -- field idents), so the uncurrying pass treats it exactly as a
+        -- user-written curried function. A nullary constructor is the bare
+        -- saturated node. The root annotation stays on the outermost node.
+        -- See Note [Constructor applications are saturated].
+        let names = identToName <$> fields
+            body =
+              ctor
+                algTy
+                contextModuleName
+                tyName
+                (mkCtorName properCtorName)
+                (refLocal <$> names)
+         in setAnn ann (foldr (abstraction . paramNamed) body names)
 
 mkTyName ∷ PS.ProperName 'PS.TypeName → TyName
 mkTyName = TyName . PS.runProperName

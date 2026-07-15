@@ -6,7 +6,10 @@ local Golden_RecDataDefs_Test_B = { "Golden.RecDataDefs.Test∷B.B" }
 local Golden_RecDataDefs_Test_BA = function(value0)
   return { "Golden.RecDataDefs.Test∷B.BA", value0 }
 end
-local Golden_RecDataDefs_Test_ab = Golden_RecDataDefs_Test_AB(Golden_RecDataDefs_Test_B)
+local Golden_RecDataDefs_Test_ab = {
+  "Golden.RecDataDefs.Test∷A.AB",
+  Golden_RecDataDefs_Test_B
+}
 return {
   A = Golden_RecDataDefs_Test_A,
   AB = Golden_RecDataDefs_Test_AB,
@@ -15,5 +18,5 @@ return {
   a = Golden_RecDataDefs_Test_A,
   b = Golden_RecDataDefs_Test_B,
   ab = Golden_RecDataDefs_Test_ab,
-  ba = Golden_RecDataDefs_Test_BA(Golden_RecDataDefs_Test_ab)
+  ba = { "Golden.RecDataDefs.Test∷B.BA", Golden_RecDataDefs_Test_ab }
 }

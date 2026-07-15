@@ -1,0 +1,929 @@
+UberModule
+  { uberModuleBindings =
+    [ Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Show", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Data.Show" ) ".spago/p/prelude/5718c84fdde6247749cb053e816df696c30fe691/src/Data/Show.purs"
+        [ ( Nothing, Name "showIntImpl" ), ( Nothing, Name "showArrayImpl" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Show", qnameName = Name "showIntImpl"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
+        ( PropName "showIntImpl" )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Functor", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Data.Functor" ) ".spago/p/prelude/5718c84fdde6247749cb053e816df696c30fe691/src/Data/Functor.purs"
+        [ ( Nothing, Name "arrayMap" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Functor", qnameName = Name "arrayMap"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Data.Functor" ) ( Name "foreign" ) ) )
+        ( PropName "arrayMap" )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Effect.Console" ) ".spago/p/console/f82835a0b873aafe6bd7b14dd30cc150553d4ab9/src/Effect/Console.purs"
+        [ ( Nothing, Name "log" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Show", qnameName = Name "showInt"
+        }, LiteralObject Nothing
+        [
+          ( PropName "show", Ref Nothing
+            ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) )
+          )
+        ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "logShow$w"
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "dictShow" ) :| [ ParamNamed Nothing ( Name "a" ) ] )
+        ( AppN Nothing
+          ( ObjectProp Nothing
+            ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
+            ( PropName "log" )
+          )
+          ( AppN Nothing
+            ( ObjectProp Nothing
+              ( Ref Nothing ( Local ( Name "dictShow" ) ) )
+              ( PropName "show" )
+            )
+            ( Ref Nothing ( Local ( Name "a" ) ) :| [] ) :| []
+          )
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.UncurryCtor.Test", qnameName = Name "add$w"
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "x$311" ) :| [ ParamNamed Nothing ( Name "y$312" ) ] )
+        ( PrimBinOp Nothing PrimAdd
+          ( Ref Nothing ( Local ( Name "x$311" ) ) )
+          ( Ref Nothing ( Local ( Name "y$312" ) ) )
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.UncurryCtor.Test", qnameName = Name "Origin"
+        }, Ctor Nothing SumType
+        ( ModuleName "Golden.UncurryCtor.Test" )
+        ( TyName "Shape" )
+        ( CtorName "Origin" ) []
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.UncurryCtor.Test", qnameName = Name "Dot"
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "value0" ) :| [] )
+        ( Ctor Nothing SumType
+          ( ModuleName "Golden.UncurryCtor.Test" )
+          ( TyName "Shape" )
+          ( CtorName "Dot" )
+          [ Ref Nothing ( Local ( Name "value0" ) ) ]
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.UncurryCtor.Test", qnameName = Name "Tri$w"
+        }, AbsN Nothing
+        ( ParamNamed Nothing
+          ( Name "value0" ) :|
+          [ ParamNamed Nothing ( Name "value1" ), ParamNamed Nothing ( Name "value2" ) ]
+        )
+        ( Ctor Nothing SumType
+          ( ModuleName "Golden.UncurryCtor.Test" )
+          ( TyName "Shape" )
+          ( CtorName "Tri" )
+          [ Ref Nothing
+            ( Local ( Name "value0" ) ), Ref Nothing
+            ( Local ( Name "value1" ) ), Ref Nothing
+            ( Local ( Name "value2" ) )
+          ]
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.UncurryCtor.Test", qnameName = Name "Tri"
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "Tri$p1" ) :| [] )
+        ( AbsN Nothing
+          ( ParamNamed Nothing ( Name "Tri$p2" ) :| [] )
+          ( AbsN Nothing
+            ( ParamNamed Nothing ( Name "Tri$p3" ) :| [] )
+            ( AppN Nothing
+              ( Ref Nothing
+                ( Imported ( ModuleName "Golden.UncurryCtor.Test" ) ( Name "Tri$w" ) )
+              )
+              ( Ref Nothing
+                ( Local ( Name "Tri$p1" ) ) :|
+                [ Ref Nothing ( Local ( Name "Tri$p2" ) ), Ref Nothing ( Local ( Name "Tri$p3" ) ) ]
+              )
+            )
+          )
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.UncurryCtor.Test", qnameName = Name "Pair$w"
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "value0" ) :| [ ParamNamed Nothing ( Name "value1" ) ] )
+        ( Ctor Nothing ProductType
+          ( ModuleName "Golden.UncurryCtor.Test" )
+          ( TyName "Pair" )
+          ( CtorName "Pair" )
+          [ Ref Nothing ( Local ( Name "value0" ) ), Ref Nothing ( Local ( Name "value1" ) ) ]
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.UncurryCtor.Test", qnameName = Name "Nil"
+        }, Ctor Nothing SumType
+        ( ModuleName "Golden.UncurryCtor.Test" )
+        ( TyName "IntList" )
+        ( CtorName "Nil" ) []
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.UncurryCtor.Test", qnameName = Name "Cons$w"
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "value0" ) :| [ ParamNamed Nothing ( Name "value1" ) ] )
+        ( Ctor Nothing SumType
+          ( ModuleName "Golden.UncurryCtor.Test" )
+          ( TyName "IntList" )
+          ( CtorName "Cons" )
+          [ Ref Nothing ( Local ( Name "value0" ) ), Ref Nothing ( Local ( Name "value1" ) ) ]
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.UncurryCtor.Test", qnameName = Name "unbox"
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "v" ) :| [] )
+        ( Ref Nothing ( Local ( Name "v" ) ) )
+      ), RecursiveGroup
+      (
+        ( QName
+          { qnameModuleName = ModuleName "Golden.UncurryCtor.Test", qnameName = Name "total"
+          }, AbsN Nothing
+          ( ParamNamed Nothing ( Name "v" ) :| [] )
+          ( Let Nothing
+            ( Standalone
+              ( Nothing, Name "$cse352", ReflectCtor Nothing
+                ( Ref Nothing ( Local ( Name "v" ) ) )
+              ) :| []
+            )
+            ( IfThenElse Nothing
+              ( Eq Nothing
+                ( LiteralString Nothing "Golden.UncurryCtor.Test∷IntList.Nil" )
+                ( Ref Nothing ( Local ( Name "$cse352" ) ) )
+              )
+              ( LiteralInt Nothing 0 )
+              ( IfThenElse Nothing
+                ( Eq Nothing
+                  ( LiteralString Nothing "Golden.UncurryCtor.Test∷IntList.Cons" )
+                  ( Ref Nothing ( Local ( Name "$cse352" ) ) )
+                )
+                ( AppN Nothing
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Golden.UncurryCtor.Test" ) ( Name "add$w" ) )
+                  )
+                  ( DataArgumentByIndex Nothing SumType 0
+                    ( Ref Nothing ( Local ( Name "v" ) ) ) :|
+                    [ AppN Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Golden.UncurryCtor.Test" ) ( Name "total" ) )
+                      )
+                      ( DataArgumentByIndex Nothing SumType 1
+                        ( Ref Nothing ( Local ( Name "v" ) ) ) :| []
+                      )
+                    ]
+                  )
+                )
+                ( Exception Nothing "No patterns matched" )
+              )
+            )
+          )
+        ) :| []
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.UncurryCtor.Test", qnameName = Name "range"
+        }, AppN Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Golden.UncurryCtor.Test" ) ( Name "Cons$w" ) ) )
+        ( LiteralInt Nothing 1 :|
+          [ AppN Nothing
+            ( Ref Nothing ( Imported ( ModuleName "Golden.UncurryCtor.Test" ) ( Name "Cons$w" ) ) )
+            ( LiteralInt Nothing 2 :|
+              [ AppN Nothing
+                ( Ref Nothing
+                  ( Imported ( ModuleName "Golden.UncurryCtor.Test" ) ( Name "Cons$w" ) )
+                )
+                ( LiteralInt Nothing 3 :|
+                  [ AppN Nothing
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Golden.UncurryCtor.Test" ) ( Name "Cons$w" ) )
+                    )
+                    ( LiteralInt Nothing 4 :|
+                      [ AppN Nothing
+                        ( Ref Nothing
+                          ( Imported ( ModuleName "Golden.UncurryCtor.Test" ) ( Name "Cons$w" ) )
+                        )
+                        ( LiteralInt Nothing 5 :|
+                          [ AppN Nothing
+                            ( Ref Nothing
+                              ( Imported
+                                ( ModuleName "Golden.UncurryCtor.Test" )
+                                ( Name "Cons$w" )
+                              )
+                            )
+                            ( LiteralInt Nothing 6 :|
+                              [ AppN Nothing
+                                ( Ref Nothing
+                                  ( Imported
+                                    ( ModuleName "Golden.UncurryCtor.Test" )
+                                    ( Name "Cons$w" )
+                                  )
+                                )
+                                ( LiteralInt Nothing 7 :|
+                                  [ AppN Nothing
+                                    ( Ref Nothing
+                                      ( Imported
+                                        ( ModuleName "Golden.UncurryCtor.Test" )
+                                        ( Name "Cons$w" )
+                                      )
+                                    )
+                                    ( LiteralInt Nothing 8 :|
+                                      [ AppN Nothing
+                                        ( Ref Nothing
+                                          ( Imported
+                                            ( ModuleName "Golden.UncurryCtor.Test" )
+                                            ( Name "Cons$w" )
+                                          )
+                                        )
+                                        ( LiteralInt Nothing 9 :|
+                                          [ AppN Nothing
+                                            ( Ref Nothing
+                                              ( Imported
+                                                ( ModuleName "Golden.UncurryCtor.Test" )
+                                                ( Name "Cons$w" )
+                                              )
+                                            )
+                                            ( LiteralInt Nothing 10 :|
+                                              [ Ref Nothing
+                                                ( Imported
+                                                  ( ModuleName "Golden.UncurryCtor.Test" )
+                                                  ( Name "Nil" )
+                                                )
+                                              ]
+                                            )
+                                          ]
+                                        )
+                                      ]
+                                    )
+                                  ]
+                                )
+                              ]
+                            )
+                          ]
+                        )
+                      ]
+                    )
+                  ]
+                )
+              ]
+            )
+          ]
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.UncurryCtor.Test", qnameName = Name "pairSum"
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "v" ) :| [] )
+        ( AppN Nothing
+          ( Ref Nothing ( Imported ( ModuleName "Golden.UncurryCtor.Test" ) ( Name "add$w" ) ) )
+          ( DataArgumentByIndex Nothing ProductType 0
+            ( Ref Nothing ( Local ( Name "v" ) ) ) :|
+            [ DataArgumentByIndex Nothing ProductType 1 ( Ref Nothing ( Local ( Name "v" ) ) ) ]
+          )
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.UncurryCtor.Test", qnameName = Name "area"
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "v" ) :| [] )
+        ( Let Nothing
+          ( Standalone
+            ( Nothing, Name "$cse354", DataArgumentByIndex Nothing SumType 0
+              ( Ref Nothing ( Local ( Name "v" ) ) )
+            ) :| []
+          )
+          ( Let Nothing
+            ( Standalone
+              ( Nothing, Name "$cse353", ReflectCtor Nothing
+                ( Ref Nothing ( Local ( Name "v" ) ) )
+              ) :| []
+            )
+            ( IfThenElse Nothing
+              ( Eq Nothing
+                ( LiteralString Nothing "Golden.UncurryCtor.Test∷Shape.Origin" )
+                ( Ref Nothing ( Local ( Name "$cse353" ) ) )
+              )
+              ( LiteralInt Nothing 0 )
+              ( IfThenElse Nothing
+                ( Eq Nothing
+                  ( LiteralString Nothing "Golden.UncurryCtor.Test∷Shape.Dot" )
+                  ( Ref Nothing ( Local ( Name "$cse353" ) ) )
+                )
+                ( Ref Nothing ( Local ( Name "$cse354" ) ) )
+                ( IfThenElse Nothing
+                  ( Eq Nothing
+                    ( LiteralString Nothing "Golden.UncurryCtor.Test∷Shape.Tri" )
+                    ( Ref Nothing ( Local ( Name "$cse353" ) ) )
+                  )
+                  ( AppN Nothing
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Golden.UncurryCtor.Test" ) ( Name "add$w" ) )
+                    )
+                    ( AppN Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Golden.UncurryCtor.Test" ) ( Name "add$w" ) )
+                      )
+                      ( Ref Nothing
+                        ( Local ( Name "$cse354" ) ) :|
+                        [ DataArgumentByIndex Nothing SumType 1
+                          ( Ref Nothing ( Local ( Name "v" ) ) )
+                        ]
+                      ) :|
+                      [ DataArgumentByIndex Nothing SumType 2
+                        ( Ref Nothing ( Local ( Name "v" ) ) )
+                      ]
+                    )
+                  )
+                  ( Exception Nothing "No patterns matched" )
+                )
+              )
+            )
+          )
+        )
+      )
+    ], uberModuleForeigns = [], uberModuleExports =
+    [
+      ( Name "Origin", Ref Nothing
+        ( Imported ( ModuleName "Golden.UncurryCtor.Test" ) ( Name "Origin" ) )
+      ),
+      ( Name "Dot", Ref Nothing
+        ( Imported ( ModuleName "Golden.UncurryCtor.Test" ) ( Name "Dot" ) )
+      ),
+      ( Name "Tri", Ref Nothing
+        ( Imported ( ModuleName "Golden.UncurryCtor.Test" ) ( Name "Tri" ) )
+      ),
+      ( Name "Pair", AbsN Nothing
+        ( ParamNamed Nothing ( Name "Pair$p1$322" ) :| [] )
+        ( AbsN Nothing
+          ( ParamNamed Nothing ( Name "Pair$p2$323" ) :| [] )
+          ( AppN Nothing
+            ( Ref Nothing ( Imported ( ModuleName "Golden.UncurryCtor.Test" ) ( Name "Pair$w" ) ) )
+            ( Ref Nothing
+              ( Local ( Name "Pair$p1$322" ) ) :|
+              [ Ref Nothing ( Local ( Name "Pair$p2$323" ) ) ]
+            )
+          )
+        )
+      ),
+      ( Name "Boxed", AbsN Nothing
+        ( ParamNamed Nothing ( Name "x$1" ) :| [] )
+        ( Ref Nothing ( Local ( Name "x$1" ) ) )
+      ),
+      ( Name "Nil", Ref Nothing
+        ( Imported ( ModuleName "Golden.UncurryCtor.Test" ) ( Name "Nil" ) )
+      ),
+      ( Name "Cons", AbsN Nothing
+        ( ParamNamed Nothing ( Name "Cons$p1$320" ) :| [] )
+        ( AbsN Nothing
+          ( ParamNamed Nothing ( Name "Cons$p2$321" ) :| [] )
+          ( AppN Nothing
+            ( Ref Nothing ( Imported ( ModuleName "Golden.UncurryCtor.Test" ) ( Name "Cons$w" ) ) )
+            ( Ref Nothing
+              ( Local ( Name "Cons$p1$320" ) ) :|
+              [ Ref Nothing ( Local ( Name "Cons$p2$321" ) ) ]
+            )
+          )
+        )
+      ),
+      ( Name "area", Ref Nothing
+        ( Imported ( ModuleName "Golden.UncurryCtor.Test" ) ( Name "area" ) )
+      ),
+      ( Name "pairSum", Ref Nothing
+        ( Imported ( ModuleName "Golden.UncurryCtor.Test" ) ( Name "pairSum" ) )
+      ),
+      ( Name "unbox", Ref Nothing
+        ( Imported ( ModuleName "Golden.UncurryCtor.Test" ) ( Name "unbox" ) )
+      ),
+      ( Name "range", Ref Nothing
+        ( Imported ( ModuleName "Golden.UncurryCtor.Test" ) ( Name "range" ) )
+      ),
+      ( Name "total", Ref Nothing
+        ( Imported ( ModuleName "Golden.UncurryCtor.Test" ) ( Name "total" ) )
+      ),
+      ( Name "main", AbsN Nothing
+        ( ParamUnused Nothing :| [] )
+        ( Let Nothing
+          ( Standalone
+            ( Nothing, Name "$cse356", DataArgumentByIndex Nothing SumType 0
+              ( Ref Nothing
+                ( Imported ( ModuleName "Golden.UncurryCtor.Test" ) ( Name "Origin" ) )
+              )
+            ) :| []
+          )
+          ( Let Nothing
+            ( Standalone
+              ( Nothing, Name "$cse355", ReflectCtor Nothing
+                ( Ref Nothing
+                  ( Imported ( ModuleName "Golden.UncurryCtor.Test" ) ( Name "Origin" ) )
+                )
+              ) :| []
+            )
+            ( Let Nothing
+              ( Standalone
+                ( Nothing, Name "_", AppN Nothing
+                  ( AppN Nothing
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow$w" ) )
+                    )
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Data.Show" ) ( Name "showInt" ) ) :|
+                      [ AppN Nothing
+                        ( Ref Nothing
+                          ( Imported ( ModuleName "Golden.UncurryCtor.Test" ) ( Name "add$w" ) )
+                        )
+                        ( AppN Nothing
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Golden.UncurryCtor.Test" ) ( Name "add$w" ) )
+                          )
+                          ( LiteralInt Nothing 3 :| [ LiteralInt Nothing 4 ] ) :|
+                          [ LiteralInt Nothing 5 ]
+                        )
+                      ]
+                    )
+                  )
+                  ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+                ) :|
+                [ Standalone
+                  ( Nothing, Name "_", AppN Nothing
+                    ( AppN Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow$w" ) )
+                      )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Data.Show" ) ( Name "showInt" ) ) :|
+                        [ Let Nothing
+                          ( Standalone
+                            ( Nothing, Name "v$333", Ctor Nothing SumType
+                              ( ModuleName "Golden.UncurryCtor.Test" )
+                              ( TyName "Shape" )
+                              ( CtorName "Dot" )
+                              [ LiteralInt Nothing 9 ]
+                            ) :| []
+                          )
+                          ( IfThenElse Nothing
+                            ( Eq Nothing
+                              ( LiteralString Nothing "Golden.UncurryCtor.Test∷Shape.Origin" )
+                              ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v$333" ) ) ) )
+                            )
+                            ( LiteralInt Nothing 0 )
+                            ( IfThenElse Nothing
+                              ( Eq Nothing
+                                ( LiteralString Nothing "Golden.UncurryCtor.Test∷Shape.Dot" )
+                                ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v$333" ) ) ) )
+                              )
+                              ( DataArgumentByIndex Nothing SumType 0
+                                ( Ref Nothing ( Local ( Name "v$333" ) ) )
+                              )
+                              ( IfThenElse Nothing
+                                ( Eq Nothing
+                                  ( LiteralString Nothing "Golden.UncurryCtor.Test∷Shape.Tri" )
+                                  ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v$333" ) ) ) )
+                                )
+                                ( AppN Nothing
+                                  ( Ref Nothing
+                                    ( Imported
+                                      ( ModuleName "Golden.UncurryCtor.Test" )
+                                      ( Name "add$w" )
+                                    )
+                                  )
+                                  ( AppN Nothing
+                                    ( Ref Nothing
+                                      ( Imported
+                                        ( ModuleName "Golden.UncurryCtor.Test" )
+                                        ( Name "add$w" )
+                                      )
+                                    )
+                                    ( DataArgumentByIndex Nothing SumType 0
+                                      ( Ref Nothing ( Local ( Name "v$333" ) ) ) :|
+                                      [ DataArgumentByIndex Nothing SumType 1
+                                        ( Ref Nothing ( Local ( Name "v$333" ) ) )
+                                      ]
+                                    ) :|
+                                    [ DataArgumentByIndex Nothing SumType 2
+                                      ( Ref Nothing ( Local ( Name "v$333" ) ) )
+                                    ]
+                                  )
+                                )
+                                ( Exception Nothing "No patterns matched" )
+                              )
+                            )
+                          )
+                        ]
+                      )
+                    )
+                    ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+                  ), Standalone
+                  ( Nothing, Name "_", AppN Nothing
+                    ( AppN Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow$w" ) )
+                      )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Data.Show" ) ( Name "showInt" ) ) :|
+                        [ IfThenElse Nothing
+                          ( Eq Nothing
+                            ( LiteralString Nothing "Golden.UncurryCtor.Test∷Shape.Origin" )
+                            ( Ref Nothing ( Local ( Name "$cse355" ) ) )
+                          )
+                          ( LiteralInt Nothing 0 )
+                          ( IfThenElse Nothing
+                            ( Eq Nothing
+                              ( LiteralString Nothing "Golden.UncurryCtor.Test∷Shape.Dot" )
+                              ( Ref Nothing ( Local ( Name "$cse355" ) ) )
+                            )
+                            ( Ref Nothing ( Local ( Name "$cse356" ) ) )
+                            ( IfThenElse Nothing
+                              ( Eq Nothing
+                                ( LiteralString Nothing "Golden.UncurryCtor.Test∷Shape.Tri" )
+                                ( Ref Nothing ( Local ( Name "$cse355" ) ) )
+                              )
+                              ( AppN Nothing
+                                ( Ref Nothing
+                                  ( Imported
+                                    ( ModuleName "Golden.UncurryCtor.Test" )
+                                    ( Name "add$w" )
+                                  )
+                                )
+                                ( AppN Nothing
+                                  ( Ref Nothing
+                                    ( Imported
+                                      ( ModuleName "Golden.UncurryCtor.Test" )
+                                      ( Name "add$w" )
+                                    )
+                                  )
+                                  ( Ref Nothing
+                                    ( Local ( Name "$cse356" ) ) :|
+                                    [ DataArgumentByIndex Nothing SumType 1
+                                      ( Ref Nothing
+                                        ( Imported
+                                          ( ModuleName "Golden.UncurryCtor.Test" )
+                                          ( Name "Origin" )
+                                        )
+                                      )
+                                    ]
+                                  ) :|
+                                  [ DataArgumentByIndex Nothing SumType 2
+                                    ( Ref Nothing
+                                      ( Imported
+                                        ( ModuleName "Golden.UncurryCtor.Test" )
+                                        ( Name "Origin" )
+                                      )
+                                    )
+                                  ]
+                                )
+                              )
+                              ( Exception Nothing "No patterns matched" )
+                            )
+                          )
+                        ]
+                      )
+                    )
+                    ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+                  ), Standalone
+                  ( Nothing, Name "_", AppN Nothing
+                    ( AppN Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow$w" ) )
+                      )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Data.Show" ) ( Name "showInt" ) ) :|
+                        [ AppN Nothing
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Golden.UncurryCtor.Test" ) ( Name "add$w" ) )
+                          )
+                          ( LiteralInt Nothing 20 :| [ LiteralInt Nothing 22 ] )
+                        ]
+                      )
+                    )
+                    ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+                  ), Standalone
+                  ( Nothing, Name "_", AppN Nothing
+                    ( AppN Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow$w" ) )
+                      )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Data.Show" ) ( Name "showInt" ) ) :|
+                        [ LiteralInt Nothing 41 ]
+                      )
+                    )
+                    ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+                  )
+                ]
+              )
+              ( AppN Nothing
+                ( Let Nothing
+                  ( Standalone
+                    ( Nothing, Name "mk$0", AbsN Nothing
+                      ( ParamNamed Nothing ( Name "Tri$p3$345" ) :| [] )
+                      ( AppN Nothing
+                        ( Ref Nothing
+                          ( Imported ( ModuleName "Golden.UncurryCtor.Test" ) ( Name "Tri$w" ) )
+                        )
+                        ( LiteralInt Nothing 1 :|
+                          [ LiteralInt Nothing 2, Ref Nothing ( Local ( Name "Tri$p3$345" ) ) ]
+                        )
+                      )
+                    ) :| []
+                  )
+                  ( AbsN Nothing
+                    ( ParamUnused Nothing :| [] )
+                    ( Let Nothing
+                      ( Standalone
+                        ( Nothing, Name "_", AppN Nothing
+                          ( AppN Nothing
+                            ( Ref Nothing
+                              ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow$w" ) )
+                            )
+                            ( Ref Nothing
+                              ( Imported ( ModuleName "Data.Show" ) ( Name "showInt" ) ) :|
+                              [ Let Nothing
+                                ( Standalone
+                                  ( Nothing, Name "v$346", AppN Nothing
+                                    ( Ref Nothing ( Local ( Name "mk$0" ) ) )
+                                    ( LiteralInt Nothing 3 :| [] )
+                                  ) :| []
+                                )
+                                ( IfThenElse Nothing
+                                  ( Eq Nothing
+                                    ( LiteralString Nothing "Golden.UncurryCtor.Test∷Shape.Origin" )
+                                    ( ReflectCtor Nothing
+                                      ( Ref Nothing ( Local ( Name "v$346" ) ) )
+                                    )
+                                  )
+                                  ( LiteralInt Nothing 0 )
+                                  ( IfThenElse Nothing
+                                    ( Eq Nothing
+                                      ( LiteralString Nothing "Golden.UncurryCtor.Test∷Shape.Dot" )
+                                      ( ReflectCtor Nothing
+                                        ( Ref Nothing ( Local ( Name "v$346" ) ) )
+                                      )
+                                    )
+                                    ( DataArgumentByIndex Nothing SumType 0
+                                      ( Ref Nothing ( Local ( Name "v$346" ) ) )
+                                    )
+                                    ( IfThenElse Nothing
+                                      ( Eq Nothing
+                                        ( LiteralString Nothing "Golden.UncurryCtor.Test∷Shape.Tri" )
+                                        ( ReflectCtor Nothing
+                                          ( Ref Nothing ( Local ( Name "v$346" ) ) )
+                                        )
+                                      )
+                                      ( AppN Nothing
+                                        ( Ref Nothing
+                                          ( Imported
+                                            ( ModuleName "Golden.UncurryCtor.Test" )
+                                            ( Name "add$w" )
+                                          )
+                                        )
+                                        ( AppN Nothing
+                                          ( Ref Nothing
+                                            ( Imported
+                                              ( ModuleName "Golden.UncurryCtor.Test" )
+                                              ( Name "add$w" )
+                                            )
+                                          )
+                                          ( DataArgumentByIndex Nothing SumType 0
+                                            ( Ref Nothing ( Local ( Name "v$346" ) ) ) :|
+                                            [ DataArgumentByIndex Nothing SumType 1
+                                              ( Ref Nothing ( Local ( Name "v$346" ) ) )
+                                            ]
+                                          ) :|
+                                          [ DataArgumentByIndex Nothing SumType 2
+                                            ( Ref Nothing ( Local ( Name "v$346" ) ) )
+                                          ]
+                                        )
+                                      )
+                                      ( Exception Nothing "No patterns matched" )
+                                    )
+                                  )
+                                )
+                              ]
+                            )
+                          )
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                          )
+                        ) :|
+                        [ Standalone
+                          ( Nothing, Name "_", AppN Nothing
+                            ( AppN Nothing
+                              ( Ref Nothing
+                                ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow$w" ) )
+                              )
+                              ( Ref Nothing
+                                ( Imported ( ModuleName "Data.Show" ) ( Name "showInt" ) ) :|
+                                [ Let Nothing
+                                  ( Standalone
+                                    ( Nothing, Name "v$348", AppN Nothing
+                                      ( Ref Nothing ( Local ( Name "mk$0" ) ) )
+                                      ( LiteralInt Nothing 30 :| [] )
+                                    ) :| []
+                                  )
+                                  ( IfThenElse Nothing
+                                    ( Eq Nothing
+                                      ( LiteralString Nothing "Golden.UncurryCtor.Test∷Shape.Origin" )
+                                      ( ReflectCtor Nothing
+                                        ( Ref Nothing ( Local ( Name "v$348" ) ) )
+                                      )
+                                    )
+                                    ( LiteralInt Nothing 0 )
+                                    ( IfThenElse Nothing
+                                      ( Eq Nothing
+                                        ( LiteralString Nothing "Golden.UncurryCtor.Test∷Shape.Dot" )
+                                        ( ReflectCtor Nothing
+                                          ( Ref Nothing ( Local ( Name "v$348" ) ) )
+                                        )
+                                      )
+                                      ( DataArgumentByIndex Nothing SumType 0
+                                        ( Ref Nothing ( Local ( Name "v$348" ) ) )
+                                      )
+                                      ( IfThenElse Nothing
+                                        ( Eq Nothing
+                                          ( LiteralString Nothing "Golden.UncurryCtor.Test∷Shape.Tri" )
+                                          ( ReflectCtor Nothing
+                                            ( Ref Nothing ( Local ( Name "v$348" ) ) )
+                                          )
+                                        )
+                                        ( AppN Nothing
+                                          ( Ref Nothing
+                                            ( Imported
+                                              ( ModuleName "Golden.UncurryCtor.Test" )
+                                              ( Name "add$w" )
+                                            )
+                                          )
+                                          ( AppN Nothing
+                                            ( Ref Nothing
+                                              ( Imported
+                                                ( ModuleName "Golden.UncurryCtor.Test" )
+                                                ( Name "add$w" )
+                                              )
+                                            )
+                                            ( DataArgumentByIndex Nothing SumType 0
+                                              ( Ref Nothing ( Local ( Name "v$348" ) ) ) :|
+                                              [ DataArgumentByIndex Nothing SumType 1
+                                                ( Ref Nothing ( Local ( Name "v$348" ) ) )
+                                              ]
+                                            ) :|
+                                            [ DataArgumentByIndex Nothing SumType 2
+                                              ( Ref Nothing ( Local ( Name "v$348" ) ) )
+                                            ]
+                                          )
+                                        )
+                                        ( Exception Nothing "No patterns matched" )
+                                      )
+                                    )
+                                  )
+                                ]
+                              )
+                            )
+                            ( Ref Nothing
+                              ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                            )
+                          ), Standalone
+                          ( Nothing, Name "_", AppN Nothing
+                            ( AppN Nothing
+                              ( Ref Nothing
+                                ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow$w" ) )
+                              )
+                              ( LiteralObject Nothing
+                                [
+                                  ( PropName "show", AppN Nothing
+                                    ( ObjectProp Nothing
+                                      ( Ref Nothing
+                                        ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) )
+                                      )
+                                      ( PropName "showArrayImpl" )
+                                    )
+                                    ( Ref Nothing
+                                      ( Imported
+                                        ( ModuleName "Data.Show" )
+                                        ( Name "showIntImpl" )
+                                      ) :| []
+                                    )
+                                  )
+                                ] :|
+                                [ AppN Nothing
+                                  ( AppN Nothing
+                                    ( Ref Nothing
+                                      ( Imported ( ModuleName "Data.Functor" ) ( Name "arrayMap" ) )
+                                    )
+                                    ( AbsN Nothing
+                                      ( ParamNamed Nothing ( Name "v2$307" ) :| [] )
+                                      ( Let Nothing
+                                        ( Standalone
+                                          ( Nothing, Name "$cse357", ReflectCtor Nothing
+                                            ( Ref Nothing ( Local ( Name "v2$307" ) ) )
+                                          ) :| []
+                                        )
+                                        ( IfThenElse Nothing
+                                          ( Eq Nothing
+                                            ( LiteralString Nothing "Data.Maybe∷Maybe.Nothing" )
+                                            ( Ref Nothing ( Local ( Name "$cse357" ) ) )
+                                          )
+                                          ( LiteralInt Nothing 0 )
+                                          ( IfThenElse Nothing
+                                            ( Eq Nothing
+                                              ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
+                                              ( Ref Nothing ( Local ( Name "$cse357" ) ) )
+                                            )
+                                            ( DataArgumentByIndex Nothing SumType 0
+                                              ( Ref Nothing ( Local ( Name "v2$307" ) ) )
+                                            )
+                                            ( Exception Nothing "No patterns matched" )
+                                          )
+                                        )
+                                      ) :| []
+                                    )
+                                  )
+                                  ( AppN Nothing
+                                    ( AppN Nothing
+                                      ( Ref Nothing
+                                        ( Imported
+                                          ( ModuleName "Data.Functor" )
+                                          ( Name "arrayMap" )
+                                        )
+                                      )
+                                      ( AbsN Nothing
+                                        ( ParamNamed Nothing ( Name "value0$308" ) :| [] )
+                                        ( Ctor Nothing SumType
+                                          ( ModuleName "Data.Maybe" )
+                                          ( TyName "Maybe" )
+                                          ( CtorName "Just" )
+                                          [ Ref Nothing ( Local ( Name "value0$308" ) ) ]
+                                        ) :| []
+                                      )
+                                    )
+                                    ( LiteralArray Nothing
+                                      [ LiteralInt Nothing 1, LiteralInt Nothing 2, LiteralInt Nothing 3
+                                      ] :| []
+                                    ) :| []
+                                  )
+                                ]
+                              )
+                            )
+                            ( Ref Nothing
+                              ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                            )
+                          )
+                        ]
+                      )
+                      ( AppN Nothing
+                        ( AppN Nothing
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow$w" ) )
+                          )
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Data.Show" ) ( Name "showInt" ) ) :|
+                            [ AppN Nothing
+                              ( Ref Nothing
+                                ( Imported
+                                  ( ModuleName "Golden.UncurryCtor.Test" )
+                                  ( Name "total" )
+                                )
+                              )
+                              ( Ref Nothing
+                                ( Imported
+                                  ( ModuleName "Golden.UncurryCtor.Test" )
+                                  ( Name "range" )
+                                ) :| []
+                              )
+                            ]
+                          )
+                        )
+                        ( Ref Nothing
+                          ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                        )
+                      )
+                    )
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              )
+            )
+          )
+        )
+      )
+    ]
+  }

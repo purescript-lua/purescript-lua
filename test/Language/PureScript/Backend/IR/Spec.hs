@@ -19,6 +19,7 @@ import Language.PureScript.Backend.IR.Inliner
 import Language.PureScript.Backend.IR.Inliner qualified as Inliner
 import Language.PureScript.Backend.IR.Names
   ( CtorName (..)
+  , FieldName (..)
   , ModuleName (..)
   , Name (..)
   , PropName (..)
@@ -742,6 +743,62 @@ spec = describe "IR representation" do
             )
           ]
 
+  describe "constructor translation" do
+    -- See Note [Constructor applications are saturated].
+    let dataTypes =
+          Map.fromList
+            [
+              ( (PS.ModuleName "M", TyName "S")
+              ,
+                ( SumType
+                , Map.fromList
+                    [ (CtorName "K", [FieldName "a", FieldName "b"])
+                    , (CtorName "L", [])
+                    ]
+                )
+              )
+            ]
+        cfnCtor tyName ctorName fields =
+          Cfn.Constructor
+            ann
+            (PS.ProperName tyName)
+            (PS.ProperName ctorName)
+            (PS.Ident <$> fields)
+
+    it "translates an arity-2 constructor to a manifest lambda chain" do
+      expr ← translateBindingWithTypes dataTypes (cfnCtor "S" "K" ["a", "b"])
+      expr
+        `shouldBe` abstraction
+          (paramNamed (Name "a"))
+          ( abstraction
+              (paramNamed (Name "b"))
+              ( ctor
+                  SumType
+                  (ModuleName "M")
+                  (TyName "S")
+                  (CtorName "K")
+                  [refLocal (Name "a"), refLocal (Name "b")]
+              )
+          )
+
+    it "translates a nullary constructor to the bare saturated node" do
+      expr ← translateBindingWithTypes dataTypes (cfnCtor "S" "L" [])
+      expr
+        `shouldBe` ctor SumType (ModuleName "M") (TyName "S") (CtorName "L") []
+
+    it "erases a newtype constructor to the identity" do
+      expr ←
+        translateBindingWithTypes
+          dataTypes
+          ( Cfn.Constructor
+              (Just Cfn.IsNewtype)
+              (PS.ProperName "S")
+              (PS.ProperName "K")
+              [PS.Ident "a"]
+          )
+      expr
+        `shouldBe` abstraction (paramNamed (Name "x")) (refLocal (Name "x"))
+
 --------------------------------------------------------------------------------
 -- Helper functions ------------------------------------------------------------
 
@@ -825,6 +882,27 @@ translateBinding ∷ MonadFail m ⇒ Cfn.Expr Cfn.Ann → m Exp
 translateBinding cfnExpr = do
   irModule ←
     translateModule [] [Cfn.NonRec ann (PS.Ident "foo") cfnExpr]
+  case moduleBindings irModule of
+    [Standalone (_ann, Name "foo", expr)] → pure expr
+    other → fail ("unexpected bindings: " <> show other)
+
+{- | 'translateBinding' with data declarations in scope, for expressions
+(constructors, case matches) that consult the data-type registry.
+-}
+translateBindingWithTypes
+  ∷ MonadFail m
+  ⇒ Map (ModuleName, TyName) (AlgebraicType, Map CtorName [FieldName])
+  → Cfn.Expr Cfn.Ann
+  → m Exp
+translateBindingWithTypes dataTypes cfnExpr = do
+  irModule ←
+    either fail (pure . snd) . first show $
+      mkModule
+        mempty
+        cfnModule
+          { Cfn.moduleBindings = [Cfn.NonRec ann (PS.Ident "foo") cfnExpr]
+          }
+        dataTypes
   case moduleBindings irModule of
     [Standalone (_ann, Name "foo", expr)] → pure expr
     other → fail ("unexpected bindings: " <> show other)

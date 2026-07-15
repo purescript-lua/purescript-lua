@@ -66,28 +66,28 @@ UberModule
               )
             ),
             ( PropName "conj", AbsN Nothing
+              ( ParamNamed Nothing ( Name "b1$231" ) :| [] )
+              ( AbsN Nothing
+                ( ParamNamed Nothing ( Name "b2$232" ) :| [] )
+                ( PrimBinOp Nothing PrimAnd
+                  ( Ref Nothing ( Local ( Name "b1$231" ) ) )
+                  ( Ref Nothing ( Local ( Name "b2$232" ) ) )
+                )
+              )
+            ),
+            ( PropName "disj", AbsN Nothing
               ( ParamNamed Nothing ( Name "b1$229" ) :| [] )
               ( AbsN Nothing
                 ( ParamNamed Nothing ( Name "b2$230" ) :| [] )
-                ( PrimBinOp Nothing PrimAnd
+                ( PrimBinOp Nothing PrimOr
                   ( Ref Nothing ( Local ( Name "b1$229" ) ) )
                   ( Ref Nothing ( Local ( Name "b2$230" ) ) )
                 )
               )
             ),
-            ( PropName "disj", AbsN Nothing
-              ( ParamNamed Nothing ( Name "b1$227" ) :| [] )
-              ( AbsN Nothing
-                ( ParamNamed Nothing ( Name "b2$228" ) :| [] )
-                ( PrimBinOp Nothing PrimOr
-                  ( Ref Nothing ( Local ( Name "b1$227" ) ) )
-                  ( Ref Nothing ( Local ( Name "b2$228" ) ) )
-                )
-              )
-            ),
             ( PropName "not", AbsN Nothing
-              ( ParamNamed Nothing ( Name "b$226" ) :| [] )
-              ( PrimNot Nothing ( Ref Nothing ( Local ( Name "b$226" ) ) ) )
+              ( ParamNamed Nothing ( Name "b$228" ) :| [] )
+              ( PrimNot Nothing ( Ref Nothing ( Local ( Name "b$228" ) ) ) )
             )
           ]
         ) :| []
@@ -193,11 +193,14 @@ UberModule
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.BugListGenericEq.Test", qnameName = Name "Cons"
-        }, Ctor Nothing SumType
-        ( ModuleName "Golden.BugListGenericEq.Test" )
-        ( TyName "List" )
-        ( CtorName "Cons" )
-        [ FieldName "value0" ]
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "value0" ) :| [] )
+        ( Ctor Nothing SumType
+          ( ModuleName "Golden.BugListGenericEq.Test" )
+          ( TyName "List" )
+          ( CtorName "Cons" )
+          [ Ref Nothing ( Local ( Name "value0" ) ) ]
+        )
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.BugListGenericEq.Test", qnameName = Name "genericList"
@@ -207,14 +210,14 @@ UberModule
             ( ParamNamed Nothing ( Name "x" ) :| [] )
             ( Let Nothing
               ( Standalone
-                ( Nothing, Name "$cse264", ReflectCtor Nothing
+                ( Nothing, Name "$cse268", ReflectCtor Nothing
                   ( Ref Nothing ( Local ( Name "x" ) ) )
                 ) :| []
               )
               ( IfThenElse Nothing
                 ( Eq Nothing
                   ( LiteralString Nothing "Data.Generic.Rep∷Sum.Inl" )
-                  ( Ref Nothing ( Local ( Name "$cse264" ) ) )
+                  ( Ref Nothing ( Local ( Name "$cse268" ) ) )
                 )
                 ( Ref Nothing
                   ( Imported ( ModuleName "Golden.BugListGenericEq.Test" ) ( Name "Nil" ) )
@@ -222,15 +225,13 @@ UberModule
                 ( IfThenElse Nothing
                   ( Eq Nothing
                     ( LiteralString Nothing "Data.Generic.Rep∷Sum.Inr" )
-                    ( Ref Nothing ( Local ( Name "$cse264" ) ) )
+                    ( Ref Nothing ( Local ( Name "$cse268" ) ) )
                   )
-                  ( AppN Nothing
-                    ( Ref Nothing
-                      ( Imported ( ModuleName "Golden.BugListGenericEq.Test" ) ( Name "Cons" ) )
-                    )
-                    ( DataArgumentByIndex Nothing SumType 0
-                      ( Ref Nothing ( Local ( Name "x" ) ) ) :| []
-                    )
+                  ( Ctor Nothing SumType
+                    ( ModuleName "Golden.BugListGenericEq.Test" )
+                    ( TyName "List" )
+                    ( CtorName "Cons" )
+                    [ DataArgumentByIndex Nothing SumType 0 ( Ref Nothing ( Local ( Name "x" ) ) ) ]
                   )
                   ( Exception Nothing "No patterns matched" )
                 )
@@ -241,43 +242,37 @@ UberModule
             ( ParamNamed Nothing ( Name "x0" ) :| [] )
             ( Let Nothing
               ( Standalone
-                ( Nothing, Name "$cse265", ReflectCtor Nothing
+                ( Nothing, Name "$cse269", ReflectCtor Nothing
                   ( Ref Nothing ( Local ( Name "x0" ) ) )
                 ) :| []
               )
               ( IfThenElse Nothing
                 ( Eq Nothing
                   ( LiteralString Nothing "Golden.BugListGenericEq.Test∷List.Nil" )
-                  ( Ref Nothing ( Local ( Name "$cse265" ) ) )
+                  ( Ref Nothing ( Local ( Name "$cse269" ) ) )
                 )
-                ( AppN Nothing
-                  ( Ctor Nothing SumType
-                    ( ModuleName "Data.Generic.Rep" )
-                    ( TyName "Sum" )
-                    ( CtorName "Inl" )
-                    [ FieldName "value0" ]
-                  )
-                  ( Ctor Nothing ProductType
+                ( Ctor Nothing SumType
+                  ( ModuleName "Data.Generic.Rep" )
+                  ( TyName "Sum" )
+                  ( CtorName "Inl" )
+                  [ Ctor Nothing ProductType
                     ( ModuleName "Data.Generic.Rep" )
                     ( TyName "NoArguments" )
-                    ( CtorName "NoArguments" ) [] :| []
-                  )
+                    ( CtorName "NoArguments" ) []
+                  ]
                 )
                 ( IfThenElse Nothing
                   ( Eq Nothing
                     ( LiteralString Nothing "Golden.BugListGenericEq.Test∷List.Cons" )
-                    ( Ref Nothing ( Local ( Name "$cse265" ) ) )
+                    ( Ref Nothing ( Local ( Name "$cse269" ) ) )
                   )
-                  ( AppN Nothing
-                    ( Ctor Nothing SumType
-                      ( ModuleName "Data.Generic.Rep" )
-                      ( TyName "Sum" )
-                      ( CtorName "Inr" )
-                      [ FieldName "value0" ]
-                    )
-                    ( DataArgumentByIndex Nothing SumType 0
-                      ( Ref Nothing ( Local ( Name "x0" ) ) ) :| []
-                    )
+                  ( Ctor Nothing SumType
+                    ( ModuleName "Data.Generic.Rep" )
+                    ( TyName "Sum" )
+                    ( CtorName "Inr" )
+                    [ DataArgumentByIndex Nothing SumType 0
+                      ( Ref Nothing ( Local ( Name "x0" ) ) )
+                    ]
                   )
                   ( Exception Nothing "No patterns matched" )
                 )
@@ -299,30 +294,27 @@ UberModule
                   ( ParamNamed Nothing ( Name "y" ) :| [] )
                   ( Let Nothing
                     ( Standalone
-                      ( Nothing, Name "$cse268", ReflectCtor Nothing
+                      ( Nothing, Name "$cse272", ReflectCtor Nothing
                         ( Ref Nothing ( Local ( Name "y" ) ) )
                       ) :| []
                     )
                     ( Let Nothing
                       ( Standalone
-                        ( Nothing, Name "$cse267", ReflectCtor Nothing
-                          ( Ref Nothing ( Local ( Name "x" ) ) )
+                        ( Nothing, Name "$cse271", Ctor Nothing SumType
+                          ( ModuleName "Data.Generic.Rep" )
+                          ( TyName "Sum" )
+                          ( CtorName "Inl" )
+                          [ Ctor Nothing ProductType
+                            ( ModuleName "Data.Generic.Rep" )
+                            ( TyName "NoArguments" )
+                            ( CtorName "NoArguments" ) []
+                          ]
                         ) :| []
                       )
                       ( Let Nothing
                         ( Standalone
-                          ( Nothing, Name "$cse266", AppN Nothing
-                            ( Ctor Nothing SumType
-                              ( ModuleName "Data.Generic.Rep" )
-                              ( TyName "Sum" )
-                              ( CtorName "Inl" )
-                              [ FieldName "value0" ]
-                            )
-                            ( Ctor Nothing ProductType
-                              ( ModuleName "Data.Generic.Rep" )
-                              ( TyName "NoArguments" )
-                              ( CtorName "NoArguments" ) [] :| []
-                            )
+                          ( Nothing, Name "$cse270", ReflectCtor Nothing
+                            ( Ref Nothing ( Local ( Name "x" ) ) )
                           ) :| []
                         )
                         ( AppN Nothing
@@ -331,24 +323,21 @@ UberModule
                               ( Nothing, Name "v$13", IfThenElse Nothing
                                 ( Eq Nothing
                                   ( LiteralString Nothing "Golden.BugListGenericEq.Test∷List.Nil" )
-                                  ( Ref Nothing ( Local ( Name "$cse267" ) ) )
+                                  ( Ref Nothing ( Local ( Name "$cse270" ) ) )
                                 )
-                                ( Ref Nothing ( Local ( Name "$cse266" ) ) )
+                                ( Ref Nothing ( Local ( Name "$cse271" ) ) )
                                 ( IfThenElse Nothing
                                   ( Eq Nothing
                                     ( LiteralString Nothing "Golden.BugListGenericEq.Test∷List.Cons" )
-                                    ( Ref Nothing ( Local ( Name "$cse267" ) ) )
+                                    ( Ref Nothing ( Local ( Name "$cse270" ) ) )
                                   )
-                                  ( AppN Nothing
-                                    ( Ctor Nothing SumType
-                                      ( ModuleName "Data.Generic.Rep" )
-                                      ( TyName "Sum" )
-                                      ( CtorName "Inr" )
-                                      [ FieldName "value0" ]
-                                    )
-                                    ( DataArgumentByIndex Nothing SumType 0
-                                      ( Ref Nothing ( Local ( Name "x" ) ) ) :| []
-                                    )
+                                  ( Ctor Nothing SumType
+                                    ( ModuleName "Data.Generic.Rep" )
+                                    ( TyName "Sum" )
+                                    ( CtorName "Inr" )
+                                    [ DataArgumentByIndex Nothing SumType 0
+                                      ( Ref Nothing ( Local ( Name "x" ) ) )
+                                    ]
                                   )
                                   ( Exception Nothing "No patterns matched" )
                                 )
@@ -358,34 +347,34 @@ UberModule
                               ( ParamNamed Nothing ( Name "v1$14" ) :| [] )
                               ( Let Nothing
                                 ( Standalone
-                                  ( Nothing, Name "$cse270", ReflectCtor Nothing
+                                  ( Nothing, Name "$cse274", ReflectCtor Nothing
                                     ( Ref Nothing ( Local ( Name "v1$14" ) ) )
                                   ) :| []
                                 )
                                 ( Let Nothing
                                   ( Standalone
-                                    ( Nothing, Name "$cse269", ReflectCtor Nothing
+                                    ( Nothing, Name "$cse273", ReflectCtor Nothing
                                       ( Ref Nothing ( Local ( Name "v$13" ) ) )
                                     ) :| []
                                   )
                                   ( IfThenElse Nothing
                                     ( Eq Nothing
                                       ( LiteralString Nothing "Data.Generic.Rep∷Sum.Inl" )
-                                      ( Ref Nothing ( Local ( Name "$cse269" ) ) )
+                                      ( Ref Nothing ( Local ( Name "$cse273" ) ) )
                                     )
                                     ( Eq Nothing
                                       ( LiteralString Nothing "Data.Generic.Rep∷Sum.Inl" )
-                                      ( Ref Nothing ( Local ( Name "$cse270" ) ) )
+                                      ( Ref Nothing ( Local ( Name "$cse274" ) ) )
                                     )
                                     ( PrimBinOp Nothing PrimAnd
                                       ( Eq Nothing
                                         ( LiteralString Nothing "Data.Generic.Rep∷Sum.Inr" )
-                                        ( Ref Nothing ( Local ( Name "$cse269" ) ) )
+                                        ( Ref Nothing ( Local ( Name "$cse273" ) ) )
                                       )
                                       ( PrimBinOp Nothing PrimAnd
                                         ( Eq Nothing
                                           ( LiteralString Nothing "Data.Generic.Rep∷Sum.Inr" )
-                                          ( Ref Nothing ( Local ( Name "$cse270" ) ) )
+                                          ( Ref Nothing ( Local ( Name "$cse274" ) ) )
                                         )
                                         ( AppN Nothing
                                           ( AppN Nothing
@@ -481,24 +470,21 @@ UberModule
                           ( IfThenElse Nothing
                             ( Eq Nothing
                               ( LiteralString Nothing "Golden.BugListGenericEq.Test∷List.Nil" )
-                              ( Ref Nothing ( Local ( Name "$cse268" ) ) )
+                              ( Ref Nothing ( Local ( Name "$cse272" ) ) )
                             )
-                            ( Ref Nothing ( Local ( Name "$cse266" ) ) )
+                            ( Ref Nothing ( Local ( Name "$cse271" ) ) )
                             ( IfThenElse Nothing
                               ( Eq Nothing
                                 ( LiteralString Nothing "Golden.BugListGenericEq.Test∷List.Cons" )
-                                ( Ref Nothing ( Local ( Name "$cse268" ) ) )
+                                ( Ref Nothing ( Local ( Name "$cse272" ) ) )
                               )
-                              ( AppN Nothing
-                                ( Ctor Nothing SumType
-                                  ( ModuleName "Data.Generic.Rep" )
-                                  ( TyName "Sum" )
-                                  ( CtorName "Inr" )
-                                  [ FieldName "value0" ]
-                                )
-                                ( DataArgumentByIndex Nothing SumType 0
-                                  ( Ref Nothing ( Local ( Name "y" ) ) ) :| []
-                                )
+                              ( Ctor Nothing SumType
+                                ( ModuleName "Data.Generic.Rep" )
+                                ( TyName "Sum" )
+                                ( CtorName "Inr" )
+                                [ DataArgumentByIndex Nothing SumType 0
+                                  ( Ref Nothing ( Local ( Name "y" ) ) )
+                                ]
                               )
                               ( Exception Nothing "No patterns matched" )
                             ) :| []
@@ -523,12 +509,12 @@ UberModule
           ( LiteralObject Nothing
             [
               ( PropName "eq", AbsN Nothing
-                ( ParamNamed Nothing ( Name "r1$233" ) :| [] )
+                ( ParamNamed Nothing ( Name "r1$235" ) :| [] )
                 ( AbsN Nothing
-                  ( ParamNamed Nothing ( Name "r2$234" ) :| [] )
+                  ( ParamNamed Nothing ( Name "r2$236" ) :| [] )
                   ( Eq Nothing
-                    ( Ref Nothing ( Local ( Name "r1$233" ) ) )
-                    ( Ref Nothing ( Local ( Name "r2$234" ) ) )
+                    ( Ref Nothing ( Local ( Name "r1$235" ) ) )
+                    ( Ref Nothing ( Local ( Name "r2$236" ) ) )
                   )
                 )
               )
@@ -541,16 +527,16 @@ UberModule
         { qnameModuleName = ModuleName "Golden.BugListGenericEq.Test", qnameName = Name "cons$w"
         }, AbsN Nothing
         ( ParamNamed Nothing ( Name "head" ) :| [ ParamNamed Nothing ( Name "tail" ) ] )
-        ( AppN Nothing
-          ( Ref Nothing
-            ( Imported ( ModuleName "Golden.BugListGenericEq.Test" ) ( Name "Cons" ) )
-          )
-          ( LiteralObject Nothing
+        ( Ctor Nothing SumType
+          ( ModuleName "Golden.BugListGenericEq.Test" )
+          ( TyName "List" )
+          ( CtorName "Cons" )
+          [ LiteralObject Nothing
             [
               ( PropName "head", Ref Nothing ( Local ( Name "head" ) ) ),
               ( PropName "tail", Ref Nothing ( Local ( Name "tail" ) ) )
-            ] :| []
-          )
+            ]
+          ]
         )
       )
     ], uberModuleForeigns = [], uberModuleExports =
@@ -562,16 +548,16 @@ UberModule
         ( Imported ( ModuleName "Golden.BugListGenericEq.Test" ) ( Name "Cons" ) )
       ),
       ( Name "cons", AbsN Nothing
-        ( ParamNamed Nothing ( Name "cons$p1$240" ) :| [] )
+        ( ParamNamed Nothing ( Name "cons$p1$242" ) :| [] )
         ( AbsN Nothing
-          ( ParamNamed Nothing ( Name "cons$p2$241" ) :| [] )
+          ( ParamNamed Nothing ( Name "cons$p2$243" ) :| [] )
           ( AppN Nothing
             ( Ref Nothing
               ( Imported ( ModuleName "Golden.BugListGenericEq.Test" ) ( Name "cons$w" ) )
             )
             ( Ref Nothing
-              ( Local ( Name "cons$p1$240" ) ) :|
-              [ Ref Nothing ( Local ( Name "cons$p2$241" ) ) ]
+              ( Local ( Name "cons$p1$242" ) ) :|
+              [ Ref Nothing ( Local ( Name "cons$p2$243" ) ) ]
             )
           )
         )
@@ -583,7 +569,7 @@ UberModule
             ( Nothing, Name "_", AppN Nothing
               ( Let Nothing
                 ( Standalone
-                  ( Nothing, Name "a$261", AppN Nothing
+                  ( Nothing, Name "a$265", AppN Nothing
                     ( AppN Nothing
                       ( Ref Nothing
                         ( Imported ( ModuleName "Golden.BugListGenericEq.Test" ) ( Name "eq" ) )
@@ -606,11 +592,11 @@ UberModule
                 ( AppN Nothing
                   ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
                   ( IfThenElse Nothing
-                    ( Ref Nothing ( Local ( Name "a$261" ) ) )
+                    ( Ref Nothing ( Local ( Name "a$265" ) ) )
                     ( LiteralString Nothing "true" )
                     ( IfThenElse Nothing
                       ( Eq Nothing ( LiteralBool Nothing False )
-                        ( Ref Nothing ( Local ( Name "a$261" ) ) )
+                        ( Ref Nothing ( Local ( Name "a$265" ) ) )
                       )
                       ( LiteralString Nothing "false" )
                       ( Exception Nothing "No patterns matched" )
@@ -624,7 +610,7 @@ UberModule
               ( Nothing, Name "_", AppN Nothing
                 ( Let Nothing
                   ( Standalone
-                    ( Nothing, Name "a$262", AppN Nothing
+                    ( Nothing, Name "a$266", AppN Nothing
                       ( AppN Nothing
                         ( Ref Nothing
                           ( Imported ( ModuleName "Golden.BugListGenericEq.Test" ) ( Name "eq" ) )
@@ -687,11 +673,11 @@ UberModule
                   ( AppN Nothing
                     ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
                     ( IfThenElse Nothing
-                      ( Ref Nothing ( Local ( Name "a$262" ) ) )
+                      ( Ref Nothing ( Local ( Name "a$266" ) ) )
                       ( LiteralString Nothing "true" )
                       ( IfThenElse Nothing
                         ( Eq Nothing ( LiteralBool Nothing False )
-                          ( Ref Nothing ( Local ( Name "a$262" ) ) )
+                          ( Ref Nothing ( Local ( Name "a$266" ) ) )
                         )
                         ( LiteralString Nothing "false" )
                         ( Exception Nothing "No patterns matched" )
@@ -706,7 +692,7 @@ UberModule
           ( AppN Nothing
             ( Let Nothing
               ( Standalone
-                ( Nothing, Name "a$263", AppN Nothing
+                ( Nothing, Name "a$267", AppN Nothing
                   ( AppN Nothing
                     ( Ref Nothing
                       ( Imported ( ModuleName "Golden.BugListGenericEq.Test" ) ( Name "eq" ) )
@@ -737,11 +723,11 @@ UberModule
               ( AppN Nothing
                 ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
                 ( IfThenElse Nothing
-                  ( Ref Nothing ( Local ( Name "a$263" ) ) )
+                  ( Ref Nothing ( Local ( Name "a$267" ) ) )
                   ( LiteralString Nothing "true" )
                   ( IfThenElse Nothing
                     ( Eq Nothing ( LiteralBool Nothing False )
-                      ( Ref Nothing ( Local ( Name "a$263" ) ) )
+                      ( Ref Nothing ( Local ( Name "a$267" ) ) )
                     )
                     ( LiteralString Nothing "false" )
                     ( Exception Nothing "No patterns matched" )

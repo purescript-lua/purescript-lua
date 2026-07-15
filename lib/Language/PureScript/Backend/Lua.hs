@@ -204,31 +204,33 @@ fromIR foreigns topLevelNames modname ir = case ir of
     Right <$> liftA2 (Lua.binOp (luaBinaryOp op)) (goExp l) (goExp r)
   IR.PrimNot _ann e →
     Right . Lua.logicalNot <$> goExp e
-  IR.Ctor _ann algebraicTy ctorModName ctorTyName ctorName fieldNames →
-    pure . Right $ foldr wrap value args
-   where
-    wrap name expr = Lua.functionDef [ParamNamed name] [Lua.return expr]
-    -- A constructor value is a positional table: the tag string in slot
-    -- 1, fields in the slots after it. Only sum-type constructors need
-    -- the tag row: the pattern matcher emits a ReflectCtor read (the
-    -- reflectCtor == ctorId test) exclusively for sum types, so on a
-    -- product value the row would never be read — product fields start
-    -- at slot 1. See Note [Compiling case expressions to decision trees].
+  IR.Ctor _ann algebraicTy ctorModName ctorTyName ctorName ctorArgs →
+    -- A constructor value is a positional table built directly from the
+    -- compiled field arguments (the node is saturated by construction — see
+    -- Note [Constructor applications are saturated]). The tag string sits in
+    -- slot 1 and fields in the slots after it for a sum type; a product
+    -- value omits the tag row, so its fields start at slot 1. Only sum-type
+    -- constructors need the tag: the pattern matcher emits a ReflectCtor read
+    -- (the reflectCtor == ctorId test) exclusively for sum types, so on a
+    -- product value the row would never be read. See Note [Compiling case
+    -- expressions to decision trees].
     --
-    -- The rows must stay positional ('TableRowV'), not '[i] = v' keyed
-    -- ('TableRowKV'): only a positional constructor pre-sizes the
-    -- table's array part in PUC Lua 5.1 — keyed integer rows go through
-    -- the hash lookup this representation exists to avoid. Positional
-    -- rows are safe because every row is a plain parameter name, which
-    -- is single-valued in Lua even when nil, so a row can never splice
-    -- multiple values into the constructor the way a call could.
-    value = Lua.table case algebraicTy of
-      IR.SumType → ctorRow : attributes
-      IR.ProductType → attributes
+    -- The rows stay positional ('TableRowV'), not '[i] = v' keyed
+    -- ('TableRowKV'): only a positional constructor pre-sizes the table's
+    -- array part in PUC Lua 5.1 — keyed integer rows go through the hash
+    -- lookup this representation exists to avoid. A positional row carrying a
+    -- multi-valued expression (a call or '...') would splice its extra
+    -- results into the table, but Lua adjusts every non-final positional
+    -- element to one value, so only the final field needs the explicit-parens
+    -- guard 'parenLastMultiValued' applies.
+    Right . Lua.table . rows <$> traverse goExp ctorArgs
+   where
+    rows compiledArgs = case algebraicTy of
+      IR.SumType → ctorRow : fieldRows compiledArgs
+      IR.ProductType → fieldRows compiledArgs
+    fieldRows = fmap Lua.tableRowV . parenLastMultiValued
     ctorId = IR.ctorId ctorModName ctorTyName ctorName
     ctorRow = Lua.tableRowV (Lua.String ctorId)
-    args = Name.unsafeName . IR.renderFieldName <$> fieldNames
-    attributes = args <&> Lua.tableRowV . Lua.varName
   IR.ArrayLength _ann e →
     Right . Lua.hash <$> goExp e
   IR.ArrayIndex _ann expr index →
@@ -420,6 +422,27 @@ luaBinaryOp = \case
 
 qualifyName ∷ ModuleName → Lua.Name → Lua.Name
 qualifyName modname = Name.join2 (fromModuleName modname)
+
+{- | Guard the final element of a constructor's positional field list against
+splicing. A multi-valued Lua expression — a function call, a method call, or
+@...@ — in the last array slot of a table constructor expands to all its
+results, growing the constructor with extra fields. Wrapping it in explicit
+parens ('Lua.Paren') adjusts it back to exactly one value. Only the last
+element needs this: Lua adjusts every non-final positional element to one
+value on its own.
+-}
+parenLastMultiValued ∷ [Lua.Exp] → [Lua.Exp]
+parenLastMultiValued = \case
+  [] → []
+  [x] → [parenMultiValued x]
+  (x : xs) → x : parenLastMultiValued xs
+
+parenMultiValued ∷ Lua.Exp → Lua.Exp
+parenMultiValued e = case e of
+  Lua.FunctionCall {} → Lua.Paren (Lua.ann e)
+  Lua.MethodCall {} → Lua.Paren (Lua.ann e)
+  Lua.Vararg → Lua.Paren (Lua.ann e)
+  _ → e
 
 isUnusedParam ∷ IR.Parameter ann → Bool
 isUnusedParam = isNothing . IR.paramName

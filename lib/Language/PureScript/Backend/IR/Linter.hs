@@ -69,6 +69,12 @@ data Violation
     (Note [n-ary abstraction]).
     -}
     NonTrailingUnusedParam Site
+  | {- | An 'AppN' whose head is a 'Ctor' node ('WellApplied'). A
+    constructor value is a table, never a function (see Note [Constructor
+    applications are saturated]), so applying it would emit a call on a
+    table. Reported as a single violation per site, like 'RefToDiscard'.
+    -}
+    CtorApplied Site
   deriving stock (Eq, Show)
 
 -- | The top-level entry of the module a violation was found in.
@@ -107,7 +113,10 @@ of the n-ary nodes (Note [n-ary abstraction]):
     drops arguments or nil-fills parameters instead of currying;
 
   * every 'AbsN' keeps its 'ParamUnused' parameters in a trailing run,
-    so the Lua backend can drop them without shifting the rest.
+    so the Lua backend can drop them without shifting the rest;
+
+  * no 'AppN' head is a 'Ctor' — a constructor value is a table, not a
+    function (see Note [Constructor applications are saturated]).
 
 An empty result means the module holds the invariant.
 -}
@@ -115,6 +124,7 @@ lintWellApplied ∷ UberModule → [Violation]
 lintWellApplied = overSites \site e →
   (uncurry (LambdaArityMismatch site) <$> lambdaArityMismatches e)
     <> [NonTrailingUnusedParam site | hasNonTrailingUnusedParam e]
+    <> [CtorApplied site | hasAppliedCtor e]
 
 {- | Run a per-site check over every top-level binding, foreign binding,
 and export of the module.
@@ -217,6 +227,17 @@ lambdaArityMismatches e =
   | AppN _ (AbsN _ params _) args ← toListOf (cosmosOf subexpressions) e
   , length args /= length params
   ]
+
+{- | Whether any 'AppN' of the expression applies a 'Ctor' head. A
+constructor value is a table, never a function, so this would emit a call
+on a table. Reported as a single violation per site, like 'RefToDiscard'.
+-}
+hasAppliedCtor ∷ Exp → Bool
+hasAppliedCtor e =
+  or
+    [ True
+    | AppN _ (Ctor {}) _ ← toListOf (cosmosOf subexpressions) e
+    ]
 
 {- | Whether any 'AbsN' of the expression binds a named parameter after
 an unused one. Reported as a single violation per site, like

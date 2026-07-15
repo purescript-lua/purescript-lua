@@ -1,0 +1,25 @@
+spec: ctor_build
+runtime: LuaJIT 2.1.1741730670
+workload: n=1000000 reps=4 result=15000450000
+aborts (distinct site -- reason):
+  Bench.CtorBuild.lua:29 -- NYI: bytecode FNEW
+  Bench.CtorBuild.lua:30 -- NYI: bytecode FNEW
+  Bench.CtorBuild.lua:38 -- inner loop in root trace
+  Bench.CtorBuild.lua:75 -- NYI: bytecode FNEW
+  Bench.CtorBuild.lua:76 -- NYI: bytecode FNEW
+  Bench.CtorBuild.lua:78 -- NYI: bytecode UCLO
+  Bench.CtorBuild.lua:8 -- NYI: bytecode FNEW
+bytecode end state (J*=compiled, I*=blacklisted):
+  Bench.CtorBuild.lua:27 IFORL
+  Bench.CtorBuild.lua:3 JFUNCF
+  Bench.CtorBuild.lua:38 JLOOP
+  Bench.CtorBuild.lua:57 JFUNCF
+  Bench.CtorBuild.lua:6 JFORI
+  Bench.CtorBuild.lua:6 JFORL
+  Bench.CtorBuild.lua:60 JFUNCF
+  Bench.CtorBuild.lua:72 IFUNCF
+  Bench.CtorBuild.lua:73 JFUNCF
+  Bench.CtorBuild.lua:76 JFUNCF
+  ctor_build.lua:20 JFORI
+  ctor_build.lua:20 JFORL
+counts: aborts=7 compiled=10 blacklisted=2

@@ -1,9 +1,9 @@
 local Golden_PatternMatching_Test2_bat = function(n)
   while true do
-    local _S_cse1 = n[1]
-    if "Golden.PatternMatching.Test1∷N.Zero" == _S_cse1 then
+    local _S_cse6 = n[1]
+    if "Golden.PatternMatching.Test1∷N.Zero" == _S_cse6 then
       return 1
-    elseif "Golden.PatternMatching.Test1∷N.Succ" == _S_cse1 then
+    elseif "Golden.PatternMatching.Test1∷N.Succ" == _S_cse6 then
       n = n[2]
     else
       return error("No patterns matched")
@@ -12,34 +12,34 @@ local Golden_PatternMatching_Test2_bat = function(n)
 end
 return {
   Zero = { "Golden.PatternMatching.Test2∷N.Zero" },
-  Succ = function(value0)
-    return { "Golden.PatternMatching.Test2∷N.Succ", value0 }
+  Succ = function(value0_S_5)
+    return { "Golden.PatternMatching.Test2∷N.Succ", value0_S_5 }
   end,
-  Add = function(value0)
-    return function(value1)
-      return { "Golden.PatternMatching.Test2∷N.Add", value0, value1 }
+  Add = function(value0_S_3)
+    return function(value1_S_4)
+      return { "Golden.PatternMatching.Test2∷N.Add", value0_S_3, value1_S_4 }
     end
   end,
-  Mul = function(value0)
-    return function(value1)
-      return { "Golden.PatternMatching.Test2∷N.Mul", value0, value1 }
+  Mul = function(value0_S_1)
+    return function(value1_S_2)
+      return { "Golden.PatternMatching.Test2∷N.Mul", value0_S_1, value1_S_2 }
     end
   end,
   pat = function(e_S_0)
-    local _S_cse3 = e_S_0[2]
-    local _S_cse2 = e_S_0[3]
+    local _S_cse8 = e_S_0[2]
+    local _S_cse7 = e_S_0[3]
     if "Golden.PatternMatching.Test2∷N.Add" == e_S_0[1] then
-      if "Golden.PatternMatching.Test2∷N.Zero" == _S_cse2[1] then
-        if "Golden.PatternMatching.Test2∷N.Add" == _S_cse3[1] then
+      if "Golden.PatternMatching.Test2∷N.Zero" == _S_cse7[1] then
+        if "Golden.PatternMatching.Test2∷N.Add" == _S_cse8[1] then
           return 1
-        elseif "Golden.PatternMatching.Test2∷N.Mul" == _S_cse3[1] then
+        elseif "Golden.PatternMatching.Test2∷N.Mul" == _S_cse8[1] then
           return 2
         else
           return 5
         end
-      elseif "Golden.PatternMatching.Test2∷N.Mul" == _S_cse2[1] then
+      elseif "Golden.PatternMatching.Test2∷N.Mul" == _S_cse7[1] then
         return 3
-      elseif "Golden.PatternMatching.Test2∷N.Add" == _S_cse2[1] then
+      elseif "Golden.PatternMatching.Test2∷N.Add" == _S_cse7[1] then
         return 4
       else
         return 6

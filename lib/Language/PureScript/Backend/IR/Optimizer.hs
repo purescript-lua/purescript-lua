@@ -21,8 +21,7 @@ import Language.PureScript.Backend.IR.Linker
   )
 import Language.PureScript.Backend.IR.MagicDo (magicDo)
 import Language.PureScript.Backend.IR.Names
-  ( FieldName
-  , ModuleName
+  ( ModuleName
   , Name (..)
   , PropName
   , QName (..)
@@ -767,6 +766,12 @@ complexityOf = \case
   ReflectCtor _ann base → Deref <> complexityOf base
   DataArgumentByIndex _ann _algTy _idx base → Deref <> complexityOf base
   AbsN _ann _params body → KnownSize <> complexityOf body
+  -- A 'Ctor' is a table allocation, so it stays 'NonTrivial' rather than
+  -- folding its fields in as a bounded 'KnownSize' literal would: that keeps
+  -- a nullary singleton (@Ctor []@) shared through a binding instead of
+  -- re-allocated at every use site. See Note [Constructor applications are
+  -- saturated].
+  Ctor {} → NonTrivial
   _ → NonTrivial
 
 {- | Pure wrapper for tests and standalone use: runs the rewrite with
@@ -1017,11 +1022,12 @@ sinkProjectionIntoLet =
   * @DataArgumentByIndex i (K a₁ … aₙ)@ — a field read, the shape the
     pattern matcher emits — folds to @aᵢ@.
 
-A constructor application is the curried unary-'App' spine
-@App (… (App (Ctor …) a₁) …) aₙ@ that translation and the pattern
-matcher build. The fold fires only when the spine is /saturated/ (as
-many arguments as the constructor declares fields), so a partial
-application — still a function — is left alone.
+A constructor value is an in-place 'Ctor' node, saturated by construction
+(see Note [Constructor applications are saturated]), so the fold matches it
+directly. A partial application is a call of the curried wrapper — a
+reference-headed spine, still a function — and is left to
+'reduceKnownCtorRefRead', which resolves the reference through the inline
+environment ('resolveKnownCtorApp').
 
 'ReflectCtor' folds for 'SumType' only: product constructors omit the
 tag slot in the generated Lua (see the @Ctor@ case of
@@ -1045,11 +1051,8 @@ not the argument's, for the reason spelled out on 'reduceObjectProp'.
 reduceKnownConstructor ∷ Applicative m ⇒ RewriteRuleM m Ann
 reduceKnownConstructor =
   pure . \case
-    ReflectCtor ann scrutinee
-      | (Ctor _ SumType modName tyName ctorName fields, args) ←
-          unwindApp scrutinee
-      , length args == length fields →
-          Just $ LiteralString ann (ctorId modName tyName ctorName)
+    ReflectCtor ann (Ctor _ SumType modName tyName ctorName _args) →
+      Just $ LiteralString ann (ctorId modName tyName ctorName)
     -- A tag read over a conditional of constructors distributes into the
     -- branches, where each meets the rule above and folds to its tag string
     -- (issue #180): an inlined comparison (@compare@\/@>=@) is an if-tree of
@@ -1061,10 +1064,8 @@ reduceKnownConstructor =
       | reflectFoldsThrough t
       , reflectFoldsThrough e →
           Just $ IfThenElse ifAnn cond (ReflectCtor ann t) (ReflectCtor ann e)
-    DataArgumentByIndex ann algTy index scrutinee
-      | (Ctor _ ctorAlgTy _ _ _ fields, args) ← unwindApp scrutinee
-      , algTy == ctorAlgTy
-      , length args == length fields
+    DataArgumentByIndex ann algTy index (Ctor _ ctorAlgTy _ _ _ args)
+      | algTy == ctorAlgTy
       , Just arg ← viaNonEmpty head (List.genericDrop index args) →
           Just (setAnn ann arg)
     _ → Nothing
@@ -1078,9 +1079,7 @@ residual read behind nor grows a conditional over non-constructor branches.
 reflectFoldsThrough ∷ RawExp ann → Bool
 reflectFoldsThrough = \case
   IfThenElse _ _ t e → reflectFoldsThrough t && reflectFoldsThrough e
-  scrutinee
-    | (Ctor _ SumType _ _ _ fields, args) ← unwindApp scrutinee →
-        length args == length fields
+  Ctor _ SumType _ _ _ _ → True
   _ → False
 
 {- | Case-of-known-constructor through a let-bound scrutinee (issue #214).
@@ -1140,11 +1139,11 @@ not fold is not pessimised into pasted constructor thunks.
 propagateKnownCtorThroughLet ∷ InlineEnv → RewriteRuleM SupplyM Ann
 propagateKnownCtorThroughLet env = \case
   Let ann groupings body
-    | Just (before, (name, algTy, fields, args, tag), after) ←
+    | Just (before, (name, algTy, arity, args, tag), after) ←
         findCtorBinding (toList groupings)
     , all ((== 0) . countFreeRefGrouping name) (before <> after)
     , countFreeRef (Local name) body > 0
-    , not (hasWholeValueRead name algTy fields body) → do
+    , not (hasWholeValueRead name algTy arity body) → do
         let readIndices = readFieldIndices name algTy body
         freshFields ←
           Map.fromList
@@ -1168,7 +1167,7 @@ propagateKnownCtorThroughLet env = \case
     ∷ [Grouping (Ann, Name, Exp)]
     → Maybe
         ( [Grouping (Ann, Name, Exp)]
-        , (Name, AlgebraicType, [FieldName], [Exp], Text)
+        , (Name, AlgebraicType, Natural, [Exp], Text)
         , [Grouping (Ann, Name, Exp)]
         )
   findCtorBinding = go []
@@ -1178,36 +1177,20 @@ propagateKnownCtorThroughLet env = \case
       → [Grouping (Ann, Name, Exp)]
       → Maybe
           ( [Grouping (Ann, Name, Exp)]
-          , (Name, AlgebraicType, [FieldName], [Exp], Text)
+          , (Name, AlgebraicType, Natural, [Exp], Text)
           , [Grouping (Ann, Name, Exp)]
           )
     go _before [] = Nothing
     go before (grouping : after) = case grouping of
       Standalone (_bAnn, name, rhs)
-        | Just (algTy, fields, args, tag) ← asKnownCtorApp rhs
-        , length args == length fields
+        | Just (algTy, arity, args, tag) ← resolveKnownCtorApp env rhs
         , -- A self-referencing RHS cannot arise under GUC (a Standalone RHS
           -- does not see its own binder), but 'optimizedExpression' also runs
           -- on non-GUC input; dropping the binding would then dangle the
           -- field-binder that copied the reference (cf. 'inlineLocalBinding').
           countFreeRef (Local name) rhs == 0 →
-            Just (reverse before, (name, algTy, fields, args, tag), after)
+            Just (reverse before, (name, algTy, arity, args, tag), after)
       _ → go (grouping : before) after
-
-  -- A saturated constructor application, recognised either as an in-place
-  -- 'Ctor' node or through a 'Ref' to a top-level constructor binding held in
-  -- the inline environment (issue #180 — see the note on this function). The
-  -- returned tag and field list come from the constructor's declaration; the
-  -- arguments come from the application spine.
-  asKnownCtorApp ∷ Exp → Maybe (AlgebraicType, [FieldName], [Exp], Text)
-  asKnownCtorApp rhs = case unwindApp rhs of
-    (Ctor _ algTy modName tyName ctorName fields, args) →
-      Just (algTy, fields, args, ctorId modName tyName ctorName)
-    (Ref _ ctorRef, args)
-      | Just (Ctor _ algTy modName tyName ctorName fields) ←
-          Map.lookup ctorRef env →
-          Just (algTy, fields, args, ctorId modName tyName ctorName)
-    _ → Nothing
 
   countFreeRefGrouping ∷ Name → Grouping (Ann, Name, Exp) → Natural
   countFreeRefGrouping name grouping =
@@ -1215,8 +1198,8 @@ propagateKnownCtorThroughLet env = \case
 
   -- True when some @Ref name@ is reached other than through a foldable
   -- eliminating read — the residue that would dangle if the binding dropped.
-  hasWholeValueRead ∷ Name → AlgebraicType → [FieldName] → Exp → Bool
-  hasWholeValueRead name algTy fields = go
+  hasWholeValueRead ∷ Name → AlgebraicType → Natural → Exp → Bool
+  hasWholeValueRead name algTy arity = go
    where
     go = \case
       ReflectCtor _ (Ref _ (Local n)) | n == name, SumType ← algTy → False
@@ -1229,7 +1212,7 @@ propagateKnownCtorThroughLet env = \case
       -- rule sound on the non-GUC / generated input 'optimizedExpression'
       -- also runs on.
       DataArgumentByIndex _ readTy i (Ref _ (Local n))
-        | n == name, readTy == algTy, i < fromIntegral (length fields) → False
+        | n == name, readTy == algTy, i < arity → False
       Ref _ (Local n) | n == name → True
       other → any go (toListOf subexpressions other)
 
@@ -1263,18 +1246,18 @@ propagateKnownCtorThroughLet env = \case
 
 {- | The through-a-reference companion of 'reduceKnownConstructor' — the
 relationship 'resolveDictionaryProp' bears to 'reduceObjectProp'. A
-user-written @Op f@ compiles to a saturated application of a /reference/
-to the @Op@ worker binding, which 'inlineSaturatedCall' deliberately
-leaves in place (its 'Ctor' RHS is not a lambda). A constructor-eliminating
-read over that spine — the shape a directive-driven paste exposes —
-would otherwise stall right before the fold: 'reduceKnownConstructor'
-needs an in-place 'Ctor' head and 'propagateKnownCtorThroughLet' needs
-the read behind a 'Let' binder. The reference is resolved through the
-environment only for its declared fields and tag — no 'Ctor' node is
+constructor value used at a saturated site is a reference-headed call: the
+uncurrying pass leaves an arity-≥2 constructor as an n-ary worker call
+@Cʷ(a₁,…,aₙ)@, and an arity-1 constructor stays @C a@ until
+'inlineSaturatedCall' pastes it. A constructor-eliminating read over such a
+spine would otherwise stall right before the fold: 'reduceKnownConstructor'
+needs an in-place 'Ctor' and 'propagateKnownCtorThroughLet' needs the read
+behind a 'Let' binder. 'resolveKnownCtorApp' resolves the reference through
+the environment for its declared arity and tag only — no 'Ctor' node is
 pasted — and discarded sibling arguments are dropped with the licence
-'reduceKnownConstructor' spells out. The folded value takes the read
-node's own annotation, not the argument's, for the reason spelled out
-on 'reduceObjectProp'.
+'reduceKnownConstructor' spells out. The folded value takes the read node's
+own annotation, not the argument's, for the reason spelled out on
+'reduceObjectProp'.
 -}
 reduceKnownCtorRefRead ∷ Applicative m ⇒ InlineEnv → RewriteRuleM m Ann
 reduceKnownCtorRefRead env =
@@ -1282,30 +1265,110 @@ reduceKnownCtorRefRead env =
     -- Field reads fold only at the constructor's own algebraic type, as
     -- in 'reduceKnownConstructor'.
     DataArgumentByIndex ann algTy i spine
-      | Just (ctorAlgTy, _fields, args, _tag) ← saturatedCtorRefApp env spine
+      | Just (ctorAlgTy, _arity, args, _tag) ← resolveKnownCtorApp env spine
       , algTy == ctorAlgTy
       , Just arg ← args !!? fromIntegral i →
           Just (setAnn ann arg)
     -- Tag reads fold for sum types only, as in 'reduceKnownConstructor'.
     ReflectCtor ann spine
-      | Just (SumType, _fields, _args, tag) ← saturatedCtorRefApp env spine →
+      | Just (SumType, _arity, _args, tag) ← resolveKnownCtorApp env spine →
           Just (LiteralString ann tag)
     _ → Nothing
 
-{- | A non-empty, saturated application spine whose head references a
-top-level constructor binding, resolved through the inline environment.
-The returned tag and field list come from the constructor's declaration;
-the arguments come from the spine.
+{- | Recognise a known saturated constructor value and return its algebraic
+type, arity, field arguments, and tag string. It covers every shape a
+constructor value takes after uncurrying (see Note [Constructor applications
+are saturated]):
+
+  * an in-place 'Ctor' node (saturated by construction);
+  * an n-ary worker call @AppN (Ref Cʷ) [a₁,…,aₙ]@ — the shape the early
+    uncurry run rewrites a saturated arity-≥2 site into. 'unwindApp' does
+    not flatten a multi-argument 'AppN' (Note [n-ary application]), so this
+    shape is matched directly, not through the unary spine — miss it and
+    the folds silently stop firing on monadic chains;
+  * a curried unary spine @App (… (App (Ref C) a₁) …) aₙ@ — an arity-1
+    constructor reference, or an arity-≥2 curried wrapper reference a site
+    that saturates only after magicDo/flattening still carries before the
+    late uncurry run.
+
+A reference is resolved through the inline environment by 'ctorFunctionShape',
+which reads only the constructor's declared arity and tag — it pastes no
+'Ctor' node, so a chain that does not fold is not pessimised into pasted
+constructor thunks (issue #180). The result is returned only when the
+application is saturated (argument count equal to the declared arity).
 -}
-saturatedCtorRefApp
-  ∷ InlineEnv → Exp → Maybe (AlgebraicType, [FieldName], [Exp], Text)
-saturatedCtorRefApp env expr = case unwindApp expr of
-  (Ref _ ctorRef, args@(_ : _))
-    | Just (Ctor _ algTy modName tyName ctorName fields) ←
-        Map.lookup ctorRef env
-    , length args == length fields →
-        Just (algTy, fields, args, ctorId modName tyName ctorName)
+resolveKnownCtorApp
+  ∷ InlineEnv → Exp → Maybe (AlgebraicType, Natural, [Exp], Text)
+resolveKnownCtorApp env = \case
+  Ctor _ algTy modName tyName ctorName args →
+    Just
+      ( algTy
+      , fromIntegral (length args)
+      , args
+      , ctorId modName tyName ctorName
+      )
+  AppN _ (Ref _ ctorRef) args
+    | Just (algTy, arity, tag) ← ctorFunctionShape env ctorRef
+    , arity == length args →
+        Just (algTy, fromIntegral arity, toList args, tag)
+  expr
+    | (Ref _ ctorRef, args@(_ : _)) ← unwindApp expr
+    , Just (algTy, arity, tag) ← ctorFunctionShape env ctorRef
+    , arity == length args →
+        Just (algTy, fromIntegral arity, args, tag)
   _ → Nothing
+
+{- | The algebraic type, arity, and tag of a top-level binding that is a
+constructor /function/: the manifest lambda chain 'mkConstructor' emits over
+a saturated 'Ctor' of references to its parameters, the n-ary worker the
+uncurry split derives from it, or the curried wrapper delegating to such a
+worker. Resolving reads only the declaration, never pasting a 'Ctor' node.
+The visited set makes the wrapper→worker hop terminate on the arbitrary
+(possibly cyclic) input 'optimizedExpression' also runs on.
+-}
+ctorFunctionShape
+  ∷ InlineEnv → Qualified Name → Maybe (AlgebraicType, Int, Text)
+ctorFunctionShape env = go Set.empty
+ where
+  go visited ctorRef
+    | ctorRef `Set.member` visited = Nothing
+    | otherwise = do
+        rhs ← Map.lookup ctorRef env
+        let (params, body) = peelCtorParams rhs
+        case body of
+          Ctor _ algTy modName tyName ctorName args
+            | argsAreRefsTo params args →
+                Just (algTy, length params, ctorId modName tyName ctorName)
+          AppN _ (Ref _ workerRef) wargs
+            | argsAreRefsTo params (toList wargs)
+            , Just (algTy, arity, tag) ← go (Set.insert ctorRef visited) workerRef
+            , arity == length params →
+                Just (algTy, arity, tag)
+          _ → Nothing
+
+{- | Peel leading lambda parameters (through unary 'Abs' and n-ary 'AbsN'), as
+long as every one is named, returning the names in order and the body.
+-}
+peelCtorParams ∷ Exp → ([Name], Exp)
+peelCtorParams = go []
+ where
+  go ∷ [Name] → Exp → ([Name], Exp)
+  go acc = \case
+    AbsN _ params body
+      | Just names ← traverse paramName (toList params) →
+          go (acc <> names) body
+    e → (acc, e)
+
+{- | Whether the expressions are exactly local references to the given names,
+in order — a constructor lambda passing its parameters straight through.
+-}
+argsAreRefsTo ∷ [Name] → [Exp] → Bool
+argsAreRefsTo names args =
+  length names == length args && and (zipWith isRefTo names args)
+ where
+  isRefTo ∷ Name → Exp → Bool
+  isRefTo name (Ref _ (Local n)) = n == name
+  isRefTo _ _ = False
 
 {- | Resolve a method projection off a known top-level dictionary (issue
 #180). When @dict@ is a reference to a top-level 'LiteralObject' binding,
