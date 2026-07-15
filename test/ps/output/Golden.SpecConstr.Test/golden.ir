@@ -80,192 +80,277 @@ UberModule
         ( Let Nothing
           ( RecursiveGroup
             (
-              ( Nothing, Name "go", AbsN Nothing
-                ( ParamNamed Nothing ( Name "acc" ) :| [] )
-                ( Let Nothing
-                  ( Standalone
-                    ( Nothing, Name "$cse443", DataArgumentByIndex Nothing ProductType 1
-                      ( Ref Nothing ( Local ( Name "acc" ) ) )
-                    ) :| []
+              ( Nothing, Name "go$sc1Tuple", AbsN Nothing
+                ( ParamNamed Nothing
+                  ( Name "go$sc1Tuple$f1" ) :|
+                  [ ParamNamed Nothing ( Name "go$sc1Tuple$f2" ) ]
+                )
+                ( IfThenElse Nothing
+                  ( PrimBinOp Nothing PrimLt
+                    ( Ref Nothing ( Local ( Name "go$sc1Tuple$f2" ) ) )
+                    ( Ref Nothing ( Local ( Name "n" ) ) )
                   )
-                  ( IfThenElse Nothing
-                    ( PrimBinOp Nothing PrimLt
-                      ( Ref Nothing ( Local ( Name "$cse443" ) ) )
-                      ( Ref Nothing ( Local ( Name "n" ) ) )
+                  ( AppN Nothing
+                    ( Ref Nothing ( Local ( Name "go$sc1Tuple" ) ) )
+                    ( PrimBinOp Nothing PrimAdd
+                      ( Ref Nothing ( Local ( Name "go$sc1Tuple$f1" ) ) )
+                      ( Ref Nothing ( Local ( Name "go$sc1Tuple$f2" ) ) ) :|
+                      [ PrimBinOp Nothing PrimAdd
+                        ( Ref Nothing ( Local ( Name "go$sc1Tuple$f2" ) ) )
+                        ( LiteralInt Nothing 1 )
+                      ]
                     )
-                    ( AppN Nothing
-                      ( Ref Nothing ( Local ( Name "go" ) ) )
-                      ( AppN Nothing
-                        ( Ref Nothing ( Imported ( ModuleName "Data.Tuple" ) ( Name "Tuple$w" ) ) )
-                        ( PrimBinOp Nothing PrimAdd
-                          ( DataArgumentByIndex Nothing ProductType 0
-                            ( Ref Nothing ( Local ( Name "acc" ) ) )
-                          )
-                          ( Ref Nothing ( Local ( Name "$cse443" ) ) ) :|
-                          [ PrimBinOp Nothing PrimAdd
-                            ( Ref Nothing ( Local ( Name "$cse443" ) ) )
-                            ( LiteralInt Nothing 1 )
-                          ]
-                        ) :| []
-                      )
-                    )
-                    ( Ref Nothing ( Local ( Name "acc" ) ) )
+                  )
+                  ( Ctor Nothing ProductType
+                    ( ModuleName "Data.Tuple" )
+                    ( TyName "Tuple" )
+                    ( CtorName "Tuple" )
+                    [ Ref Nothing
+                      ( Local ( Name "go$sc1Tuple$f1" ) ), Ref Nothing
+                      ( Local ( Name "go$sc1Tuple$f2" ) )
+                    ]
                   )
                 )
               ) :| []
             ) :| []
           )
           ( AppN Nothing
-            ( Ref Nothing ( Local ( Name "go" ) ) )
-            ( AppN Nothing
-              ( Ref Nothing ( Imported ( ModuleName "Data.Tuple" ) ( Name "Tuple$w" ) ) )
-              ( LiteralInt Nothing 0 :| [ LiteralInt Nothing 0 ] ) :| []
-            )
+            ( Ref Nothing ( Local ( Name "go$sc1Tuple" ) ) )
+            ( LiteralInt Nothing 0 :| [ LiteralInt Nothing 0 ] )
           )
         )
       ), RecursiveGroup
       (
         ( QName
-          { qnameModuleName = ModuleName "Golden.SpecConstr.Test", qnameName = Name "stepDown"
+          { qnameModuleName = ModuleName "Golden.SpecConstr.Test", qnameName = Name "stepDown$sc1Just"
           }, AbsN Nothing
-          ( ParamNamed Nothing ( Name "m" ) :| [] )
-          ( Let Nothing
-            ( Standalone
-              ( Nothing, Name "$cse445", DataArgumentByIndex Nothing SumType 0
-                ( Ref Nothing ( Local ( Name "m" ) ) )
-              ) :| []
+          ( ParamNamed Nothing ( Name "stepDown$sc1Just$f1" ) :| [] )
+          ( IfThenElse Nothing
+            ( Eq Nothing
+              ( Ref Nothing ( Local ( Name "stepDown$sc1Just$f1" ) ) )
+              ( LiteralInt Nothing 0 )
             )
-            ( Let Nothing
-              ( Standalone
-                ( Nothing, Name "$cse444", ReflectCtor Nothing
-                  ( Ref Nothing ( Local ( Name "m" ) ) )
+            ( LiteralInt Nothing 42 )
+            ( AppN Nothing
+              ( Ref Nothing
+                ( Imported ( ModuleName "Golden.SpecConstr.Test" ) ( Name "stepDown$sc1Just" ) )
+              )
+              ( AppN Nothing
+                ( Ref Nothing
+                  ( Imported ( ModuleName "Golden.SpecConstr.Test" ) ( Name "sub$w" ) )
+                )
+                ( Ref Nothing
+                  ( Local ( Name "stepDown$sc1Just$f1" ) ) :|
+                  [ LiteralInt Nothing 1 ]
                 ) :| []
-              )
-              ( IfThenElse Nothing
-                ( Eq Nothing
-                  ( LiteralString Nothing "Data.Maybe∷Maybe.Nothing" )
-                  ( Ref Nothing ( Local ( Name "$cse444" ) ) )
-                )
-                ( LiteralInt Nothing 0 )
-                ( IfThenElse Nothing
-                  ( Eq Nothing
-                    ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
-                    ( Ref Nothing ( Local ( Name "$cse444" ) ) )
-                  )
-                  ( IfThenElse Nothing
-                    ( Eq Nothing
-                      ( Ref Nothing ( Local ( Name "$cse445" ) ) )
-                      ( LiteralInt Nothing 0 )
-                    )
-                    ( LiteralInt Nothing 42 )
-                    ( AppN Nothing
-                      ( Ref Nothing
-                        ( Imported ( ModuleName "Golden.SpecConstr.Test" ) ( Name "stepDown" ) )
-                      )
-                      ( Ctor Nothing SumType
-                        ( ModuleName "Data.Maybe" )
-                        ( TyName "Maybe" )
-                        ( CtorName "Just" )
-                        [ AppN Nothing
-                          ( Ref Nothing
-                            ( Imported ( ModuleName "Golden.SpecConstr.Test" ) ( Name "sub$w" ) )
-                          )
-                          ( Ref Nothing ( Local ( Name "$cse445" ) ) :| [ LiteralInt Nothing 1 ] )
-                        ] :| []
-                      )
-                    )
-                  )
-                  ( Exception Nothing "No patterns matched" )
-                )
-              )
-            )
-          )
-        ) :| []
-      ), RecursiveGroup
-      (
-        ( QName
-          { qnameModuleName = ModuleName "Golden.SpecConstr.Test", qnameName = Name "pong"
-          }, AbsN Nothing
-          ( ParamNamed Nothing ( Name "t" ) :| [] )
-          ( Let Nothing
-            ( Standalone
-              ( Nothing, Name "$cse447", DataArgumentByIndex Nothing ProductType 1
-                ( Ref Nothing ( Local ( Name "t" ) ) )
-              ) :| []
-            )
-            ( Let Nothing
-              ( Standalone
-                ( Nothing, Name "$cse446", DataArgumentByIndex Nothing ProductType 0
-                  ( Ref Nothing ( Local ( Name "t" ) ) )
-                ) :| []
-              )
-              ( IfThenElse Nothing
-                ( Eq Nothing
-                  ( Ref Nothing ( Local ( Name "$cse446" ) ) )
-                  ( LiteralInt Nothing 0 )
-                )
-                ( Ref Nothing ( Local ( Name "$cse447" ) ) )
-                ( AppN Nothing
-                  ( Ref Nothing
-                    ( Imported ( ModuleName "Golden.SpecConstr.Test" ) ( Name "ping" ) )
-                  )
-                  ( AppN Nothing
-                    ( Ref Nothing ( Imported ( ModuleName "Data.Tuple" ) ( Name "Tuple$w" ) ) )
-                    ( AppN Nothing
-                      ( Ref Nothing
-                        ( Imported ( ModuleName "Golden.SpecConstr.Test" ) ( Name "sub$w" ) )
-                      )
-                      ( Ref Nothing ( Local ( Name "$cse446" ) ) :| [ LiteralInt Nothing 1 ] ) :|
-                      [ PrimBinOp Nothing PrimAdd
-                        ( Ref Nothing ( Local ( Name "$cse447" ) ) )
-                        ( LiteralInt Nothing 2 )
-                      ]
-                    ) :| []
-                  )
-                )
               )
             )
           )
         ) :|
         [
           ( QName
-            { qnameModuleName = ModuleName "Golden.SpecConstr.Test", qnameName = Name "ping"
+            { qnameModuleName = ModuleName "Golden.SpecConstr.Test", qnameName = Name "stepDown"
+            }, AbsN Nothing
+            ( ParamNamed Nothing ( Name "m" ) :| [] )
+            ( Let Nothing
+              ( Standalone
+                ( Nothing, Name "$cse449", DataArgumentByIndex Nothing SumType 0
+                  ( Ref Nothing ( Local ( Name "m" ) ) )
+                ) :| []
+              )
+              ( Let Nothing
+                ( Standalone
+                  ( Nothing, Name "$cse448", ReflectCtor Nothing
+                    ( Ref Nothing ( Local ( Name "m" ) ) )
+                  ) :| []
+                )
+                ( IfThenElse Nothing
+                  ( Eq Nothing
+                    ( LiteralString Nothing "Data.Maybe∷Maybe.Nothing" )
+                    ( Ref Nothing ( Local ( Name "$cse448" ) ) )
+                  )
+                  ( LiteralInt Nothing 0 )
+                  ( IfThenElse Nothing
+                    ( Eq Nothing
+                      ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
+                      ( Ref Nothing ( Local ( Name "$cse448" ) ) )
+                    )
+                    ( IfThenElse Nothing
+                      ( Eq Nothing
+                        ( Ref Nothing ( Local ( Name "$cse449" ) ) )
+                        ( LiteralInt Nothing 0 )
+                      )
+                      ( LiteralInt Nothing 42 )
+                      ( AppN Nothing
+                        ( Ref Nothing
+                          ( Imported
+                            ( ModuleName "Golden.SpecConstr.Test" )
+                            ( Name "stepDown$sc1Just" )
+                          )
+                        )
+                        ( AppN Nothing
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Golden.SpecConstr.Test" ) ( Name "sub$w" ) )
+                          )
+                          ( Ref Nothing
+                            ( Local ( Name "$cse449" ) ) :|
+                            [ LiteralInt Nothing 1 ]
+                          ) :| []
+                        )
+                      )
+                    )
+                    ( Exception Nothing "No patterns matched" )
+                  )
+                )
+              )
+            )
+          )
+        ]
+      ), RecursiveGroup
+      (
+        ( QName
+          { qnameModuleName = ModuleName "Golden.SpecConstr.Test", qnameName = Name "pong$sc1Tuple"
+          }, AbsN Nothing
+          ( ParamNamed Nothing
+            ( Name "pong$sc1Tuple$f1" ) :|
+            [ ParamNamed Nothing ( Name "pong$sc1Tuple$f2" ) ]
+          )
+          ( IfThenElse Nothing
+            ( Eq Nothing
+              ( Ref Nothing ( Local ( Name "pong$sc1Tuple$f1" ) ) )
+              ( LiteralInt Nothing 0 )
+            )
+            ( Ref Nothing ( Local ( Name "pong$sc1Tuple$f2" ) ) )
+            ( AppN Nothing
+              ( Ref Nothing
+                ( Imported ( ModuleName "Golden.SpecConstr.Test" ) ( Name "ping$sc1Tuple" ) )
+              )
+              ( AppN Nothing
+                ( Ref Nothing
+                  ( Imported ( ModuleName "Golden.SpecConstr.Test" ) ( Name "sub$w" ) )
+                )
+                ( Ref Nothing
+                  ( Local ( Name "pong$sc1Tuple$f1" ) ) :|
+                  [ LiteralInt Nothing 1 ]
+                ) :|
+                [ PrimBinOp Nothing PrimAdd
+                  ( Ref Nothing ( Local ( Name "pong$sc1Tuple$f2" ) ) )
+                  ( LiteralInt Nothing 2 )
+                ]
+              )
+            )
+          )
+        ) :|
+        [
+          ( QName
+            { qnameModuleName = ModuleName "Golden.SpecConstr.Test", qnameName = Name "pong"
             }, AbsN Nothing
             ( ParamNamed Nothing ( Name "t" ) :| [] )
             ( Let Nothing
               ( Standalone
-                ( Nothing, Name "$cse449", DataArgumentByIndex Nothing ProductType 1
+                ( Nothing, Name "$cse451", DataArgumentByIndex Nothing ProductType 1
                   ( Ref Nothing ( Local ( Name "t" ) ) )
                 ) :| []
               )
               ( Let Nothing
                 ( Standalone
-                  ( Nothing, Name "$cse448", DataArgumentByIndex Nothing ProductType 0
+                  ( Nothing, Name "$cse450", DataArgumentByIndex Nothing ProductType 0
                     ( Ref Nothing ( Local ( Name "t" ) ) )
                   ) :| []
                 )
                 ( IfThenElse Nothing
                   ( Eq Nothing
-                    ( Ref Nothing ( Local ( Name "$cse448" ) ) )
+                    ( Ref Nothing ( Local ( Name "$cse450" ) ) )
                     ( LiteralInt Nothing 0 )
                   )
-                  ( Ref Nothing ( Local ( Name "$cse449" ) ) )
+                  ( Ref Nothing ( Local ( Name "$cse451" ) ) )
                   ( AppN Nothing
                     ( Ref Nothing
-                      ( Imported ( ModuleName "Golden.SpecConstr.Test" ) ( Name "pong" ) )
+                      ( Imported ( ModuleName "Golden.SpecConstr.Test" ) ( Name "ping$sc1Tuple" ) )
                     )
                     ( AppN Nothing
-                      ( Ref Nothing ( Imported ( ModuleName "Data.Tuple" ) ( Name "Tuple$w" ) ) )
-                      ( AppN Nothing
-                        ( Ref Nothing
-                          ( Imported ( ModuleName "Golden.SpecConstr.Test" ) ( Name "sub$w" ) )
-                        )
-                        ( Ref Nothing ( Local ( Name "$cse448" ) ) :| [ LiteralInt Nothing 1 ] ) :|
-                        [ PrimBinOp Nothing PrimAdd
-                          ( Ref Nothing ( Local ( Name "$cse449" ) ) )
-                          ( LiteralInt Nothing 1 )
-                        ]
-                      ) :| []
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Golden.SpecConstr.Test" ) ( Name "sub$w" ) )
+                      )
+                      ( Ref Nothing ( Local ( Name "$cse450" ) ) :| [ LiteralInt Nothing 1 ] ) :|
+                      [ PrimBinOp Nothing PrimAdd
+                        ( Ref Nothing ( Local ( Name "$cse451" ) ) )
+                        ( LiteralInt Nothing 2 )
+                      ]
+                    )
+                  )
+                )
+              )
+            )
+          ),
+          ( QName
+            { qnameModuleName = ModuleName "Golden.SpecConstr.Test", qnameName = Name "ping$sc1Tuple"
+            }, AbsN Nothing
+            ( ParamNamed Nothing
+              ( Name "ping$sc1Tuple$f1" ) :|
+              [ ParamNamed Nothing ( Name "ping$sc1Tuple$f2" ) ]
+            )
+            ( IfThenElse Nothing
+              ( Eq Nothing
+                ( Ref Nothing ( Local ( Name "ping$sc1Tuple$f1" ) ) )
+                ( LiteralInt Nothing 0 )
+              )
+              ( Ref Nothing ( Local ( Name "ping$sc1Tuple$f2" ) ) )
+              ( AppN Nothing
+                ( Ref Nothing
+                  ( Imported ( ModuleName "Golden.SpecConstr.Test" ) ( Name "pong$sc1Tuple" ) )
+                )
+                ( AppN Nothing
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Golden.SpecConstr.Test" ) ( Name "sub$w" ) )
+                  )
+                  ( Ref Nothing
+                    ( Local ( Name "ping$sc1Tuple$f1" ) ) :|
+                    [ LiteralInt Nothing 1 ]
+                  ) :|
+                  [ PrimBinOp Nothing PrimAdd
+                    ( Ref Nothing ( Local ( Name "ping$sc1Tuple$f2" ) ) )
+                    ( LiteralInt Nothing 1 )
+                  ]
+                )
+              )
+            )
+          ),
+          ( QName
+            { qnameModuleName = ModuleName "Golden.SpecConstr.Test", qnameName = Name "ping"
+            }, AbsN Nothing
+            ( ParamNamed Nothing ( Name "t" ) :| [] )
+            ( Let Nothing
+              ( Standalone
+                ( Nothing, Name "$cse453", DataArgumentByIndex Nothing ProductType 1
+                  ( Ref Nothing ( Local ( Name "t" ) ) )
+                ) :| []
+              )
+              ( Let Nothing
+                ( Standalone
+                  ( Nothing, Name "$cse452", DataArgumentByIndex Nothing ProductType 0
+                    ( Ref Nothing ( Local ( Name "t" ) ) )
+                  ) :| []
+                )
+                ( IfThenElse Nothing
+                  ( Eq Nothing
+                    ( Ref Nothing ( Local ( Name "$cse452" ) ) )
+                    ( LiteralInt Nothing 0 )
+                  )
+                  ( Ref Nothing ( Local ( Name "$cse453" ) ) )
+                  ( AppN Nothing
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Golden.SpecConstr.Test" ) ( Name "pong$sc1Tuple" ) )
+                    )
+                    ( AppN Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Golden.SpecConstr.Test" ) ( Name "sub$w" ) )
+                      )
+                      ( Ref Nothing ( Local ( Name "$cse452" ) ) :| [ LiteralInt Nothing 1 ] ) :|
+                      [ PrimBinOp Nothing PrimAdd
+                        ( Ref Nothing ( Local ( Name "$cse453" ) ) )
+                        ( LiteralInt Nothing 1 )
+                      ]
                     )
                   )
                 )
@@ -396,49 +481,43 @@ UberModule
                   [ Let Nothing
                     ( RecursiveGroup
                       (
-                        ( Nothing, Name "go$432", AbsN Nothing
-                          ( ParamNamed Nothing ( Name "acc$433" ) :| [] )
-                          ( Let Nothing
-                            ( Standalone
-                              ( Nothing, Name "$cse450", DataArgumentByIndex Nothing ProductType 1
-                                ( Ref Nothing ( Local ( Name "acc$433" ) ) )
-                              ) :| []
+                        ( Nothing, Name "go$432$sc1Tuple", AbsN Nothing
+                          ( ParamNamed Nothing
+                            ( Name "go$432$sc1Tuple$f1" ) :|
+                            [ ParamNamed Nothing ( Name "go$432$sc1Tuple$f2" ) ]
+                          )
+                          ( IfThenElse Nothing
+                            ( PrimBinOp Nothing PrimLt
+                              ( Ref Nothing ( Local ( Name "go$432$sc1Tuple$f2" ) ) )
+                              ( LiteralInt Nothing 5 )
                             )
-                            ( IfThenElse Nothing
-                              ( PrimBinOp Nothing PrimLt
-                                ( Ref Nothing ( Local ( Name "$cse450" ) ) )
-                                ( LiteralInt Nothing 5 )
+                            ( AppN Nothing
+                              ( Ref Nothing ( Local ( Name "go$432$sc1Tuple" ) ) )
+                              ( PrimBinOp Nothing PrimAdd
+                                ( Ref Nothing ( Local ( Name "go$432$sc1Tuple$f1" ) ) )
+                                ( Ref Nothing ( Local ( Name "go$432$sc1Tuple$f2" ) ) ) :|
+                                [ PrimBinOp Nothing PrimAdd
+                                  ( Ref Nothing ( Local ( Name "go$432$sc1Tuple$f2" ) ) )
+                                  ( LiteralInt Nothing 1 )
+                                ]
                               )
-                              ( AppN Nothing
-                                ( Ref Nothing ( Local ( Name "go$432" ) ) )
-                                ( AppN Nothing
-                                  ( Ref Nothing
-                                    ( Imported ( ModuleName "Data.Tuple" ) ( Name "Tuple$w" ) )
-                                  )
-                                  ( PrimBinOp Nothing PrimAdd
-                                    ( DataArgumentByIndex Nothing ProductType 0
-                                      ( Ref Nothing ( Local ( Name "acc$433" ) ) )
-                                    )
-                                    ( Ref Nothing ( Local ( Name "$cse450" ) ) ) :|
-                                    [ PrimBinOp Nothing PrimAdd
-                                      ( Ref Nothing ( Local ( Name "$cse450" ) ) )
-                                      ( LiteralInt Nothing 1 )
-                                    ]
-                                  ) :| []
-                                )
-                              )
-                              ( Ref Nothing ( Local ( Name "acc$433" ) ) )
+                            )
+                            ( Ctor Nothing ProductType
+                              ( ModuleName "Data.Tuple" )
+                              ( TyName "Tuple" )
+                              ( CtorName "Tuple" )
+                              [ Ref Nothing
+                                ( Local ( Name "go$432$sc1Tuple$f1" ) ), Ref Nothing
+                                ( Local ( Name "go$432$sc1Tuple$f2" ) )
+                              ]
                             )
                           )
                         ) :| []
                       ) :| []
                     )
                     ( AppN Nothing
-                      ( Ref Nothing ( Local ( Name "go$432" ) ) )
-                      ( AppN Nothing
-                        ( Ref Nothing ( Imported ( ModuleName "Data.Tuple" ) ( Name "Tuple$w" ) ) )
-                        ( LiteralInt Nothing 0 :| [ LiteralInt Nothing 0 ] ) :| []
-                      )
+                      ( Ref Nothing ( Local ( Name "go$432$sc1Tuple" ) ) )
+                      ( LiteralInt Nothing 0 :| [ LiteralInt Nothing 0 ] )
                     )
                   ]
                 )
@@ -453,14 +532,12 @@ UberModule
                     ( Imported ( ModuleName "Data.Show" ) ( Name "showInt" ) ) :|
                     [ AppN Nothing
                       ( Ref Nothing
-                        ( Imported ( ModuleName "Golden.SpecConstr.Test" ) ( Name "stepDown" ) )
+                        ( Imported
+                          ( ModuleName "Golden.SpecConstr.Test" )
+                          ( Name "stepDown$sc1Just" )
+                        )
                       )
-                      ( Ctor Nothing SumType
-                        ( ModuleName "Data.Maybe" )
-                        ( TyName "Maybe" )
-                        ( CtorName "Just" )
-                        [ LiteralInt Nothing 3 ] :| []
-                      )
+                      ( LiteralInt Nothing 3 :| [] )
                     ]
                   )
                 )
@@ -492,12 +569,12 @@ UberModule
                     ( Imported ( ModuleName "Data.Show" ) ( Name "showInt" ) ) :|
                     [ AppN Nothing
                       ( Ref Nothing
-                        ( Imported ( ModuleName "Golden.SpecConstr.Test" ) ( Name "ping" ) )
+                        ( Imported
+                          ( ModuleName "Golden.SpecConstr.Test" )
+                          ( Name "ping$sc1Tuple" )
+                        )
                       )
-                      ( AppN Nothing
-                        ( Ref Nothing ( Imported ( ModuleName "Data.Tuple" ) ( Name "Tuple$w" ) ) )
-                        ( LiteralInt Nothing 4 :| [ LiteralInt Nothing 10 ] ) :| []
-                      )
+                      ( LiteralInt Nothing 4 :| [ LiteralInt Nothing 10 ] )
                     ]
                   )
                 )
