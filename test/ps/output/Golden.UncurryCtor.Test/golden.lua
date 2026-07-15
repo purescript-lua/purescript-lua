@@ -58,10 +58,10 @@ end
 M.Golden_UncurryCtor_Test_unbox = function(v) return v end
 local Golden_UncurryCtor_Test_total
 Golden_UncurryCtor_Test_total = function(v)
-  local _S_cse352 = v[1]
-  if "Golden.UncurryCtor.Test∷IntList.Nil" == _S_cse352 then
+  local _S_cse364 = v[1]
+  if "Golden.UncurryCtor.Test∷IntList.Nil" == _S_cse364 then
     return 0
-  elseif "Golden.UncurryCtor.Test∷IntList.Cons" == _S_cse352 then
+  elseif "Golden.UncurryCtor.Test∷IntList.Cons" == _S_cse364 then
     return Golden_UncurryCtor_Test_add_S_w(v[2], Golden_UncurryCtor_Test_total(v[3]))
   else
     return error("No patterns matched")
@@ -72,21 +72,21 @@ M.Golden_UncurryCtor_Test_pairSum = function(v)
   return Golden_UncurryCtor_Test_add_S_w(v[1], v[2])
 end
 M.Golden_UncurryCtor_Test_area = function(v)
-  local _S_cse354 = v[2]
-  local _S_cse353 = v[1]
-  if "Golden.UncurryCtor.Test∷Shape.Origin" == _S_cse353 then
+  local _S_cse366 = v[2]
+  local _S_cse365 = v[1]
+  if "Golden.UncurryCtor.Test∷Shape.Origin" == _S_cse365 then
     return 0
-  elseif "Golden.UncurryCtor.Test∷Shape.Dot" == _S_cse353 then
-    return _S_cse354
-  elseif "Golden.UncurryCtor.Test∷Shape.Tri" == _S_cse353 then
-    return Golden_UncurryCtor_Test_add_S_w(Golden_UncurryCtor_Test_add_S_w(_S_cse354, v[3]), v[4])
+  elseif "Golden.UncurryCtor.Test∷Shape.Dot" == _S_cse365 then
+    return _S_cse366
+  elseif "Golden.UncurryCtor.Test∷Shape.Tri" == _S_cse365 then
+    return Golden_UncurryCtor_Test_add_S_w(Golden_UncurryCtor_Test_add_S_w(_S_cse366, v[3]), v[4])
   else
     return error("No patterns matched")
   end
 end
 return (function()
-  local _S_cse356 = Golden_UncurryCtor_Test_Origin[2]
-  local _S_cse355 = Golden_UncurryCtor_Test_Origin[1]
+  local _S_cse368 = Golden_UncurryCtor_Test_Origin[2]
+  local _S_cse367 = Golden_UncurryCtor_Test_Origin[1]
   local _ = Effect_Console_logShow_S_w(Data_Show_showInt, Golden_UncurryCtor_Test_add_S_w(Golden_UncurryCtor_Test_add_S_w(3, 4), 5))()
   local _ = Effect_Console_logShow_S_w(Data_Show_showInt, (function()
     local v_S_333 = { "Golden.UncurryCtor.Test∷Shape.Dot", 9 }
@@ -101,12 +101,12 @@ return (function()
     end
   end)())()
   local _ = Effect_Console_logShow_S_w(Data_Show_showInt, (function()
-    if "Golden.UncurryCtor.Test∷Shape.Origin" == _S_cse355 then
+    if "Golden.UncurryCtor.Test∷Shape.Origin" == _S_cse367 then
       return 0
-    elseif "Golden.UncurryCtor.Test∷Shape.Dot" == _S_cse355 then
-      return _S_cse356
-    elseif "Golden.UncurryCtor.Test∷Shape.Tri" == _S_cse355 then
-      return Golden_UncurryCtor_Test_add_S_w(Golden_UncurryCtor_Test_add_S_w(_S_cse356, Golden_UncurryCtor_Test_Origin[3]), Golden_UncurryCtor_Test_Origin[4])
+    elseif "Golden.UncurryCtor.Test∷Shape.Dot" == _S_cse367 then
+      return _S_cse368
+    elseif "Golden.UncurryCtor.Test∷Shape.Tri" == _S_cse367 then
+      return Golden_UncurryCtor_Test_add_S_w(Golden_UncurryCtor_Test_add_S_w(_S_cse368, Golden_UncurryCtor_Test_Origin[3]), Golden_UncurryCtor_Test_Origin[4])
     else
       return error("No patterns matched")
     end
@@ -114,41 +114,23 @@ return (function()
   local _ = Effect_Console_logShow_S_w(Data_Show_showInt, Golden_UncurryCtor_Test_add_S_w(20, 22))()
   local _ = Effect_Console_logShow_S_w(Data_Show_showInt, 41)()
   return (function()
-    local mk_S_0 = function(Tri_S_p3_S_345)
-      return Golden_UncurryCtor_Test_Tri_S_w(1, 2, Tri_S_p3_S_345)
-    end
+    local mk_S_0_S_r = function(Tri_S_p3_S_345) return 1, 2, Tri_S_p3_S_345 end
     return function()
       local _ = Effect_Console_logShow_S_w(Data_Show_showInt, (function()
-        local v_S_346 = mk_S_0(3)
-        if "Golden.UncurryCtor.Test∷Shape.Origin" == v_S_346[1] then
-          return 0
-        elseif "Golden.UncurryCtor.Test∷Shape.Dot" == v_S_346[1] then
-          return v_S_346[2]
-        elseif "Golden.UncurryCtor.Test∷Shape.Tri" == v_S_346[1] then
-          return Golden_UncurryCtor_Test_add_S_w(Golden_UncurryCtor_Test_add_S_w(v_S_346[2], v_S_346[3]), v_S_346[4])
-        else
-          return error("No patterns matched")
-        end
+        local _S_v352, _S_v353, _S_v354 = mk_S_0_S_r(3)
+        return Golden_UncurryCtor_Test_add_S_w(Golden_UncurryCtor_Test_add_S_w(_S_v352, _S_v353), _S_v354)
       end)())()
       local _ = Effect_Console_logShow_S_w(Data_Show_showInt, (function()
-        local v_S_348 = mk_S_0(30)
-        if "Golden.UncurryCtor.Test∷Shape.Origin" == v_S_348[1] then
-          return 0
-        elseif "Golden.UncurryCtor.Test∷Shape.Dot" == v_S_348[1] then
-          return v_S_348[2]
-        elseif "Golden.UncurryCtor.Test∷Shape.Tri" == v_S_348[1] then
-          return Golden_UncurryCtor_Test_add_S_w(Golden_UncurryCtor_Test_add_S_w(v_S_348[2], v_S_348[3]), v_S_348[4])
-        else
-          return error("No patterns matched")
-        end
+        local _S_v355, _S_v356, _S_v357 = mk_S_0_S_r(30)
+        return Golden_UncurryCtor_Test_add_S_w(Golden_UncurryCtor_Test_add_S_w(_S_v355, _S_v356), _S_v357)
       end)())()
       local _ = Effect_Console_logShow_S_w({
         show = Data_Show_foreign.showArrayImpl(Data_Show_showIntImpl)
       }, Data_Functor_arrayMap(function(v2_S_307)
-        local _S_cse357 = v2_S_307[1]
-        if "Data.Maybe∷Maybe.Nothing" == _S_cse357 then
+        local _S_cse369 = v2_S_307[1]
+        if "Data.Maybe∷Maybe.Nothing" == _S_cse369 then
           return 0
-        elseif "Data.Maybe∷Maybe.Just" == _S_cse357 then
+        elseif "Data.Maybe∷Maybe.Just" == _S_cse369 then
           return v2_S_307[2]
         else
           return error("No patterns matched")
