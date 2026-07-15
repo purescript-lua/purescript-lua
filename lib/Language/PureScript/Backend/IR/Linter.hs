@@ -63,10 +63,10 @@ data Violation
     argument count.
     -}
     LambdaArityMismatch Site Natural Natural
-  | {- | An 'AbsN' parameter list with a 'ParamUnused' in non-trailing
-    position ('WellApplied'). The Lua backend drops unused parameters,
-    which is arity-preserving only for a trailing run
-    (Note [n-ary abstraction]).
+  | {- | An 'AbsN' or 'LetValues' parameter list with a 'ParamUnused' in
+    non-trailing position ('WellApplied'). The Lua backend drops unused
+    parameters/binders, which is arity-preserving only for a trailing
+    run (Note [n-ary abstraction], Note [Multi-value results]).
     -}
     NonTrailingUnusedParam Site
   | {- | An 'AppN' whose head is a 'Ctor' node ('WellApplied'). A
@@ -75,6 +75,13 @@ data Violation
     table. Reported as a single violation per site, like 'RefToDiscard'.
     -}
     CtorApplied Site
+  | {- | A 'Values' node outside a multi-value slot ('WellApplied').
+    Anywhere but a multi-value tail position Lua adjusts the value list
+    to a single value — silent truncation of the remaining results (see
+    Note [Multi-value results]). Reported as a single violation per
+    site, like 'RefToDiscard'.
+    -}
+    ValuesOutsideTail Site
   deriving stock (Eq, Show)
 
 -- | The top-level entry of the module a violation was found in.
@@ -112,11 +119,15 @@ of the n-ary nodes (Note [n-ary abstraction]):
     arguments as the lambda binds parameters — anything else silently
     drops arguments or nil-fills parameters instead of currying;
 
-  * every 'AbsN' keeps its 'ParamUnused' parameters in a trailing run,
-    so the Lua backend can drop them without shifting the rest;
+  * every 'AbsN' and every 'LetValues' keeps its 'ParamUnused'
+    parameters in a trailing run, so the Lua backend can drop them
+    without shifting the rest;
 
   * no 'AppN' head is a 'Ctor' — a constructor value is a table, not a
-    function (see Note [Constructor applications are saturated]).
+    function (see Note [Constructor applications are saturated]);
+
+  * every 'Values' sits in a multi-value slot (Note [Multi-value
+    results]) — anywhere else Lua silently truncates it to one value.
 
 An empty result means the module holds the invariant.
 -}
@@ -125,6 +136,7 @@ lintWellApplied = overSites \site e →
   (uncurry (LambdaArityMismatch site) <$> lambdaArityMismatches e)
     <> [NonTrailingUnusedParam site | hasNonTrailingUnusedParam e]
     <> [CtorApplied site | hasAppliedCtor e]
+    <> [ValuesOutsideTail site | hasMisplacedValues e]
 
 {- | Run a per-site check over every top-level binding, foreign binding,
 and export of the module.
@@ -158,6 +170,13 @@ unboundLocals = go (Set.singleton (Name runtimeLazyName))
       | otherwise → [nm]
     AbsN _ params body →
       go (foldl' (\sc p → bindName (paramName p) sc) scope (toList params)) body
+    -- The binders scope over the body only; the RHS sees the enclosing
+    -- scope (Note [Multi-value results]).
+    LetValues _ params rhs body →
+      go scope rhs
+        <> go
+          (foldl' (\sc p → bindName (paramName p) sc) scope (toList params))
+          body
     Let _ binds body →
       let (bodyScope, errs) = foldl' letGrouping (scope, []) (toList binds)
        in errs <> go bodyScope body
@@ -201,6 +220,7 @@ duplicateBinders e =
   binders ∷ Exp → [Name]
   binders = \case
     AbsN _ params _ → mapMaybe paramName (toList params)
+    LetValues _ params _ _ → mapMaybe paramName (toList params)
     Let _ binds _ → bindingNames =<< toList binds
     _ → []
 
@@ -239,15 +259,41 @@ hasAppliedCtor e =
     | AppN _ (Ctor {}) _ ← toListOf (cosmosOf subexpressions) e
     ]
 
-{- | Whether any 'AbsN' of the expression binds a named parameter after
-an unused one. Reported as a single violation per site, like
-'RefToDiscard'.
+{- | Whether any 'AbsN' or 'LetValues' of the expression binds a named
+parameter after an unused one. Reported as a single violation per site,
+like 'RefToDiscard'.
 -}
 hasNonTrailingUnusedParam ∷ Exp → Bool
 hasNonTrailingUnusedParam e =
   or
     [ any (isJust . paramName) fromFirstUnused
-    | AbsN _ params _ ← toListOf (cosmosOf subexpressions) e
+    | node ← toListOf (cosmosOf subexpressions) e
+    , params ← case node of
+        AbsN _ ps _ → [toList ps]
+        LetValues _ ps _ _ → [toList ps]
+        _ → []
     , let (_named, fromFirstUnused) =
-            break (isNothing . paramName) (toList params)
+            break (isNothing . paramName) params
     ]
+
+{- | Whether a 'Values' node occurs outside a multi-value slot — see
+Note [Multi-value results] for the slot discipline this walk encodes:
+an 'AbsN' body and a 'LetValues' RHS open a multi-value slot, 'Let' and
+'LetValues' bodies and 'IfThenElse' branches (not the condition)
+propagate it, and every other child position is single-valued. Reported
+as a single violation per site, like 'RefToDiscard'.
+-}
+hasMisplacedValues ∷ Exp → Bool
+hasMisplacedValues = go False
+ where
+  go ∷ Bool → Exp → Bool
+  go multi = \case
+    Values _ es → not multi || any (go False) (toList es)
+    AbsN _ _params body → go True body
+    LetValues _ _params rhs body → go True rhs || go multi body
+    Let _ binds body →
+      any (\(_ann, _nm, rhs) → go False rhs) (foldMap toList binds)
+        || go multi body
+    IfThenElse _ cond th el →
+      go False cond || go multi th || go multi el
+    other → any (go False) (toListOf subexpressions other)

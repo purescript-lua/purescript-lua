@@ -13,6 +13,7 @@ import Control.Monad.Trans.Accum (AccumT, add, runAccumT)
 import Data.DList qualified as DList
 import Data.IntCast (intCast)
 import Data.List qualified as List
+import Data.List.NonEmpty qualified as NE
 import Data.Set qualified as Set
 import Data.Tagged (Tagged (..), untag)
 import Data.Text qualified as Text
@@ -340,6 +341,34 @@ fromIR foreigns topLevelNames modname ir = case ir of
           pure $ DList.fromList binds <> DList.fromList assignments
     pure . Left . DList.toList $
       recs <> either DList.fromList (DList.singleton . Lua.return) body
+  -- A multi-value return: only reachable in a multi-value tail position
+  -- (Note [Multi-value results] in ...Backend.IR.Types), so it lowers to
+  -- the final @return e₁, …, eₙ@ of the enclosing chunk. Each element is
+  -- a single-value slot: a multi-valued call in the last slot would
+  -- splice its extra results into the return list, so it gets the same
+  -- explicit-parens guard as the last field of a constructor.
+  IR.Values _ann exprs → do
+    es ← traverse goExp (toList exprs)
+    pure . Left $ [Lua.returnN (NE.fromList (parenLastMultiValued es))]
+  -- @local p₁, …, pₙ = rhs@ followed by the body statements. The
+  -- trailing run of unused binders is dropped — Lua discards surplus
+  -- results — and a non-trailing 'IR.ParamUnused' cannot occur
+  -- (Note [Multi-value results]). The RHS is never paren-wrapped: it is
+  -- the multi-valued producer whose results the binder list captures.
+  IR.LetValues _ann params rhs bodyExp → do
+    rhsExp ← goExp rhs
+    body ← go bodyExp
+    let binding = case nonEmpty keptNames of
+          Just names → Lua.localN names rhsExp
+          -- Every binder is unused (an all-dead suffix DCE has not
+          -- collapsed yet): keep the RHS evaluation, discard the values.
+          Nothing → Lua.local1 (fromName (IR.Name "_")) rhsExp
+        keptNames =
+          [ fromName name
+          | IR.ParamNamed _pann name ←
+              List.dropWhileEnd isUnusedParam (toList params)
+          ]
+    pure . Left $ binding : either id (pure . Lua.return) body
   IR.IfThenElse _ann cond th el → do
     thenExp ← go th
     elseExp ← go el

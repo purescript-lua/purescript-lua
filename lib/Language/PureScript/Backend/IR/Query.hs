@@ -179,4 +179,6 @@ collectBoundNames =
         e <$ add do
           Set.fromList
             [iname | grouping ← toList groupings, iname ← bindingNames grouping]
+      IR.LetValues _ann params _rhs _body →
+        e <$ add (Set.fromList (mapMaybe IR.paramName (toList params)))
       _ → pure e

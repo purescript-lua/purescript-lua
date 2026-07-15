@@ -794,6 +794,11 @@ complexityOf = \case
   -- re-allocated at every use site. See Note [Constructor applications are
   -- saturated].
   Ctor {} → NonTrivial
+  -- The multi-value nodes are position-restricted (Note [Multi-value
+  -- results]): duplicating them into argument positions is never
+  -- admissible, so both are explicitly 'NonTrivial'.
+  Values {} → NonTrivial
+  LetValues {} → NonTrivial
   _ → NonTrivial
 
 {- | Pure wrapper for tests and standalone use: runs the rewrite with

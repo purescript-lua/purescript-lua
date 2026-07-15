@@ -339,6 +339,12 @@ local name expr = Local (pure name) (ann <$> maybeToList expr)
 local1 ∷ Name → Exp → Statement
 local1 name expr = Local (pure name) [ann expr]
 
+{- | @local n₁, …, nₖ = expr@ — bind several results of one multi-valued
+expression at once.
+-}
+localN ∷ NonEmpty Name → Exp → Statement
+localN names expr = Local names [ann expr]
+
 local0 ∷ Name → Statement
 local0 name = Local (pure name) []
 
@@ -347,6 +353,10 @@ ifThenElse i t e = IfThenElse (ann i) (ann <$> t) (ann <$> e)
 
 return ∷ Exp → Statement
 return e = Return [ann e]
+
+-- | @return e₁, …, eₙ@ — a multi-value return.
+returnN ∷ NonEmpty Exp → Statement
+returnN es = Return (toList (ann <$> es))
 
 chunkToExpression ∷ Chunk → Exp
 chunkToExpression ss = functionCall (Function [] (ann <$> ss)) []

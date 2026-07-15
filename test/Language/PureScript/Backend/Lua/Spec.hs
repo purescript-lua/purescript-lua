@@ -86,6 +86,40 @@ spec = describe "Lua.fromUberModule" do
     rendered ← compileExportedExpr (naryCallOn [primUndefined, ref "b"])
     rendered `shouldSatisfy` Text.isInfixOf "f(nil, b)"
 
+  -- See Note [Multi-value results] in ...Backend.IR.Types
+  describe "multi-value results (#206)" do
+    it "lowers a Values tail to a multi-value return" do
+      rendered ← compileExportedExpr multiValueTail
+      rendered `shouldSatisfy` Text.isInfixOf "return a, b"
+
+    it "parenthesises a call in the last Values slot" do
+      rendered ←
+        compileExportedExpr $
+          absN ["a", "f", "x"] $
+            IR.values (ref "a" :| [IR.application (ref "f") (ref "x")])
+      rendered `shouldSatisfy` Text.isInfixOf "return a, (f(x))"
+
+    it "pushes a Values tail into both IfThenElse branches" do
+      rendered ←
+        compileExportedExpr $
+          absN ["c", "a", "b"] $
+            IR.ifThenElse
+              (ref "c")
+              (IR.values (ref "a" :| [ref "b"]))
+              (IR.values (ref "b" :| [ref "a"]))
+      rendered `shouldSatisfy` Text.isInfixOf "return a, b"
+      rendered `shouldSatisfy` Text.isInfixOf "return b, a"
+
+    it "lowers LetValues to a multi-name local" do
+      rendered ← compileExportedExpr (letValuesExpr [pn "a", pn "b"])
+      rendered `shouldSatisfy` Text.isInfixOf "local a, b = f(s)"
+
+    it "drops the trailing unused run of LetValues binders" do
+      rendered ←
+        compileExportedExpr (letValuesExpr [pn "a", IR.ParamUnused IR.noAnn])
+      rendered `shouldSatisfy` Text.isInfixOf "local a = f(s)"
+      rendered `shouldSatisfy` (not . Text.isInfixOf "local a,")
+
   describe "loopification (#181)" do
     it "lowers a top-level self-recursive tail call to a while loop" do
       rendered ← compileRecBinding (selfTailLoop topSelf)
@@ -419,6 +453,28 @@ shortCall self arg =
       (ref "p")
       (ref "acc")
       (IR.AppN IR.noAnn self (arg :| [primUndefined]))
+
+-- Multi-value fixtures (#206) -------------------------------------------------
+
+-- | @function(a, b) return a, b end@ — a result worker's shape.
+multiValueTail ∷ IR.Exp
+multiValueTail = absN ["a", "b"] (IR.values (ref "a" :| [ref "b"]))
+
+pn ∷ Text → IR.Parameter IR.Ann
+pn = IR.ParamNamed IR.noAnn . IR.Name
+
+{- | @function(s) local \<binders\> = f(s) return a end@ — the shape a
+rewritten deconstructing call site lowers to.
+-}
+letValuesExpr ∷ [IR.Parameter IR.Ann] → IR.Exp
+letValuesExpr binders = case binders of
+  p : ps →
+    absN ["s"] $
+      IR.letValues
+        (p :| ps)
+        (IR.AppN IR.noAnn (ref "f") (ref "s" :| []))
+        (ref "a")
+  [] → error "letValuesExpr: needs at least one binder"
 
 absN ∷ [Text] → IR.Exp → IR.Exp
 absN names body = case names of

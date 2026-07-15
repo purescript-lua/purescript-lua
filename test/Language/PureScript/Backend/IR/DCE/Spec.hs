@@ -34,6 +34,7 @@ import Language.PureScript.Backend.IR.Types
   , applicationN
   , countFreeRefs
   , exception
+  , letValues
   , lets
   , literalInt
   , noAnn
@@ -210,6 +211,47 @@ spec = describe "IR Dead Code Elimination" do
             (Standalone (noAnn, Name "res", runW) :| [])
             (literalInt 2)
     dceExpression expr === expr
+
+  -- See Note [Multi-value results]
+  describe "multi-value nodes (#206)" do
+    let a = Name "a"
+        b = Name "b"
+        s = Name "s"
+        workerCall =
+          applicationN
+            (refImported mainModuleName (Name "step$r"))
+            (refLocal s :| [])
+
+    it "keeps the producing call reachable through a live binder" $ hedgehog do
+      let expr =
+            abstraction (paramNamed s) $
+              letValues
+                (paramNamed a :| [paramNamed b])
+                workerCall
+                (application (refLocal a) (refLocal b))
+      dceExpression expr === expr
+
+    it "blanks the dead suffix of the binder list" $ hedgehog do
+      let expr body =
+            abstraction (paramNamed s) $
+              letValues (paramNamed a :| [paramNamed b]) workerCall body
+      dceExpression (expr (refLocal a))
+        === abstraction
+          (paramNamed s)
+          (letValues (paramNamed a :| [paramUnused]) workerCall (refLocal a))
+
+    it "keeps an interior dead binder named" $ hedgehog do
+      -- Blanking a would shift b onto the wrong result slot.
+      let expr =
+            abstraction (paramNamed s) $
+              letValues (paramNamed a :| [paramNamed b]) workerCall (refLocal b)
+      dceExpression expr === expr
+
+    it "collapses a LetValues whose every binder is dead" $ hedgehog do
+      let expr =
+            abstraction (paramNamed s) $
+              letValues (paramNamed a :| [paramNamed b]) workerCall (literalInt 1)
+      dceExpression expr === abstraction paramUnused (literalInt 1)
 
 --------------------------------------------------------------------------------
 -- Helpers ---------------------------------------------------------------------

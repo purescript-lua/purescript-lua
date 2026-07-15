@@ -73,17 +73,14 @@ uniquifyNamesInExpr e =
   go ∷ RenamesInScope → Exp → State (Set Name) Exp
   go scope = \case
     AbsN ann params body → do
-      (scope', reverse → params') ←
-        foldlM
-          ( \(sc, ps) param → case param of
-              ParamUnused _ann → pure (sc, param : ps)
-              ParamNamed paramAnn name → do
-                (name', sc') ← bindName sc name
-                pure (sc', ParamNamed paramAnn name' : ps)
-          )
-          (scope, [])
-          (toList params)
-      AbsN ann (NE.fromList params') <$> go scope' body
+      (scope', params') ← bindParams scope params
+      AbsN ann params' <$> go scope' body
+    -- The RHS sees the enclosing scope; the binders scope over the body
+    -- only (Note [Multi-value results]).
+    LetValues ann params rhs body → do
+      rhs' ← go scope rhs
+      (scope', params') ← bindParams scope params
+      LetValues ann params' rhs' <$> go scope' body
     Ref ann qname →
       pure case qname of
         Local lname
@@ -98,6 +95,23 @@ uniquifyNamesInExpr e =
     -- export keys of the foreign source file, not binders — they must
     -- not be renamed):
     other → traverseOf subexpressions (go scope) other
+
+  bindParams
+    ∷ RenamesInScope
+    → NonEmpty (Parameter Ann)
+    → State (Set Name) (RenamesInScope, NonEmpty (Parameter Ann))
+  bindParams scope params = do
+    (scope', reverse → params') ←
+      foldlM
+        ( \(sc, ps) param → case param of
+            ParamUnused _ann → pure (sc, param : ps)
+            ParamNamed paramAnn name → do
+              (name', sc') ← bindName sc name
+              pure (sc', ParamNamed paramAnn name' : ps)
+        )
+        (scope, [])
+        (toList params)
+    pure (scope', NE.fromList params')
 
   withGrouping
     ∷ (RenamesInScope, [Grouping (Ann, Name, Exp)])

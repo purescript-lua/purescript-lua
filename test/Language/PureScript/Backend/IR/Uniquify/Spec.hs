@@ -18,6 +18,7 @@ import Language.PureScript.Backend.IR.Types
   , abstraction
   , alphaEq
   , application
+  , letValues
   , lets
   , literalInt
   , noAnn
@@ -103,6 +104,18 @@ spec = describe "IR Uniquify" do
             (Standalone (noAnn, x1, refLocal x) :| [])
             (refLocal x1)
         )
+
+  it "renames a shadowing LetValues binder, resolving the RHS pre-binding" do
+    -- λx. letValues x = x in x: the RHS's x resolves to the λ binder (a
+    -- LetValues RHS does not see its own binders —
+    -- Note [Multi-value results]); the body's x to the renamed binder.
+    uniquifyNamesInExpr
+      ( abstraction (paramNamed x) $
+          letValues (paramNamed x :| []) (refLocal x) (refLocal x)
+      )
+      `shouldBe` abstraction
+        (paramNamed x)
+        (letValues (paramNamed x1 :| []) (refLocal x) (refLocal x1))
 
   it "renames self-references inside a shadowing recursive group" do
     -- λx. letrec x = x in x: a member's RHS sees its own group.

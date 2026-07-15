@@ -178,6 +178,19 @@ eliminateDeadCode uber@UberModule {..} =
             Just case NE.nonEmpty kept of
               Nothing → body
               Just keptNE → Let ann keptNE body
+      -- A 'LetValues' whose every binder is dead evaluates its RHS for
+      -- nothing: collapse to the body (the same discard licence as an
+      -- unreferenced Let binding; an effect run is kept, as above).
+      -- Otherwise blank the dead suffix of the binder list — interior
+      -- dead binders keep their names, as in the Abs case
+      -- (Note [Multi-value results]).
+      LetValues ann params rhs body
+        | not (isEffectRun rhs)
+        , not (any paramReachable params) →
+            Just body
+        | let params' = blankDeadSuffix params
+        , params' /= params →
+            Just (LetValues ann params' rhs body)
       _ → Nothing
    where
     preservedGroupings
@@ -198,6 +211,11 @@ eliminateDeadCode uber@UberModule {..} =
 
     members ∷ [Grouping ((Id, Ann), Name, AExp)] → Int
     members = length . (listGrouping =<<)
+
+    paramReachable ∷ Parameter (Id, Ann) → Bool
+    paramReachable = \case
+      ParamNamed (paramId, _ann) _name → paramId `member` reachableIds
+      ParamUnused _pann → False
 
     -- Right-to-left: blank dead named parameters until the first
     -- parameter that must stay named (a live one, or an interior one
@@ -348,6 +366,28 @@ eliminateDeadCode uber@UberModule {..} =
           -- binding (see Note [Sequential scoping of Let bindings]).
           (bodyScope, groupingsAdjacency) =
             foldl' adjacencyListForGrouping (scope, mempty) groupings
+        -- The RHS resolves against the enclosing scope; the binders
+        -- scope over the body only (Note [Multi-value results]). Each
+        -- named binder depends on the RHS, so any live binder keeps
+        -- the producing call reachable (mirroring a Let grouping's
+        -- binder → bound-expression edge).
+        LetValues _ann params rhs body →
+          adjacencyListForExpr scope rhs
+            <> paramNodes
+            <> adjacencyListForExpr scopeWithParams body
+         where
+          (scopeWithParams, paramNodes) =
+            foldl' bindParam (scope, DL.empty) (toList params)
+          bindParam
+            ∷ (Scope, DList Node)
+            → Parameter (Id, b)
+            → (Scope, DList Node)
+          bindParam (sc, nodes) = \case
+            ParamUnused _ann' → (sc, nodes)
+            ParamNamed (paramId, _ann') name →
+              ( addLocalToScope paramId name sc
+              , DL.snoc nodes (mkNode paramId [nodeId rhs])
+              )
         -- No other constructor binds names, so the scope passes through:
         other → foldMapOf subexpressions (adjacencyListForExpr scope) other
    where
@@ -391,6 +431,11 @@ expressionDependsOnIds exprScope = \case
         | Standalone (_binder, _name, rhs) ← toList groupings
         , isEffectRun rhs
         ]
+  -- A LetValues node depends on its body; the RHS is kept reachable by
+  -- any live binder (see 'adjacencyListForExpr'), or — defensively, in
+  -- symmetry with Let — by being an effect run itself.
+  LetValues _ann _params rhs body →
+    nodeId body : [nodeId rhs | isEffectRun rhs]
   other → nodeId <$> toListOf subexpressions other
 
 {- | Under GUC (@UniqueBinders@) no two live binders at one site share a
