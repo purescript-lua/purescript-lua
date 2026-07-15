@@ -1,5 +1,6 @@
 module Language.PureScript.Backend.IR.Query where
 
+import Control.Lens (toListOf)
 import Control.Lens.Plated (transformMOf)
 import Control.Monad.Trans.Accum (add, execAccum)
 import Data.Map qualified as Map
@@ -14,7 +15,7 @@ import Language.PureScript.Backend.IR.Names
   , runModuleName
   )
 import Language.PureScript.Backend.IR.Types
-  ( AlgebraicType
+  ( AlgebraicType (..)
   , Exp
   , RawExp (..)
   , bindingNames
@@ -182,3 +183,30 @@ collectBoundNames =
       IR.LetValues _ann params _rhs _body →
         e <$ add (Set.fromList (mapMaybe IR.paramName (toList params)))
       _ → pure e
+
+{- | Whether some @Ref name@ is reached other than through a foldable
+constructor-eliminating read — the residue that would dangle if the
+binding were dropped and its reads folded to the constructor's fields.
+Shared by 'propagateKnownCtorThroughLet' (the optimizer rule that folds
+such a binding) and the deconstructing-site census of the CPR split
+("Language.PureScript.Backend.IR.Cpr"), which pre-verifies exactly that
+rule's precondition.
+
+An out-of-range index or a mismatched algebraic type reads no existing
+field, so it is not a foldable eliminating read: it counts as a
+whole-value read, forcing the caller to decline (as
+'reduceKnownConstructor' does). Well-typed input never indexes past the
+arity nor mistypes the read; the guards keep callers sound on the
+non-GUC / generated input 'optimizedExpression' also runs on. A
+product-type @ReflectCtor@ read has no tag slot to fold to, so it too
+counts as a whole-value read.
+-}
+hasWholeValueRead ∷ Name → AlgebraicType → Natural → Exp → Bool
+hasWholeValueRead name algTy arity = go
+ where
+  go = \case
+    ReflectCtor _ (Ref _ (Local n)) | n == name, SumType ← algTy → False
+    DataArgumentByIndex _ readTy i (Ref _ (Local n))
+      | n == name, readTy == algTy, i < arity → False
+    Ref _ (Local n) | n == name → True
+    other → any go (toListOf subexpressions other)

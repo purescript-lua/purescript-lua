@@ -128,6 +128,7 @@ library
   exposed-modules:
     Language.PureScript.Backend
     Language.PureScript.Backend.IR
+    Language.PureScript.Backend.IR.Cpr
     Language.PureScript.Backend.IR.CSE
     Language.PureScript.Backend.IR.DCE
     Language.PureScript.Backend.IR.EffectNames
@@ -183,6 +184,7 @@ test-suite spec
   main-is:        Main.hs
   other-modules:
     Hedgehog.Gen.Extended
+    Language.PureScript.Backend.IR.Cpr.Spec
     Language.PureScript.Backend.IR.CSE.Spec
     Language.PureScript.Backend.IR.DCE.Spec
     Language.PureScript.Backend.IR.FlattenDeepBinds.Spec

@@ -220,7 +220,7 @@ spec = describe "IR Linter" do
     describe "multi-value nodes (#206)" do
       let f = refLocal (Name "f")
           pair = values (a :| [b])
-          bindPair body = letValues (paramNamed x :| [paramNamed y]) f body
+          bindPair = letValues (paramNamed x :| [paramNamed y]) f
 
       it "accepts a Values in a lambda tail" do
         lintWellApplied (inBinding (abstraction (paramNamed x) pair))
