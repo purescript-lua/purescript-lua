@@ -1,0 +1,13 @@
+spec: tuple_fold
+runtime: LuaJIT 2.1.1741730670
+workload: n=5000000 reps=4 result=124999750000
+aborts (distinct site -- reason):
+  Bench.TupleFold.lua:15 -- NYI: bytecode FNEW
+  Bench.TupleFold.lua:16 -- NYI: bytecode UCLO
+  Bench.TupleFold.lua:9 -- inner loop in root trace
+  tuple_fold.lua:22 -- inner loop in root trace
+bytecode end state (J*=compiled, I*=blacklisted):
+  Bench.TupleFold.lua:1 JFUNCF
+  Bench.TupleFold.lua:8 JLOOP
+  tuple_fold.lua:21 JLOOP
+counts: aborts=4 compiled=3 blacklisted=0
