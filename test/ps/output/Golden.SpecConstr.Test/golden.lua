@@ -1,0 +1,130 @@
+local M = {}
+local Data_Show_foreign = { showIntImpl = function(n) return tostring(n) end }
+local Data_Show_showIntImpl = Data_Show_foreign.showIntImpl
+local Effect_Console_foreign = {
+  log = function(s) return function() print(s) end end
+}
+local Data_Show_showInt = { show = Data_Show_showIntImpl }
+local Data_Tuple_append_S_w = function(s1_S_403, s2_S_404)
+  return s1_S_403 .. s2_S_404
+end
+local Data_Tuple_Tuple_S_w = function(value0, value1)
+  return { value0, value1 }
+end
+local Effect_Console_logShow_S_w = function(dictShow, a)
+  return Effect_Console_foreign.log(dictShow.show(a))
+end
+local Golden_SpecConstr_Test_sub_S_w = function(x_S_398, y_S_399)
+  return x_S_398 - y_S_399
+end
+M.Golden_SpecConstr_Test_sumCount = function(n)
+  local go_S_sc1Tuple
+  go_S_sc1Tuple = function(go_S_sc1Tuple_S_f1, go_S_sc1Tuple_S_f2)
+    while true do
+      if go_S_sc1Tuple_S_f2 < n then
+        go_S_sc1Tuple_S_f1, go_S_sc1Tuple_S_f2 = go_S_sc1Tuple_S_f1 + go_S_sc1Tuple_S_f2, go_S_sc1Tuple_S_f2 + 1
+      else
+        return { go_S_sc1Tuple_S_f1, go_S_sc1Tuple_S_f2 }
+      end
+    end
+  end
+  return go_S_sc1Tuple(0, 0)
+end
+local Golden_SpecConstr_Test_stepDown_S_sc1Just = function( stepDown_S_sc1Just_S_f1 )
+  while true do
+    if stepDown_S_sc1Just_S_f1 == 0 then
+      return 42
+    else
+      stepDown_S_sc1Just_S_f1 = Golden_SpecConstr_Test_sub_S_w(stepDown_S_sc1Just_S_f1, 1)
+    end
+  end
+end
+local Golden_SpecConstr_Test_stepDown = function(m)
+  local _S_cse449 = m[2]
+  local _S_cse448 = m[1]
+  if "Data.Maybe∷Maybe.Nothing" == _S_cse448 then
+    return 0
+  elseif "Data.Maybe∷Maybe.Just" == _S_cse448 then
+    if _S_cse449 == 0 then
+      return 42
+    else
+      return Golden_SpecConstr_Test_stepDown_S_sc1Just(Golden_SpecConstr_Test_sub_S_w(_S_cse449, 1))
+    end
+  else
+    return error("No patterns matched")
+  end
+end
+local Golden_SpecConstr_Test_ping_S_sc1Tuple
+local Golden_SpecConstr_Test_pong_S_sc1Tuple = function( pong_S_sc1Tuple_S_f1
+, pong_S_sc1Tuple_S_f2 )
+  if pong_S_sc1Tuple_S_f1 == 0 then
+    return pong_S_sc1Tuple_S_f2
+  else
+    return Golden_SpecConstr_Test_ping_S_sc1Tuple(Golden_SpecConstr_Test_sub_S_w(pong_S_sc1Tuple_S_f1, 1), pong_S_sc1Tuple_S_f2 + 2)
+  end
+end
+M.Golden_SpecConstr_Test_pong = function(t)
+  local _S_cse451 = t[2]
+  local _S_cse450 = t[1]
+  if _S_cse450 == 0 then
+    return _S_cse451
+  else
+    return Golden_SpecConstr_Test_ping_S_sc1Tuple(Golden_SpecConstr_Test_sub_S_w(_S_cse450, 1), _S_cse451 + 2)
+  end
+end
+Golden_SpecConstr_Test_ping_S_sc1Tuple = function( ping_S_sc1Tuple_S_f1
+, ping_S_sc1Tuple_S_f2 )
+  if ping_S_sc1Tuple_S_f1 == 0 then
+    return ping_S_sc1Tuple_S_f2
+  else
+    return Golden_SpecConstr_Test_pong_S_sc1Tuple(Golden_SpecConstr_Test_sub_S_w(ping_S_sc1Tuple_S_f1, 1), ping_S_sc1Tuple_S_f2 + 1)
+  end
+end
+M.Golden_SpecConstr_Test_ping = function(t)
+  local _S_cse453 = t[2]
+  local _S_cse452 = t[1]
+  if _S_cse452 == 0 then
+    return _S_cse453
+  else
+    return Golden_SpecConstr_Test_pong_S_sc1Tuple(Golden_SpecConstr_Test_sub_S_w(_S_cse452, 1), _S_cse453 + 1)
+  end
+end
+local Golden_SpecConstr_Test_blind_S_w
+Golden_SpecConstr_Test_blind_S_w = function(n)
+  if n == 0 then
+    return 0
+  else
+    return Golden_SpecConstr_Test_blind_S_w(Golden_SpecConstr_Test_sub_S_w(n, 1), Data_Tuple_Tuple_S_w(n, n))
+  end
+end
+M.Golden_SpecConstr_Test_blind = function(blind_S_p1)
+  return function(blind_S_p2)
+    return Golden_SpecConstr_Test_blind_S_w(blind_S_p1, blind_S_p2)
+  end
+end
+return (function()
+  local _ = Effect_Console_logShow_S_w({
+    show = function(v_S_86)
+      return Data_Tuple_append_S_w("(Tuple ", Data_Tuple_append_S_w(Data_Show_showIntImpl(v_S_86[1]), Data_Tuple_append_S_w(" ", Data_Tuple_append_S_w(Data_Show_showIntImpl(v_S_86[2]), ")"))))
+    end
+  }, (function()
+    local go_S_432_S_sc1Tuple
+    go_S_432_S_sc1Tuple = function( go_S_432_S_sc1Tuple_S_f1
+    , go_S_432_S_sc1Tuple_S_f2 )
+      while true do
+        if go_S_432_S_sc1Tuple_S_f2 < 5 then
+          go_S_432_S_sc1Tuple_S_f1, go_S_432_S_sc1Tuple_S_f2 = go_S_432_S_sc1Tuple_S_f1 + go_S_432_S_sc1Tuple_S_f2, go_S_432_S_sc1Tuple_S_f2 + 1
+        else
+          return { go_S_432_S_sc1Tuple_S_f1, go_S_432_S_sc1Tuple_S_f2 }
+        end
+      end
+    end
+    return go_S_432_S_sc1Tuple(0, 0)
+  end)())()
+  local _ = Effect_Console_logShow_S_w(Data_Show_showInt, Golden_SpecConstr_Test_stepDown_S_sc1Just(3))()
+  local _ = Effect_Console_logShow_S_w(Data_Show_showInt, Golden_SpecConstr_Test_stepDown({
+    "Data.Maybe∷Maybe.Nothing"
+  }))()
+  local _ = Effect_Console_logShow_S_w(Data_Show_showInt, Golden_SpecConstr_Test_ping_S_sc1Tuple(4, 10))()
+  return Effect_Console_logShow_S_w(Data_Show_showInt, Golden_SpecConstr_Test_blind_S_w(3, Data_Tuple_Tuple_S_w(1, 1)))()
+end)()

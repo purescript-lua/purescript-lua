@@ -1,0 +1,608 @@
+UberModule
+  { uberModuleBindings =
+    [ Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Show", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Data.Show" ) ".spago/p/prelude/5718c84fdde6247749cb053e816df696c30fe691/src/Data/Show.purs"
+        [ ( Nothing, Name "showIntImpl" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Show", qnameName = Name "showIntImpl"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
+        ( PropName "showIntImpl" )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Effect.Console" ) ".spago/p/console/f82835a0b873aafe6bd7b14dd30cc150553d4ab9/src/Effect/Console.purs"
+        [ ( Nothing, Name "log" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Show", qnameName = Name "showInt"
+        }, LiteralObject Nothing
+        [
+          ( PropName "show", Ref Nothing
+            ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) )
+          )
+        ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Tuple", qnameName = Name "append$w" }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "s1$403" ) :| [ ParamNamed Nothing ( Name "s2$404" ) ] )
+        ( PrimBinOp Nothing PrimConcat
+          ( Ref Nothing ( Local ( Name "s1$403" ) ) )
+          ( Ref Nothing ( Local ( Name "s2$404" ) ) )
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Tuple", qnameName = Name "Tuple$w" }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "value0" ) :| [ ParamNamed Nothing ( Name "value1" ) ] )
+        ( Ctor Nothing ProductType
+          ( ModuleName "Data.Tuple" )
+          ( TyName "Tuple" )
+          ( CtorName "Tuple" )
+          [ Ref Nothing ( Local ( Name "value0" ) ), Ref Nothing ( Local ( Name "value1" ) ) ]
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "logShow$w"
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "dictShow" ) :| [ ParamNamed Nothing ( Name "a" ) ] )
+        ( AppN Nothing
+          ( ObjectProp Nothing
+            ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
+            ( PropName "log" )
+          )
+          ( AppN Nothing
+            ( ObjectProp Nothing
+              ( Ref Nothing ( Local ( Name "dictShow" ) ) )
+              ( PropName "show" )
+            )
+            ( Ref Nothing ( Local ( Name "a" ) ) :| [] ) :| []
+          )
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.SpecConstr.Test", qnameName = Name "sub$w"
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "x$398" ) :| [ ParamNamed Nothing ( Name "y$399" ) ] )
+        ( PrimBinOp Nothing PrimSub
+          ( Ref Nothing ( Local ( Name "x$398" ) ) )
+          ( Ref Nothing ( Local ( Name "y$399" ) ) )
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.SpecConstr.Test", qnameName = Name "sumCount"
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "n" ) :| [] )
+        ( Let Nothing
+          ( RecursiveGroup
+            (
+              ( Nothing, Name "go$sc1Tuple", AbsN Nothing
+                ( ParamNamed Nothing
+                  ( Name "go$sc1Tuple$f1" ) :|
+                  [ ParamNamed Nothing ( Name "go$sc1Tuple$f2" ) ]
+                )
+                ( IfThenElse Nothing
+                  ( PrimBinOp Nothing PrimLt
+                    ( Ref Nothing ( Local ( Name "go$sc1Tuple$f2" ) ) )
+                    ( Ref Nothing ( Local ( Name "n" ) ) )
+                  )
+                  ( AppN Nothing
+                    ( Ref Nothing ( Local ( Name "go$sc1Tuple" ) ) )
+                    ( PrimBinOp Nothing PrimAdd
+                      ( Ref Nothing ( Local ( Name "go$sc1Tuple$f1" ) ) )
+                      ( Ref Nothing ( Local ( Name "go$sc1Tuple$f2" ) ) ) :|
+                      [ PrimBinOp Nothing PrimAdd
+                        ( Ref Nothing ( Local ( Name "go$sc1Tuple$f2" ) ) )
+                        ( LiteralInt Nothing 1 )
+                      ]
+                    )
+                  )
+                  ( Ctor Nothing ProductType
+                    ( ModuleName "Data.Tuple" )
+                    ( TyName "Tuple" )
+                    ( CtorName "Tuple" )
+                    [ Ref Nothing
+                      ( Local ( Name "go$sc1Tuple$f1" ) ), Ref Nothing
+                      ( Local ( Name "go$sc1Tuple$f2" ) )
+                    ]
+                  )
+                )
+              ) :| []
+            ) :| []
+          )
+          ( AppN Nothing
+            ( Ref Nothing ( Local ( Name "go$sc1Tuple" ) ) )
+            ( LiteralInt Nothing 0 :| [ LiteralInt Nothing 0 ] )
+          )
+        )
+      ), RecursiveGroup
+      (
+        ( QName
+          { qnameModuleName = ModuleName "Golden.SpecConstr.Test", qnameName = Name "stepDown$sc1Just"
+          }, AbsN Nothing
+          ( ParamNamed Nothing ( Name "stepDown$sc1Just$f1" ) :| [] )
+          ( IfThenElse Nothing
+            ( Eq Nothing
+              ( Ref Nothing ( Local ( Name "stepDown$sc1Just$f1" ) ) )
+              ( LiteralInt Nothing 0 )
+            )
+            ( LiteralInt Nothing 42 )
+            ( AppN Nothing
+              ( Ref Nothing
+                ( Imported ( ModuleName "Golden.SpecConstr.Test" ) ( Name "stepDown$sc1Just" ) )
+              )
+              ( AppN Nothing
+                ( Ref Nothing
+                  ( Imported ( ModuleName "Golden.SpecConstr.Test" ) ( Name "sub$w" ) )
+                )
+                ( Ref Nothing
+                  ( Local ( Name "stepDown$sc1Just$f1" ) ) :|
+                  [ LiteralInt Nothing 1 ]
+                ) :| []
+              )
+            )
+          )
+        ) :|
+        [
+          ( QName
+            { qnameModuleName = ModuleName "Golden.SpecConstr.Test", qnameName = Name "stepDown"
+            }, AbsN Nothing
+            ( ParamNamed Nothing ( Name "m" ) :| [] )
+            ( Let Nothing
+              ( Standalone
+                ( Nothing, Name "$cse449", DataArgumentByIndex Nothing SumType 0
+                  ( Ref Nothing ( Local ( Name "m" ) ) )
+                ) :| []
+              )
+              ( Let Nothing
+                ( Standalone
+                  ( Nothing, Name "$cse448", ReflectCtor Nothing
+                    ( Ref Nothing ( Local ( Name "m" ) ) )
+                  ) :| []
+                )
+                ( IfThenElse Nothing
+                  ( Eq Nothing
+                    ( LiteralString Nothing "Data.Maybe∷Maybe.Nothing" )
+                    ( Ref Nothing ( Local ( Name "$cse448" ) ) )
+                  )
+                  ( LiteralInt Nothing 0 )
+                  ( IfThenElse Nothing
+                    ( Eq Nothing
+                      ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
+                      ( Ref Nothing ( Local ( Name "$cse448" ) ) )
+                    )
+                    ( IfThenElse Nothing
+                      ( Eq Nothing
+                        ( Ref Nothing ( Local ( Name "$cse449" ) ) )
+                        ( LiteralInt Nothing 0 )
+                      )
+                      ( LiteralInt Nothing 42 )
+                      ( AppN Nothing
+                        ( Ref Nothing
+                          ( Imported
+                            ( ModuleName "Golden.SpecConstr.Test" )
+                            ( Name "stepDown$sc1Just" )
+                          )
+                        )
+                        ( AppN Nothing
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Golden.SpecConstr.Test" ) ( Name "sub$w" ) )
+                          )
+                          ( Ref Nothing
+                            ( Local ( Name "$cse449" ) ) :|
+                            [ LiteralInt Nothing 1 ]
+                          ) :| []
+                        )
+                      )
+                    )
+                    ( Exception Nothing "No patterns matched" )
+                  )
+                )
+              )
+            )
+          )
+        ]
+      ), RecursiveGroup
+      (
+        ( QName
+          { qnameModuleName = ModuleName "Golden.SpecConstr.Test", qnameName = Name "pong$sc1Tuple"
+          }, AbsN Nothing
+          ( ParamNamed Nothing
+            ( Name "pong$sc1Tuple$f1" ) :|
+            [ ParamNamed Nothing ( Name "pong$sc1Tuple$f2" ) ]
+          )
+          ( IfThenElse Nothing
+            ( Eq Nothing
+              ( Ref Nothing ( Local ( Name "pong$sc1Tuple$f1" ) ) )
+              ( LiteralInt Nothing 0 )
+            )
+            ( Ref Nothing ( Local ( Name "pong$sc1Tuple$f2" ) ) )
+            ( AppN Nothing
+              ( Ref Nothing
+                ( Imported ( ModuleName "Golden.SpecConstr.Test" ) ( Name "ping$sc1Tuple" ) )
+              )
+              ( AppN Nothing
+                ( Ref Nothing
+                  ( Imported ( ModuleName "Golden.SpecConstr.Test" ) ( Name "sub$w" ) )
+                )
+                ( Ref Nothing
+                  ( Local ( Name "pong$sc1Tuple$f1" ) ) :|
+                  [ LiteralInt Nothing 1 ]
+                ) :|
+                [ PrimBinOp Nothing PrimAdd
+                  ( Ref Nothing ( Local ( Name "pong$sc1Tuple$f2" ) ) )
+                  ( LiteralInt Nothing 2 )
+                ]
+              )
+            )
+          )
+        ) :|
+        [
+          ( QName
+            { qnameModuleName = ModuleName "Golden.SpecConstr.Test", qnameName = Name "pong"
+            }, AbsN Nothing
+            ( ParamNamed Nothing ( Name "t" ) :| [] )
+            ( Let Nothing
+              ( Standalone
+                ( Nothing, Name "$cse451", DataArgumentByIndex Nothing ProductType 1
+                  ( Ref Nothing ( Local ( Name "t" ) ) )
+                ) :| []
+              )
+              ( Let Nothing
+                ( Standalone
+                  ( Nothing, Name "$cse450", DataArgumentByIndex Nothing ProductType 0
+                    ( Ref Nothing ( Local ( Name "t" ) ) )
+                  ) :| []
+                )
+                ( IfThenElse Nothing
+                  ( Eq Nothing
+                    ( Ref Nothing ( Local ( Name "$cse450" ) ) )
+                    ( LiteralInt Nothing 0 )
+                  )
+                  ( Ref Nothing ( Local ( Name "$cse451" ) ) )
+                  ( AppN Nothing
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Golden.SpecConstr.Test" ) ( Name "ping$sc1Tuple" ) )
+                    )
+                    ( AppN Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Golden.SpecConstr.Test" ) ( Name "sub$w" ) )
+                      )
+                      ( Ref Nothing ( Local ( Name "$cse450" ) ) :| [ LiteralInt Nothing 1 ] ) :|
+                      [ PrimBinOp Nothing PrimAdd
+                        ( Ref Nothing ( Local ( Name "$cse451" ) ) )
+                        ( LiteralInt Nothing 2 )
+                      ]
+                    )
+                  )
+                )
+              )
+            )
+          ),
+          ( QName
+            { qnameModuleName = ModuleName "Golden.SpecConstr.Test", qnameName = Name "ping$sc1Tuple"
+            }, AbsN Nothing
+            ( ParamNamed Nothing
+              ( Name "ping$sc1Tuple$f1" ) :|
+              [ ParamNamed Nothing ( Name "ping$sc1Tuple$f2" ) ]
+            )
+            ( IfThenElse Nothing
+              ( Eq Nothing
+                ( Ref Nothing ( Local ( Name "ping$sc1Tuple$f1" ) ) )
+                ( LiteralInt Nothing 0 )
+              )
+              ( Ref Nothing ( Local ( Name "ping$sc1Tuple$f2" ) ) )
+              ( AppN Nothing
+                ( Ref Nothing
+                  ( Imported ( ModuleName "Golden.SpecConstr.Test" ) ( Name "pong$sc1Tuple" ) )
+                )
+                ( AppN Nothing
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Golden.SpecConstr.Test" ) ( Name "sub$w" ) )
+                  )
+                  ( Ref Nothing
+                    ( Local ( Name "ping$sc1Tuple$f1" ) ) :|
+                    [ LiteralInt Nothing 1 ]
+                  ) :|
+                  [ PrimBinOp Nothing PrimAdd
+                    ( Ref Nothing ( Local ( Name "ping$sc1Tuple$f2" ) ) )
+                    ( LiteralInt Nothing 1 )
+                  ]
+                )
+              )
+            )
+          ),
+          ( QName
+            { qnameModuleName = ModuleName "Golden.SpecConstr.Test", qnameName = Name "ping"
+            }, AbsN Nothing
+            ( ParamNamed Nothing ( Name "t" ) :| [] )
+            ( Let Nothing
+              ( Standalone
+                ( Nothing, Name "$cse453", DataArgumentByIndex Nothing ProductType 1
+                  ( Ref Nothing ( Local ( Name "t" ) ) )
+                ) :| []
+              )
+              ( Let Nothing
+                ( Standalone
+                  ( Nothing, Name "$cse452", DataArgumentByIndex Nothing ProductType 0
+                    ( Ref Nothing ( Local ( Name "t" ) ) )
+                  ) :| []
+                )
+                ( IfThenElse Nothing
+                  ( Eq Nothing
+                    ( Ref Nothing ( Local ( Name "$cse452" ) ) )
+                    ( LiteralInt Nothing 0 )
+                  )
+                  ( Ref Nothing ( Local ( Name "$cse453" ) ) )
+                  ( AppN Nothing
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Golden.SpecConstr.Test" ) ( Name "pong$sc1Tuple" ) )
+                    )
+                    ( AppN Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Golden.SpecConstr.Test" ) ( Name "sub$w" ) )
+                      )
+                      ( Ref Nothing ( Local ( Name "$cse452" ) ) :| [ LiteralInt Nothing 1 ] ) :|
+                      [ PrimBinOp Nothing PrimAdd
+                        ( Ref Nothing ( Local ( Name "$cse453" ) ) )
+                        ( LiteralInt Nothing 1 )
+                      ]
+                    )
+                  )
+                )
+              )
+            )
+          )
+        ]
+      ), RecursiveGroup
+      (
+        ( QName
+          { qnameModuleName = ModuleName "Golden.SpecConstr.Test", qnameName = Name "blind$w"
+          }, AbsN Nothing
+          ( ParamNamed Nothing ( Name "n" ) :| [ ParamUnused Nothing ] )
+          ( IfThenElse Nothing
+            ( Eq Nothing ( Ref Nothing ( Local ( Name "n" ) ) ) ( LiteralInt Nothing 0 ) )
+            ( LiteralInt Nothing 0 )
+            ( AppN Nothing
+              ( Ref Nothing
+                ( Imported ( ModuleName "Golden.SpecConstr.Test" ) ( Name "blind$w" ) )
+              )
+              ( AppN Nothing
+                ( Ref Nothing
+                  ( Imported ( ModuleName "Golden.SpecConstr.Test" ) ( Name "sub$w" ) )
+                )
+                ( Ref Nothing ( Local ( Name "n" ) ) :| [ LiteralInt Nothing 1 ] ) :|
+                [ AppN Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Data.Tuple" ) ( Name "Tuple$w" ) ) )
+                  ( Ref Nothing ( Local ( Name "n" ) ) :| [ Ref Nothing ( Local ( Name "n" ) ) ] )
+                ]
+              )
+            )
+          )
+        ) :|
+        [
+          ( QName
+            { qnameModuleName = ModuleName "Golden.SpecConstr.Test", qnameName = Name "blind"
+            }, AbsN Nothing
+            ( ParamNamed Nothing ( Name "blind$p1" ) :| [] )
+            ( AbsN Nothing
+              ( ParamNamed Nothing ( Name "blind$p2" ) :| [] )
+              ( AppN Nothing
+                ( Ref Nothing
+                  ( Imported ( ModuleName "Golden.SpecConstr.Test" ) ( Name "blind$w" ) )
+                )
+                ( Ref Nothing
+                  ( Local ( Name "blind$p1" ) ) :|
+                  [ Ref Nothing ( Local ( Name "blind$p2" ) ) ]
+                )
+              )
+            )
+          )
+        ]
+      )
+    ], uberModuleForeigns = [], uberModuleExports =
+    [
+      ( Name "sumCount", Ref Nothing
+        ( Imported ( ModuleName "Golden.SpecConstr.Test" ) ( Name "sumCount" ) )
+      ),
+      ( Name "stepDown", Ref Nothing
+        ( Imported ( ModuleName "Golden.SpecConstr.Test" ) ( Name "stepDown" ) )
+      ),
+      ( Name "ping", Ref Nothing
+        ( Imported ( ModuleName "Golden.SpecConstr.Test" ) ( Name "ping" ) )
+      ),
+      ( Name "pong", Ref Nothing
+        ( Imported ( ModuleName "Golden.SpecConstr.Test" ) ( Name "pong" ) )
+      ),
+      ( Name "blind", Ref Nothing
+        ( Imported ( ModuleName "Golden.SpecConstr.Test" ) ( Name "blind" ) )
+      ),
+      ( Name "main", AbsN Nothing
+        ( ParamUnused Nothing :| [] )
+        ( Let Nothing
+          ( Standalone
+            ( Nothing, Name "_", AppN Nothing
+              ( AppN Nothing
+                ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow$w" ) ) )
+                ( LiteralObject Nothing
+                  [
+                    ( PropName "show", AbsN Nothing
+                      ( ParamNamed Nothing ( Name "v$86" ) :| [] )
+                      ( AppN Nothing
+                        ( Ref Nothing
+                          ( Imported ( ModuleName "Data.Tuple" ) ( Name "append$w" ) )
+                        )
+                        ( LiteralString Nothing "(Tuple " :|
+                          [ AppN Nothing
+                            ( Ref Nothing
+                              ( Imported ( ModuleName "Data.Tuple" ) ( Name "append$w" ) )
+                            )
+                            ( AppN Nothing
+                              ( Ref Nothing
+                                ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) )
+                              )
+                              ( DataArgumentByIndex Nothing ProductType 0
+                                ( Ref Nothing ( Local ( Name "v$86" ) ) ) :| []
+                              ) :|
+                              [ AppN Nothing
+                                ( Ref Nothing
+                                  ( Imported ( ModuleName "Data.Tuple" ) ( Name "append$w" ) )
+                                )
+                                ( LiteralString Nothing " " :|
+                                  [ AppN Nothing
+                                    ( Ref Nothing
+                                      ( Imported ( ModuleName "Data.Tuple" ) ( Name "append$w" ) )
+                                    )
+                                    ( AppN Nothing
+                                      ( Ref Nothing
+                                        ( Imported
+                                          ( ModuleName "Data.Show" )
+                                          ( Name "showIntImpl" )
+                                        )
+                                      )
+                                      ( DataArgumentByIndex Nothing ProductType 1
+                                        ( Ref Nothing ( Local ( Name "v$86" ) ) ) :| []
+                                      ) :|
+                                      [ LiteralString Nothing ")" ]
+                                    )
+                                  ]
+                                )
+                              ]
+                            )
+                          ]
+                        )
+                      )
+                    )
+                  ] :|
+                  [ Let Nothing
+                    ( RecursiveGroup
+                      (
+                        ( Nothing, Name "go$432$sc1Tuple", AbsN Nothing
+                          ( ParamNamed Nothing
+                            ( Name "go$432$sc1Tuple$f1" ) :|
+                            [ ParamNamed Nothing ( Name "go$432$sc1Tuple$f2" ) ]
+                          )
+                          ( IfThenElse Nothing
+                            ( PrimBinOp Nothing PrimLt
+                              ( Ref Nothing ( Local ( Name "go$432$sc1Tuple$f2" ) ) )
+                              ( LiteralInt Nothing 5 )
+                            )
+                            ( AppN Nothing
+                              ( Ref Nothing ( Local ( Name "go$432$sc1Tuple" ) ) )
+                              ( PrimBinOp Nothing PrimAdd
+                                ( Ref Nothing ( Local ( Name "go$432$sc1Tuple$f1" ) ) )
+                                ( Ref Nothing ( Local ( Name "go$432$sc1Tuple$f2" ) ) ) :|
+                                [ PrimBinOp Nothing PrimAdd
+                                  ( Ref Nothing ( Local ( Name "go$432$sc1Tuple$f2" ) ) )
+                                  ( LiteralInt Nothing 1 )
+                                ]
+                              )
+                            )
+                            ( Ctor Nothing ProductType
+                              ( ModuleName "Data.Tuple" )
+                              ( TyName "Tuple" )
+                              ( CtorName "Tuple" )
+                              [ Ref Nothing
+                                ( Local ( Name "go$432$sc1Tuple$f1" ) ), Ref Nothing
+                                ( Local ( Name "go$432$sc1Tuple$f2" ) )
+                              ]
+                            )
+                          )
+                        ) :| []
+                      ) :| []
+                    )
+                    ( AppN Nothing
+                      ( Ref Nothing ( Local ( Name "go$432$sc1Tuple" ) ) )
+                      ( LiteralInt Nothing 0 :| [ LiteralInt Nothing 0 ] )
+                    )
+                  ]
+                )
+              )
+              ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+            ) :|
+            [ Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow$w" ) ) )
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Data.Show" ) ( Name "showInt" ) ) :|
+                    [ AppN Nothing
+                      ( Ref Nothing
+                        ( Imported
+                          ( ModuleName "Golden.SpecConstr.Test" )
+                          ( Name "stepDown$sc1Just" )
+                        )
+                      )
+                      ( LiteralInt Nothing 3 :| [] )
+                    ]
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              ), Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow$w" ) ) )
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Data.Show" ) ( Name "showInt" ) ) :|
+                    [ AppN Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Golden.SpecConstr.Test" ) ( Name "stepDown" ) )
+                      )
+                      ( Ctor Nothing SumType
+                        ( ModuleName "Data.Maybe" )
+                        ( TyName "Maybe" )
+                        ( CtorName "Nothing" ) [] :| []
+                      )
+                    ]
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              ), Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow$w" ) ) )
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Data.Show" ) ( Name "showInt" ) ) :|
+                    [ AppN Nothing
+                      ( Ref Nothing
+                        ( Imported
+                          ( ModuleName "Golden.SpecConstr.Test" )
+                          ( Name "ping$sc1Tuple" )
+                        )
+                      )
+                      ( LiteralInt Nothing 4 :| [ LiteralInt Nothing 10 ] )
+                    ]
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              )
+            ]
+          )
+          ( AppN Nothing
+            ( AppN Nothing
+              ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow$w" ) ) )
+              ( Ref Nothing
+                ( Imported ( ModuleName "Data.Show" ) ( Name "showInt" ) ) :|
+                [ AppN Nothing
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Golden.SpecConstr.Test" ) ( Name "blind$w" ) )
+                  )
+                  ( LiteralInt Nothing 3 :|
+                    [ AppN Nothing
+                      ( Ref Nothing ( Imported ( ModuleName "Data.Tuple" ) ( Name "Tuple$w" ) ) )
+                      ( LiteralInt Nothing 1 :| [ LiteralInt Nothing 1 ] )
+                    ]
+                  )
+                ]
+              )
+            )
+            ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+          )
+        )
+      )
+    ]
+  }

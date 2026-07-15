@@ -36,6 +36,12 @@ import Language.PureScript.Backend.IR.Pass
   , runSteps
   , runStepsChecked
   )
+import Language.PureScript.Backend.IR.Query
+  ( CtorShape (..)
+  , ctorShapeTag
+  , resolveKnownCtorApp
+  )
+import Language.PureScript.Backend.IR.SpecConstr (specConstr)
 import Language.PureScript.Backend.IR.Supply (SupplyM, freshName, runSupply)
 import Language.PureScript.Backend.IR.Types
   ( AlgebraicType (SumType)
@@ -150,7 +156,16 @@ optimizerPipeline policy =
     -- the case-of-known-constructor folds (#177/#213/#214), collapsing
     -- Maybe/Either/Writer/State chains into straight-line code. Code growth
     -- is bounded by 'inlineSizeBudget'.
-    RunFixpoint "specialize+dce" (specializePass :| [dcePass])
+    --
+    -- Call-pattern specialization (issue #208) rides in the same fixpoint:
+    -- a recursive binding whose recursion passes a known constructor at a
+    -- scrutinized parameter position gets an unboxed specialized copy, and
+    -- the next optimize round's constructor folds collapse the reboxes its
+    -- body carries. Each round mints one specialization layer, so the
+    -- fixpoint provides the bounded iteration a nested accumulator needs;
+    -- the per-binding cap in Language.PureScript.Backend.IR.SpecConstr
+    -- keeps the minting finite.
+    RunFixpoint "specialize+dce" (specializePass :| [dcePass, specConstrPass])
   , -- Rebuild sharing for the foreign-accessor reads that dissolution
     -- and the call-site pastes above duplicated: a read surviving at
     -- two or more sites is re-bound to its linker name, which stage-2
@@ -220,6 +235,13 @@ optimizerPipeline policy =
     Pass
       { passName = "specialize"
       , passRun = optimizeModule InlineCallSites policy
+      , passRequires = guc
+      , passEnsures = guc
+      }
+  specConstrPass =
+    Pass
+      { passName = "spec-constr"
+      , passRun = specConstr (uncurryVeto policy)
       , passRequires = guc
       , passEnsures = guc
       }
@@ -1183,7 +1205,10 @@ propagateKnownCtorThroughLet env = \case
     go _before [] = Nothing
     go before (grouping : after) = case grouping of
       Standalone (_bAnn, name, rhs)
-        | Just (algTy, arity, args, tag) ← resolveKnownCtorApp env rhs
+        | Just (shape, args) ← resolveKnownCtorApp env rhs
+        , let algTy = ctorShapeType shape
+              arity = fromIntegral (length args) ∷ Natural
+              tag = ctorShapeTag shape
         , -- A self-referencing RHS cannot arise under GUC (a Standalone RHS
           -- does not see its own binder), but 'optimizedExpression' also runs
           -- on non-GUC input; dropping the binding would then dangle the
@@ -1265,110 +1290,16 @@ reduceKnownCtorRefRead env =
     -- Field reads fold only at the constructor's own algebraic type, as
     -- in 'reduceKnownConstructor'.
     DataArgumentByIndex ann algTy i spine
-      | Just (ctorAlgTy, _arity, args, _tag) ← resolveKnownCtorApp env spine
-      , algTy == ctorAlgTy
+      | Just (shape, args) ← resolveKnownCtorApp env spine
+      , algTy == ctorShapeType shape
       , Just arg ← args !!? fromIntegral i →
           Just (setAnn ann arg)
     -- Tag reads fold for sum types only, as in 'reduceKnownConstructor'.
     ReflectCtor ann spine
-      | Just (SumType, _arity, _args, tag) ← resolveKnownCtorApp env spine →
-          Just (LiteralString ann tag)
+      | Just (shape, _args) ← resolveKnownCtorApp env spine
+      , SumType ← ctorShapeType shape →
+          Just (LiteralString ann (ctorShapeTag shape))
     _ → Nothing
-
-{- | Recognise a known saturated constructor value and return its algebraic
-type, arity, field arguments, and tag string. It covers every shape a
-constructor value takes after uncurrying (see Note [Constructor applications
-are saturated]):
-
-  * an in-place 'Ctor' node (saturated by construction);
-  * an n-ary worker call @AppN (Ref Cʷ) [a₁,…,aₙ]@ — the shape the early
-    uncurry run rewrites a saturated arity-≥2 site into. 'unwindApp' does
-    not flatten a multi-argument 'AppN' (Note [n-ary application]), so this
-    shape is matched directly, not through the unary spine — miss it and
-    the folds silently stop firing on monadic chains;
-  * a curried unary spine @App (… (App (Ref C) a₁) …) aₙ@ — an arity-1
-    constructor reference, or an arity-≥2 curried wrapper reference a site
-    that saturates only after magicDo/flattening still carries before the
-    late uncurry run.
-
-A reference is resolved through the inline environment by 'ctorFunctionShape',
-which reads only the constructor's declared arity and tag — it pastes no
-'Ctor' node, so a chain that does not fold is not pessimised into pasted
-constructor thunks (issue #180). The result is returned only when the
-application is saturated (argument count equal to the declared arity).
--}
-resolveKnownCtorApp
-  ∷ InlineEnv → Exp → Maybe (AlgebraicType, Natural, [Exp], Text)
-resolveKnownCtorApp env = \case
-  Ctor _ algTy modName tyName ctorName args →
-    Just
-      ( algTy
-      , fromIntegral (length args)
-      , args
-      , ctorId modName tyName ctorName
-      )
-  AppN _ (Ref _ ctorRef) args
-    | Just (algTy, arity, tag) ← ctorFunctionShape env ctorRef
-    , arity == length args →
-        Just (algTy, fromIntegral arity, toList args, tag)
-  expr
-    | (Ref _ ctorRef, args@(_ : _)) ← unwindApp expr
-    , Just (algTy, arity, tag) ← ctorFunctionShape env ctorRef
-    , arity == length args →
-        Just (algTy, fromIntegral arity, args, tag)
-  _ → Nothing
-
-{- | The algebraic type, arity, and tag of a top-level binding that is a
-constructor /function/: the manifest lambda chain 'mkConstructor' emits over
-a saturated 'Ctor' of references to its parameters, the n-ary worker the
-uncurry split derives from it, or the curried wrapper delegating to such a
-worker. Resolving reads only the declaration, never pasting a 'Ctor' node.
-The visited set makes the wrapper→worker hop terminate on the arbitrary
-(possibly cyclic) input 'optimizedExpression' also runs on.
--}
-ctorFunctionShape
-  ∷ InlineEnv → Qualified Name → Maybe (AlgebraicType, Int, Text)
-ctorFunctionShape env = go Set.empty
- where
-  go visited ctorRef
-    | ctorRef `Set.member` visited = Nothing
-    | otherwise = do
-        rhs ← Map.lookup ctorRef env
-        let (params, body) = peelCtorParams rhs
-        case body of
-          Ctor _ algTy modName tyName ctorName args
-            | argsAreRefsTo params args →
-                Just (algTy, length params, ctorId modName tyName ctorName)
-          AppN _ (Ref _ workerRef) wargs
-            | argsAreRefsTo params (toList wargs)
-            , Just (algTy, arity, tag) ← go (Set.insert ctorRef visited) workerRef
-            , arity == length params →
-                Just (algTy, arity, tag)
-          _ → Nothing
-
-{- | Peel leading lambda parameters (through unary 'Abs' and n-ary 'AbsN'), as
-long as every one is named, returning the names in order and the body.
--}
-peelCtorParams ∷ Exp → ([Name], Exp)
-peelCtorParams = go []
- where
-  go ∷ [Name] → Exp → ([Name], Exp)
-  go acc = \case
-    AbsN _ params body
-      | Just names ← traverse paramName (toList params) →
-          go (acc <> names) body
-    e → (acc, e)
-
-{- | Whether the expressions are exactly local references to the given names,
-in order — a constructor lambda passing its parameters straight through.
--}
-argsAreRefsTo ∷ [Name] → [Exp] → Bool
-argsAreRefsTo names args =
-  length names == length args && and (zipWith isRefTo names args)
- where
-  isRefTo ∷ Name → Exp → Bool
-  isRefTo name (Ref _ (Local n)) = n == name
-  isRefTo _ _ = False
 
 {- | Resolve a method projection off a known top-level dictionary (issue
 #180). When @dict@ is a reference to a top-level 'LiteralObject' binding,
