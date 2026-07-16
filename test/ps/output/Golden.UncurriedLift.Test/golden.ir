@@ -106,11 +106,9 @@ UberModule
         { qnameModuleName = ModuleName "Golden.UncurriedLift.Test", qnameName = Name "addOnePlusTwoTo"
         }, AbsN Nothing
         ( ParamNamed Nothing ( Name "c$682" ) :| [] )
-        ( AppN Nothing
-          ( Ref Nothing ( Imported ( ModuleName "Golden.UncurriedLift.Test" ) ( Name "add3" ) ) )
-          ( LiteralInt Nothing 1 :|
-            [ LiteralInt Nothing 2, Ref Nothing ( Local ( Name "c$682" ) ) ]
-          )
+        ( PrimBinOp Nothing PrimAdd
+          ( LiteralInt Nothing 3 )
+          ( Ref Nothing ( Local ( Name "c$682" ) ) )
         )
       )
     ], uberModuleForeigns = [], uberModuleExports =
@@ -155,14 +153,7 @@ UberModule
                   ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
                   ( AppN Nothing
                     ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
-                    ( AppN Nothing
-                      ( Ref Nothing
-                        ( Imported ( ModuleName "Golden.UncurriedLift.Test" ) ( Name "add3" ) )
-                      )
-                      ( LiteralInt Nothing 1 :|
-                        [ LiteralInt Nothing 2, LiteralInt Nothing 3 ]
-                      ) :| []
-                    ) :| []
+                    ( LiteralInt Nothing 6 :| [] ) :| []
                   )
                 )
                 ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
@@ -192,14 +183,7 @@ UberModule
                   ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
                   ( AppN Nothing
                     ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
-                    ( AppN Nothing
-                      ( Ref Nothing
-                        ( Imported ( ModuleName "Golden.UncurriedLift.Test" ) ( Name "add3" ) )
-                      )
-                      ( LiteralInt Nothing 1 :|
-                        [ LiteralInt Nothing 2, LiteralInt Nothing 100 ]
-                      ) :| []
-                    ) :| []
+                    ( LiteralInt Nothing 103 :| [] ) :| []
                   )
                 )
                 ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
@@ -209,14 +193,7 @@ UberModule
                   ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
                   ( AppN Nothing
                     ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
-                    ( AppN Nothing
-                      ( Ref Nothing
-                        ( Imported ( ModuleName "Golden.UncurriedLift.Test" ) ( Name "add3" ) )
-                      )
-                      ( LiteralInt Nothing 1 :|
-                        [ LiteralInt Nothing 2, LiteralInt Nothing 200 ]
-                      ) :| []
-                    ) :| []
+                    ( LiteralInt Nothing 203 :| [] ) :| []
                   )
                 )
                 ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
