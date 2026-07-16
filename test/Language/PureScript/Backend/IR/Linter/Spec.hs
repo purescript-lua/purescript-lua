@@ -24,12 +24,15 @@ import Language.PureScript.Backend.IR.Types
   , abstractionN
   , application
   , applicationN
+  , ifThenElse
+  , letValues
   , lets
   , literalInt
   , noAnn
   , paramNamed
   , paramUnused
   , refLocal
+  , values
   )
 import Language.PureScript.Names (runtimeLazyName)
 import Test.Hspec (Spec, describe, it, shouldBe)
@@ -212,3 +215,61 @@ spec = describe "IR Linter" do
             (abstractionN (paramUnused :| [paramNamed x]) (refLocal x))
         )
         `shouldBe` [NonTrailingUnusedParam (InBinding itQName)]
+
+    -- See Note [Multi-value results]
+    describe "multi-value nodes (#206)" do
+      let f = refLocal (Name "f")
+          pair = values (a :| [b])
+          bindPair = letValues (paramNamed x :| [paramNamed y]) f
+
+      it "accepts a Values in a lambda tail" do
+        lintWellApplied (inBinding (abstraction (paramNamed x) pair))
+          `shouldBe` []
+
+      it "accepts a Values behind Let bodies and IfThenElse branches" do
+        lintWellApplied
+          ( inBinding . abstraction (paramNamed x) $
+              lets
+                (Standalone (noAnn, y, a) :| [])
+                (ifThenElse (refLocal x) pair (values (b :| [c])))
+          )
+          `shouldBe` []
+
+      it "accepts a Values as a LetValues right-hand side" do
+        lintWellApplied
+          (inBinding (abstraction (paramNamed x) (bindPair (refLocal y))))
+          `shouldBe` []
+
+      it "flags a Values in an argument position" do
+        lintWellApplied
+          (inBinding (application (refLocal (Name "g")) pair))
+          `shouldBe` [ValuesOutsideTail (InBinding itQName)]
+
+      it "flags a Values in an IfThenElse condition" do
+        lintWellApplied
+          ( inBinding . abstraction (paramNamed x) $
+              ifThenElse pair a b
+          )
+          `shouldBe` [ValuesOutsideTail (InBinding itQName)]
+
+      it "flags a Values in a Let grouping right-hand side" do
+        -- A grouping RHS is bound to one name, so it is a single-value
+        -- slot even inside a multi-value tail.
+        lintWellApplied
+          ( inBinding . abstraction (paramNamed x) $
+              lets (Standalone (noAnn, y, pair) :| []) (refLocal y)
+          )
+          `shouldBe` [ValuesOutsideTail (InBinding itQName)]
+
+      it "flags a named LetValues binder after an unused one" do
+        lintWellApplied
+          ( inBinding . abstraction (paramNamed x) $
+              letValues (paramUnused :| [paramNamed y]) f (refLocal y)
+          )
+          `shouldBe` [NonTrailingUnusedParam (InBinding itQName)]
+
+      it "scopes LetValues binders over the body only" do
+        -- The binder does not reach the RHS, so an RHS reference to it
+        -- is unbound; the body reference is fine.
+        let e = letValues (paramNamed y :| []) (refLocal y) (refLocal y)
+        unboundLocals e `shouldBe` [y]

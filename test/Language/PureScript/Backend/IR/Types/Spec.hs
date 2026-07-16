@@ -27,6 +27,7 @@ import Language.PureScript.Backend.IR.Types
   , countFreeRefs
   , eq
   , freshenBinders
+  , letValues
   , lets
   , literalBool
   , literalInt
@@ -39,6 +40,7 @@ import Language.PureScript.Backend.IR.Types
   , rewriteExpTopDownM
   , substituteCopyM
   , substituteMoveM
+  , values
   )
 import Language.PureScript.Backend.IR.Uniquify (uniquifyNamesInExpr)
 import Test.Hspec (Spec, SpecWith, describe, it, shouldBe)
@@ -209,6 +211,65 @@ spec = describe "Types" do
             (literalInt 1)
         )
         === True
+
+  -- See Note [Multi-value results]
+  describe "multi-value nodes (Values / LetValues)" do
+    let a = Name "a"
+        b = Name "b"
+        f = Name "f"
+        s = Name "s"
+
+    test "countFreeRefs: LetValues binders bind in the body only" do
+      let e =
+            letValues
+              (paramNamed a :| [paramNamed b])
+              (application (refLocal f) (refLocal s))
+              (application (refLocal a) (refLocal b))
+      countFreeRefs e === Map.fromList [(Local f, 1), (Local s, 1)]
+
+    test "countFreeRefs: the RHS does not see the binders" do
+      -- The RHS reference to a resolves to the enclosing scope, so it
+      -- is free even though a binder of the same name follows.
+      let e = letValues (paramNamed a :| []) (refLocal a) (refLocal a)
+      countFreeRef (Local a) e === 1
+
+    test "alphaEq: identifies LetValues differing only in binder names" do
+      alphaEq
+        (letValues (paramNamed a :| []) (refLocal f) (refLocal a))
+        (letValues (paramNamed b :| []) (refLocal f) (refLocal b))
+        === True
+
+    test "alphaEq: resolves the RHS against the outer scope" do
+      -- Both RHS references are free occurrences of the same outer a;
+      -- the differing binder names do not affect them.
+      alphaEq
+        (letValues (paramNamed a :| []) (refLocal a) (literalInt 1))
+        (letValues (paramNamed b :| []) (refLocal a) (literalInt 1))
+        === True
+
+    test "alphaEq: distinguishes a bound body reference from a free one" do
+      alphaEq
+        (letValues (paramNamed a :| []) (refLocal f) (refLocal a))
+        (letValues (paramNamed b :| []) (refLocal f) (refLocal a))
+        === False
+
+    test "alphaEq: distinguishes Values by element count" do
+      alphaEq
+        (values (refLocal a :| []))
+        (values (refLocal a :| [refLocal a]))
+        === False
+
+    it "freshenBinders: renames the binders and body references only" do
+      -- The RHS reference stays a free occurrence of the outer a; the
+      -- body reference follows its renamed binder.
+      runSupply
+        ( freshenBinders
+            (letValues (paramNamed a :| []) (refLocal a) (refLocal a))
+        )
+        `shouldBe` letValues
+          (paramNamed (Name "a$0") :| [])
+          (refLocal a)
+          (refLocal (Name "a$0"))
 
   describe "rewrite drivers" do
     let x = Name "x"

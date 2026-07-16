@@ -141,6 +141,7 @@ import Language.PureScript.Backend.IR.Types
   , expSize
   , isNonRecursiveLiteral
   , noAnn
+  , paramName
   , setAnn
   , subexpressions
   )
@@ -275,13 +276,20 @@ collectBlock root =
   recordLetBinders ∷ Exp → State BlockAnalysis ()
   recordLetBinders = \case
     Let _ groupings _ →
-      modify \s →
-        let names = bindingNames =<< toList groupings
-         in s
-              { blockBound = foldr Set.insert (blockBound s) names
-              , blockLocalCount = blockLocalCount s + length names
-              }
+      modify (addBound (bindingNames =<< toList groupings))
+    -- LetValues binders are block-bound names and local slots exactly
+    -- like Let binders: a hoist whose representative references one
+    -- would float above its binding and dangle.
+    LetValues _ params _ _ →
+      modify (addBound (mapMaybe paramName (toList params)))
     _ → pass
+   where
+    addBound ∷ [Name] → BlockAnalysis → BlockAnalysis
+    addBound names s =
+      s
+        { blockBound = foldr Set.insert (blockBound s) names
+        , blockLocalCount = blockLocalCount s + length names
+        }
 
   descend ∷ Exp → State BlockAnalysis ()
   descend = traverse_ go . toListOf subexpressions
@@ -437,16 +445,6 @@ alphaKey = canonicalize . void
     AbsN ann params body → do
       (renames', params') ← mapAccumM renameParam renames params
       AbsN ann params' <$> go renames' body
-     where
-      renameParam
-        ∷ Map Name Name
-        → Parameter ()
-        → State Natural (Map Name Name, Parameter ())
-      renameParam rs = \case
-        p@(ParamUnused _paramAnn) → pure (rs, p)
-        ParamNamed paramAnn name → do
-          name' ← mint
-          pure (Map.insert name name' rs, ParamNamed paramAnn name')
     Let ann binds body → do
       -- Under unique binders no Let name can be referenced before it is
       -- bound, so all the groupings can enter the rename map up front
@@ -463,7 +461,23 @@ alphaKey = canonicalize . void
             (bindAnn,Map.findWithDefault name name renames',)
               <$> go renames' expr
       Let ann <$> traverse (traverse renameBound) binds <*> go renames' body
+    -- The RHS is canonicalized under the incoming map — the binders
+    -- scope over the body only (Note [Multi-value results]).
+    LetValues ann params rhs body → do
+      rhs' ← go renames rhs
+      (renames', params') ← mapAccumM renameParam renames params
+      LetValues ann params' rhs' <$> go renames' body
     other → traverseOf subexpressions (go renames) other
+
+  renameParam
+    ∷ Map Name Name
+    → Parameter ()
+    → State Natural (Map Name Name, Parameter ())
+  renameParam rs = \case
+    p@(ParamUnused _paramAnn) → pure (rs, p)
+    ParamNamed paramAnn name → do
+      name' ← mint
+      pure (Map.insert name name' rs, ParamNamed paramAnn name')
 
   mint ∷ State Natural Name
   mint = state \n → (Name ("$key" <> show n), n + 1)

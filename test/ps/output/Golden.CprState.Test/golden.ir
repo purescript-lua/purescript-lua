@@ -1,0 +1,1110 @@
+UberModule
+  { uberModuleBindings =
+    [ Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Unit", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Data.Unit" ) ".spago/p/prelude/5718c84fdde6247749cb053e816df696c30fe691/src/Data/Unit.purs"
+        [ ( Just Never, Name "unit" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Unit", qnameName = Name "unit"
+        }, ObjectProp ( Just Never )
+        ( Ref Nothing ( Imported ( ModuleName "Data.Unit" ) ( Name "foreign" ) ) )
+        ( PropName "unit" )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Show", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Data.Show" ) ".spago/p/prelude/5718c84fdde6247749cb053e816df696c30fe691/src/Data/Show.purs"
+        [ ( Nothing, Name "showIntImpl" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Effect.Console" ) ".spago/p/console/f82835a0b873aafe6bd7b14dd30cc150553d4ab9/src/Effect/Console.purs"
+        [ ( Nothing, Name "log" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Tuple", qnameName = Name "Tuple$w" }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "value0" ) :| [ ParamNamed Nothing ( Name "value1" ) ] )
+        ( Ctor Nothing ProductType
+          ( ModuleName "Data.Tuple" )
+          ( TyName "Tuple" )
+          ( CtorName "Tuple" )
+          [ Ref Nothing ( Local ( Name "value0" ) ), Ref Nothing ( Local ( Name "value1" ) ) ]
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Identity", qnameName = Name "applyIdentity"
+        }, LiteralObject Nothing
+        [
+          ( PropName "apply", AbsN Nothing
+            ( ParamNamed Nothing ( Name "v" ) :| [] )
+            ( AbsN Nothing
+              ( ParamNamed Nothing ( Name "v1" ) :| [] )
+              ( AppN Nothing
+                ( Ref Nothing ( Local ( Name "v" ) ) )
+                ( Ref Nothing ( Local ( Name "v1" ) ) :| [] )
+              )
+            )
+          ),
+          ( PropName "Functor0", AbsN Nothing
+            ( ParamUnused Nothing :| [] )
+            ( LiteralObject Nothing
+              [
+                ( PropName "map", AbsN Nothing
+                  ( ParamNamed Nothing ( Name "f$521" ) :| [] )
+                  ( AbsN Nothing
+                    ( ParamNamed Nothing ( Name "m$522" ) :| [] )
+                    ( AppN Nothing
+                      ( Ref Nothing ( Local ( Name "f$521" ) ) )
+                      ( Ref Nothing ( Local ( Name "m$522" ) ) :| [] )
+                    )
+                  )
+                )
+              ]
+            )
+          )
+        ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Identity", qnameName = Name "monadIdentity"
+        }, LiteralObject Nothing
+        [
+          ( PropName "Applicative0", AbsN Nothing
+            ( ParamUnused Nothing :| [] )
+            ( LiteralObject Nothing
+              [
+                ( PropName "pure", AbsN Nothing
+                  ( ParamNamed Nothing ( Name "x$523" ) :| [] )
+                  ( Ref Nothing ( Local ( Name "x$523" ) ) )
+                ),
+                ( PropName "Apply0", AbsN Nothing
+                  ( ParamUnused Nothing :| [] )
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Data.Identity" ) ( Name "applyIdentity" ) )
+                  )
+                )
+              ]
+            )
+          ),
+          ( PropName "Bind1", AbsN Nothing
+            ( ParamUnused Nothing :| [] )
+            ( LiteralObject Nothing
+              [
+                ( PropName "bind", AbsN Nothing
+                  ( ParamNamed Nothing ( Name "v$78" ) :| [] )
+                  ( AbsN Nothing
+                    ( ParamNamed Nothing ( Name "f$79" ) :| [] )
+                    ( AppN Nothing
+                      ( Ref Nothing ( Local ( Name "f$79" ) ) )
+                      ( Ref Nothing ( Local ( Name "v$78" ) ) :| [] )
+                    )
+                  )
+                ),
+                ( PropName "Apply0", AbsN Nothing
+                  ( ParamUnused Nothing :| [] )
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Data.Identity" ) ( Name "applyIdentity" ) )
+                  )
+                )
+              ]
+            )
+          )
+        ]
+      ), RecursiveGroup
+      (
+        ( QName
+          { qnameModuleName = ModuleName "Control.Monad.State.Trans", qnameName = Name "monadStateT"
+          }, AbsN Nothing
+          ( ParamNamed Nothing ( Name "dictMonad" ) :| [] )
+          ( LiteralObject Nothing
+            [
+              ( PropName "Applicative0", AbsN Nothing
+                ( ParamUnused Nothing :| [] )
+                ( AppN Nothing
+                  ( Ref Nothing
+                    ( Imported
+                      ( ModuleName "Control.Monad.State.Trans" )
+                      ( Name "applicativeStateT" )
+                    )
+                  )
+                  ( Ref Nothing ( Local ( Name "dictMonad" ) ) :| [] )
+                )
+              ),
+              ( PropName "Bind1", AbsN Nothing
+                ( ParamUnused Nothing :| [] )
+                ( AppN Nothing
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Control.Monad.State.Trans" ) ( Name "bindStateT" ) )
+                  )
+                  ( Ref Nothing ( Local ( Name "dictMonad" ) ) :| [] )
+                )
+              )
+            ]
+          )
+        ) :|
+        [
+          ( QName
+            { qnameModuleName = ModuleName "Control.Monad.State.Trans", qnameName = Name "bindStateT"
+            }, AbsN Nothing
+            ( ParamNamed Nothing ( Name "dictMonad" ) :| [] )
+            ( LiteralObject Nothing
+              [
+                ( PropName "bind", AbsN Nothing
+                  ( ParamNamed Nothing ( Name "v" ) :| [] )
+                  ( AbsN Nothing
+                    ( ParamNamed Nothing ( Name "f" ) :| [] )
+                    ( AbsN Nothing
+                      ( ParamNamed Nothing ( Name "s" ) :| [] )
+                      ( AppN Nothing
+                        ( AppN Nothing
+                          ( ObjectProp Nothing
+                            ( AppN Nothing
+                              ( ObjectProp Nothing
+                                ( Ref Nothing ( Local ( Name "dictMonad" ) ) )
+                                ( PropName "Bind1" )
+                              )
+                              ( Ref Nothing
+                                ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| []
+                              )
+                            )
+                            ( PropName "bind" )
+                          )
+                          ( AppN Nothing
+                            ( Ref Nothing ( Local ( Name "v" ) ) )
+                            ( Ref Nothing ( Local ( Name "s" ) ) :| [] ) :| []
+                          )
+                        )
+                        ( AbsN Nothing
+                          ( ParamNamed Nothing ( Name "v1" ) :| [] )
+                          ( AppN Nothing
+                            ( AppN Nothing
+                              ( Ref Nothing ( Local ( Name "f" ) ) )
+                              ( DataArgumentByIndex Nothing ProductType 0
+                                ( Ref Nothing ( Local ( Name "v1" ) ) ) :| []
+                              )
+                            )
+                            ( DataArgumentByIndex Nothing ProductType 1
+                              ( Ref Nothing ( Local ( Name "v1" ) ) ) :| []
+                            )
+                          ) :| []
+                        )
+                      )
+                    )
+                  )
+                ),
+                ( PropName "Apply0", AbsN Nothing
+                  ( ParamUnused Nothing :| [] )
+                  ( AppN Nothing
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Control.Monad.State.Trans" ) ( Name "applyStateT" ) )
+                    )
+                    ( Ref Nothing ( Local ( Name "dictMonad" ) ) :| [] )
+                  )
+                )
+              ]
+            )
+          ),
+          ( QName
+            { qnameModuleName = ModuleName "Control.Monad.State.Trans", qnameName = Name "applyStateT"
+            }, AbsN Nothing
+            ( ParamNamed Nothing ( Name "dictMonad" ) :| [] )
+            ( LiteralObject Nothing
+              [
+                ( PropName "apply", Let Nothing
+                  ( Standalone
+                    ( Nothing, Name "dictMonad$524", AppN Nothing
+                      ( Ref Nothing
+                        ( Imported
+                          ( ModuleName "Control.Monad.State.Trans" )
+                          ( Name "monadStateT" )
+                        )
+                      )
+                      ( Ref Nothing ( Local ( Name "dictMonad" ) ) :| [] )
+                    ) :| []
+                  )
+                  ( Let Nothing
+                    ( Standalone
+                      ( Nothing, Name "bind$525", ObjectProp Nothing
+                        ( AppN Nothing
+                          ( ObjectProp Nothing
+                            ( Ref Nothing ( Local ( Name "dictMonad$524" ) ) )
+                            ( PropName "Bind1" )
+                          )
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| []
+                          )
+                        )
+                        ( PropName "bind" )
+                      ) :| []
+                    )
+                    ( AbsN Nothing
+                      ( ParamNamed Nothing ( Name "f$526" ) :| [] )
+                      ( AbsN Nothing
+                        ( ParamNamed Nothing ( Name "a$527" ) :| [] )
+                        ( AppN Nothing
+                          ( AppN Nothing
+                            ( Ref Nothing ( Local ( Name "bind$525" ) ) )
+                            ( Ref Nothing ( Local ( Name "f$526" ) ) :| [] )
+                          )
+                          ( AbsN Nothing
+                            ( ParamNamed Nothing ( Name "f'$528" ) :| [] )
+                            ( AppN Nothing
+                              ( AppN Nothing
+                                ( Ref Nothing ( Local ( Name "bind$525" ) ) )
+                                ( Ref Nothing ( Local ( Name "a$527" ) ) :| [] )
+                              )
+                              ( AbsN Nothing
+                                ( ParamNamed Nothing ( Name "a'$529" ) :| [] )
+                                ( AppN Nothing
+                                  ( ObjectProp Nothing
+                                    ( AppN Nothing
+                                      ( ObjectProp Nothing
+                                        ( Ref Nothing ( Local ( Name "dictMonad$524" ) ) )
+                                        ( PropName "Applicative0" )
+                                      )
+                                      ( Ref Nothing
+                                        ( Imported
+                                          ( ModuleName "Prim" )
+                                          ( Name "undefined" )
+                                        ) :| []
+                                      )
+                                    )
+                                    ( PropName "pure" )
+                                  )
+                                  ( AppN Nothing
+                                    ( Ref Nothing ( Local ( Name "f'$528" ) ) )
+                                    ( Ref Nothing ( Local ( Name "a'$529" ) ) :| [] ) :| []
+                                  )
+                                ) :| []
+                              )
+                            ) :| []
+                          )
+                        )
+                      )
+                    )
+                  )
+                ),
+                ( PropName "Functor0", AbsN Nothing
+                  ( ParamUnused Nothing :| [] )
+                  ( LiteralObject Nothing
+                    [
+                      ( PropName "map", AbsN Nothing
+                        ( ParamNamed Nothing ( Name "f$517" ) :| [] )
+                        ( AbsN Nothing
+                          ( ParamNamed Nothing ( Name "v$518" ) :| [] )
+                          ( AbsN Nothing
+                            ( ParamNamed Nothing ( Name "s$519" ) :| [] )
+                            ( AppN Nothing
+                              ( AppN Nothing
+                                ( ObjectProp Nothing
+                                  ( AppN Nothing
+                                    ( ObjectProp Nothing
+                                      ( AppN Nothing
+                                        ( ObjectProp Nothing
+                                          ( AppN Nothing
+                                            ( ObjectProp Nothing
+                                              ( Ref Nothing ( Local ( Name "dictMonad" ) ) )
+                                              ( PropName "Bind1" )
+                                            )
+                                            ( Ref Nothing
+                                              ( Imported
+                                                ( ModuleName "Prim" )
+                                                ( Name "undefined" )
+                                              ) :| []
+                                            )
+                                          )
+                                          ( PropName "Apply0" )
+                                        )
+                                        ( Ref Nothing
+                                          ( Imported
+                                            ( ModuleName "Prim" )
+                                            ( Name "undefined" )
+                                          ) :| []
+                                        )
+                                      )
+                                      ( PropName "Functor0" )
+                                    )
+                                    ( Ref Nothing
+                                      ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| []
+                                    )
+                                  )
+                                  ( PropName "map" )
+                                )
+                                ( AbsN Nothing
+                                  ( ParamNamed Nothing ( Name "v1$520" ) :| [] )
+                                  ( AppN Nothing
+                                    ( Ref Nothing
+                                      ( Imported ( ModuleName "Data.Tuple" ) ( Name "Tuple$w" ) )
+                                    )
+                                    ( AppN Nothing
+                                      ( Ref Nothing ( Local ( Name "f$517" ) ) )
+                                      ( DataArgumentByIndex Nothing ProductType 0
+                                        ( Ref Nothing ( Local ( Name "v1$520" ) ) ) :| []
+                                      ) :|
+                                      [ DataArgumentByIndex Nothing ProductType 1
+                                        ( Ref Nothing ( Local ( Name "v1$520" ) ) )
+                                      ]
+                                    )
+                                  ) :| []
+                                )
+                              )
+                              ( AppN Nothing
+                                ( Ref Nothing ( Local ( Name "v$518" ) ) )
+                                ( Ref Nothing ( Local ( Name "s$519" ) ) :| [] ) :| []
+                              )
+                            )
+                          )
+                        )
+                      )
+                    ]
+                  )
+                )
+              ]
+            )
+          ),
+          ( QName
+            { qnameModuleName = ModuleName "Control.Monad.State.Trans", qnameName = Name "applicativeStateT"
+            }, AbsN Nothing
+            ( ParamNamed Nothing ( Name "dictMonad" ) :| [] )
+            ( LiteralObject Nothing
+              [
+                ( PropName "pure", AbsN Nothing
+                  ( ParamNamed Nothing ( Name "a" ) :| [] )
+                  ( AbsN Nothing
+                    ( ParamNamed Nothing ( Name "s" ) :| [] )
+                    ( AppN Nothing
+                      ( ObjectProp Nothing
+                        ( AppN Nothing
+                          ( ObjectProp Nothing
+                            ( Ref Nothing ( Local ( Name "dictMonad" ) ) )
+                            ( PropName "Applicative0" )
+                          )
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| []
+                          )
+                        )
+                        ( PropName "pure" )
+                      )
+                      ( AppN Nothing
+                        ( Ref Nothing ( Imported ( ModuleName "Data.Tuple" ) ( Name "Tuple$w" ) ) )
+                        ( Ref Nothing
+                          ( Local ( Name "a" ) ) :|
+                          [ Ref Nothing ( Local ( Name "s" ) ) ]
+                        ) :| []
+                      )
+                    )
+                  )
+                ),
+                ( PropName "Apply0", AbsN Nothing
+                  ( ParamUnused Nothing :| [] )
+                  ( AppN Nothing
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Control.Monad.State.Trans" ) ( Name "applyStateT" ) )
+                    )
+                    ( Ref Nothing ( Local ( Name "dictMonad" ) ) :| [] )
+                  )
+                )
+              ]
+            )
+          )
+        ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.CprState.Test", qnameName = Name "bindStateT"
+        }, AppN Nothing
+        ( Ref Nothing
+          ( Imported ( ModuleName "Control.Monad.State.Trans" ) ( Name "bindStateT" ) )
+        )
+        ( Ref Nothing ( Imported ( ModuleName "Data.Identity" ) ( Name "monadIdentity" ) ) :| [] )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.CprState.Test", qnameName = Name "bind"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Golden.CprState.Test" ) ( Name "bindStateT" ) ) )
+        ( PropName "bind" )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.CprState.Test", qnameName = Name "get"
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "x$612" ) :| [] )
+        ( AppN Nothing
+          ( Ref Nothing ( Imported ( ModuleName "Data.Tuple" ) ( Name "Tuple$w" ) ) )
+          ( Ref Nothing ( Local ( Name "x$612" ) ) :| [ Ref Nothing ( Local ( Name "x$612" ) ) ] )
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.CprState.Test", qnameName = Name "discard"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Golden.CprState.Test" ) ( Name "bindStateT" ) ) )
+        ( PropName "bind" )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.CprState.Test", qnameName = Name "add$w"
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "x$534" ) :| [ ParamNamed Nothing ( Name "y$535" ) ] )
+        ( PrimBinOp Nothing PrimAdd
+          ( Ref Nothing ( Local ( Name "x$534" ) ) )
+          ( Ref Nothing ( Local ( Name "y$535" ) ) )
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.CprState.Test", qnameName = Name "go"
+        }, AppN Nothing
+        ( AppN Nothing
+          ( Ref Nothing ( Imported ( ModuleName "Golden.CprState.Test" ) ( Name "bind" ) ) )
+          ( Ref Nothing ( Imported ( ModuleName "Golden.CprState.Test" ) ( Name "get" ) ) :| [] )
+        )
+        ( AbsN Nothing
+          ( ParamNamed Nothing ( Name "x1" ) :| [] )
+          ( AppN Nothing
+            ( AppN Nothing
+              ( Ref Nothing ( Imported ( ModuleName "Golden.CprState.Test" ) ( Name "discard" ) ) )
+              ( AbsN Nothing
+                ( ParamUnused Nothing :| [] )
+                ( AppN Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Data.Tuple" ) ( Name "Tuple$w" ) ) )
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Data.Unit" ) ( Name "unit" ) ) :|
+                    [ AppN Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Golden.CprState.Test" ) ( Name "add$w" ) )
+                      )
+                      ( Ref Nothing ( Local ( Name "x1" ) ) :| [ LiteralInt Nothing 1 ] )
+                    ]
+                  )
+                ) :| []
+              )
+            )
+            ( AbsN Nothing
+              ( ParamUnused Nothing :| [] )
+              ( AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Golden.CprState.Test" ) ( Name "bind" ) )
+                  )
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Golden.CprState.Test" ) ( Name "get" ) ) :| []
+                  )
+                )
+                ( AbsN Nothing
+                  ( ParamNamed Nothing ( Name "x2" ) :| [] )
+                  ( AppN Nothing
+                    ( AppN Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Golden.CprState.Test" ) ( Name "discard" ) )
+                      )
+                      ( AbsN Nothing
+                        ( ParamUnused Nothing :| [] )
+                        ( AppN Nothing
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Data.Tuple" ) ( Name "Tuple$w" ) )
+                          )
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Data.Unit" ) ( Name "unit" ) ) :|
+                            [ AppN Nothing
+                              ( Ref Nothing
+                                ( Imported ( ModuleName "Golden.CprState.Test" ) ( Name "add$w" ) )
+                              )
+                              ( Ref Nothing ( Local ( Name "x2" ) ) :| [ LiteralInt Nothing 1 ] )
+                            ]
+                          )
+                        ) :| []
+                      )
+                    )
+                    ( AbsN Nothing
+                      ( ParamUnused Nothing :| [] )
+                      ( AppN Nothing
+                        ( AppN Nothing
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Golden.CprState.Test" ) ( Name "bind" ) )
+                          )
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Golden.CprState.Test" ) ( Name "get" ) ) :| []
+                          )
+                        )
+                        ( AbsN Nothing
+                          ( ParamNamed Nothing ( Name "x3" ) :| [] )
+                          ( AppN Nothing
+                            ( AppN Nothing
+                              ( Ref Nothing
+                                ( Imported
+                                  ( ModuleName "Golden.CprState.Test" )
+                                  ( Name "discard" )
+                                )
+                              )
+                              ( AbsN Nothing
+                                ( ParamUnused Nothing :| [] )
+                                ( AppN Nothing
+                                  ( Ref Nothing
+                                    ( Imported ( ModuleName "Data.Tuple" ) ( Name "Tuple$w" ) )
+                                  )
+                                  ( Ref Nothing
+                                    ( Imported ( ModuleName "Data.Unit" ) ( Name "unit" ) ) :|
+                                    [ AppN Nothing
+                                      ( Ref Nothing
+                                        ( Imported
+                                          ( ModuleName "Golden.CprState.Test" )
+                                          ( Name "add$w" )
+                                        )
+                                      )
+                                      ( Ref Nothing
+                                        ( Local ( Name "x3" ) ) :|
+                                        [ LiteralInt Nothing 1 ]
+                                      )
+                                    ]
+                                  )
+                                ) :| []
+                              )
+                            )
+                            ( AbsN Nothing
+                              ( ParamUnused Nothing :| [] )
+                              ( AppN Nothing
+                                ( AppN Nothing
+                                  ( Ref Nothing
+                                    ( Imported
+                                      ( ModuleName "Golden.CprState.Test" )
+                                      ( Name "bind" )
+                                    )
+                                  )
+                                  ( Ref Nothing
+                                    ( Imported
+                                      ( ModuleName "Golden.CprState.Test" )
+                                      ( Name "get" )
+                                    ) :| []
+                                  )
+                                )
+                                ( AbsN Nothing
+                                  ( ParamNamed Nothing ( Name "x4" ) :| [] )
+                                  ( AppN Nothing
+                                    ( AppN Nothing
+                                      ( Ref Nothing
+                                        ( Imported
+                                          ( ModuleName "Golden.CprState.Test" )
+                                          ( Name "discard" )
+                                        )
+                                      )
+                                      ( AbsN Nothing
+                                        ( ParamUnused Nothing :| [] )
+                                        ( AppN Nothing
+                                          ( Ref Nothing
+                                            ( Imported
+                                              ( ModuleName "Data.Tuple" )
+                                              ( Name "Tuple$w" )
+                                            )
+                                          )
+                                          ( Ref Nothing
+                                            ( Imported
+                                              ( ModuleName "Data.Unit" )
+                                              ( Name "unit" )
+                                            ) :|
+                                            [ AppN Nothing
+                                              ( Ref Nothing
+                                                ( Imported
+                                                  ( ModuleName "Golden.CprState.Test" )
+                                                  ( Name "add$w" )
+                                                )
+                                              )
+                                              ( Ref Nothing
+                                                ( Local ( Name "x4" ) ) :|
+                                                [ LiteralInt Nothing 1 ]
+                                              )
+                                            ]
+                                          )
+                                        ) :| []
+                                      )
+                                    )
+                                    ( AbsN Nothing
+                                      ( ParamUnused Nothing :| [] )
+                                      ( AppN Nothing
+                                        ( AppN Nothing
+                                          ( Ref Nothing
+                                            ( Imported
+                                              ( ModuleName "Golden.CprState.Test" )
+                                              ( Name "bind" )
+                                            )
+                                          )
+                                          ( Ref Nothing
+                                            ( Imported
+                                              ( ModuleName "Golden.CprState.Test" )
+                                              ( Name "get" )
+                                            ) :| []
+                                          )
+                                        )
+                                        ( AbsN Nothing
+                                          ( ParamNamed Nothing ( Name "x5" ) :| [] )
+                                          ( AppN Nothing
+                                            ( AppN Nothing
+                                              ( Ref Nothing
+                                                ( Imported
+                                                  ( ModuleName "Golden.CprState.Test" )
+                                                  ( Name "discard" )
+                                                )
+                                              )
+                                              ( AbsN Nothing
+                                                ( ParamUnused Nothing :| [] )
+                                                ( AppN Nothing
+                                                  ( Ref Nothing
+                                                    ( Imported
+                                                      ( ModuleName "Data.Tuple" )
+                                                      ( Name "Tuple$w" )
+                                                    )
+                                                  )
+                                                  ( Ref Nothing
+                                                    ( Imported
+                                                      ( ModuleName "Data.Unit" )
+                                                      ( Name "unit" )
+                                                    ) :|
+                                                    [ AppN Nothing
+                                                      ( Ref Nothing
+                                                        ( Imported
+                                                          ( ModuleName "Golden.CprState.Test" )
+                                                          ( Name "add$w" )
+                                                        )
+                                                      )
+                                                      ( Ref Nothing
+                                                        ( Local ( Name "x5" ) ) :|
+                                                        [ LiteralInt Nothing 1 ]
+                                                      )
+                                                    ]
+                                                  )
+                                                ) :| []
+                                              )
+                                            )
+                                            ( AbsN Nothing
+                                              ( ParamUnused Nothing :| [] )
+                                              ( AppN Nothing
+                                                ( AppN Nothing
+                                                  ( Ref Nothing
+                                                    ( Imported
+                                                      ( ModuleName "Golden.CprState.Test" )
+                                                      ( Name "bind" )
+                                                    )
+                                                  )
+                                                  ( Ref Nothing
+                                                    ( Imported
+                                                      ( ModuleName "Golden.CprState.Test" )
+                                                      ( Name "get" )
+                                                    ) :| []
+                                                  )
+                                                )
+                                                ( AbsN Nothing
+                                                  ( ParamNamed Nothing ( Name "x6" ) :| [] )
+                                                  ( AppN Nothing
+                                                    ( AppN Nothing
+                                                      ( Ref Nothing
+                                                        ( Imported
+                                                          ( ModuleName "Golden.CprState.Test" )
+                                                          ( Name "discard" )
+                                                        )
+                                                      )
+                                                      ( AbsN Nothing
+                                                        ( ParamUnused Nothing :| [] )
+                                                        ( AppN Nothing
+                                                          ( Ref Nothing
+                                                            ( Imported
+                                                              ( ModuleName "Data.Tuple" )
+                                                              ( Name "Tuple$w" )
+                                                            )
+                                                          )
+                                                          ( Ref Nothing
+                                                            ( Imported
+                                                              ( ModuleName "Data.Unit" )
+                                                              ( Name "unit" )
+                                                            ) :|
+                                                            [ AppN Nothing
+                                                              ( Ref Nothing
+                                                                ( Imported
+                                                                  ( ModuleName "Golden.CprState.Test" )
+                                                                  ( Name "add$w" )
+                                                                )
+                                                              )
+                                                              ( Ref Nothing
+                                                                ( Local ( Name "x6" ) ) :|
+                                                                [ LiteralInt Nothing 1 ]
+                                                              )
+                                                            ]
+                                                          )
+                                                        ) :| []
+                                                      )
+                                                    )
+                                                    ( AbsN Nothing
+                                                      ( ParamUnused Nothing :| [] )
+                                                      ( AppN Nothing
+                                                        ( AppN Nothing
+                                                          ( Ref Nothing
+                                                            ( Imported
+                                                              ( ModuleName "Golden.CprState.Test" )
+                                                              ( Name "bind" )
+                                                            )
+                                                          )
+                                                          ( Ref Nothing
+                                                            ( Imported
+                                                              ( ModuleName "Golden.CprState.Test" )
+                                                              ( Name "get" )
+                                                            ) :| []
+                                                          )
+                                                        )
+                                                        ( AbsN Nothing
+                                                          ( ParamNamed Nothing
+                                                            ( Name "x7" ) :| []
+                                                          )
+                                                          ( AppN Nothing
+                                                            ( AppN Nothing
+                                                              ( Ref Nothing
+                                                                ( Imported
+                                                                  ( ModuleName "Golden.CprState.Test" )
+                                                                  ( Name "discard" )
+                                                                )
+                                                              )
+                                                              ( AbsN Nothing
+                                                                ( ParamUnused Nothing :| [] )
+                                                                ( AppN Nothing
+                                                                  ( Ref Nothing
+                                                                    ( Imported
+                                                                      ( ModuleName "Data.Tuple" )
+                                                                      ( Name "Tuple$w" )
+                                                                    )
+                                                                  )
+                                                                  ( Ref Nothing
+                                                                    ( Imported
+                                                                      ( ModuleName "Data.Unit" )
+                                                                      ( Name "unit" )
+                                                                    ) :|
+                                                                    [ AppN Nothing
+                                                                      ( Ref Nothing
+                                                                        ( Imported
+                                                                          ( ModuleName "Golden.CprState.Test" )
+                                                                          ( Name "add$w" )
+                                                                        )
+                                                                      )
+                                                                      ( Ref Nothing
+                                                                        ( Local ( Name "x7" ) ) :|
+                                                                        [ LiteralInt Nothing 1 ]
+                                                                      )
+                                                                    ]
+                                                                  )
+                                                                ) :| []
+                                                              )
+                                                            )
+                                                            ( AbsN Nothing
+                                                              ( ParamUnused Nothing :| [] )
+                                                              ( AppN Nothing
+                                                                ( AppN Nothing
+                                                                  ( Ref Nothing
+                                                                    ( Imported
+                                                                      ( ModuleName "Golden.CprState.Test" )
+                                                                      ( Name "bind" )
+                                                                    )
+                                                                  )
+                                                                  ( Ref Nothing
+                                                                    ( Imported
+                                                                      ( ModuleName "Golden.CprState.Test" )
+                                                                      ( Name "get" )
+                                                                    ) :| []
+                                                                  )
+                                                                )
+                                                                ( AbsN Nothing
+                                                                  ( ParamNamed Nothing
+                                                                    ( Name "x8" ) :| []
+                                                                  )
+                                                                  ( AppN Nothing
+                                                                    ( AppN Nothing
+                                                                      ( Ref Nothing
+                                                                        ( Imported
+                                                                          ( ModuleName "Golden.CprState.Test" )
+                                                                          ( Name "discard" )
+                                                                        )
+                                                                      )
+                                                                      ( AbsN Nothing
+                                                                        ( ParamUnused Nothing :| [] )
+                                                                        ( AppN Nothing
+                                                                          ( Ref Nothing
+                                                                            ( Imported
+                                                                              ( ModuleName "Data.Tuple" )
+                                                                              ( Name "Tuple$w" )
+                                                                            )
+                                                                          )
+                                                                          ( Ref Nothing
+                                                                            ( Imported
+                                                                              ( ModuleName "Data.Unit" )
+                                                                              ( Name "unit" )
+                                                                            ) :|
+                                                                            [ AppN Nothing
+                                                                              ( Ref Nothing
+                                                                                ( Imported
+                                                                                  ( ModuleName "Golden.CprState.Test" )
+                                                                                  ( Name "add$w" )
+                                                                                )
+                                                                              )
+                                                                              ( Ref Nothing
+                                                                                ( Local
+                                                                                  ( Name "x8" )
+                                                                                ) :|
+                                                                                [ LiteralInt Nothing 1 ]
+                                                                              )
+                                                                            ]
+                                                                          )
+                                                                        ) :| []
+                                                                      )
+                                                                    )
+                                                                    ( AbsN Nothing
+                                                                      ( ParamUnused Nothing :| [] )
+                                                                      ( AppN Nothing
+                                                                        ( AppN Nothing
+                                                                          ( Ref Nothing
+                                                                            ( Imported
+                                                                              ( ModuleName "Golden.CprState.Test" )
+                                                                              ( Name "bind" )
+                                                                            )
+                                                                          )
+                                                                          ( Ref Nothing
+                                                                            ( Imported
+                                                                              ( ModuleName "Golden.CprState.Test" )
+                                                                              ( Name "get" )
+                                                                            ) :| []
+                                                                          )
+                                                                        )
+                                                                        ( AbsN Nothing
+                                                                          ( ParamNamed Nothing
+                                                                            ( Name "x9" ) :| []
+                                                                          )
+                                                                          ( AppN Nothing
+                                                                            ( AppN Nothing
+                                                                              ( Ref Nothing
+                                                                                ( Imported
+                                                                                  ( ModuleName "Golden.CprState.Test" )
+                                                                                  ( Name "discard" )
+                                                                                )
+                                                                              )
+                                                                              ( AbsN Nothing
+                                                                                ( ParamUnused Nothing :| [] )
+                                                                                ( AppN Nothing
+                                                                                  ( Ref Nothing
+                                                                                    ( Imported
+                                                                                      ( ModuleName "Data.Tuple" )
+                                                                                      ( Name "Tuple$w" )
+                                                                                    )
+                                                                                  )
+                                                                                  ( Ref Nothing
+                                                                                    ( Imported
+                                                                                      ( ModuleName "Data.Unit" )
+                                                                                      ( Name "unit" )
+                                                                                    ) :|
+                                                                                    [ AppN Nothing
+                                                                                      ( Ref Nothing
+                                                                                        ( Imported
+                                                                                          ( ModuleName "Golden.CprState.Test" )
+                                                                                          ( Name "add$w" )
+                                                                                        )
+                                                                                      )
+                                                                                      ( Ref Nothing
+                                                                                        ( Local
+                                                                                          ( Name "x9" )
+                                                                                        ) :|
+                                                                                        [ LiteralInt Nothing 1 ]
+                                                                                      )
+                                                                                    ]
+                                                                                  )
+                                                                                ) :| []
+                                                                              )
+                                                                            )
+                                                                            ( AbsN Nothing
+                                                                              ( ParamUnused Nothing :| [] )
+                                                                              ( AppN Nothing
+                                                                                ( AppN Nothing
+                                                                                  ( Ref Nothing
+                                                                                    ( Imported
+                                                                                      ( ModuleName "Golden.CprState.Test" )
+                                                                                      ( Name "bind" )
+                                                                                    )
+                                                                                  )
+                                                                                  ( Ref Nothing
+                                                                                    ( Imported
+                                                                                      ( ModuleName "Golden.CprState.Test" )
+                                                                                      ( Name "get" )
+                                                                                    ) :| []
+                                                                                  )
+                                                                                )
+                                                                                ( AbsN Nothing
+                                                                                  ( ParamNamed Nothing
+                                                                                    ( Name "x10" ) :| []
+                                                                                  )
+                                                                                  ( AppN Nothing
+                                                                                    ( AppN Nothing
+                                                                                      ( Ref Nothing
+                                                                                        ( Imported
+                                                                                          ( ModuleName "Golden.CprState.Test" )
+                                                                                          ( Name "discard" )
+                                                                                        )
+                                                                                      )
+                                                                                      ( AbsN Nothing
+                                                                                        ( ParamUnused Nothing :| [] )
+                                                                                        ( AppN Nothing
+                                                                                          ( Ref Nothing
+                                                                                            ( Imported
+                                                                                              ( ModuleName "Data.Tuple" )
+                                                                                              ( Name "Tuple$w" )
+                                                                                            )
+                                                                                          )
+                                                                                          ( Ref Nothing
+                                                                                            ( Imported
+                                                                                              ( ModuleName "Data.Unit" )
+                                                                                              ( Name "unit" )
+                                                                                            ) :|
+                                                                                            [ AppN Nothing
+                                                                                              ( Ref Nothing
+                                                                                                ( Imported
+                                                                                                  ( ModuleName "Golden.CprState.Test" )
+                                                                                                  ( Name "add$w" )
+                                                                                                )
+                                                                                              )
+                                                                                              ( Ref Nothing
+                                                                                                ( Local
+                                                                                                  ( Name "x10" )
+                                                                                                ) :|
+                                                                                                [ LiteralInt Nothing 1 ]
+                                                                                              )
+                                                                                            ]
+                                                                                          )
+                                                                                        ) :| []
+                                                                                      )
+                                                                                    )
+                                                                                    ( AbsN Nothing
+                                                                                      ( ParamUnused Nothing :| [] )
+                                                                                      ( AppN Nothing
+                                                                                        ( AppN Nothing
+                                                                                          ( Ref Nothing
+                                                                                            ( Imported
+                                                                                              ( ModuleName "Golden.CprState.Test" )
+                                                                                              ( Name "bind" )
+                                                                                            )
+                                                                                          )
+                                                                                          ( Ref Nothing
+                                                                                            ( Imported
+                                                                                              ( ModuleName "Golden.CprState.Test" )
+                                                                                              ( Name "get" )
+                                                                                            ) :| []
+                                                                                          )
+                                                                                        )
+                                                                                        ( AbsN Nothing
+                                                                                          ( ParamNamed Nothing
+                                                                                            ( Name "final" ) :| []
+                                                                                          )
+                                                                                          ( AppN Nothing
+                                                                                            ( ObjectProp Nothing
+                                                                                              ( AppN Nothing
+                                                                                                ( Ref Nothing
+                                                                                                  ( Imported
+                                                                                                    ( ModuleName "Control.Monad.State.Trans" )
+                                                                                                    ( Name "applicativeStateT" )
+                                                                                                  )
+                                                                                                )
+                                                                                                ( Ref Nothing
+                                                                                                  ( Imported
+                                                                                                    ( ModuleName "Data.Identity" )
+                                                                                                    ( Name "monadIdentity" )
+                                                                                                  ) :| []
+                                                                                                )
+                                                                                              )
+                                                                                              ( PropName "pure" )
+                                                                                            )
+                                                                                            ( AppN Nothing
+                                                                                              ( Ref Nothing
+                                                                                                ( Imported
+                                                                                                  ( ModuleName "Golden.CprState.Test" )
+                                                                                                  ( Name "add$w" )
+                                                                                                )
+                                                                                              )
+                                                                                              ( AppN Nothing
+                                                                                                ( Ref Nothing
+                                                                                                  ( Imported
+                                                                                                    ( ModuleName "Golden.CprState.Test" )
+                                                                                                    ( Name "add$w" )
+                                                                                                  )
+                                                                                                )
+                                                                                                ( Ref Nothing
+                                                                                                  ( Local
+                                                                                                    ( Name "x1" )
+                                                                                                  ) :|
+                                                                                                  [ Ref Nothing
+                                                                                                    ( Local
+                                                                                                      ( Name "x5" )
+                                                                                                    )
+                                                                                                  ]
+                                                                                                ) :|
+                                                                                                [ Ref Nothing
+                                                                                                  ( Local
+                                                                                                    ( Name "final" )
+                                                                                                  )
+                                                                                                ]
+                                                                                              ) :| []
+                                                                                            )
+                                                                                          ) :| []
+                                                                                        )
+                                                                                      ) :| []
+                                                                                    )
+                                                                                  ) :| []
+                                                                                )
+                                                                              ) :| []
+                                                                            )
+                                                                          ) :| []
+                                                                        )
+                                                                      ) :| []
+                                                                    )
+                                                                  ) :| []
+                                                                )
+                                                              ) :| []
+                                                            )
+                                                          ) :| []
+                                                        )
+                                                      ) :| []
+                                                    )
+                                                  ) :| []
+                                                )
+                                              ) :| []
+                                            )
+                                          ) :| []
+                                        )
+                                      ) :| []
+                                    )
+                                  ) :| []
+                                )
+                              ) :| []
+                            )
+                          ) :| []
+                        )
+                      ) :| []
+                    )
+                  ) :| []
+                )
+              ) :| []
+            )
+          ) :| []
+        )
+      )
+    ], uberModuleForeigns = [], uberModuleExports =
+    [
+      ( Name "go", Ref Nothing ( Imported ( ModuleName "Golden.CprState.Test" ) ( Name "go" ) ) ),
+      ( Name "main", AppN Nothing
+        ( ObjectProp Nothing
+          ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
+          ( PropName "log" )
+        )
+        ( AppN Nothing
+          ( ObjectProp Nothing
+            ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
+            ( PropName "showIntImpl" )
+          )
+          ( DataArgumentByIndex Nothing ProductType 0
+            ( AppN Nothing
+              ( Ref Nothing ( Imported ( ModuleName "Golden.CprState.Test" ) ( Name "go" ) ) )
+              ( LiteralInt Nothing 0 :| [] )
+            ) :| []
+          ) :| []
+        )
+      )
+    ]
+  }

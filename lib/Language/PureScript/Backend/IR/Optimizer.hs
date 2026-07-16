@@ -10,6 +10,7 @@ import Data.Set qualified as Set
 import Data.Text qualified as Text
 import GHC.Generics (Generically (..))
 import Language.PureScript.Backend.IR.CSE (eliminateCommonSubexpressions)
+import Language.PureScript.Backend.IR.Cpr (cprWorkerWrapper)
 import Language.PureScript.Backend.IR.DCE (eliminateDeadCode)
 import Language.PureScript.Backend.IR.EffectNames (canonicalizeEffectApp)
 import Language.PureScript.Backend.IR.FlattenDeepBinds (flattenDeepBindsM)
@@ -41,6 +42,7 @@ import Language.PureScript.Backend.IR.Query
   , ctorShapeTag
   , resolveKnownCtorApp
   )
+import Language.PureScript.Backend.IR.Query qualified as Query
 import Language.PureScript.Backend.IR.SpecConstr (specConstr)
 import Language.PureScript.Backend.IR.Supply (SupplyM, freshName, runSupply)
 import Language.PureScript.Backend.IR.Types
@@ -72,6 +74,7 @@ import Language.PureScript.Backend.IR.Types
   , literalFloat
   , literalInt
   , literalString
+  , noAnn
   , paramName
   , primBinOp
   , primNot
@@ -166,6 +169,28 @@ optimizerPipeline policy =
     -- the per-binding cap in Language.PureScript.Backend.IR.SpecConstr
     -- keeps the minting finite.
     RunFixpoint "specialize+dce" (specializePass :| [dcePass, specConstrPass])
+  , -- CPR worker/wrapper on results (issue #206): split every binding
+    -- whose every return path builds one fixed saturated constructor
+    -- into a worker returning the fields as Lua multiple values plus a
+    -- rebox wrapper, rewriting the let-bound deconstructing sites to
+    -- direct worker calls behind an in-place rebox. Runs after the
+    -- specialize fixpoint — the monadic chains are collapsed and the
+    -- call-pattern specializations are minted, so the constructor-tailed
+    -- candidates and their deconstructing sites are maximal — and before
+    -- shareAccessors/cse/flattenDeepBinds, which must tolerate, but never
+    -- create, the Values/LetValues nodes. See
+    -- Language.PureScript.Backend.IR.Cpr.
+    RunPass cprPass
+  , -- Cancel the reboxes the split planted: floatLetValuesFromLetRhs
+    -- surfaces each one as a let-bound constructor, where the
+    -- known-constructor folds meet the site's eliminating reads and
+    -- the product dissolves; dce then drops the wrappers whose every
+    -- site went to the worker directly. Same members as the fixpoint
+    -- above, so call-pattern specialization keeps firing on shapes the
+    -- cancellation exposes.
+    RunFixpoint
+      "specialize+dce-post-cpr"
+      (specializePass :| [dcePass, specConstrPass])
   , -- Rebuild sharing for the foreign-accessor reads that dissolution
     -- and the call-site pastes above duplicated: a read surviving at
     -- two or more sites is re-bound to its linker name, which stage-2
@@ -261,6 +286,15 @@ optimizerPipeline policy =
       , passEnsures = guc
       }
   uncurryLatePass = uncurryPass {passName = "uncurry-late"}
+  -- The veto is shared with the uncurrying pass: both splits hide a
+  -- name's call sites from the name-keyed inline policies.
+  cprPass =
+    Pass
+      { passName = "cpr"
+      , passRun = cprWorkerWrapper (uncurryVeto policy)
+      , passRequires = guc
+      , passEnsures = guc
+      }
   floatInPass = gucPass "float-in" floatIn
   shareAccessorsPass =
     gucPass "share-accessors" (shareForeignAccessors policy)
@@ -794,6 +828,11 @@ complexityOf = \case
   -- re-allocated at every use site. See Note [Constructor applications are
   -- saturated].
   Ctor {} → NonTrivial
+  -- The multi-value nodes are position-restricted (Note [Multi-value
+  -- results]): duplicating them into argument positions is never
+  -- admissible, so both are explicitly 'NonTrivial'.
+  Values {} → NonTrivial
+  LetValues {} → NonTrivial
   _ → NonTrivial
 
 {- | Pure wrapper for tests and standalone use: runs the rewrite with
@@ -812,6 +851,10 @@ optimizedExpressionM policy env =
         `thenRewrite` constantFolding
         `thenRewrite` reduceObjectProp
         `thenRewrite` sinkProjectionIntoLet
+        `thenRewrite` cancelLetValuesOfValues
+        `thenRewrite` floatLetFromLetValuesRhs
+        `thenRewrite` floatLetValuesFromLetRhs
+        `thenRewrite` sinkReadIntoLetValues
         `thenRewrite` reduceKnownConstructor
         `thenRewrite` reduceKnownCtorRefRead env
         `thenRewrite` propagateKnownCtorThroughLet env
@@ -1033,6 +1076,141 @@ sinkProjectionIntoLet =
       Just $ Let letAnn binds (DataArgumentByIndex ann algTy i body)
     _ → Nothing
 
+{- | Cancel a multi-value binding of a known multi-value result: when a
+'LetValues' right-hand side is directly a 'Values' of matching width —
+the shape left behind when a CPR worker's body is pasted back into a
+binding site — the results are known statically, so the multi-value hop
+dissolves into ordinary Let bindings. Elements at 'ParamUnused'
+positions are dropped, the licence 'betaReduce' exercises on arguments
+facing unused parameters. Binding (never substituting) leaves the
+use-count discipline to 'inlineLocalBindings' and DCE, exactly as
+'betaReduce' does. A width mismatch is left alone: it is not the shape
+any producer constructs, and rewriting it would silently change which
+results are dropped or nil-filled.
+-}
+cancelLetValuesOfValues ∷ Applicative m ⇒ RewriteRuleM m Ann
+cancelLetValuesOfValues =
+  pure . \case
+    LetValues ann params (Values _vAnn es) body
+      | length params == length es →
+          Just case nonEmpty (mapMaybe bind (zip (toList params) (toList es))) of
+            Nothing → body
+            Just groupings → Let ann groupings body
+     where
+      bind ∷ (Parameter Ann, Exp) → Maybe (Grouping (Ann, Name, Exp))
+      bind (param, e) =
+        paramName param <&> \n → Standalone (noAnn, n, e)
+    _ → Nothing
+
+{- | Float a 'Let' out of a 'LetValues' right-hand side:
+
+> letValues ps = (let bs in inner) in body
+>   ⟶  let bs in (letValues ps = inner in body)
+
+Evaluation order is unchanged (@bs@, then @inner@, then @body@), GUC
+excludes capture, and the rewrite strictly shrinks the RHS — so it
+terminates and eventually exposes a 'Values' tail of @inner@ to
+'cancelLetValuesOfValues'.
+-}
+floatLetFromLetValuesRhs ∷ Applicative m ⇒ RewriteRuleM m Ann
+floatLetFromLetValuesRhs =
+  pure . \case
+    LetValues ann params (Let letAnn binds inner) body →
+      Just $ Let letAnn binds (LetValues ann params inner body)
+    _ → Nothing
+
+{- | Surface a 'LetValues' bound inside a 'Let' grouping — the shape a
+rewritten deconstructing call site takes when the call was a let-bound
+scrutinee (see "Language.PureScript.Backend.IR.Cpr"):
+
+> let before…; v = (letValues ps = r in inner); after… in body
+>   ⟶  let before… in
+>         letValues ps = r in (let v = inner; after… in body)
+
+The 'Let' is split at the /first/ such grouping, which is exactly
+order-preserving: @before@, then @r@, then @inner@, then @after@, then
+@body@ — floating above @before@ instead would reorder @r@ with the
+earlier bindings. Once surfaced, @inner@ is typically the constructor
+rebox the site rewrite planted, and 'propagateKnownCtorThroughLet'
+cancels it against the binder's eliminating reads. Recursive-group
+right-hand sides are lambdas, never 'LetValues' nodes, so only
+'Standalone' groupings are inspected. Terminates: the total depth of
+'LetValues' nodes under Let-grouping right-hand sides strictly
+decreases.
+-}
+floatLetValuesFromLetRhs ∷ Applicative m ⇒ RewriteRuleM m Ann
+floatLetValuesFromLetRhs =
+  pure . \case
+    Let ann groupings body
+      | Just (before, (bAnn, v, LetValues lvAnn ps rhs inner), after) ←
+          findLetValuesGrouping [] (toList groupings) →
+          Just
+            let floated =
+                  LetValues lvAnn ps rhs $
+                    Let ann (Standalone (bAnn, v, inner) :| after) body
+             in case nonEmpty before of
+                  Nothing → floated
+                  Just bs → Let ann bs floated
+    _ → Nothing
+ where
+  findLetValuesGrouping
+    ∷ [Grouping (Ann, Name, Exp)]
+    → [Grouping (Ann, Name, Exp)]
+    → Maybe
+        ( [Grouping (Ann, Name, Exp)]
+        , (Ann, Name, Exp)
+        , [Grouping (Ann, Name, Exp)]
+        )
+  findLetValuesGrouping _before [] = Nothing
+  findLetValuesGrouping before (grouping : after) = case grouping of
+    Standalone binding@(_bAnn, _v, LetValues {}) →
+      Just (reverse before, binding, after)
+    _ → findLetValuesGrouping (grouping : before) after
+
+{- | Sink a constructor-eliminating read (or a record projection) into a
+'LetValues' body — the mirror of 'sinkProjectionIntoLet', with the same
+licence: the right-hand side evaluates first either way, and the
+read's index\/label is static. This carries the read through the
+multi-value binding a rewritten call site introduces, down to the
+constructor rebox where 'reduceKnownConstructor' folds it.
+-}
+sinkReadIntoLetValues ∷ Applicative m ⇒ RewriteRuleM m Ann
+sinkReadIntoLetValues =
+  pure . \case
+    ObjectProp ann (LetValues lvAnn ps rhs inner) prop →
+      Just $ LetValues lvAnn ps rhs (ObjectProp ann inner prop)
+    DataArgumentByIndex ann algTy i (LetValues lvAnn ps rhs inner) →
+      Just $ LetValues lvAnn ps rhs (DataArgumentByIndex ann algTy i inner)
+    ReflectCtor ann (LetValues lvAnn ps rhs inner) →
+      Just $ LetValues lvAnn ps rhs (ReflectCtor ann inner)
+    _ → Nothing
+
+{- | Whether the expression contains a multi-value node anywhere — the
+mark of a CPR worker ('Values') or wrapper ('LetValues') body. Pasting
+either through the call-site inliner is declined: rebuilt as a unary
+spine and beta-reduced, a worker's 'Values' tails would land under an
+expression-position redex — where a branchy body lowers to a per-call
+IIFE (a closure allocation and a trace abort, the exact cost the split
+removes) and a leaked 'Values' in a single-value slot is silent
+truncation (Note [Multi-value results]) — and a wrapper's 'LetValues'
+rebox in expression position lowers to the same per-call IIFE, worse
+than the shared wrapper call it replaced. The named worker call is
+already cheap and allocation-free; the sites worth unboxing were
+rewritten by the split itself.
+-}
+containsMultiValue ∷ RawExp ann → Bool
+containsMultiValue e =
+  not
+    ( null
+        [ ()
+        | node ← universeOf subexpressions e
+        , case node of
+            Values {} → True
+            LetValues {} → True
+            _ → False
+        ]
+    )
+
 {- | Case-of-known-constructor for algebraic types (issue #177), the
 'reduceObjectProp' twin for data constructors:
 
@@ -1165,7 +1343,7 @@ propagateKnownCtorThroughLet env = \case
         findCtorBinding (toList groupings)
     , all ((== 0) . countFreeRefGrouping name) (before <> after)
     , countFreeRef (Local name) body > 0
-    , not (hasWholeValueRead name algTy arity body) → do
+    , not (Query.hasWholeValueRead name algTy arity body) → do
         let readIndices = readFieldIndices name algTy body
         freshFields ←
           Map.fromList
@@ -1220,26 +1398,6 @@ propagateKnownCtorThroughLet env = \case
   countFreeRefGrouping ∷ Name → Grouping (Ann, Name, Exp) → Natural
   countFreeRefGrouping name grouping =
     sum [countFreeRef (Local name) e | (_ann, _n, e) ← listGrouping grouping]
-
-  -- True when some @Ref name@ is reached other than through a foldable
-  -- eliminating read — the residue that would dangle if the binding dropped.
-  hasWholeValueRead ∷ Name → AlgebraicType → Natural → Exp → Bool
-  hasWholeValueRead name algTy arity = go
-   where
-    go = \case
-      ReflectCtor _ (Ref _ (Local n)) | n == name, SumType ← algTy → False
-      -- An out-of-range index or a mismatched algebraic type reads no
-      -- existing field, so it is not a foldable eliminating read: it falls
-      -- through to the whole-value read below, forcing the rule to decline
-      -- (as 'reduceKnownConstructor' does), rather than minting a fresh
-      -- field-binder the argument list cannot bind. Well-typed input never
-      -- indexes past the arity nor mistypes the read; the guards keep the
-      -- rule sound on the non-GUC / generated input 'optimizedExpression'
-      -- also runs on.
-      DataArgumentByIndex _ readTy i (Ref _ (Local n))
-        | n == name, readTy == algTy, i < arity → False
-      Ref _ (Local n) | n == name → True
-      other → any go (toListOf subexpressions other)
 
   readFieldIndices ∷ Name → AlgebraicType → Exp → Set Natural
   readFieldIndices name algTy = go
@@ -1445,7 +1603,9 @@ inlineSaturatedCall ∷ InlinePolicy → InlineEnv → RewriteRuleM SupplyM Ann
 inlineSaturatedCall policy env expr = case unwindApp expr of
   (Ref _ fname, args)
     | not (null args)
-    , Just rhs ← Map.lookup fname env →
+    , Just rhs ← Map.lookup fname env
+    , -- A multi-value body is never pasted (see 'containsMultiValue').
+      not (containsMultiValue rhs) →
         case directedArity fname of
           Just arity
             | fromIntegral (length args) >= arity
@@ -1956,6 +2116,8 @@ isDuplicatableClosedAbs rhs Usage {usageCapture} =
     && usageCapture == CaptureNone
     && expSize rhs < smallInlineBudget
     && isClosedExp rhs
+    -- A multi-value body is never pasted (see 'containsMultiValue').
+    && not (containsMultiValue rhs)
  where
   isAbs ∷ RawExp a → Bool
   isAbs = \case

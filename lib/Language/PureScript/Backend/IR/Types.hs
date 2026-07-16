@@ -181,6 +181,21 @@ data RawExp ann
   | AppN ann (RawExp ann) (NonEmpty (RawExp ann))
   | Ref ann (Qualified Name)
   | Let ann (NonEmpty (Grouping (ann, Name, RawExp ann))) (RawExp ann)
+  | {- | A multi-value result: @return e₁, …, eₙ@. Legal only in a
+    multi-value tail position — see Note [Multi-value results].
+    -}
+    Values ann (NonEmpty (RawExp ann))
+  | {- | Bind the n results of one multi-valued right-hand side:
+    @local p₁, …, pₙ = rhs@ followed by the body. The binders scope
+    over the body only; the RHS sees the enclosing scope.
+    'ParamUnused' occurs only as a trailing run, as in 'AbsN'.
+    See Note [Multi-value results].
+    -}
+    LetValues
+      ann
+      (NonEmpty (Parameter ann))
+      (RawExp ann)
+      (RawExp ann)
   | IfThenElse ann (RawExp ann) (RawExp ann) (RawExp ann)
   | Exception ann Text
   | ForeignImport ann ModuleName FilePath [(ann, Name)]
@@ -204,6 +219,53 @@ sites, beta-reducing to an in-place 'Ctor'. A partial application stays a
 call of the curried wrapper. Every rewrite that builds a 'Ctor' preserves
 saturation; the case-of-known-constructor folds (see 'reduceKnownConstructor'
 and 'resolveKnownCtorApp' in the optimizer) rely on it.
+-}
+
+{- Note [Multi-value results]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Lua functions can return several values at once (@return a, b@), and a
+call in the last slot of an explist spreads into all of them. 'Values'
+and 'LetValues' expose exactly that capability to the IR, and nothing
+more: 'Values' is the multi-value return, 'LetValues' the multi-value
+binding @local p₁, …, pₙ = rhs@.
+
+A /multi-value slot/ is a position whose value crosses a return-or-bind
+boundary where Lua keeps all values:
+
+  * the body of an 'AbsN' is one (it lowers to the function's @return@);
+  * the RHS of a 'LetValues' is one (it lowers to the explist of a
+    multi-name @local@);
+  * within a multi-value slot, the property propagates into 'Let' and
+    'LetValues' /bodies/ and into both branches of an 'IfThenElse'
+    (never into its condition) — the positions the Lua backend lowers
+    to statements ending in the same @return@.
+
+A 'Values' node is legal only in a multi-value slot; its children are
+ordinary single-value expressions. Anywhere else Lua would silently
+adjust the list to one value — truncation, the exact bug class this
+invariant exists to exclude — so the 'WellApplied' lint
+("Language.PureScript.Backend.IR.Linter") rejects a 'Values' outside a
+multi-value slot at every checked pass boundary. A 'LetValues' node
+itself is an ordinary single-valued expression (its value is its
+body's value) and may appear wherever an expression may.
+
+Arity discipline: the binder count of a 'LetValues' should equal the
+result count of its RHS. That is a whole-program property of the
+callee's return convention, not checkable node-locally, and is left
+unchecked: the only producers — the CPR worker/wrapper split
+("Language.PureScript.Backend.IR.Cpr") and the optimizer rules that
+shuffle its output — construct matching shapes by construction. A
+mismatch is not undefined behaviour (Lua nil-fills or discards), just
+wrong.
+
+Scoping: 'LetValues' binders scope over the body only; the RHS sees
+the enclosing scope. 'ParamUnused' occurs only as a trailing run of
+the binder list (same licence and reason as 'AbsN': the Lua backend
+drops a trailing unused run, and dropping an interior binder would
+shift the ones after it).
+
+No pass upstream of the Cpr split ever sees these nodes; the passes
+downstream of it must tolerate them but never create new ones.
 -}
 
 {- Note [n-ary application]
@@ -390,6 +452,8 @@ getAnn = \case
   AppN ann _ _ → ann
   Ref ann _ → ann
   Let ann _ _ → ann
+  Values ann _ → ann
+  LetValues ann _ _ _ → ann
   IfThenElse ann _ _ _ → ann
   Exception ann _ → ann
   ForeignImport ann _ _ _ → ann
@@ -422,6 +486,8 @@ setAnn ann = \case
   AppN _ f args → AppN ann f args
   Ref _ qname → Ref ann qname
   Let _ binds body → Let ann binds body
+  Values _ es → Values ann es
+  LetValues _ params rhs body → LetValues ann params rhs body
   IfThenElse _ cond th el → IfThenElse ann cond th el
   Exception _ msg → Exception ann msg
   ForeignImport _ modName path names → ForeignImport ann modName path names
@@ -537,6 +603,12 @@ identity =
 
 lets ∷ NonEmpty Binding → Exp → Exp
 lets = Let noAnn
+
+values ∷ NonEmpty Exp → Exp
+values = Values noAnn
+
+letValues ∷ NonEmpty (Parameter Ann) → Exp → Exp → Exp
+letValues = LetValues noAnn
 
 application ∷ Exp → Exp → Exp
 application = App noAnn
@@ -670,6 +742,10 @@ subexpressions go = \case
     Let ann
       <$> traverse (traverse (\(a, n, expr) → (a,n,) <$> go expr)) bs
       <*> go body
+  Values ann es →
+    Values ann <$> traverse go es
+  LetValues ann params rhs body →
+    LetValues ann params <$> go rhs <*> go body
   IfThenElse ann p th el →
     IfThenElse ann <$> go p <*> go th <*> go el
   e → pure e
@@ -786,11 +862,11 @@ countFreeRefs = fmap getSum . MMap.toMap . countFreeRefs' mempty
         _ → MMap.singleton qname (Sum 1)
     AbsN _ann params body →
       countFreeRefs' (foldl' bindParam bound params) body
-     where
-      bindParam ∷ Set Name → Parameter ann → Set Name
-      bindParam names = \case
-        ParamNamed _paramAnn name → Set.insert name names
-        ParamUnused _paramAnn → names
+    -- The binders scope over the body only; the RHS sees the enclosing
+    -- scope (Note [Multi-value results]).
+    LetValues _ann params rhs body →
+      countFreeRefs' bound rhs
+        <> countFreeRefs' (foldl' bindParam bound params) body
     -- See Note [Sequential scoping of Let bindings]
     Let _ann binds body → fold (countsInBody : countsInBinds)
      where
@@ -821,6 +897,11 @@ countFreeRefs = fmap getSum . MMap.toMap . countFreeRefs' mempty
               recBinds
     -- No other constructor binds names, so the scope passes through:
     other → foldMapOf subexpressions (countFreeRefs' bound) other
+
+  bindParam ∷ Set Name → Parameter ann → Set Name
+  bindParam names = \case
+    ParamNamed _paramAnn name → Set.insert name names
+    ParamUnused _paramAnn → names
 
 countFreeRef ∷ Qualified Name → RawExp ann → Natural
 countFreeRef name = Map.findWithDefault 0 name . countFreeRefs
@@ -871,11 +952,13 @@ countFreeRefUsage name = go CaptureNone mempty
       | otherwise → mempty
     AbsN _ann params body →
       go (cap <> CaptureClosure) (foldl' bindParam bound params) body
-     where
-      bindParam ∷ Set Name → Parameter ann → Set Name
-      bindParam names = \case
-        ParamNamed _paramAnn n → Set.insert n names
-        ParamUnused _paramAnn → names
+    -- Like 'Let', a 'LetValues' defers nothing: its RHS and body
+    -- evaluate when the node does, so the context passes through and
+    -- only the bound-name set advances (over the body alone — the RHS
+    -- sees the enclosing scope, Note [Multi-value results]).
+    LetValues _ann params rhs body →
+      go cap bound rhs
+        <> go cap (foldl' bindParam bound params) body
     IfThenElse _ann cond thenBranch elseBranch →
       go cap bound cond
         <> go (cap <> CaptureBranch) bound thenBranch
@@ -909,6 +992,11 @@ countFreeRefUsage name = go CaptureNone mempty
     -- No other constructor binds names or defers/conditions evaluation,
     -- so both context components pass through:
     other → foldMapOf subexpressions (go cap bound) other
+
+  bindParam ∷ Set Name → Parameter ann → Set Name
+  bindParam names = \case
+    ParamNamed _paramAnn n → Set.insert n names
+    ParamUnused _paramAnn → names
 
 {- | Structural equality modulo the names of locally-bound binders.
 
@@ -1003,6 +1091,17 @@ alphaEq = go 0 Map.empty Map.empty
         && go lvl scopeL scopeR pL pR
         && go lvl scopeL scopeR tL tR
         && go lvl scopeL scopeR eL eR
+    (Values annL esL, Values annR esR) →
+      annL == annR
+        && length esL == length esR
+        && and (zipWith (go lvl scopeL scopeR) (toList esL) (toList esR))
+    -- The RHS is compared under the outer scopes (the binders scope
+    -- over the body only, Note [Multi-value results]); the binders are
+    -- then walked positionally in lockstep, exactly as for 'AbsN'.
+    (LetValues annL psL rhsL bodyL, LetValues annR psR rhsR bodyR) →
+      annL == annR
+        && go lvl scopeL scopeR rhsL rhsR
+        && goAbs lvl scopeL scopeR (toList psL) (toList psR) bodyL bodyR
     -- Imported/mismatched-qualifier refs, terminals and pairs of
     -- different constructors:
     _ → exprL == exprR
@@ -1132,16 +1231,12 @@ freshenBinders = go Map.empty
     AbsN ann params body → do
       (renames', params') ← mapAccumM freshenParam renames params
       AbsN ann params' <$> go renames' body
-     where
-      freshenParam
-        ∷ Map Name Name
-        → Parameter ann
-        → SupplyM (Map Name Name, Parameter ann)
-      freshenParam rs = \case
-        p@(ParamUnused _paramAnn) → pure (rs, p)
-        ParamNamed paramAnn name → do
-          name' ← freshNameFor name
-          pure (Map.insert name name' rs, ParamNamed paramAnn name')
+    -- The RHS is renamed under the incoming map — the binders scope
+    -- over the body only (Note [Multi-value results]).
+    LetValues ann params rhs body → do
+      rhs' ← go renames rhs
+      (renames', params') ← mapAccumM freshenParam renames params
+      LetValues ann params' rhs' <$> go renames' body
     Let ann binds body → do
       -- Under unique binders no Let name can be referenced before it is
       -- bound, so all the groupings can enter the rename map up front.
@@ -1166,6 +1261,16 @@ freshenBinders = go Map.empty
     -- No other constructor binds or references names ('ForeignImport'
     -- included: its name list holds export keys, not binders):
     other → traverseOf subexpressions (go renames) other
+
+  freshenParam
+    ∷ Map Name Name
+    → Parameter ann
+    → SupplyM (Map Name Name, Parameter ann)
+  freshenParam rs = \case
+    p@(ParamUnused _paramAnn) → pure (rs, p)
+    ParamNamed paramAnn name → do
+      name' ← freshNameFor name
+      pure (Map.insert name name' rs, ParamNamed paramAnn name')
 
   freshNameFor ∷ Name → SupplyM Name
   freshNameFor name = freshName (stripFreshSuffix (nameToText name) <> "$")

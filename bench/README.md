@@ -20,9 +20,9 @@ JIT treats it. Two kinds of output with two different purposes:
   PureScript module (sources in `test/ps/src/Bench/`, linked by
   `./bench/link` into `_build/`), how to drive its export hot, and an
   `ideal` hand-written equivalent.
-- `tools/` — the runners and meters. `fnew_census.lua` and
-  `trace_report.lua` require LuaJIT (`jit.util`, `jit.attach`); the timing
-  runners work under both PUC Lua and LuaJIT.
+- `tools/` — the runners and meters. `fnew_census.lua`, `tnew_census.lua`
+  and `trace_report.lua` require LuaJIT (`jit.util`, `jit.attach`); the
+  timing runners work under both PUC Lua and LuaJIT.
 - `goldens/` — committed counter reports; the CI oracle.
 
 ## Usage
@@ -51,6 +51,14 @@ the **main chunk** runs once at load time, so its FNEWs are init cost; a
 and each one aborts LuaJIT trace recording (`NYI: bytecode FNEW`), which is
 what keeps curried hot code interpreted. The census is a pure function of
 the artifact, hence byte-stable.
+
+`tnew_census` is the same static walk for the two table-creation bytecodes
+(`TNEW` allocates a fresh table, `TDUP` clones a constant template; a
+codegen change can turn one into the other, so the per-site list names the
+opcode). The main-chunk/function-body split means the same thing as for
+FNEW. Unlike FNEW, neither opcode aborts trace recording — table
+allocation cost is invisible to the trace report, which is why this census
+exists: a function-body TNEW/TDUP is a table allocated on every call.
 
 `trace_report` runs a macro spec hot under eager hot thresholds
 (`hotloop=1`, see the tool header: eager firing removes the counter
