@@ -26,15 +26,6 @@ UberModule
         ( PropName "log" )
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Golden.FieldCaching.Test", qnameName = Name "sub$w"
-        }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "x$214" ) :| [ ParamNamed Nothing ( Name "y$215" ) ] )
-        ( PrimBinOp Nothing PrimSub
-          ( Ref Nothing ( Local ( Name "x$214" ) ) )
-          ( Ref Nothing ( Local ( Name "y$215" ) ) )
-        )
-      ), Standalone
-      ( QName
         { qnameModuleName = ModuleName "Golden.FieldCaching.Test", qnameName = Name "weigh"
         }, AbsN ( Just Never )
         ( ParamNamed Nothing ( Name "x" ) :| [] )
@@ -66,11 +57,9 @@ UberModule
                   )
                   ( Ref Nothing ( Local ( Name "n" ) ) :| [] )
                 ) :|
-                [ AppN Nothing
-                  ( Ref Nothing
-                    ( Imported ( ModuleName "Golden.FieldCaching.Test" ) ( Name "sub$w" ) )
-                  )
-                  ( Ref Nothing ( Local ( Name "n" ) ) :| [ LiteralInt Nothing 1 ] )
+                [ PrimBinOp Nothing PrimSub
+                  ( Ref Nothing ( Local ( Name "n" ) ) )
+                  ( LiteralInt Nothing 1 )
                 ]
               )
             )
@@ -138,22 +127,18 @@ UberModule
               ( Ref Nothing
                 ( Imported ( ModuleName "Golden.FieldCaching.Test" ) ( Name "weigh" ) )
               )
-              ( AppN Nothing
-                ( Ref Nothing
-                  ( Imported ( ModuleName "Golden.FieldCaching.Test" ) ( Name "sub$w" ) )
-                )
-                ( Ref Nothing ( Local ( Name "n" ) ) :| [ LiteralInt Nothing 1 ] ) :| []
+              ( PrimBinOp Nothing PrimSub
+                ( Ref Nothing ( Local ( Name "n" ) ) )
+                ( LiteralInt Nothing 1 ) :| []
               )
             )
             ( AppN Nothing
               ( Ref Nothing
                 ( Imported ( ModuleName "Golden.FieldCaching.Test" ) ( Name "weigh" ) )
               )
-              ( AppN Nothing
-                ( Ref Nothing
-                  ( Imported ( ModuleName "Golden.FieldCaching.Test" ) ( Name "sub$w" ) )
-                )
-                ( Ref Nothing ( Local ( Name "n" ) ) :| [ LiteralInt Nothing 2 ] ) :| []
+              ( PrimBinOp Nothing PrimSub
+                ( Ref Nothing ( Local ( Name "n" ) ) )
+                ( LiteralInt Nothing 2 ) :| []
               )
             )
           )
@@ -281,23 +266,13 @@ UberModule
                         ( Ref Nothing
                           ( Imported ( ModuleName "Golden.FieldCaching.Test" ) ( Name "weigh" ) )
                         )
-                        ( AppN Nothing
-                          ( Ref Nothing
-                            ( Imported ( ModuleName "Golden.FieldCaching.Test" ) ( Name "sub$w" ) )
-                          )
-                          ( LiteralInt Nothing 5 :| [ LiteralInt Nothing 1 ] ) :| []
-                        )
+                        ( LiteralInt Nothing 4 :| [] )
                       )
                       ( AppN Nothing
                         ( Ref Nothing
                           ( Imported ( ModuleName "Golden.FieldCaching.Test" ) ( Name "weigh" ) )
                         )
-                        ( AppN Nothing
-                          ( Ref Nothing
-                            ( Imported ( ModuleName "Golden.FieldCaching.Test" ) ( Name "sub$w" ) )
-                          )
-                          ( LiteralInt Nothing 5 :| [ LiteralInt Nothing 2 ] ) :| []
-                        )
+                        ( LiteralInt Nothing 3 :| [] )
                       ) :| []
                     ) :| []
                   )
@@ -316,7 +291,7 @@ UberModule
                     ( Imported ( ModuleName "Golden.FieldCaching.Test" ) ( Name "apply2" ) )
                   )
                   ( AbsN Nothing
-                    ( ParamNamed Nothing ( Name "y$254" ) :| [] )
+                    ( ParamNamed Nothing ( Name "y$264" ) :| [] )
                     ( PrimBinOp Nothing PrimAdd
                       ( AppN Nothing
                         ( Ref Nothing
@@ -328,7 +303,7 @@ UberModule
                         ( Ref Nothing
                           ( Imported ( ModuleName "Golden.FieldCaching.Test" ) ( Name "weigh" ) )
                         )
-                        ( Ref Nothing ( Local ( Name "y$254" ) ) :| [] )
+                        ( Ref Nothing ( Local ( Name "y$264" ) ) :| [] )
                       )
                     ) :| []
                   ) :| []

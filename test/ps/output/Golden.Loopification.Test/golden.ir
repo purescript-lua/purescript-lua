@@ -24,15 +24,6 @@ UberModule
         }, ObjectProp Nothing
         ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
         ( PropName "log" )
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Golden.Loopification.Test", qnameName = Name "sub$w"
-        }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "x$216" ) :| [ ParamNamed Nothing ( Name "y$217" ) ] )
-        ( PrimBinOp Nothing PrimSub
-          ( Ref Nothing ( Local ( Name "x$216" ) ) )
-          ( Ref Nothing ( Local ( Name "y$217" ) ) )
-        )
       ), RecursiveGroup
       (
         ( QName
@@ -49,11 +40,9 @@ UberModule
               ( PrimBinOp Nothing PrimAdd
                 ( Ref Nothing ( Local ( Name "acc" ) ) )
                 ( Ref Nothing ( Local ( Name "n" ) ) ) :|
-                [ AppN Nothing
-                  ( Ref Nothing
-                    ( Imported ( ModuleName "Golden.Loopification.Test" ) ( Name "sub$w" ) )
-                  )
-                  ( Ref Nothing ( Local ( Name "n" ) ) :| [ LiteralInt Nothing 1 ] )
+                [ PrimBinOp Nothing PrimSub
+                  ( Ref Nothing ( Local ( Name "n" ) ) )
+                  ( LiteralInt Nothing 1 )
                 ]
               )
             )
@@ -99,11 +88,9 @@ UberModule
                         ( Ref Nothing ( Local ( Name "n" ) ) )
                         ( Ref Nothing ( Local ( Name "n" ) ) )
                       ) :|
-                      [ AppN Nothing
-                        ( Ref Nothing
-                          ( Imported ( ModuleName "Golden.Loopification.Test" ) ( Name "sub$w" ) )
-                        )
-                        ( Ref Nothing ( Local ( Name "n" ) ) :| [ LiteralInt Nothing 1 ] )
+                      [ PrimBinOp Nothing PrimSub
+                        ( Ref Nothing ( Local ( Name "n" ) ) )
+                        ( LiteralInt Nothing 1 )
                       ]
                     )
                   )
@@ -129,11 +116,9 @@ UberModule
               ( Ref Nothing
                 ( Imported ( ModuleName "Golden.Loopification.Test" ) ( Name "sumCPS$w" ) )
               )
-              ( AppN Nothing
-                ( Ref Nothing
-                  ( Imported ( ModuleName "Golden.Loopification.Test" ) ( Name "sub$w" ) )
-                )
-                ( Ref Nothing ( Local ( Name "n" ) ) :| [ LiteralInt Nothing 1 ] ) :|
+              ( PrimBinOp Nothing PrimSub
+                ( Ref Nothing ( Local ( Name "n" ) ) )
+                ( LiteralInt Nothing 1 ) :|
                 [ AbsN Nothing
                   ( ParamNamed Nothing ( Name "r" ) :| [] )
                   ( AppN Nothing
@@ -185,11 +170,9 @@ UberModule
                 ( Eq Nothing ( Ref Nothing ( Local ( Name "n" ) ) ) ( LiteralInt Nothing 100 ) )
               )
             )
-            ( AppN Nothing
-              ( Ref Nothing
-                ( Imported ( ModuleName "Golden.Loopification.Test" ) ( Name "sub$w" ) )
-              )
-              ( Ref Nothing ( Local ( Name "n" ) ) :| [ LiteralInt Nothing 10 ] )
+            ( PrimBinOp Nothing PrimSub
+              ( Ref Nothing ( Local ( Name "n" ) ) )
+              ( LiteralInt Nothing 10 )
             )
             ( AppN Nothing
               ( Ref Nothing
@@ -229,11 +212,9 @@ UberModule
               ( Ref Nothing
                 ( Imported ( ModuleName "Golden.Loopification.Test" ) ( Name "countdown" ) )
               )
-              ( AppN Nothing
-                ( Ref Nothing
-                  ( Imported ( ModuleName "Golden.Loopification.Test" ) ( Name "sub$w" ) )
-                )
-                ( Ref Nothing ( Local ( Name "n" ) ) :| [ LiteralInt Nothing 1 ] ) :| []
+              ( PrimBinOp Nothing PrimSub
+                ( Ref Nothing ( Local ( Name "n" ) ) )
+                ( LiteralInt Nothing 1 ) :| []
               )
             )
             ( LiteralInt Nothing 0 )
@@ -252,11 +233,9 @@ UberModule
               ( Ref Nothing
                 ( Imported ( ModuleName "Golden.Loopification.Test" ) ( Name "countDrop$w" ) )
               )
-              ( AppN Nothing
-                ( Ref Nothing
-                  ( Imported ( ModuleName "Golden.Loopification.Test" ) ( Name "sub$w" ) )
-                )
-                ( Ref Nothing ( Local ( Name "n" ) ) :| [ LiteralInt Nothing 1 ] ) :|
+              ( PrimBinOp Nothing PrimSub
+                ( Ref Nothing ( Local ( Name "n" ) ) )
+                ( LiteralInt Nothing 1 ) :|
                 [ Ref Nothing ( Local ( Name "n" ) ) ]
               )
             )
@@ -345,36 +324,28 @@ UberModule
                     ( Let Nothing
                       ( RecursiveGroup
                         (
-                          ( Nothing, Name "go$w$255", AbsN Nothing
+                          ( Nothing, Name "go$w$267", AbsN Nothing
                             ( ParamNamed Nothing
-                              ( Name "acc$256" ) :|
-                              [ ParamNamed Nothing ( Name "n$257" ) ]
+                              ( Name "acc$268" ) :|
+                              [ ParamNamed Nothing ( Name "n$269" ) ]
                             )
                             ( IfThenElse Nothing
                               ( Eq Nothing
-                                ( Ref Nothing ( Local ( Name "n$257" ) ) )
+                                ( Ref Nothing ( Local ( Name "n$269" ) ) )
                                 ( LiteralInt Nothing 0 )
                               )
-                              ( Ref Nothing ( Local ( Name "acc$256" ) ) )
+                              ( Ref Nothing ( Local ( Name "acc$268" ) ) )
                               ( AppN Nothing
-                                ( Ref Nothing ( Local ( Name "go$w$255" ) ) )
+                                ( Ref Nothing ( Local ( Name "go$w$267" ) ) )
                                 ( PrimBinOp Nothing PrimAdd
-                                  ( Ref Nothing ( Local ( Name "acc$256" ) ) )
+                                  ( Ref Nothing ( Local ( Name "acc$268" ) ) )
                                   ( PrimBinOp Nothing PrimMul
-                                    ( Ref Nothing ( Local ( Name "n$257" ) ) )
-                                    ( Ref Nothing ( Local ( Name "n$257" ) ) )
+                                    ( Ref Nothing ( Local ( Name "n$269" ) ) )
+                                    ( Ref Nothing ( Local ( Name "n$269" ) ) )
                                   ) :|
-                                  [ AppN Nothing
-                                    ( Ref Nothing
-                                      ( Imported
-                                        ( ModuleName "Golden.Loopification.Test" )
-                                        ( Name "sub$w" )
-                                      )
-                                    )
-                                    ( Ref Nothing
-                                      ( Local ( Name "n$257" ) ) :|
-                                      [ LiteralInt Nothing 1 ]
-                                    )
+                                  [ PrimBinOp Nothing PrimSub
+                                    ( Ref Nothing ( Local ( Name "n$269" ) ) )
+                                    ( LiteralInt Nothing 1 )
                                   ]
                                 )
                               )
@@ -383,7 +354,7 @@ UberModule
                         ) :| []
                       )
                       ( AppN Nothing
-                        ( Ref Nothing ( Local ( Name "go$w$255" ) ) )
+                        ( Ref Nothing ( Local ( Name "go$w$267" ) ) )
                         ( LiteralInt Nothing 0 :| [ LiteralInt Nothing 4 ] )
                       ) :| []
                     ) :| []

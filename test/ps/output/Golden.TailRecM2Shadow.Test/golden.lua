@@ -81,26 +81,20 @@ Effect_Lazy_applyEffect = PSLUA_runtime_lazy("applyEffect")(function()
   }
 end)
 local Effect_functorEffect = Effect_Lazy_functorEffect(0)
-local Golden_TailRecM2Shadow_Test_add_S_w = function(x_S_492, y_S_493)
-  return x_S_492 + y_S_493
-end
 M.Golden_TailRecM2Shadow_Test_sumFrom = function(dictMonadRec)
   local pure = ((dictMonadRec.Monad0()).Applicative0()).pure
   return function(b)
     return function(n)
       return dictMonadRec.tailRecM(function(o_S_482)
-        local _S_cse514 = o_S_482.a
-        local _S_cse513 = o_S_482.b
-        if _S_cse513 < n then
+        local _S_cse522 = o_S_482.a
+        local _S_cse521 = o_S_482.b
+        if _S_cse521 < n then
           return pure({
             "Control.Monad.Rec.Class∷Step.Loop",
-            {
-              a = Golden_TailRecM2Shadow_Test_add_S_w(_S_cse514, _S_cse513),
-              b = Golden_TailRecM2Shadow_Test_add_S_w(_S_cse513, 1)
-            }
+            { a = _S_cse522 + _S_cse521, b = _S_cse521 + 1 }
           })
         else
-          return pure({ "Control.Monad.Rec.Class∷Step.Done", _S_cse514 })
+          return pure({ "Control.Monad.Rec.Class∷Step.Done", _S_cse522 })
         end
       end)({ a = b, b = 0 })
     end
@@ -108,7 +102,7 @@ M.Golden_TailRecM2Shadow_Test_sumFrom = function(dictMonadRec)
 end
 return (function()
   local r_S_0 = (function()
-    local dictMonadRec_S_507 = {
+    local dictMonadRec_S_511 = {
       tailRecM = function(f_S_11)
         return function(a_S_12)
           return function()
@@ -143,27 +137,24 @@ return (function()
       end,
       Monad0 = function() return Effect_monadEffect end
     }
-    local pure_S_508 = ((dictMonadRec_S_507.Monad0()).Applicative0()).pure
-    return function(b_S_509)
-      return function(n_S_510)
-        return dictMonadRec_S_507.tailRecM(function(o_S_511)
-          local _S_cse516 = o_S_511.a
-          local _S_cse515 = o_S_511.b
-          if _S_cse515 < n_S_510 then
-            return pure_S_508({
+    local pure_S_512 = ((dictMonadRec_S_511.Monad0()).Applicative0()).pure
+    return function(b_S_513)
+      return function(n_S_514)
+        return dictMonadRec_S_511.tailRecM(function(o_S_515)
+          local _S_cse524 = o_S_515.a
+          local _S_cse523 = o_S_515.b
+          if _S_cse523 < n_S_514 then
+            return pure_S_512({
               "Control.Monad.Rec.Class∷Step.Loop",
-              {
-                a = Golden_TailRecM2Shadow_Test_add_S_w(_S_cse516, _S_cse515),
-                b = Golden_TailRecM2Shadow_Test_add_S_w(_S_cse515, 1)
-              }
+              { a = _S_cse524 + _S_cse523, b = _S_cse523 + 1 }
             })
           else
-            return pure_S_508({
+            return pure_S_512({
               "Control.Monad.Rec.Class∷Step.Done",
-              _S_cse516
+              _S_cse524
             })
           end
-        end)({ a = b_S_509, b = 0 })
+        end)({ a = b_S_513, b = 0 })
       end
     end
   end)()(0)(5)()

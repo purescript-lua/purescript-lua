@@ -5,17 +5,8 @@ local Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
 }
 local Effect_Console_log = Effect_Console_foreign.log
-local Golden_Loopification_Test_sub_S_w = function(x_S_216, y_S_217)
-  return x_S_216 - y_S_217
-end
 local Golden_Loopification_Test_sumTo_S_w = function(acc, n)
-  while true do
-    if n == 0 then
-      return acc
-    else
-      acc, n = acc + n, Golden_Loopification_Test_sub_S_w(n, 1)
-    end
-  end
+  while true do if n == 0 then return acc else acc, n = acc + n, n - 1 end end
 end
 M.Golden_Loopification_Test_sumTo = function(sumTo_S_p1)
   return function(sumTo_S_p2)
@@ -26,11 +17,7 @@ M.Golden_Loopification_Test_sumSquares = function(m)
   local go_S_w
   go_S_w = function(acc, n)
     while true do
-      if n == 0 then
-        return acc
-      else
-        acc, n = acc + n * n, Golden_Loopification_Test_sub_S_w(n, 1)
-      end
+      if n == 0 then return acc else acc, n = acc + n * n, n - 1 end
     end
   end
   return go_S_w(0, m)
@@ -40,7 +27,7 @@ Golden_Loopification_Test_sumCPS_S_w = function(n, k)
   if n == 0 then
     return k(0)
   else
-    return Golden_Loopification_Test_sumCPS_S_w(Golden_Loopification_Test_sub_S_w(n, 1), function( r )
+    return Golden_Loopification_Test_sumCPS_S_w(n - 1, function(r)
       return k(r + n)
     end)
   end
@@ -54,25 +41,17 @@ local Golden_Loopification_Test_mc91
 Golden_Loopification_Test_mc91 = function(n)
   while true do
     if not(n < 100) and n ~= 100 then
-      return Golden_Loopification_Test_sub_S_w(n, 10)
+      return n - 10
     else
       n = Golden_Loopification_Test_mc91(n + 11)
     end
   end
 end
 local Golden_Loopification_Test_countdown = function(n)
-  while true do
-    if not(n < 0) and n ~= 0 then
-      n = Golden_Loopification_Test_sub_S_w(n, 1)
-    else
-      return 0
-    end
-  end
+  while true do if not(n < 0) and n ~= 0 then n = n - 1 else return 0 end end
 end
 local Golden_Loopification_Test_countDrop_S_w = function(n)
-  while true do
-    if n == 0 then return 0 else n = Golden_Loopification_Test_sub_S_w(n, 1) end
-  end
+  while true do if n == 0 then return 0 else n = n - 1 end end
 end
 M.Golden_Loopification_Test_countDrop = function(countDrop_S_p1)
   return function(countDrop_S_p2)
@@ -83,17 +62,17 @@ return (function()
   local _ = Effect_Console_log(Data_Show_showIntImpl(Golden_Loopification_Test_countdown(5)))()
   local _ = Effect_Console_log(Data_Show_showIntImpl(Golden_Loopification_Test_sumTo_S_w(0, 10)))()
   local _ = Effect_Console_log(Data_Show_showIntImpl((function()
-    local go_S_w_S_255
-    go_S_w_S_255 = function(acc_S_256, n_S_257)
+    local go_S_w_S_267
+    go_S_w_S_267 = function(acc_S_268, n_S_269)
       while true do
-        if n_S_257 == 0 then
-          return acc_S_256
+        if n_S_269 == 0 then
+          return acc_S_268
         else
-          acc_S_256, n_S_257 = acc_S_256 + n_S_257 * n_S_257, Golden_Loopification_Test_sub_S_w(n_S_257, 1)
+          acc_S_268, n_S_269 = acc_S_268 + n_S_269 * n_S_269, n_S_269 - 1
         end
       end
     end
-    return go_S_w_S_255(0, 4)
+    return go_S_w_S_267(0, 4)
   end)()))()
   local _ = Effect_Console_log(Data_Show_showIntImpl(Golden_Loopification_Test_mc91(1)))()
   local _ = Effect_Console_log(Data_Show_showIntImpl(Golden_Loopification_Test_sumCPS_S_w(5, function( x_S_223 )

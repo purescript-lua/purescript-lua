@@ -20,30 +20,15 @@ UberModule
         [ ( Nothing, Name "log" ) ]
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Golden.LongReaderBind.Test", qnameName = Name "add$w"
-        }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "x$506" ) :| [ ParamNamed Nothing ( Name "y$507" ) ] )
-        ( PrimBinOp Nothing PrimAdd
-          ( Ref Nothing ( Local ( Name "x$506" ) ) )
-          ( Ref Nothing ( Local ( Name "y$507" ) ) )
-        )
-      ), Standalone
-      ( QName
         { qnameModuleName = ModuleName "Golden.LongReaderBind.Test", qnameName = Name "go"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "r$556" ) :| [] )
-        ( AppN Nothing
-          ( Ref Nothing ( Imported ( ModuleName "Golden.LongReaderBind.Test" ) ( Name "add$w" ) ) )
-          ( AppN Nothing
-            ( Ref Nothing
-              ( Imported ( ModuleName "Golden.LongReaderBind.Test" ) ( Name "add$w" ) )
-            )
-            ( Ref Nothing
-              ( Local ( Name "r$556" ) ) :|
-              [ Ref Nothing ( Local ( Name "r$556" ) ) ]
-            ) :|
-            [ Ref Nothing ( Local ( Name "r$556" ) ) ]
+        ( ParamNamed Nothing ( Name "r$560" ) :| [] )
+        ( PrimBinOp Nothing PrimAdd
+          ( PrimBinOp Nothing PrimAdd
+            ( Ref Nothing ( Local ( Name "r$560" ) ) )
+            ( Ref Nothing ( Local ( Name "r$560" ) ) )
           )
+          ( Ref Nothing ( Local ( Name "r$560" ) ) )
         )
       ), Standalone
       ( QName
@@ -53,16 +38,7 @@ UberModule
           ( Ref Nothing ( Imported ( ModuleName "Unsafe.Coerce" ) ( Name "foreign" ) ) )
           ( PropName "unsafeCoerce" )
         )
-        ( AppN Nothing
-          ( Ref Nothing ( Imported ( ModuleName "Golden.LongReaderBind.Test" ) ( Name "add$w" ) ) )
-          ( AppN Nothing
-            ( Ref Nothing
-              ( Imported ( ModuleName "Golden.LongReaderBind.Test" ) ( Name "add$w" ) )
-            )
-            ( LiteralInt Nothing 3 :| [ LiteralInt Nothing 3 ] ) :|
-            [ LiteralInt Nothing 3 ]
-          ) :| []
-        )
+        ( LiteralInt Nothing 9 :| [] )
       )
     ], uberModuleForeigns = [], uberModuleExports =
     [
