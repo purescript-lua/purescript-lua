@@ -1650,11 +1650,12 @@ inlineSaturatedCall policy env expr = case expr of
   directedArity fname = refQName fname >>= (`Map.lookup` policyArity policy)
 
 {- | Whether a worker body is a bare primop — a single arithmetic,
-comparison, equality or negated-equality node over operands free to
-re-emit ('Trivial': parameter references or scalar literals). Such a
-body is the cheapest possible paste: no work can be duplicated and no
-allocation introduced, so 'inlineSaturatedCall' unfolds it at every
-saturated n-ary call site regardless of use count (issue #281).
+comparison, equality or negated-equality node whose operands
+'complexityOf' classifies 'Trivial': references (in practice the
+worker's parameters) and scalar-sized literals, all free to re-emit.
+Such a body is the cheapest possible paste: no work can be duplicated
+and no allocation introduced, so 'inlineSaturatedCall' unfolds it at
+every saturated n-ary call site regardless of use count (issue #281).
 -}
 isBarePrimOpBody ∷ RawExp ann → Bool
 isBarePrimOpBody = \case
