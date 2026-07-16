@@ -1,6 +1,9 @@
 -- | A short State do-block: every bind threads a `Tuple result state`
--- | through the chain, so this module is the end-to-end witness for the
--- | result-side worker/wrapper split on State-shaped code.
+-- | through the chain. The result-side worker/wrapper split deliberately
+-- | does not fire here yet — the StateT dictionary bind chain is not
+-- | collapsed by the budgeted inliner, so no manifest Tuple-returning
+-- | candidate exists — and this golden pins exactly that boundary: its
+-- | output moves the day chain collapsing reaches these shapes.
 module Golden.CprState.Test where
 
 import Prelude
