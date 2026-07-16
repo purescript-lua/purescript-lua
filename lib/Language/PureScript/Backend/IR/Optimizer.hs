@@ -1598,10 +1598,30 @@ requirement (pasting a non-lambda value duplicates work, which is exactly
 what the user signed for; in a pure language it is behaviour-preserving).
 Below N arguments nothing pastes, not even the default guards: the
 directive pins the binding as a shared reference at partial sites.
+
+An n-ary call — the direct worker call the uncurry split mints — is not
+a unary spine, so 'unwindApp' leaves it whole and the paths above never
+see it. Most workers are meant to stay shared bindings, but a worker
+whose body is a bare primop over trivial operands (the residue of a
+floated dictionary application like @add = Data.Semiring.add
+semiringInt@, resolved through the lifted foreign) makes the call itself
+the whole cost: pasting is the cheapest possible unfolding and folds
+each site to the inline operator (issue #281). The n-ary 'AbsN' root is
+pasted under the original 'AppN' node — never rebuilt as a unary spine,
+which would leave an under-applied redex ('pasteableRoot') — so the
+exact-arity 'betaReduce' consumes it in the same pass.
 -}
 inlineSaturatedCall ∷ InlinePolicy → InlineEnv → RewriteRuleM SupplyM Ann
-inlineSaturatedCall policy env expr = case unwindApp expr of
-  (Ref _ fname, args)
+inlineSaturatedCall policy env expr = case expr of
+  AppN ann (Ref _ fname) args
+    | _ : _ : _ ← toList args
+    , Nothing ← directedArity fname
+    , Just rhs@(AbsN _ params body) ← Map.lookup fname env
+    , length args == length params
+    , isBarePrimOpBody body
+    , countFreeRef fname rhs == 0 →
+        (\rhs' → Just (AppN ann rhs' args)) <$> freshenBinders rhs
+  (unwindApp → (Ref _ fname, args))
     | not (null args)
     , Just rhs ← Map.lookup fname env
     , -- A multi-value body is never pasted (see 'containsMultiValue').
@@ -1628,6 +1648,23 @@ inlineSaturatedCall policy env expr = case unwindApp expr of
  where
   directedArity ∷ Qualified Name → Maybe Natural
   directedArity fname = refQName fname >>= (`Map.lookup` policyArity policy)
+
+{- | Whether a worker body is a bare primop — a single arithmetic,
+comparison, equality or negated-equality node over operands free to
+re-emit ('Trivial': parameter references or scalar literals). Such a
+body is the cheapest possible paste: no work can be duplicated and no
+allocation introduced, so 'inlineSaturatedCall' unfolds it at every
+saturated n-ary call site regardless of use count (issue #281).
+-}
+isBarePrimOpBody ∷ RawExp ann → Bool
+isBarePrimOpBody = \case
+  PrimBinOp _ _ a b → isTrivialOperand a && isTrivialOperand b
+  Eq _ a b → isTrivialOperand a && isTrivialOperand b
+  PrimNot _ e → isBarePrimOpBody e
+  _ → False
+ where
+  isTrivialOperand ∷ RawExp ann → Bool
+  isTrivialOperand = (== Trivial) . complexityOf
 
 -- | Re-apply the arguments 'unwindApp' peeled, as a unary spine.
 rebuildSpine ∷ [Exp] → Exp → Exp
