@@ -26,15 +26,6 @@ UberModule
         ( PropName "log" )
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Golden.EffectPureChain.Test", qnameName = Name "append$w"
-        }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "s1$212" ) :| [ ParamNamed Nothing ( Name "s2$213" ) ] )
-        ( PrimBinOp Nothing PrimConcat
-          ( Ref Nothing ( Local ( Name "s1$212" ) ) )
-          ( Ref Nothing ( Local ( Name "s2$213" ) ) )
-        )
-      ), Standalone
-      ( QName
         { qnameModuleName = ModuleName "Golden.EffectPureChain.Test", qnameName = Name "show"
         }, Ref Nothing
         ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) )
@@ -50,17 +41,13 @@ UberModule
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
                   ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
-                  ( AppN Nothing
-                    ( Ref Nothing
-                      ( Imported ( ModuleName "Golden.EffectPureChain.Test" ) ( Name "append$w" ) )
-                    )
-                    ( LiteralString Nothing "counting from " :|
-                      [ AppN Nothing
-                        ( Ref Nothing
-                          ( Imported ( ModuleName "Golden.EffectPureChain.Test" ) ( Name "show" ) )
-                        )
-                        ( Ref Nothing ( Local ( Name "n" ) ) :| [] )
-                      ]
+                  ( PrimBinOp Nothing PrimConcat
+                    ( LiteralString Nothing "counting from " )
+                    ( AppN Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Golden.EffectPureChain.Test" ) ( Name "show" ) )
+                      )
+                      ( Ref Nothing ( Local ( Name "n" ) ) :| [] )
                     ) :| []
                   )
                 )
@@ -74,23 +61,13 @@ UberModule
                 ( Nothing, Name "_", AppN Nothing
                   ( AppN Nothing
                     ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
-                    ( AppN Nothing
-                      ( Ref Nothing
-                        ( Imported
-                          ( ModuleName "Golden.EffectPureChain.Test" )
-                          ( Name "append$w" )
+                    ( PrimBinOp Nothing PrimConcat
+                      ( LiteralString Nothing "got " )
+                      ( AppN Nothing
+                        ( Ref Nothing
+                          ( Imported ( ModuleName "Golden.EffectPureChain.Test" ) ( Name "show" ) )
                         )
-                      )
-                      ( LiteralString Nothing "got " :|
-                        [ AppN Nothing
-                          ( Ref Nothing
-                            ( Imported
-                              ( ModuleName "Golden.EffectPureChain.Test" )
-                              ( Name "show" )
-                            )
-                          )
-                          ( Ref Nothing ( Local ( Name "x" ) ) :| [] )
-                        ]
+                        ( Ref Nothing ( Local ( Name "x" ) ) :| [] )
                       ) :| []
                     )
                   )
@@ -125,23 +102,16 @@ UberModule
                     ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
                         ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
-                        ( AppN Nothing
-                          ( Ref Nothing
-                            ( Imported
-                              ( ModuleName "Golden.EffectPureChain.Test" )
-                              ( Name "append$w" )
-                            )
-                          )
-                          ( LiteralString Nothing "counting from " :|
-                            [ AppN Nothing
-                              ( Ref Nothing
-                                ( Imported
-                                  ( ModuleName "Golden.EffectPureChain.Test" )
-                                  ( Name "show" )
-                                )
+                        ( PrimBinOp Nothing PrimConcat
+                          ( LiteralString Nothing "counting from " )
+                          ( AppN Nothing
+                            ( Ref Nothing
+                              ( Imported
+                                ( ModuleName "Golden.EffectPureChain.Test" )
+                                ( Name "show" )
                               )
-                              ( LiteralInt Nothing 20 :| [] )
-                            ]
+                            )
+                            ( LiteralInt Nothing 20 :| [] )
                           ) :| []
                         )
                       )
@@ -150,29 +120,22 @@ UberModule
                       )
                     ) :|
                     [ Standalone
-                      ( Nothing, Name "x$222", LiteralInt Nothing 21 ), Standalone
+                      ( Nothing, Name "x$226", LiteralInt Nothing 21 ), Standalone
                       ( Nothing, Name "_", AppN Nothing
                         ( AppN Nothing
                           ( Ref Nothing
                             ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) )
                           )
-                          ( AppN Nothing
-                            ( Ref Nothing
-                              ( Imported
-                                ( ModuleName "Golden.EffectPureChain.Test" )
-                                ( Name "append$w" )
-                              )
-                            )
-                            ( LiteralString Nothing "got " :|
-                              [ AppN Nothing
-                                ( Ref Nothing
-                                  ( Imported
-                                    ( ModuleName "Golden.EffectPureChain.Test" )
-                                    ( Name "show" )
-                                  )
+                          ( PrimBinOp Nothing PrimConcat
+                            ( LiteralString Nothing "got " )
+                            ( AppN Nothing
+                              ( Ref Nothing
+                                ( Imported
+                                  ( ModuleName "Golden.EffectPureChain.Test" )
+                                  ( Name "show" )
                                 )
-                                ( Ref Nothing ( Local ( Name "x$222" ) ) :| [] )
-                              ]
+                              )
+                              ( Ref Nothing ( Local ( Name "x$226" ) ) :| [] )
                             ) :| []
                           )
                         )

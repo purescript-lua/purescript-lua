@@ -1574,6 +1574,47 @@ spec = describe "IR Optimizer" do
                             )
         es → expectationFailure ("unexpected exports: " <> show es)
 
+  describe "dissolves primop workers into saturated call sites (#281)" do
+    let mainModule = moduleNameFromString "Main"
+        extern = moduleNameFromString "Extern"
+        n1 = refImported extern (Name "n1")
+        n2 = refImported extern (Name "n2")
+        addName = QName mainModule (Name "add")
+        addRef = refImported mainModule (Name "add")
+        -- λx. λy. x + y — the shape a floated dictionary application
+        -- (`add = Data.Semiring.add semiringInt`) resolves to once the
+        -- foreign lift and the use-once whole-binding inline have run.
+        addDef =
+          abstraction (paramNamed (Name "x")) $
+            abstraction (paramNamed (Name "y")) $
+              primBinOp
+                PrimAdd
+                (refLocal (Name "x"))
+                (refLocal (Name "y"))
+        saturated a = application (application addRef a)
+        checked = either (fail . show) pure . optimizedUberModuleChecked
+
+    it "folds every saturated worker call to the inline primop" do
+      -- Two saturated sites: the use-once whole-binding inline does not
+      -- fire, so the early uncurry split rewrites both sites to n-ary
+      -- worker calls. The call-site inliner must dissolve those calls
+      -- into the bare primop, leaving no binding behind.
+      optimized ←
+        checked
+          Linker.UberModule
+            { uberModuleForeigns = []
+            , uberModuleBindings = [Standalone (addName, addDef)]
+            , uberModuleExports =
+                [ (Name "main1", saturated n1 n2)
+                , (Name "main2", saturated n2 n1)
+                ]
+            }
+      Linker.uberModuleBindings optimized `shouldBe` []
+      Linker.uberModuleExports optimized
+        `shouldBe` [ (Name "main1", primBinOp PrimAdd n1 n2)
+                   , (Name "main2", primBinOp PrimAdd n2 n1)
+                   ]
+
   describe "honours @inline arity=N directives (issue #232)" do
     let mainModule = moduleNameFromString "Main"
         extern = moduleNameFromString "Extern"

@@ -429,10 +429,10 @@ UberModule
       ( QName
         { qnameModuleName = ModuleName "Golden.CprState.Test", qnameName = Name "get"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "x$612" ) :| [] )
+        ( ParamNamed Nothing ( Name "x$636" ) :| [] )
         ( AppN Nothing
           ( Ref Nothing ( Imported ( ModuleName "Data.Tuple" ) ( Name "Tuple$w" ) ) )
-          ( Ref Nothing ( Local ( Name "x$612" ) ) :| [ Ref Nothing ( Local ( Name "x$612" ) ) ] )
+          ( Ref Nothing ( Local ( Name "x$636" ) ) :| [ Ref Nothing ( Local ( Name "x$636" ) ) ] )
         )
       ), Standalone
       ( QName
@@ -440,15 +440,6 @@ UberModule
         }, ObjectProp Nothing
         ( Ref Nothing ( Imported ( ModuleName "Golden.CprState.Test" ) ( Name "bindStateT" ) ) )
         ( PropName "bind" )
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Golden.CprState.Test", qnameName = Name "add$w"
-        }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "x$534" ) :| [ ParamNamed Nothing ( Name "y$535" ) ] )
-        ( PrimBinOp Nothing PrimAdd
-          ( Ref Nothing ( Local ( Name "x$534" ) ) )
-          ( Ref Nothing ( Local ( Name "y$535" ) ) )
-        )
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.CprState.Test", qnameName = Name "go"
@@ -468,11 +459,9 @@ UberModule
                   ( Ref Nothing ( Imported ( ModuleName "Data.Tuple" ) ( Name "Tuple$w" ) ) )
                   ( Ref Nothing
                     ( Imported ( ModuleName "Data.Unit" ) ( Name "unit" ) ) :|
-                    [ AppN Nothing
-                      ( Ref Nothing
-                        ( Imported ( ModuleName "Golden.CprState.Test" ) ( Name "add$w" ) )
-                      )
-                      ( Ref Nothing ( Local ( Name "x1" ) ) :| [ LiteralInt Nothing 1 ] )
+                    [ PrimBinOp Nothing PrimAdd
+                      ( Ref Nothing ( Local ( Name "x1" ) ) )
+                      ( LiteralInt Nothing 1 )
                     ]
                   )
                 ) :| []
@@ -504,11 +493,9 @@ UberModule
                           )
                           ( Ref Nothing
                             ( Imported ( ModuleName "Data.Unit" ) ( Name "unit" ) ) :|
-                            [ AppN Nothing
-                              ( Ref Nothing
-                                ( Imported ( ModuleName "Golden.CprState.Test" ) ( Name "add$w" ) )
-                              )
-                              ( Ref Nothing ( Local ( Name "x2" ) ) :| [ LiteralInt Nothing 1 ] )
+                            [ PrimBinOp Nothing PrimAdd
+                              ( Ref Nothing ( Local ( Name "x2" ) ) )
+                              ( LiteralInt Nothing 1 )
                             ]
                           )
                         ) :| []
@@ -543,17 +530,9 @@ UberModule
                                   )
                                   ( Ref Nothing
                                     ( Imported ( ModuleName "Data.Unit" ) ( Name "unit" ) ) :|
-                                    [ AppN Nothing
-                                      ( Ref Nothing
-                                        ( Imported
-                                          ( ModuleName "Golden.CprState.Test" )
-                                          ( Name "add$w" )
-                                        )
-                                      )
-                                      ( Ref Nothing
-                                        ( Local ( Name "x3" ) ) :|
-                                        [ LiteralInt Nothing 1 ]
-                                      )
+                                    [ PrimBinOp Nothing PrimAdd
+                                      ( Ref Nothing ( Local ( Name "x3" ) ) )
+                                      ( LiteralInt Nothing 1 )
                                     ]
                                   )
                                 ) :| []
@@ -600,17 +579,9 @@ UberModule
                                               ( ModuleName "Data.Unit" )
                                               ( Name "unit" )
                                             ) :|
-                                            [ AppN Nothing
-                                              ( Ref Nothing
-                                                ( Imported
-                                                  ( ModuleName "Golden.CprState.Test" )
-                                                  ( Name "add$w" )
-                                                )
-                                              )
-                                              ( Ref Nothing
-                                                ( Local ( Name "x4" ) ) :|
-                                                [ LiteralInt Nothing 1 ]
-                                              )
+                                            [ PrimBinOp Nothing PrimAdd
+                                              ( Ref Nothing ( Local ( Name "x4" ) ) )
+                                              ( LiteralInt Nothing 1 )
                                             ]
                                           )
                                         ) :| []
@@ -657,17 +628,9 @@ UberModule
                                                       ( ModuleName "Data.Unit" )
                                                       ( Name "unit" )
                                                     ) :|
-                                                    [ AppN Nothing
-                                                      ( Ref Nothing
-                                                        ( Imported
-                                                          ( ModuleName "Golden.CprState.Test" )
-                                                          ( Name "add$w" )
-                                                        )
-                                                      )
-                                                      ( Ref Nothing
-                                                        ( Local ( Name "x5" ) ) :|
-                                                        [ LiteralInt Nothing 1 ]
-                                                      )
+                                                    [ PrimBinOp Nothing PrimAdd
+                                                      ( Ref Nothing ( Local ( Name "x5" ) ) )
+                                                      ( LiteralInt Nothing 1 )
                                                     ]
                                                   )
                                                 ) :| []
@@ -714,17 +677,11 @@ UberModule
                                                               ( ModuleName "Data.Unit" )
                                                               ( Name "unit" )
                                                             ) :|
-                                                            [ AppN Nothing
+                                                            [ PrimBinOp Nothing PrimAdd
                                                               ( Ref Nothing
-                                                                ( Imported
-                                                                  ( ModuleName "Golden.CprState.Test" )
-                                                                  ( Name "add$w" )
-                                                                )
+                                                                ( Local ( Name "x6" ) )
                                                               )
-                                                              ( Ref Nothing
-                                                                ( Local ( Name "x6" ) ) :|
-                                                                [ LiteralInt Nothing 1 ]
-                                                              )
+                                                              ( LiteralInt Nothing 1 )
                                                             ]
                                                           )
                                                         ) :| []
@@ -773,17 +730,11 @@ UberModule
                                                                       ( ModuleName "Data.Unit" )
                                                                       ( Name "unit" )
                                                                     ) :|
-                                                                    [ AppN Nothing
+                                                                    [ PrimBinOp Nothing PrimAdd
                                                                       ( Ref Nothing
-                                                                        ( Imported
-                                                                          ( ModuleName "Golden.CprState.Test" )
-                                                                          ( Name "add$w" )
-                                                                        )
+                                                                        ( Local ( Name "x7" ) )
                                                                       )
-                                                                      ( Ref Nothing
-                                                                        ( Local ( Name "x7" ) ) :|
-                                                                        [ LiteralInt Nothing 1 ]
-                                                                      )
+                                                                      ( LiteralInt Nothing 1 )
                                                                     ]
                                                                   )
                                                                 ) :| []
@@ -832,19 +783,13 @@ UberModule
                                                                               ( ModuleName "Data.Unit" )
                                                                               ( Name "unit" )
                                                                             ) :|
-                                                                            [ AppN Nothing
-                                                                              ( Ref Nothing
-                                                                                ( Imported
-                                                                                  ( ModuleName "Golden.CprState.Test" )
-                                                                                  ( Name "add$w" )
-                                                                                )
-                                                                              )
+                                                                            [ PrimBinOp Nothing PrimAdd
                                                                               ( Ref Nothing
                                                                                 ( Local
                                                                                   ( Name "x8" )
-                                                                                ) :|
-                                                                                [ LiteralInt Nothing 1 ]
+                                                                                )
                                                                               )
+                                                                              ( LiteralInt Nothing 1 )
                                                                             ]
                                                                           )
                                                                         ) :| []
@@ -893,19 +838,13 @@ UberModule
                                                                                       ( ModuleName "Data.Unit" )
                                                                                       ( Name "unit" )
                                                                                     ) :|
-                                                                                    [ AppN Nothing
-                                                                                      ( Ref Nothing
-                                                                                        ( Imported
-                                                                                          ( ModuleName "Golden.CprState.Test" )
-                                                                                          ( Name "add$w" )
-                                                                                        )
-                                                                                      )
+                                                                                    [ PrimBinOp Nothing PrimAdd
                                                                                       ( Ref Nothing
                                                                                         ( Local
                                                                                           ( Name "x9" )
-                                                                                        ) :|
-                                                                                        [ LiteralInt Nothing 1 ]
+                                                                                        )
                                                                                       )
+                                                                                      ( LiteralInt Nothing 1 )
                                                                                     ]
                                                                                   )
                                                                                 ) :| []
@@ -954,19 +893,13 @@ UberModule
                                                                                               ( ModuleName "Data.Unit" )
                                                                                               ( Name "unit" )
                                                                                             ) :|
-                                                                                            [ AppN Nothing
-                                                                                              ( Ref Nothing
-                                                                                                ( Imported
-                                                                                                  ( ModuleName "Golden.CprState.Test" )
-                                                                                                  ( Name "add$w" )
-                                                                                                )
-                                                                                              )
+                                                                                            [ PrimBinOp Nothing PrimAdd
                                                                                               ( Ref Nothing
                                                                                                 ( Local
                                                                                                   ( Name "x10" )
-                                                                                                ) :|
-                                                                                                [ LiteralInt Nothing 1 ]
+                                                                                                )
                                                                                               )
+                                                                                              ( LiteralInt Nothing 1 )
                                                                                             ]
                                                                                           )
                                                                                         ) :| []
@@ -1011,35 +944,23 @@ UberModule
                                                                                               )
                                                                                               ( PropName "pure" )
                                                                                             )
-                                                                                            ( AppN Nothing
-                                                                                              ( Ref Nothing
-                                                                                                ( Imported
-                                                                                                  ( ModuleName "Golden.CprState.Test" )
-                                                                                                  ( Name "add$w" )
-                                                                                                )
-                                                                                              )
-                                                                                              ( AppN Nothing
-                                                                                                ( Ref Nothing
-                                                                                                  ( Imported
-                                                                                                    ( ModuleName "Golden.CprState.Test" )
-                                                                                                    ( Name "add$w" )
-                                                                                                  )
-                                                                                                )
+                                                                                            ( PrimBinOp Nothing PrimAdd
+                                                                                              ( PrimBinOp Nothing PrimAdd
                                                                                                 ( Ref Nothing
                                                                                                   ( Local
                                                                                                     ( Name "x1" )
-                                                                                                  ) :|
-                                                                                                  [ Ref Nothing
-                                                                                                    ( Local
-                                                                                                      ( Name "x5" )
-                                                                                                    )
-                                                                                                  ]
-                                                                                                ) :|
-                                                                                                [ Ref Nothing
-                                                                                                  ( Local
-                                                                                                    ( Name "final" )
                                                                                                   )
-                                                                                                ]
+                                                                                                )
+                                                                                                ( Ref Nothing
+                                                                                                  ( Local
+                                                                                                    ( Name "x5" )
+                                                                                                  )
+                                                                                                )
+                                                                                              )
+                                                                                              ( Ref Nothing
+                                                                                                ( Local
+                                                                                                  ( Name "final" )
+                                                                                                )
                                                                                               ) :| []
                                                                                             )
                                                                                           ) :| []

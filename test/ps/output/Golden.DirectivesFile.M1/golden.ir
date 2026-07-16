@@ -2,30 +2,21 @@ UberModule
   { uberModuleBindings =
     [ Standalone
       ( QName
-        { qnameModuleName = ModuleName "Golden.DirectivesFile.M1", qnameName = Name "add$w"
-        }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "x$188" ) :| [ ParamNamed Nothing ( Name "y$189" ) ] )
-        ( PrimBinOp Nothing PrimAdd
-          ( Ref Nothing ( Local ( Name "x$188" ) ) )
-          ( Ref Nothing ( Local ( Name "y$189" ) ) )
-        )
-      ), Standalone
-      ( QName
         { qnameModuleName = ModuleName "Golden.DirectivesFile.M1", qnameName = Name "keep"
         }, AbsN ( Just Never )
         ( ParamNamed Nothing ( Name "x" ) :| [] )
-        ( AppN Nothing
-          ( Ref Nothing ( Imported ( ModuleName "Golden.DirectivesFile.M1" ) ( Name "add$w" ) ) )
-          ( Ref Nothing ( Local ( Name "x" ) ) :| [ LiteralInt Nothing 2 ] )
+        ( PrimBinOp Nothing PrimAdd
+          ( Ref Nothing ( Local ( Name "x" ) ) )
+          ( LiteralInt Nothing 2 )
         )
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.DirectivesFile.M1", qnameName = Name "incr"
         }, AbsN ( Just Never )
         ( ParamNamed Nothing ( Name "x" ) :| [] )
-        ( AppN Nothing
-          ( Ref Nothing ( Imported ( ModuleName "Golden.DirectivesFile.M1" ) ( Name "add$w" ) ) )
-          ( Ref Nothing ( Local ( Name "x" ) ) :| [ LiteralInt Nothing 1 ] )
+        ( PrimBinOp Nothing PrimAdd
+          ( Ref Nothing ( Local ( Name "x" ) ) )
+          ( LiteralInt Nothing 1 )
         )
       )
     ], uberModuleForeigns = [], uberModuleExports =

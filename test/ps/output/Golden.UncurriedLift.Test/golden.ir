@@ -172,12 +172,7 @@ UberModule
                   ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
                   ( AppN Nothing
                     ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
-                    ( AppN Nothing
-                      ( Ref Nothing
-                        ( Imported ( ModuleName "Golden.UncurriedLift.Test" ) ( Name "mul2" ) )
-                      )
-                      ( LiteralInt Nothing 4 :| [ LiteralInt Nothing 5 ] ) :| []
-                    ) :| []
+                    ( LiteralInt Nothing 20 :| [] ) :| []
                   )
                 )
                 ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
@@ -187,12 +182,7 @@ UberModule
                   ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
                   ( AppN Nothing
                     ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
-                    ( AppN Nothing
-                      ( Ref Nothing
-                        ( Imported ( ModuleName "Golden.UncurriedLift.Test" ) ( Name "mulByFn" ) )
-                      )
-                      ( LiteralInt Nothing 6 :| [ LiteralInt Nothing 8 ] ) :| []
-                    ) :| []
+                    ( LiteralInt Nothing 48 :| [] ) :| []
                   )
                 )
                 ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
@@ -247,12 +237,7 @@ UberModule
                   )
                   ( AbsN Nothing
                     ( ParamUnused Nothing :| [] )
-                    ( AppN Nothing
-                      ( Ref Nothing
-                        ( Imported ( ModuleName "Golden.UncurriedLift.Test" ) ( Name "sumST" ) )
-                      )
-                      ( LiteralInt Nothing 40 :| [ LiteralInt Nothing 2 ] )
-                    ) :| []
+                    ( LiteralInt Nothing 42 ) :| []
                   ) :| []
                 ) :| []
               )

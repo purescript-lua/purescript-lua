@@ -5,16 +5,13 @@ local Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
 }
 local Effect_Console_log = Effect_Console_foreign.log
-local Golden_FieldCaching_Test_sub_S_w = function(x_S_214, y_S_215)
-  return x_S_214 - y_S_215
-end
 local Golden_FieldCaching_Test_weigh = function(x) return x * 2 + 1 end
 local Golden_FieldCaching_Test_sumLoop_S_w = function(acc, n)
   while true do
     if n == 0 then
       return acc
     else
-      acc, n = acc + Golden_FieldCaching_Test_weigh(n), Golden_FieldCaching_Test_sub_S_w(n, 1)
+      acc, n = acc + Golden_FieldCaching_Test_weigh(n), n - 1
     end
   end
 end
@@ -33,7 +30,7 @@ M.Golden_FieldCaching_Test_fibby = function(n)
   if n < 2 then
     return n
   else
-    return Golden_FieldCaching_Test_weigh(Golden_FieldCaching_Test_sub_S_w(n, 1)) + Golden_FieldCaching_Test_weigh(Golden_FieldCaching_Test_sub_S_w(n, 2))
+    return Golden_FieldCaching_Test_weigh(n - 1) + Golden_FieldCaching_Test_weigh(n - 2)
   end
 end
 local Golden_FieldCaching_Test_apply2 = function(f) return f(2) end
@@ -46,8 +43,8 @@ return (function()
   local _ = Effect_Console_log(Data_Show_showIntImpl(Golden_FieldCaching_Test_weigh(1) + Golden_FieldCaching_Test_weigh(2)))()
   local _ = Effect_Console_log(Data_Show_showIntImpl(Golden_FieldCaching_Test_weigh(10)))()
   local _ = Effect_Console_log(Data_Show_showIntImpl(Golden_FieldCaching_Test_sumLoop_S_w(0, 4)))()
-  local _ = Effect_Console_log(Data_Show_showIntImpl(Golden_FieldCaching_Test_weigh(Golden_FieldCaching_Test_sub_S_w(5, 1)) + Golden_FieldCaching_Test_weigh(Golden_FieldCaching_Test_sub_S_w(5, 2))))()
-  return Effect_Console_log(Data_Show_showIntImpl(Golden_FieldCaching_Test_apply2(function( y_S_254 )
-    return Golden_FieldCaching_Test_weigh(5) + Golden_FieldCaching_Test_weigh(y_S_254)
+  local _ = Effect_Console_log(Data_Show_showIntImpl(Golden_FieldCaching_Test_weigh(4) + Golden_FieldCaching_Test_weigh(3)))()
+  return Effect_Console_log(Data_Show_showIntImpl(Golden_FieldCaching_Test_apply2(function( y_S_264 )
+    return Golden_FieldCaching_Test_weigh(5) + Golden_FieldCaching_Test_weigh(y_S_264)
   end)))()
 end)()

@@ -28,31 +28,19 @@ local Data_Show_showInt = { show = Data_Show_showIntImpl }
 local Effect_Console_logShow_S_w = function(dictShow, a)
   return Effect_Console_foreign.log(dictShow.show(a))
 end
-local Golden_Uncurry_Test_eq_S_w = function(r1_S_213, r2_S_214)
-  return r1_S_213 == r2_S_214
-end
-local Golden_Uncurry_Test_sub_S_w = function(x_S_208, y_S_209)
-  return x_S_208 - y_S_209
-end
 M.Golden_Uncurry_Test_sumTo = function(m)
   local go_S_w
   go_S_w = function(acc, n)
-    while true do
-      if Golden_Uncurry_Test_eq_S_w(n, 0) then
-        return acc
-      else
-        acc, n = acc + n, Golden_Uncurry_Test_sub_S_w(n, 1)
-      end
-    end
+    while true do if n == 0 then return acc else acc, n = acc + n, n - 1 end end
   end
   return go_S_w(0, m)
 end
 local Golden_Uncurry_Test_evenSteps_S_w
 local Golden_Uncurry_Test_oddSteps_S_w = function(acc, n)
-  if Golden_Uncurry_Test_eq_S_w(n, 0) then
+  if n == 0 then
     return acc
   else
-    return Golden_Uncurry_Test_evenSteps_S_w(acc + 1, Golden_Uncurry_Test_sub_S_w(n, 1))
+    return Golden_Uncurry_Test_evenSteps_S_w(acc + 1, n - 1)
   end
 end
 M.Golden_Uncurry_Test_oddSteps = function(oddSteps_S_p1)
@@ -61,10 +49,10 @@ M.Golden_Uncurry_Test_oddSteps = function(oddSteps_S_p1)
   end
 end
 Golden_Uncurry_Test_evenSteps_S_w = function(acc, n)
-  if Golden_Uncurry_Test_eq_S_w(n, 0) then
+  if n == 0 then
     return acc
   else
-    return Golden_Uncurry_Test_oddSteps_S_w(acc + 1, Golden_Uncurry_Test_sub_S_w(n, 1))
+    return Golden_Uncurry_Test_oddSteps_S_w(acc + 1, n - 1)
   end
 end
 M.Golden_Uncurry_Test_evenSteps = function(evenSteps_S_p1)
@@ -94,36 +82,36 @@ return (function()
   local _ = Effect_Console_logShow_S_w(Data_Show_showInt, Golden_Uncurry_Test_add3_S_w(1, 0, 41))()
   local _ = Effect_Console_logShow_S_w({
     show = Data_Show_foreign.showArrayImpl(Data_Show_showIntImpl)
-  }, Data_Functor_foreign.arrayMap(function(add3_S_p3_S_246)
-    return Golden_Uncurry_Test_add3_S_w(1, 2, add3_S_p3_S_246)
+  }, Data_Functor_foreign.arrayMap(function(add3_S_p3_S_258)
+    return Golden_Uncurry_Test_add3_S_w(1, 2, add3_S_p3_S_258)
   end)({ [1] = 1, [2] = 2, [3] = 3 }))()
   local _ = Effect_Console_logShow_S_w(Data_Show_showInt, Golden_Uncurry_Test_evenSteps_S_w(0, 10))()
   local _ = Effect_Console_logShow_S_w(Data_Show_showInt, Golden_Uncurry_Test_oddSteps_S_w(0, 7))()
   local _ = Effect_Console_logShow_S_w(Data_Show_showInt, (function()
-    local go_S_w_S_250
-    go_S_w_S_250 = function(acc_S_251, n_S_252)
+    local go_S_w_S_262
+    go_S_w_S_262 = function(acc_S_263, n_S_264)
       while true do
-        if Golden_Uncurry_Test_eq_S_w(n_S_252, 0) then
-          return acc_S_251
+        if n_S_264 == 0 then
+          return acc_S_263
         else
-          acc_S_251, n_S_252 = acc_S_251 + n_S_252, Golden_Uncurry_Test_sub_S_w(n_S_252, 1)
+          acc_S_263, n_S_264 = acc_S_263 + n_S_264, n_S_264 - 1
         end
       end
     end
-    return go_S_w_S_250(0, 10)
+    return go_S_w_S_262(0, 10)
   end)())()
   local _ = Effect_Console_logShow_S_w(Data_Show_showInt, (function()
-    local go_S_w_S_257
-    go_S_w_S_257 = function(acc_S_258, n_S_259)
+    local go_S_w_S_273
+    go_S_w_S_273 = function(acc_S_274, n_S_275)
       while true do
-        if Golden_Uncurry_Test_eq_S_w(n_S_259, 0) then
-          return acc_S_258
+        if n_S_275 == 0 then
+          return acc_S_274
         else
-          acc_S_258, n_S_259 = acc_S_258 + n_S_259, Golden_Uncurry_Test_sub_S_w(n_S_259, 1)
+          acc_S_274, n_S_275 = acc_S_274 + n_S_275, n_S_275 - 1
         end
       end
     end
-    return go_S_w_S_257(0, 100)
+    return go_S_w_S_273(0, 100)
   end)())()
   local _ = Effect_Console_logShow_S_w(Data_Show_showInt, Golden_Uncurry_Test_adderOf_S_w(1, 2)(3))()
   local _ = Effect_Console_logShow_S_w(Data_Show_showInt, Golden_Uncurry_Test_adderOf_S_w(2, 3)(4))()

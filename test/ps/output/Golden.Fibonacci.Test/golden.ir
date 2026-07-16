@@ -12,15 +12,6 @@ UberModule
         }, ForeignImport Nothing
         ( ModuleName "Effect.Console" ) ".spago/p/console/f82835a0b873aafe6bd7b14dd30cc150553d4ab9/src/Effect/Console.purs"
         [ ( Nothing, Name "log" ) ]
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Golden.Fibonacci.Test", qnameName = Name "sub$w"
-        }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "x$208" ) :| [ ParamNamed Nothing ( Name "y$209" ) ] )
-        ( PrimBinOp Nothing PrimSub
-          ( Ref Nothing ( Local ( Name "x$208" ) ) )
-          ( Ref Nothing ( Local ( Name "y$209" ) ) )
-        )
       ), RecursiveGroup
       (
         ( QName
@@ -38,22 +29,18 @@ UberModule
                   ( Ref Nothing
                     ( Imported ( ModuleName "Golden.Fibonacci.Test" ) ( Name "fib" ) )
                   )
-                  ( AppN Nothing
-                    ( Ref Nothing
-                      ( Imported ( ModuleName "Golden.Fibonacci.Test" ) ( Name "sub$w" ) )
-                    )
-                    ( Ref Nothing ( Local ( Name "v" ) ) :| [ LiteralInt Nothing 1 ] ) :| []
+                  ( PrimBinOp Nothing PrimSub
+                    ( Ref Nothing ( Local ( Name "v" ) ) )
+                    ( LiteralInt Nothing 1 ) :| []
                   )
                 )
                 ( AppN Nothing
                   ( Ref Nothing
                     ( Imported ( ModuleName "Golden.Fibonacci.Test" ) ( Name "fib" ) )
                   )
-                  ( AppN Nothing
-                    ( Ref Nothing
-                      ( Imported ( ModuleName "Golden.Fibonacci.Test" ) ( Name "sub$w" ) )
-                    )
-                    ( Ref Nothing ( Local ( Name "v" ) ) :| [ LiteralInt Nothing 2 ] ) :| []
+                  ( PrimBinOp Nothing PrimSub
+                    ( Ref Nothing ( Local ( Name "v" ) ) )
+                    ( LiteralInt Nothing 2 ) :| []
                   )
                 )
               )

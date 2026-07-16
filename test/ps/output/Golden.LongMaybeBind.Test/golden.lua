@@ -4,119 +4,113 @@ local Data_Show_foreign = { showIntImpl = function(n) return tostring(n) end }
 local Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
 }
-local Data_Maybe_append_S_w = function(s1_S_316, s2_S_317)
-  return s1_S_316 .. s2_S_317
-end
 local Golden_LongMaybeBind_Test_bind_S_w = function(v_S_305, v1_S_306)
-  local _S_cse626 = v_S_305[1]
-  if "Data.Maybe∷Maybe.Just" == _S_cse626 then
+  local _S_cse1230 = v_S_305[1]
+  if "Data.Maybe∷Maybe.Just" == _S_cse1230 then
     return v1_S_306(v_S_305[2])
-  elseif "Data.Maybe∷Maybe.Nothing" == _S_cse626 then
+  elseif "Data.Maybe∷Maybe.Nothing" == _S_cse1230 then
     return { "Data.Maybe∷Maybe.Nothing" }
   else
     return error("No patterns matched")
   end
 end
-local Golden_LongMaybeBind_Test_add_S_w = function(x_S_311, y_S_312)
-  return x_S_311 + y_S_312
-end
 local Golden_LongMaybeBind_Test_compute = (function()
-  local _S_kont628_S_w = function(x1_S_629, x277_S_630)
+  local _S_kont1232_S_w = function(x1_S_1233, x277_S_1234)
     return Golden_LongMaybeBind_Test_bind_S_w({
       "Data.Maybe∷Maybe.Just",
-      (Golden_LongMaybeBind_Test_add_S_w(x277_S_630, 1))
+      x277_S_1234 + 1
     }, function(x278)
       return Golden_LongMaybeBind_Test_bind_S_w({
         "Data.Maybe∷Maybe.Just",
-        (Golden_LongMaybeBind_Test_add_S_w(x278, 1))
+        x278 + 1
       }, function(x279)
         return Golden_LongMaybeBind_Test_bind_S_w({
           "Data.Maybe∷Maybe.Just",
-          (Golden_LongMaybeBind_Test_add_S_w(x279, 1))
+          x279 + 1
         }, function(x280)
           return Golden_LongMaybeBind_Test_bind_S_w({
             "Data.Maybe∷Maybe.Just",
-            (Golden_LongMaybeBind_Test_add_S_w(x280, 1))
+            x280 + 1
           }, function(x281)
             return Golden_LongMaybeBind_Test_bind_S_w({
               "Data.Maybe∷Maybe.Just",
-              (Golden_LongMaybeBind_Test_add_S_w(x281, 1))
+              x281 + 1
             }, function(x282)
               return Golden_LongMaybeBind_Test_bind_S_w({
                 "Data.Maybe∷Maybe.Just",
-                (Golden_LongMaybeBind_Test_add_S_w(x282, 1))
+                x282 + 1
               }, function(x283)
                 return Golden_LongMaybeBind_Test_bind_S_w({
                   "Data.Maybe∷Maybe.Just",
-                  (Golden_LongMaybeBind_Test_add_S_w(x283, 1))
+                  x283 + 1
                 }, function(x284)
                   return Golden_LongMaybeBind_Test_bind_S_w({
                     "Data.Maybe∷Maybe.Just",
-                    (Golden_LongMaybeBind_Test_add_S_w(x284, 1))
+                    x284 + 1
                   }, function(x285)
                     return Golden_LongMaybeBind_Test_bind_S_w({
                       "Data.Maybe∷Maybe.Just",
-                      (Golden_LongMaybeBind_Test_add_S_w(x285, 1))
+                      x285 + 1
                     }, function(x286)
                       return Golden_LongMaybeBind_Test_bind_S_w({
                         "Data.Maybe∷Maybe.Just",
-                        (Golden_LongMaybeBind_Test_add_S_w(x286, 1))
+                        x286 + 1
                       }, function(x287)
                         return Golden_LongMaybeBind_Test_bind_S_w({
                           "Data.Maybe∷Maybe.Just",
-                          (Golden_LongMaybeBind_Test_add_S_w(x287, 1))
+                          x287 + 1
                         }, function(x288)
                           return Golden_LongMaybeBind_Test_bind_S_w({
                             "Data.Maybe∷Maybe.Just",
-                            (Golden_LongMaybeBind_Test_add_S_w(x288, 1))
+                            x288 + 1
                           }, function(x289)
                             return Golden_LongMaybeBind_Test_bind_S_w({
                               "Data.Maybe∷Maybe.Just",
-                              (Golden_LongMaybeBind_Test_add_S_w(x289, 1))
+                              x289 + 1
                             }, function(x290)
                               return Golden_LongMaybeBind_Test_bind_S_w({
                                 "Data.Maybe∷Maybe.Just",
-                                (Golden_LongMaybeBind_Test_add_S_w(x290, 1))
+                                x290 + 1
                               }, function(x291)
                                 return Golden_LongMaybeBind_Test_bind_S_w({
                                   "Data.Maybe∷Maybe.Just",
-                                  (Golden_LongMaybeBind_Test_add_S_w(x291, 1))
+                                  x291 + 1
                                 }, function(x292)
                                   return Golden_LongMaybeBind_Test_bind_S_w({
                                     "Data.Maybe∷Maybe.Just",
-                                    (Golden_LongMaybeBind_Test_add_S_w(x292, 1))
+                                    x292 + 1
                                   }, function(x293)
                                     return Golden_LongMaybeBind_Test_bind_S_w({
                                       "Data.Maybe∷Maybe.Just",
-                                      (Golden_LongMaybeBind_Test_add_S_w(x293, 1))
+                                      x293 + 1
                                     }, function(x294)
                                       return Golden_LongMaybeBind_Test_bind_S_w({
                                         "Data.Maybe∷Maybe.Just",
-                                        (Golden_LongMaybeBind_Test_add_S_w(x294, 1))
+                                        x294 + 1
                                       }, function(x295)
                                         return Golden_LongMaybeBind_Test_bind_S_w({
                                           "Data.Maybe∷Maybe.Just",
-                                          (Golden_LongMaybeBind_Test_add_S_w(x295, 1))
+                                          x295 + 1
                                         }, function(x296)
                                           return Golden_LongMaybeBind_Test_bind_S_w({
                                             "Data.Maybe∷Maybe.Just",
-                                            (Golden_LongMaybeBind_Test_add_S_w(x296, 1))
+                                            x296 + 1
                                           }, function(x297)
                                             return Golden_LongMaybeBind_Test_bind_S_w({
                                               "Data.Maybe∷Maybe.Just",
-                                              (Golden_LongMaybeBind_Test_add_S_w(x297, 1))
+                                              x297 + 1
                                             }, function(x298)
                                               return Golden_LongMaybeBind_Test_bind_S_w({
                                                 "Data.Maybe∷Maybe.Just",
-                                                (Golden_LongMaybeBind_Test_add_S_w(x298, 1))
+                                                x298 + 1
                                               }, function(x299)
                                                 return Golden_LongMaybeBind_Test_bind_S_w({
                                                   "Data.Maybe∷Maybe.Just",
-                                                  (Golden_LongMaybeBind_Test_add_S_w(x299, 1))
+                                                  x299 + 1
                                                 }, function(x300)
                                                   return {
                                                     "Data.Maybe∷Maybe.Just",
-                                                    (Golden_LongMaybeBind_Test_add_S_w(x1_S_629, x300))
+                                                    x1_S_1233 + x300
                                                   }
                                                 end)
                                               end)
@@ -142,54 +136,54 @@ local Golden_LongMaybeBind_Test_compute = (function()
       end)
     end)
   end
-  local _S_kont631_S_w = function(x1_S_632, x238_S_633)
+  local _S_kont1235_S_w = function(x1_S_1236, x238_S_1237)
     return Golden_LongMaybeBind_Test_bind_S_w({
       "Data.Maybe∷Maybe.Just",
-      (Golden_LongMaybeBind_Test_add_S_w(x238_S_633, 1))
+      x238_S_1237 + 1
     }, function(x239)
       return Golden_LongMaybeBind_Test_bind_S_w({
         "Data.Maybe∷Maybe.Just",
-        (Golden_LongMaybeBind_Test_add_S_w(x239, 1))
+        x239 + 1
       }, function(x240)
         return Golden_LongMaybeBind_Test_bind_S_w({
           "Data.Maybe∷Maybe.Just",
-          (Golden_LongMaybeBind_Test_add_S_w(x240, 1))
+          x240 + 1
         }, function(x241)
           return Golden_LongMaybeBind_Test_bind_S_w({
             "Data.Maybe∷Maybe.Just",
-            (Golden_LongMaybeBind_Test_add_S_w(x241, 1))
+            x241 + 1
           }, function(x242)
             return Golden_LongMaybeBind_Test_bind_S_w({
               "Data.Maybe∷Maybe.Just",
-              (Golden_LongMaybeBind_Test_add_S_w(x242, 1))
+              x242 + 1
             }, function(x243)
               return Golden_LongMaybeBind_Test_bind_S_w({
                 "Data.Maybe∷Maybe.Just",
-                (Golden_LongMaybeBind_Test_add_S_w(x243, 1))
+                x243 + 1
               }, function(x244)
                 return Golden_LongMaybeBind_Test_bind_S_w({
                   "Data.Maybe∷Maybe.Just",
-                  (Golden_LongMaybeBind_Test_add_S_w(x244, 1))
+                  x244 + 1
                 }, function(x245)
                   return Golden_LongMaybeBind_Test_bind_S_w({
                     "Data.Maybe∷Maybe.Just",
-                    (Golden_LongMaybeBind_Test_add_S_w(x245, 1))
+                    x245 + 1
                   }, function(x246)
                     return Golden_LongMaybeBind_Test_bind_S_w({
                       "Data.Maybe∷Maybe.Just",
-                      (Golden_LongMaybeBind_Test_add_S_w(x246, 1))
+                      x246 + 1
                     }, function(x247)
                       return Golden_LongMaybeBind_Test_bind_S_w({
                         "Data.Maybe∷Maybe.Just",
-                        (Golden_LongMaybeBind_Test_add_S_w(x247, 1))
+                        x247 + 1
                       }, function(x248)
                         return Golden_LongMaybeBind_Test_bind_S_w({
                           "Data.Maybe∷Maybe.Just",
-                          (Golden_LongMaybeBind_Test_add_S_w(x248, 1))
+                          x248 + 1
                         }, function(x249)
                           return Golden_LongMaybeBind_Test_bind_S_w({
                             "Data.Maybe∷Maybe.Just",
-                            (Golden_LongMaybeBind_Test_add_S_w(x249, 1))
+                            x249 + 1
                           }, function(x250)
                             return Golden_LongMaybeBind_Test_bind_S_w({
                               "Data.Maybe∷Maybe.Just",
@@ -197,113 +191,113 @@ local Golden_LongMaybeBind_Test_compute = (function()
                             }, function()
                               return Golden_LongMaybeBind_Test_bind_S_w({
                                 "Data.Maybe∷Maybe.Just",
-                                (Golden_LongMaybeBind_Test_add_S_w(x250, 1))
+                                x250 + 1
                               }, function(x251)
                                 return Golden_LongMaybeBind_Test_bind_S_w({
                                   "Data.Maybe∷Maybe.Just",
-                                  (Golden_LongMaybeBind_Test_add_S_w(x251, 1))
+                                  x251 + 1
                                 }, function(x252)
                                   return Golden_LongMaybeBind_Test_bind_S_w({
                                     "Data.Maybe∷Maybe.Just",
-                                    (Golden_LongMaybeBind_Test_add_S_w(x252, 1))
+                                    x252 + 1
                                   }, function(x253)
                                     return Golden_LongMaybeBind_Test_bind_S_w({
                                       "Data.Maybe∷Maybe.Just",
-                                      (Golden_LongMaybeBind_Test_add_S_w(x253, 1))
+                                      x253 + 1
                                     }, function(x254)
                                       return Golden_LongMaybeBind_Test_bind_S_w({
                                         "Data.Maybe∷Maybe.Just",
-                                        (Golden_LongMaybeBind_Test_add_S_w(x254, 1))
+                                        x254 + 1
                                       }, function(x255)
                                         return Golden_LongMaybeBind_Test_bind_S_w({
                                           "Data.Maybe∷Maybe.Just",
-                                          (Golden_LongMaybeBind_Test_add_S_w(x255, 1))
+                                          x255 + 1
                                         }, function(x256)
                                           return Golden_LongMaybeBind_Test_bind_S_w({
                                             "Data.Maybe∷Maybe.Just",
-                                            (Golden_LongMaybeBind_Test_add_S_w(x256, 1))
+                                            x256 + 1
                                           }, function(x257)
                                             return Golden_LongMaybeBind_Test_bind_S_w({
                                               "Data.Maybe∷Maybe.Just",
-                                              (Golden_LongMaybeBind_Test_add_S_w(x257, 1))
+                                              x257 + 1
                                             }, function(x258)
                                               return Golden_LongMaybeBind_Test_bind_S_w({
                                                 "Data.Maybe∷Maybe.Just",
-                                                (Golden_LongMaybeBind_Test_add_S_w(x258, 1))
+                                                x258 + 1
                                               }, function(x259)
                                                 return Golden_LongMaybeBind_Test_bind_S_w({
                                                   "Data.Maybe∷Maybe.Just",
-                                                  (Golden_LongMaybeBind_Test_add_S_w(x259, 1))
+                                                  x259 + 1
                                                 }, function(x260)
                                                   return Golden_LongMaybeBind_Test_bind_S_w({
                                                     "Data.Maybe∷Maybe.Just",
-                                                    (Golden_LongMaybeBind_Test_add_S_w(x260, 1))
+                                                    x260 + 1
                                                   }, function(x261)
                                                     return Golden_LongMaybeBind_Test_bind_S_w({
                                                       "Data.Maybe∷Maybe.Just",
-                                                      (Golden_LongMaybeBind_Test_add_S_w(x261, 1))
+                                                      x261 + 1
                                                     }, function(x262)
                                                       return Golden_LongMaybeBind_Test_bind_S_w({
                                                         "Data.Maybe∷Maybe.Just",
-                                                        (Golden_LongMaybeBind_Test_add_S_w(x262, 1))
+                                                        x262 + 1
                                                       }, function(x263)
                                                         return Golden_LongMaybeBind_Test_bind_S_w({
                                                           "Data.Maybe∷Maybe.Just",
-                                                          (Golden_LongMaybeBind_Test_add_S_w(x263, 1))
+                                                          x263 + 1
                                                         }, function(x264)
                                                           return Golden_LongMaybeBind_Test_bind_S_w({
                                                             "Data.Maybe∷Maybe.Just",
-                                                            (Golden_LongMaybeBind_Test_add_S_w(x264, 1))
+                                                            x264 + 1
                                                           }, function(x265)
                                                             return Golden_LongMaybeBind_Test_bind_S_w({
                                                               "Data.Maybe∷Maybe.Just",
-                                                              (Golden_LongMaybeBind_Test_add_S_w(x265, 1))
+                                                              x265 + 1
                                                             }, function(x266)
                                                               return Golden_LongMaybeBind_Test_bind_S_w({
                                                                 "Data.Maybe∷Maybe.Just",
-                                                                (Golden_LongMaybeBind_Test_add_S_w(x266, 1))
+                                                                x266 + 1
                                                               }, function(x267)
                                                                 return Golden_LongMaybeBind_Test_bind_S_w({
                                                                   "Data.Maybe∷Maybe.Just",
-                                                                  (Golden_LongMaybeBind_Test_add_S_w(x267, 1))
+                                                                  x267 + 1
                                                                 }, function( x268 )
                                                                   return Golden_LongMaybeBind_Test_bind_S_w({
                                                                     "Data.Maybe∷Maybe.Just",
-                                                                    (Golden_LongMaybeBind_Test_add_S_w(x268, 1))
+                                                                    x268 + 1
                                                                   }, function( x269 )
                                                                     return Golden_LongMaybeBind_Test_bind_S_w({
                                                                       "Data.Maybe∷Maybe.Just",
-                                                                      (Golden_LongMaybeBind_Test_add_S_w(x269, 1))
+                                                                      x269 + 1
                                                                     }, function( x270 )
                                                                       return Golden_LongMaybeBind_Test_bind_S_w({
                                                                         "Data.Maybe∷Maybe.Just",
-                                                                        (Golden_LongMaybeBind_Test_add_S_w(x270, 1))
+                                                                        x270 + 1
                                                                       }, function( x271 )
                                                                         return Golden_LongMaybeBind_Test_bind_S_w({
                                                                           "Data.Maybe∷Maybe.Just",
-                                                                          (Golden_LongMaybeBind_Test_add_S_w(x271, 1))
+                                                                          x271 + 1
                                                                         }, function( x272 )
                                                                           return Golden_LongMaybeBind_Test_bind_S_w({
                                                                             "Data.Maybe∷Maybe.Just",
-                                                                            (Golden_LongMaybeBind_Test_add_S_w(x272, 1))
+                                                                            x272 + 1
                                                                           }, function( x273 )
                                                                             return Golden_LongMaybeBind_Test_bind_S_w({
                                                                               "Data.Maybe∷Maybe.Just",
-                                                                              (Golden_LongMaybeBind_Test_add_S_w(x273, 1))
+                                                                              x273 + 1
                                                                             }, function( x274 )
                                                                               return Golden_LongMaybeBind_Test_bind_S_w({
                                                                                 "Data.Maybe∷Maybe.Just",
-                                                                                (Golden_LongMaybeBind_Test_add_S_w(x274, 1))
+                                                                                x274 + 1
                                                                               }, function( x275 )
                                                                                 return Golden_LongMaybeBind_Test_bind_S_w({
                                                                                   "Data.Maybe∷Maybe.Just",
-                                                                                  (Golden_LongMaybeBind_Test_add_S_w(x275, 1))
+                                                                                  x275 + 1
                                                                                 }, function( x276 )
                                                                                   return Golden_LongMaybeBind_Test_bind_S_w({
                                                                                     "Data.Maybe∷Maybe.Just",
-                                                                                    (Golden_LongMaybeBind_Test_add_S_w(x276, 1))
+                                                                                    x276 + 1
                                                                                   }, function( x277 )
-                                                                                    return _S_kont628_S_w(x1_S_632, x277)
+                                                                                    return _S_kont1232_S_w(x1_S_1236, x277)
                                                                                   end)
                                                                                 end)
                                                                               end)
@@ -345,168 +339,168 @@ local Golden_LongMaybeBind_Test_compute = (function()
       end)
     end)
   end
-  local _S_kont634_S_w = function(x1_S_635, x198_S_636)
+  local _S_kont1238_S_w = function(x1_S_1239, x198_S_1240)
     return Golden_LongMaybeBind_Test_bind_S_w({
       "Data.Maybe∷Maybe.Just",
-      (Golden_LongMaybeBind_Test_add_S_w(x198_S_636, 1))
+      x198_S_1240 + 1
     }, function(x199)
       return Golden_LongMaybeBind_Test_bind_S_w({
         "Data.Maybe∷Maybe.Just",
-        (Golden_LongMaybeBind_Test_add_S_w(x199, 1))
+        x199 + 1
       }, function(x200)
         return Golden_LongMaybeBind_Test_bind_S_w({
           "Data.Maybe∷Maybe.Just",
-          (Golden_LongMaybeBind_Test_add_S_w(x200, 1))
+          x200 + 1
         }, function(x201)
           return Golden_LongMaybeBind_Test_bind_S_w({
             "Data.Maybe∷Maybe.Just",
-            (Golden_LongMaybeBind_Test_add_S_w(x201, 1))
+            x201 + 1
           }, function(x202)
             return Golden_LongMaybeBind_Test_bind_S_w({
               "Data.Maybe∷Maybe.Just",
-              (Golden_LongMaybeBind_Test_add_S_w(x202, 1))
+              x202 + 1
             }, function(x203)
               return Golden_LongMaybeBind_Test_bind_S_w({
                 "Data.Maybe∷Maybe.Just",
-                (Golden_LongMaybeBind_Test_add_S_w(x203, 1))
+                x203 + 1
               }, function(x204)
                 return Golden_LongMaybeBind_Test_bind_S_w({
                   "Data.Maybe∷Maybe.Just",
-                  (Golden_LongMaybeBind_Test_add_S_w(x204, 1))
+                  x204 + 1
                 }, function(x205)
                   return Golden_LongMaybeBind_Test_bind_S_w({
                     "Data.Maybe∷Maybe.Just",
-                    (Golden_LongMaybeBind_Test_add_S_w(x205, 1))
+                    x205 + 1
                   }, function(x206)
                     return Golden_LongMaybeBind_Test_bind_S_w({
                       "Data.Maybe∷Maybe.Just",
-                      (Golden_LongMaybeBind_Test_add_S_w(x206, 1))
+                      x206 + 1
                     }, function(x207)
                       return Golden_LongMaybeBind_Test_bind_S_w({
                         "Data.Maybe∷Maybe.Just",
-                        (Golden_LongMaybeBind_Test_add_S_w(x207, 1))
+                        x207 + 1
                       }, function(x208)
                         return Golden_LongMaybeBind_Test_bind_S_w({
                           "Data.Maybe∷Maybe.Just",
-                          (Golden_LongMaybeBind_Test_add_S_w(x208, 1))
+                          x208 + 1
                         }, function(x209)
                           return Golden_LongMaybeBind_Test_bind_S_w({
                             "Data.Maybe∷Maybe.Just",
-                            (Golden_LongMaybeBind_Test_add_S_w(x209, 1))
+                            x209 + 1
                           }, function(x210)
                             return Golden_LongMaybeBind_Test_bind_S_w({
                               "Data.Maybe∷Maybe.Just",
-                              (Golden_LongMaybeBind_Test_add_S_w(x210, 1))
+                              x210 + 1
                             }, function(x211)
                               return Golden_LongMaybeBind_Test_bind_S_w({
                                 "Data.Maybe∷Maybe.Just",
-                                (Golden_LongMaybeBind_Test_add_S_w(x211, 1))
+                                x211 + 1
                               }, function(x212)
                                 return Golden_LongMaybeBind_Test_bind_S_w({
                                   "Data.Maybe∷Maybe.Just",
-                                  (Golden_LongMaybeBind_Test_add_S_w(x212, 1))
+                                  x212 + 1
                                 }, function(x213)
                                   return Golden_LongMaybeBind_Test_bind_S_w({
                                     "Data.Maybe∷Maybe.Just",
-                                    (Golden_LongMaybeBind_Test_add_S_w(x213, 1))
+                                    x213 + 1
                                   }, function(x214)
                                     return Golden_LongMaybeBind_Test_bind_S_w({
                                       "Data.Maybe∷Maybe.Just",
-                                      (Golden_LongMaybeBind_Test_add_S_w(x214, 1))
+                                      x214 + 1
                                     }, function(x215)
                                       return Golden_LongMaybeBind_Test_bind_S_w({
                                         "Data.Maybe∷Maybe.Just",
-                                        (Golden_LongMaybeBind_Test_add_S_w(x215, 1))
+                                        x215 + 1
                                       }, function(x216)
                                         return Golden_LongMaybeBind_Test_bind_S_w({
                                           "Data.Maybe∷Maybe.Just",
-                                          (Golden_LongMaybeBind_Test_add_S_w(x216, 1))
+                                          x216 + 1
                                         }, function(x217)
                                           return Golden_LongMaybeBind_Test_bind_S_w({
                                             "Data.Maybe∷Maybe.Just",
-                                            (Golden_LongMaybeBind_Test_add_S_w(x217, 1))
+                                            x217 + 1
                                           }, function(x218)
                                             return Golden_LongMaybeBind_Test_bind_S_w({
                                               "Data.Maybe∷Maybe.Just",
-                                              (Golden_LongMaybeBind_Test_add_S_w(x218, 1))
+                                              x218 + 1
                                             }, function(x219)
                                               return Golden_LongMaybeBind_Test_bind_S_w({
                                                 "Data.Maybe∷Maybe.Just",
-                                                (Golden_LongMaybeBind_Test_add_S_w(x219, 1))
+                                                x219 + 1
                                               }, function(x220)
                                                 return Golden_LongMaybeBind_Test_bind_S_w({
                                                   "Data.Maybe∷Maybe.Just",
-                                                  (Golden_LongMaybeBind_Test_add_S_w(x220, 1))
+                                                  x220 + 1
                                                 }, function(x221)
                                                   return Golden_LongMaybeBind_Test_bind_S_w({
                                                     "Data.Maybe∷Maybe.Just",
-                                                    (Golden_LongMaybeBind_Test_add_S_w(x221, 1))
+                                                    x221 + 1
                                                   }, function(x222)
                                                     return Golden_LongMaybeBind_Test_bind_S_w({
                                                       "Data.Maybe∷Maybe.Just",
-                                                      (Golden_LongMaybeBind_Test_add_S_w(x222, 1))
+                                                      x222 + 1
                                                     }, function(x223)
                                                       return Golden_LongMaybeBind_Test_bind_S_w({
                                                         "Data.Maybe∷Maybe.Just",
-                                                        (Golden_LongMaybeBind_Test_add_S_w(x223, 1))
+                                                        x223 + 1
                                                       }, function(x224)
                                                         return Golden_LongMaybeBind_Test_bind_S_w({
                                                           "Data.Maybe∷Maybe.Just",
-                                                          (Golden_LongMaybeBind_Test_add_S_w(x224, 1))
+                                                          x224 + 1
                                                         }, function(x225)
                                                           return Golden_LongMaybeBind_Test_bind_S_w({
                                                             "Data.Maybe∷Maybe.Just",
-                                                            (Golden_LongMaybeBind_Test_add_S_w(x225, 1))
+                                                            x225 + 1
                                                           }, function(x226)
                                                             return Golden_LongMaybeBind_Test_bind_S_w({
                                                               "Data.Maybe∷Maybe.Just",
-                                                              (Golden_LongMaybeBind_Test_add_S_w(x226, 1))
+                                                              x226 + 1
                                                             }, function(x227)
                                                               return Golden_LongMaybeBind_Test_bind_S_w({
                                                                 "Data.Maybe∷Maybe.Just",
-                                                                (Golden_LongMaybeBind_Test_add_S_w(x227, 1))
+                                                                x227 + 1
                                                               }, function(x228)
                                                                 return Golden_LongMaybeBind_Test_bind_S_w({
                                                                   "Data.Maybe∷Maybe.Just",
-                                                                  (Golden_LongMaybeBind_Test_add_S_w(x228, 1))
+                                                                  x228 + 1
                                                                 }, function( x229 )
                                                                   return Golden_LongMaybeBind_Test_bind_S_w({
                                                                     "Data.Maybe∷Maybe.Just",
-                                                                    (Golden_LongMaybeBind_Test_add_S_w(x229, 1))
+                                                                    x229 + 1
                                                                   }, function( x230 )
                                                                     return Golden_LongMaybeBind_Test_bind_S_w({
                                                                       "Data.Maybe∷Maybe.Just",
-                                                                      (Golden_LongMaybeBind_Test_add_S_w(x230, 1))
+                                                                      x230 + 1
                                                                     }, function( x231 )
                                                                       return Golden_LongMaybeBind_Test_bind_S_w({
                                                                         "Data.Maybe∷Maybe.Just",
-                                                                        (Golden_LongMaybeBind_Test_add_S_w(x231, 1))
+                                                                        x231 + 1
                                                                       }, function( x232 )
                                                                         return Golden_LongMaybeBind_Test_bind_S_w({
                                                                           "Data.Maybe∷Maybe.Just",
-                                                                          (Golden_LongMaybeBind_Test_add_S_w(x232, 1))
+                                                                          x232 + 1
                                                                         }, function( x233 )
                                                                           return Golden_LongMaybeBind_Test_bind_S_w({
                                                                             "Data.Maybe∷Maybe.Just",
-                                                                            (Golden_LongMaybeBind_Test_add_S_w(x233, 1))
+                                                                            x233 + 1
                                                                           }, function( x234 )
                                                                             return Golden_LongMaybeBind_Test_bind_S_w({
                                                                               "Data.Maybe∷Maybe.Just",
-                                                                              (Golden_LongMaybeBind_Test_add_S_w(x234, 1))
+                                                                              x234 + 1
                                                                             }, function( x235 )
                                                                               return Golden_LongMaybeBind_Test_bind_S_w({
                                                                                 "Data.Maybe∷Maybe.Just",
-                                                                                (Golden_LongMaybeBind_Test_add_S_w(x235, 1))
+                                                                                x235 + 1
                                                                               }, function( x236 )
                                                                                 return Golden_LongMaybeBind_Test_bind_S_w({
                                                                                   "Data.Maybe∷Maybe.Just",
-                                                                                  (Golden_LongMaybeBind_Test_add_S_w(x236, 1))
+                                                                                  x236 + 1
                                                                                 }, function( x237 )
                                                                                   return Golden_LongMaybeBind_Test_bind_S_w({
                                                                                     "Data.Maybe∷Maybe.Just",
-                                                                                    (Golden_LongMaybeBind_Test_add_S_w(x237, 1))
+                                                                                    x237 + 1
                                                                                   }, function( x238 )
-                                                                                    return _S_kont631_S_w(x1_S_635, x238)
+                                                                                    return _S_kont1235_S_w(x1_S_1239, x238)
                                                                                   end)
                                                                                 end)
                                                                               end)
@@ -548,168 +542,168 @@ local Golden_LongMaybeBind_Test_compute = (function()
       end)
     end)
   end
-  local _S_kont637_S_w = function(x1_S_638, x158_S_639)
+  local _S_kont1241_S_w = function(x1_S_1242, x158_S_1243)
     return Golden_LongMaybeBind_Test_bind_S_w({
       "Data.Maybe∷Maybe.Just",
-      (Golden_LongMaybeBind_Test_add_S_w(x158_S_639, 1))
+      x158_S_1243 + 1
     }, function(x159)
       return Golden_LongMaybeBind_Test_bind_S_w({
         "Data.Maybe∷Maybe.Just",
-        (Golden_LongMaybeBind_Test_add_S_w(x159, 1))
+        x159 + 1
       }, function(x160)
         return Golden_LongMaybeBind_Test_bind_S_w({
           "Data.Maybe∷Maybe.Just",
-          (Golden_LongMaybeBind_Test_add_S_w(x160, 1))
+          x160 + 1
         }, function(x161)
           return Golden_LongMaybeBind_Test_bind_S_w({
             "Data.Maybe∷Maybe.Just",
-            (Golden_LongMaybeBind_Test_add_S_w(x161, 1))
+            x161 + 1
           }, function(x162)
             return Golden_LongMaybeBind_Test_bind_S_w({
               "Data.Maybe∷Maybe.Just",
-              (Golden_LongMaybeBind_Test_add_S_w(x162, 1))
+              x162 + 1
             }, function(x163)
               return Golden_LongMaybeBind_Test_bind_S_w({
                 "Data.Maybe∷Maybe.Just",
-                (Golden_LongMaybeBind_Test_add_S_w(x163, 1))
+                x163 + 1
               }, function(x164)
                 return Golden_LongMaybeBind_Test_bind_S_w({
                   "Data.Maybe∷Maybe.Just",
-                  (Golden_LongMaybeBind_Test_add_S_w(x164, 1))
+                  x164 + 1
                 }, function(x165)
                   return Golden_LongMaybeBind_Test_bind_S_w({
                     "Data.Maybe∷Maybe.Just",
-                    (Golden_LongMaybeBind_Test_add_S_w(x165, 1))
+                    x165 + 1
                   }, function(x166)
                     return Golden_LongMaybeBind_Test_bind_S_w({
                       "Data.Maybe∷Maybe.Just",
-                      (Golden_LongMaybeBind_Test_add_S_w(x166, 1))
+                      x166 + 1
                     }, function(x167)
                       return Golden_LongMaybeBind_Test_bind_S_w({
                         "Data.Maybe∷Maybe.Just",
-                        (Golden_LongMaybeBind_Test_add_S_w(x167, 1))
+                        x167 + 1
                       }, function(x168)
                         return Golden_LongMaybeBind_Test_bind_S_w({
                           "Data.Maybe∷Maybe.Just",
-                          (Golden_LongMaybeBind_Test_add_S_w(x168, 1))
+                          x168 + 1
                         }, function(x169)
                           return Golden_LongMaybeBind_Test_bind_S_w({
                             "Data.Maybe∷Maybe.Just",
-                            (Golden_LongMaybeBind_Test_add_S_w(x169, 1))
+                            x169 + 1
                           }, function(x170)
                             return Golden_LongMaybeBind_Test_bind_S_w({
                               "Data.Maybe∷Maybe.Just",
-                              (Golden_LongMaybeBind_Test_add_S_w(x170, 1))
+                              x170 + 1
                             }, function(x171)
                               return Golden_LongMaybeBind_Test_bind_S_w({
                                 "Data.Maybe∷Maybe.Just",
-                                (Golden_LongMaybeBind_Test_add_S_w(x171, 1))
+                                x171 + 1
                               }, function(x172)
                                 return Golden_LongMaybeBind_Test_bind_S_w({
                                   "Data.Maybe∷Maybe.Just",
-                                  (Golden_LongMaybeBind_Test_add_S_w(x172, 1))
+                                  x172 + 1
                                 }, function(x173)
                                   return Golden_LongMaybeBind_Test_bind_S_w({
                                     "Data.Maybe∷Maybe.Just",
-                                    (Golden_LongMaybeBind_Test_add_S_w(x173, 1))
+                                    x173 + 1
                                   }, function(x174)
                                     return Golden_LongMaybeBind_Test_bind_S_w({
                                       "Data.Maybe∷Maybe.Just",
-                                      (Golden_LongMaybeBind_Test_add_S_w(x174, 1))
+                                      x174 + 1
                                     }, function(x175)
                                       return Golden_LongMaybeBind_Test_bind_S_w({
                                         "Data.Maybe∷Maybe.Just",
-                                        (Golden_LongMaybeBind_Test_add_S_w(x175, 1))
+                                        x175 + 1
                                       }, function(x176)
                                         return Golden_LongMaybeBind_Test_bind_S_w({
                                           "Data.Maybe∷Maybe.Just",
-                                          (Golden_LongMaybeBind_Test_add_S_w(x176, 1))
+                                          x176 + 1
                                         }, function(x177)
                                           return Golden_LongMaybeBind_Test_bind_S_w({
                                             "Data.Maybe∷Maybe.Just",
-                                            (Golden_LongMaybeBind_Test_add_S_w(x177, 1))
+                                            x177 + 1
                                           }, function(x178)
                                             return Golden_LongMaybeBind_Test_bind_S_w({
                                               "Data.Maybe∷Maybe.Just",
-                                              (Golden_LongMaybeBind_Test_add_S_w(x178, 1))
+                                              x178 + 1
                                             }, function(x179)
                                               return Golden_LongMaybeBind_Test_bind_S_w({
                                                 "Data.Maybe∷Maybe.Just",
-                                                (Golden_LongMaybeBind_Test_add_S_w(x179, 1))
+                                                x179 + 1
                                               }, function(x180)
                                                 return Golden_LongMaybeBind_Test_bind_S_w({
                                                   "Data.Maybe∷Maybe.Just",
-                                                  (Golden_LongMaybeBind_Test_add_S_w(x180, 1))
+                                                  x180 + 1
                                                 }, function(x181)
                                                   return Golden_LongMaybeBind_Test_bind_S_w({
                                                     "Data.Maybe∷Maybe.Just",
-                                                    (Golden_LongMaybeBind_Test_add_S_w(x181, 1))
+                                                    x181 + 1
                                                   }, function(x182)
                                                     return Golden_LongMaybeBind_Test_bind_S_w({
                                                       "Data.Maybe∷Maybe.Just",
-                                                      (Golden_LongMaybeBind_Test_add_S_w(x182, 1))
+                                                      x182 + 1
                                                     }, function(x183)
                                                       return Golden_LongMaybeBind_Test_bind_S_w({
                                                         "Data.Maybe∷Maybe.Just",
-                                                        (Golden_LongMaybeBind_Test_add_S_w(x183, 1))
+                                                        x183 + 1
                                                       }, function(x184)
                                                         return Golden_LongMaybeBind_Test_bind_S_w({
                                                           "Data.Maybe∷Maybe.Just",
-                                                          (Golden_LongMaybeBind_Test_add_S_w(x184, 1))
+                                                          x184 + 1
                                                         }, function(x185)
                                                           return Golden_LongMaybeBind_Test_bind_S_w({
                                                             "Data.Maybe∷Maybe.Just",
-                                                            (Golden_LongMaybeBind_Test_add_S_w(x185, 1))
+                                                            x185 + 1
                                                           }, function(x186)
                                                             return Golden_LongMaybeBind_Test_bind_S_w({
                                                               "Data.Maybe∷Maybe.Just",
-                                                              (Golden_LongMaybeBind_Test_add_S_w(x186, 1))
+                                                              x186 + 1
                                                             }, function(x187)
                                                               return Golden_LongMaybeBind_Test_bind_S_w({
                                                                 "Data.Maybe∷Maybe.Just",
-                                                                (Golden_LongMaybeBind_Test_add_S_w(x187, 1))
+                                                                x187 + 1
                                                               }, function(x188)
                                                                 return Golden_LongMaybeBind_Test_bind_S_w({
                                                                   "Data.Maybe∷Maybe.Just",
-                                                                  (Golden_LongMaybeBind_Test_add_S_w(x188, 1))
+                                                                  x188 + 1
                                                                 }, function( x189 )
                                                                   return Golden_LongMaybeBind_Test_bind_S_w({
                                                                     "Data.Maybe∷Maybe.Just",
-                                                                    (Golden_LongMaybeBind_Test_add_S_w(x189, 1))
+                                                                    x189 + 1
                                                                   }, function( x190 )
                                                                     return Golden_LongMaybeBind_Test_bind_S_w({
                                                                       "Data.Maybe∷Maybe.Just",
-                                                                      (Golden_LongMaybeBind_Test_add_S_w(x190, 1))
+                                                                      x190 + 1
                                                                     }, function( x191 )
                                                                       return Golden_LongMaybeBind_Test_bind_S_w({
                                                                         "Data.Maybe∷Maybe.Just",
-                                                                        (Golden_LongMaybeBind_Test_add_S_w(x191, 1))
+                                                                        x191 + 1
                                                                       }, function( x192 )
                                                                         return Golden_LongMaybeBind_Test_bind_S_w({
                                                                           "Data.Maybe∷Maybe.Just",
-                                                                          (Golden_LongMaybeBind_Test_add_S_w(x192, 1))
+                                                                          x192 + 1
                                                                         }, function( x193 )
                                                                           return Golden_LongMaybeBind_Test_bind_S_w({
                                                                             "Data.Maybe∷Maybe.Just",
-                                                                            (Golden_LongMaybeBind_Test_add_S_w(x193, 1))
+                                                                            x193 + 1
                                                                           }, function( x194 )
                                                                             return Golden_LongMaybeBind_Test_bind_S_w({
                                                                               "Data.Maybe∷Maybe.Just",
-                                                                              (Golden_LongMaybeBind_Test_add_S_w(x194, 1))
+                                                                              x194 + 1
                                                                             }, function( x195 )
                                                                               return Golden_LongMaybeBind_Test_bind_S_w({
                                                                                 "Data.Maybe∷Maybe.Just",
-                                                                                (Golden_LongMaybeBind_Test_add_S_w(x195, 1))
+                                                                                x195 + 1
                                                                               }, function( x196 )
                                                                                 return Golden_LongMaybeBind_Test_bind_S_w({
                                                                                   "Data.Maybe∷Maybe.Just",
-                                                                                  (Golden_LongMaybeBind_Test_add_S_w(x196, 1))
+                                                                                  x196 + 1
                                                                                 }, function( x197 )
                                                                                   return Golden_LongMaybeBind_Test_bind_S_w({
                                                                                     "Data.Maybe∷Maybe.Just",
-                                                                                    (Golden_LongMaybeBind_Test_add_S_w(x197, 1))
+                                                                                    x197 + 1
                                                                                   }, function( x198 )
-                                                                                    return _S_kont634_S_w(x1_S_638, x198)
+                                                                                    return _S_kont1238_S_w(x1_S_1242, x198)
                                                                                   end)
                                                                                 end)
                                                                               end)
@@ -751,130 +745,130 @@ local Golden_LongMaybeBind_Test_compute = (function()
       end)
     end)
   end
-  local _S_kont640_S_w = function(x1_S_641, x119_S_642)
+  local _S_kont1244_S_w = function(x1_S_1245, x119_S_1246)
     return Golden_LongMaybeBind_Test_bind_S_w({
       "Data.Maybe∷Maybe.Just",
-      (Golden_LongMaybeBind_Test_add_S_w(x119_S_642, 1))
+      x119_S_1246 + 1
     }, function(x120)
       return Golden_LongMaybeBind_Test_bind_S_w({
         "Data.Maybe∷Maybe.Just",
-        (Golden_LongMaybeBind_Test_add_S_w(x120, 1))
+        x120 + 1
       }, function(x121)
         return Golden_LongMaybeBind_Test_bind_S_w({
           "Data.Maybe∷Maybe.Just",
-          (Golden_LongMaybeBind_Test_add_S_w(x121, 1))
+          x121 + 1
         }, function(x122)
           return Golden_LongMaybeBind_Test_bind_S_w({
             "Data.Maybe∷Maybe.Just",
-            (Golden_LongMaybeBind_Test_add_S_w(x122, 1))
+            x122 + 1
           }, function(x123)
             return Golden_LongMaybeBind_Test_bind_S_w({
               "Data.Maybe∷Maybe.Just",
-              (Golden_LongMaybeBind_Test_add_S_w(x123, 1))
+              x123 + 1
             }, function(x124)
               return Golden_LongMaybeBind_Test_bind_S_w({
                 "Data.Maybe∷Maybe.Just",
-                (Golden_LongMaybeBind_Test_add_S_w(x124, 1))
+                x124 + 1
               }, function(x125)
                 return Golden_LongMaybeBind_Test_bind_S_w({
                   "Data.Maybe∷Maybe.Just",
-                  (Golden_LongMaybeBind_Test_add_S_w(x125, 1))
+                  x125 + 1
                 }, function(x126)
                   return Golden_LongMaybeBind_Test_bind_S_w({
                     "Data.Maybe∷Maybe.Just",
-                    (Golden_LongMaybeBind_Test_add_S_w(x126, 1))
+                    x126 + 1
                   }, function(x127)
                     return Golden_LongMaybeBind_Test_bind_S_w({
                       "Data.Maybe∷Maybe.Just",
-                      (Golden_LongMaybeBind_Test_add_S_w(x127, 1))
+                      x127 + 1
                     }, function(x128)
                       return Golden_LongMaybeBind_Test_bind_S_w({
                         "Data.Maybe∷Maybe.Just",
-                        (Golden_LongMaybeBind_Test_add_S_w(x128, 1))
+                        x128 + 1
                       }, function(x129)
                         return Golden_LongMaybeBind_Test_bind_S_w({
                           "Data.Maybe∷Maybe.Just",
-                          (Golden_LongMaybeBind_Test_add_S_w(x129, 1))
+                          x129 + 1
                         }, function(x130)
                           return Golden_LongMaybeBind_Test_bind_S_w({
                             "Data.Maybe∷Maybe.Just",
-                            (Golden_LongMaybeBind_Test_add_S_w(x130, 1))
+                            x130 + 1
                           }, function(x131)
                             return Golden_LongMaybeBind_Test_bind_S_w({
                               "Data.Maybe∷Maybe.Just",
-                              (Golden_LongMaybeBind_Test_add_S_w(x131, 1))
+                              x131 + 1
                             }, function(x132)
                               return Golden_LongMaybeBind_Test_bind_S_w({
                                 "Data.Maybe∷Maybe.Just",
-                                (Golden_LongMaybeBind_Test_add_S_w(x132, 1))
+                                x132 + 1
                               }, function(x133)
                                 return Golden_LongMaybeBind_Test_bind_S_w({
                                   "Data.Maybe∷Maybe.Just",
-                                  (Golden_LongMaybeBind_Test_add_S_w(x133, 1))
+                                  x133 + 1
                                 }, function(x134)
                                   return Golden_LongMaybeBind_Test_bind_S_w({
                                     "Data.Maybe∷Maybe.Just",
-                                    (Golden_LongMaybeBind_Test_add_S_w(x134, 1))
+                                    x134 + 1
                                   }, function(x135)
                                     return Golden_LongMaybeBind_Test_bind_S_w({
                                       "Data.Maybe∷Maybe.Just",
-                                      (Golden_LongMaybeBind_Test_add_S_w(x135, 1))
+                                      x135 + 1
                                     }, function(x136)
                                       return Golden_LongMaybeBind_Test_bind_S_w({
                                         "Data.Maybe∷Maybe.Just",
-                                        (Golden_LongMaybeBind_Test_add_S_w(x136, 1))
+                                        x136 + 1
                                       }, function(x137)
                                         return Golden_LongMaybeBind_Test_bind_S_w({
                                           "Data.Maybe∷Maybe.Just",
-                                          (Golden_LongMaybeBind_Test_add_S_w(x137, 1))
+                                          x137 + 1
                                         }, function(x138)
                                           return Golden_LongMaybeBind_Test_bind_S_w({
                                             "Data.Maybe∷Maybe.Just",
-                                            (Golden_LongMaybeBind_Test_add_S_w(x138, 1))
+                                            x138 + 1
                                           }, function(x139)
                                             return Golden_LongMaybeBind_Test_bind_S_w({
                                               "Data.Maybe∷Maybe.Just",
-                                              (Golden_LongMaybeBind_Test_add_S_w(x139, 1))
+                                              x139 + 1
                                             }, function(x140)
                                               return Golden_LongMaybeBind_Test_bind_S_w({
                                                 "Data.Maybe∷Maybe.Just",
-                                                (Golden_LongMaybeBind_Test_add_S_w(x140, 1))
+                                                x140 + 1
                                               }, function(x141)
                                                 return Golden_LongMaybeBind_Test_bind_S_w({
                                                   "Data.Maybe∷Maybe.Just",
-                                                  (Golden_LongMaybeBind_Test_add_S_w(x141, 1))
+                                                  x141 + 1
                                                 }, function(x142)
                                                   return Golden_LongMaybeBind_Test_bind_S_w({
                                                     "Data.Maybe∷Maybe.Just",
-                                                    (Golden_LongMaybeBind_Test_add_S_w(x142, 1))
+                                                    x142 + 1
                                                   }, function(x143)
                                                     return Golden_LongMaybeBind_Test_bind_S_w({
                                                       "Data.Maybe∷Maybe.Just",
-                                                      (Golden_LongMaybeBind_Test_add_S_w(x143, 1))
+                                                      x143 + 1
                                                     }, function(x144)
                                                       return Golden_LongMaybeBind_Test_bind_S_w({
                                                         "Data.Maybe∷Maybe.Just",
-                                                        (Golden_LongMaybeBind_Test_add_S_w(x144, 1))
+                                                        x144 + 1
                                                       }, function(x145)
                                                         return Golden_LongMaybeBind_Test_bind_S_w({
                                                           "Data.Maybe∷Maybe.Just",
-                                                          (Golden_LongMaybeBind_Test_add_S_w(x145, 1))
+                                                          x145 + 1
                                                         }, function(x146)
                                                           return Golden_LongMaybeBind_Test_bind_S_w({
                                                             "Data.Maybe∷Maybe.Just",
-                                                            (Golden_LongMaybeBind_Test_add_S_w(x146, 1))
+                                                            x146 + 1
                                                           }, function(x147)
                                                             return Golden_LongMaybeBind_Test_bind_S_w({
                                                               "Data.Maybe∷Maybe.Just",
-                                                              (Golden_LongMaybeBind_Test_add_S_w(x147, 1))
+                                                              x147 + 1
                                                             }, function(x148)
                                                               return Golden_LongMaybeBind_Test_bind_S_w({
                                                                 "Data.Maybe∷Maybe.Just",
-                                                                (Golden_LongMaybeBind_Test_add_S_w(x148, 1))
+                                                                x148 + 1
                                                               }, function(x149)
                                                                 return Golden_LongMaybeBind_Test_bind_S_w({
                                                                   "Data.Maybe∷Maybe.Just",
-                                                                  (Golden_LongMaybeBind_Test_add_S_w(x149, 1))
+                                                                  x149 + 1
                                                                 }, function( x150 )
                                                                   return Golden_LongMaybeBind_Test_bind_S_w({
                                                                     "Data.Maybe∷Maybe.Just",
@@ -882,37 +876,37 @@ local Golden_LongMaybeBind_Test_compute = (function()
                                                                   }, function()
                                                                     return Golden_LongMaybeBind_Test_bind_S_w({
                                                                       "Data.Maybe∷Maybe.Just",
-                                                                      (Golden_LongMaybeBind_Test_add_S_w(x150, 1))
+                                                                      x150 + 1
                                                                     }, function( x151 )
                                                                       return Golden_LongMaybeBind_Test_bind_S_w({
                                                                         "Data.Maybe∷Maybe.Just",
-                                                                        (Golden_LongMaybeBind_Test_add_S_w(x151, 1))
+                                                                        x151 + 1
                                                                       }, function( x152 )
                                                                         return Golden_LongMaybeBind_Test_bind_S_w({
                                                                           "Data.Maybe∷Maybe.Just",
-                                                                          (Golden_LongMaybeBind_Test_add_S_w(x152, 1))
+                                                                          x152 + 1
                                                                         }, function( x153 )
                                                                           return Golden_LongMaybeBind_Test_bind_S_w({
                                                                             "Data.Maybe∷Maybe.Just",
-                                                                            (Golden_LongMaybeBind_Test_add_S_w(x153, 1))
+                                                                            x153 + 1
                                                                           }, function( x154 )
                                                                             return Golden_LongMaybeBind_Test_bind_S_w({
                                                                               "Data.Maybe∷Maybe.Just",
-                                                                              (Golden_LongMaybeBind_Test_add_S_w(x154, 1))
+                                                                              x154 + 1
                                                                             }, function( x155 )
                                                                               return Golden_LongMaybeBind_Test_bind_S_w({
                                                                                 "Data.Maybe∷Maybe.Just",
-                                                                                (Golden_LongMaybeBind_Test_add_S_w(x155, 1))
+                                                                                x155 + 1
                                                                               }, function( x156 )
                                                                                 return Golden_LongMaybeBind_Test_bind_S_w({
                                                                                   "Data.Maybe∷Maybe.Just",
-                                                                                  (Golden_LongMaybeBind_Test_add_S_w(x156, 1))
+                                                                                  x156 + 1
                                                                                 }, function( x157 )
                                                                                   return Golden_LongMaybeBind_Test_bind_S_w({
                                                                                     "Data.Maybe∷Maybe.Just",
-                                                                                    (Golden_LongMaybeBind_Test_add_S_w(x157, 1))
+                                                                                    x157 + 1
                                                                                   }, function( x158 )
-                                                                                    return _S_kont637_S_w(x1_S_641, x158)
+                                                                                    return _S_kont1241_S_w(x1_S_1245, x158)
                                                                                   end)
                                                                                 end)
                                                                               end)
@@ -954,168 +948,168 @@ local Golden_LongMaybeBind_Test_compute = (function()
       end)
     end)
   end
-  local _S_kont643_S_w = function(x1_S_644, x79_S_645)
+  local _S_kont1247_S_w = function(x1_S_1248, x79_S_1249)
     return Golden_LongMaybeBind_Test_bind_S_w({
       "Data.Maybe∷Maybe.Just",
-      (Golden_LongMaybeBind_Test_add_S_w(x79_S_645, 1))
+      x79_S_1249 + 1
     }, function(x80)
       return Golden_LongMaybeBind_Test_bind_S_w({
         "Data.Maybe∷Maybe.Just",
-        (Golden_LongMaybeBind_Test_add_S_w(x80, 1))
+        x80 + 1
       }, function(x81)
         return Golden_LongMaybeBind_Test_bind_S_w({
           "Data.Maybe∷Maybe.Just",
-          (Golden_LongMaybeBind_Test_add_S_w(x81, 1))
+          x81 + 1
         }, function(x82)
           return Golden_LongMaybeBind_Test_bind_S_w({
             "Data.Maybe∷Maybe.Just",
-            (Golden_LongMaybeBind_Test_add_S_w(x82, 1))
+            x82 + 1
           }, function(x83)
             return Golden_LongMaybeBind_Test_bind_S_w({
               "Data.Maybe∷Maybe.Just",
-              (Golden_LongMaybeBind_Test_add_S_w(x83, 1))
+              x83 + 1
             }, function(x84)
               return Golden_LongMaybeBind_Test_bind_S_w({
                 "Data.Maybe∷Maybe.Just",
-                (Golden_LongMaybeBind_Test_add_S_w(x84, 1))
+                x84 + 1
               }, function(x85)
                 return Golden_LongMaybeBind_Test_bind_S_w({
                   "Data.Maybe∷Maybe.Just",
-                  (Golden_LongMaybeBind_Test_add_S_w(x85, 1))
+                  x85 + 1
                 }, function(x86)
                   return Golden_LongMaybeBind_Test_bind_S_w({
                     "Data.Maybe∷Maybe.Just",
-                    (Golden_LongMaybeBind_Test_add_S_w(x86, 1))
+                    x86 + 1
                   }, function(x87)
                     return Golden_LongMaybeBind_Test_bind_S_w({
                       "Data.Maybe∷Maybe.Just",
-                      (Golden_LongMaybeBind_Test_add_S_w(x87, 1))
+                      x87 + 1
                     }, function(x88)
                       return Golden_LongMaybeBind_Test_bind_S_w({
                         "Data.Maybe∷Maybe.Just",
-                        (Golden_LongMaybeBind_Test_add_S_w(x88, 1))
+                        x88 + 1
                       }, function(x89)
                         return Golden_LongMaybeBind_Test_bind_S_w({
                           "Data.Maybe∷Maybe.Just",
-                          (Golden_LongMaybeBind_Test_add_S_w(x89, 1))
+                          x89 + 1
                         }, function(x90)
                           return Golden_LongMaybeBind_Test_bind_S_w({
                             "Data.Maybe∷Maybe.Just",
-                            (Golden_LongMaybeBind_Test_add_S_w(x90, 1))
+                            x90 + 1
                           }, function(x91)
                             return Golden_LongMaybeBind_Test_bind_S_w({
                               "Data.Maybe∷Maybe.Just",
-                              (Golden_LongMaybeBind_Test_add_S_w(x91, 1))
+                              x91 + 1
                             }, function(x92)
                               return Golden_LongMaybeBind_Test_bind_S_w({
                                 "Data.Maybe∷Maybe.Just",
-                                (Golden_LongMaybeBind_Test_add_S_w(x92, 1))
+                                x92 + 1
                               }, function(x93)
                                 return Golden_LongMaybeBind_Test_bind_S_w({
                                   "Data.Maybe∷Maybe.Just",
-                                  (Golden_LongMaybeBind_Test_add_S_w(x93, 1))
+                                  x93 + 1
                                 }, function(x94)
                                   return Golden_LongMaybeBind_Test_bind_S_w({
                                     "Data.Maybe∷Maybe.Just",
-                                    (Golden_LongMaybeBind_Test_add_S_w(x94, 1))
+                                    x94 + 1
                                   }, function(x95)
                                     return Golden_LongMaybeBind_Test_bind_S_w({
                                       "Data.Maybe∷Maybe.Just",
-                                      (Golden_LongMaybeBind_Test_add_S_w(x95, 1))
+                                      x95 + 1
                                     }, function(x96)
                                       return Golden_LongMaybeBind_Test_bind_S_w({
                                         "Data.Maybe∷Maybe.Just",
-                                        (Golden_LongMaybeBind_Test_add_S_w(x96, 1))
+                                        x96 + 1
                                       }, function(x97)
                                         return Golden_LongMaybeBind_Test_bind_S_w({
                                           "Data.Maybe∷Maybe.Just",
-                                          (Golden_LongMaybeBind_Test_add_S_w(x97, 1))
+                                          x97 + 1
                                         }, function(x98)
                                           return Golden_LongMaybeBind_Test_bind_S_w({
                                             "Data.Maybe∷Maybe.Just",
-                                            (Golden_LongMaybeBind_Test_add_S_w(x98, 1))
+                                            x98 + 1
                                           }, function(x99)
                                             return Golden_LongMaybeBind_Test_bind_S_w({
                                               "Data.Maybe∷Maybe.Just",
-                                              (Golden_LongMaybeBind_Test_add_S_w(x99, 1))
+                                              x99 + 1
                                             }, function(x100)
                                               return Golden_LongMaybeBind_Test_bind_S_w({
                                                 "Data.Maybe∷Maybe.Just",
-                                                (Golden_LongMaybeBind_Test_add_S_w(x100, 1))
+                                                x100 + 1
                                               }, function(x101)
                                                 return Golden_LongMaybeBind_Test_bind_S_w({
                                                   "Data.Maybe∷Maybe.Just",
-                                                  (Golden_LongMaybeBind_Test_add_S_w(x101, 1))
+                                                  x101 + 1
                                                 }, function(x102)
                                                   return Golden_LongMaybeBind_Test_bind_S_w({
                                                     "Data.Maybe∷Maybe.Just",
-                                                    (Golden_LongMaybeBind_Test_add_S_w(x102, 1))
+                                                    x102 + 1
                                                   }, function(x103)
                                                     return Golden_LongMaybeBind_Test_bind_S_w({
                                                       "Data.Maybe∷Maybe.Just",
-                                                      (Golden_LongMaybeBind_Test_add_S_w(x103, 1))
+                                                      x103 + 1
                                                     }, function(x104)
                                                       return Golden_LongMaybeBind_Test_bind_S_w({
                                                         "Data.Maybe∷Maybe.Just",
-                                                        (Golden_LongMaybeBind_Test_add_S_w(x104, 1))
+                                                        x104 + 1
                                                       }, function(x105)
                                                         return Golden_LongMaybeBind_Test_bind_S_w({
                                                           "Data.Maybe∷Maybe.Just",
-                                                          (Golden_LongMaybeBind_Test_add_S_w(x105, 1))
+                                                          x105 + 1
                                                         }, function(x106)
                                                           return Golden_LongMaybeBind_Test_bind_S_w({
                                                             "Data.Maybe∷Maybe.Just",
-                                                            (Golden_LongMaybeBind_Test_add_S_w(x106, 1))
+                                                            x106 + 1
                                                           }, function(x107)
                                                             return Golden_LongMaybeBind_Test_bind_S_w({
                                                               "Data.Maybe∷Maybe.Just",
-                                                              (Golden_LongMaybeBind_Test_add_S_w(x107, 1))
+                                                              x107 + 1
                                                             }, function(x108)
                                                               return Golden_LongMaybeBind_Test_bind_S_w({
                                                                 "Data.Maybe∷Maybe.Just",
-                                                                (Golden_LongMaybeBind_Test_add_S_w(x108, 1))
+                                                                x108 + 1
                                                               }, function(x109)
                                                                 return Golden_LongMaybeBind_Test_bind_S_w({
                                                                   "Data.Maybe∷Maybe.Just",
-                                                                  (Golden_LongMaybeBind_Test_add_S_w(x109, 1))
+                                                                  x109 + 1
                                                                 }, function( x110 )
                                                                   return Golden_LongMaybeBind_Test_bind_S_w({
                                                                     "Data.Maybe∷Maybe.Just",
-                                                                    (Golden_LongMaybeBind_Test_add_S_w(x110, 1))
+                                                                    x110 + 1
                                                                   }, function( x111 )
                                                                     return Golden_LongMaybeBind_Test_bind_S_w({
                                                                       "Data.Maybe∷Maybe.Just",
-                                                                      (Golden_LongMaybeBind_Test_add_S_w(x111, 1))
+                                                                      x111 + 1
                                                                     }, function( x112 )
                                                                       return Golden_LongMaybeBind_Test_bind_S_w({
                                                                         "Data.Maybe∷Maybe.Just",
-                                                                        (Golden_LongMaybeBind_Test_add_S_w(x112, 1))
+                                                                        x112 + 1
                                                                       }, function( x113 )
                                                                         return Golden_LongMaybeBind_Test_bind_S_w({
                                                                           "Data.Maybe∷Maybe.Just",
-                                                                          (Golden_LongMaybeBind_Test_add_S_w(x113, 1))
+                                                                          x113 + 1
                                                                         }, function( x114 )
                                                                           return Golden_LongMaybeBind_Test_bind_S_w({
                                                                             "Data.Maybe∷Maybe.Just",
-                                                                            (Golden_LongMaybeBind_Test_add_S_w(x114, 1))
+                                                                            x114 + 1
                                                                           }, function( x115 )
                                                                             return Golden_LongMaybeBind_Test_bind_S_w({
                                                                               "Data.Maybe∷Maybe.Just",
-                                                                              (Golden_LongMaybeBind_Test_add_S_w(x115, 1))
+                                                                              x115 + 1
                                                                             }, function( x116 )
                                                                               return Golden_LongMaybeBind_Test_bind_S_w({
                                                                                 "Data.Maybe∷Maybe.Just",
-                                                                                (Golden_LongMaybeBind_Test_add_S_w(x116, 1))
+                                                                                x116 + 1
                                                                               }, function( x117 )
                                                                                 return Golden_LongMaybeBind_Test_bind_S_w({
                                                                                   "Data.Maybe∷Maybe.Just",
-                                                                                  (Golden_LongMaybeBind_Test_add_S_w(x117, 1))
+                                                                                  x117 + 1
                                                                                 }, function( x118 )
                                                                                   return Golden_LongMaybeBind_Test_bind_S_w({
                                                                                     "Data.Maybe∷Maybe.Just",
-                                                                                    (Golden_LongMaybeBind_Test_add_S_w(x118, 1))
+                                                                                    x118 + 1
                                                                                   }, function( x119 )
-                                                                                    return _S_kont640_S_w(x1_S_644, x119)
+                                                                                    return _S_kont1244_S_w(x1_S_1248, x119)
                                                                                   end)
                                                                                 end)
                                                                               end)
@@ -1157,46 +1151,46 @@ local Golden_LongMaybeBind_Test_compute = (function()
       end)
     end)
   end
-  local _S_kont646_S_w = function(x1_S_647, x40_S_648)
+  local _S_kont1250_S_w = function(x1_S_1251, x40_S_1252)
     return Golden_LongMaybeBind_Test_bind_S_w({
       "Data.Maybe∷Maybe.Just",
-      (Golden_LongMaybeBind_Test_add_S_w(x40_S_648, 1))
+      x40_S_1252 + 1
     }, function(x41)
       return Golden_LongMaybeBind_Test_bind_S_w({
         "Data.Maybe∷Maybe.Just",
-        (Golden_LongMaybeBind_Test_add_S_w(x41, 1))
+        x41 + 1
       }, function(x42)
         return Golden_LongMaybeBind_Test_bind_S_w({
           "Data.Maybe∷Maybe.Just",
-          (Golden_LongMaybeBind_Test_add_S_w(x42, 1))
+          x42 + 1
         }, function(x43)
           return Golden_LongMaybeBind_Test_bind_S_w({
             "Data.Maybe∷Maybe.Just",
-            (Golden_LongMaybeBind_Test_add_S_w(x43, 1))
+            x43 + 1
           }, function(x44)
             return Golden_LongMaybeBind_Test_bind_S_w({
               "Data.Maybe∷Maybe.Just",
-              (Golden_LongMaybeBind_Test_add_S_w(x44, 1))
+              x44 + 1
             }, function(x45)
               return Golden_LongMaybeBind_Test_bind_S_w({
                 "Data.Maybe∷Maybe.Just",
-                (Golden_LongMaybeBind_Test_add_S_w(x45, 1))
+                x45 + 1
               }, function(x46)
                 return Golden_LongMaybeBind_Test_bind_S_w({
                   "Data.Maybe∷Maybe.Just",
-                  (Golden_LongMaybeBind_Test_add_S_w(x46, 1))
+                  x46 + 1
                 }, function(x47)
                   return Golden_LongMaybeBind_Test_bind_S_w({
                     "Data.Maybe∷Maybe.Just",
-                    (Golden_LongMaybeBind_Test_add_S_w(x47, 1))
+                    x47 + 1
                   }, function(x48)
                     return Golden_LongMaybeBind_Test_bind_S_w({
                       "Data.Maybe∷Maybe.Just",
-                      (Golden_LongMaybeBind_Test_add_S_w(x48, 1))
+                      x48 + 1
                     }, function(x49)
                       return Golden_LongMaybeBind_Test_bind_S_w({
                         "Data.Maybe∷Maybe.Just",
-                        (Golden_LongMaybeBind_Test_add_S_w(x49, 1))
+                        x49 + 1
                       }, function(x50)
                         return Golden_LongMaybeBind_Test_bind_S_w({
                           "Data.Maybe∷Maybe.Just",
@@ -1204,121 +1198,121 @@ local Golden_LongMaybeBind_Test_compute = (function()
                         }, function()
                           return Golden_LongMaybeBind_Test_bind_S_w({
                             "Data.Maybe∷Maybe.Just",
-                            (Golden_LongMaybeBind_Test_add_S_w(x50, 1))
+                            x50 + 1
                           }, function(x51)
                             return Golden_LongMaybeBind_Test_bind_S_w({
                               "Data.Maybe∷Maybe.Just",
-                              (Golden_LongMaybeBind_Test_add_S_w(x51, 1))
+                              x51 + 1
                             }, function(x52)
                               return Golden_LongMaybeBind_Test_bind_S_w({
                                 "Data.Maybe∷Maybe.Just",
-                                (Golden_LongMaybeBind_Test_add_S_w(x52, 1))
+                                x52 + 1
                               }, function(x53)
                                 return Golden_LongMaybeBind_Test_bind_S_w({
                                   "Data.Maybe∷Maybe.Just",
-                                  (Golden_LongMaybeBind_Test_add_S_w(x53, 1))
+                                  x53 + 1
                                 }, function(x54)
                                   return Golden_LongMaybeBind_Test_bind_S_w({
                                     "Data.Maybe∷Maybe.Just",
-                                    (Golden_LongMaybeBind_Test_add_S_w(x54, 1))
+                                    x54 + 1
                                   }, function(x55)
                                     return Golden_LongMaybeBind_Test_bind_S_w({
                                       "Data.Maybe∷Maybe.Just",
-                                      (Golden_LongMaybeBind_Test_add_S_w(x55, 1))
+                                      x55 + 1
                                     }, function(x56)
                                       return Golden_LongMaybeBind_Test_bind_S_w({
                                         "Data.Maybe∷Maybe.Just",
-                                        (Golden_LongMaybeBind_Test_add_S_w(x56, 1))
+                                        x56 + 1
                                       }, function(x57)
                                         return Golden_LongMaybeBind_Test_bind_S_w({
                                           "Data.Maybe∷Maybe.Just",
-                                          (Golden_LongMaybeBind_Test_add_S_w(x57, 1))
+                                          x57 + 1
                                         }, function(x58)
                                           return Golden_LongMaybeBind_Test_bind_S_w({
                                             "Data.Maybe∷Maybe.Just",
-                                            (Golden_LongMaybeBind_Test_add_S_w(x58, 1))
+                                            x58 + 1
                                           }, function(x59)
                                             return Golden_LongMaybeBind_Test_bind_S_w({
                                               "Data.Maybe∷Maybe.Just",
-                                              (Golden_LongMaybeBind_Test_add_S_w(x59, 1))
+                                              x59 + 1
                                             }, function(x60)
                                               return Golden_LongMaybeBind_Test_bind_S_w({
                                                 "Data.Maybe∷Maybe.Just",
-                                                (Golden_LongMaybeBind_Test_add_S_w(x60, 1))
+                                                x60 + 1
                                               }, function(x61)
                                                 return Golden_LongMaybeBind_Test_bind_S_w({
                                                   "Data.Maybe∷Maybe.Just",
-                                                  (Golden_LongMaybeBind_Test_add_S_w(x61, 1))
+                                                  x61 + 1
                                                 }, function(x62)
                                                   return Golden_LongMaybeBind_Test_bind_S_w({
                                                     "Data.Maybe∷Maybe.Just",
-                                                    (Golden_LongMaybeBind_Test_add_S_w(x62, 1))
+                                                    x62 + 1
                                                   }, function(x63)
                                                     return Golden_LongMaybeBind_Test_bind_S_w({
                                                       "Data.Maybe∷Maybe.Just",
-                                                      (Golden_LongMaybeBind_Test_add_S_w(x63, 1))
+                                                      x63 + 1
                                                     }, function(x64)
                                                       return Golden_LongMaybeBind_Test_bind_S_w({
                                                         "Data.Maybe∷Maybe.Just",
-                                                        (Golden_LongMaybeBind_Test_add_S_w(x64, 1))
+                                                        x64 + 1
                                                       }, function(x65)
                                                         return Golden_LongMaybeBind_Test_bind_S_w({
                                                           "Data.Maybe∷Maybe.Just",
-                                                          (Golden_LongMaybeBind_Test_add_S_w(x65, 1))
+                                                          x65 + 1
                                                         }, function(x66)
                                                           return Golden_LongMaybeBind_Test_bind_S_w({
                                                             "Data.Maybe∷Maybe.Just",
-                                                            (Golden_LongMaybeBind_Test_add_S_w(x66, 1))
+                                                            x66 + 1
                                                           }, function(x67)
                                                             return Golden_LongMaybeBind_Test_bind_S_w({
                                                               "Data.Maybe∷Maybe.Just",
-                                                              (Golden_LongMaybeBind_Test_add_S_w(x67, 1))
+                                                              x67 + 1
                                                             }, function(x68)
                                                               return Golden_LongMaybeBind_Test_bind_S_w({
                                                                 "Data.Maybe∷Maybe.Just",
-                                                                (Golden_LongMaybeBind_Test_add_S_w(x68, 1))
+                                                                x68 + 1
                                                               }, function(x69)
                                                                 return Golden_LongMaybeBind_Test_bind_S_w({
                                                                   "Data.Maybe∷Maybe.Just",
-                                                                  (Golden_LongMaybeBind_Test_add_S_w(x69, 1))
+                                                                  x69 + 1
                                                                 }, function(x70)
                                                                   return Golden_LongMaybeBind_Test_bind_S_w({
                                                                     "Data.Maybe∷Maybe.Just",
-                                                                    (Golden_LongMaybeBind_Test_add_S_w(x70, 1))
+                                                                    x70 + 1
                                                                   }, function( x71 )
                                                                     return Golden_LongMaybeBind_Test_bind_S_w({
                                                                       "Data.Maybe∷Maybe.Just",
-                                                                      (Golden_LongMaybeBind_Test_add_S_w(x71, 1))
+                                                                      x71 + 1
                                                                     }, function( x72 )
                                                                       return Golden_LongMaybeBind_Test_bind_S_w({
                                                                         "Data.Maybe∷Maybe.Just",
-                                                                        (Golden_LongMaybeBind_Test_add_S_w(x72, 1))
+                                                                        x72 + 1
                                                                       }, function( x73 )
                                                                         return Golden_LongMaybeBind_Test_bind_S_w({
                                                                           "Data.Maybe∷Maybe.Just",
-                                                                          (Golden_LongMaybeBind_Test_add_S_w(x73, 1))
+                                                                          x73 + 1
                                                                         }, function( x74 )
                                                                           return Golden_LongMaybeBind_Test_bind_S_w({
                                                                             "Data.Maybe∷Maybe.Just",
-                                                                            (Golden_LongMaybeBind_Test_add_S_w(x74, 1))
+                                                                            x74 + 1
                                                                           }, function( x75 )
                                                                             return Golden_LongMaybeBind_Test_bind_S_w({
                                                                               "Data.Maybe∷Maybe.Just",
-                                                                              (Golden_LongMaybeBind_Test_add_S_w(x75, 1))
+                                                                              x75 + 1
                                                                             }, function( x76 )
                                                                               return Golden_LongMaybeBind_Test_bind_S_w({
                                                                                 "Data.Maybe∷Maybe.Just",
-                                                                                (Golden_LongMaybeBind_Test_add_S_w(x76, 1))
+                                                                                x76 + 1
                                                                               }, function( x77 )
                                                                                 return Golden_LongMaybeBind_Test_bind_S_w({
                                                                                   "Data.Maybe∷Maybe.Just",
-                                                                                  (Golden_LongMaybeBind_Test_add_S_w(x77, 1))
+                                                                                  x77 + 1
                                                                                 }, function( x78 )
                                                                                   return Golden_LongMaybeBind_Test_bind_S_w({
                                                                                     "Data.Maybe∷Maybe.Just",
-                                                                                    (Golden_LongMaybeBind_Test_add_S_w(x78, 1))
+                                                                                    x78 + 1
                                                                                   }, function( x79 )
-                                                                                    return _S_kont643_S_w(x1_S_647, x79)
+                                                                                    return _S_kont1247_S_w(x1_S_1251, x79)
                                                                                   end)
                                                                                 end)
                                                                               end)
@@ -1366,161 +1360,161 @@ local Golden_LongMaybeBind_Test_compute = (function()
   }, function(x1)
     return Golden_LongMaybeBind_Test_bind_S_w({
       "Data.Maybe∷Maybe.Just",
-      (Golden_LongMaybeBind_Test_add_S_w(x1, 1))
+      x1 + 1
     }, function(x2)
       return Golden_LongMaybeBind_Test_bind_S_w({
         "Data.Maybe∷Maybe.Just",
-        (Golden_LongMaybeBind_Test_add_S_w(x2, 1))
+        x2 + 1
       }, function(x3)
         return Golden_LongMaybeBind_Test_bind_S_w({
           "Data.Maybe∷Maybe.Just",
-          (Golden_LongMaybeBind_Test_add_S_w(x3, 1))
+          x3 + 1
         }, function(x4)
           return Golden_LongMaybeBind_Test_bind_S_w({
             "Data.Maybe∷Maybe.Just",
-            (Golden_LongMaybeBind_Test_add_S_w(x4, 1))
+            x4 + 1
           }, function(x5)
             return Golden_LongMaybeBind_Test_bind_S_w({
               "Data.Maybe∷Maybe.Just",
-              (Golden_LongMaybeBind_Test_add_S_w(x5, 1))
+              x5 + 1
             }, function(x6)
               return Golden_LongMaybeBind_Test_bind_S_w({
                 "Data.Maybe∷Maybe.Just",
-                (Golden_LongMaybeBind_Test_add_S_w(x6, 1))
+                x6 + 1
               }, function(x7)
                 return Golden_LongMaybeBind_Test_bind_S_w({
                   "Data.Maybe∷Maybe.Just",
-                  (Golden_LongMaybeBind_Test_add_S_w(x7, 1))
+                  x7 + 1
                 }, function(x8)
                   return Golden_LongMaybeBind_Test_bind_S_w({
                     "Data.Maybe∷Maybe.Just",
-                    (Golden_LongMaybeBind_Test_add_S_w(x8, 1))
+                    x8 + 1
                   }, function(x9)
                     return Golden_LongMaybeBind_Test_bind_S_w({
                       "Data.Maybe∷Maybe.Just",
-                      (Golden_LongMaybeBind_Test_add_S_w(x9, 1))
+                      x9 + 1
                     }, function(x10)
                       return Golden_LongMaybeBind_Test_bind_S_w({
                         "Data.Maybe∷Maybe.Just",
-                        (Golden_LongMaybeBind_Test_add_S_w(x10, 1))
+                        x10 + 1
                       }, function(x11)
                         return Golden_LongMaybeBind_Test_bind_S_w({
                           "Data.Maybe∷Maybe.Just",
-                          (Golden_LongMaybeBind_Test_add_S_w(x11, 1))
+                          x11 + 1
                         }, function(x12)
                           return Golden_LongMaybeBind_Test_bind_S_w({
                             "Data.Maybe∷Maybe.Just",
-                            (Golden_LongMaybeBind_Test_add_S_w(x12, 1))
+                            x12 + 1
                           }, function(x13)
                             return Golden_LongMaybeBind_Test_bind_S_w({
                               "Data.Maybe∷Maybe.Just",
-                              (Golden_LongMaybeBind_Test_add_S_w(x13, 1))
+                              x13 + 1
                             }, function(x14)
                               return Golden_LongMaybeBind_Test_bind_S_w({
                                 "Data.Maybe∷Maybe.Just",
-                                (Golden_LongMaybeBind_Test_add_S_w(x14, 1))
+                                x14 + 1
                               }, function(x15)
                                 return Golden_LongMaybeBind_Test_bind_S_w({
                                   "Data.Maybe∷Maybe.Just",
-                                  (Golden_LongMaybeBind_Test_add_S_w(x15, 1))
+                                  x15 + 1
                                 }, function(x16)
                                   return Golden_LongMaybeBind_Test_bind_S_w({
                                     "Data.Maybe∷Maybe.Just",
-                                    (Golden_LongMaybeBind_Test_add_S_w(x16, 1))
+                                    x16 + 1
                                   }, function(x17)
                                     return Golden_LongMaybeBind_Test_bind_S_w({
                                       "Data.Maybe∷Maybe.Just",
-                                      (Golden_LongMaybeBind_Test_add_S_w(x17, 1))
+                                      x17 + 1
                                     }, function(x18)
                                       return Golden_LongMaybeBind_Test_bind_S_w({
                                         "Data.Maybe∷Maybe.Just",
-                                        (Golden_LongMaybeBind_Test_add_S_w(x18, 1))
+                                        x18 + 1
                                       }, function(x19)
                                         return Golden_LongMaybeBind_Test_bind_S_w({
                                           "Data.Maybe∷Maybe.Just",
-                                          (Golden_LongMaybeBind_Test_add_S_w(x19, 1))
+                                          x19 + 1
                                         }, function(x20)
                                           return Golden_LongMaybeBind_Test_bind_S_w({
                                             "Data.Maybe∷Maybe.Just",
-                                            (Golden_LongMaybeBind_Test_add_S_w(x20, 1))
+                                            x20 + 1
                                           }, function(x21)
                                             return Golden_LongMaybeBind_Test_bind_S_w({
                                               "Data.Maybe∷Maybe.Just",
-                                              (Golden_LongMaybeBind_Test_add_S_w(x21, 1))
+                                              x21 + 1
                                             }, function(x22)
                                               return Golden_LongMaybeBind_Test_bind_S_w({
                                                 "Data.Maybe∷Maybe.Just",
-                                                (Golden_LongMaybeBind_Test_add_S_w(x22, 1))
+                                                x22 + 1
                                               }, function(x23)
                                                 return Golden_LongMaybeBind_Test_bind_S_w({
                                                   "Data.Maybe∷Maybe.Just",
-                                                  (Golden_LongMaybeBind_Test_add_S_w(x23, 1))
+                                                  x23 + 1
                                                 }, function(x24)
                                                   return Golden_LongMaybeBind_Test_bind_S_w({
                                                     "Data.Maybe∷Maybe.Just",
-                                                    (Golden_LongMaybeBind_Test_add_S_w(x24, 1))
+                                                    x24 + 1
                                                   }, function(x25)
                                                     return Golden_LongMaybeBind_Test_bind_S_w({
                                                       "Data.Maybe∷Maybe.Just",
-                                                      (Golden_LongMaybeBind_Test_add_S_w(x25, 1))
+                                                      x25 + 1
                                                     }, function(x26)
                                                       return Golden_LongMaybeBind_Test_bind_S_w({
                                                         "Data.Maybe∷Maybe.Just",
-                                                        (Golden_LongMaybeBind_Test_add_S_w(x26, 1))
+                                                        x26 + 1
                                                       }, function(x27)
                                                         return Golden_LongMaybeBind_Test_bind_S_w({
                                                           "Data.Maybe∷Maybe.Just",
-                                                          (Golden_LongMaybeBind_Test_add_S_w(x27, 1))
+                                                          x27 + 1
                                                         }, function(x28)
                                                           return Golden_LongMaybeBind_Test_bind_S_w({
                                                             "Data.Maybe∷Maybe.Just",
-                                                            (Golden_LongMaybeBind_Test_add_S_w(x28, 1))
+                                                            x28 + 1
                                                           }, function(x29)
                                                             return Golden_LongMaybeBind_Test_bind_S_w({
                                                               "Data.Maybe∷Maybe.Just",
-                                                              (Golden_LongMaybeBind_Test_add_S_w(x29, 1))
+                                                              x29 + 1
                                                             }, function(x30)
                                                               return Golden_LongMaybeBind_Test_bind_S_w({
                                                                 "Data.Maybe∷Maybe.Just",
-                                                                (Golden_LongMaybeBind_Test_add_S_w(x30, 1))
+                                                                x30 + 1
                                                               }, function(x31)
                                                                 return Golden_LongMaybeBind_Test_bind_S_w({
                                                                   "Data.Maybe∷Maybe.Just",
-                                                                  (Golden_LongMaybeBind_Test_add_S_w(x31, 1))
+                                                                  x31 + 1
                                                                 }, function(x32)
                                                                   return Golden_LongMaybeBind_Test_bind_S_w({
                                                                     "Data.Maybe∷Maybe.Just",
-                                                                    (Golden_LongMaybeBind_Test_add_S_w(x32, 1))
+                                                                    x32 + 1
                                                                   }, function( x33 )
                                                                     return Golden_LongMaybeBind_Test_bind_S_w({
                                                                       "Data.Maybe∷Maybe.Just",
-                                                                      (Golden_LongMaybeBind_Test_add_S_w(x33, 1))
+                                                                      x33 + 1
                                                                     }, function( x34 )
                                                                       return Golden_LongMaybeBind_Test_bind_S_w({
                                                                         "Data.Maybe∷Maybe.Just",
-                                                                        (Golden_LongMaybeBind_Test_add_S_w(x34, 1))
+                                                                        x34 + 1
                                                                       }, function( x35 )
                                                                         return Golden_LongMaybeBind_Test_bind_S_w({
                                                                           "Data.Maybe∷Maybe.Just",
-                                                                          (Golden_LongMaybeBind_Test_add_S_w(x35, 1))
+                                                                          x35 + 1
                                                                         }, function( x36 )
                                                                           return Golden_LongMaybeBind_Test_bind_S_w({
                                                                             "Data.Maybe∷Maybe.Just",
-                                                                            (Golden_LongMaybeBind_Test_add_S_w(x36, 1))
+                                                                            x36 + 1
                                                                           }, function( x37 )
                                                                             return Golden_LongMaybeBind_Test_bind_S_w({
                                                                               "Data.Maybe∷Maybe.Just",
-                                                                              (Golden_LongMaybeBind_Test_add_S_w(x37, 1))
+                                                                              x37 + 1
                                                                             }, function( x38 )
                                                                               return Golden_LongMaybeBind_Test_bind_S_w({
                                                                                 "Data.Maybe∷Maybe.Just",
-                                                                                (Golden_LongMaybeBind_Test_add_S_w(x38, 1))
+                                                                                x38 + 1
                                                                               }, function( x39 )
                                                                                 return Golden_LongMaybeBind_Test_bind_S_w({
                                                                                   "Data.Maybe∷Maybe.Just",
-                                                                                  (Golden_LongMaybeBind_Test_add_S_w(x39, 1))
+                                                                                  x39 + 1
                                                                                 }, function( x40 )
-                                                                                  return _S_kont646_S_w(x1, x40)
+                                                                                  return _S_kont1250_S_w(x1, x40)
                                                                                 end)
                                                                               end)
                                                                             end)
@@ -1563,11 +1557,11 @@ local Golden_LongMaybeBind_Test_compute = (function()
   end)
 end)()
 return (function()
-  local _S_cse627 = Golden_LongMaybeBind_Test_compute[1]
+  local _S_cse1231 = Golden_LongMaybeBind_Test_compute[1]
   return Effect_Console_foreign.log((function()
-    if "Data.Maybe∷Maybe.Just" == _S_cse627 then
-      return Data_Maybe_append_S_w("(Just ", Data_Maybe_append_S_w(Data_Show_foreign.showIntImpl(Golden_LongMaybeBind_Test_compute[2]), ")"))
-    elseif "Data.Maybe∷Maybe.Nothing" == _S_cse627 then
+    if "Data.Maybe∷Maybe.Just" == _S_cse1231 then
+      return "(Just " .. Data_Show_foreign.showIntImpl(Golden_LongMaybeBind_Test_compute[2]) .. ")"
+    elseif "Data.Maybe∷Maybe.Nothing" == _S_cse1231 then
       return "Nothing"
     else
       return error("No patterns matched")

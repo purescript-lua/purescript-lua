@@ -4,7 +4,6 @@ workload: n=30 reps=4 result=832040
 aborts (distinct site -- reason):
   fibonacci.lua:19 -- NYI: bytecode FNEW
 bytecode end state (J*=compiled, I*=blacklisted):
-  Bench.Fib.lua:1 JFUNCF
-  Bench.Fib.lua:5 JFUNCF
+  Bench.Fib.lua:2 JFUNCF
   fibonacci.lua:11 JFUNCF
-counts: aborts=1 compiled=3 blacklisted=0
+counts: aborts=1 compiled=2 blacklisted=0

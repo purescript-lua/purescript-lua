@@ -25,30 +25,27 @@ local Control_Monad_ST_Internal_run = Control_Monad_ST_Internal_foreign.run
 local Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
 }
-local Golden_STDoBlock_Test_add_S_w = function(x_S_447, y_S_448)
-  return x_S_447 + y_S_448
-end
 M.Golden_STDoBlock_Test_sumTwice = function(n)
   return Control_Monad_ST_Internal_run(function()
-    local _S_cse469 = function(s_S_453)
-      local sPrime_S_454 = Golden_STDoBlock_Test_add_S_w(s_S_453, n)
-      return { state = sPrime_S_454, value = sPrime_S_454 }
+    local _S_cse481 = function(s_S_455)
+      local sPrime_S_456 = s_S_455 + n
+      return { state = sPrime_S_456, value = sPrime_S_456 }
     end
     local ref = Control_Monad_ST_Internal_new(0)()
-    local _ = Control_Monad_ST_Internal_modifyImpl(_S_cse469)(ref)()
-    local _ = Control_Monad_ST_Internal_modifyImpl(_S_cse469)(ref)()
+    local _ = Control_Monad_ST_Internal_modifyImpl(_S_cse481)(ref)()
+    local _ = Control_Monad_ST_Internal_modifyImpl(_S_cse481)(ref)()
     local total = Control_Monad_ST_Internal_read(ref)()
-    return Golden_STDoBlock_Test_add_S_w(total, 1)
+    return total + 1
   end)
 end
 return Effect_Console_foreign.log(Data_Show_foreign.showIntImpl(Control_Monad_ST_Internal_run(function(  )
-  local _S_cse470 = function(s_S_464)
-    local sPrime_S_465 = Golden_STDoBlock_Test_add_S_w(s_S_464, 5)
-    return { state = sPrime_S_465, value = sPrime_S_465 }
+  local _S_cse482 = function(s_S_472)
+    local sPrime_S_473 = s_S_472 + 5
+    return { state = sPrime_S_473, value = sPrime_S_473 }
   end
-  local ref_S_459 = Control_Monad_ST_Internal_new(0)()
-  local _ = Control_Monad_ST_Internal_modifyImpl(_S_cse470)(ref_S_459)()
-  local _ = Control_Monad_ST_Internal_modifyImpl(_S_cse470)(ref_S_459)()
-  local total_S_460 = Control_Monad_ST_Internal_read(ref_S_459)()
-  return Golden_STDoBlock_Test_add_S_w(total_S_460, 1)
+  local ref_S_465 = Control_Monad_ST_Internal_new(0)()
+  local _ = Control_Monad_ST_Internal_modifyImpl(_S_cse482)(ref_S_465)()
+  local _ = Control_Monad_ST_Internal_modifyImpl(_S_cse482)(ref_S_465)()
+  local total_S_466 = Control_Monad_ST_Internal_read(ref_S_465)()
+  return total_S_466 + 1
 end)))()
