@@ -1620,7 +1620,7 @@ inlineSaturatedCall policy env expr = case expr of
     , Nothing ← directedArity fname
     , Just rhs@(AbsN _ params body) ← Map.lookup fname env
     , length args == length params
-    , expSize rhs <= smallInlineBudget
+    , expSize rhs < smallInlineBudget
     , isCheapWorkerBody body
     , countFreeRef fname rhs == 0 →
         (\rhs' → Just (AppN ann rhs' args)) <$> freshenBinders rhs
@@ -1657,13 +1657,13 @@ saturated call site: a tree of arithmetic, comparison, equality and
 negation nodes over leaves 'complexityOf' classifies at most 'Deref' —
 references (in practice the worker's parameters), scalar-sized
 literals, and cheap-read chains over them, all free to re-evaluate —
-possibly under nested abstractions (an inner lambda pasted at the site
-allocates exactly the closure the worker's own body allocated per
-call). Such a body pastes to an inline operator expression: no work is
-duplicated and no allocation introduced, so 'inlineSaturatedCall'
-unfolds it at every saturated n-ary call site regardless of use count
-(issues #281, #211), with code growth bounded by 'smallInlineBudget'
-at the call site.
+possibly under nested abstractions. Such a body pastes to an inline
+operator expression that duplicates no work and allocates nothing
+beyond what the worker call already performed (an inner lambda pasted
+at the site is exactly the closure the worker's own body allocated per
+call), so 'inlineSaturatedCall' unfolds it at every saturated n-ary
+call site regardless of use count (issues #281, #211), with code
+growth bounded by 'smallInlineBudget' at the call site.
 
 'IfThenElse' is deliberately not admitted: a decision tree pasted into
 expression position lowers to a per-call IIFE — the allocation the
