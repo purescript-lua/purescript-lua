@@ -63,6 +63,7 @@ import Language.PureScript.Backend.IR.Types
   , ifThenElse
   , isLiteral
   , lets
+  , listGrouping
   , literalBool
   , literalFloat
   , literalInt
@@ -1614,6 +1615,151 @@ spec = describe "IR Optimizer" do
         `shouldBe` [ (Name "main1", primBinOp PrimAdd n1 n2)
                    , (Name "main2", primBinOp PrimAdd n2 n1)
                    ]
+
+  describe "dissolves small pure workers into saturated call sites (#211)" do
+    let mainModule = moduleNameFromString "Main"
+        extern = moduleNameFromString "Extern"
+        n1 = refImported extern (Name "n1")
+        n2 = refImported extern (Name "n2")
+        n3 = refImported extern (Name "n3")
+        x = Name "x"
+        y = Name "y"
+        checked = either (fail . show) pure . optimizedUberModuleChecked
+        uberWith name def sites =
+          Linker.UberModule
+            { uberModuleForeigns = []
+            , uberModuleBindings = [Standalone (QName mainModule name, def)]
+            , uberModuleExports =
+                [(Name ("main" <> show i), site) | (i, site) ← zip [1 ∷ Int ..] sites]
+            }
+        topLevelNames uber =
+          fst <$> (listGrouping =<< Linker.uberModuleBindings uber)
+
+    it "folds a nested primop tree into every saturated call site" do
+      -- add3 = λx. λy. λz. (x + y) + z: the nested left operand is not
+      -- Trivial, so the bare-primop rule (#281) declined it and every
+      -- call paid for the shared worker.
+      let z = Name "z"
+          add3Ref = refImported mainModule (Name "add3")
+          add3Def =
+            abstraction (paramNamed x) $
+              abstraction (paramNamed y) $
+                abstraction (paramNamed z) $
+                  primBinOp
+                    PrimAdd
+                    (primBinOp PrimAdd (refLocal x) (refLocal y))
+                    (refLocal z)
+          saturated a b = application (application (application add3Ref a) b)
+      optimized ←
+        checked $
+          uberWith (Name "add3") add3Def [saturated n1 n2 n3, saturated n3 n2 n1]
+      Linker.uberModuleBindings optimized `shouldBe` []
+      Linker.uberModuleExports optimized
+        `shouldBe` [ (Name "main1", primBinOp PrimAdd (primBinOp PrimAdd n1 n2) n3)
+                   , (Name "main2", primBinOp PrimAdd (primBinOp PrimAdd n3 n2) n1)
+                   ]
+
+    it "folds a parameter-selecting worker (no operator at all)" do
+      -- first = λx. λy. x: the body is a bare reference — not a primop,
+      -- so the #281 rule never saw it.
+      let firstRef = refImported mainModule (Name "first")
+          firstDef =
+            abstraction (paramNamed x) $
+              abstraction (paramNamed y) $
+                refLocal x
+          saturated a = application (application firstRef a)
+      optimized ←
+        checked $
+          uberWith (Name "first") firstDef [saturated n1 n2, saturated n2 n1]
+      Linker.uberModuleBindings optimized `shouldBe` []
+      Linker.uberModuleExports optimized
+        `shouldBe` [(Name "main1", n1), (Name "main2", n2)]
+
+    it "admits projection-chain operands (Deref leaves)" do
+      -- addFields = λx. λy. x.foo + y.bar: record and module tables are
+      -- write-once, so re-reading a field at the paste site duplicates
+      -- no work.
+      let addFieldsRef = refImported mainModule (Name "addFields")
+          addFieldsDef =
+            abstraction (paramNamed x) $
+              abstraction (paramNamed y) $
+                primBinOp
+                  PrimAdd
+                  (objectProp (refLocal x) (PropName "foo"))
+                  (objectProp (refLocal y) (PropName "bar"))
+          saturated a = application (application addFieldsRef a)
+      optimized ←
+        checked $
+          uberWith
+            (Name "addFields")
+            addFieldsDef
+            [saturated n1 n2, saturated n2 n1]
+      Linker.uberModuleBindings optimized `shouldBe` []
+      Linker.uberModuleExports optimized
+        `shouldBe` [
+                     ( Name "main1"
+                     , primBinOp
+                         PrimAdd
+                         (objectProp n1 (PropName "foo"))
+                         (objectProp n2 (PropName "bar"))
+                     )
+                   ,
+                     ( Name "main2"
+                     , primBinOp
+                         PrimAdd
+                         (objectProp n2 (PropName "foo"))
+                         (objectProp n1 (PropName "bar"))
+                     )
+                   ]
+
+    it "keeps a worker whose body applies a function" do
+      -- callAdd = λx. λy. g (x + y): an application may hide arbitrary
+      -- work, so the call sites keep sharing the worker.
+      let g = refImported extern (Name "g")
+          callAddRef = refImported mainModule (Name "callAdd")
+          callAddDef =
+            abstraction (paramNamed x) $
+              abstraction (paramNamed y) $
+                application
+                  g
+                  (primBinOp PrimAdd (refLocal x) (refLocal y))
+          saturated a = application (application callAddRef a)
+      optimized ←
+        checked $
+          uberWith (Name "callAdd") callAddDef [saturated n1 n2, saturated n2 n1]
+      topLevelNames optimized `shouldBe` [QName mainModule (Name "callAdd$w")]
+
+    it "keeps a worker whose body branches" do
+      -- pickOr = λx. λy. if x then y else 0: an IfThenElse pasted into
+      -- expression position lowers to a per-call IIFE (issue #203) —
+      -- worse than the shared worker call it would replace.
+      let pickOrRef = refImported mainModule (Name "pickOr")
+          pickOrDef =
+            abstraction (paramNamed x) $
+              abstraction (paramNamed y) $
+                ifThenElse (refLocal x) (refLocal y) (literalInt 0)
+          saturated a = application (application pickOrRef a)
+      optimized ←
+        checked $
+          uberWith (Name "pickOr") pickOrDef [saturated n1 n2, saturated n2 n1]
+      topLevelNames optimized `shouldBe` [QName mainModule (Name "pickOr$w")]
+
+    it "keeps a worker whose primop tree exceeds the small budget" do
+      -- Same shape as add3, but grown past 'smallInlineBudget': pasting
+      -- it at every site trades one call for unbounded code growth.
+      let wideRef = refImported mainModule (Name "wide")
+          wideDef =
+            abstraction (paramNamed x) $
+              abstraction (paramNamed y) $
+                foldl'
+                  (primBinOp PrimAdd)
+                  (refLocal x)
+                  (concat (replicate 8 [refLocal y, refLocal x]))
+          saturated a = application (application wideRef a)
+      optimized ←
+        checked $
+          uberWith (Name "wide") wideDef [saturated n1 n2, saturated n2 n1]
+      topLevelNames optimized `shouldBe` [QName mainModule (Name "wide$w")]
 
   describe "honours @inline arity=N directives (issue #232)" do
     let mainModule = moduleNameFromString "Main"

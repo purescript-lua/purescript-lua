@@ -769,9 +769,10 @@ collapse.
 inlineSizeBudget ∷ Natural
 inlineSizeBudget = 64
 
-{- | The largest expression the Deref and KnownSize inlining tiers paste
-(Note [Complexity and Capture gate inlining]), sized in IR nodes like
-'inlineSizeBudget' but far below it: these tiers admit duplication at
+{- | The largest expression the Deref and KnownSize inlining tiers and
+the cheap-worker unfolding ('isCheapWorkerBody') paste (Note
+[Complexity and Capture gate inlining]), sized in IR nodes like
+'inlineSizeBudget' but far below it: these admissions duplicate at
 every use site, so growth scales with the use count.
 -}
 smallInlineBudget ∷ Natural
@@ -1601,15 +1602,16 @@ directive pins the binding as a shared reference at partial sites.
 
 An n-ary call — the direct worker call the uncurry split mints — is not
 a unary spine, so 'unwindApp' leaves it whole and the paths above never
-see it. Most workers are meant to stay shared bindings, but a worker
-whose body is a bare primop over trivial operands (the residue of a
-floated dictionary application like @add = Data.Semiring.add
-semiringInt@, resolved through the lifted foreign) makes the call itself
-the whole cost: pasting is the cheapest possible unfolding and folds
-each site to the inline operator (issue #281). The n-ary 'AbsN' root is
-pasted under the original 'AppN' node — never rebuilt as a unary spine,
-which would leave an under-applied redex ('pasteableRoot') — so the
-exact-arity 'betaReduce' consumes it in the same pass.
+see it. Most workers are meant to stay shared bindings, but a small
+worker whose body is cheap to duplicate ('isCheapWorkerBody' under
+'smallInlineBudget' — the residue of a floated dictionary application
+like @add = Data.Semiring.add semiringInt@, resolved through the lifted
+foreign, or a tiny helper purs shares because its operator occurs more
+than once) makes the call itself the whole cost: pasting folds each
+site to the inline expression (issues #281, #211). The n-ary 'AbsN'
+root is pasted under the original 'AppN' node — never rebuilt as a
+unary spine, which would leave an under-applied redex ('pasteableRoot')
+— so the exact-arity 'betaReduce' consumes it in the same pass.
 -}
 inlineSaturatedCall ∷ InlinePolicy → InlineEnv → RewriteRuleM SupplyM Ann
 inlineSaturatedCall policy env expr = case expr of
@@ -1618,7 +1620,8 @@ inlineSaturatedCall policy env expr = case expr of
     , Nothing ← directedArity fname
     , Just rhs@(AbsN _ params body) ← Map.lookup fname env
     , length args == length params
-    , isBarePrimOpBody body
+    , expSize rhs < smallInlineBudget
+    , isCheapWorkerBody body
     , countFreeRef fname rhs == 0 →
         (\rhs' → Just (AppN ann rhs' args)) <$> freshenBinders rhs
   (unwindApp → (Ref _ fname, args))
@@ -1649,23 +1652,35 @@ inlineSaturatedCall policy env expr = case expr of
   directedArity ∷ Qualified Name → Maybe Natural
   directedArity fname = refQName fname >>= (`Map.lookup` policyArity policy)
 
-{- | Whether a worker body is a bare primop — a single arithmetic,
-comparison, equality or negated-equality node whose operands
-'complexityOf' classifies 'Trivial': references (in practice the
-worker's parameters) and scalar-sized literals, all free to re-emit.
-Such a body is the cheapest possible paste: no work can be duplicated
-and no allocation introduced, so 'inlineSaturatedCall' unfolds it at
-every saturated n-ary call site regardless of use count (issue #281).
+{- | Whether a worker body is cheap enough to duplicate at every
+saturated call site: a tree of arithmetic, comparison, equality and
+negation nodes over leaves 'complexityOf' classifies at most 'Deref' —
+references (in practice the worker's parameters), scalar-sized
+literals, and cheap-read chains over them, all free to re-evaluate —
+possibly under nested abstractions. Such a body pastes to an inline
+operator expression that duplicates no work and allocates nothing
+beyond what the worker call already performed (an inner lambda pasted
+at the site is exactly the closure the worker's own body allocated per
+call), so 'inlineSaturatedCall' unfolds it at every saturated n-ary
+call site regardless of use count (issues #281, #211), with code
+growth bounded by 'smallInlineBudget' at the call site.
+
+'IfThenElse' is deliberately not admitted: a decision tree pasted into
+expression position lowers to a per-call IIFE — the allocation the
+case-of-case rules of issue #203 exist to remove — worse than the
+shared worker call it would replace. An application may hide arbitrary
+work and the allocating shapes (constructors, non-empty literals,
+'Let') price above 'Deref', so all of them decline through the
+'complexityOf' fallback, conservative for unlisted node kinds by
+construction.
 -}
-isBarePrimOpBody ∷ RawExp ann → Bool
-isBarePrimOpBody = \case
-  PrimBinOp _ _ a b → isTrivialOperand a && isTrivialOperand b
-  Eq _ a b → isTrivialOperand a && isTrivialOperand b
-  PrimNot _ e → isBarePrimOpBody e
-  _ → False
- where
-  isTrivialOperand ∷ RawExp ann → Bool
-  isTrivialOperand = (== Trivial) . complexityOf
+isCheapWorkerBody ∷ RawExp ann → Bool
+isCheapWorkerBody = \case
+  PrimBinOp _ _ a b → isCheapWorkerBody a && isCheapWorkerBody b
+  Eq _ a b → isCheapWorkerBody a && isCheapWorkerBody b
+  PrimNot _ e → isCheapWorkerBody e
+  AbsN _ _params body → isCheapWorkerBody body
+  leaf → complexityOf leaf <= Deref
 
 -- | Re-apply the arguments 'unwindApp' peeled, as a unary spine.
 rebuildSpine ∷ [Exp] → Exp → Exp

@@ -24,19 +24,19 @@ local Golden_UncurriedLift_Test_logTwice = function(a_S_673, b_S_674)
     return Effect_Console_log(b_S_674)()
   end)()
 end
-local Golden_UncurriedLift_Test_add3 = function(a_S_694, b_S_695, c_S_696)
+M.Golden_UncurriedLift_Test_add3 = function(a_S_694, b_S_695, c_S_696)
   return a_S_694 + b_S_695 + c_S_696
 end
 M.Golden_UncurriedLift_Test_addOnePlusTwoTo = function(c_S_682)
-  return Golden_UncurriedLift_Test_add3(1, 2, c_S_682)
+  return 3 + c_S_682
 end
 return (function()
   local _ = Golden_UncurriedLift_Test_logTwice("hello", "world")
-  local _ = Effect_Console_log(Data_Show_showIntImpl(Golden_UncurriedLift_Test_add3(1, 2, 3)))()
+  local _ = Effect_Console_log(Data_Show_showIntImpl(6))()
   local _ = Effect_Console_log(Data_Show_showIntImpl(20))()
   local _ = Effect_Console_log(Data_Show_showIntImpl(48))()
-  local _ = Effect_Console_log(Data_Show_showIntImpl(Golden_UncurriedLift_Test_add3(1, 2, 100)))()
-  local _ = Effect_Console_log(Data_Show_showIntImpl(Golden_UncurriedLift_Test_add3(1, 2, 200)))()
+  local _ = Effect_Console_log(Data_Show_showIntImpl(103))()
+  local _ = Effect_Console_log(Data_Show_showIntImpl(203))()
   return Effect_Console_log(Data_Show_showIntImpl(Control_Monad_ST_Internal_foreign.run(function(  )
     return 42
   end)))()
