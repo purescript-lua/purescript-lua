@@ -1,10 +1,11 @@
 local M = {}
 local Data_Show_foreign = { showIntImpl = function(n) return tostring(n) end }
-local Data_Show_showIntImpl = Data_Show_foreign.showIntImpl
 local Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
 }
-local Effect_Console_log = Effect_Console_foreign.log
+local Golden_FieldCaching_Test_logShow = function(a_S_2)
+  return Effect_Console_foreign.log(Data_Show_foreign.showIntImpl(a_S_2))
+end
 local Golden_FieldCaching_Test_weigh = function(x) return x * 2 + 1 end
 local Golden_FieldCaching_Test_sumLoop_S_w = function(acc, n)
   while true do
@@ -20,13 +21,13 @@ M.Golden_FieldCaching_Test_sumLoop = function(sumLoop_S_p1)
     return Golden_FieldCaching_Test_sumLoop_S_w(sumLoop_S_p1, sumLoop_S_p2)
   end
 end
-M.Golden_FieldCaching_Test_single = function(n)
+local Golden_FieldCaching_Test_single = function(n)
   return Golden_FieldCaching_Test_weigh(n)
 end
-M.Golden_FieldCaching_Test_pair = function(n)
+local Golden_FieldCaching_Test_pair = function(n)
   return Golden_FieldCaching_Test_weigh(n) + Golden_FieldCaching_Test_weigh(n + 1)
 end
-M.Golden_FieldCaching_Test_fibby = function(n)
+local Golden_FieldCaching_Test_fibby = function(n)
   if n < 2 then
     return n
   else
@@ -34,17 +35,15 @@ M.Golden_FieldCaching_Test_fibby = function(n)
   end
 end
 local Golden_FieldCaching_Test_apply2 = function(f) return f(2) end
-M.Golden_FieldCaching_Test_closed = function(x)
+local Golden_FieldCaching_Test_closed = function(x)
   return Golden_FieldCaching_Test_apply2(function(y)
     return Golden_FieldCaching_Test_weigh(x) + Golden_FieldCaching_Test_weigh(y)
   end)
 end
 return (function()
-  local _ = Effect_Console_log(Data_Show_showIntImpl(Golden_FieldCaching_Test_weigh(1) + Golden_FieldCaching_Test_weigh(2)))()
-  local _ = Effect_Console_log(Data_Show_showIntImpl(Golden_FieldCaching_Test_weigh(10)))()
-  local _ = Effect_Console_log(Data_Show_showIntImpl(Golden_FieldCaching_Test_sumLoop_S_w(0, 4)))()
-  local _ = Effect_Console_log(Data_Show_showIntImpl(Golden_FieldCaching_Test_weigh(4) + Golden_FieldCaching_Test_weigh(3)))()
-  return Effect_Console_log(Data_Show_showIntImpl(Golden_FieldCaching_Test_apply2(function( y_S_264 )
-    return Golden_FieldCaching_Test_weigh(5) + Golden_FieldCaching_Test_weigh(y_S_264)
-  end)))()
+  local _ = Golden_FieldCaching_Test_logShow(Golden_FieldCaching_Test_pair(1))()
+  local _ = Golden_FieldCaching_Test_logShow(Golden_FieldCaching_Test_single(10))()
+  local _ = Golden_FieldCaching_Test_logShow(Golden_FieldCaching_Test_sumLoop_S_w(0, 4))()
+  local _ = Golden_FieldCaching_Test_logShow(Golden_FieldCaching_Test_fibby(5))()
+  return Golden_FieldCaching_Test_logShow(Golden_FieldCaching_Test_closed(5))()
 end)()

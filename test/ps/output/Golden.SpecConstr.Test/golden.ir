@@ -132,30 +132,30 @@ UberModule
             ( ParamNamed Nothing ( Name "m" ) :| [] )
             ( Let Nothing
               ( Standalone
-                ( Nothing, Name "$cse465", DataArgumentByIndex Nothing SumType 0
+                ( Nothing, Name "$cse502", DataArgumentByIndex Nothing SumType 0
                   ( Ref Nothing ( Local ( Name "m" ) ) )
                 ) :| []
               )
               ( Let Nothing
                 ( Standalone
-                  ( Nothing, Name "$cse464", ReflectCtor Nothing
+                  ( Nothing, Name "$cse501", ReflectCtor Nothing
                     ( Ref Nothing ( Local ( Name "m" ) ) )
                   ) :| []
                 )
                 ( IfThenElse Nothing
                   ( Eq Nothing
                     ( LiteralString Nothing "Data.Maybe∷Maybe.Nothing" )
-                    ( Ref Nothing ( Local ( Name "$cse464" ) ) )
+                    ( Ref Nothing ( Local ( Name "$cse501" ) ) )
                   )
                   ( LiteralInt Nothing 0 )
                   ( IfThenElse Nothing
                     ( Eq Nothing
                       ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
-                      ( Ref Nothing ( Local ( Name "$cse464" ) ) )
+                      ( Ref Nothing ( Local ( Name "$cse501" ) ) )
                     )
                     ( IfThenElse Nothing
                       ( Eq Nothing
-                        ( Ref Nothing ( Local ( Name "$cse465" ) ) )
+                        ( Ref Nothing ( Local ( Name "$cse502" ) ) )
                         ( LiteralInt Nothing 0 )
                       )
                       ( LiteralInt Nothing 42 )
@@ -167,7 +167,7 @@ UberModule
                           )
                         )
                         ( PrimBinOp Nothing PrimSub
-                          ( Ref Nothing ( Local ( Name "$cse465" ) ) )
+                          ( Ref Nothing ( Local ( Name "$cse502" ) ) )
                           ( LiteralInt Nothing 1 ) :| []
                         )
                       )
@@ -216,31 +216,31 @@ UberModule
             ( ParamNamed Nothing ( Name "t" ) :| [] )
             ( Let Nothing
               ( Standalone
-                ( Nothing, Name "$cse467", DataArgumentByIndex Nothing ProductType 1
+                ( Nothing, Name "$cse504", DataArgumentByIndex Nothing ProductType 1
                   ( Ref Nothing ( Local ( Name "t" ) ) )
                 ) :| []
               )
               ( Let Nothing
                 ( Standalone
-                  ( Nothing, Name "$cse466", DataArgumentByIndex Nothing ProductType 0
+                  ( Nothing, Name "$cse503", DataArgumentByIndex Nothing ProductType 0
                     ( Ref Nothing ( Local ( Name "t" ) ) )
                   ) :| []
                 )
                 ( IfThenElse Nothing
                   ( Eq Nothing
-                    ( Ref Nothing ( Local ( Name "$cse466" ) ) )
+                    ( Ref Nothing ( Local ( Name "$cse503" ) ) )
                     ( LiteralInt Nothing 0 )
                   )
-                  ( Ref Nothing ( Local ( Name "$cse467" ) ) )
+                  ( Ref Nothing ( Local ( Name "$cse504" ) ) )
                   ( AppN Nothing
                     ( Ref Nothing
                       ( Imported ( ModuleName "Golden.SpecConstr.Test" ) ( Name "ping$sc1Tuple" ) )
                     )
                     ( PrimBinOp Nothing PrimSub
-                      ( Ref Nothing ( Local ( Name "$cse466" ) ) )
+                      ( Ref Nothing ( Local ( Name "$cse503" ) ) )
                       ( LiteralInt Nothing 1 ) :|
                       [ PrimBinOp Nothing PrimAdd
-                        ( Ref Nothing ( Local ( Name "$cse467" ) ) )
+                        ( Ref Nothing ( Local ( Name "$cse504" ) ) )
                         ( LiteralInt Nothing 2 )
                       ]
                     )
@@ -283,31 +283,31 @@ UberModule
             ( ParamNamed Nothing ( Name "t" ) :| [] )
             ( Let Nothing
               ( Standalone
-                ( Nothing, Name "$cse469", DataArgumentByIndex Nothing ProductType 1
+                ( Nothing, Name "$cse506", DataArgumentByIndex Nothing ProductType 1
                   ( Ref Nothing ( Local ( Name "t" ) ) )
                 ) :| []
               )
               ( Let Nothing
                 ( Standalone
-                  ( Nothing, Name "$cse468", DataArgumentByIndex Nothing ProductType 0
+                  ( Nothing, Name "$cse505", DataArgumentByIndex Nothing ProductType 0
                     ( Ref Nothing ( Local ( Name "t" ) ) )
                   ) :| []
                 )
                 ( IfThenElse Nothing
                   ( Eq Nothing
-                    ( Ref Nothing ( Local ( Name "$cse468" ) ) )
+                    ( Ref Nothing ( Local ( Name "$cse505" ) ) )
                     ( LiteralInt Nothing 0 )
                   )
-                  ( Ref Nothing ( Local ( Name "$cse469" ) ) )
+                  ( Ref Nothing ( Local ( Name "$cse506" ) ) )
                   ( AppN Nothing
                     ( Ref Nothing
                       ( Imported ( ModuleName "Golden.SpecConstr.Test" ) ( Name "pong$sc1Tuple" ) )
                     )
                     ( PrimBinOp Nothing PrimSub
-                      ( Ref Nothing ( Local ( Name "$cse468" ) ) )
+                      ( Ref Nothing ( Local ( Name "$cse505" ) ) )
                       ( LiteralInt Nothing 1 ) :|
                       [ PrimBinOp Nothing PrimAdd
-                        ( Ref Nothing ( Local ( Name "$cse469" ) ) )
+                        ( Ref Nothing ( Local ( Name "$cse506" ) ) )
                         ( LiteralInt Nothing 1 )
                       ]
                     )
@@ -421,23 +421,23 @@ UberModule
                   [ Let Nothing
                     ( RecursiveGroup
                       (
-                        ( Nothing, Name "go$448$sc1Tuple", AbsN Nothing
+                        ( Nothing, Name "go$sc1Tuple$494", AbsN Nothing
                           ( ParamNamed Nothing
-                            ( Name "go$448$sc1Tuple$f1" ) :|
-                            [ ParamNamed Nothing ( Name "go$448$sc1Tuple$f2" ) ]
+                            ( Name "go$sc1Tuple$f1$495" ) :|
+                            [ ParamNamed Nothing ( Name "go$sc1Tuple$f2$496" ) ]
                           )
                           ( IfThenElse Nothing
                             ( PrimBinOp Nothing PrimLt
-                              ( Ref Nothing ( Local ( Name "go$448$sc1Tuple$f2" ) ) )
+                              ( Ref Nothing ( Local ( Name "go$sc1Tuple$f2$496" ) ) )
                               ( LiteralInt Nothing 5 )
                             )
                             ( AppN Nothing
-                              ( Ref Nothing ( Local ( Name "go$448$sc1Tuple" ) ) )
+                              ( Ref Nothing ( Local ( Name "go$sc1Tuple$494" ) ) )
                               ( PrimBinOp Nothing PrimAdd
-                                ( Ref Nothing ( Local ( Name "go$448$sc1Tuple$f1" ) ) )
-                                ( Ref Nothing ( Local ( Name "go$448$sc1Tuple$f2" ) ) ) :|
+                                ( Ref Nothing ( Local ( Name "go$sc1Tuple$f1$495" ) ) )
+                                ( Ref Nothing ( Local ( Name "go$sc1Tuple$f2$496" ) ) ) :|
                                 [ PrimBinOp Nothing PrimAdd
-                                  ( Ref Nothing ( Local ( Name "go$448$sc1Tuple$f2" ) ) )
+                                  ( Ref Nothing ( Local ( Name "go$sc1Tuple$f2$496" ) ) )
                                   ( LiteralInt Nothing 1 )
                                 ]
                               )
@@ -447,8 +447,8 @@ UberModule
                               ( TyName "Tuple" )
                               ( CtorName "Tuple" )
                               [ Ref Nothing
-                                ( Local ( Name "go$448$sc1Tuple$f1" ) ), Ref Nothing
-                                ( Local ( Name "go$448$sc1Tuple$f2" ) )
+                                ( Local ( Name "go$sc1Tuple$f1$495" ) ), Ref Nothing
+                                ( Local ( Name "go$sc1Tuple$f2$496" ) )
                               ]
                             )
                           )
@@ -456,7 +456,7 @@ UberModule
                       ) :| []
                     )
                     ( AppN Nothing
-                      ( Ref Nothing ( Local ( Name "go$448$sc1Tuple" ) ) )
+                      ( Ref Nothing ( Local ( Name "go$sc1Tuple$494" ) ) )
                       ( LiteralInt Nothing 0 :| [ LiteralInt Nothing 0 ] )
                     )
                   ]

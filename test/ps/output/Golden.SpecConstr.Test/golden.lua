@@ -34,15 +34,15 @@ local Golden_SpecConstr_Test_stepDown_S_sc1Just = function( stepDown_S_sc1Just_S
   end
 end
 local Golden_SpecConstr_Test_stepDown = function(m)
-  local _S_cse465 = m[2]
-  local _S_cse464 = m[1]
-  if "Data.Maybe∷Maybe.Nothing" == _S_cse464 then
+  local _S_cse502 = m[2]
+  local _S_cse501 = m[1]
+  if "Data.Maybe∷Maybe.Nothing" == _S_cse501 then
     return 0
-  elseif "Data.Maybe∷Maybe.Just" == _S_cse464 then
-    if _S_cse465 == 0 then
+  elseif "Data.Maybe∷Maybe.Just" == _S_cse501 then
+    if _S_cse502 == 0 then
       return 42
     else
-      return Golden_SpecConstr_Test_stepDown_S_sc1Just(_S_cse465 - 1)
+      return Golden_SpecConstr_Test_stepDown_S_sc1Just(_S_cse502 - 1)
     end
   else
     return error("No patterns matched")
@@ -58,12 +58,12 @@ local Golden_SpecConstr_Test_pong_S_sc1Tuple = function( pong_S_sc1Tuple_S_f1
   end
 end
 M.Golden_SpecConstr_Test_pong = function(t)
-  local _S_cse467 = t[2]
-  local _S_cse466 = t[1]
-  if _S_cse466 == 0 then
-    return _S_cse467
+  local _S_cse504 = t[2]
+  local _S_cse503 = t[1]
+  if _S_cse503 == 0 then
+    return _S_cse504
   else
-    return Golden_SpecConstr_Test_ping_S_sc1Tuple(_S_cse466 - 1, _S_cse467 + 2)
+    return Golden_SpecConstr_Test_ping_S_sc1Tuple(_S_cse503 - 1, _S_cse504 + 2)
   end
 end
 Golden_SpecConstr_Test_ping_S_sc1Tuple = function( ping_S_sc1Tuple_S_f1
@@ -75,12 +75,12 @@ Golden_SpecConstr_Test_ping_S_sc1Tuple = function( ping_S_sc1Tuple_S_f1
   end
 end
 M.Golden_SpecConstr_Test_ping = function(t)
-  local _S_cse469 = t[2]
-  local _S_cse468 = t[1]
-  if _S_cse468 == 0 then
-    return _S_cse469
+  local _S_cse506 = t[2]
+  local _S_cse505 = t[1]
+  if _S_cse505 == 0 then
+    return _S_cse506
   else
-    return Golden_SpecConstr_Test_pong_S_sc1Tuple(_S_cse468 - 1, _S_cse469 + 1)
+    return Golden_SpecConstr_Test_pong_S_sc1Tuple(_S_cse505 - 1, _S_cse506 + 1)
   end
 end
 local Golden_SpecConstr_Test_blind_S_w
@@ -102,18 +102,18 @@ return (function()
       return "(Tuple " .. Data_Show_showIntImpl(v_S_86[1]) .. " " .. Data_Show_showIntImpl(v_S_86[2]) .. ")"
     end
   }, (function()
-    local go_S_448_S_sc1Tuple
-    go_S_448_S_sc1Tuple = function( go_S_448_S_sc1Tuple_S_f1
-    , go_S_448_S_sc1Tuple_S_f2 )
+    local go_S_sc1Tuple_S_494
+    go_S_sc1Tuple_S_494 = function( go_S_sc1Tuple_S_f1_S_495
+    , go_S_sc1Tuple_S_f2_S_496 )
       while true do
-        if go_S_448_S_sc1Tuple_S_f2 < 5 then
-          go_S_448_S_sc1Tuple_S_f1, go_S_448_S_sc1Tuple_S_f2 = go_S_448_S_sc1Tuple_S_f1 + go_S_448_S_sc1Tuple_S_f2, go_S_448_S_sc1Tuple_S_f2 + 1
+        if go_S_sc1Tuple_S_f2_S_496 < 5 then
+          go_S_sc1Tuple_S_f1_S_495, go_S_sc1Tuple_S_f2_S_496 = go_S_sc1Tuple_S_f1_S_495 + go_S_sc1Tuple_S_f2_S_496, go_S_sc1Tuple_S_f2_S_496 + 1
         else
-          return { go_S_448_S_sc1Tuple_S_f1, go_S_448_S_sc1Tuple_S_f2 }
+          return { go_S_sc1Tuple_S_f1_S_495, go_S_sc1Tuple_S_f2_S_496 }
         end
       end
     end
-    return go_S_448_S_sc1Tuple(0, 0)
+    return go_S_sc1Tuple_S_494(0, 0)
   end)())()
   local _ = Effect_Console_logShow_S_w(Data_Show_showInt, Golden_SpecConstr_Test_stepDown_S_sc1Just(3))()
   local _ = Effect_Console_logShow_S_w(Data_Show_showInt, Golden_SpecConstr_Test_stepDown({

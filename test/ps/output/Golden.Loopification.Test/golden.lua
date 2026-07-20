@@ -1,10 +1,11 @@
 local M = {}
 local Data_Show_foreign = { showIntImpl = function(n) return tostring(n) end }
-local Data_Show_showIntImpl = Data_Show_foreign.showIntImpl
 local Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
 }
-local Effect_Console_log = Effect_Console_foreign.log
+local Golden_Loopification_Test_logShow = function(a_S_2)
+  return Effect_Console_foreign.log(Data_Show_foreign.showIntImpl(a_S_2))
+end
 local Golden_Loopification_Test_sumTo_S_w = function(acc, n)
   while true do if n == 0 then return acc else acc, n = acc + n, n - 1 end end
 end
@@ -13,7 +14,7 @@ M.Golden_Loopification_Test_sumTo = function(sumTo_S_p1)
     return Golden_Loopification_Test_sumTo_S_w(sumTo_S_p1, sumTo_S_p2)
   end
 end
-M.Golden_Loopification_Test_sumSquares = function(m)
+local Golden_Loopification_Test_sumSquares = function(m)
   local go_S_w
   go_S_w = function(acc, n)
     while true do
@@ -59,24 +60,12 @@ M.Golden_Loopification_Test_countDrop = function(countDrop_S_p1)
   end
 end
 return (function()
-  local _ = Effect_Console_log(Data_Show_showIntImpl(Golden_Loopification_Test_countdown(5)))()
-  local _ = Effect_Console_log(Data_Show_showIntImpl(Golden_Loopification_Test_sumTo_S_w(0, 10)))()
-  local _ = Effect_Console_log(Data_Show_showIntImpl((function()
-    local go_S_w_S_267
-    go_S_w_S_267 = function(acc_S_268, n_S_269)
-      while true do
-        if n_S_269 == 0 then
-          return acc_S_268
-        else
-          acc_S_268, n_S_269 = acc_S_268 + n_S_269 * n_S_269, n_S_269 - 1
-        end
-      end
-    end
-    return go_S_w_S_267(0, 4)
-  end)()))()
-  local _ = Effect_Console_log(Data_Show_showIntImpl(Golden_Loopification_Test_mc91(1)))()
-  local _ = Effect_Console_log(Data_Show_showIntImpl(Golden_Loopification_Test_sumCPS_S_w(5, function( x_S_223 )
+  local _ = Golden_Loopification_Test_logShow(Golden_Loopification_Test_countdown(5))()
+  local _ = Golden_Loopification_Test_logShow(Golden_Loopification_Test_sumTo_S_w(0, 10))()
+  local _ = Golden_Loopification_Test_logShow(Golden_Loopification_Test_sumSquares(4))()
+  local _ = Golden_Loopification_Test_logShow(Golden_Loopification_Test_mc91(1))()
+  local _ = Golden_Loopification_Test_logShow(Golden_Loopification_Test_sumCPS_S_w(5, function( x_S_223 )
     return x_S_223
-  end)))()
-  return Effect_Console_log(Data_Show_showIntImpl(Golden_Loopification_Test_countDrop_S_w(3, 99)))()
+  end))()
+  return Golden_Loopification_Test_logShow(Golden_Loopification_Test_countDrop_S_w(3, 99))()
 end)()

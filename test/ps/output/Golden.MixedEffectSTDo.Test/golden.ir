@@ -21,30 +21,6 @@ UberModule
         ]
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Control.Monad.ST.Internal", qnameName = Name "modifyImpl"
-        }, ObjectProp Nothing
-        ( Ref Nothing ( Imported ( ModuleName "Control.Monad.ST.Internal" ) ( Name "foreign" ) ) )
-        ( PropName "modifyImpl" )
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Control.Monad.ST.Internal", qnameName = Name "new"
-        }, ObjectProp Nothing
-        ( Ref Nothing ( Imported ( ModuleName "Control.Monad.ST.Internal" ) ( Name "foreign" ) ) )
-        ( PropName "new" )
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Control.Monad.ST.Internal", qnameName = Name "read"
-        }, ObjectProp Nothing
-        ( Ref Nothing ( Imported ( ModuleName "Control.Monad.ST.Internal" ) ( Name "foreign" ) ) )
-        ( PropName "read" )
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Control.Monad.ST.Internal", qnameName = Name "run"
-        }, ObjectProp Nothing
-        ( Ref Nothing ( Imported ( ModuleName "Control.Monad.ST.Internal" ) ( Name "foreign" ) ) )
-        ( PropName "run" )
-      ), Standalone
-      ( QName
         { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "foreign"
         }, ForeignImport Nothing
         ( ModuleName "Effect.Console" ) ".spago/p/console/f82835a0b873aafe6bd7b14dd30cc150553d4ab9/src/Effect/Console.purs"
@@ -61,15 +37,23 @@ UberModule
         }, AbsN Nothing
         ( ParamNamed Nothing ( Name "start" ) :| [] )
         ( AppN Nothing
-          ( Ref Nothing ( Imported ( ModuleName "Control.Monad.ST.Internal" ) ( Name "run" ) ) )
+          ( ObjectProp Nothing
+            ( Ref Nothing
+              ( Imported ( ModuleName "Control.Monad.ST.Internal" ) ( Name "foreign" ) )
+            )
+            ( PropName "run" )
+          )
           ( AbsN Nothing
             ( ParamUnused Nothing :| [] )
             ( Let Nothing
               ( Standalone
                 ( Nothing, Name "ref", AppN Nothing
                   ( AppN Nothing
-                    ( Ref Nothing
-                      ( Imported ( ModuleName "Control.Monad.ST.Internal" ) ( Name "new" ) )
+                    ( ObjectProp Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Control.Monad.ST.Internal" ) ( Name "foreign" ) )
+                      )
+                      ( PropName "new" )
                     )
                     ( Ref Nothing ( Local ( Name "start" ) ) :| [] )
                   )
@@ -79,11 +63,14 @@ UberModule
                   ( Nothing, Name "_", AppN Nothing
                     ( AppN Nothing
                       ( AppN Nothing
-                        ( Ref Nothing
-                          ( Imported
-                            ( ModuleName "Control.Monad.ST.Internal" )
-                            ( Name "modifyImpl" )
+                        ( ObjectProp Nothing
+                          ( Ref Nothing
+                            ( Imported
+                              ( ModuleName "Control.Monad.ST.Internal" )
+                              ( Name "foreign" )
+                            )
                           )
+                          ( PropName "modifyImpl" )
                         )
                         ( AbsN Nothing
                           ( ParamNamed Nothing ( Name "s$8" ) :| [] )
@@ -109,8 +96,11 @@ UberModule
                   ), Standalone
                   ( Nothing, Name "n", AppN Nothing
                     ( AppN Nothing
-                      ( Ref Nothing
-                        ( Imported ( ModuleName "Control.Monad.ST.Internal" ) ( Name "read" ) )
+                      ( ObjectProp Nothing
+                        ( Ref Nothing
+                          ( Imported ( ModuleName "Control.Monad.ST.Internal" ) ( Name "foreign" ) )
+                        )
+                        ( PropName "read" )
                       )
                       ( Ref Nothing ( Local ( Name "ref" ) ) :| [] )
                     )
@@ -145,81 +135,9 @@ UberModule
             [ Standalone
               ( Nothing, Name "x$0", AppN Nothing
                 ( Ref Nothing
-                  ( Imported ( ModuleName "Control.Monad.ST.Internal" ) ( Name "run" ) )
+                  ( Imported ( ModuleName "Golden.MixedEffectSTDo.Test" ) ( Name "tally" ) )
                 )
-                ( AbsN Nothing
-                  ( ParamUnused Nothing :| [] )
-                  ( Let Nothing
-                    ( Standalone
-                      ( Nothing, Name "ref$458", AppN Nothing
-                        ( AppN Nothing
-                          ( Ref Nothing
-                            ( Imported ( ModuleName "Control.Monad.ST.Internal" ) ( Name "new" ) )
-                          )
-                          ( LiteralInt Nothing 2 :| [] )
-                        )
-                        ( Ref Nothing
-                          ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
-                        )
-                      ) :|
-                      [ Standalone
-                        ( Nothing, Name "_", AppN Nothing
-                          ( AppN Nothing
-                            ( AppN Nothing
-                              ( Ref Nothing
-                                ( Imported
-                                  ( ModuleName "Control.Monad.ST.Internal" )
-                                  ( Name "modifyImpl" )
-                                )
-                              )
-                              ( AbsN Nothing
-                                ( ParamNamed Nothing ( Name "s$460" ) :| [] )
-                                ( Let Nothing
-                                  ( Standalone
-                                    ( Nothing, Name "s'$461", PrimBinOp Nothing PrimMul
-                                      ( Ref Nothing ( Local ( Name "s$460" ) ) )
-                                      ( LiteralInt Nothing 2 )
-                                    ) :| []
-                                  )
-                                  ( LiteralObject Nothing
-                                    [
-                                      ( PropName "state", Ref Nothing
-                                        ( Local ( Name "s'$461" ) )
-                                      ),
-                                      ( PropName "value", Ref Nothing ( Local ( Name "s'$461" ) ) )
-                                    ]
-                                  )
-                                ) :| []
-                              )
-                            )
-                            ( Ref Nothing ( Local ( Name "ref$458" ) ) :| [] )
-                          )
-                          ( Ref Nothing
-                            ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
-                          )
-                        ), Standalone
-                        ( Nothing, Name "n$459", AppN Nothing
-                          ( AppN Nothing
-                            ( Ref Nothing
-                              ( Imported
-                                ( ModuleName "Control.Monad.ST.Internal" )
-                                ( Name "read" )
-                              )
-                            )
-                            ( Ref Nothing ( Local ( Name "ref$458" ) ) :| [] )
-                          )
-                          ( Ref Nothing
-                            ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
-                          )
-                        )
-                      ]
-                    )
-                    ( PrimBinOp Nothing PrimAdd
-                      ( Ref Nothing ( Local ( Name "n$459" ) ) )
-                      ( LiteralInt Nothing 3 )
-                    )
-                  ) :| []
-                )
+                ( LiteralInt Nothing 2 :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
