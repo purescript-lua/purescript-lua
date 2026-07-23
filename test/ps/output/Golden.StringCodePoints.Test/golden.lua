@@ -638,13 +638,7 @@ return (function()
   end)())()
   local _ = Effect_Console_logShow_S_w({
     show = function(v_S_1236)
-      if v_S_1236 then
-        return "true"
-      elseif false == v_S_1236 then
-        return "false"
-      else
-        return error("No patterns matched")
-      end
+      if v_S_1236 then return "true" else return "false" end
     end
   }, Data_String_CodePoints_foreign._fromCodePointArray(Data_String_CodePoints_singletonFallback)(Data_String_CodePoints_toCodePointArray("aéЯ𝐀z")) == "aéЯ𝐀z")()
   return Effect_Console_logShow_S_w(Golden_StringCodePoints_Test_showArray, Data_Functor_arrayMap(Golden_StringCodePoints_Test_fromEnum)(Data_String_CodePoints_toCodePointArray(Data_String_CodePoints_singleton(Partial_Unsafe__unsafePartial(function(  )

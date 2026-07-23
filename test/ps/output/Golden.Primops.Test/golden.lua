@@ -37,13 +37,7 @@ end
 return (function()
   local _S_cse252 = {
     show = function(v_S_241)
-      if v_S_241 then
-        return "true"
-      elseif false == v_S_241 then
-        return "false"
-      else
-        return error("No patterns matched")
-      end
+      if v_S_241 then return "true" else return "false" end
     end
   }
   local _ = Effect_Console_logShow_S_w({

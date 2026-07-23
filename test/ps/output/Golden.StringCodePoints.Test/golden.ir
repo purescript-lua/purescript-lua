@@ -2021,13 +2021,7 @@ UberModule
                         ( IfThenElse Nothing
                           ( Ref Nothing ( Local ( Name "v$1236" ) ) )
                           ( LiteralString Nothing "true" )
-                          ( IfThenElse Nothing
-                            ( Eq Nothing ( LiteralBool Nothing False )
-                              ( Ref Nothing ( Local ( Name "v$1236" ) ) )
-                            )
-                            ( LiteralString Nothing "false" )
-                            ( Exception Nothing "No patterns matched" )
-                          )
+                          ( LiteralString Nothing "false" )
                         )
                       )
                     ] :|

@@ -974,6 +974,7 @@ optimizedExpressionWithPastes pastes policy env =
         `thenRewrite` removeUnreachableThenBranch
         `thenRewrite` removeUnreachableElseBranch
         `thenRewrite` removeIfWithEqualBranches
+        `thenRewrite` propagateKnownCondIntoBranches
         `thenRewrite` flipNegatedIf
         `thenRewrite` reduceBooleanIf
         `thenRewrite` pushEqIntoIfBranches
@@ -1006,9 +1007,18 @@ constantFolding =
     Eq _ a b
       | Just result ← foldEqLiterals a b →
           Just $ literalBool result
+    -- The other operand must be of type Bool in each of the four cases
+    -- below; see Note [IR is assumed well-typed]. A false literal folds
+    -- to the negation (issue #223) — the shape a Boolean pattern match
+    -- re-tests its scrutinee with (@false == a@).
     Eq _ (LiteralBool _ True) b →
-      -- 'b' must be of type Bool; see Note [IR is assumed well-typed]
       Just b
+    Eq _ b (LiteralBool _ True) →
+      Just b
+    Eq _ (LiteralBool _ False) b →
+      Just (primNot b)
+    Eq _ b (LiteralBool _ False) →
+      Just (primNot b)
     -- See Note [IR primops] and Note [Folding primops follows Lua 5.1]
     PrimBinOp _ op a b → foldPrimBinOp op a b
     PrimNot _ a → foldPrimNot a
@@ -1965,6 +1975,41 @@ removeIfWithEqualBranches e =
       | thenBranch `alphaEq` elseBranch →
           Just thenBranch
     _ → Nothing
+
+{- | Propagate a branch condition's known value into the branches (issue
+#223), the Boolean sibling of 'propagateKnownCtorThroughLet': inside
+@if c then t else e@ the variable @c@ is 'True' throughout @t@ and
+'False' throughout @e@, so its occurrences in the branches are replaced
+with the matching literal. The existing folds then finish the job: a
+Boolean pattern match compiles to a re-test of the scrutinee behind the
+first branch — @if a then "true" else (if false == a then "false" else
+error)@ — and with @a@ known 'False' in the else branch the re-test
+folds to a literal condition and 'removeUnreachableThenBranch' drops
+the synthesized default, collapsing the match to a two-way if.
+
+Only a variable condition propagates: an IR binding is immutable, so
+re-reading it in a branch is free and yields the value the test just
+observed, and replacing the read with a literal duplicates no work. The
+substitution licence is Note [IR is assumed well-typed]: @c@ is a
+'Bool', so truth of the test is equality with @true@. The substitution
+itself follows the GUC discipline of 'substituteCopyM' — no scope is
+threaded, which is exact under unique binders.
+
+Placed after 'removeIfWithEqualBranches': branches that are equal while
+still naming @c@ collapse to a single copy, which substituting the two
+literals first would unequalize. Fixpoint-safe: the rule fires only
+when a branch has a free occurrence of @c@ and leaves none behind, so
+it cannot re-fire on its own result, and a 'Ref' becomes a literal
+node-for-node, so the tree never grows.
+-}
+propagateKnownCondIntoBranches ∷ RewriteRuleM SupplyM Ann
+propagateKnownCondIntoBranches = \case
+  IfThenElse ann cond@(Ref _ name) thenBranch elseBranch
+    | countFreeRef name thenBranch + countFreeRef name elseBranch > 0 → do
+        thenBranch' ← substituteCopyM name (literalBool True) thenBranch
+        elseBranch' ← substituteCopyM name (literalBool False) elseBranch
+        pure . Just $ IfThenElse ann cond thenBranch' elseBranch'
+  _ → pure Nothing
 
 {- | Drop a negated condition by swapping the branches:
 @if not p then a else b@ ⟶ @if p then b else a@. Runs before
