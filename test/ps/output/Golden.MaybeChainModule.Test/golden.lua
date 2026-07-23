@@ -3,14 +3,7 @@ local Data_Maybe_Just = function(value0)
   return { "Data.Maybe∷Maybe.Just", value0 }
 end
 local Data_Maybe_maybe_S_w = function(v, v1, v2)
-  local _S_cse296 = v2[1]
-  if "Data.Maybe∷Maybe.Nothing" == _S_cse296 then
-    return v
-  elseif "Data.Maybe∷Maybe.Just" == _S_cse296 then
-    return v1(v2[2])
-  else
-    return error("No patterns matched")
-  end
+  if "Data.Maybe∷Maybe.Nothing" == v2[1] then return v else return v1(v2[2]) end
 end
 local Golden_MaybeChainModule_Test_identity = function(x_S_289)
   return x_S_289

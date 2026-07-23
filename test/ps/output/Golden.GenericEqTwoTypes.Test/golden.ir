@@ -462,72 +462,42 @@ UberModule
         [
           ( PropName "to", AbsN Nothing
             ( ParamNamed Nothing ( Name "x" ) :| [] )
-            ( Let Nothing
-              ( Standalone
-                ( Nothing, Name "$cse444", ReflectCtor Nothing
-                  ( Ref Nothing ( Local ( Name "x" ) ) )
-                ) :| []
+            ( IfThenElse Nothing
+              ( Eq Nothing
+                ( LiteralString Nothing "Data.Generic.Rep∷Sum.Inl" )
+                ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "x" ) ) ) )
               )
-              ( IfThenElse Nothing
-                ( Eq Nothing
-                  ( LiteralString Nothing "Data.Generic.Rep∷Sum.Inl" )
-                  ( Ref Nothing ( Local ( Name "$cse444" ) ) )
-                )
-                ( Ref Nothing
-                  ( Imported ( ModuleName "Golden.GenericEqTwoTypes.Test" ) ( Name "Leaf" ) )
-                )
-                ( IfThenElse Nothing
-                  ( Eq Nothing
-                    ( LiteralString Nothing "Data.Generic.Rep∷Sum.Inr" )
-                    ( Ref Nothing ( Local ( Name "$cse444" ) ) )
-                  )
-                  ( Ctor Nothing SumType
-                    ( ModuleName "Golden.GenericEqTwoTypes.Test" )
-                    ( TyName "Tree" )
-                    ( CtorName "Node" )
-                    [ DataArgumentByIndex Nothing SumType 0 ( Ref Nothing ( Local ( Name "x" ) ) ) ]
-                  )
-                  ( Exception Nothing "No patterns matched" )
-                )
+              ( Ref Nothing
+                ( Imported ( ModuleName "Golden.GenericEqTwoTypes.Test" ) ( Name "Leaf" ) )
+              )
+              ( Ctor Nothing SumType
+                ( ModuleName "Golden.GenericEqTwoTypes.Test" )
+                ( TyName "Tree" )
+                ( CtorName "Node" )
+                [ DataArgumentByIndex Nothing SumType 0 ( Ref Nothing ( Local ( Name "x" ) ) ) ]
               )
             )
           ),
           ( PropName "from", AbsN Nothing
             ( ParamNamed Nothing ( Name "x0" ) :| [] )
-            ( Let Nothing
-              ( Standalone
-                ( Nothing, Name "$cse445", ReflectCtor Nothing
-                  ( Ref Nothing ( Local ( Name "x0" ) ) )
-                ) :| []
+            ( IfThenElse Nothing
+              ( Eq Nothing
+                ( LiteralString Nothing "Golden.GenericEqTwoTypes.Test∷Tree.Leaf" )
+                ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "x0" ) ) ) )
               )
-              ( IfThenElse Nothing
-                ( Eq Nothing
-                  ( LiteralString Nothing "Golden.GenericEqTwoTypes.Test∷Tree.Leaf" )
-                  ( Ref Nothing ( Local ( Name "$cse445" ) ) )
-                )
-                ( Ctor Nothing SumType
-                  ( ModuleName "Data.Generic.Rep" )
-                  ( TyName "Sum" )
-                  ( CtorName "Inl" )
-                  [ Ref Nothing
-                    ( Imported ( ModuleName "Data.Generic.Rep" ) ( Name "NoArguments" ) )
-                  ]
-                )
-                ( IfThenElse Nothing
-                  ( Eq Nothing
-                    ( LiteralString Nothing "Golden.GenericEqTwoTypes.Test∷Tree.Node" )
-                    ( Ref Nothing ( Local ( Name "$cse445" ) ) )
-                  )
-                  ( Ctor Nothing SumType
-                    ( ModuleName "Data.Generic.Rep" )
-                    ( TyName "Sum" )
-                    ( CtorName "Inr" )
-                    [ DataArgumentByIndex Nothing SumType 0
-                      ( Ref Nothing ( Local ( Name "x0" ) ) )
-                    ]
-                  )
-                  ( Exception Nothing "No patterns matched" )
-                )
+              ( Ctor Nothing SumType
+                ( ModuleName "Data.Generic.Rep" )
+                ( TyName "Sum" )
+                ( CtorName "Inl" )
+                [ Ref Nothing
+                  ( Imported ( ModuleName "Data.Generic.Rep" ) ( Name "NoArguments" ) )
+                ]
+              )
+              ( Ctor Nothing SumType
+                ( ModuleName "Data.Generic.Rep" )
+                ( TyName "Sum" )
+                ( CtorName "Inr" )
+                [ DataArgumentByIndex Nothing SumType 0 ( Ref Nothing ( Local ( Name "x0" ) ) ) ]
               )
             )
           )
@@ -539,72 +509,42 @@ UberModule
         [
           ( PropName "to", AbsN Nothing
             ( ParamNamed Nothing ( Name "x" ) :| [] )
-            ( Let Nothing
-              ( Standalone
-                ( Nothing, Name "$cse446", ReflectCtor Nothing
-                  ( Ref Nothing ( Local ( Name "x" ) ) )
-                ) :| []
+            ( IfThenElse Nothing
+              ( Eq Nothing
+                ( LiteralString Nothing "Data.Generic.Rep∷Sum.Inl" )
+                ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "x" ) ) ) )
               )
-              ( IfThenElse Nothing
-                ( Eq Nothing
-                  ( LiteralString Nothing "Data.Generic.Rep∷Sum.Inl" )
-                  ( Ref Nothing ( Local ( Name "$cse446" ) ) )
-                )
-                ( Ref Nothing
-                  ( Imported ( ModuleName "Golden.GenericEqTwoTypes.Test" ) ( Name "Nil" ) )
-                )
-                ( IfThenElse Nothing
-                  ( Eq Nothing
-                    ( LiteralString Nothing "Data.Generic.Rep∷Sum.Inr" )
-                    ( Ref Nothing ( Local ( Name "$cse446" ) ) )
-                  )
-                  ( Ctor Nothing SumType
-                    ( ModuleName "Golden.GenericEqTwoTypes.Test" )
-                    ( TyName "List" )
-                    ( CtorName "Cons" )
-                    [ DataArgumentByIndex Nothing SumType 0 ( Ref Nothing ( Local ( Name "x" ) ) ) ]
-                  )
-                  ( Exception Nothing "No patterns matched" )
-                )
+              ( Ref Nothing
+                ( Imported ( ModuleName "Golden.GenericEqTwoTypes.Test" ) ( Name "Nil" ) )
+              )
+              ( Ctor Nothing SumType
+                ( ModuleName "Golden.GenericEqTwoTypes.Test" )
+                ( TyName "List" )
+                ( CtorName "Cons" )
+                [ DataArgumentByIndex Nothing SumType 0 ( Ref Nothing ( Local ( Name "x" ) ) ) ]
               )
             )
           ),
           ( PropName "from", AbsN Nothing
             ( ParamNamed Nothing ( Name "x0" ) :| [] )
-            ( Let Nothing
-              ( Standalone
-                ( Nothing, Name "$cse447", ReflectCtor Nothing
-                  ( Ref Nothing ( Local ( Name "x0" ) ) )
-                ) :| []
+            ( IfThenElse Nothing
+              ( Eq Nothing
+                ( LiteralString Nothing "Golden.GenericEqTwoTypes.Test∷List.Nil" )
+                ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "x0" ) ) ) )
               )
-              ( IfThenElse Nothing
-                ( Eq Nothing
-                  ( LiteralString Nothing "Golden.GenericEqTwoTypes.Test∷List.Nil" )
-                  ( Ref Nothing ( Local ( Name "$cse447" ) ) )
-                )
-                ( Ctor Nothing SumType
-                  ( ModuleName "Data.Generic.Rep" )
-                  ( TyName "Sum" )
-                  ( CtorName "Inl" )
-                  [ Ref Nothing
-                    ( Imported ( ModuleName "Data.Generic.Rep" ) ( Name "NoArguments" ) )
-                  ]
-                )
-                ( IfThenElse Nothing
-                  ( Eq Nothing
-                    ( LiteralString Nothing "Golden.GenericEqTwoTypes.Test∷List.Cons" )
-                    ( Ref Nothing ( Local ( Name "$cse447" ) ) )
-                  )
-                  ( Ctor Nothing SumType
-                    ( ModuleName "Data.Generic.Rep" )
-                    ( TyName "Sum" )
-                    ( CtorName "Inr" )
-                    [ DataArgumentByIndex Nothing SumType 0
-                      ( Ref Nothing ( Local ( Name "x0" ) ) )
-                    ]
-                  )
-                  ( Exception Nothing "No patterns matched" )
-                )
+              ( Ctor Nothing SumType
+                ( ModuleName "Data.Generic.Rep" )
+                ( TyName "Sum" )
+                ( CtorName "Inl" )
+                [ Ref Nothing
+                  ( Imported ( ModuleName "Data.Generic.Rep" ) ( Name "NoArguments" ) )
+                ]
+              )
+              ( Ctor Nothing SumType
+                ( ModuleName "Data.Generic.Rep" )
+                ( TyName "Sum" )
+                ( CtorName "Inr" )
+                [ DataArgumentByIndex Nothing SumType 0 ( Ref Nothing ( Local ( Name "x0" ) ) ) ]
               )
             )
           )

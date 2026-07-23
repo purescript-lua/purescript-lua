@@ -482,23 +482,14 @@ UberModule
                                                     ) ( LiteralBool Nothing False )
                                                   )
                                                 )
-                                                ( IfThenElse Nothing
-                                                  ( Eq Nothing
-                                                    ( LiteralString Nothing "Control.Monad.Rec.Class∷Step.Done" )
-                                                    ( ReflectCtor Nothing
-                                                      ( Ref Nothing ( Local ( Name "v0$17" ) ) )
+                                                ( AppN Nothing
+                                                  ( Ref Nothing
+                                                    ( Imported
+                                                      ( ModuleName "Effect" )
+                                                      ( Name "pureE" )
                                                     )
                                                   )
-                                                  ( AppN Nothing
-                                                    ( Ref Nothing
-                                                      ( Imported
-                                                        ( ModuleName "Effect" )
-                                                        ( Name "pureE" )
-                                                      )
-                                                    )
-                                                    ( LiteralBool Nothing True :| [] )
-                                                  )
-                                                  ( Exception Nothing "No patterns matched" )
+                                                  ( LiteralBool Nothing True :| [] )
                                                 )
                                               )
                                               ( Ref Nothing

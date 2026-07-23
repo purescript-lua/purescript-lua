@@ -132,47 +132,33 @@ UberModule
             ( ParamNamed Nothing ( Name "m" ) :| [] )
             ( Let Nothing
               ( Standalone
-                ( Nothing, Name "$cse502", DataArgumentByIndex Nothing SumType 0
+                ( Nothing, Name "$cse501", DataArgumentByIndex Nothing SumType 0
                   ( Ref Nothing ( Local ( Name "m" ) ) )
                 ) :| []
               )
-              ( Let Nothing
-                ( Standalone
-                  ( Nothing, Name "$cse501", ReflectCtor Nothing
-                    ( Ref Nothing ( Local ( Name "m" ) ) )
-                  ) :| []
+              ( IfThenElse Nothing
+                ( Eq Nothing
+                  ( LiteralString Nothing "Data.Maybe∷Maybe.Nothing" )
+                  ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "m" ) ) ) )
                 )
+                ( LiteralInt Nothing 0 )
                 ( IfThenElse Nothing
                   ( Eq Nothing
-                    ( LiteralString Nothing "Data.Maybe∷Maybe.Nothing" )
                     ( Ref Nothing ( Local ( Name "$cse501" ) ) )
+                    ( LiteralInt Nothing 0 )
                   )
-                  ( LiteralInt Nothing 0 )
-                  ( IfThenElse Nothing
-                    ( Eq Nothing
-                      ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
+                  ( LiteralInt Nothing 42 )
+                  ( AppN Nothing
+                    ( Ref Nothing
+                      ( Imported
+                        ( ModuleName "Golden.SpecConstr.Test" )
+                        ( Name "stepDown$sc1Just" )
+                      )
+                    )
+                    ( PrimBinOp Nothing PrimSub
                       ( Ref Nothing ( Local ( Name "$cse501" ) ) )
+                      ( LiteralInt Nothing 1 ) :| []
                     )
-                    ( IfThenElse Nothing
-                      ( Eq Nothing
-                        ( Ref Nothing ( Local ( Name "$cse502" ) ) )
-                        ( LiteralInt Nothing 0 )
-                      )
-                      ( LiteralInt Nothing 42 )
-                      ( AppN Nothing
-                        ( Ref Nothing
-                          ( Imported
-                            ( ModuleName "Golden.SpecConstr.Test" )
-                            ( Name "stepDown$sc1Just" )
-                          )
-                        )
-                        ( PrimBinOp Nothing PrimSub
-                          ( Ref Nothing ( Local ( Name "$cse502" ) ) )
-                          ( LiteralInt Nothing 1 ) :| []
-                        )
-                      )
-                    )
-                    ( Exception Nothing "No patterns matched" )
                   )
                 )
               )
@@ -216,31 +202,31 @@ UberModule
             ( ParamNamed Nothing ( Name "t" ) :| [] )
             ( Let Nothing
               ( Standalone
-                ( Nothing, Name "$cse504", DataArgumentByIndex Nothing ProductType 1
+                ( Nothing, Name "$cse503", DataArgumentByIndex Nothing ProductType 1
                   ( Ref Nothing ( Local ( Name "t" ) ) )
                 ) :| []
               )
               ( Let Nothing
                 ( Standalone
-                  ( Nothing, Name "$cse503", DataArgumentByIndex Nothing ProductType 0
+                  ( Nothing, Name "$cse502", DataArgumentByIndex Nothing ProductType 0
                     ( Ref Nothing ( Local ( Name "t" ) ) )
                   ) :| []
                 )
                 ( IfThenElse Nothing
                   ( Eq Nothing
-                    ( Ref Nothing ( Local ( Name "$cse503" ) ) )
+                    ( Ref Nothing ( Local ( Name "$cse502" ) ) )
                     ( LiteralInt Nothing 0 )
                   )
-                  ( Ref Nothing ( Local ( Name "$cse504" ) ) )
+                  ( Ref Nothing ( Local ( Name "$cse503" ) ) )
                   ( AppN Nothing
                     ( Ref Nothing
                       ( Imported ( ModuleName "Golden.SpecConstr.Test" ) ( Name "ping$sc1Tuple" ) )
                     )
                     ( PrimBinOp Nothing PrimSub
-                      ( Ref Nothing ( Local ( Name "$cse503" ) ) )
+                      ( Ref Nothing ( Local ( Name "$cse502" ) ) )
                       ( LiteralInt Nothing 1 ) :|
                       [ PrimBinOp Nothing PrimAdd
-                        ( Ref Nothing ( Local ( Name "$cse504" ) ) )
+                        ( Ref Nothing ( Local ( Name "$cse503" ) ) )
                         ( LiteralInt Nothing 2 )
                       ]
                     )
@@ -283,31 +269,31 @@ UberModule
             ( ParamNamed Nothing ( Name "t" ) :| [] )
             ( Let Nothing
               ( Standalone
-                ( Nothing, Name "$cse506", DataArgumentByIndex Nothing ProductType 1
+                ( Nothing, Name "$cse505", DataArgumentByIndex Nothing ProductType 1
                   ( Ref Nothing ( Local ( Name "t" ) ) )
                 ) :| []
               )
               ( Let Nothing
                 ( Standalone
-                  ( Nothing, Name "$cse505", DataArgumentByIndex Nothing ProductType 0
+                  ( Nothing, Name "$cse504", DataArgumentByIndex Nothing ProductType 0
                     ( Ref Nothing ( Local ( Name "t" ) ) )
                   ) :| []
                 )
                 ( IfThenElse Nothing
                   ( Eq Nothing
-                    ( Ref Nothing ( Local ( Name "$cse505" ) ) )
+                    ( Ref Nothing ( Local ( Name "$cse504" ) ) )
                     ( LiteralInt Nothing 0 )
                   )
-                  ( Ref Nothing ( Local ( Name "$cse506" ) ) )
+                  ( Ref Nothing ( Local ( Name "$cse505" ) ) )
                   ( AppN Nothing
                     ( Ref Nothing
                       ( Imported ( ModuleName "Golden.SpecConstr.Test" ) ( Name "pong$sc1Tuple" ) )
                     )
                     ( PrimBinOp Nothing PrimSub
-                      ( Ref Nothing ( Local ( Name "$cse505" ) ) )
+                      ( Ref Nothing ( Local ( Name "$cse504" ) ) )
                       ( LiteralInt Nothing 1 ) :|
                       [ PrimBinOp Nothing PrimAdd
-                        ( Ref Nothing ( Local ( Name "$cse506" ) ) )
+                        ( Ref Nothing ( Local ( Name "$cse505" ) ) )
                         ( LiteralInt Nothing 1 )
                       ]
                     )

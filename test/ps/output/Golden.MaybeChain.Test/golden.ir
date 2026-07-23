@@ -48,31 +48,15 @@ UberModule
           ( Name "v" ) :|
           [ ParamNamed Nothing ( Name "v1" ), ParamNamed Nothing ( Name "v2" ) ]
         )
-        ( Let Nothing
-          ( Standalone
-            ( Nothing, Name "$cse320", ReflectCtor Nothing
-              ( Ref Nothing ( Local ( Name "v2" ) ) )
-            ) :| []
+        ( IfThenElse Nothing
+          ( Eq Nothing
+            ( LiteralString Nothing "Data.Maybe∷Maybe.Nothing" )
+            ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v2" ) ) ) )
           )
-          ( IfThenElse Nothing
-            ( Eq Nothing
-              ( LiteralString Nothing "Data.Maybe∷Maybe.Nothing" )
-              ( Ref Nothing ( Local ( Name "$cse320" ) ) )
-            )
-            ( Ref Nothing ( Local ( Name "v" ) ) )
-            ( IfThenElse Nothing
-              ( Eq Nothing
-                ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
-                ( Ref Nothing ( Local ( Name "$cse320" ) ) )
-              )
-              ( AppN Nothing
-                ( Ref Nothing ( Local ( Name "v1" ) ) )
-                ( DataArgumentByIndex Nothing SumType 0
-                  ( Ref Nothing ( Local ( Name "v2" ) ) ) :| []
-                )
-              )
-              ( Exception Nothing "No patterns matched" )
-            )
+          ( Ref Nothing ( Local ( Name "v" ) ) )
+          ( AppN Nothing
+            ( Ref Nothing ( Local ( Name "v1" ) ) )
+            ( DataArgumentByIndex Nothing SumType 0 ( Ref Nothing ( Local ( Name "v2" ) ) ) :| [] )
           )
         )
       ), Standalone
@@ -111,7 +95,7 @@ UberModule
         ( ParamUnused Nothing :| [] )
         ( Let Nothing
           ( Standalone
-            ( Nothing, Name "$cse321", AbsN Nothing
+            ( Nothing, Name "$cse320", AbsN Nothing
               ( ParamNamed Nothing ( Name "x$0" ) :| [] )
               ( Ref Nothing ( Local ( Name "x$0" ) ) )
             ) :| []
@@ -148,7 +132,7 @@ UberModule
                                 )
                               )
                               ( Ref Nothing
-                                ( Local ( Name "$cse321" ) ) :|
+                                ( Local ( Name "$cse320" ) ) :|
                                 [ Ref Nothing
                                   ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) )
                                 ]
@@ -185,7 +169,7 @@ UberModule
                               ( Imported ( ModuleName "Golden.MaybeChain.Test" ) ( Name "map$w" ) )
                             )
                             ( Ref Nothing
-                              ( Local ( Name "$cse321" ) ) :|
+                              ( Local ( Name "$cse320" ) ) :|
                               [ Ctor Nothing SumType
                                 ( ModuleName "Data.Maybe" )
                                 ( TyName "Maybe" )

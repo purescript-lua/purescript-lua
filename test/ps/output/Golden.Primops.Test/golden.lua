@@ -52,10 +52,8 @@ return (function()
         return "LT"
       elseif "Data.Ordering∷Ordering.GT" == _S_cse253 then
         return "GT"
-      elseif "Data.Ordering∷Ordering.EQ" == _S_cse253 then
-        return "EQ"
       else
-        return error("No patterns matched")
+        return "EQ"
       end
     end
   }, { "Data.Ordering∷Ordering.LT" })()

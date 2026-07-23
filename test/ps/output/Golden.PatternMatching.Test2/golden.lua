@@ -1,12 +1,9 @@
 local Golden_PatternMatching_Test2_bat = function(n)
   while true do
-    local _S_cse6 = n[1]
-    if "Golden.PatternMatching.Test1∷N.Zero" == _S_cse6 then
+    if "Golden.PatternMatching.Test1∷N.Zero" == n[1] then
       return 1
-    elseif "Golden.PatternMatching.Test1∷N.Succ" == _S_cse6 then
-      n = n[2]
     else
-      return error("No patterns matched")
+      n = n[2]
     end
   end
 end
@@ -26,20 +23,20 @@ return {
     end
   end,
   pat = function(e_S_0)
-    local _S_cse8 = e_S_0[2]
-    local _S_cse7 = e_S_0[3]
+    local _S_cse7 = e_S_0[2]
+    local _S_cse6 = e_S_0[3]
     if "Golden.PatternMatching.Test2∷N.Add" == e_S_0[1] then
-      if "Golden.PatternMatching.Test2∷N.Zero" == _S_cse7[1] then
-        if "Golden.PatternMatching.Test2∷N.Add" == _S_cse8[1] then
+      if "Golden.PatternMatching.Test2∷N.Zero" == _S_cse6[1] then
+        if "Golden.PatternMatching.Test2∷N.Add" == _S_cse7[1] then
           return 1
-        elseif "Golden.PatternMatching.Test2∷N.Mul" == _S_cse8[1] then
+        elseif "Golden.PatternMatching.Test2∷N.Mul" == _S_cse7[1] then
           return 2
         else
           return 5
         end
-      elseif "Golden.PatternMatching.Test2∷N.Mul" == _S_cse7[1] then
+      elseif "Golden.PatternMatching.Test2∷N.Mul" == _S_cse6[1] then
         return 3
-      elseif "Golden.PatternMatching.Test2∷N.Add" == _S_cse7[1] then
+      elseif "Golden.PatternMatching.Test2∷N.Add" == _S_cse6[1] then
         return 4
       else
         return 6

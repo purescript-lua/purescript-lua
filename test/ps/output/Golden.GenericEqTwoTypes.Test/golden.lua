@@ -110,45 +110,33 @@ local Golden_GenericEqTwoTypes_Test_node_S_w = function(left, value, right)
 end
 local Golden_GenericEqTwoTypes_Test_genericTree = {
   to = function(x)
-    local _S_cse444 = x[1]
-    if "Data.Generic.Rep∷Sum.Inl" == _S_cse444 then
+    if "Data.Generic.Rep∷Sum.Inl" == x[1] then
       return Golden_GenericEqTwoTypes_Test_Leaf
-    elseif "Data.Generic.Rep∷Sum.Inr" == _S_cse444 then
-      return { "Golden.GenericEqTwoTypes.Test∷Tree.Node", x[2] }
     else
-      return error("No patterns matched")
+      return { "Golden.GenericEqTwoTypes.Test∷Tree.Node", x[2] }
     end
   end,
   from = function(x0)
-    local _S_cse445 = x0[1]
-    if "Golden.GenericEqTwoTypes.Test∷Tree.Leaf" == _S_cse445 then
+    if "Golden.GenericEqTwoTypes.Test∷Tree.Leaf" == x0[1] then
       return { "Data.Generic.Rep∷Sum.Inl", Data_Generic_Rep_NoArguments }
-    elseif "Golden.GenericEqTwoTypes.Test∷Tree.Node" == _S_cse445 then
-      return { "Data.Generic.Rep∷Sum.Inr", x0[2] }
     else
-      return error("No patterns matched")
+      return { "Data.Generic.Rep∷Sum.Inr", x0[2] }
     end
   end
 }
 local Golden_GenericEqTwoTypes_Test_genericList = {
   to = function(x)
-    local _S_cse446 = x[1]
-    if "Data.Generic.Rep∷Sum.Inl" == _S_cse446 then
+    if "Data.Generic.Rep∷Sum.Inl" == x[1] then
       return Golden_GenericEqTwoTypes_Test_Nil
-    elseif "Data.Generic.Rep∷Sum.Inr" == _S_cse446 then
-      return { "Golden.GenericEqTwoTypes.Test∷List.Cons", x[2] }
     else
-      return error("No patterns matched")
+      return { "Golden.GenericEqTwoTypes.Test∷List.Cons", x[2] }
     end
   end,
   from = function(x0)
-    local _S_cse447 = x0[1]
-    if "Golden.GenericEqTwoTypes.Test∷List.Nil" == _S_cse447 then
+    if "Golden.GenericEqTwoTypes.Test∷List.Nil" == x0[1] then
       return { "Data.Generic.Rep∷Sum.Inl", Data_Generic_Rep_NoArguments }
-    elseif "Golden.GenericEqTwoTypes.Test∷List.Cons" == _S_cse447 then
-      return { "Data.Generic.Rep∷Sum.Inr", x0[2] }
     else
-      return error("No patterns matched")
+      return { "Data.Generic.Rep∷Sum.Inr", x0[2] }
     end
   end
 }
