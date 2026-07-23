@@ -1812,6 +1812,7 @@ spec = describe "IR Optimizer" do
                       (dataArgumentByIndex ProductType 1 (refLocal (Name "v")))
                   )
         productDict = literalObject [(bindProp, productBind)]
+        chainSite ∷ Exp → Int → Exp
         chainSite mm i =
           application
             (application (objectProp dictRef bindProp) mm)
