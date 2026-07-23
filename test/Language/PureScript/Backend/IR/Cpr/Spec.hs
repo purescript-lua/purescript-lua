@@ -2,7 +2,6 @@ module Language.PureScript.Backend.IR.Cpr.Spec where
 
 import Data.List qualified as List
 import Data.Set qualified as Set
-import Data.Text qualified as Text
 import Hedgehog (Gen, annotateShow, forAll, (===))
 import Hedgehog.Gen qualified as Gen
 import Hedgehog.Range qualified as Range
