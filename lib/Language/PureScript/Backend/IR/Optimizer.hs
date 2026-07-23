@@ -2,6 +2,7 @@ module Language.PureScript.Backend.IR.Optimizer where
 
 import Control.Lens (over, toListOf, transformOf, universeOf)
 import Control.Monad.Writer.CPS (WriterT, runWriterT, tell)
+import Data.Char (isAscii)
 import Data.Foldable (foldrM)
 import Data.List qualified as List
 import Data.List.NonEmpty qualified as NE
@@ -1036,9 +1037,11 @@ primops]). The per-operator caveats:
   * @..@ folds string with string only. Lua coerces a number operand on
     concat with a version- and build-dependent format, so a number is
     never reproduced at compile time.
-  * Comparisons fold on two numbers (int or finite float); strings and
-    chars are left alone, because Lua orders strings by bytes while the
-    IR literal carries semantic 'Text'.
+  * Comparisons fold on two numbers (int or finite float), and on two
+    ASCII chars, whose single-byte Lua representation orders exactly
+    like the codepoint. Strings and non-ASCII chars are left alone,
+    because Lua orders strings by bytes while the IR literal carries
+    semantic 'Text'.
   * @and@/@or@ fold when both operands are boolean, and additionally
     collapse a known-boolean first operand (@true and b == b@,
     @false or b == b@, and the two annihilators): sound because Lua
@@ -1071,10 +1074,10 @@ foldPrimBinOp op l r = case (op, l, r) of
   (PrimDiv, LiteralFloat _ a, LiteralFloat _ b) → floatFold (a / b)
   (PrimConcat, LiteralString _ a, LiteralString _ b) →
     Just (literalString (a <> b))
-  (PrimLt, _, _) → literalBool . (== LT) <$> numericCompare l r
-  (PrimLe, _, _) → literalBool . (/= GT) <$> numericCompare l r
-  (PrimGt, _, _) → literalBool . (== GT) <$> numericCompare l r
-  (PrimGe, _, _) → literalBool . (/= LT) <$> numericCompare l r
+  (PrimLt, _, _) → literalBool . (== LT) <$> compareLiterals l r
+  (PrimLe, _, _) → literalBool . (/= GT) <$> compareLiterals l r
+  (PrimGt, _, _) → literalBool . (== GT) <$> compareLiterals l r
+  (PrimGe, _, _) → literalBool . (/= LT) <$> compareLiterals l r
   (PrimAnd, LiteralBool _ a, LiteralBool _ b) → Just (literalBool (a && b))
   (PrimAnd, LiteralBool _ True, b) → Just b
   (PrimAnd, LiteralBool _ False, _) → Just (literalBool False)
@@ -1095,11 +1098,13 @@ foldPrimBinOp op l r = case (op, l, r) of
     | isFinite result = Just (literalFloat result)
     | otherwise = Nothing
 
-  numericCompare ∷ Exp → Exp → Maybe Ordering
-  numericCompare a b = case (a, b) of
+  compareLiterals ∷ Exp → Exp → Maybe Ordering
+  compareLiterals a b = case (a, b) of
     (LiteralInt _ x, LiteralInt _ y) → Just (compare x y)
     (LiteralFloat _ x, LiteralFloat _ y)
       | isFinite x, isFinite y → Just (compare x y)
+    (LiteralChar _ x, LiteralChar _ y)
+      | isAscii x, isAscii y → Just (compare x y)
     _ → Nothing
 
   isFinite ∷ Double → Bool
