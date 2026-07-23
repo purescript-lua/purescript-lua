@@ -1761,6 +1761,139 @@ spec = describe "IR Optimizer" do
           uberWith (Name "wide") wideDef [saturated n1 n2, saturated n2 n1]
       topLevelNames optimized `shouldBe` [QName mainModule (Name "wide$w")]
 
+  describe "bounds call-site growth on non-collapsing chains (#221)" do
+    let mainModule = moduleNameFromString "Main"
+        extern = moduleNameFromString "Extern"
+        checked = either (fail . show) pure . optimizedUberModuleChecked
+        namesOf uber =
+          [ name
+          | Standalone (QName _ (Name name), _) ←
+              Linker.uberModuleBindings uber
+          ]
+        bindProp = PropName "bind"
+        dictName = QName mainModule (Name "dict")
+        dictRef = refImported mainModule (Name "dict")
+        -- bind = λm. λf. λs. let v = m s in (f v.0) v.1 — the State
+        -- shape: the payload is a single-constructor product, so a
+        -- pasted copy meets no tag test and nothing folds.
+        productBind =
+          abstraction (paramNamed (Name "m")) $
+            abstraction (paramNamed (Name "f")) $
+              abstraction (paramNamed (Name "s")) $
+                let1
+                  (Name "v")
+                  (application (refLocal (Name "m")) (refLocal (Name "s")))
+                  ( application
+                      ( application
+                          (refLocal (Name "f"))
+                          ( dataArgumentByIndex
+                              ProductType
+                              0
+                              (refLocal (Name "v"))
+                          )
+                      )
+                      (dataArgumentByIndex ProductType 1 (refLocal (Name "v")))
+                  )
+        productDict = literalObject [(bindProp, productBind)]
+        chainSite mm i =
+          application
+            (application (objectProp dictRef bindProp) mm)
+            (refImported extern (Name ("k" <> show i)))
+        productChain =
+          foldl' chainSite (refImported extern (Name "m0")) [1 .. 16 ∷ Int]
+
+    it "keeps a product-monad dictionary out of a non-collapsing chain" do
+      -- Every resolved `dict.bind` replaces a compact call with a body
+      -- nothing folds; over the chain that is pure growth, so the sweep
+      -- is discarded and the sites keep sharing the dictionary.
+      optimized ←
+        checked
+          Linker.UberModule
+            { uberModuleForeigns = []
+            , uberModuleBindings = [Standalone (dictName, productDict)]
+            , uberModuleExports = [(Name "main", productChain)]
+            }
+      namesOf optimized `shouldSatisfy` elem "dict"
+
+    it "keeps the pastes when the chain collapses" do
+      -- The Maybe shape: bind tests a sum tag, so from a known
+      -- constructor every paste folds to straight-line code — the sweep
+      -- shrinks, is kept, and the dictionary dissolves. The continuation
+      -- parameter comes first: it substitutes in on the first reduction,
+      -- so the known-constructor Let lands directly over the tag test,
+      -- where the #214 fold reaches it.
+      let maybeTy = TyName "Maybe"
+          justName = CtorName "Just"
+          justOf x = ctor SumType extern maybeTy justName [x]
+          justTag = ctorId extern maybeTy justName
+          nothingOf = ctor SumType extern maybeTy (CtorName "Nothing") []
+          -- bind = λf. λm. if reflectCtor m == Just then f m.0 else Nothing
+          maybeBind =
+            abstraction (paramNamed (Name "f")) $
+              abstraction (paramNamed (Name "m")) $
+                ifThenElse
+                  ( eq
+                      (literalString justTag)
+                      (reflectCtor (refLocal (Name "m")))
+                  )
+                  ( application
+                      (refLocal (Name "f"))
+                      (dataArgumentByIndex SumType 0 (refLocal (Name "m")))
+                  )
+                  nothingOf
+          maybeDict = literalObject [(bindProp, maybeBind)]
+          incr =
+            abstraction (paramNamed (Name "x")) $
+              justOf (primBinOp PrimAdd (refLocal (Name "x")) (literalInt 1))
+          site = application (application (objectProp dictRef bindProp) incr)
+          collapsing = site (site (site (justOf (literalInt 1))))
+      optimized ←
+        checked
+          Linker.UberModule
+            { uberModuleForeigns = []
+            , uberModuleBindings = [Standalone (dictName, maybeDict)]
+            , uberModuleExports = [(Name "main", collapsing)]
+            }
+      namesOf optimized `shouldSatisfy` notElem "dict"
+      Linker.uberModuleExports optimized
+        `shouldBe` [(Name "main", justOf (literalInt 4))]
+
+    it "pastes a directed method inside a growth-vetoed expression" do
+      -- An explicit directive keeps its budget bypass where the growth
+      -- bound suppresses heuristic pastes: the fallback sweep still
+      -- resolves the @inline always@ field, so only the undirected
+      -- dictionary survives.
+      let adictName = QName mainModule (Name "adict")
+          adictRef = refImported mainModule (Name "adict")
+          addChain = foldl' \acc i → primBinOp PrimAdd acc (literalInt i)
+          adictDef =
+            literalObject
+              [
+                ( PropName "m"
+                , setAnn (Just Always)
+                    . abstraction (paramNamed (Name "x"))
+                    $ addChain (refLocal (Name "x")) [1 .. 40]
+                )
+              ]
+          directedSite =
+            application (objectProp adictRef (PropName "m")) (literalInt 0)
+          combined =
+            application
+              (application (refImported extern (Name "use")) directedSite)
+              productChain
+      optimized ←
+        checked
+          Linker.UberModule
+            { uberModuleForeigns = []
+            , uberModuleBindings =
+                [ Standalone (dictName, productDict)
+                , Standalone (adictName, adictDef)
+                ]
+            , uberModuleExports = [(Name "main", combined)]
+            }
+      namesOf optimized `shouldSatisfy` elem "dict"
+      namesOf optimized `shouldSatisfy` notElem "adict"
+
   describe "honours @inline arity=N directives (issue #232)" do
     let mainModule = moduleNameFromString "Main"
         extern = moduleNameFromString "Extern"

@@ -16,7 +16,6 @@ local function PSLUA_runtime_lazy(name)
     end
   end
 end
-local M = {}
 local Data_Show_foreign = { showIntImpl = function(n) return tostring(n) end }
 local Effect_foreign = {
   pureE = function(a) return function() return a end end,
@@ -81,82 +80,60 @@ Effect_Lazy_applyEffect = PSLUA_runtime_lazy("applyEffect")(function()
   }
 end)
 local Effect_functorEffect = Effect_Lazy_functorEffect(0)
-M.Golden_TailRecM2Shadow_Test_sumFrom = function(dictMonadRec)
+local Golden_TailRecM2Shadow_Test_sumFrom = function(dictMonadRec)
   local pure = ((dictMonadRec.Monad0()).Applicative0()).pure
   return function(b)
     return function(n)
       return dictMonadRec.tailRecM(function(o_S_482)
-        local _S_cse522 = o_S_482.a
-        local _S_cse521 = o_S_482.b
-        if _S_cse521 < n then
+        local _S_cse532 = o_S_482.a
+        local _S_cse531 = o_S_482.b
+        if _S_cse531 < n then
           return pure({
             "Control.Monad.Rec.Class∷Step.Loop",
-            { a = _S_cse522 + _S_cse521, b = _S_cse521 + 1 }
+            { a = _S_cse532 + _S_cse531, b = _S_cse531 + 1 }
           })
         else
-          return pure({ "Control.Monad.Rec.Class∷Step.Done", _S_cse522 })
+          return pure({ "Control.Monad.Rec.Class∷Step.Done", _S_cse532 })
         end
       end)({ a = b, b = 0 })
     end
   end
 end
 return (function()
-  local r_S_0 = (function()
-    local dictMonadRec_S_511 = {
-      tailRecM = function(f_S_11)
-        return function(a_S_12)
-          return function()
-            local r_S_16 = Effect_bindE(f_S_11(a_S_12))(Effect_Ref_foreign._new)()
-            local _ = Effect_foreign.untilE(function()
-              local v0_S_17 = Effect_Ref_read(r_S_16)()
-              return (function()
-                if "Control.Monad.Rec.Class∷Step.Loop" == v0_S_17[1] then
-                  return function()
-                    local e_S_19 = f_S_11(v0_S_17[2])()
-                    local _ = Effect_Ref_foreign.write(e_S_19)(r_S_16)()
-                    return false
-                  end
-                elseif "Control.Monad.Rec.Class∷Step.Done" == v0_S_17[1] then
-                  return Effect_pureE(true)
-                else
-                  return error("No patterns matched")
+  local r_S_0 = Golden_TailRecM2Shadow_Test_sumFrom({
+    tailRecM = function(f_S_11)
+      return function(a_S_12)
+        return function()
+          local r_S_16 = Effect_bindE(f_S_11(a_S_12))(Effect_Ref_foreign._new)()
+          local _ = Effect_foreign.untilE(function()
+            local v0_S_17 = Effect_Ref_read(r_S_16)()
+            return (function()
+              if "Control.Monad.Rec.Class∷Step.Loop" == v0_S_17[1] then
+                return function()
+                  local e_S_19 = f_S_11(v0_S_17[2])()
+                  local _ = Effect_Ref_foreign.write(e_S_19)(r_S_16)()
+                  return false
                 end
-              end)()()
-            end)()
-            return Effect_functorEffect.map(Partial_Unsafe_foreign._unsafePartial(function(  )
-              return function(v_S_20)
-                if "Control.Monad.Rec.Class∷Step.Done" == v_S_20[1] then
-                  return v_S_20[2]
-                else
-                  return error("No patterns matched")
-                end
+              elseif "Control.Monad.Rec.Class∷Step.Done" == v0_S_17[1] then
+                return Effect_pureE(true)
+              else
+                return error("No patterns matched")
               end
-            end))(Effect_Ref_read(r_S_16))()
-          end
+            end)()()
+          end)()
+          return Effect_functorEffect.map(Partial_Unsafe_foreign._unsafePartial(function(  )
+            return function(v_S_20)
+              if "Control.Monad.Rec.Class∷Step.Done" == v_S_20[1] then
+                return v_S_20[2]
+              else
+                return error("No patterns matched")
+              end
+            end
+          end))(Effect_Ref_read(r_S_16))()
         end
-      end,
-      Monad0 = function() return Effect_monadEffect end
-    }
-    local pure_S_512 = ((dictMonadRec_S_511.Monad0()).Applicative0()).pure
-    return function(b_S_513)
-      return function(n_S_514)
-        return dictMonadRec_S_511.tailRecM(function(o_S_515)
-          local _S_cse524 = o_S_515.a
-          local _S_cse523 = o_S_515.b
-          if _S_cse523 < n_S_514 then
-            return pure_S_512({
-              "Control.Monad.Rec.Class∷Step.Loop",
-              { a = _S_cse524 + _S_cse523, b = _S_cse523 + 1 }
-            })
-          else
-            return pure_S_512({
-              "Control.Monad.Rec.Class∷Step.Done",
-              _S_cse524
-            })
-          end
-        end)({ a = b_S_513, b = 0 })
       end
-    end
-  end)()(0)(5)()
+    end,
+    Monad0 = function() return Effect_monadEffect end
+  })(0)(5)()
   return Effect_Console_foreign.log(Data_Show_foreign.showIntImpl(r_S_0))()
 end)()

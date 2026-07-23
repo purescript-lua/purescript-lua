@@ -75,36 +75,36 @@ return (function()
   local _ = Effect_Console_logShow_S_w(Data_Show_showInt, 42)()
   local _ = Effect_Console_logShow_S_w({
     show = Data_Show_foreign.showArrayImpl(Data_Show_showIntImpl)
-  }, Data_Functor_foreign.arrayMap(function(add3_S_p3_S_259)
-    return 3 + add3_S_p3_S_259
+  }, Data_Functor_foreign.arrayMap(function(add3_S_p3_S_319)
+    return 3 + add3_S_p3_S_319
   end)({ [1] = 1, [2] = 2, [3] = 3 }))()
   local _ = Effect_Console_logShow_S_w(Data_Show_showInt, Golden_Uncurry_Test_evenSteps_S_w(0, 10))()
   local _ = Effect_Console_logShow_S_w(Data_Show_showInt, Golden_Uncurry_Test_oddSteps_S_w(0, 7))()
   local _ = Effect_Console_logShow_S_w(Data_Show_showInt, (function()
-    local go_S_w_S_263
-    go_S_w_S_263 = function(acc_S_264, n_S_265)
+    local go_S_w_S_326
+    go_S_w_S_326 = function(acc_S_327, n_S_328)
       while true do
-        if n_S_265 == 0 then
-          return acc_S_264
+        if n_S_328 == 0 then
+          return acc_S_327
         else
-          acc_S_264, n_S_265 = acc_S_264 + n_S_265, n_S_265 - 1
+          acc_S_327, n_S_328 = acc_S_327 + n_S_328, n_S_328 - 1
         end
       end
     end
-    return go_S_w_S_263(0, 10)
+    return go_S_w_S_326(0, 10)
   end)())()
   local _ = Effect_Console_logShow_S_w(Data_Show_showInt, (function()
-    local go_S_w_S_274
-    go_S_w_S_274 = function(acc_S_275, n_S_276)
+    local go_S_w_S_331
+    go_S_w_S_331 = function(acc_S_332, n_S_333)
       while true do
-        if n_S_276 == 0 then
-          return acc_S_275
+        if n_S_333 == 0 then
+          return acc_S_332
         else
-          acc_S_275, n_S_276 = acc_S_275 + n_S_276, n_S_276 - 1
+          acc_S_332, n_S_333 = acc_S_332 + n_S_333, n_S_333 - 1
         end
       end
     end
-    return go_S_w_S_274(0, 100)
+    return go_S_w_S_331(0, 100)
   end)())()
   local _ = Effect_Console_logShow_S_w(Data_Show_showInt, 6)()
   local _ = Effect_Console_logShow_S_w(Data_Show_showInt, 9)()

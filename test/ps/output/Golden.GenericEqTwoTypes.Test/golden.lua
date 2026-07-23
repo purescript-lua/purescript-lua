@@ -5,7 +5,6 @@ local Record_Unsafe_foreign = {
 local Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
 }
-local Effect_Console_log = Effect_Console_foreign.log
 local Type_Proxy_Proxy = {}
 local Data_HeytingAlgebra_heytingAlgebraBoolean
 Data_HeytingAlgebra_heytingAlgebraBoolean = {
@@ -46,9 +45,60 @@ local Data_Eq_eqRowCons_S_w = function( dictEqRecord
   }
 end
 local Data_Generic_Rep_NoArguments = {}
+local Data_Eq_Generic_genericEqArgument = function(dictEq)
+  return {
+    genericEqPrime = function(v)
+      return function(v1) return dictEq.eq(v)(v1) end
+    end
+  }
+end
+local Data_Eq_Generic_genericEqConstructor = function(dictGenericEq)
+  return {
+    genericEqPrime = function(v)
+      return function(v1) return dictGenericEq.genericEqPrime(v)(v1) end
+    end
+  }
+end
 local Data_Eq_Generic_genericEq_S_w = function(dictGeneric, dictGenericEq, x, y)
-  local _S_cse303 = dictGeneric.from
-  return dictGenericEq.genericEqPrime(_S_cse303(x))(_S_cse303(y))
+  local _S_cse449 = dictGeneric.from
+  return dictGenericEq.genericEqPrime(_S_cse449(x))(_S_cse449(y))
+end
+local Golden_GenericEqTwoTypes_Test_genericEqSum = function(dictGenericEq1_S_5)
+  return {
+    genericEqPrime = function(v_S_7)
+      return function(v1_S_8)
+        local _S_cse451 = v1_S_8[1]
+        local _S_cse450 = v_S_7[1]
+        if "Data.Generic.Rep∷Sum.Inl" == _S_cse450 then
+          return "Data.Generic.Rep∷Sum.Inl" == _S_cse451
+        else
+          return "Data.Generic.Rep∷Sum.Inr" == _S_cse450 and ("Data.Generic.Rep∷Sum.Inr" == _S_cse451 and dictGenericEq1_S_5.genericEqPrime(v_S_7[2])(v1_S_8[2]))
+        end
+      end
+    end
+  }
+end
+local Golden_GenericEqTwoTypes_Test_eqRec = function(dictEqRecord_S_221)
+  return { eq = dictEqRecord_S_221.eqRecord(Type_Proxy_Proxy) }
+end
+local Golden_GenericEqTwoTypes_Test_eqRowCons_S_w = function( eqRowCons_S_p3_S_233
+, eqRowCons_S_p4_S_234 )
+  return Data_Eq_eqRowCons_S_w({
+    eqRecord = function()
+      return function() return function() return true end end
+    end
+  }, nil, eqRowCons_S_p3_S_233, eqRowCons_S_p4_S_234)
+end
+local Golden_GenericEqTwoTypes_Test_logShow = function(a_S_2)
+  return Effect_Console_foreign.log((function()
+    if a_S_2 then
+      return "true"
+    elseif false == a_S_2 then
+      return "false"
+    else
+      return error("No patterns matched")
+    end
+  end)())
 end
 local Golden_GenericEqTwoTypes_Test_Leaf = {
   "Golden.GenericEqTwoTypes.Test∷Tree.Leaf"
@@ -70,20 +120,20 @@ local Golden_GenericEqTwoTypes_Test_node_S_w = function(left, value, right)
 end
 local Golden_GenericEqTwoTypes_Test_genericTree = {
   to = function(x)
-    local _S_cse304 = x[1]
-    if "Data.Generic.Rep∷Sum.Inl" == _S_cse304 then
+    local _S_cse452 = x[1]
+    if "Data.Generic.Rep∷Sum.Inl" == _S_cse452 then
       return Golden_GenericEqTwoTypes_Test_Leaf
-    elseif "Data.Generic.Rep∷Sum.Inr" == _S_cse304 then
+    elseif "Data.Generic.Rep∷Sum.Inr" == _S_cse452 then
       return { "Golden.GenericEqTwoTypes.Test∷Tree.Node", x[2] }
     else
       return error("No patterns matched")
     end
   end,
   from = function(x0)
-    local _S_cse305 = x0[1]
-    if "Golden.GenericEqTwoTypes.Test∷Tree.Leaf" == _S_cse305 then
+    local _S_cse453 = x0[1]
+    if "Golden.GenericEqTwoTypes.Test∷Tree.Leaf" == _S_cse453 then
       return { "Data.Generic.Rep∷Sum.Inl", Data_Generic_Rep_NoArguments }
-    elseif "Golden.GenericEqTwoTypes.Test∷Tree.Node" == _S_cse305 then
+    elseif "Golden.GenericEqTwoTypes.Test∷Tree.Node" == _S_cse453 then
       return { "Data.Generic.Rep∷Sum.Inr", x0[2] }
     else
       return error("No patterns matched")
@@ -92,20 +142,20 @@ local Golden_GenericEqTwoTypes_Test_genericTree = {
 }
 local Golden_GenericEqTwoTypes_Test_genericList = {
   to = function(x)
-    local _S_cse306 = x[1]
-    if "Data.Generic.Rep∷Sum.Inl" == _S_cse306 then
+    local _S_cse454 = x[1]
+    if "Data.Generic.Rep∷Sum.Inl" == _S_cse454 then
       return Golden_GenericEqTwoTypes_Test_Nil
-    elseif "Data.Generic.Rep∷Sum.Inr" == _S_cse306 then
+    elseif "Data.Generic.Rep∷Sum.Inr" == _S_cse454 then
       return { "Golden.GenericEqTwoTypes.Test∷List.Cons", x[2] }
     else
       return error("No patterns matched")
     end
   end,
   from = function(x0)
-    local _S_cse307 = x0[1]
-    if "Golden.GenericEqTwoTypes.Test∷List.Nil" == _S_cse307 then
+    local _S_cse455 = x0[1]
+    if "Golden.GenericEqTwoTypes.Test∷List.Nil" == _S_cse455 then
       return { "Data.Generic.Rep∷Sum.Inl", Data_Generic_Rep_NoArguments }
-    elseif "Golden.GenericEqTwoTypes.Test∷List.Cons" == _S_cse307 then
+    elseif "Golden.GenericEqTwoTypes.Test∷List.Cons" == _S_cse455 then
       return { "Data.Generic.Rep∷Sum.Inr", x0[2] }
     else
       return error("No patterns matched")
@@ -117,29 +167,13 @@ Golden_GenericEqTwoTypes_Test_eqTree = function(dictEq)
   return {
     eq = function(x)
       return function(y)
-        return Data_Eq_Generic_genericEq_S_w(Golden_GenericEqTwoTypes_Test_genericTree, {
-          genericEqPrime = function(v_S_272)
-            return function(v1_S_273)
-              local _S_cse309 = v1_S_273[1]
-              local _S_cse308 = v_S_272[1]
-              if "Data.Generic.Rep∷Sum.Inl" == _S_cse308 then
-                return "Data.Generic.Rep∷Sum.Inl" == _S_cse309
-              else
-                return "Data.Generic.Rep∷Sum.Inr" == _S_cse308 and ("Data.Generic.Rep∷Sum.Inr" == _S_cse309 and (Data_Eq_eqRowCons_S_w(Data_Eq_eqRowCons_S_w(Data_Eq_eqRowCons_S_w({
-                  eqRecord = function()
-                    return function() return function() return true end end
-                  end
-                }, nil, {
-                  reflectSymbol = function() return "value" end
-                }, dictEq), nil, {
-                  reflectSymbol = function() return "right" end
-                }, Golden_GenericEqTwoTypes_Test_eqTree(dictEq)), nil, {
-                  reflectSymbol = function() return "left" end
-                }, Golden_GenericEqTwoTypes_Test_eqTree(dictEq))).eqRecord(Type_Proxy_Proxy)(v_S_272[2])(v1_S_273[2]))
-              end
-            end
-          end
-        }, x, y)
+        return Data_Eq_Generic_genericEq_S_w(Golden_GenericEqTwoTypes_Test_genericTree, Golden_GenericEqTwoTypes_Test_genericEqSum(Data_Eq_Generic_genericEqConstructor(Data_Eq_Generic_genericEqArgument(Golden_GenericEqTwoTypes_Test_eqRec(Data_Eq_eqRowCons_S_w(Data_Eq_eqRowCons_S_w(Golden_GenericEqTwoTypes_Test_eqRowCons_S_w({
+          reflectSymbol = function() return "value" end
+        }, dictEq), nil, {
+          reflectSymbol = function() return "right" end
+        }, Golden_GenericEqTwoTypes_Test_eqTree(dictEq)), nil, {
+          reflectSymbol = function() return "left" end
+        }, Golden_GenericEqTwoTypes_Test_eqTree(dictEq)))))), x, y)
       end
     end
   }
@@ -150,27 +184,11 @@ Golden_GenericEqTwoTypes_Test_eqList = function(dictEq)
   return {
     eq = function(x)
       return function(y)
-        return Data_Eq_Generic_genericEq_S_w(Golden_GenericEqTwoTypes_Test_genericList, {
-          genericEqPrime = function(v_S_250)
-            return function(v1_S_251)
-              local _S_cse311 = v1_S_251[1]
-              local _S_cse310 = v_S_250[1]
-              if "Data.Generic.Rep∷Sum.Inl" == _S_cse310 then
-                return "Data.Generic.Rep∷Sum.Inl" == _S_cse311
-              else
-                return "Data.Generic.Rep∷Sum.Inr" == _S_cse310 and ("Data.Generic.Rep∷Sum.Inr" == _S_cse311 and (Data_Eq_eqRowCons_S_w(Data_Eq_eqRowCons_S_w({
-                  eqRecord = function()
-                    return function() return function() return true end end
-                  end
-                }, nil, {
-                  reflectSymbol = function() return "tail" end
-                }, Golden_GenericEqTwoTypes_Test_eqList(dictEq)), nil, {
-                  reflectSymbol = function() return "head" end
-                }, dictEq)).eqRecord(Type_Proxy_Proxy)(v_S_250[2])(v1_S_251[2]))
-              end
-            end
-          end
-        }, x, y)
+        return Data_Eq_Generic_genericEq_S_w(Golden_GenericEqTwoTypes_Test_genericList, Golden_GenericEqTwoTypes_Test_genericEqSum(Data_Eq_Generic_genericEqConstructor(Data_Eq_Generic_genericEqArgument(Golden_GenericEqTwoTypes_Test_eqRec(Data_Eq_eqRowCons_S_w(Golden_GenericEqTwoTypes_Test_eqRowCons_S_w({
+          reflectSymbol = function() return "tail" end
+        }, Golden_GenericEqTwoTypes_Test_eqList(dictEq)), nil, {
+          reflectSymbol = function() return "head" end
+        }, dictEq))))), x, y)
       end
     end
   }
@@ -183,52 +201,8 @@ local Golden_GenericEqTwoTypes_Test_cons_S_w = function(head, tail)
   }
 end
 return (function()
-  local _ = (function()
-    local a_S_299 = Golden_GenericEqTwoTypes_Test_eq1(Golden_GenericEqTwoTypes_Test_cons_S_w(1, Golden_GenericEqTwoTypes_Test_cons_S_w(2, Golden_GenericEqTwoTypes_Test_Nil)))(Golden_GenericEqTwoTypes_Test_cons_S_w(1, Golden_GenericEqTwoTypes_Test_cons_S_w(2, Golden_GenericEqTwoTypes_Test_Nil)))
-    return Effect_Console_log((function()
-      if a_S_299 then
-        return "true"
-      elseif false == a_S_299 then
-        return "false"
-      else
-        return error("No patterns matched")
-      end
-    end)())
-  end)()()
-  local _ = (function()
-    local a_S_300 = Golden_GenericEqTwoTypes_Test_eq1(Golden_GenericEqTwoTypes_Test_cons_S_w(1, Golden_GenericEqTwoTypes_Test_Nil))(Golden_GenericEqTwoTypes_Test_cons_S_w(2, Golden_GenericEqTwoTypes_Test_Nil))
-    return Effect_Console_log((function()
-      if a_S_300 then
-        return "true"
-      elseif false == a_S_300 then
-        return "false"
-      else
-        return error("No patterns matched")
-      end
-    end)())
-  end)()()
-  local _ = (function()
-    local a_S_301 = Golden_GenericEqTwoTypes_Test_eq(Golden_GenericEqTwoTypes_Test_node_S_w(Golden_GenericEqTwoTypes_Test_Leaf, 1, Golden_GenericEqTwoTypes_Test_node_S_w(Golden_GenericEqTwoTypes_Test_Leaf, 2, Golden_GenericEqTwoTypes_Test_Leaf)))(Golden_GenericEqTwoTypes_Test_node_S_w(Golden_GenericEqTwoTypes_Test_Leaf, 1, Golden_GenericEqTwoTypes_Test_node_S_w(Golden_GenericEqTwoTypes_Test_Leaf, 2, Golden_GenericEqTwoTypes_Test_Leaf)))
-    return Effect_Console_log((function()
-      if a_S_301 then
-        return "true"
-      elseif false == a_S_301 then
-        return "false"
-      else
-        return error("No patterns matched")
-      end
-    end)())
-  end)()()
-  return (function()
-    local a_S_302 = Golden_GenericEqTwoTypes_Test_eq(Golden_GenericEqTwoTypes_Test_node_S_w(Golden_GenericEqTwoTypes_Test_Leaf, 1, Golden_GenericEqTwoTypes_Test_Leaf))(Golden_GenericEqTwoTypes_Test_node_S_w(Golden_GenericEqTwoTypes_Test_Leaf, 2, Golden_GenericEqTwoTypes_Test_Leaf))
-    return Effect_Console_log((function()
-      if a_S_302 then
-        return "true"
-      elseif false == a_S_302 then
-        return "false"
-      else
-        return error("No patterns matched")
-      end
-    end)())
-  end)()()
+  local _ = Golden_GenericEqTwoTypes_Test_logShow(Golden_GenericEqTwoTypes_Test_eq1(Golden_GenericEqTwoTypes_Test_cons_S_w(1, Golden_GenericEqTwoTypes_Test_cons_S_w(2, Golden_GenericEqTwoTypes_Test_Nil)))(Golden_GenericEqTwoTypes_Test_cons_S_w(1, Golden_GenericEqTwoTypes_Test_cons_S_w(2, Golden_GenericEqTwoTypes_Test_Nil))))()
+  local _ = Golden_GenericEqTwoTypes_Test_logShow(Golden_GenericEqTwoTypes_Test_eq1(Golden_GenericEqTwoTypes_Test_cons_S_w(1, Golden_GenericEqTwoTypes_Test_Nil))(Golden_GenericEqTwoTypes_Test_cons_S_w(2, Golden_GenericEqTwoTypes_Test_Nil)))()
+  local _ = Golden_GenericEqTwoTypes_Test_logShow(Golden_GenericEqTwoTypes_Test_eq(Golden_GenericEqTwoTypes_Test_node_S_w(Golden_GenericEqTwoTypes_Test_Leaf, 1, Golden_GenericEqTwoTypes_Test_node_S_w(Golden_GenericEqTwoTypes_Test_Leaf, 2, Golden_GenericEqTwoTypes_Test_Leaf)))(Golden_GenericEqTwoTypes_Test_node_S_w(Golden_GenericEqTwoTypes_Test_Leaf, 1, Golden_GenericEqTwoTypes_Test_node_S_w(Golden_GenericEqTwoTypes_Test_Leaf, 2, Golden_GenericEqTwoTypes_Test_Leaf))))()
+  return Golden_GenericEqTwoTypes_Test_logShow(Golden_GenericEqTwoTypes_Test_eq(Golden_GenericEqTwoTypes_Test_node_S_w(Golden_GenericEqTwoTypes_Test_Leaf, 1, Golden_GenericEqTwoTypes_Test_Leaf))(Golden_GenericEqTwoTypes_Test_node_S_w(Golden_GenericEqTwoTypes_Test_Leaf, 2, Golden_GenericEqTwoTypes_Test_Leaf)))()
 end)()

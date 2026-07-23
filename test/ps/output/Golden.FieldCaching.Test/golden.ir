@@ -8,22 +8,28 @@ UberModule
         [ ( Nothing, Name "showIntImpl" ) ]
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Data.Show", qnameName = Name "showIntImpl"
-        }, ObjectProp Nothing
-        ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
-        ( PropName "showIntImpl" )
-      ), Standalone
-      ( QName
         { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "foreign"
         }, ForeignImport Nothing
         ( ModuleName "Effect.Console" ) ".spago/p/console/f82835a0b873aafe6bd7b14dd30cc150553d4ab9/src/Effect/Console.purs"
         [ ( Nothing, Name "log" ) ]
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "log"
-        }, ObjectProp Nothing
-        ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
-        ( PropName "log" )
+        { qnameModuleName = ModuleName "Golden.FieldCaching.Test", qnameName = Name "logShow"
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "a$2" ) :| [] )
+        ( AppN Nothing
+          ( ObjectProp Nothing
+            ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
+            ( PropName "log" )
+          )
+          ( AppN Nothing
+            ( ObjectProp Nothing
+              ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
+              ( PropName "showIntImpl" )
+            )
+            ( Ref Nothing ( Local ( Name "a$2" ) ) :| [] ) :| []
+          )
+        )
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.FieldCaching.Test", qnameName = Name "weigh"
@@ -204,23 +210,14 @@ UberModule
           ( Standalone
             ( Nothing, Name "_", AppN Nothing
               ( AppN Nothing
-                ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+                ( Ref Nothing
+                  ( Imported ( ModuleName "Golden.FieldCaching.Test" ) ( Name "logShow" ) )
+                )
                 ( AppN Nothing
-                  ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
-                  ( PrimBinOp Nothing PrimAdd
-                    ( AppN Nothing
-                      ( Ref Nothing
-                        ( Imported ( ModuleName "Golden.FieldCaching.Test" ) ( Name "weigh" ) )
-                      )
-                      ( LiteralInt Nothing 1 :| [] )
-                    )
-                    ( AppN Nothing
-                      ( Ref Nothing
-                        ( Imported ( ModuleName "Golden.FieldCaching.Test" ) ( Name "weigh" ) )
-                      )
-                      ( LiteralInt Nothing 2 :| [] )
-                    ) :| []
-                  ) :| []
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Golden.FieldCaching.Test" ) ( Name "pair" ) )
+                  )
+                  ( LiteralInt Nothing 1 :| [] ) :| []
                 )
               )
               ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
@@ -228,53 +225,42 @@ UberModule
             [ Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
-                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Golden.FieldCaching.Test" ) ( Name "logShow" ) )
+                  )
                   ( AppN Nothing
-                    ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
-                    ( AppN Nothing
-                      ( Ref Nothing
-                        ( Imported ( ModuleName "Golden.FieldCaching.Test" ) ( Name "weigh" ) )
-                      )
-                      ( LiteralInt Nothing 10 :| [] ) :| []
-                    ) :| []
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Golden.FieldCaching.Test" ) ( Name "single" ) )
+                    )
+                    ( LiteralInt Nothing 10 :| [] ) :| []
                   )
                 )
                 ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
-                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Golden.FieldCaching.Test" ) ( Name "logShow" ) )
+                  )
                   ( AppN Nothing
-                    ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
-                    ( AppN Nothing
-                      ( Ref Nothing
-                        ( Imported ( ModuleName "Golden.FieldCaching.Test" ) ( Name "sumLoop$w" ) )
-                      )
-                      ( LiteralInt Nothing 0 :| [ LiteralInt Nothing 4 ] ) :| []
-                    ) :| []
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Golden.FieldCaching.Test" ) ( Name "sumLoop$w" ) )
+                    )
+                    ( LiteralInt Nothing 0 :| [ LiteralInt Nothing 4 ] ) :| []
                   )
                 )
                 ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
-                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Golden.FieldCaching.Test" ) ( Name "logShow" ) )
+                  )
                   ( AppN Nothing
-                    ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
-                    ( PrimBinOp Nothing PrimAdd
-                      ( AppN Nothing
-                        ( Ref Nothing
-                          ( Imported ( ModuleName "Golden.FieldCaching.Test" ) ( Name "weigh" ) )
-                        )
-                        ( LiteralInt Nothing 4 :| [] )
-                      )
-                      ( AppN Nothing
-                        ( Ref Nothing
-                          ( Imported ( ModuleName "Golden.FieldCaching.Test" ) ( Name "weigh" ) )
-                        )
-                        ( LiteralInt Nothing 3 :| [] )
-                      ) :| []
-                    ) :| []
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Golden.FieldCaching.Test" ) ( Name "fibby" ) )
+                    )
+                    ( LiteralInt Nothing 5 :| [] ) :| []
                   )
                 )
                 ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
@@ -283,31 +269,14 @@ UberModule
           )
           ( AppN Nothing
             ( AppN Nothing
-              ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+              ( Ref Nothing
+                ( Imported ( ModuleName "Golden.FieldCaching.Test" ) ( Name "logShow" ) )
+              )
               ( AppN Nothing
-                ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
-                ( AppN Nothing
-                  ( Ref Nothing
-                    ( Imported ( ModuleName "Golden.FieldCaching.Test" ) ( Name "apply2" ) )
-                  )
-                  ( AbsN Nothing
-                    ( ParamNamed Nothing ( Name "y$264" ) :| [] )
-                    ( PrimBinOp Nothing PrimAdd
-                      ( AppN Nothing
-                        ( Ref Nothing
-                          ( Imported ( ModuleName "Golden.FieldCaching.Test" ) ( Name "weigh" ) )
-                        )
-                        ( LiteralInt Nothing 5 :| [] )
-                      )
-                      ( AppN Nothing
-                        ( Ref Nothing
-                          ( Imported ( ModuleName "Golden.FieldCaching.Test" ) ( Name "weigh" ) )
-                        )
-                        ( Ref Nothing ( Local ( Name "y$264" ) ) :| [] )
-                      )
-                    ) :| []
-                  ) :| []
-                ) :| []
+                ( Ref Nothing
+                  ( Imported ( ModuleName "Golden.FieldCaching.Test" ) ( Name "closed" ) )
+                )
+                ( LiteralInt Nothing 5 :| [] ) :| []
               )
             )
             ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )

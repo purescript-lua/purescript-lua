@@ -158,7 +158,9 @@ optimizerPipeline policy =
     -- longer recognise. The inlined methods' constructor matches then meet
     -- the case-of-known-constructor folds (#177/#213/#214), collapsing
     -- Maybe/Either/Writer/State chains into straight-line code. Code growth
-    -- is bounded by 'inlineSizeBudget'.
+    -- is bounded per paste by 'inlineSizeBudget' and per expression by the
+    -- growth veto (Note [Bounded call-site inlining growth]), which keeps
+    -- a chain whose pastes never collapse from unrolling.
     --
     -- Call-pattern specialization (issue #208) rides in the same fixpoint:
     -- a recursive binding whose recursion passes a known constructor at a
@@ -652,9 +654,25 @@ optimizeModule inlining policy UberModule {..} = runWriterT do
   -- the pass's 'WasRewritten' result; nothing else in this pass changes
   -- the module, so a converged module reports 'Unmodified'.
   optimizeExp ∷ Exp → WriterT WasRewritten SupplyM Exp
-  optimizeExp e = do
-    (e', rewritten) ← lift (optimizedExpressionM policy inlineEnv e)
-    e' <$ tell rewritten
+  optimizeExp e = case inlining of
+    SkipCallSites → keepSweep HeuristicPastes
+    InlineCallSites → do
+      -- The armed sweep is speculative: kept only while the pastes'
+      -- growth stays within the expression's allowance; a sweep that
+      -- grew without collapse is discarded — result and change flag
+      -- both — and the fallback sweep decides instead.
+      -- See Note [Bounded call-site inlining growth].
+      (e', rewritten) ←
+        lift (optimizedExpressionWithPastes HeuristicPastes policy inlineEnv e)
+      if expSize e' <= inlineGrowthBudget (expSize e)
+        then e' <$ tell rewritten
+        else keepSweep DirectedPastesOnly
+   where
+    keepSweep ∷ CallSitePastes → WriterT WasRewritten SupplyM Exp
+    keepSweep pastes = do
+      (e', rewritten) ←
+        lift (optimizedExpressionWithPastes pastes policy inlineEnv e)
+      e' <$ tell rewritten
 
   -- See Note [Incremental free-reference counting]
   withBinding
@@ -761,10 +779,11 @@ type InlineEnv = Map (Qualified Name) Exp
 
 {- | The largest expression the call-site inliner will paste, GHC's
 unfolding-use-threshold analogue, sized in IR nodes ('expSize'). Code
-growth is the transform's main risk (issue #180); this bounds it.
-Deliberately generous enough to admit an uncurried monad-method worker
-(a folded Maybe/Either match), the payload the cascade is built to
-collapse.
+growth is the transform's main risk (issue #180); this bounds one
+paste, and the growth veto bounds their sum across an expression
+(Note [Bounded call-site inlining growth]). Deliberately generous
+enough to admit an uncurried monad-method worker (a folded Maybe/Either
+match), the payload the cascade is built to collapse.
 -}
 inlineSizeBudget ∷ Natural
 inlineSizeBudget = 64
@@ -777,6 +796,86 @@ every use site, so growth scales with the use count.
 -}
 smallInlineBudget ∷ Natural
 smallInlineBudget = 16
+
+{- Note [Bounded call-site inlining growth]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Call-site pastes are bets: pasting a method body pays off when the copy
+meets a known-constructor fold and collapses (a Maybe/Either match
+dissolves into straight-line code), and loses when nothing folds (a
+product-type monad such as State threads a single-constructor Tuple —
+no tag test exists, so the pasted bodies just accumulate, issue #221).
+Whether a paste collapses is not knowable at the paste site: the fold
+may need several other pastes and reductions to expose a known
+constructor, all of which happen later in the same bottom-up sweep. The
+per-paste budgets bound each site's bet, but not the sum of bets across
+an expression: a long chain pastes one body per step, and when none of
+them folds the expression grows linearly in the chain length.
+
+So the sweep is speculative, measured, and reverted at expression
+granularity ('optimizeExp'): run the rewrite with every paste tier
+armed, compare 'expSize' before and after, and when the result grew
+past 'inlineGrowthBudget' — growth without collapse — discard it,
+result and change flag both, and redo the sweep with the heuristic
+paste tiers disarmed ('DirectedPastesOnly'). Explicit @inline@
+directives keep firing in the fallback sweep: a directive is the user
+overriding the heuristics, so the growth bound never vetoes it. The
+env-reading folds ('reduceKnownCtorRefRead',
+'propagateKnownCtorThroughLet') also keep firing: they only shrink, and
+disarming them would make the fallback sweep strictly worse than the
+sweep it replaces.
+
+The allowance is linear with a floor: @before + max smallInlineBudget
+(before `div` 4)@. A paste that collapses leaves little residue — the
+Maybe match folds to the continuation's body — so the floor only needs
+to admit that residue in a small host, and 'smallInlineBudget' already
+prices what is free to leave at a site. A paste surviving whole is
+bigger than that by construction ('isCheapWorkerBody' would have
+admitted anything smaller), so even a single non-folding paste into a
+small expression is refused — which is the point, not a casualty.
+
+The proportional term is calibrated from both sides of the corpus. It
+must reject the chains where every paste survives — the transformer
+stack of Golden.LongStackBind grows past a third of its host, well
+over the quarter. And it must stay above the /transient/ growth of a
+collapse that spans fixpoint rounds: the veto measures one sweep, but
+an Either chain first grows when its binds paste and only folds a
+round later, once the env carries the settled neighbours — measured
+just under a fifth of the host on Golden.LongEitherBind. A dial below
+that freezes the chain at its unfolded worst (vetoed every round, the
+fold never arrives). A quarter clears the one and rejects the other.
+The blind spot of the dial is many tiny pastes diluted in a huge host
+(the plain State chain of Golden.LongStateBind grows only ~10% in
+nodes, though far more in printed lines); catching it needs the
+measurement at fixpoint convergence rather than per sweep, where
+transient growth is invisible and the dial could drop.
+
+The measurement baseline resets each round of the specialize fixpoint,
+which is what makes the veto safe and non-sticky. Reverting to the
+round's own input can never dangle a reference: that input is live this
+round, and DCE runs after. An expression vetoed in round N is
+re-attempted in round N+1 against the then-current environment, so a
+collapse unlocked by a neighbour's settled form still lands; one that
+needs the kept pastes themselves does not get that chance, which is
+what the transient-growth calibration above accounts for. The
+discarded sweep never reports 'Rewritten', so a converged module still
+reports 'Unmodified' and the fixpoint terminates ('runStepsChecked'
+enforces exactly this contract). The cost is one extra sweep per vetoed
+expression per 'optimizeExp' call.
+-}
+
+{- | Which call-site paste tiers a rewrite sweep may use: all of them,
+or only those an explicit @inline@ directive commands. The fallback
+sweep of the growth veto runs with 'DirectedPastesOnly'.
+See Note [Bounded call-site inlining growth].
+-}
+data CallSitePastes = HeuristicPastes | DirectedPastesOnly
+
+{- | Per-expression growth allowance for one call-site inlining sweep:
+the largest 'expSize' the sweep may leave behind, given the size it
+started from. See Note [Bounded call-site inlining growth].
+-}
+inlineGrowthBudget ∷ Natural → Natural
+inlineGrowthBudget before = before + max smallInlineBudget (before `div` 4)
 
 {- | How costly an expression is to duplicate, ordered by escalation.
 Combines by taking the worse classification.
@@ -845,7 +944,15 @@ optimizedExpression = runSupply . fmap fst . optimizedExpressionM mempty mempty
 
 optimizedExpressionM
   ∷ InlinePolicy → InlineEnv → Exp → SupplyM (Exp, WasRewritten)
-optimizedExpressionM policy env =
+optimizedExpressionM = optimizedExpressionWithPastes HeuristicPastes
+
+optimizedExpressionWithPastes
+  ∷ CallSitePastes
+  → InlinePolicy
+  → InlineEnv
+  → Exp
+  → SupplyM (Exp, WasRewritten)
+optimizedExpressionWithPastes pastes policy env =
   -- See Note [Eta reduction is unsound]
   rewriteExpBottomUpM
     ( canonicalizeEffectHead
@@ -859,9 +966,9 @@ optimizedExpressionM policy env =
         `thenRewrite` reduceKnownConstructor
         `thenRewrite` reduceKnownCtorRefRead env
         `thenRewrite` propagateKnownCtorThroughLet env
-        `thenRewrite` resolveDictionaryProp policy env
+        `thenRewrite` resolveDictionaryProp pastes policy env
         `thenRewrite` inlineAnnotatedProjection policy env
-        `thenRewrite` inlineSaturatedCall policy env
+        `thenRewrite` inlineSaturatedCall pastes policy env
         `thenRewrite` betaReduce
         `thenRewrite` removeUnreachableThenBranch
         `thenRewrite` removeUnreachableElseBranch
@@ -1488,17 +1595,26 @@ The veto is best-effort rather than airtight: a dictionary referenced
 exactly once is pasted whole by the use-once path in 'optimizeModule', and
 'reduceObjectProp' then folds the projection without consulting any policy —
 harmless, since sharing is moot at a single use site.
+
+In a 'DirectedPastesOnly' sweep the size-budget path is disarmed and only
+an @always@ field resolves — the sweep exists to suppress exactly the
+heuristic pastes (Note [Bounded call-site inlining growth]).
 -}
-resolveDictionaryProp ∷ InlinePolicy → InlineEnv → RewriteRuleM SupplyM Ann
-resolveDictionaryProp policy env = \case
+resolveDictionaryProp
+  ∷ CallSitePastes → InlinePolicy → InlineEnv → RewriteRuleM SupplyM Ann
+resolveDictionaryProp pastes policy env = \case
   ObjectProp ann (Ref _ dictName) prop
     | Just (LiteralObject _ props) ← Map.lookup dictName env
     , Just method ← List.lookup prop props
     , countFreeRef dictName method == 0
-    , maybe
-        (expSize method <= inlineSizeBudget)
-        (== Always)
-        (fieldPolicy policy dictName prop) →
+    , case pastes of
+        HeuristicPastes →
+          maybe
+            (expSize method <= inlineSizeBudget)
+            (== Always)
+            (fieldPolicy policy dictName prop)
+        DirectedPastesOnly →
+          fieldPolicy policy dictName prop == Just Always →
         Just . setAnn ann <$> freshenBinders method
   _ → pure Nothing
 
@@ -1586,11 +1702,14 @@ code.
 
 Pasting a lambda (a value) duplicates no work, and 'betaReduce' let-binds any
 non-trivial argument rather than copy it into each use, so the reduction is
-behaviour-preserving (issue #167). Growth is bounded by 'inlineSizeBudget'.
-The rule declines a self-referential RHS, which cannot arise for a Standalone
-binding under GUC but must not be unfolded on the non-GUC input the rewrite
-also runs on (Note [Eta reduction is unsound] is the reason the environment
-holds no recursive-group members either).
+behaviour-preserving (issue #167). Growth is bounded per paste by
+'inlineSizeBudget' and per expression by the growth veto in 'optimizeExp'
+(Note [Bounded call-site inlining growth]); in a 'DirectedPastesOnly' sweep
+both heuristic tiers below are disarmed and only the directed-arity gate
+pastes. The rule declines a self-referential RHS, which cannot arise for a
+Standalone binding under GUC but must not be unfolded on the non-GUC input
+the rewrite also runs on (Note [Eta reduction is unsound] is the reason the
+environment holds no recursive-group members either).
 
 A binding under an @inline arity=N@ directive takes a different gate: the
 site qualifies by argument count alone — at least N arguments applied — and
@@ -1613,10 +1732,12 @@ root is pasted under the original 'AppN' node — never rebuilt as a
 unary spine, which would leave an under-applied redex ('pasteableRoot')
 — so the exact-arity 'betaReduce' consumes it in the same pass.
 -}
-inlineSaturatedCall ∷ InlinePolicy → InlineEnv → RewriteRuleM SupplyM Ann
-inlineSaturatedCall policy env expr = case expr of
+inlineSaturatedCall
+  ∷ CallSitePastes → InlinePolicy → InlineEnv → RewriteRuleM SupplyM Ann
+inlineSaturatedCall pastes policy env expr = case expr of
   AppN ann (Ref _ fname) args
-    | _ : _ : _ ← toList args
+    | HeuristicPastes ← pastes
+    , _ : _ : _ ← toList args
     , Nothing ← directedArity fname
     , Just rhs@(AbsN _ params body) ← Map.lookup fname env
     , length args == length params
@@ -1641,7 +1762,8 @@ inlineSaturatedCall policy env expr = case expr of
                   <$> freshenBinders rhs
           Just _underApplied → pure Nothing
           Nothing
-            | AbsN _ params _ ← rhs
+            | HeuristicPastes ← pastes
+            , AbsN _ params _ ← rhs
             , length args >= length params
             , countFreeRef fname rhs == 0
             , expSize rhs <= inlineSizeBudget →

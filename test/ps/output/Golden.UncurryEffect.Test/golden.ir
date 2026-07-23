@@ -26,56 +26,84 @@ UberModule
         ( PropName "log" )
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Golden.UncurryEffect.Test", qnameName = Name "tick"
+        { qnameModuleName = ModuleName "Golden.UncurryEffect.Test", qnameName = Name "tick$w"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "n" ) :| [] )
-        ( AbsN Nothing
-          ( ParamUnused Nothing :| [] )
-          ( Let Nothing
-            ( Standalone
-              ( Nothing, Name "_", AppN Nothing
-                ( AppN Nothing
-                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
-                  ( LiteralString Nothing "tick" :| [] )
-                )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
-              ) :| []
-            )
-            ( AppN Nothing
+        ( ParamNamed Nothing ( Name "n" ) :| [ ParamUnused Nothing ] )
+        ( Let Nothing
+          ( Standalone
+            ( Nothing, Name "_", AppN Nothing
               ( AppN Nothing
                 ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
-                ( AppN Nothing
-                  ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
-                  ( Ref Nothing ( Local ( Name "n" ) ) :| [] ) :| []
-                )
+                ( LiteralString Nothing "tick" :| [] )
               )
               ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+            ) :| []
+          )
+          ( AppN Nothing
+            ( AppN Nothing
+              ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+              ( AppN Nothing
+                ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
+                ( Ref Nothing ( Local ( Name "n" ) ) :| [] ) :| []
+              )
             )
+            ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+          )
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.UncurryEffect.Test", qnameName = Name "tick"
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "tick$p1" ) :| [] )
+        ( AbsN Nothing
+          ( ParamNamed Nothing ( Name "tick$p2" ) :| [] )
+          ( AppN Nothing
+            ( Ref Nothing
+              ( Imported ( ModuleName "Golden.UncurryEffect.Test" ) ( Name "tick$w" ) )
+            )
+            ( Ref Nothing
+              ( Local ( Name "tick$p1" ) ) :|
+              [ Ref Nothing ( Local ( Name "tick$p2" ) ) ]
+            )
+          )
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.UncurryEffect.Test", qnameName = Name "runBoth$w"
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "act" ) :| [ ParamUnused Nothing ] )
+        ( Let Nothing
+          ( Standalone
+            ( Nothing, Name "_", AppN Nothing
+              ( AppN Nothing
+                ( Ref Nothing ( Local ( Name "act" ) ) )
+                ( LiteralInt Nothing 1 :| [] )
+              )
+              ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+            ) :| []
+          )
+          ( AppN Nothing
+            ( AppN Nothing
+              ( Ref Nothing ( Local ( Name "act" ) ) )
+              ( LiteralInt Nothing 2 :| [] )
+            )
+            ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
           )
         )
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.UncurryEffect.Test", qnameName = Name "runBoth"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "act" ) :| [] )
+        ( ParamNamed Nothing ( Name "runBoth$p1" ) :| [] )
         ( AbsN Nothing
-          ( ParamUnused Nothing :| [] )
-          ( Let Nothing
-            ( Standalone
-              ( Nothing, Name "_", AppN Nothing
-                ( AppN Nothing
-                  ( Ref Nothing ( Local ( Name "act" ) ) )
-                  ( LiteralInt Nothing 1 :| [] )
-                )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
-              ) :| []
+          ( ParamNamed Nothing ( Name "runBoth$p2" ) :| [] )
+          ( AppN Nothing
+            ( Ref Nothing
+              ( Imported ( ModuleName "Golden.UncurryEffect.Test" ) ( Name "runBoth$w" ) )
             )
-            ( AppN Nothing
-              ( AppN Nothing
-                ( Ref Nothing ( Local ( Name "act" ) ) )
-                ( LiteralInt Nothing 2 :| [] )
-              )
-              ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+            ( Ref Nothing
+              ( Local ( Name "runBoth$p1" ) ) :|
+              [ Ref Nothing ( Local ( Name "runBoth$p2" ) ) ]
             )
           )
         )
@@ -190,35 +218,12 @@ UberModule
         ( Let Nothing
           ( Standalone
             ( Nothing, Name "_", AppN Nothing
-              ( AbsN Nothing
-                ( ParamUnused Nothing :| [] )
-                ( Let Nothing
-                  ( Standalone
-                    ( Nothing, Name "_", AppN Nothing
-                      ( AppN Nothing
-                        ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
-                        ( LiteralString Nothing "tick" :| [] )
-                      )
-                      ( Ref Nothing
-                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
-                      )
-                    ) :| []
-                  )
-                  ( AppN Nothing
-                    ( AppN Nothing
-                      ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
-                      ( AppN Nothing
-                        ( Ref Nothing
-                          ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) )
-                        )
-                        ( LiteralInt Nothing 7 :| [] ) :| []
-                      )
-                    )
-                    ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
-                  )
-                )
+              ( Ref Nothing
+                ( Imported ( ModuleName "Golden.UncurryEffect.Test" ) ( Name "tick$w" ) )
               )
-              ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              ( LiteralInt Nothing 7 :|
+                [ Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) ]
+              )
             ) :|
             [ Standalone
               ( Nothing, Name "_", AppN Nothing
@@ -230,120 +235,24 @@ UberModule
                 )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
-                ( AbsN Nothing
-                  ( ParamUnused Nothing :| [] )
-                  ( Let Nothing
-                    ( Standalone
-                      ( Nothing, Name "_", AppN Nothing
-                        ( AbsN Nothing
-                          ( ParamUnused Nothing :| [] )
-                          ( Let Nothing
-                            ( Standalone
-                              ( Nothing, Name "_", AppN Nothing
-                                ( AppN Nothing
-                                  ( Ref Nothing
-                                    ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) )
-                                  )
-                                  ( LiteralString Nothing "tick" :| [] )
-                                )
-                                ( Ref Nothing
-                                  ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
-                                )
-                              ) :| []
-                            )
-                            ( AppN Nothing
-                              ( AppN Nothing
-                                ( Ref Nothing
-                                  ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) )
-                                )
-                                ( AppN Nothing
-                                  ( Ref Nothing
-                                    ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) )
-                                  )
-                                  ( LiteralInt Nothing 1 :| [] ) :| []
-                                )
-                              )
-                              ( Ref Nothing
-                                ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
-                              )
-                            )
-                          )
-                        )
-                        ( Ref Nothing
-                          ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
-                        )
-                      ) :| []
-                    )
-                    ( AppN Nothing
-                      ( AbsN Nothing
-                        ( ParamUnused Nothing :| [] )
-                        ( Let Nothing
-                          ( Standalone
-                            ( Nothing, Name "_", AppN Nothing
-                              ( AppN Nothing
-                                ( Ref Nothing
-                                  ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) )
-                                )
-                                ( LiteralString Nothing "tick" :| [] )
-                              )
-                              ( Ref Nothing
-                                ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
-                              )
-                            ) :| []
-                          )
-                          ( AppN Nothing
-                            ( AppN Nothing
-                              ( Ref Nothing
-                                ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) )
-                              )
-                              ( AppN Nothing
-                                ( Ref Nothing
-                                  ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) )
-                                )
-                                ( LiteralInt Nothing 2 :| [] ) :| []
-                              )
-                            )
-                            ( Ref Nothing
-                              ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
-                            )
-                          )
-                        )
-                      )
-                      ( Ref Nothing
-                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
-                      )
-                    )
-                  )
+                ( Ref Nothing
+                  ( Imported ( ModuleName "Golden.UncurryEffect.Test" ) ( Name "runBoth$w" ) )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+                ( Ref Nothing
+                  ( Imported ( ModuleName "Golden.UncurryEffect.Test" ) ( Name "tick" ) ) :|
+                  [ Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) ]
+                )
               )
             ]
           )
           ( AppN Nothing
-            ( AbsN Nothing
-              ( ParamUnused Nothing :| [] )
-              ( Let Nothing
-                ( Standalone
-                  ( Nothing, Name "_", AppN Nothing
-                    ( Ref Nothing
-                      ( Imported ( ModuleName "Golden.UncurryEffect.Test" ) ( Name "countdown$w" ) )
-                    )
-                    ( LiteralInt Nothing 1 :|
-                      [ Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) ]
-                    )
-                  ) :| []
-                )
-                ( AppN Nothing
-                  ( Ref Nothing
-                    ( Imported ( ModuleName "Golden.UncurryEffect.Test" ) ( Name "countdown$w" ) )
-                  )
-                  ( LiteralInt Nothing 2 :|
-                    [ Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) ]
-                  )
-                )
-              )
+            ( Ref Nothing
+              ( Imported ( ModuleName "Golden.UncurryEffect.Test" ) ( Name "runBoth$w" ) )
             )
-            ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+            ( Ref Nothing
+              ( Imported ( ModuleName "Golden.UncurryEffect.Test" ) ( Name "countdown" ) ) :|
+              [ Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) ]
+            )
           )
         )
       )
