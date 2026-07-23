@@ -28,14 +28,5 @@ return (function()
   local _ = Effect_Console_log(Golden_CharLiterals_Test_show("\\"))()
   local _ = Effect_Console_log(Golden_CharLiterals_Test_show("a"))()
   local _ = Effect_Console_log("true")()
-  return Effect_Console_log((function()
-    local v_S_221 = "\t" < "\n"
-    if v_S_221 then
-      return "true"
-    elseif false == v_S_221 then
-      return "false"
-    else
-      return error("No patterns matched")
-    end
-  end)())()
+  return Effect_Console_log("true")()
 end)()

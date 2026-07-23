@@ -116,25 +116,7 @@ UberModule
           ( AppN Nothing
             ( AppN Nothing
               ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
-              ( Let Nothing
-                ( Standalone
-                  ( Nothing, Name "v$221", PrimBinOp Nothing PrimLt
-                    ( LiteralChar Nothing '\x9' )
-                    ( LiteralChar Nothing ' ' )
-                  ) :| []
-                )
-                ( IfThenElse Nothing
-                  ( Ref Nothing ( Local ( Name "v$221" ) ) )
-                  ( LiteralString Nothing "true" )
-                  ( IfThenElse Nothing
-                    ( Eq Nothing ( LiteralBool Nothing False )
-                      ( Ref Nothing ( Local ( Name "v$221" ) ) )
-                    )
-                    ( LiteralString Nothing "false" )
-                    ( Exception Nothing "No patterns matched" )
-                  )
-                ) :| []
-              )
+              ( LiteralString Nothing "true" :| [] )
             )
             ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
           )

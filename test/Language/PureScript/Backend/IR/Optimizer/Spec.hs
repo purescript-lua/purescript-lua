@@ -65,6 +65,7 @@ import Language.PureScript.Backend.IR.Types
   , lets
   , listGrouping
   , literalBool
+  , literalChar
   , literalFloat
   , literalInt
   , literalObject
@@ -926,6 +927,22 @@ spec = describe "IR Optimizer" do
     it "does not fold string comparisons (bytes vs Text)" do
       let original = primBinOp PrimLt (literalString "a") (literalString "b")
       optimizedExpression original `shouldBe` original
+
+    it "folds ordering on two ASCII char literals (#222)" do
+      optimizedExpression (primBinOp PrimLt (literalChar '\t') (literalChar '\n'))
+        `shouldBe` literalBool True
+      optimizedExpression (primBinOp PrimLe (literalChar 'a') (literalChar 'a'))
+        `shouldBe` literalBool True
+      optimizedExpression (primBinOp PrimGt (literalChar 'a') (literalChar 'b'))
+        `shouldBe` literalBool False
+      optimizedExpression (primBinOp PrimGe (literalChar 'z') (literalChar 'a'))
+        `shouldBe` literalBool True
+
+    it "does not fold ordering on non-ASCII char literals (bytes vs Text)" do
+      let nonAscii = primBinOp PrimLt (literalChar 'é') (literalChar 'ê')
+          mixed = primBinOp PrimLt (literalChar 'a') (literalChar 'é')
+      optimizedExpression nonAscii `shouldBe` nonAscii
+      optimizedExpression mixed `shouldBe` mixed
 
     it "folds boolean and/or and not" do
       optimizedExpression (primBinOp PrimAnd (literalBool True) (literalBool False))
