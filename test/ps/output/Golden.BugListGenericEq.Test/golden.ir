@@ -14,6 +14,12 @@ UberModule
         [ ( Nothing, Name "log" ) ]
       ), Standalone
       ( QName
+        { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "log"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
+        ( PropName "log" )
+      ), Standalone
+      ( QName
         { qnameModuleName = ModuleName "Type.Proxy", qnameName = Name "Proxy"
         }, Ctor Nothing ProductType
         ( ModuleName "Type.Proxy" )
@@ -179,26 +185,6 @@ UberModule
         )
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Golden.BugListGenericEq.Test", qnameName = Name "logShow"
-        }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "a$2" ) :| [] )
-        ( AppN Nothing
-          ( ObjectProp Nothing
-            ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
-            ( PropName "log" )
-          )
-          ( IfThenElse Nothing
-            ( Ref Nothing ( Local ( Name "a$2" ) ) )
-            ( LiteralString Nothing "true" )
-            ( IfThenElse Nothing
-              ( Eq Nothing ( LiteralBool Nothing False ) ( Ref Nothing ( Local ( Name "a$2" ) ) ) )
-              ( LiteralString Nothing "false" )
-              ( Exception Nothing "No patterns matched" )
-            ) :| []
-          )
-        )
-      ), Standalone
-      ( QName
         { qnameModuleName = ModuleName "Golden.BugListGenericEq.Test", qnameName = Name "Nil"
         }, Ctor Nothing SumType
         ( ModuleName "Golden.BugListGenericEq.Test" )
@@ -224,14 +210,14 @@ UberModule
             ( ParamNamed Nothing ( Name "x" ) :| [] )
             ( Let Nothing
               ( Standalone
-                ( Nothing, Name "$cse274", ReflectCtor Nothing
+                ( Nothing, Name "$cse268", ReflectCtor Nothing
                   ( Ref Nothing ( Local ( Name "x" ) ) )
                 ) :| []
               )
               ( IfThenElse Nothing
                 ( Eq Nothing
                   ( LiteralString Nothing "Data.Generic.Rep∷Sum.Inl" )
-                  ( Ref Nothing ( Local ( Name "$cse274" ) ) )
+                  ( Ref Nothing ( Local ( Name "$cse268" ) ) )
                 )
                 ( Ref Nothing
                   ( Imported ( ModuleName "Golden.BugListGenericEq.Test" ) ( Name "Nil" ) )
@@ -239,7 +225,7 @@ UberModule
                 ( IfThenElse Nothing
                   ( Eq Nothing
                     ( LiteralString Nothing "Data.Generic.Rep∷Sum.Inr" )
-                    ( Ref Nothing ( Local ( Name "$cse274" ) ) )
+                    ( Ref Nothing ( Local ( Name "$cse268" ) ) )
                   )
                   ( Ctor Nothing SumType
                     ( ModuleName "Golden.BugListGenericEq.Test" )
@@ -256,14 +242,14 @@ UberModule
             ( ParamNamed Nothing ( Name "x0" ) :| [] )
             ( Let Nothing
               ( Standalone
-                ( Nothing, Name "$cse275", ReflectCtor Nothing
+                ( Nothing, Name "$cse269", ReflectCtor Nothing
                   ( Ref Nothing ( Local ( Name "x0" ) ) )
                 ) :| []
               )
               ( IfThenElse Nothing
                 ( Eq Nothing
                   ( LiteralString Nothing "Golden.BugListGenericEq.Test∷List.Nil" )
-                  ( Ref Nothing ( Local ( Name "$cse275" ) ) )
+                  ( Ref Nothing ( Local ( Name "$cse269" ) ) )
                 )
                 ( Ctor Nothing SumType
                   ( ModuleName "Data.Generic.Rep" )
@@ -278,7 +264,7 @@ UberModule
                 ( IfThenElse Nothing
                   ( Eq Nothing
                     ( LiteralString Nothing "Golden.BugListGenericEq.Test∷List.Cons" )
-                    ( Ref Nothing ( Local ( Name "$cse275" ) ) )
+                    ( Ref Nothing ( Local ( Name "$cse269" ) ) )
                   )
                   ( Ctor Nothing SumType
                     ( ModuleName "Data.Generic.Rep" )
@@ -308,13 +294,13 @@ UberModule
                   ( ParamNamed Nothing ( Name "y" ) :| [] )
                   ( Let Nothing
                     ( Standalone
-                      ( Nothing, Name "$cse278", ReflectCtor Nothing
+                      ( Nothing, Name "$cse272", ReflectCtor Nothing
                         ( Ref Nothing ( Local ( Name "y" ) ) )
                       ) :| []
                     )
                     ( Let Nothing
                       ( Standalone
-                        ( Nothing, Name "$cse277", Ctor Nothing SumType
+                        ( Nothing, Name "$cse271", Ctor Nothing SumType
                           ( ModuleName "Data.Generic.Rep" )
                           ( TyName "Sum" )
                           ( CtorName "Inl" )
@@ -327,7 +313,7 @@ UberModule
                       )
                       ( Let Nothing
                         ( Standalone
-                          ( Nothing, Name "$cse276", ReflectCtor Nothing
+                          ( Nothing, Name "$cse270", ReflectCtor Nothing
                             ( Ref Nothing ( Local ( Name "x" ) ) )
                           ) :| []
                         )
@@ -337,13 +323,13 @@ UberModule
                               ( Nothing, Name "v$13", IfThenElse Nothing
                                 ( Eq Nothing
                                   ( LiteralString Nothing "Golden.BugListGenericEq.Test∷List.Nil" )
-                                  ( Ref Nothing ( Local ( Name "$cse276" ) ) )
+                                  ( Ref Nothing ( Local ( Name "$cse270" ) ) )
                                 )
-                                ( Ref Nothing ( Local ( Name "$cse277" ) ) )
+                                ( Ref Nothing ( Local ( Name "$cse271" ) ) )
                                 ( IfThenElse Nothing
                                   ( Eq Nothing
                                     ( LiteralString Nothing "Golden.BugListGenericEq.Test∷List.Cons" )
-                                    ( Ref Nothing ( Local ( Name "$cse276" ) ) )
+                                    ( Ref Nothing ( Local ( Name "$cse270" ) ) )
                                   )
                                   ( Ctor Nothing SumType
                                     ( ModuleName "Data.Generic.Rep" )
@@ -361,34 +347,34 @@ UberModule
                               ( ParamNamed Nothing ( Name "v1$14" ) :| [] )
                               ( Let Nothing
                                 ( Standalone
-                                  ( Nothing, Name "$cse280", ReflectCtor Nothing
+                                  ( Nothing, Name "$cse274", ReflectCtor Nothing
                                     ( Ref Nothing ( Local ( Name "v1$14" ) ) )
                                   ) :| []
                                 )
                                 ( Let Nothing
                                   ( Standalone
-                                    ( Nothing, Name "$cse279", ReflectCtor Nothing
+                                    ( Nothing, Name "$cse273", ReflectCtor Nothing
                                       ( Ref Nothing ( Local ( Name "v$13" ) ) )
                                     ) :| []
                                   )
                                   ( IfThenElse Nothing
                                     ( Eq Nothing
                                       ( LiteralString Nothing "Data.Generic.Rep∷Sum.Inl" )
-                                      ( Ref Nothing ( Local ( Name "$cse279" ) ) )
+                                      ( Ref Nothing ( Local ( Name "$cse273" ) ) )
                                     )
                                     ( Eq Nothing
                                       ( LiteralString Nothing "Data.Generic.Rep∷Sum.Inl" )
-                                      ( Ref Nothing ( Local ( Name "$cse280" ) ) )
+                                      ( Ref Nothing ( Local ( Name "$cse274" ) ) )
                                     )
                                     ( PrimBinOp Nothing PrimAnd
                                       ( Eq Nothing
                                         ( LiteralString Nothing "Data.Generic.Rep∷Sum.Inr" )
-                                        ( Ref Nothing ( Local ( Name "$cse279" ) ) )
+                                        ( Ref Nothing ( Local ( Name "$cse273" ) ) )
                                       )
                                       ( PrimBinOp Nothing PrimAnd
                                         ( Eq Nothing
                                           ( LiteralString Nothing "Data.Generic.Rep∷Sum.Inr" )
-                                          ( Ref Nothing ( Local ( Name "$cse280" ) ) )
+                                          ( Ref Nothing ( Local ( Name "$cse274" ) ) )
                                         )
                                         ( AppN Nothing
                                           ( AppN Nothing
@@ -484,13 +470,13 @@ UberModule
                           ( IfThenElse Nothing
                             ( Eq Nothing
                               ( LiteralString Nothing "Golden.BugListGenericEq.Test∷List.Nil" )
-                              ( Ref Nothing ( Local ( Name "$cse278" ) ) )
+                              ( Ref Nothing ( Local ( Name "$cse272" ) ) )
                             )
-                            ( Ref Nothing ( Local ( Name "$cse277" ) ) )
+                            ( Ref Nothing ( Local ( Name "$cse271" ) ) )
                             ( IfThenElse Nothing
                               ( Eq Nothing
                                 ( LiteralString Nothing "Golden.BugListGenericEq.Test∷List.Cons" )
-                                ( Ref Nothing ( Local ( Name "$cse278" ) ) )
+                                ( Ref Nothing ( Local ( Name "$cse272" ) ) )
                               )
                               ( Ctor Nothing SumType
                                 ( ModuleName "Data.Generic.Rep" )
@@ -582,13 +568,19 @@ UberModule
           ( Standalone
             ( Nothing, Name "_", AppN Nothing
               ( AppN Nothing
-                ( Ref Nothing
-                  ( Imported ( ModuleName "Golden.BugListGenericEq.Test" ) ( Name "logShow" ) )
-                )
-                ( AppN Nothing
+                ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+                ( IfThenElse Nothing
                   ( AppN Nothing
-                    ( Ref Nothing
-                      ( Imported ( ModuleName "Golden.BugListGenericEq.Test" ) ( Name "eq" ) )
+                    ( AppN Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Golden.BugListGenericEq.Test" ) ( Name "eq" ) )
+                      )
+                      ( Ref Nothing
+                        ( Imported
+                          ( ModuleName "Golden.BugListGenericEq.Test" )
+                          ( Name "Nil" )
+                        ) :| []
+                      )
                     )
                     ( Ref Nothing
                       ( Imported
@@ -597,9 +589,8 @@ UberModule
                       ) :| []
                     )
                   )
-                  ( Ref Nothing
-                    ( Imported ( ModuleName "Golden.BugListGenericEq.Test" ) ( Name "Nil" ) ) :| []
-                  ) :| []
+                  ( LiteralString Nothing "true" )
+                  ( LiteralString Nothing "false" ) :| []
                 )
               )
               ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
@@ -607,13 +598,39 @@ UberModule
             [ Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
-                  ( Ref Nothing
-                    ( Imported ( ModuleName "Golden.BugListGenericEq.Test" ) ( Name "logShow" ) )
-                  )
-                  ( AppN Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+                  ( IfThenElse Nothing
                     ( AppN Nothing
-                      ( Ref Nothing
-                        ( Imported ( ModuleName "Golden.BugListGenericEq.Test" ) ( Name "eq" ) )
+                      ( AppN Nothing
+                        ( Ref Nothing
+                          ( Imported ( ModuleName "Golden.BugListGenericEq.Test" ) ( Name "eq" ) )
+                        )
+                        ( AppN Nothing
+                          ( Ref Nothing
+                            ( Imported
+                              ( ModuleName "Golden.BugListGenericEq.Test" )
+                              ( Name "cons$w" )
+                            )
+                          )
+                          ( LiteralInt Nothing 1 :|
+                            [ AppN Nothing
+                              ( Ref Nothing
+                                ( Imported
+                                  ( ModuleName "Golden.BugListGenericEq.Test" )
+                                  ( Name "cons$w" )
+                                )
+                              )
+                              ( LiteralInt Nothing 2 :|
+                                [ Ref Nothing
+                                  ( Imported
+                                    ( ModuleName "Golden.BugListGenericEq.Test" )
+                                    ( Name "Nil" )
+                                  )
+                                ]
+                              )
+                            ]
+                          ) :| []
+                        )
                       )
                       ( AppN Nothing
                         ( Ref Nothing
@@ -642,29 +659,8 @@ UberModule
                         ) :| []
                       )
                     )
-                    ( AppN Nothing
-                      ( Ref Nothing
-                        ( Imported ( ModuleName "Golden.BugListGenericEq.Test" ) ( Name "cons$w" ) )
-                      )
-                      ( LiteralInt Nothing 1 :|
-                        [ AppN Nothing
-                          ( Ref Nothing
-                            ( Imported
-                              ( ModuleName "Golden.BugListGenericEq.Test" )
-                              ( Name "cons$w" )
-                            )
-                          )
-                          ( LiteralInt Nothing 2 :|
-                            [ Ref Nothing
-                              ( Imported
-                                ( ModuleName "Golden.BugListGenericEq.Test" )
-                                ( Name "Nil" )
-                              )
-                            ]
-                          )
-                        ]
-                      ) :| []
-                    ) :| []
+                    ( LiteralString Nothing "true" )
+                    ( LiteralString Nothing "false" ) :| []
                   )
                 )
                 ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
@@ -673,35 +669,37 @@ UberModule
           )
           ( AppN Nothing
             ( AppN Nothing
-              ( Ref Nothing
-                ( Imported ( ModuleName "Golden.BugListGenericEq.Test" ) ( Name "logShow" ) )
-              )
-              ( AppN Nothing
+              ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+              ( IfThenElse Nothing
                 ( AppN Nothing
-                  ( Ref Nothing
-                    ( Imported ( ModuleName "Golden.BugListGenericEq.Test" ) ( Name "eq" ) )
+                  ( AppN Nothing
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Golden.BugListGenericEq.Test" ) ( Name "eq" ) )
+                    )
+                    ( AppN Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Golden.BugListGenericEq.Test" ) ( Name "cons$w" ) )
+                      )
+                      ( LiteralInt Nothing 1 :|
+                        [ Ref Nothing
+                          ( Imported ( ModuleName "Golden.BugListGenericEq.Test" ) ( Name "Nil" ) )
+                        ]
+                      ) :| []
+                    )
                   )
                   ( AppN Nothing
                     ( Ref Nothing
                       ( Imported ( ModuleName "Golden.BugListGenericEq.Test" ) ( Name "cons$w" ) )
                     )
-                    ( LiteralInt Nothing 1 :|
+                    ( LiteralInt Nothing 2 :|
                       [ Ref Nothing
                         ( Imported ( ModuleName "Golden.BugListGenericEq.Test" ) ( Name "Nil" ) )
                       ]
                     ) :| []
                   )
                 )
-                ( AppN Nothing
-                  ( Ref Nothing
-                    ( Imported ( ModuleName "Golden.BugListGenericEq.Test" ) ( Name "cons$w" ) )
-                  )
-                  ( LiteralInt Nothing 2 :|
-                    [ Ref Nothing
-                      ( Imported ( ModuleName "Golden.BugListGenericEq.Test" ) ( Name "Nil" ) )
-                    ]
-                  ) :| []
-                ) :| []
+                ( LiteralString Nothing "true" )
+                ( LiteralString Nothing "false" ) :| []
               )
             )
             ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )

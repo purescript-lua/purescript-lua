@@ -59,6 +59,7 @@ import Language.PureScript.Backend.IR.Types
   , ctorId
   , dataArgumentByIndex
   , eq
+  , exception
   , getAnn
   , ifThenElse
   , isLiteral
@@ -1048,6 +1049,75 @@ spec = describe "IR Optimizer" do
     it "leaves an if with no boolean-literal branch alone" do
       let original = ifThenElse p r (refLocal (Name "s"))
       optimizedExpression original `shouldBe` original
+
+  -- A pattern match on a Boolean compiles to a three-way if with a
+  -- synthesized default: the scrutinee is re-tested behind the first
+  -- branch (`false == a`) and the default is unreachable, since
+  -- true/false already cover a Boolean. The boolean-equality folds and
+  -- the known-condition propagation collapse it to a two-way if.
+  describe "collapses a Boolean pattern match to a two-way if (#223)" do
+    let m = moduleNameFromString "M"
+        a = refLocal (Name "a")
+        b = primBinOp PrimLt (refLocal (Name "x")) (refLocal (Name "y"))
+        deadDefault = exception "No patterns matched"
+
+    it "reduces False == b to not b" do
+      optimizedExpression (eq (literalBool False) b) `shouldBe` primNot b
+
+    it "reduces b == False to not b" do
+      optimizedExpression (eq b (literalBool False)) `shouldBe` primNot b
+
+    it "reduces b == True to b" do
+      optimizedExpression (eq b (literalBool True)) `shouldBe` b
+
+    it "still folds two boolean literals to a literal" do
+      optimizedExpression (eq (literalBool False) (literalBool False))
+        `shouldBe` literalBool True
+
+    it "reduces the three-way Boolean match to a two-way if" do
+      -- The shape every inlined `show` of a Boolean produces.
+      let original =
+            ifThenElse a (literalString "true") $
+              ifThenElse
+                (eq (literalBool False) a)
+                (literalString "false")
+                deadDefault
+      optimizedExpression original
+        `shouldBe` ifThenElse a (literalString "true") (literalString "false")
+
+    it "propagates the condition's truth into the then branch" do
+      -- if a then a else e: a is True throughout the then branch, and
+      -- the half-literal boolean-if fold finishes the collapse.
+      let e = refLocal (Name "e")
+      optimizedExpression (ifThenElse a a e)
+        `shouldBe` primBinOp PrimOr a e
+
+    it "keeps the default of a genuinely partial match" do
+      -- No second arm at all: the default is live and must survive.
+      let original = ifThenElse a (literalString "true") deadDefault
+      optimizedExpression original `shouldBe` original
+
+    it "keeps the default when the guard tests a different variable" do
+      -- The re-test folds only for the same variable; a different one
+      -- may genuinely be true, so the default stays reachable (the
+      -- equality fold and the negated-if flip still normalise it).
+      let c = refLocal (Name "c")
+          original =
+            ifThenElse a (literalString "true") $
+              ifThenElse
+                (eq (literalBool False) c)
+                (literalString "false")
+                deadDefault
+          expected =
+            ifThenElse a (literalString "true") $
+              ifThenElse c deadDefault (literalString "false")
+      optimizedExpression original `shouldBe` expected
+
+    it "prefers collapsing equal branches over propagating the condition" do
+      -- if a then f a else f a ≡ f a: substituting True/False into the
+      -- branches first would unequalize them and lose the collapse.
+      let fa = application (refImported m (Name "f")) a
+      optimizedExpression (ifThenElse a fa fa) `shouldBe` fa
 
   -- Case-of-case over the IfThenElse decision tree: a boolean-returning
   -- tree consumed in a strict position (an Eq against a literal, or the

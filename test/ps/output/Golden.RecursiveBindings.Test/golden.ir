@@ -12,15 +12,9 @@ UberModule
                   ( Ref Nothing ( Local ( Name "no$1" ) ) )
                   ( LiteralBool Nothing False :| [] )
                 )
-                ( IfThenElse Nothing
-                  ( Eq Nothing ( LiteralBool Nothing False )
-                    ( Ref Nothing ( Local ( Name "v$2" ) ) )
-                  )
-                  ( AppN Nothing
-                    ( Ref Nothing ( Local ( Name "no$1" ) ) )
-                    ( LiteralBool Nothing True :| [] )
-                  )
-                  ( Exception Nothing "No patterns matched" )
+                ( AppN Nothing
+                  ( Ref Nothing ( Local ( Name "no$1" ) ) )
+                  ( LiteralBool Nothing True :| [] )
                 )
               )
             ) :|
@@ -33,15 +27,9 @@ UberModule
                     ( Ref Nothing ( Local ( Name "yes$0" ) ) )
                     ( LiteralBool Nothing False :| [] )
                   )
-                  ( IfThenElse Nothing
-                    ( Eq Nothing ( LiteralBool Nothing False )
-                      ( Ref Nothing ( Local ( Name "v0$3" ) ) )
-                    )
-                    ( AppN Nothing
-                      ( Ref Nothing ( Local ( Name "yes$0" ) ) )
-                      ( LiteralBool Nothing True :| [] )
-                    )
-                    ( Exception Nothing "No patterns matched" )
+                  ( AppN Nothing
+                    ( Ref Nothing ( Local ( Name "yes$0" ) ) )
+                    ( LiteralBool Nothing True :| [] )
                   )
                 )
               )
@@ -64,15 +52,9 @@ UberModule
                   ( Ref Nothing ( Local ( Name "no$15" ) ) )
                   ( LiteralBool Nothing False :| [] )
                 )
-                ( IfThenElse Nothing
-                  ( Eq Nothing ( LiteralBool Nothing False )
-                    ( Ref Nothing ( Local ( Name "v$16" ) ) )
-                  )
-                  ( AppN Nothing
-                    ( Ref Nothing ( Local ( Name "no$15" ) ) )
-                    ( LiteralBool Nothing True :| [] )
-                  )
-                  ( Exception Nothing "No patterns matched" )
+                ( AppN Nothing
+                  ( Ref Nothing ( Local ( Name "no$15" ) ) )
+                  ( LiteralBool Nothing True :| [] )
                 )
               )
             ) :|
@@ -85,15 +67,9 @@ UberModule
                     ( Ref Nothing ( Local ( Name "yes$14" ) ) )
                     ( LiteralBool Nothing False :| [] )
                   )
-                  ( IfThenElse Nothing
-                    ( Eq Nothing ( LiteralBool Nothing False )
-                      ( Ref Nothing ( Local ( Name "v0$17" ) ) )
-                    )
-                    ( AppN Nothing
-                      ( Ref Nothing ( Local ( Name "yes$14" ) ) )
-                      ( LiteralBool Nothing True :| [] )
-                    )
-                    ( Exception Nothing "No patterns matched" )
+                  ( AppN Nothing
+                    ( Ref Nothing ( Local ( Name "yes$14" ) ) )
+                    ( LiteralBool Nothing True :| [] )
                   )
                 )
               )

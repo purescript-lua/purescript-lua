@@ -2,16 +2,15 @@ UberModule
   { uberModuleBindings =
     [ Standalone
       ( QName
-        { qnameModuleName = ModuleName "Data.Semiring", qnameName = Name "foreign"
-        }, ForeignImport Nothing
-        ( ModuleName "Data.Semiring" ) ".spago/p/prelude/5718c84fdde6247749cb053e816df696c30fe691/src/Data/Semiring.purs"
-        [ ( Nothing, Name "numAdd" ), ( Nothing, Name "numMul" ) ]
-      ), Standalone
-      ( QName
         { qnameModuleName = ModuleName "Data.Ring", qnameName = Name "foreign"
         }, ForeignImport Nothing
         ( ModuleName "Data.Ring" ) ".spago/p/prelude/5718c84fdde6247749cb053e816df696c30fe691/src/Data/Ring.purs"
         [ ( Nothing, Name "numSub" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Ring", qnameName = Name "numSub" }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Data.Ring" ) ( Name "foreign" ) ) )
+        ( PropName "numSub" )
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Data.Number", qnameName = Name "foreign"
@@ -43,56 +42,10 @@ UberModule
         [ ( Nothing, Name "log" ) ]
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Data.Ring", qnameName = Name "sub" }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "dict" ) :| [] )
-        ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) ) ( PropName "sub" ) )
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Data.Ring", qnameName = Name "ringNumber"
-        }, LiteralObject Nothing
-        [
-          ( PropName "sub", ObjectProp Nothing
-            ( Ref Nothing ( Imported ( ModuleName "Data.Ring" ) ( Name "foreign" ) ) )
-            ( PropName "numSub" )
-          ),
-          ( PropName "Semiring0", AbsN Nothing
-            ( ParamUnused Nothing :| [] )
-            ( LiteralObject Nothing
-              [
-                ( PropName "add", ObjectProp Nothing
-                  ( Ref Nothing ( Imported ( ModuleName "Data.Semiring" ) ( Name "foreign" ) ) )
-                  ( PropName "numAdd" )
-                ),
-                ( PropName "zero", LiteralFloat Nothing 0.0 ),
-                ( PropName "mul", ObjectProp Nothing
-                  ( Ref Nothing ( Imported ( ModuleName "Data.Semiring" ) ( Name "foreign" ) ) )
-                  ( PropName "numMul" )
-                ),
-                ( PropName "one", LiteralFloat Nothing 1.0 )
-              ]
-            )
-          )
-        ]
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Golden.NumberIsNaN.Test", qnameName = Name "logShow"
-        }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "a$2" ) :| [] )
-        ( AppN Nothing
-          ( ObjectProp Nothing
-            ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
-            ( PropName "log" )
-          )
-          ( IfThenElse Nothing
-            ( Ref Nothing ( Local ( Name "a$2" ) ) )
-            ( LiteralString Nothing "true" )
-            ( IfThenElse Nothing
-              ( Eq Nothing ( LiteralBool Nothing False ) ( Ref Nothing ( Local ( Name "a$2" ) ) ) )
-              ( LiteralString Nothing "false" )
-              ( Exception Nothing "No patterns matched" )
-            ) :| []
-          )
-        )
+        { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "log"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
+        ( PropName "log" )
       )
     ], uberModuleForeigns = [], uberModuleExports =
     [
@@ -102,14 +55,14 @@ UberModule
           ( Standalone
             ( Nothing, Name "_", AppN Nothing
               ( AppN Nothing
-                ( Ref Nothing
-                  ( Imported ( ModuleName "Golden.NumberIsNaN.Test" ) ( Name "logShow" ) )
-                )
-                ( AppN Nothing
-                  ( Ref Nothing ( Imported ( ModuleName "Data.Number" ) ( Name "isNaN" ) ) )
-                  ( Ref Nothing
-                    ( Imported ( ModuleName "Data.Number" ) ( Name "nan" ) ) :| []
-                  ) :| []
+                ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+                ( IfThenElse Nothing
+                  ( AppN Nothing
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Number" ) ( Name "isNaN" ) ) )
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Number" ) ( Name "nan" ) ) :| [] )
+                  )
+                  ( LiteralString Nothing "true" )
+                  ( LiteralString Nothing "false" ) :| []
                 )
               )
               ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
@@ -117,77 +70,60 @@ UberModule
             [ Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
-                  ( Ref Nothing
-                    ( Imported ( ModuleName "Golden.NumberIsNaN.Test" ) ( Name "logShow" ) )
-                  )
-                  ( AppN Nothing
-                    ( Ref Nothing ( Imported ( ModuleName "Data.Number" ) ( Name "isNaN" ) ) )
+                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+                  ( IfThenElse Nothing
                     ( AppN Nothing
+                      ( Ref Nothing ( Imported ( ModuleName "Data.Number" ) ( Name "isNaN" ) ) )
                       ( AppN Nothing
                         ( AppN Nothing
-                          ( Ref Nothing ( Imported ( ModuleName "Data.Ring" ) ( Name "sub" ) ) )
-                          ( Ref Nothing
-                            ( Imported ( ModuleName "Data.Ring" ) ( Name "ringNumber" ) ) :| []
-                          )
+                          ( Ref Nothing ( Imported ( ModuleName "Data.Ring" ) ( Name "numSub" ) ) )
+                          ( LiteralFloat Nothing 0.0 :| [] )
                         )
-                        ( ObjectProp Nothing
-                          ( AppN Nothing
-                            ( ObjectProp Nothing
-                              ( Ref Nothing
-                                ( Imported ( ModuleName "Data.Ring" ) ( Name "ringNumber" ) )
-                              )
-                              ( PropName "Semiring0" )
-                            )
-                            ( Ref Nothing
-                              ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| []
-                            )
-                          )
-                          ( PropName "zero" ) :| []
-                        )
+                        ( Ref Nothing
+                          ( Imported ( ModuleName "Data.Number" ) ( Name "nan" ) ) :| []
+                        ) :| []
                       )
-                      ( Ref Nothing
-                        ( Imported ( ModuleName "Data.Number" ) ( Name "nan" ) ) :| []
-                      ) :| []
-                    ) :| []
+                    )
+                    ( LiteralString Nothing "true" )
+                    ( LiteralString Nothing "false" ) :| []
                   )
                 )
                 ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
-                  ( Ref Nothing
-                    ( Imported ( ModuleName "Golden.NumberIsNaN.Test" ) ( Name "logShow" ) )
-                  )
-                  ( AppN Nothing
-                    ( Ref Nothing ( Imported ( ModuleName "Data.Number" ) ( Name "isNaN" ) ) )
+                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+                  ( IfThenElse Nothing
                     ( AppN Nothing
+                      ( Ref Nothing ( Imported ( ModuleName "Data.Number" ) ( Name "isNaN" ) ) )
                       ( AppN Nothing
                         ( AppN Nothing
-                          ( Ref Nothing ( Imported ( ModuleName "Data.Ring" ) ( Name "sub" ) ) )
+                          ( Ref Nothing ( Imported ( ModuleName "Data.Ring" ) ( Name "numSub" ) ) )
                           ( Ref Nothing
-                            ( Imported ( ModuleName "Data.Ring" ) ( Name "ringNumber" ) ) :| []
+                            ( Imported ( ModuleName "Data.Number" ) ( Name "infinity" ) ) :| []
                           )
                         )
                         ( Ref Nothing
                           ( Imported ( ModuleName "Data.Number" ) ( Name "infinity" ) ) :| []
-                        )
+                        ) :| []
                       )
-                      ( Ref Nothing
-                        ( Imported ( ModuleName "Data.Number" ) ( Name "infinity" ) ) :| []
-                      ) :| []
-                    ) :| []
+                    )
+                    ( LiteralString Nothing "true" )
+                    ( LiteralString Nothing "false" ) :| []
                   )
                 )
                 ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
-                  ( Ref Nothing
-                    ( Imported ( ModuleName "Golden.NumberIsNaN.Test" ) ( Name "logShow" ) )
-                  )
-                  ( AppN Nothing
-                    ( Ref Nothing ( Imported ( ModuleName "Data.Number" ) ( Name "isNaN" ) ) )
-                    ( LiteralFloat Nothing 42.0 :| [] ) :| []
+                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+                  ( IfThenElse Nothing
+                    ( AppN Nothing
+                      ( Ref Nothing ( Imported ( ModuleName "Data.Number" ) ( Name "isNaN" ) ) )
+                      ( LiteralFloat Nothing 42.0 :| [] )
+                    )
+                    ( LiteralString Nothing "true" )
+                    ( LiteralString Nothing "false" ) :| []
                   )
                 )
                 ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
@@ -196,14 +132,16 @@ UberModule
           )
           ( AppN Nothing
             ( AppN Nothing
-              ( Ref Nothing
-                ( Imported ( ModuleName "Golden.NumberIsNaN.Test" ) ( Name "logShow" ) )
-              )
-              ( AppN Nothing
-                ( Ref Nothing ( Imported ( ModuleName "Data.Number" ) ( Name "isNaN" ) ) )
-                ( Ref Nothing
-                  ( Imported ( ModuleName "Data.Number" ) ( Name "infinity" ) ) :| []
-                ) :| []
+              ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+              ( IfThenElse Nothing
+                ( AppN Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Data.Number" ) ( Name "isNaN" ) ) )
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Data.Number" ) ( Name "infinity" ) ) :| []
+                  )
+                )
+                ( LiteralString Nothing "true" )
+                ( LiteralString Nothing "false" ) :| []
               )
             )
             ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
