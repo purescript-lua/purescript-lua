@@ -121,6 +121,16 @@ data PassCheckFailure
     changes or genuinely loops.
     -}
     FixpointDivergence Text Natural
+  | {- | The pipeline's final module is not closed: it contains
+    'Imported' references no top-level binding provides — some pass
+    manufactured a reference to a binding dead-code elimination had
+    already removed. The generated Lua would read a never-assigned
+    module-table field, a nil call at runtime (issue #297). Checked on
+    the optimized result only, by 'Language.PureScript.Backend.compileModules'
+    and the golden harness — see
+    'Language.PureScript.Backend.IR.Linter.lintDanglingImports'.
+    -}
+    ResultDanglingImports (NonEmpty Violation)
   deriving stock (Eq, Show)
 
 {- | The user-facing rendering of a contract violation (used by the CLI
@@ -147,6 +157,10 @@ renderPassCheckFailure = \case
       <> " did not converge within "
       <> show iterations
       <> " iterations."
+  ResultDanglingImports violations →
+    unlines $
+      ["Optimized module contains dangling imported references:"]
+        <> (show <$> toList violations)
 
 {- | Iteration backstop for 'RunFixpoint'. Convergence normally takes a
 handful of rounds, so this is far above anything legitimate: hitting it

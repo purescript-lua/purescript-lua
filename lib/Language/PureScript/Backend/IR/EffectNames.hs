@@ -5,6 +5,7 @@ module Language.PureScript.Backend.IR.EffectNames
   ( canonicalBindNames
   , canonicalPureNames
   , canonicalizeEffectApp
+  , canonicalizeEffectAppInModule
   ) where
 
 import Data.Map.Strict qualified as Map
@@ -73,12 +74,48 @@ The rewrite runs in two tiers, both required:
      @bind = bind bindST@) and only becomes 'Imported' after the linker
      requalifies it, so tier 1 cannot see it. The rule also catches
      pairs exposed later by alias dissolution. It rewrites two nodes to
-     one, so it is fixpoint-safe, and the canonical heads are real
-     foreigns, so firing after magic-do is harmless.
+     one, so it is fixpoint-safe.
 
 Both tiers match 'Imported' references only. A 'Local' reference has no
 stable identity to match — the qualified name is the identity that
 survives linking.
+
+Tier 2 resolves head positions through top-level aliases (issue #297).
+When a module instantiates @discard@ with two /different/ Bind
+dictionaries — Effect or ST plus any second monad — purs's own CSE (the
+CoreFn common-subexpression pass over compiler-synthesized dictionary
+applications) floats the shared partial application as a binding of its
+own:
+
+  > discard  = Control.Bind.discard discardUnit
+  > discard1 = discard bindST
+  > discard2 = discard bindEffect
+
+(A single-use instantiation may also stay applied inline in its chain —
+@discard bindEffect m k@ — rather than becoming a float; the node shape
+is the same.) Either way the row's head is hidden behind a module-local
+alias that tier 1 cannot see (the reference is 'Local' at translation
+time) and a plain structural match cannot either. Tier 2 therefore
+matches each head position /through/ top-level aliases
+('canonicalizeEffectAppInModule'):
+a reference denotes a row's name if it is that name, or if the
+top-level binding it names has a right-hand side that denotes it
+(visited-bounded, so alias cycles cannot loop it). The dictionary
+positions stay strict references — dictionaries are already top-level
+constants, so CSE never hides them. The matched spines are structurally
+bounded (@bind@/@pure@: two nodes, @discard@: three), so resolution
+terminates after at most a hop per node.
+
+Tier 2 also /declines/ a rewrite whose produced reference would dangle
+(issue #297 again, the severe half): the canonical accessor bindings are
+subject to dissolution and dead-code elimination like any other, so a
+row exposed late — e.g. by alias dissolution after magic-do — may name
+an accessor that no longer exists, and the manufactured reference would
+compile to a read of a never-assigned module-table field (a nil call at
+runtime). Declining is sound: the dictionary application left behind is
+executable — @bindE m k@ is already the program the application
+denotes. Tier 1 needs no such gate: it runs before linking, and the
+linker includes the accessor bindings its references demand.
 
 There is deliberately /no/ standalone @discard discardUnit ==> bind@
 row: it would rewrite the discards of every monad, churning all the
@@ -94,30 +131,94 @@ Consumers of the canonical names: magic-do matches chain heads against
 --------------------------------------------------------------------------------
 -- Canonicalization ------------------------------------------------------------
 
-{- | Rewrite an Effect/ST dictionary application into an application of
-the real foreign method, per the table in
-Note [Canonical Effect/ST heads]. The produced reference keeps the
-outer application's annotation. 'Nothing' when the node is not a row of
-the table.
+{- | Tier 1 of Note [Canonical Effect/ST heads]: rewrite an Effect/ST
+dictionary application into a reference to the real foreign method, per
+the table in the note. Runs at CoreFn translation, where no top-level
+aliases are visible (module-local references are still 'Local') and
+every produced reference is safe — the linker includes the accessor
+bindings the references demand. The produced reference keeps the outer
+application's annotation. 'Nothing' when the node is not a row of the
+table.
 -}
 canonicalizeEffectApp ∷ RawExp ann → Maybe (RawExp ann)
-canonicalizeEffectApp = \case
-  App ann (Ref _ (Imported hm hn)) (Ref _ (Imported dm dn))
-    | QName hm hn == bindQName →
-        canonicalRef ann <$> Map.lookup (QName dm dn) bindMethods
-    | QName hm hn == pureQName →
-        canonicalRef ann <$> Map.lookup (QName dm dn) pureMethods
-  App
-    ann
-    (App _ (Ref _ (Imported hm hn)) (Ref _ (Imported um un)))
-    (Ref _ (Imported dm dn))
-      | QName hm hn == discardQName
-      , QName um un == discardUnitQName →
-          canonicalRef ann <$> Map.lookup (QName dm dn) bindMethods
+canonicalizeEffectApp = canonicalizeWith (const Nothing) (const True)
+
+{- | Tier 2 of Note [Canonical Effect/ST heads]: like
+'canonicalizeEffectApp', with the module's top-level bindings in scope.
+Head positions match through top-level aliases (the purs CSE floats of
+issue #297), and a rewrite is declined unless the module still binds
+the canonical method the produced reference would name.
+-}
+canonicalizeEffectAppInModule
+  ∷ Map QName (RawExp ann) → RawExp ann → Maybe (RawExp ann)
+canonicalizeEffectAppInModule topLevel =
+  canonicalizeWith (`Map.lookup` topLevel) (`Map.member` topLevel)
+
+{- | The shared matcher: the first argument resolves a top-level alias
+to its right-hand side, the second says whether a reference to the
+given name may be manufactured. See Note [Canonical Effect/ST heads]
+for both.
+-}
+canonicalizeWith
+  ∷ ∀ ann
+   . (QName → Maybe (RawExp ann))
+  → (QName → Bool)
+  → RawExp ann
+  → Maybe (RawExp ann)
+canonicalizeWith resolve live = \case
+  App ann hd (Ref _ (Imported dm dn)) → do
+    methods ← methodTable hd
+    target ← Map.lookup (QName dm dn) methods
+    guard (live target)
+    pure (canonicalRef ann target)
   _ → Nothing
  where
   canonicalRef ∷ ann → QName → RawExp ann
   canonicalRef ann (QName m n) = Ref ann (Imported m n)
+
+  -- The method table the head selects: bind/pure denoted directly or
+  -- through aliases, or the discard·discardUnit pair — the pair itself
+  -- possibly one alias, each of its positions possibly one more.
+  methodTable ∷ RawExp ann → Maybe (Map QName QName)
+  methodTable hd
+    | denotes bindQName hd = Just bindMethods
+    | denotes pureQName hd = Just pureMethods
+    | Just (inner, unitArg) ← viewAppThroughAliases hd
+    , denotes discardQName inner
+    , denotes discardUnitQName unitArg =
+        Just bindMethods
+    | otherwise = Nothing
+
+  -- Whether the expression denotes the given qualified name: it is a
+  -- reference to it, or a reference to a top-level alias whose
+  -- right-hand side denotes it. The visited set bounds alias chains.
+  denotes ∷ QName → RawExp ann → Bool
+  denotes target = go mempty
+   where
+    go ∷ Set QName → RawExp ann → Bool
+    go visited = \case
+      Ref _ (Imported m n)
+        | QName m n == target → True
+        | qname ← QName m n
+        , Set.notMember qname visited
+        , Just rhs ← resolve qname →
+            go (Set.insert qname visited) rhs
+      _ → False
+
+  -- View an application node through top-level aliases: the node
+  -- itself, or the application a chain of aliases resolves to.
+  viewAppThroughAliases ∷ RawExp ann → Maybe (RawExp ann, RawExp ann)
+  viewAppThroughAliases = go mempty
+   where
+    go ∷ Set QName → RawExp ann → Maybe (RawExp ann, RawExp ann)
+    go visited = \case
+      App _ f a → Just (f, a)
+      Ref _ (Imported m n)
+        | qname ← QName m n
+        , Set.notMember qname visited
+        , Just rhs ← resolve qname →
+            go (Set.insert qname visited) rhs
+      _ → Nothing
 
 {- | The canonical Effect/ST bind methods: @Effect.bindE@ and
 @Control.Monad.ST.Internal.bind_@.

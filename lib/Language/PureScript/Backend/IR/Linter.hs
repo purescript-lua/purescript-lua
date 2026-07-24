@@ -4,11 +4,13 @@ suite always, in the CLI behind a debug flag. A violation names the exact
 top-level site, turning a silent miscompile into a loud failure that
 points at the offending pass.
 
-The linter only checks 'Local' references: after
+The per-pass checks cover 'Local' references only: after
 'Language.PureScript.Backend.IR.Linker.qualifyTopRefs' every top-level
-cross-reference is 'Language.PureScript.Backend.IR.Names.Imported', which
-this scope check deliberately ignores (mechanically checking those is
-part of the globally-unique-names redesign, issue #139).
+cross-reference is 'Language.PureScript.Backend.IR.Names.Imported', and
+unit fixtures legitimately use such references as free external names,
+so 'Imported' resolution ('lintDanglingImports') is checked on closed
+modules only — the optimizer's final result — rather than at every pass
+boundary.
 -}
 module Language.PureScript.Backend.IR.Linter
   ( Violation (..)
@@ -16,6 +18,7 @@ module Language.PureScript.Backend.IR.Linter
   , lintWellScoped
   , lintUniqueBinders
   , lintWellApplied
+  , lintDanglingImports
   , unboundLocals
   ) where
 
@@ -24,9 +27,10 @@ import Data.Map qualified as Map
 import Data.Set qualified as Set
 import Language.PureScript.Backend.IR.Linker (UberModule (..))
 import Language.PureScript.Backend.IR.Names
-  ( Name (..)
-  , QName
-  , Qualified (Local)
+  ( ModuleName (..)
+  , Name (..)
+  , QName (..)
+  , Qualified (Imported, Local)
   , discardName
   )
 import Language.PureScript.Backend.IR.Types
@@ -82,6 +86,12 @@ data Violation
     site, like 'RefToDiscard'.
     -}
     ValuesOutsideTail Site
+  | {- | An 'Imported' reference to a top-level name the module does not
+    bind ('lintDanglingImports'). Codegen renders it as a read of a
+    never-assigned module-table field — a nil call at runtime (issue
+    #297).
+    -}
+    DanglingImport Site QName
   deriving stock (Eq, Show)
 
 -- | The top-level entry of the module a violation was found in.
@@ -137,6 +147,35 @@ lintWellApplied = overSites \site e →
     <> [NonTrailingUnusedParam site | hasNonTrailingUnusedParam e]
     <> [CtorApplied site | hasAppliedCtor e]
     <> [ValuesOutsideTail site | hasMisplacedValues e]
+
+{- | Check that the module is closed: every 'Imported' reference outside
+the marker namespace @Prim@ (@Prim.undefined@, the effect-run marker)
+names a top-level binding or foreign of the module. Only meaningful for
+a linked module — unit fixtures reference external names freely — so it
+is checked on the optimizer's final result, not at pass boundaries: see
+'Language.PureScript.Backend.compileModules'. A dangling reference
+compiles to a read of a never-assigned module-table field, a nil call
+at runtime (issue #297).
+-}
+lintDanglingImports ∷ UberModule → [Violation]
+lintDanglingImports uber@UberModule {..} =
+  overSites (\site e → DanglingImport site <$> danglingImports e) uber
+ where
+  resolvable ∷ Set QName
+  resolvable =
+    Set.fromList $
+      fmap fst (listGrouping =<< uberModuleBindings)
+        <> fmap fst uberModuleForeigns
+
+  danglingImports ∷ Exp → [QName]
+  danglingImports e =
+    ordNub
+      [ qname
+      | Ref _ (Imported m n) ← toListOf (cosmosOf subexpressions) e
+      , m /= ModuleName "Prim"
+      , let qname = QName m n
+      , Set.notMember qname resolvable
+      ]
 
 {- | Run a per-site check over every top-level binding, foreign binding,
 and export of the module.
