@@ -1,0 +1,565 @@
+UberModule
+  { uberModuleBindings =
+    [ Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Unit", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Data.Unit" ) ".spago/p/prelude/5718c84fdde6247749cb053e816df696c30fe691/src/Data/Unit.purs"
+        [ ( Just Never, Name "unit" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Unit", qnameName = Name "unit"
+        }, ObjectProp ( Just Never )
+        ( Ref Nothing ( Imported ( ModuleName "Data.Unit" ) ( Name "foreign" ) ) )
+        ( PropName "unit" )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Show", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Data.Show" ) ".spago/p/prelude/5718c84fdde6247749cb053e816df696c30fe691/src/Data/Show.purs"
+        [ ( Nothing, Name "showIntImpl" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Show", qnameName = Name "showIntImpl"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
+        ( PropName "showIntImpl" )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Effect", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Effect" ) ".spago/p/effect/82bac3dff904fa34534c4f5b9deeb5da359471c8/src/Effect.purs"
+        [
+          ( Nothing, Name "pureE" ),
+          ( Nothing, Name "bindE" ),
+          ( Nothing, Name "whileE" ),
+          ( Nothing, Name "forE" ),
+          ( Nothing, Name "foreachE" )
+        ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Effect", qnameName = Name "forE" }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "foreign" ) ) )
+        ( PropName "forE" )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Effect", qnameName = Name "foreachE" }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "foreign" ) ) )
+        ( PropName "foreachE" )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Effect", qnameName = Name "pureE" }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "foreign" ) ) )
+        ( PropName "pureE" )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Effect.Console" ) ".spago/p/console/f82835a0b873aafe6bd7b14dd30cc150553d4ab9/src/Effect/Console.purs"
+        [ ( Nothing, Name "log" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "log"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
+        ( PropName "log" )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Effect.Ref", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Effect.Ref" ) ".spago/p/refs/ee6e959ec21b752622e105a14816e7983b21b9a5/src/Effect/Ref.purs"
+        [ ( Nothing, Name "_new" ), ( Nothing, Name "read" ), ( Nothing, Name "modifyImpl" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Effect.Ref", qnameName = Name "_new" }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Effect.Ref" ) ( Name "foreign" ) ) )
+        ( PropName "_new" )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Effect.Ref", qnameName = Name "read" }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Effect.Ref" ) ( Name "foreign" ) ) )
+        ( PropName "read" )
+      ), RecursiveGroup
+      (
+        ( QName
+          { qnameModuleName = ModuleName "Effect", qnameName = Name "monadEffect"
+          }, LiteralObject Nothing
+          [
+            ( PropName "Applicative0", AbsN Nothing
+              ( ParamUnused Nothing :| [] )
+              ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "applicativeEffect" ) ) )
+            ),
+            ( PropName "Bind1", AbsN Nothing
+              ( ParamUnused Nothing :| [] )
+              ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "bindEffect" ) ) )
+            )
+          ]
+        ) :|
+        [
+          ( QName
+            { qnameModuleName = ModuleName "Effect", qnameName = Name "bindEffect"
+            }, LiteralObject Nothing
+            [
+              ( PropName "bind", ObjectProp Nothing
+                ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "foreign" ) ) )
+                ( PropName "bindE" )
+              ),
+              ( PropName "Apply0", AbsN Nothing
+                ( ParamUnused Nothing :| [] )
+                ( AppN Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "Lazy_applyEffect" ) ) )
+                  ( LiteralInt Nothing 0 :| [] )
+                )
+              )
+            ]
+          ),
+          ( QName
+            { qnameModuleName = ModuleName "Effect", qnameName = Name "applicativeEffect"
+            }, LiteralObject Nothing
+            [
+              ( PropName "pure", Ref Nothing
+                ( Imported ( ModuleName "Effect" ) ( Name "pureE" ) )
+              ),
+              ( PropName "Apply0", AbsN Nothing
+                ( ParamUnused Nothing :| [] )
+                ( AppN Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "Lazy_applyEffect" ) ) )
+                  ( LiteralInt Nothing 0 :| [] )
+                )
+              )
+            ]
+          ),
+          ( QName
+            { qnameModuleName = ModuleName "Effect", qnameName = Name "Lazy_functorEffect"
+            }, AppN Nothing
+            ( AppN Nothing
+              ( Ref Nothing ( Local ( Name "PSLUA_runtime_lazy" ) ) )
+              ( LiteralString Nothing "functorEffect" :| [] )
+            )
+            ( AbsN Nothing
+              ( ParamUnused Nothing :| [] )
+              ( LiteralObject Nothing
+                [
+                  ( PropName "map", AbsN Nothing
+                    ( ParamNamed Nothing ( Name "f$38" ) :| [] )
+                    ( AbsN Nothing
+                      ( ParamNamed Nothing ( Name "a$39" ) :| [] )
+                      ( AppN Nothing
+                        ( AppN Nothing
+                          ( ObjectProp Nothing
+                            ( AppN Nothing
+                              ( ObjectProp Nothing
+                                ( Ref Nothing
+                                  ( Imported ( ModuleName "Effect" ) ( Name "applicativeEffect" ) )
+                                )
+                                ( PropName "Apply0" )
+                              )
+                              ( Ref Nothing
+                                ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| []
+                              )
+                            )
+                            ( PropName "apply" )
+                          )
+                          ( AppN Nothing
+                            ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "pureE" ) ) )
+                            ( Ref Nothing ( Local ( Name "f$38" ) ) :| [] ) :| []
+                          )
+                        )
+                        ( Ref Nothing ( Local ( Name "a$39" ) ) :| [] )
+                      )
+                    )
+                  )
+                ]
+              ) :| []
+            )
+          ),
+          ( QName
+            { qnameModuleName = ModuleName "Effect", qnameName = Name "Lazy_applyEffect"
+            }, AppN Nothing
+            ( AppN Nothing
+              ( Ref Nothing ( Local ( Name "PSLUA_runtime_lazy" ) ) )
+              ( LiteralString Nothing "applyEffect" :| [] )
+            )
+            ( AbsN Nothing
+              ( ParamUnused Nothing :| [] )
+              ( LiteralObject Nothing
+                [
+                  ( PropName "apply", Let Nothing
+                    ( Standalone
+                      ( Nothing, Name "bind$20", ObjectProp Nothing
+                        ( AppN Nothing
+                          ( ObjectProp Nothing
+                            ( Ref Nothing
+                              ( Imported ( ModuleName "Effect" ) ( Name "monadEffect" ) )
+                            )
+                            ( PropName "Bind1" )
+                          )
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| []
+                          )
+                        )
+                        ( PropName "bind" )
+                      ) :| []
+                    )
+                    ( AbsN Nothing
+                      ( ParamNamed Nothing ( Name "f$22" ) :| [] )
+                      ( AbsN Nothing
+                        ( ParamNamed Nothing ( Name "a$23" ) :| [] )
+                        ( AppN Nothing
+                          ( AppN Nothing
+                            ( Ref Nothing ( Local ( Name "bind$20" ) ) )
+                            ( Ref Nothing ( Local ( Name "f$22" ) ) :| [] )
+                          )
+                          ( AbsN Nothing
+                            ( ParamNamed Nothing ( Name "f'$24" ) :| [] )
+                            ( AppN Nothing
+                              ( AppN Nothing
+                                ( Ref Nothing ( Local ( Name "bind$20" ) ) )
+                                ( Ref Nothing ( Local ( Name "a$23" ) ) :| [] )
+                              )
+                              ( AbsN Nothing
+                                ( ParamNamed Nothing ( Name "a'$25" ) :| [] )
+                                ( AppN Nothing
+                                  ( ObjectProp Nothing
+                                    ( AppN Nothing
+                                      ( ObjectProp Nothing
+                                        ( Ref Nothing
+                                          ( Imported
+                                            ( ModuleName "Effect" )
+                                            ( Name "monadEffect" )
+                                          )
+                                        )
+                                        ( PropName "Applicative0" )
+                                      )
+                                      ( Ref Nothing
+                                        ( Imported
+                                          ( ModuleName "Prim" )
+                                          ( Name "undefined" )
+                                        ) :| []
+                                      )
+                                    )
+                                    ( PropName "pure" )
+                                  )
+                                  ( AppN Nothing
+                                    ( Ref Nothing ( Local ( Name "f'$24" ) ) )
+                                    ( Ref Nothing ( Local ( Name "a'$25" ) ) :| [] ) :| []
+                                  )
+                                ) :| []
+                              )
+                            ) :| []
+                          )
+                        )
+                      )
+                    )
+                  ),
+                  ( PropName "Functor0", AbsN Nothing
+                    ( ParamUnused Nothing :| [] )
+                    ( AppN Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Effect" ) ( Name "Lazy_functorEffect" ) )
+                      )
+                      ( LiteralInt Nothing 0 :| [] )
+                    )
+                  )
+                ]
+              ) :| []
+            )
+          ),
+          ( QName
+            { qnameModuleName = ModuleName "Effect", qnameName = Name "functorEffect"
+            }, AppN Nothing
+            ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "Lazy_functorEffect" ) ) )
+            ( LiteralInt Nothing 0 :| [] )
+          )
+        ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Effect.Ref", qnameName = Name "modify_$w" }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "f" ) :| [ ParamNamed Nothing ( Name "s" ) ] )
+        ( AppN Nothing
+          ( AppN Nothing
+            ( ObjectProp Nothing
+              ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "functorEffect" ) ) )
+              ( PropName "map" )
+            )
+            ( AbsN Nothing
+              ( ParamUnused Nothing :| [] )
+              ( Ref Nothing ( Imported ( ModuleName "Data.Unit" ) ( Name "unit" ) ) ) :| []
+            )
+          )
+          ( AppN Nothing
+            ( AppN Nothing
+              ( ObjectProp Nothing
+                ( Ref Nothing ( Imported ( ModuleName "Effect.Ref" ) ( Name "foreign" ) ) )
+                ( PropName "modifyImpl" )
+              )
+              ( AbsN Nothing
+                ( ParamNamed Nothing ( Name "s$11" ) :| [] )
+                ( Let Nothing
+                  ( Standalone
+                    ( Nothing, Name "s'$12", AppN Nothing
+                      ( Ref Nothing ( Local ( Name "f" ) ) )
+                      ( Ref Nothing ( Local ( Name "s$11" ) ) :| [] )
+                    ) :| []
+                  )
+                  ( LiteralObject Nothing
+                    [
+                      ( PropName "state", Ref Nothing ( Local ( Name "s'$12" ) ) ),
+                      ( PropName "value", Ref Nothing ( Local ( Name "s'$12" ) ) )
+                    ]
+                  )
+                ) :| []
+              )
+            )
+            ( Ref Nothing ( Local ( Name "s" ) ) :| [] ) :| []
+          )
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.NativeLoops.Test", qnameName = Name "logShow"
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "a$15" ) :| [] )
+        ( AppN Nothing
+          ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+          ( AppN Nothing
+            ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
+            ( Ref Nothing ( Local ( Name "a$15" ) ) :| [] ) :| []
+          )
+        )
+      )
+    ], uberModuleForeigns = [], uberModuleExports =
+    [
+      ( Name "main", AbsN Nothing
+        ( ParamUnused Nothing :| [] )
+        ( Let Nothing
+          ( Standalone
+            ( Nothing, Name "_", AppN Nothing
+              ( AppN Nothing
+                ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+                ( LiteralString Nothing "forE:" :| [] )
+              )
+              ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+            ) :|
+            [ Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( AppN Nothing
+                    ( AppN Nothing
+                      ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "forE" ) ) )
+                      ( LiteralInt Nothing 1 :| [] )
+                    )
+                    ( LiteralInt Nothing 4 :| [] )
+                  )
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Golden.NativeLoops.Test" ) ( Name "logShow" ) ) :| []
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              ), Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+                  ( LiteralString Nothing "foreachE:" :| [] )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              ), Standalone
+              ( Nothing, Name "sum$0", AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Effect.Ref" ) ( Name "_new" ) ) )
+                  ( LiteralInt Nothing 0 :| [] )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              ), Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( AppN Nothing
+                    ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "foreachE" ) ) )
+                    ( LiteralArray Nothing
+                      [ LiteralInt Nothing 10, LiteralInt Nothing 20, LiteralInt Nothing 30 ] :| []
+                    )
+                  )
+                  ( AbsN Nothing
+                    ( ParamNamed Nothing ( Name "n$1" ) :| [] )
+                    ( AppN Nothing
+                      ( Ref Nothing ( Imported ( ModuleName "Effect.Ref" ) ( Name "modify_$w" ) ) )
+                      ( AbsN Nothing
+                        ( ParamNamed Nothing ( Name "v$2" ) :| [] )
+                        ( PrimBinOp Nothing PrimAdd
+                          ( Ref Nothing ( Local ( Name "v$2" ) ) )
+                          ( Ref Nothing ( Local ( Name "n$1" ) ) )
+                        ) :|
+                        [ Ref Nothing ( Local ( Name "sum$0" ) ) ]
+                      )
+                    ) :| []
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              ), Standalone
+              ( Nothing, Name "total$3", AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Effect.Ref" ) ( Name "read" ) ) )
+                  ( Ref Nothing ( Local ( Name "sum$0" ) ) :| [] )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              ), Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+                  ( AppN Nothing
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
+                    ( Ref Nothing ( Local ( Name "total$3" ) ) :| [] ) :| []
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              ), Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+                  ( LiteralString Nothing "whileE:" :| [] )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              ), Standalone
+              ( Nothing, Name "counter$4", AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Effect.Ref" ) ( Name "_new" ) ) )
+                  ( LiteralInt Nothing 0 :| [] )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              ), Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( AppN Nothing
+                    ( ObjectProp Nothing
+                      ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "foreign" ) ) )
+                      ( PropName "whileE" )
+                    )
+                    ( AppN Nothing
+                      ( AppN Nothing
+                        ( ObjectProp Nothing
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Effect" ) ( Name "functorEffect" ) )
+                          )
+                          ( PropName "map" )
+                        )
+                        ( AbsN Nothing
+                          ( ParamNamed Nothing ( Name "v0$5" ) :| [] )
+                          ( PrimBinOp Nothing PrimLt
+                            ( Ref Nothing ( Local ( Name "v0$5" ) ) )
+                            ( LiteralInt Nothing 3 )
+                          ) :| []
+                        )
+                      )
+                      ( AppN Nothing
+                        ( Ref Nothing ( Imported ( ModuleName "Effect.Ref" ) ( Name "read" ) ) )
+                        ( Ref Nothing ( Local ( Name "counter$4" ) ) :| [] ) :| []
+                      ) :| []
+                    )
+                  )
+                  ( AbsN Nothing
+                    ( ParamUnused Nothing :| [] )
+                    ( Let Nothing
+                      ( Standalone
+                        ( Nothing, Name "n0$6", AppN Nothing
+                          ( AppN Nothing
+                            ( Ref Nothing
+                              ( Imported ( ModuleName "Effect.Ref" ) ( Name "read" ) )
+                            )
+                            ( Ref Nothing ( Local ( Name "counter$4" ) ) :| [] )
+                          )
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                          )
+                        ) :|
+                        [ Standalone
+                          ( Nothing, Name "_", AppN Nothing
+                            ( AppN Nothing
+                              ( Ref Nothing
+                                ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) )
+                              )
+                              ( AppN Nothing
+                                ( Ref Nothing
+                                  ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) )
+                                )
+                                ( Ref Nothing ( Local ( Name "n0$6" ) ) :| [] ) :| []
+                              )
+                            )
+                            ( Ref Nothing
+                              ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                            )
+                          )
+                        ]
+                      )
+                      ( AppN Nothing
+                        ( AppN Nothing
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Effect.Ref" ) ( Name "modify_$w" ) )
+                          )
+                          ( AbsN Nothing
+                            ( ParamNamed Nothing ( Name "v1$7" ) :| [] )
+                            ( PrimBinOp Nothing PrimAdd
+                              ( Ref Nothing ( Local ( Name "v1$7" ) ) )
+                              ( LiteralInt Nothing 1 )
+                            ) :|
+                            [ Ref Nothing ( Local ( Name "counter$4" ) ) ]
+                          )
+                        )
+                        ( Ref Nothing
+                          ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                        )
+                      )
+                    ) :| []
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              ), Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+                  ( LiteralString Nothing "nested:" :| [] )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              )
+            ]
+          )
+          ( AppN Nothing
+            ( AppN Nothing
+              ( AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "forE" ) ) )
+                  ( LiteralInt Nothing 0 :| [] )
+                )
+                ( LiteralInt Nothing 2 :| [] )
+              )
+              ( AbsN Nothing
+                ( ParamNamed Nothing ( Name "i$8" ) :| [] )
+                ( AppN Nothing
+                  ( AppN Nothing
+                    ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "foreachE" ) ) )
+                    ( LiteralArray Nothing
+                      [ LiteralString Nothing "x", LiteralString Nothing "y" ] :| []
+                    )
+                  )
+                  ( AbsN Nothing
+                    ( ParamNamed Nothing ( Name "s$9" ) :| [] )
+                    ( AppN Nothing
+                      ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+                      ( PrimBinOp Nothing PrimConcat
+                        ( AppN Nothing
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) )
+                          )
+                          ( Ref Nothing ( Local ( Name "i$8" ) ) :| [] )
+                        )
+                        ( Ref Nothing ( Local ( Name "s$9" ) ) ) :| []
+                      )
+                    ) :| []
+                  )
+                ) :| []
+              )
+            )
+            ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+          )
+        )
+      )
+    ]
+  }

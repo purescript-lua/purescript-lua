@@ -28,6 +28,7 @@ import Language.PureScript.Backend.Lua.Linker.Foreign qualified as Foreign
 import Language.PureScript.Backend.Lua.Loopify qualified as Loopify
 import Language.PureScript.Backend.Lua.Name qualified as Lua
 import Language.PureScript.Backend.Lua.Name qualified as Name
+import Language.PureScript.Backend.Lua.NativeLoop qualified as NativeLoop
 import Language.PureScript.Backend.Lua.Types (ParamF (..))
 import Language.PureScript.Backend.Lua.Types qualified as Lua
 import Language.PureScript.Backend.Types (AppOrModule (..))
@@ -279,6 +280,15 @@ fromIR foreigns topLevelNames modname ir = case ir of
     (IR.AbsN _ (IR.ParamUnused _ :| []) body@IR.AppN {})
     (IR.EffectRunArg _ :| []) →
       Right <$> goExp body
+  -- The run of a saturated Effect/ST loop-combinator application lowers
+  -- to the native Lua loop instead of the foreign call (issue #233); see
+  -- Language.PureScript.Backend.Lua.NativeLoop. The chunk carries no
+  -- 'Lua.Return' — the run yields no values, exactly like the foreign
+  -- thunk falling off its end — so every consumer of a 'Left' chunk
+  -- (spliced statements, a scope-call expression) preserves semantics.
+  loopRun@IR.AppN {}
+    | Just loop ← NativeLoop.matchLoopRun loopRun →
+        Left <$> NativeLoop.lowerLoop go freshName loop
   IR.AppN _ann fn args → do
     e ← goExp fn
     -- See Note [Nullary functions and Prim.undefined]. PS inserts a
@@ -314,6 +324,20 @@ fromIR foreigns topLevelNames modname ir = case ir of
     body ← go bodyExp
     recs ←
       bindings & foldMapM \case
+        -- A statement whose RHS is a recognised loop run emits the
+        -- native loop directly instead of `local x = <scope call>`. The
+        -- run yields no values, so the binder reads nil either way:
+        -- `local x` declares exactly that, and the discard binder — never
+        -- referenced (the 'RefToDiscard' lint pins this) — needs no
+        -- declaration at all.
+        IR.Standalone (_ann, name, expr)
+          | Just loop ← NativeLoop.matchLoopRun expr → do
+              loopStmts ← NativeLoop.lowerLoop go freshName loop
+              pure $
+                DList.fromList loopStmts
+                  <> if name == IR.discardName
+                    then mempty
+                    else DList.singleton (Lua.local0 (fromName name))
         IR.Standalone (_ann, name, expr) →
           DList.singleton . Lua.local1 (fromName name) <$> goExp expr
         IR.RecursiveGroup grp → do
@@ -429,6 +453,15 @@ fromIR foreigns topLevelNames modname ir = case ir of
 
   goExp ∷ IR.Exp → LuaM e Lua.Exp
   goExp = asExpression <<$>> go
+
+{- | Mint a codegen-fresh local name: the prefix plus a counter drawn
+from the 'LuaM' supply, mangled by 'Name.makeSafe' (@$i0@ → @_S_i0@).
+The prefix must start with @$@ — unreachable from PureScript
+identifiers, and none of the IR passes' @$@-prefixed supplies mint
+these prefixes — so the name cannot capture or be captured.
+-}
+freshName ∷ Text → LuaM e Lua.Name
+freshName prefix = lift $ state \n → (Name.makeSafe (prefix <> show n), n + 1)
 
 --------------------------------------------------------------------------------
 -- Helpers ---------------------------------------------------------------------
