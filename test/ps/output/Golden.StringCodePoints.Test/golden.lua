@@ -318,7 +318,7 @@ local Data_String_CodePoints_unsafeCodePointAt0 = Data_String_CodePoints_foreign
   local cu0_S_25 = Data_String_CodePoints_fromEnum(Data_String_Unsafe_charAt(0)(s_S_24))
   if Data_String_CodePoints_conj(Data_String_CodePoints_conj(Data_Ord_lessThanOrEq_S_w(Data_Ord_ordInt, 55296, cu0_S_25))(Data_Ord_lessThanOrEq_S_w(Data_Ord_ordInt, cu0_S_25, 56319)))("Data.Ordering∷Ordering.GT" == ((function(  )
     local x_S_1600 = Data_String_CodeUnits_length(s_S_24)
-    return function(y_S_1601)
+    return (function(y_S_1601)
       if x_S_1600 < y_S_1601 then
         return Data_Ordering_LT
       elseif x_S_1600 == y_S_1601 then
@@ -326,8 +326,8 @@ local Data_String_CodePoints_unsafeCodePointAt0 = Data_String_CodePoints_foreign
       else
         return Data_Ordering_GT
       end
-    end
-  end)()(1))[1]) then
+    end)(1)
+  end)())[1]) then
     local cu1_S_27 = Data_String_CodePoints_fromEnum(Data_String_Unsafe_charAt(1)(s_S_24))
     if Data_String_CodePoints_conj(Data_Ord_lessThanOrEq_S_w(Data_Ord_ordInt, 56320, cu1_S_27))(Data_Ord_lessThanOrEq_S_w(Data_Ord_ordInt, cu1_S_27, 57343)) then
       return (cu0_S_25 - 55296) * 1024 + (cu1_S_27 - 56320) + 65536

@@ -201,24 +201,22 @@ local Golden_LongWriterBind_Test_go = (function()
                                                                                 return Golden_LongWriterBind_Test_discard(Data_Tuple_Tuple_S_w(Data_Unit_unit, {
                                                                                   [1] = 200
                                                                                 }))(function(  )
-                                                                                  return ((function(  )
-                                                                                    local dictMonoid_S_517 = {
-                                                                                      mempty = {},
-                                                                                      Semigroup0 = function(  )
-                                                                                        return Data_Semigroup_semigroupArray
+                                                                                  local dictMonoid_S_517 = {
+                                                                                    mempty = {},
+                                                                                    Semigroup0 = function(  )
+                                                                                      return Data_Semigroup_semigroupArray
+                                                                                    end
+                                                                                  }
+                                                                                  return ((function( dictApplicative_S_518 )
+                                                                                    return {
+                                                                                      pure = function( a_S_519 )
+                                                                                        return dictApplicative_S_518.pure(Data_Tuple_Tuple_S_w(a_S_519, dictMonoid_S_517.mempty))
+                                                                                      end,
+                                                                                      Apply0 = function(  )
+                                                                                        return Control_Monad_Writer_Trans_applyWriterT_S_w(dictMonoid_S_517.Semigroup0(), dictApplicative_S_518.Apply0())
                                                                                       end
                                                                                     }
-                                                                                    return function( dictApplicative_S_518 )
-                                                                                      return {
-                                                                                        pure = function( a_S_519 )
-                                                                                          return dictApplicative_S_518.pure(Data_Tuple_Tuple_S_w(a_S_519, dictMonoid_S_517.mempty))
-                                                                                        end,
-                                                                                        Apply0 = function(  )
-                                                                                          return Control_Monad_Writer_Trans_applyWriterT_S_w(dictMonoid_S_517.Semigroup0(), dictApplicative_S_518.Apply0())
-                                                                                        end
-                                                                                      }
-                                                                                    end
-                                                                                  end)()(Data_Identity_applicativeIdentity)).pure(42)
+                                                                                  end)(Data_Identity_applicativeIdentity)).pure(42)
                                                                                 end)
                                                                               end)
                                                                             end)

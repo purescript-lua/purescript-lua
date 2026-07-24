@@ -32,5 +32,5 @@ return (function()
     return { run = function() return (Lazy_record_S_0(0)).tag end, tag = "ok!" }
   end)
   record_S_1 = Lazy_record_S_0(0)
-  return Effect_Console_foreign.log(record_S_1.run(Data_Unit_unit))
-end)()()
+  return Effect_Console_foreign.log(record_S_1.run(Data_Unit_unit))()
+end)()

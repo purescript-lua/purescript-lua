@@ -70,12 +70,12 @@ return {
   baz = (function()
     local Bind1_S_1 = Effect_monadEffect.Bind1()
     local pure_S_4 = (Effect_monadEffect.Applicative0()).pure
-    return function(f_S_6)
+    return (function(f_S_6)
       return Bind1_S_1.bind(f_S_6)(function()
         return Bind1_S_1.bind(pure_S_4({
           [1] = (function()
             local Bind1_S_216 = Effect_monadEffect.Bind1()
-            return function(fn1_S_218)
+            return (function(fn1_S_218)
               return Bind1_S_216.bind(fn1_S_218)(function()
                 return Bind1_S_216.bind(fn1_S_218)(function()
                   return Bind1_S_216.bind(fn1_S_218)(function()
@@ -83,10 +83,10 @@ return {
                   end)
                 end)
               end)
-            end
-          end)()(f_S_6)
+            end)(f_S_6)
+          end)()
         }))(function() return pure_S_4(Data_Unit_unit) end)
       end)
-    end
-  end)()(Effect_pureE(Data_Unit_unit))
+    end)(Effect_pureE(Data_Unit_unit))
+  end)()
 }
