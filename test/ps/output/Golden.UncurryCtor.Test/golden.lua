@@ -82,23 +82,19 @@ return (function()
   local _ = Golden_UncurryCtor_Test_logShow(Golden_UncurryCtor_Test_area(Golden_UncurryCtor_Test_Origin))()
   local _ = Golden_UncurryCtor_Test_logShow(Golden_UncurryCtor_Test_pairSum(Golden_UncurryCtor_Test_Pair_S_w(20, 22)))()
   local _ = Golden_UncurryCtor_Test_logShow(Golden_UncurryCtor_Test_unbox(41))()
-  return (function()
-    local mk_S_0 = Golden_UncurryCtor_Test_Tri(1)(2)
-    return function()
-      local _ = Golden_UncurryCtor_Test_logShow(Golden_UncurryCtor_Test_area(mk_S_0(3)))()
-      local _ = Golden_UncurryCtor_Test_logShow(Golden_UncurryCtor_Test_area(mk_S_0(30)))()
-      local _ = Effect_Console_logShow_S_w({
-        show = Data_Show_foreign.showArrayImpl(Data_Show_show(Data_Show_showInt))
-      }, Data_Functor_arrayMap(function(v2_S_307)
-        if "Data.Maybe∷Maybe.Nothing" == v2_S_307[1] then
-          return 0
-        else
-          return v2_S_307[2]
-        end
-      end)(Data_Functor_arrayMap(function(value0_S_308)
-        return { "Data.Maybe∷Maybe.Just", value0_S_308 }
-      end)({ [1] = 1, [2] = 2, [3] = 3 })))()
-      return Golden_UncurryCtor_Test_logShow(Golden_UncurryCtor_Test_total(Golden_UncurryCtor_Test_range))()
+  local mk_S_0 = Golden_UncurryCtor_Test_Tri(1)(2)
+  local _ = Golden_UncurryCtor_Test_logShow(Golden_UncurryCtor_Test_area(mk_S_0(3)))()
+  local _ = Golden_UncurryCtor_Test_logShow(Golden_UncurryCtor_Test_area(mk_S_0(30)))()
+  local _ = Effect_Console_logShow_S_w({
+    show = Data_Show_foreign.showArrayImpl(Data_Show_show(Data_Show_showInt))
+  }, Data_Functor_arrayMap(function(v2_S_307)
+    if "Data.Maybe∷Maybe.Nothing" == v2_S_307[1] then
+      return 0
+    else
+      return v2_S_307[2]
     end
-  end)()()
+  end)(Data_Functor_arrayMap(function(value0_S_308)
+    return { "Data.Maybe∷Maybe.Just", value0_S_308 }
+  end)({ [1] = 1, [2] = 2, [3] = 3 })))()
+  return Golden_UncurryCtor_Test_logShow(Golden_UncurryCtor_Test_total(Golden_UncurryCtor_Test_range))()
 end)()

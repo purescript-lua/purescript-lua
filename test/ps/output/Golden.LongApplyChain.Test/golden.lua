@@ -4,26 +4,24 @@ local Effect_Console_foreign = {
 }
 local Data_Maybe_Nothing = { "Data.Maybe∷Maybe.Nothing" }
 local Golden_LongApplyChain_Test_applySecond_S_w = function(a_S_133, b_S_134)
-  return (function()
-    local v_S_625 = (function()
-      if "Data.Maybe∷Maybe.Just" == a_S_133[1] then
-        return { "Data.Maybe∷Maybe.Just", function(x_S_318) return x_S_318 end }
-      else
-        return Data_Maybe_Nothing
-      end
-    end)()
-    return function(v1_S_626)
-      if "Data.Maybe∷Maybe.Just" == v_S_625[1] then
-        if "Data.Maybe∷Maybe.Just" == v1_S_626[1] then
-          return { "Data.Maybe∷Maybe.Just", (v_S_625[2](v1_S_626[2])) }
-        else
-          return Data_Maybe_Nothing
-        end
-      else
-        return Data_Maybe_Nothing
-      end
+  local v_S_625 = (function()
+    if "Data.Maybe∷Maybe.Just" == a_S_133[1] then
+      return { "Data.Maybe∷Maybe.Just", function(x_S_318) return x_S_318 end }
+    else
+      return Data_Maybe_Nothing
     end
-  end)()(b_S_134)
+  end)()
+  return (function(v1_S_626)
+    if "Data.Maybe∷Maybe.Just" == v_S_625[1] then
+      if "Data.Maybe∷Maybe.Just" == v1_S_626[1] then
+        return { "Data.Maybe∷Maybe.Just", (v_S_625[2](v1_S_626[2])) }
+      else
+        return Data_Maybe_Nothing
+      end
+    else
+      return Data_Maybe_Nothing
+    end
+  end)(b_S_134)
 end
 local Golden_LongApplyChain_Test_compute = (function()
   local _S_tmp646 = Golden_LongApplyChain_Test_applySecond_S_w(Golden_LongApplyChain_Test_applySecond_S_w(Golden_LongApplyChain_Test_applySecond_S_w(Golden_LongApplyChain_Test_applySecond_S_w(Golden_LongApplyChain_Test_applySecond_S_w(Golden_LongApplyChain_Test_applySecond_S_w(Golden_LongApplyChain_Test_applySecond_S_w(Golden_LongApplyChain_Test_applySecond_S_w(Golden_LongApplyChain_Test_applySecond_S_w(Golden_LongApplyChain_Test_applySecond_S_w(Golden_LongApplyChain_Test_applySecond_S_w(Golden_LongApplyChain_Test_applySecond_S_w(Golden_LongApplyChain_Test_applySecond_S_w(Golden_LongApplyChain_Test_applySecond_S_w(Golden_LongApplyChain_Test_applySecond_S_w(Golden_LongApplyChain_Test_applySecond_S_w(Golden_LongApplyChain_Test_applySecond_S_w(Golden_LongApplyChain_Test_applySecond_S_w(Golden_LongApplyChain_Test_applySecond_S_w(Golden_LongApplyChain_Test_applySecond_S_w(Golden_LongApplyChain_Test_applySecond_S_w(Golden_LongApplyChain_Test_applySecond_S_w(Golden_LongApplyChain_Test_applySecond_S_w(Golden_LongApplyChain_Test_applySecond_S_w(Golden_LongApplyChain_Test_applySecond_S_w(Golden_LongApplyChain_Test_applySecond_S_w(Golden_LongApplyChain_Test_applySecond_S_w(Golden_LongApplyChain_Test_applySecond_S_w(Golden_LongApplyChain_Test_applySecond_S_w(Golden_LongApplyChain_Test_applySecond_S_w(Golden_LongApplyChain_Test_applySecond_S_w(Golden_LongApplyChain_Test_applySecond_S_w(Golden_LongApplyChain_Test_applySecond_S_w(Golden_LongApplyChain_Test_applySecond_S_w(Golden_LongApplyChain_Test_applySecond_S_w(Golden_LongApplyChain_Test_applySecond_S_w(Golden_LongApplyChain_Test_applySecond_S_w(Golden_LongApplyChain_Test_applySecond_S_w(Golden_LongApplyChain_Test_applySecond_S_w(Golden_LongApplyChain_Test_applySecond_S_w({

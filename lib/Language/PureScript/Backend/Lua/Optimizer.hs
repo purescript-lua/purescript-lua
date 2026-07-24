@@ -2,10 +2,11 @@ module Language.PureScript.Backend.Lua.Optimizer where
 
 import Control.Monad.Trans.Accum (Accum, add, execAccum)
 import Data.Map qualified as Map
+import Data.Set qualified as Set
 import Language.PureScript.Backend.Lua.Fixture qualified as Fixture
 import Language.PureScript.Backend.Lua.Limits (LuaLimits, workingLocalCeiling)
 import Language.PureScript.Backend.Lua.Linker.Foreign (chunkScopeUsesVararg)
-import Language.PureScript.Backend.Lua.Localize (localizeChunk)
+import Language.PureScript.Backend.Lua.Localize (localizeChunk, namesInBlock)
 import Language.PureScript.Backend.Lua.Name qualified as Lua
 import Language.PureScript.Backend.Lua.Promote (promoteChunk)
 import Language.PureScript.Backend.Lua.Traversal
@@ -69,6 +70,7 @@ rewriteRulesInOrder ∷ LuaLimits → [RewriteRule]
 rewriteRulesInOrder limits =
   [ reduceTableDefinitionAccessor
   , foldFieldProjectionThroughScopeCall limits
+  , foldCallThroughScopeCall
   , collapseTailScopeCall limits
   , foldNotEqual
   ]
@@ -170,23 +172,152 @@ foldFieldProjectionThroughScopeCall limits original
         _ → Nothing
     _ → Nothing
 
-  containsReturn ∷ Annotated Comments StatementF → Bool
-  containsReturn (Ann statement) = case statement of
-    Return {} → True
+{- | Whether a statement contains a 'Return' at the level of the enclosing
+function body — one that exits the activation. A 'Return' inside a nested
+'Function' (or 'LocalFunction') belongs to a different activation and does
+not count, while a 'Return' inside a loop or 'Do' block at body level does.
+-}
+containsReturn ∷ Annotated Comments StatementF → Bool
+containsReturn (Ann statement) = case statement of
+  Return {} → True
+  IfThenElse _predicate thenBlock elseBlock →
+    any containsReturn thenBlock || any containsReturn elseBlock
+  Do body → any containsReturn body
+  While _predicate body → any containsReturn body
+  Repeat body _predicate → any containsReturn body
+  ForNum _name _start _limit _step body → any containsReturn body
+  ForIn _names _exprs body → any containsReturn body
+  LocalFunction {} → False
+  Assign {} → False
+  Local {} → False
+  CallStatement {} → False
+  Break → False
+
+{- | Rewrites @(function() …; return e end)()(args)@ to
+@(function() …; return e(args) end)()@: a call applied to the result of a
+no-argument, immediately-invoked function is folded into its @return@s.
+The shape is how the code generator runs a selected thunk — "pick an
+effect, then run it" lowers to a scope call immediately applied — and
+folding the application inward exposes a plain scope call that
+'collapseTailScopeCall' can then splice away. The freshly built call is
+folded once more by this same rule, in case the returned expression is
+itself an applied scope call.
+
+Applying before versus after the call returns is observably the same: the
+leading statements run first either way, the returned expression is
+evaluated before the arguments in both forms, and @return e(args)@ is a
+tail call, so even the activation depth at the moment the result runs is
+unchanged.
+
+The tail chain the fold covers is a single-valued 'Return', or an
+'IfThenElse'/'Do' whose every branch ends in one, recursively — the thunk
+selection is exactly a branching tail. The rule declines when:
+
+* a leading statement (of the body or of any branch on the tail chain)
+  'containsReturn': such an early return leaves the call on a path the
+  fold does not cover;
+
+* the tail chain has a fall-off path (a branch not ending in a 'Return',
+  an empty body): falling off yields @nil@, which the original code then
+  calls — an error the folded code would not reproduce;
+
+* the tail 'Return' is not single-valued: the call consumes the first
+  value only after Lua's adjustment, but the fold cannot drop the other
+  results without dropping their effects;
+
+* the arguments mention @...@ in their own scope: moved inside the
+  no-parameter callee, it would be rebound or fail to load;
+
+* a free name of the arguments collides with a local the callee's body
+  declares ('declaredNamesInActivation'): moved inside, the argument
+  would resolve the name to the callee's local instead of the enclosing
+  scope's binding;
+
+* the tail chain branches and any argument is not a name or a literal:
+  the arguments are duplicated into every return site — evaluated at most
+  once, since a single branch runs, but syntactically repeated — and
+  atoms keep that duplication trivial.
+-}
+foldCallThroughScopeCall ∷ RewriteRule
+foldCallThroughScopeCall = \case
+  original@( FunctionCall
+               (Ann (FunctionCall (Ann (Function [] body)) []))
+               args
+             )
+      | not (chunkScopeUsesVararg argsBlock)
+      , Set.disjoint (declaredNamesInActivation body) (namesInBlock argsBlock)
+      , Just body' ← pushCallIntoTail body →
+          FunctionCall (Lua.ann (Function [] body')) []
+      | otherwise → original
+     where
+      argsBlock = [Lua.ann (Return args)]
+
+      atomicArgs ∷ Bool
+      atomicArgs = all (isAtom . Lua.unAnn) args
+       where
+        isAtom ∷ Exp → Bool
+        isAtom = \case
+          Nil → True
+          Boolean _ → True
+          Integer _ → True
+          Float _ → True
+          String _ → True
+          Var (Ann (VarName _)) → True
+          _ → False
+
+      pushCallIntoTail
+        ∷ [Annotated Comments StatementF]
+        → Maybe [Annotated Comments StatementF]
+      pushCallIntoTail block = case reverse block of
+        lastStatement : reverseLeading
+          | not (any containsReturn reverseLeading) →
+              pushIntoStatement lastStatement <&> \pushed →
+                reverse reverseLeading <> [pushed]
+        _ → Nothing
+
+      pushIntoStatement
+        ∷ Annotated Comments StatementF
+        → Maybe (Annotated Comments StatementF)
+      pushIntoStatement (c, statement) =
+        (c,) <$> case statement of
+          Return [returnedValue] →
+            Just . Return . pure . Lua.ann $
+              foldCallThroughScopeCall (FunctionCall returnedValue args)
+          IfThenElse p thenBlock elseBlock
+            | atomicArgs →
+                IfThenElse p
+                  <$> pushCallIntoTail thenBlock
+                  <*> pushCallIntoTail elseBlock
+          Do doBody → Do <$> pushCallIntoTail doBody
+          _ → Nothing
+  e → e
+
+{- | Every name declared at the activation level of a block: block-level
+declarations at any depth count, while nested function literals are
+separate scopes whose declarations are invisible outside. The name-set
+counterpart of 'activationLocalSlots'.
+-}
+declaredNamesInActivation ∷ [Annotated Comments StatementF] → Set Lua.Name
+declaredNamesInActivation = foldMap (declared . Lua.unAnn)
+ where
+  declared ∷ StatementF Comments → Set Lua.Name
+  declared = \case
+    Local names _values → Set.fromList (toList names)
+    LocalFunction fname _params _body → Set.singleton fname
+    ForNum n _start _limit _step body →
+      Set.insert n (declaredNamesInActivation body)
+    ForIn names _exprs body →
+      Set.fromList (toList names) <> declaredNamesInActivation body
     IfThenElse _predicate thenBlock elseBlock →
-      any containsReturn thenBlock || any containsReturn elseBlock
-    Do body → any containsReturn body
-    While _predicate body → any containsReturn body
-    Repeat body _predicate → any containsReturn body
-    ForNum _name _start _limit _step body → any containsReturn body
-    ForIn _names _exprs body → any containsReturn body
-    -- A nested (local) function is a different activation: its returns do
-    -- not exit this call.
-    LocalFunction {} → False
-    Assign {} → False
-    Local {} → False
-    CallStatement {} → False
-    Break → False
+      declaredNamesInActivation thenBlock
+        <> declaredNamesInActivation elseBlock
+    Do body → declaredNamesInActivation body
+    While _predicate body → declaredNamesInActivation body
+    Repeat body _predicate → declaredNamesInActivation body
+    Assign {} → mempty
+    Return {} → mempty
+    CallStatement {} → mempty
+    Break → mempty
 
 {- | Rewrites @function(…) …; return (function() <stmts> end)() end@ to
 @function(…) …; <stmts> end@: a no-argument, immediately-invoked function
@@ -226,6 +357,11 @@ Conditions checked:
   'localizeChunk' budgets its cache locals against what is actually
   declared after the splice, and only gains upvalue headroom from the
   disappearing proto.
+
+The rule re-applies itself to the merged function: the new tail may again
+be a scope-call return — 'foldCallThroughScopeCall' builds such tails at
+depths the bottom-up driver has already passed — and every round
+re-checks the conditions above.
 -}
 collapseTailScopeCall ∷ LuaLimits → RewriteRule
 collapseTailScopeCall limits = \case
@@ -235,7 +371,11 @@ collapseTailScopeCall limits = \case
     , let merged = leading <> spliced
     , length params + activationLocalSlots merged
         <= workingLocalCeiling limits →
-        Function params merged
+        -- The merged tail may itself be a scope-call return — one
+        -- 'foldCallThroughScopeCall' built after the bottom-up driver had
+        -- already passed that depth — so keep collapsing while the budget
+        -- admits it; every round consumes one nesting level.
+        collapseTailScopeCall limits (Function params merged)
   e → e
  where
   -- Splits a function body whose last statement is a single-valued

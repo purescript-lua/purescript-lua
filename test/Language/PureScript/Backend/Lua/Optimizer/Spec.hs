@@ -6,8 +6,10 @@ import Language.PureScript.Backend.Lua.Limits (LuaLimits (..), lua51Limits)
 import Language.PureScript.Backend.Lua.Name (name)
 import Language.PureScript.Backend.Lua.Optimizer
   ( collapseTailScopeCall
+  , foldCallThroughScopeCall
   , foldFieldProjectionThroughScopeCall
   , foldNotEqual
+  , optimizeStatement
   , reduceTableDefinitionAccessor
   , rewriteExpWithRule
   )
@@ -186,6 +188,202 @@ spec = describe "Lua AST Optimizer" do
       assertEqual (toString $ pShow original) expected $
         rewriteExpWithRule (foldFieldProjectionThroughScopeCall lua51Limits) original
 
+  describe "foldCallThroughScopeCall" do
+    it "folds a trailing call into a plain-return scope call" do
+      let original ∷ Lua.Exp =
+            Lua.functionCall
+              ( Lua.scope
+                  [ Lua.local1 [name|v|] (Lua.varName [name|g|])
+                  , Lua.return (Lua.varName [name|f|])
+                  ]
+              )
+              [Lua.varName [name|b|]]
+          expected ∷ Lua.Exp =
+            Lua.scope
+              [ Lua.local1 [name|v|] (Lua.varName [name|g|])
+              , Lua.return
+                  (Lua.functionCall (Lua.varName [name|f|]) [Lua.varName [name|b|]])
+              ]
+      assertEqual (toString $ pShow original) expected $
+        rewriteExpWithRule foldCallThroughScopeCall original
+
+    it "folds a zero-argument run into both branches of a tail if" do
+      -- The thunk-selection shape: `(function() if c then return f else
+      -- return g end end)()()` picks an effect and immediately runs it.
+      let original ∷ Lua.Exp =
+            Lua.functionCall
+              ( Lua.scope
+                  [ Lua.ifThenElse
+                      (Lua.varName [name|c|])
+                      [Lua.return (Lua.varName [name|f|])]
+                      [Lua.return (Lua.varName [name|g|])]
+                  ]
+              )
+              []
+          expected ∷ Lua.Exp =
+            Lua.scope
+              [ Lua.ifThenElse
+                  (Lua.varName [name|c|])
+                  [Lua.return (Lua.functionCall (Lua.varName [name|f|]) [])]
+                  [Lua.return (Lua.functionCall (Lua.varName [name|g|]) [])]
+              ]
+      assertEqual (toString $ pShow original) expected $
+        rewriteExpWithRule foldCallThroughScopeCall original
+
+    it "re-folds when the returned expression is itself a scope call" do
+      let original ∷ Lua.Exp =
+            Lua.functionCall
+              (Lua.scope [Lua.return (Lua.scope [Lua.return (Lua.varName [name|f|])])])
+              [Lua.varName [name|b|]]
+          expected ∷ Lua.Exp =
+            Lua.scope
+              [ Lua.return
+                  ( Lua.scope
+                      [ Lua.return
+                          ( Lua.functionCall
+                              (Lua.varName [name|f|])
+                              [Lua.varName [name|b|]]
+                          )
+                      ]
+                  )
+              ]
+      assertEqual (toString $ pShow original) expected $
+        rewriteExpWithRule foldCallThroughScopeCall original
+
+    it "declines when a leading statement contains an early return" do
+      let original ∷ Lua.Exp =
+            Lua.functionCall
+              ( Lua.scope
+                  [ Lua.ifThenElse
+                      (Lua.varName [name|c|])
+                      [Lua.return (Lua.varName [name|f|])]
+                      []
+                  , Lua.return (Lua.varName [name|g|])
+                  ]
+              )
+              []
+      assertEqual (toString $ pShow original) original $
+        rewriteExpWithRule foldCallThroughScopeCall original
+
+    it "declines on a fall-off path (tail if without an else)" do
+      -- Falling off the end yields nil, which the original code then
+      -- calls (an error); a partial fold would return nil instead.
+      let original ∷ Lua.Exp =
+            Lua.functionCall
+              ( Lua.scope
+                  [ Lua.ifThenElse
+                      (Lua.varName [name|c|])
+                      [Lua.return (Lua.varName [name|f|])]
+                      []
+                  ]
+              )
+              []
+      assertEqual (toString $ pShow original) original $
+        rewriteExpWithRule foldCallThroughScopeCall original
+
+    it "declines on a multi-valued tail return" do
+      let original ∷ Lua.Exp =
+            Lua.functionCall
+              ( Lua.scope
+                  [Lua.returnN (Lua.varName [name|f|] :| [Lua.varName [name|g|]])]
+              )
+              []
+      assertEqual (toString $ pShow original) original $
+        rewriteExpWithRule foldCallThroughScopeCall original
+
+    it "declines when an argument name collides with a body local" do
+      -- Moved inside, `x` would resolve to the callee's local, not the
+      -- enclosing scope's binding.
+      let original ∷ Lua.Exp =
+            Lua.functionCall
+              ( Lua.scope
+                  [ Lua.local1 [name|x|] (Lua.Integer 1)
+                  , Lua.return (Lua.varName [name|f|])
+                  ]
+              )
+              [Lua.varName [name|x|]]
+      assertEqual (toString $ pShow original) original $
+        rewriteExpWithRule foldCallThroughScopeCall original
+
+    it "declines non-atomic arguments on a branching tail" do
+      -- Branch pushing duplicates the arguments into every return site;
+      -- only names and literals keep that duplication trivial.
+      let scopeCall ∷ Lua.Exp =
+            Lua.scope
+              [ Lua.ifThenElse
+                  (Lua.varName [name|c|])
+                  [Lua.return (Lua.varName [name|f|])]
+                  [Lua.return (Lua.varName [name|g|])]
+              ]
+          nonAtomic ∷ Lua.Exp =
+            Lua.functionCall
+              scopeCall
+              [Lua.functionCall (Lua.varName [name|h|]) []]
+          atomic ∷ Lua.Exp =
+            Lua.functionCall scopeCall [Lua.varName [name|b|]]
+          pushed ∷ Lua.Exp =
+            Lua.scope
+              [ Lua.ifThenElse
+                  (Lua.varName [name|c|])
+                  [ Lua.return
+                      ( Lua.functionCall
+                          (Lua.varName [name|f|])
+                          [Lua.varName [name|b|]]
+                      )
+                  ]
+                  [ Lua.return
+                      ( Lua.functionCall
+                          (Lua.varName [name|g|])
+                          [Lua.varName [name|b|]]
+                      )
+                  ]
+              ]
+      assertEqual (toString $ pShow nonAtomic) nonAtomic $
+        rewriteExpWithRule foldCallThroughScopeCall nonAtomic
+      assertEqual (toString $ pShow atomic) pushed $
+        rewriteExpWithRule foldCallThroughScopeCall atomic
+
+    it "declines varargs among the arguments" do
+      let original ∷ Lua.Exp =
+            Lua.functionCall
+              (Lua.scope [Lua.return (Lua.varName [name|f|])])
+              [Lua.Vararg]
+      assertEqual (toString $ pShow original) original $
+        rewriteExpWithRule foldCallThroughScopeCall original
+
+    it "composes with collapseTailScopeCall into a zero-closure tail" do
+      -- The end-to-end #230-family result: `return (function() if c then
+      -- return f else return g end end)()()` in a function tail loses
+      -- both the closure and the extra calls.
+      let worker ∷ [Lua.Statement] → Lua.Statement
+          worker body =
+            Lua.local1
+              [name|w|]
+              (Lua.functionDef [Lua.ParamNamed [name|n|]] body)
+          original =
+            worker
+              [ Lua.return
+                  ( Lua.functionCall
+                      ( Lua.scope
+                          [ Lua.ifThenElse
+                              (Lua.varName [name|c|])
+                              [Lua.return (Lua.varName [name|f|])]
+                              [Lua.return (Lua.varName [name|g|])]
+                          ]
+                      )
+                      []
+                  )
+              ]
+          expected =
+            worker
+              [ Lua.ifThenElse
+                  (Lua.varName [name|c|])
+                  [Lua.return (Lua.functionCall (Lua.varName [name|f|]) [])]
+                  [Lua.return (Lua.functionCall (Lua.varName [name|g|]) [])]
+              ]
+      assertEqual (toString $ pShow original) expected $
+        optimizeStatement lua51Limits original
+
   describe "collapseTailScopeCall" do
     it "splices a tail scope call into the enclosing function body" do
       -- The residual magic-do shape from issue #230: an effectful
@@ -210,6 +408,30 @@ spec = describe "Lua AST Optimizer" do
               ]
       assertEqual (toString $ pShow original) expected $
         rewriteExpWithRule (collapseTailScopeCall lua51Limits) original
+
+    it "re-collapses a tail exposed by its own merge, without a traversal" do
+      -- The bare rule (no bottom-up driver) must flatten both levels:
+      -- 'foldCallThroughScopeCall' builds nested tails at depths the
+      -- driver has already passed, so the rule cannot rely on it.
+      let original ∷ Lua.Exp =
+            Lua.functionDef
+              []
+              [ Lua.return
+                  ( Lua.scope
+                      [ Lua.local1 [name|a|] (Lua.Integer 1)
+                      , Lua.return
+                          (Lua.scope [Lua.return (Lua.varName [name|a|])])
+                      ]
+                  )
+              ]
+          expected ∷ Lua.Exp =
+            Lua.functionDef
+              []
+              [ Lua.local1 [name|a|] (Lua.Integer 1)
+              , Lua.return (Lua.varName [name|a|])
+              ]
+      assertEqual (toString $ pShow original) expected $
+        collapseTailScopeCall lua51Limits original
 
     it "splices nested tail scope calls bottom-up in one pass" do
       let original ∷ Lua.Exp =

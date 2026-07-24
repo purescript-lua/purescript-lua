@@ -115,18 +115,16 @@ return (function()
     [2] = Data_Unit_unit,
     [3] = Data_Unit_unit
   }
-  return function()
+  return (function()
     local _ = Data_Foldable_foldableArray.foldr(function(x_S_940)
-      return (function()
-        local dictApply_S_925 = Effect_applicativeEffect.Apply0()
-        return function(a_S_926)
-          return function(b_S_927)
-            return dictApply_S_925.apply((dictApply_S_925.Functor0()).map(function(  )
-              return function(x_S_934) return x_S_934 end
-            end)(a_S_926))(b_S_927)
-          end
+      local dictApply_S_925 = Effect_applicativeEffect.Apply0()
+      return (function(a_S_926)
+        return function(b_S_927)
+          return dictApply_S_925.apply((dictApply_S_925.Functor0()).map(function(  )
+            return function(x_S_934) return x_S_934 end
+          end)(a_S_926))(b_S_927)
         end
-      end)()(Effect_Console_logShow_S_w({
+      end)(Effect_Console_logShow_S_w({
         show = function() return "unit" end
       }, x_S_940))
     end)(Effect_pureE(Data_Unit_unit))(arr_S_0)()
@@ -135,5 +133,5 @@ return (function()
     }, Data_Foldable_foldableArray.foldl(function(c_S_913)
       return function() return 1 + c_S_913 end
     end)(0)(arr_S_0))()
-  end
-end)()()
+  end)()
+end)()

@@ -29,13 +29,11 @@ local Golden_UncurryEffect_Test_countdown_S_w = function(n)
     local _ = Effect_Console_log("tick")()
     return Effect_Console_log(Data_Show_showIntImpl(n))()
   end)()
-  return (function()
-    if not(n < 1) and n ~= 1 then
-      return Golden_UncurryEffect_Test_countdown(n - 1)
-    else
-      return Effect_Console_log("done")
-    end
-  end)()()
+  if not(n < 1) and n ~= 1 then
+    return Golden_UncurryEffect_Test_countdown(n - 1)()
+  else
+    return Effect_Console_log("done")()
+  end
 end
 Golden_UncurryEffect_Test_countdown = function(countdown_S_p1)
   return function(countdown_S_p2)

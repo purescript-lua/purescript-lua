@@ -107,17 +107,15 @@ return (function()
           local r_S_16 = Effect_bindE(f_S_11(a_S_12))(Effect_Ref_foreign._new)()
           local _ = Effect_foreign.untilE(function()
             local v0_S_17 = Effect_Ref_read(r_S_16)()
-            return (function()
-              if "Control.Monad.Rec.Class∷Step.Loop" == v0_S_17[1] then
-                return function()
-                  local e_S_19 = f_S_11(v0_S_17[2])()
-                  local _ = Effect_Ref_foreign.write(e_S_19)(r_S_16)()
-                  return false
-                end
-              else
-                return Effect_pureE(true)
-              end
-            end)()()
+            if "Control.Monad.Rec.Class∷Step.Loop" == v0_S_17[1] then
+              return (function()
+                local e_S_19 = f_S_11(v0_S_17[2])()
+                local _ = Effect_Ref_foreign.write(e_S_19)(r_S_16)()
+                return false
+              end)()
+            else
+              return Effect_pureE(true)()
+            end
           end)()
           return Effect_functorEffect.map(Partial_Unsafe_foreign._unsafePartial(function(  )
             return function(v_S_20)
