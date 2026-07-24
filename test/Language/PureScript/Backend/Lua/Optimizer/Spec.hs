@@ -205,7 +205,7 @@ spec = describe "Lua AST Optimizer" do
                   (Lua.functionCall (Lua.varName [name|f|]) [Lua.varName [name|b|]])
               ]
       assertEqual (toString $ pShow original) expected $
-        rewriteExpWithRule foldCallThroughScopeCall original
+        rewriteExpWithRule (foldCallThroughScopeCall lua51Limits) original
 
     it "folds a zero-argument run into both branches of a tail if" do
       -- The thunk-selection shape: `(function() if c then return f else
@@ -228,9 +228,12 @@ spec = describe "Lua AST Optimizer" do
                   [Lua.return (Lua.functionCall (Lua.varName [name|g|]) [])]
               ]
       assertEqual (toString $ pShow original) expected $
-        rewriteExpWithRule foldCallThroughScopeCall original
+        rewriteExpWithRule (foldCallThroughScopeCall lua51Limits) original
 
     it "re-folds when the returned expression is itself a scope call" do
+      -- The re-fold pushes the call into the inner scope call, and the
+      -- collapse chained onto each rebuilt literal then flattens the
+      -- nesting into a single scope call.
       let original ∷ Lua.Exp =
             Lua.functionCall
               (Lua.scope [Lua.return (Lua.scope [Lua.return (Lua.varName [name|f|])])])
@@ -238,17 +241,13 @@ spec = describe "Lua AST Optimizer" do
           expected ∷ Lua.Exp =
             Lua.scope
               [ Lua.return
-                  ( Lua.scope
-                      [ Lua.return
-                          ( Lua.functionCall
-                              (Lua.varName [name|f|])
-                              [Lua.varName [name|b|]]
-                          )
-                      ]
+                  ( Lua.functionCall
+                      (Lua.varName [name|f|])
+                      [Lua.varName [name|b|]]
                   )
               ]
       assertEqual (toString $ pShow original) expected $
-        rewriteExpWithRule foldCallThroughScopeCall original
+        rewriteExpWithRule (foldCallThroughScopeCall lua51Limits) original
 
     it "declines when a leading statement contains an early return" do
       let original ∷ Lua.Exp =
@@ -263,7 +262,7 @@ spec = describe "Lua AST Optimizer" do
               )
               []
       assertEqual (toString $ pShow original) original $
-        rewriteExpWithRule foldCallThroughScopeCall original
+        rewriteExpWithRule (foldCallThroughScopeCall lua51Limits) original
 
     it "declines on a fall-off path (tail if without an else)" do
       -- Falling off the end yields nil, which the original code then
@@ -279,7 +278,7 @@ spec = describe "Lua AST Optimizer" do
               )
               []
       assertEqual (toString $ pShow original) original $
-        rewriteExpWithRule foldCallThroughScopeCall original
+        rewriteExpWithRule (foldCallThroughScopeCall lua51Limits) original
 
     it "declines on a multi-valued tail return" do
       let original ∷ Lua.Exp =
@@ -289,7 +288,7 @@ spec = describe "Lua AST Optimizer" do
               )
               []
       assertEqual (toString $ pShow original) original $
-        rewriteExpWithRule foldCallThroughScopeCall original
+        rewriteExpWithRule (foldCallThroughScopeCall lua51Limits) original
 
     it "declines when an argument name collides with a body local" do
       -- Moved inside, `x` would resolve to the callee's local, not the
@@ -303,7 +302,7 @@ spec = describe "Lua AST Optimizer" do
               )
               [Lua.varName [name|x|]]
       assertEqual (toString $ pShow original) original $
-        rewriteExpWithRule foldCallThroughScopeCall original
+        rewriteExpWithRule (foldCallThroughScopeCall lua51Limits) original
 
     it "declines non-atomic arguments on a branching tail" do
       -- Branch pushing duplicates the arguments into every return site;
@@ -339,9 +338,9 @@ spec = describe "Lua AST Optimizer" do
                   ]
               ]
       assertEqual (toString $ pShow nonAtomic) nonAtomic $
-        rewriteExpWithRule foldCallThroughScopeCall nonAtomic
+        rewriteExpWithRule (foldCallThroughScopeCall lua51Limits) nonAtomic
       assertEqual (toString $ pShow atomic) pushed $
-        rewriteExpWithRule foldCallThroughScopeCall atomic
+        rewriteExpWithRule (foldCallThroughScopeCall lua51Limits) atomic
 
     it "declines varargs among the arguments" do
       let original ∷ Lua.Exp =
@@ -349,7 +348,35 @@ spec = describe "Lua AST Optimizer" do
               (Lua.scope [Lua.return (Lua.varName [name|f|])])
               [Lua.Vararg]
       assertEqual (toString $ pShow original) original $
-        rewriteExpWithRule foldCallThroughScopeCall original
+        rewriteExpWithRule (foldCallThroughScopeCall lua51Limits) original
+
+    it "re-collapses the literal it rebuilds, in any position" do
+      -- The pushed application may land on a returned function literal —
+      -- a beta-redex built at a depth the bottom-up driver has already
+      -- passed. The fold hands the rebuilt literal to
+      -- 'collapseTailLiteralApplication' itself, so the redex reduces
+      -- even when the scope call sits in expression position (a table
+      -- row, an operand), where no enclosing function tail would.
+      let original ∷ Lua.Exp =
+            Lua.functionCall
+              ( Lua.scope
+                  [ Lua.local1 [name|h|] (Lua.Integer 1)
+                  , Lua.return
+                      ( Lua.functionDef
+                          [Lua.ParamNamed [name|x|]]
+                          [Lua.return (Lua.varName [name|x|])]
+                      )
+                  ]
+              )
+              [Lua.varName [name|b|]]
+          expected ∷ Lua.Exp =
+            Lua.scope
+              [ Lua.local1 [name|h|] (Lua.Integer 1)
+              , Lua.local1 [name|x|] (Lua.varName [name|b|])
+              , Lua.return (Lua.varName [name|x|])
+              ]
+      assertEqual (toString $ pShow original) expected $
+        rewriteExpWithRule (foldCallThroughScopeCall lua51Limits) original
 
     it "composes with the tail-literal collapse into a zero-closure tail" do
       -- The end-to-end #230-family result: `return (function() if c then

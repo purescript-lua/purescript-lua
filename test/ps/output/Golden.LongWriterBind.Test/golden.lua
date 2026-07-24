@@ -1,3 +1,4 @@
+local M = {}
 local Data_Unit_foreign = { unit = {} }
 local Data_Unit_unit = Data_Unit_foreign.unit
 local Data_Semigroup_foreign = {
@@ -37,7 +38,7 @@ local Data_Identity_applicativeIdentity = {
   pure = function(x_S_505) return x_S_505 end,
   Apply0 = function() return Data_Identity_applyIdentity end
 }
-local Control_Monad_Writer_Trans_applyWriterT_S_w = function( dictSemigroup
+M.Control_Monad_Writer_Trans_applyWriterT_S_w = function( dictSemigroup
 , dictApply )
   local Functor0 = dictApply.Functor0()
   return {
@@ -207,16 +208,9 @@ local Golden_LongWriterBind_Test_go = (function()
                                                                                       return Data_Semigroup_semigroupArray
                                                                                     end
                                                                                   }
-                                                                                  return ((function( dictApplicative_S_518 )
-                                                                                    return {
-                                                                                      pure = function( a_S_519 )
-                                                                                        return dictApplicative_S_518.pure(Data_Tuple_Tuple_S_w(a_S_519, dictMonoid_S_517.mempty))
-                                                                                      end,
-                                                                                      Apply0 = function(  )
-                                                                                        return Control_Monad_Writer_Trans_applyWriterT_S_w(dictMonoid_S_517.Semigroup0(), dictApplicative_S_518.Apply0())
-                                                                                      end
-                                                                                    }
-                                                                                  end)(Data_Identity_applicativeIdentity)).pure(42)
+                                                                                  local dictApplicative_S_518 = Data_Identity_applicativeIdentity
+                                                                                  local a_S_519 = 42
+                                                                                  return dictApplicative_S_518.pure(Data_Tuple_Tuple_S_w(a_S_519, dictMonoid_S_517.mempty))
                                                                                 end)
                                                                               end)
                                                                             end)

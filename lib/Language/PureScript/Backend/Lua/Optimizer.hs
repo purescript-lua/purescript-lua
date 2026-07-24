@@ -71,7 +71,7 @@ rewriteRulesInOrder ∷ LuaLimits → [RewriteRule]
 rewriteRulesInOrder limits =
   [ reduceTableDefinitionAccessor
   , foldFieldProjectionThroughScopeCall limits
-  , foldCallThroughScopeCall
+  , foldCallThroughScopeCall limits
   , collapseTailLiteralApplication limits
   , foldNotEqual
   ]
@@ -200,9 +200,16 @@ no-argument, immediately-invoked function is folded into its @return@s.
 The shape is how the code generator runs a selected thunk — "pick an
 effect, then run it" lowers to a scope call immediately applied — and
 folding the application inward exposes a plain scope call that
-'collapseTailLiteralApplication' can then splice away. The freshly built call is
-folded once more by this same rule, in case the returned expression is
-itself an applied scope call.
+'collapseTailLiteralApplication' can then splice away. The freshly built
+call is folded once more by this same rule, in case the returned
+expression is itself an applied scope call. The rebuilt literal is then
+handed to 'collapseTailLiteralApplication' directly: the pushed
+application may have landed on a returned function literal — a
+beta-redex at a depth the bottom-up driver has already passed — and
+while a literal in a function tail re-collapses when the driver reaches
+that enclosing function, one in expression position (a table row, an
+operand) has no later chance. The 'LuaLimits' are only forwarded to that
+collapse.
 
 Applying before versus after the call returns is observably the same: the
 leading statements run first either way, the returned expression is
@@ -239,8 +246,8 @@ selection is exactly a branching tail. The rule declines when:
   once, since a single branch runs, but syntactically repeated — and
   atoms keep that duplication trivial.
 -}
-foldCallThroughScopeCall ∷ RewriteRule
-foldCallThroughScopeCall = \case
+foldCallThroughScopeCall ∷ LuaLimits → RewriteRule
+foldCallThroughScopeCall limits = \case
   original@( FunctionCall
                (Ann (FunctionCall (Ann (Function [] body)) []))
                args
@@ -248,7 +255,9 @@ foldCallThroughScopeCall = \case
       | not (chunkScopeUsesVararg argsBlock)
       , Set.disjoint (declaredNamesInActivation body) (namesInBlock argsBlock)
       , Just body' ← pushCallIntoTail body →
-          FunctionCall (Lua.ann (Function [] body')) []
+          let folded =
+                collapseTailLiteralApplication limits (Function [] body')
+           in FunctionCall (Lua.ann folded) []
       | otherwise → original
      where
       argsBlock = [Lua.ann (Return args)]
@@ -283,7 +292,7 @@ foldCallThroughScopeCall = \case
         (c,) <$> case statement of
           Return [returnedValue] →
             Just . Return . pure . Lua.ann $
-              foldCallThroughScopeCall (FunctionCall returnedValue args)
+              foldCallThroughScopeCall limits (FunctionCall returnedValue args)
           IfThenElse p thenBlock elseBlock
             | atomicArgs →
                 IfThenElse p
