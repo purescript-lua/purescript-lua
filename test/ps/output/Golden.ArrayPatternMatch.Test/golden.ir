@@ -8,28 +8,22 @@ UberModule
         [ ( Nothing, Name "showIntImpl" ) ]
       ), Standalone
       ( QName
+        { qnameModuleName = ModuleName "Data.Show", qnameName = Name "showIntImpl"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
+        ( PropName "showIntImpl" )
+      ), Standalone
+      ( QName
         { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "foreign"
         }, ForeignImport Nothing
         ( ModuleName "Effect.Console" ) ".spago/p/console/f82835a0b873aafe6bd7b14dd30cc150553d4ab9/src/Effect/Console.purs"
         [ ( Nothing, Name "log" ) ]
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Golden.ArrayPatternMatch.Test", qnameName = Name "logShow"
-        }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "a$2" ) :| [] )
-        ( AppN Nothing
-          ( ObjectProp Nothing
-            ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
-            ( PropName "log" )
-          )
-          ( AppN Nothing
-            ( ObjectProp Nothing
-              ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
-              ( PropName "showIntImpl" )
-            )
-            ( Ref Nothing ( Local ( Name "a$2" ) ) :| [] ) :| []
-          )
-        )
+        { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "log"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
+        ( PropName "log" )
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.ArrayPatternMatch.Test", qnameName = Name "lastOfThree"
@@ -74,16 +68,10 @@ UberModule
           ( Standalone
             ( Nothing, Name "_", AppN Nothing
               ( AppN Nothing
-                ( Ref Nothing
-                  ( Imported ( ModuleName "Golden.ArrayPatternMatch.Test" ) ( Name "logShow" ) )
-                )
+                ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
                 ( AppN Nothing
-                  ( Ref Nothing
-                    ( Imported ( ModuleName "Golden.ArrayPatternMatch.Test" ) ( Name "firstTwo" ) )
-                  )
-                  ( LiteralArray Nothing
-                    [ LiteralInt Nothing 10, LiteralInt Nothing 20 ] :| []
-                  ) :| []
+                  ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
+                  ( LiteralInt Nothing 30 :| [] ) :| []
                 )
               )
               ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
@@ -91,36 +79,20 @@ UberModule
             [ Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
-                  ( Ref Nothing
-                    ( Imported ( ModuleName "Golden.ArrayPatternMatch.Test" ) ( Name "logShow" ) )
-                  )
+                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
                   ( AppN Nothing
-                    ( Ref Nothing
-                      ( Imported
-                        ( ModuleName "Golden.ArrayPatternMatch.Test" )
-                        ( Name "firstTwo" )
-                      )
-                    )
-                    ( LiteralArray Nothing
-                      [ LiteralInt Nothing 1, LiteralInt Nothing 2, LiteralInt Nothing 3 ] :| []
-                    ) :| []
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
+                    ( LiteralInt Nothing ( -1 ) :| [] ) :| []
                   )
                 )
                 ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
-                  ( Ref Nothing
-                    ( Imported ( ModuleName "Golden.ArrayPatternMatch.Test" ) ( Name "logShow" ) )
-                  )
+                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
                   ( AppN Nothing
-                    ( Ref Nothing
-                      ( Imported
-                        ( ModuleName "Golden.ArrayPatternMatch.Test" )
-                        ( Name "firstTwo" )
-                      )
-                    )
-                    ( LiteralArray Nothing [] :| [] ) :| []
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
+                    ( LiteralInt Nothing ( -1 ) :| [] ) :| []
                   )
                 )
                 ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
@@ -129,16 +101,10 @@ UberModule
           )
           ( AppN Nothing
             ( AppN Nothing
-              ( Ref Nothing
-                ( Imported ( ModuleName "Golden.ArrayPatternMatch.Test" ) ( Name "logShow" ) )
-              )
+              ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
               ( AppN Nothing
-                ( Ref Nothing
-                  ( Imported ( ModuleName "Golden.ArrayPatternMatch.Test" ) ( Name "lastOfThree" ) )
-                )
-                ( LiteralArray Nothing
-                  [ LiteralInt Nothing 7, LiteralInt Nothing 8, LiteralInt Nothing 9 ] :| []
-                ) :| []
+                ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
+                ( LiteralInt Nothing 9 :| [] ) :| []
               )
             )
             ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
