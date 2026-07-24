@@ -241,14 +241,7 @@ UberModule
                                   ( Ref Nothing ( Local ( Name "$cse253" ) ) )
                                 )
                                 ( LiteralString Nothing "GT" )
-                                ( IfThenElse Nothing
-                                  ( Eq Nothing
-                                    ( LiteralString Nothing "Data.Ordering∷Ordering.EQ" )
-                                    ( Ref Nothing ( Local ( Name "$cse253" ) ) )
-                                  )
-                                  ( LiteralString Nothing "EQ" )
-                                  ( Exception Nothing "No patterns matched" )
-                                )
+                                ( LiteralString Nothing "EQ" )
                               )
                             )
                           )

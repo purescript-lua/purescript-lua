@@ -29,6 +29,7 @@ import Language.PureScript.Backend.IR.Optimizer
   ( CallSiteInlining (SkipCallSites)
   , optimizeModule
   , optimizedExpression
+  , optimizedExpressionWithTypes
   , optimizedUberModule
   , optimizedUberModuleChecked
   , pushIfCondIntoBranches
@@ -41,6 +42,7 @@ import Language.PureScript.Backend.IR.Types
   ( AlgebraicType (ProductType, SumType)
   , Ann
   , Capture (..)
+  , DataTypes
   , Exp
   , Grouping (..)
   , Module (..)
@@ -409,7 +411,7 @@ spec = describe "IR Optimizer" do
                   , (Name "main2", refImported mainModule (Name "add"))
                   ]
               }
-          optimized = optimizedUberModule original
+          optimized = optimizedUberModule mempty original
           addKept =
             [ qn
             | Standalone (qn, _) ← Linker.uberModuleBindings optimized
@@ -727,7 +729,7 @@ spec = describe "IR Optimizer" do
                 )
                 nothingCtor
       optimized ←
-        either (fail . show) pure . optimizedUberModuleChecked $
+        either (fail . show) pure . optimizedUberModuleChecked mempty $
           Linker.UberModule
             { uberModuleForeigns = []
             , uberModuleBindings =
@@ -819,7 +821,7 @@ spec = describe "IR Optimizer" do
                 )
                 nothingCtor
       optimized ←
-        either (fail . show) pure . optimizedUberModuleChecked $
+        either (fail . show) pure . optimizedUberModuleChecked mempty $
           Linker.UberModule
             { uberModuleForeigns = []
             , uberModuleBindings =
@@ -1119,6 +1121,92 @@ spec = describe "IR Optimizer" do
       let fa = application (refImported m (Name "f")) a
       optimizedExpression (ifThenElse a fa fa) `shouldBe` fa
 
+  -- An exhaustive match over a closed sum compiles to a chain of
+  -- constructor-tag tests plus a synthesized default no test can reach:
+  -- the tested constructors already cover the type. With the declared
+  -- constructor table in scope the optimizer drops the dead default and
+  -- folds the then-redundant final tag test into an unconditional else.
+  describe "eliminates the unreachable default of an exhaustive match (#224)" do
+    let m = moduleNameFromString "M"
+        ty = TyName "T"
+        ctorA = CtorName "A"
+        ctorB = CtorName "B"
+        ctorC = CtorName "C"
+        dataTypes ∷ DataTypes
+        dataTypes =
+          Map.singleton
+            (m, ty)
+            (SumType, Map.fromList [(ctorA, []), (ctorB, []), (ctorC, [])])
+        v = refLocal (Name "v")
+        tagTest c = eq (literalString (ctorId m ty c)) (reflectCtor v)
+        deadDefault = exception "No patterns matched"
+
+    it "drops the default and the final tag test of an exhaustive chain" do
+      let original =
+            ifThenElse (tagTest ctorA) (literalInt 1) $
+              ifThenElse (tagTest ctorB) (literalInt 2) $
+                ifThenElse (tagTest ctorC) (literalInt 3) deadDefault
+          expected =
+            ifThenElse (tagTest ctorA) (literalInt 1) $
+              ifThenElse (tagTest ctorB) (literalInt 2) (literalInt 3)
+      optimizedExpressionWithTypes dataTypes original `shouldBe` expected
+
+    it "keeps the default of a non-exhaustive chain" do
+      -- One constructor is never tested: the default stays reachable.
+      -- This negative case is the soundness guard of the rewrite.
+      let original =
+            ifThenElse (tagTest ctorA) (literalInt 1) $
+              ifThenElse (tagTest ctorB) (literalInt 2) deadDefault
+      optimizedExpressionWithTypes dataTypes original `shouldBe` original
+
+    it "keeps the default when a repeated test hides the gap" do
+      -- Three tests but only two distinct constructors: the chain is as
+      -- long as the constructor count, yet still not exhaustive.
+      let original =
+            ifThenElse (tagTest ctorA) (literalInt 1) $
+              ifThenElse (tagTest ctorB) (literalInt 2) $
+                ifThenElse (tagTest ctorB) (literalInt 3) deadDefault
+      optimizedExpressionWithTypes dataTypes original `shouldBe` original
+
+    it "keeps the default when the chain switches scrutinees" do
+      -- The middle test reads another variable: its outcome proves
+      -- nothing about v, so the chain does not cover v's type.
+      let w = refLocal (Name "w")
+          testW c = eq (literalString (ctorId m ty c)) (reflectCtor w)
+          original =
+            ifThenElse (tagTest ctorA) (literalInt 1) $
+              ifThenElse (testW ctorB) (literalInt 2) $
+                ifThenElse (tagTest ctorC) (literalInt 3) deadDefault
+      optimizedExpressionWithTypes dataTypes original `shouldBe` original
+
+    it "keeps the default when the scrutinee is not a variable" do
+      let call = application (refImported m (Name "f")) (literalInt 0)
+          testCall c = eq (literalString (ctorId m ty c)) (reflectCtor call)
+          original =
+            ifThenElse (testCall ctorA) (literalInt 1) $
+              ifThenElse (testCall ctorB) (literalInt 2) $
+                ifThenElse (testCall ctorC) (literalInt 3) deadDefault
+      optimizedExpressionWithTypes dataTypes original `shouldBe` original
+
+    it "keeps a chain that already ends in a live else" do
+      let original =
+            ifThenElse (tagTest ctorA) (literalInt 1) $
+              ifThenElse (tagTest ctorB) (literalInt 2) $
+                ifThenElse
+                  (tagTest ctorC)
+                  (literalInt 3)
+                  (refLocal (Name "r"))
+      optimizedExpressionWithTypes dataTypes original `shouldBe` original
+
+    it "keeps the default without the data-type table" do
+      -- 'optimizedExpression' runs with no table: unknown tags prove
+      -- nothing, so the chain survives untouched.
+      let original =
+            ifThenElse (tagTest ctorA) (literalInt 1) $
+              ifThenElse (tagTest ctorB) (literalInt 2) $
+                ifThenElse (tagTest ctorC) (literalInt 3) deadDefault
+      optimizedExpression original `shouldBe` original
+
   -- Case-of-case over the IfThenElse decision tree: a boolean-returning
   -- tree consumed in a strict position (an Eq against a literal, or the
   -- condition of another if) sits in expression position, where codegen
@@ -1293,7 +1381,7 @@ spec = describe "IR Optimizer" do
               , uberModuleExports =
                   [(Name "main", refImported mainModule (Name "foo"))]
               }
-          optimized = optimizedUberModule original
+          optimized = optimizedUberModule mempty original
           fooKept =
             [ qn
             | Standalone (qn, _) ← Linker.uberModuleBindings optimized
@@ -1329,7 +1417,7 @@ spec = describe "IR Optimizer" do
                   ]
               }
       optimized ←
-        either (fail . show) pure (optimizedUberModuleChecked original)
+        either (fail . show) pure (optimizedUberModuleChecked mempty original)
       annotateShow optimized
       -- Dissolving the alias would take the Always target's use sites
       -- from one to two right before Always pastes its body into every
@@ -1376,7 +1464,7 @@ spec = describe "IR Optimizer" do
                   [(Name "main1", refImported mainModule (Name "add"))]
               }
       optimized ←
-        either (fail . show) pure (optimizedUberModuleChecked original)
+        either (fail . show) pure (optimizedUberModuleChecked mempty original)
       annotateShow optimized
       Linker.uberModuleBindings optimized === []
       let exportNames = fst <$> Linker.uberModuleExports optimized
@@ -1408,7 +1496,7 @@ spec = describe "IR Optimizer" do
                   ]
               }
       optimized ←
-        either (fail . show) pure (optimizedUberModuleChecked original)
+        either (fail . show) pure (optimizedUberModuleChecked mempty original)
       annotateShow optimized
       Linker.uberModuleBindings optimized === []
       Linker.uberModuleExports optimized
@@ -1417,7 +1505,7 @@ spec = describe "IR Optimizer" do
   describe "gates inlining by Complexity and Capture (issue #231)" do
     let main' = moduleNameFromString "Main"
         ext = moduleNameFromString "Ext"
-        checked = either (fail . show) pure . optimizedUberModuleChecked
+        checked = either (fail . show) pure . optimizedUberModuleChecked mempty
         -- λx. x + 1 — closed, well under any inlining budget.
         incName = Name "f"
         incExpr =
@@ -1562,7 +1650,7 @@ spec = describe "IR Optimizer" do
                 (refLocal (Name "b"))
         saturated x y =
           application (application fRef (literalInt x)) (literalInt y)
-        checked = either (fail . show) pure . optimizedUberModuleChecked
+        checked = either (fail . show) pure . optimizedUberModuleChecked mempty
         namesOf uber =
           [ name
           | Standalone (QName _ (Name name), _) ←
@@ -1680,7 +1768,7 @@ spec = describe "IR Optimizer" do
                 (refLocal (Name "x"))
                 (refLocal (Name "y"))
         saturated a = application (application addRef a)
-        checked = either (fail . show) pure . optimizedUberModuleChecked
+        checked = either (fail . show) pure . optimizedUberModuleChecked mempty
 
     it "folds every saturated worker call to the inline primop" do
       -- Two saturated sites: the use-once whole-binding inline does not
@@ -1711,7 +1799,7 @@ spec = describe "IR Optimizer" do
         n3 = refImported extern (Name "n3")
         x = Name "x"
         y = Name "y"
-        checked = either (fail . show) pure . optimizedUberModuleChecked
+        checked = either (fail . show) pure . optimizedUberModuleChecked mempty
         uberWith name def sites =
           Linker.UberModule
             { uberModuleForeigns = []
@@ -1851,7 +1939,7 @@ spec = describe "IR Optimizer" do
   describe "bounds call-site growth on non-collapsing chains (#221)" do
     let mainModule = moduleNameFromString "Main"
         extern = moduleNameFromString "Extern"
-        checked = either (fail . show) pure . optimizedUberModuleChecked
+        checked = either (fail . show) pure . optimizedUberModuleChecked mempty
         namesOf uber =
           [ name
           | Standalone (QName _ (Name name), _) ←
@@ -1997,7 +2085,7 @@ spec = describe "IR Optimizer" do
                 (refLocal (Name "b"))
         applied2 x y =
           application (application fRef (literalInt x)) (literalInt y)
-        checked = either (fail . show) pure . optimizedUberModuleChecked
+        checked = either (fail . show) pure . optimizedUberModuleChecked mempty
         namesOf uber =
           [ name
           | Standalone (QName _ (Name name), _) ←
@@ -2145,7 +2233,7 @@ spec = describe "IR Optimizer" do
         g = refImported extern (Name "g")
         m = PropName "m"
         pad = PropName "pad"
-        checked = either (fail . show) pure . optimizedUberModuleChecked
+        checked = either (fail . show) pure . optimizedUberModuleChecked mempty
         namesOf uber =
           [ name
           | Standalone (QName _ (Name name), _) ←
@@ -2339,7 +2427,7 @@ spec = describe "IR Optimizer" do
               (dataArgumentByIndex ProductType 0 (application opRef (wrap n)))
               (literalInt x)
       optimized ←
-        either (fail . show) pure . optimizedUberModuleChecked $
+        either (fail . show) pure . optimizedUberModuleChecked mempty $
           Linker.UberModule
             { uberModuleForeigns = []
             , uberModuleBindings = [Standalone (opName, opDef)]
@@ -2384,7 +2472,7 @@ spec = describe "IR Optimizer" do
               , modulePath = "Main.purs"
               }
           optimized =
-            optimizedUberModule $
+            optimizedUberModule mempty $
               Linker.makeUberModule (LinkAsModule mainModule) [original]
           foreignKept =
             [ qn
@@ -2413,7 +2501,7 @@ spec = describe "IR Optimizer" do
               , modulePath = "Main.purs"
               }
           optimized =
-            optimizedUberModule $
+            optimizedUberModule mempty $
               Linker.makeUberModule (LinkAsModule mainModule) [original]
           accessorKept =
             [ (qn, getAnn expr)
@@ -2443,7 +2531,7 @@ spec = describe "IR Optimizer" do
             }
         checked =
           either (fail . show) pure
-            . optimizedUberModuleChecked
+            . optimizedUberModuleChecked mempty
             . Linker.makeUberModule (LinkAsModule mainModule)
             . pure
         accessorBindings ∷ Linker.UberModule → [QName]
@@ -2570,7 +2658,7 @@ spec = describe "IR Optimizer" do
               , uberModuleExports =
                   [(Name "main", refImported main' (Name "y"))]
               }
-          optimized = fst (runSupply (optimizeModule SkipCallSites mempty original))
+          optimized = fst (runSupply (optimizeModule mempty SkipCallSites mempty original))
       Linker.uberModuleBindings optimized `shouldBe` []
       Linker.uberModuleExports optimized `shouldBe` [(Name "main", xExpr)]
 
@@ -2595,7 +2683,7 @@ spec = describe "IR Optimizer" do
               }
       annotateShow original
       annotateShow expected
-      optimizedUberModule original === expected
+      optimizedUberModule mempty original === expected
 
     -- The live trigger for the projection fold: inlining a record
     -- literal into its projection site creates the redex mid-fixpoint,
@@ -2622,7 +2710,7 @@ spec = describe "IR Optimizer" do
               , uberModuleExports = [(Name "main", literalInt 1)]
               }
       annotateShow original
-      optimizedUberModule original === expected
+      optimizedUberModule mempty original === expected
 
     -- The constructor twin of the record-projection test above (#177):
     -- inlining a saturated constructor into its field read forms the
@@ -2647,7 +2735,7 @@ spec = describe "IR Optimizer" do
               , uberModuleExports = [(Name "main", literalInt 1)]
               }
       annotateShow original
-      optimizedUberModule original === expected
+      optimizedUberModule mempty original === expected
 
     -- The tag twin: a single-use scrutinee lets inlining bring the
     -- constructor to the tag read, which folds to the tag string and
@@ -2674,7 +2762,7 @@ spec = describe "IR Optimizer" do
               , uberModuleExports = [(Name "main", literalBool True)]
               }
       annotateShow original
-      optimizedUberModule original === expected
+      optimizedUberModule mempty original === expected
 
   describe "scoping invariants" do
     -- Mimics issue #37: an inlined binding contains a let with a
@@ -2745,7 +2833,7 @@ spec = describe "IR Optimizer" do
                     )
                   ]
               }
-          optimized = optimizedUberModule original
+          optimized = optimizedUberModule mempty original
           offending =
             foldMap (unboundLocals . snd) (Linker.uberModuleExports optimized)
       annotateShow optimized
@@ -2785,7 +2873,7 @@ spec = describe "IR Optimizer" do
                 [ (PropName "p", refLocal b)
                 , (PropName "q", literalInt 0)
                 ]
-          optimized = optimizedUberModule original
+          optimized = optimizedUberModule mempty original
           offending =
             foldMap (unboundLocals . snd) (Linker.uberModuleExports optimized)
       annotateShow optimized
@@ -2821,7 +2909,7 @@ spec = describe "IR Optimizer" do
               , uberModuleBindings = []
               , uberModuleExports = [(Name "shape", shadowed)]
               }
-          optimized = optimizedUberModule original
+          optimized = optimizedUberModule mempty original
           offending =
             foldMap (unboundLocals . snd) (Linker.uberModuleExports optimized)
       annotateShow optimized
@@ -2838,6 +2926,7 @@ spec = describe "IR Optimizer" do
       unboundLocals e === [] -- the generator only emits well-scoped terms
       let optimized =
             optimizedUberModule
+              mempty
               Linker.UberModule
                 { Linker.uberModuleForeigns = []
                 , Linker.uberModuleBindings = []

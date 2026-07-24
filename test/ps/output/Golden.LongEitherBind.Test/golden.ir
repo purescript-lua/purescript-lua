@@ -28,64 +28,52 @@ UberModule
       ),
       ( Name "main", Let Nothing
         ( Standalone
-          ( Nothing, Name "$cse2150", DataArgumentByIndex Nothing SumType 0
+          ( Nothing, Name "$cse2149", DataArgumentByIndex Nothing SumType 0
             ( Ref Nothing
               ( Imported ( ModuleName "Golden.LongEitherBind.Test" ) ( Name "compute" ) )
             )
           ) :| []
         )
-        ( Let Nothing
-          ( Standalone
-            ( Nothing, Name "$cse2149", ReflectCtor Nothing
-              ( Ref Nothing
-                ( Imported ( ModuleName "Golden.LongEitherBind.Test" ) ( Name "compute" ) )
+        ( AppN Nothing
+          ( ObjectProp Nothing
+            ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
+            ( PropName "log" )
+          )
+          ( IfThenElse Nothing
+            ( Eq Nothing
+              ( LiteralString Nothing "Data.Either∷Either.Left" )
+              ( ReflectCtor Nothing
+                ( Ref Nothing
+                  ( Imported ( ModuleName "Golden.LongEitherBind.Test" ) ( Name "compute" ) )
+                )
+              )
+            )
+            ( PrimBinOp Nothing PrimConcat
+              ( LiteralString Nothing "(Left " )
+              ( PrimBinOp Nothing PrimConcat
+                ( AppN Nothing
+                  ( ObjectProp Nothing
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
+                    ( PropName "showStringImpl" )
+                  )
+                  ( Ref Nothing ( Local ( Name "$cse2149" ) ) :| [] )
+                )
+                ( LiteralString Nothing ")" )
+              )
+            )
+            ( PrimBinOp Nothing PrimConcat
+              ( LiteralString Nothing "(Right " )
+              ( PrimBinOp Nothing PrimConcat
+                ( AppN Nothing
+                  ( ObjectProp Nothing
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
+                    ( PropName "showIntImpl" )
+                  )
+                  ( Ref Nothing ( Local ( Name "$cse2149" ) ) :| [] )
+                )
+                ( LiteralString Nothing ")" )
               )
             ) :| []
-          )
-          ( AppN Nothing
-            ( ObjectProp Nothing
-              ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
-              ( PropName "log" )
-            )
-            ( IfThenElse Nothing
-              ( Eq Nothing
-                ( LiteralString Nothing "Data.Either∷Either.Left" )
-                ( Ref Nothing ( Local ( Name "$cse2149" ) ) )
-              )
-              ( PrimBinOp Nothing PrimConcat
-                ( LiteralString Nothing "(Left " )
-                ( PrimBinOp Nothing PrimConcat
-                  ( AppN Nothing
-                    ( ObjectProp Nothing
-                      ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
-                      ( PropName "showStringImpl" )
-                    )
-                    ( Ref Nothing ( Local ( Name "$cse2150" ) ) :| [] )
-                  )
-                  ( LiteralString Nothing ")" )
-                )
-              )
-              ( IfThenElse Nothing
-                ( Eq Nothing
-                  ( LiteralString Nothing "Data.Either∷Either.Right" )
-                  ( Ref Nothing ( Local ( Name "$cse2149" ) ) )
-                )
-                ( PrimBinOp Nothing PrimConcat
-                  ( LiteralString Nothing "(Right " )
-                  ( PrimBinOp Nothing PrimConcat
-                    ( AppN Nothing
-                      ( ObjectProp Nothing
-                        ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
-                        ( PropName "showIntImpl" )
-                      )
-                      ( Ref Nothing ( Local ( Name "$cse2150" ) ) :| [] )
-                    )
-                    ( LiteralString Nothing ")" )
-                  )
-                )
-                ( Exception Nothing "No patterns matched" )
-              ) :| []
-            )
           )
         )
       )

@@ -14,11 +14,6 @@ UberModule
         [ ( Nothing, Name "log" ) ]
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Data.Functor", qnameName = Name "map" }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "dict" ) :| [] )
-        ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) ) ( PropName "map" ) )
-      ), Standalone
-      ( QName
         { qnameModuleName = ModuleName "Data.Maybe", qnameName = Name "Nothing"
         }, Ctor Nothing SumType
         ( ModuleName "Data.Maybe" )
@@ -26,127 +21,58 @@ UberModule
         ( CtorName "Nothing" ) []
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Data.Maybe", qnameName = Name "functorMaybe"
-        }, LiteralObject Nothing
-        [
-          ( PropName "map", AbsN Nothing
-            ( ParamNamed Nothing ( Name "v" ) :| [] )
-            ( AbsN Nothing
-              ( ParamNamed Nothing ( Name "v1" ) :| [] )
-              ( IfThenElse Nothing
+        { qnameModuleName = ModuleName "Golden.LongApplyChain.Test", qnameName = Name "applySecond$w"
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "a$133" ) :| [ ParamNamed Nothing ( Name "b$134" ) ] )
+        ( AppN Nothing
+          ( Let Nothing
+            ( Standalone
+              ( Nothing, Name "v$625", IfThenElse Nothing
                 ( Eq Nothing
                   ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
-                  ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v1" ) ) ) )
+                  ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "a$133" ) ) ) )
                 )
                 ( Ctor Nothing SumType
                   ( ModuleName "Data.Maybe" )
                   ( TyName "Maybe" )
                   ( CtorName "Just" )
-                  [ AppN Nothing
-                    ( Ref Nothing ( Local ( Name "v" ) ) )
-                    ( DataArgumentByIndex Nothing SumType 0
-                      ( Ref Nothing ( Local ( Name "v1" ) ) ) :| []
-                    )
+                  [ AbsN Nothing
+                    ( ParamNamed Nothing ( Name "x$318" ) :| [] )
+                    ( Ref Nothing ( Local ( Name "x$318" ) ) )
                   ]
                 )
                 ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) )
-              )
+              ) :| []
             )
-          )
-        ]
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Data.Maybe", qnameName = Name "applyMaybe"
-        }, LiteralObject Nothing
-        [
-          ( PropName "apply", AbsN Nothing
-            ( ParamNamed Nothing ( Name "v" ) :| [] )
             ( AbsN Nothing
-              ( ParamNamed Nothing ( Name "v1" ) :| [] )
-              ( Let Nothing
-                ( Standalone
-                  ( Nothing, Name "$cse676", ReflectCtor Nothing
-                    ( Ref Nothing ( Local ( Name "v" ) ) )
-                  ) :| []
+              ( ParamNamed Nothing ( Name "v1$626" ) :| [] )
+              ( IfThenElse Nothing
+                ( Eq Nothing
+                  ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
+                  ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v$625" ) ) ) )
                 )
                 ( IfThenElse Nothing
                   ( Eq Nothing
                     ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
-                    ( Ref Nothing ( Local ( Name "$cse676" ) ) )
+                    ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v1$626" ) ) ) )
                   )
-                  ( IfThenElse Nothing
-                    ( Eq Nothing
-                      ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
-                      ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v1" ) ) ) )
-                    )
-                    ( Ctor Nothing SumType
-                      ( ModuleName "Data.Maybe" )
-                      ( TyName "Maybe" )
-                      ( CtorName "Just" )
-                      [ AppN Nothing
-                        ( DataArgumentByIndex Nothing SumType 0
-                          ( Ref Nothing ( Local ( Name "v" ) ) )
-                        )
-                        ( DataArgumentByIndex Nothing SumType 0
-                          ( Ref Nothing ( Local ( Name "v1" ) ) ) :| []
-                        )
-                      ]
-                    )
-                    ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) )
-                  )
-                  ( IfThenElse Nothing
-                    ( Eq Nothing
-                      ( LiteralString Nothing "Data.Maybe∷Maybe.Nothing" )
-                      ( Ref Nothing ( Local ( Name "$cse676" ) ) )
-                    )
-                    ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) )
-                    ( Exception Nothing "No patterns matched" )
-                  )
-                )
-              )
-            )
-          ),
-          ( PropName "Functor0", AbsN Nothing
-            ( ParamUnused Nothing :| [] )
-            ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "functorMaybe" ) ) )
-          )
-        ]
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Golden.LongApplyChain.Test", qnameName = Name "applySecond$w"
-        }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "a$133" ) :| [ ParamNamed Nothing ( Name "b$134" ) ] )
-        ( AppN Nothing
-          ( AppN Nothing
-            ( ObjectProp Nothing
-              ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "applyMaybe" ) ) )
-              ( PropName "apply" )
-            )
-            ( AppN Nothing
-              ( AppN Nothing
-                ( AppN Nothing
-                  ( Ref Nothing ( Imported ( ModuleName "Data.Functor" ) ( Name "map" ) ) )
-                  ( AppN Nothing
-                    ( ObjectProp Nothing
-                      ( Ref Nothing
-                        ( Imported ( ModuleName "Data.Maybe" ) ( Name "applyMaybe" ) )
+                  ( Ctor Nothing SumType
+                    ( ModuleName "Data.Maybe" )
+                    ( TyName "Maybe" )
+                    ( CtorName "Just" )
+                    [ AppN Nothing
+                      ( DataArgumentByIndex Nothing SumType 0
+                        ( Ref Nothing ( Local ( Name "v$625" ) ) )
                       )
-                      ( PropName "Functor0" )
-                    )
-                    ( Ref Nothing
-                      ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| []
-                    ) :| []
+                      ( DataArgumentByIndex Nothing SumType 0
+                        ( Ref Nothing ( Local ( Name "v1$626" ) ) ) :| []
+                      )
+                    ]
                   )
+                  ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) )
                 )
-                ( AbsN Nothing
-                  ( ParamUnused Nothing :| [] )
-                  ( AbsN Nothing
-                    ( ParamNamed Nothing ( Name "x$318" ) :| [] )
-                    ( Ref Nothing ( Local ( Name "x$318" ) ) )
-                  ) :| []
-                )
+                ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) )
               )
-              ( Ref Nothing ( Local ( Name "a$133" ) ) :| [] ) :| []
             )
           )
           ( Ref Nothing ( Local ( Name "b$134" ) ) :| [] )
@@ -156,7 +82,7 @@ UberModule
         { qnameModuleName = ModuleName "Golden.LongApplyChain.Test", qnameName = Name "compute"
         }, Let Nothing
         ( Standalone
-          ( Nothing, Name "$tmp678", AppN Nothing
+          ( Nothing, Name "$tmp646", AppN Nothing
             ( Ref Nothing
               ( Imported ( ModuleName "Golden.LongApplyChain.Test" ) ( Name "applySecond$w" ) )
             )
@@ -714,7 +640,7 @@ UberModule
             )
           ) :|
           [ Standalone
-            ( Nothing, Name "$tmp679", AppN Nothing
+            ( Nothing, Name "$tmp647", AppN Nothing
               ( Ref Nothing
                 ( Imported ( ModuleName "Golden.LongApplyChain.Test" ) ( Name "applySecond$w" ) )
               )
@@ -990,7 +916,7 @@ UberModule
                                                                                             )
                                                                                             ( Ref Nothing
                                                                                               ( Local
-                                                                                                ( Name "$tmp678" )
+                                                                                                ( Name "$tmp646" )
                                                                                               ) :|
                                                                                               [ Ctor Nothing SumType
                                                                                                 ( ModuleName "Data.Maybe" )
@@ -1273,7 +1199,7 @@ UberModule
                 ]
               )
             ), Standalone
-            ( Nothing, Name "$tmp680", AppN Nothing
+            ( Nothing, Name "$tmp648", AppN Nothing
               ( Ref Nothing
                 ( Imported ( ModuleName "Golden.LongApplyChain.Test" ) ( Name "applySecond$w" ) )
               )
@@ -1549,7 +1475,7 @@ UberModule
                                                                                             )
                                                                                             ( Ref Nothing
                                                                                               ( Local
-                                                                                                ( Name "$tmp679" )
+                                                                                                ( Name "$tmp647" )
                                                                                               ) :|
                                                                                               [ Ctor Nothing SumType
                                                                                                 ( ModuleName "Data.Maybe" )
@@ -1832,7 +1758,7 @@ UberModule
                 ]
               )
             ), Standalone
-            ( Nothing, Name "$tmp681", AppN Nothing
+            ( Nothing, Name "$tmp649", AppN Nothing
               ( Ref Nothing
                 ( Imported ( ModuleName "Golden.LongApplyChain.Test" ) ( Name "applySecond$w" ) )
               )
@@ -2108,7 +2034,7 @@ UberModule
                                                                                             )
                                                                                             ( Ref Nothing
                                                                                               ( Local
-                                                                                                ( Name "$tmp680" )
+                                                                                                ( Name "$tmp648" )
                                                                                               ) :|
                                                                                               [ Ctor Nothing SumType
                                                                                                 ( ModuleName "Data.Maybe" )
@@ -2391,7 +2317,7 @@ UberModule
                 ]
               )
             ), Standalone
-            ( Nothing, Name "$tmp682", AppN Nothing
+            ( Nothing, Name "$tmp650", AppN Nothing
               ( Ref Nothing
                 ( Imported ( ModuleName "Golden.LongApplyChain.Test" ) ( Name "applySecond$w" ) )
               )
@@ -2667,7 +2593,7 @@ UberModule
                                                                                             )
                                                                                             ( Ref Nothing
                                                                                               ( Local
-                                                                                                ( Name "$tmp681" )
+                                                                                                ( Name "$tmp649" )
                                                                                               ) :|
                                                                                               [ Ctor Nothing SumType
                                                                                                 ( ModuleName "Data.Maybe" )
@@ -2950,7 +2876,7 @@ UberModule
                 ]
               )
             ), Standalone
-            ( Nothing, Name "$tmp683", AppN Nothing
+            ( Nothing, Name "$tmp651", AppN Nothing
               ( Ref Nothing
                 ( Imported ( ModuleName "Golden.LongApplyChain.Test" ) ( Name "applySecond$w" ) )
               )
@@ -3226,7 +3152,7 @@ UberModule
                                                                                             )
                                                                                             ( Ref Nothing
                                                                                               ( Local
-                                                                                                ( Name "$tmp682" )
+                                                                                                ( Name "$tmp650" )
                                                                                               ) :|
                                                                                               [ Ctor Nothing SumType
                                                                                                 ( ModuleName "Data.Maybe" )
@@ -3509,7 +3435,7 @@ UberModule
                 ]
               )
             ), Standalone
-            ( Nothing, Name "$tmp684", AppN Nothing
+            ( Nothing, Name "$tmp652", AppN Nothing
               ( Ref Nothing
                 ( Imported ( ModuleName "Golden.LongApplyChain.Test" ) ( Name "applySecond$w" ) )
               )
@@ -3785,7 +3711,7 @@ UberModule
                                                                                             )
                                                                                             ( Ref Nothing
                                                                                               ( Local
-                                                                                                ( Name "$tmp683" )
+                                                                                                ( Name "$tmp651" )
                                                                                               ) :|
                                                                                               [ Ctor Nothing SumType
                                                                                                 ( ModuleName "Data.Maybe" )
@@ -4192,7 +4118,7 @@ UberModule
                                                 )
                                               )
                                               ( Ref Nothing
-                                                ( Local ( Name "$tmp684" ) ) :|
+                                                ( Local ( Name "$tmp652" ) ) :|
                                                 [ Ctor Nothing SumType
                                                   ( ModuleName "Data.Maybe" )
                                                   ( TyName "Maybe" )
@@ -4333,50 +4259,38 @@ UberModule
       ( Name "compute", Ref Nothing
         ( Imported ( ModuleName "Golden.LongApplyChain.Test" ) ( Name "compute" ) )
       ),
-      ( Name "main", Let Nothing
-        ( Standalone
-          ( Nothing, Name "$cse677", ReflectCtor Nothing
-            ( Ref Nothing
-              ( Imported ( ModuleName "Golden.LongApplyChain.Test" ) ( Name "compute" ) )
-            )
-          ) :| []
+      ( Name "main", AppN Nothing
+        ( ObjectProp Nothing
+          ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
+          ( PropName "log" )
         )
-        ( AppN Nothing
-          ( ObjectProp Nothing
-            ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
-            ( PropName "log" )
-          )
-          ( IfThenElse Nothing
-            ( Eq Nothing
-              ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
-              ( Ref Nothing ( Local ( Name "$cse677" ) ) )
+        ( IfThenElse Nothing
+          ( Eq Nothing
+            ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
+            ( ReflectCtor Nothing
+              ( Ref Nothing
+                ( Imported ( ModuleName "Golden.LongApplyChain.Test" ) ( Name "compute" ) )
+              )
             )
+          )
+          ( PrimBinOp Nothing PrimConcat
+            ( LiteralString Nothing "(Just " )
             ( PrimBinOp Nothing PrimConcat
-              ( LiteralString Nothing "(Just " )
-              ( PrimBinOp Nothing PrimConcat
-                ( AppN Nothing
-                  ( ObjectProp Nothing
-                    ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
-                    ( PropName "showIntImpl" )
-                  )
-                  ( DataArgumentByIndex Nothing SumType 0
-                    ( Ref Nothing
-                      ( Imported ( ModuleName "Golden.LongApplyChain.Test" ) ( Name "compute" ) )
-                    ) :| []
-                  )
+              ( AppN Nothing
+                ( ObjectProp Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
+                  ( PropName "showIntImpl" )
                 )
-                ( LiteralString Nothing ")" )
+                ( DataArgumentByIndex Nothing SumType 0
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Golden.LongApplyChain.Test" ) ( Name "compute" ) )
+                  ) :| []
+                )
               )
+              ( LiteralString Nothing ")" )
             )
-            ( IfThenElse Nothing
-              ( Eq Nothing
-                ( LiteralString Nothing "Data.Maybe∷Maybe.Nothing" )
-                ( Ref Nothing ( Local ( Name "$cse677" ) ) )
-              )
-              ( LiteralString Nothing "Nothing" )
-              ( Exception Nothing "No patterns matched" )
-            ) :| []
           )
+          ( LiteralString Nothing "Nothing" ) :| []
         )
       )
     ]

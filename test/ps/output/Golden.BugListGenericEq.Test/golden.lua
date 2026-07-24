@@ -48,23 +48,17 @@ M.Golden_BugListGenericEq_Test_Cons = function(value0)
 end
 M.Golden_BugListGenericEq_Test_genericList = {
   to = function(x)
-    local _S_cse268 = x[1]
-    if "Data.Generic.Rep∷Sum.Inl" == _S_cse268 then
+    if "Data.Generic.Rep∷Sum.Inl" == x[1] then
       return Golden_BugListGenericEq_Test_Nil
-    elseif "Data.Generic.Rep∷Sum.Inr" == _S_cse268 then
-      return { "Golden.BugListGenericEq.Test∷List.Cons", x[2] }
     else
-      return error("No patterns matched")
+      return { "Golden.BugListGenericEq.Test∷List.Cons", x[2] }
     end
   end,
   from = function(x0)
-    local _S_cse269 = x0[1]
-    if "Golden.BugListGenericEq.Test∷List.Nil" == _S_cse269 then
+    if "Golden.BugListGenericEq.Test∷List.Nil" == x0[1] then
       return { "Data.Generic.Rep∷Sum.Inl", {} }
-    elseif "Golden.BugListGenericEq.Test∷List.Cons" == _S_cse269 then
-      return { "Data.Generic.Rep∷Sum.Inr", x0[2] }
     else
-      return error("No patterns matched")
+      return { "Data.Generic.Rep∷Sum.Inr", x0[2] }
     end
   end
 }
@@ -73,26 +67,22 @@ Golden_BugListGenericEq_Test_eqList = function(dictEq)
   return {
     eq = function(x)
       return function(y)
-        local _S_cse272 = y[1]
-        local _S_cse271 = { "Data.Generic.Rep∷Sum.Inl", {} }
-        local _S_cse270 = x[1]
+        local _S_cse268 = { "Data.Generic.Rep∷Sum.Inl", {} }
         return (function()
           local v_S_13 = (function()
-            if "Golden.BugListGenericEq.Test∷List.Nil" == _S_cse270 then
-              return _S_cse271
-            elseif "Golden.BugListGenericEq.Test∷List.Cons" == _S_cse270 then
-              return { "Data.Generic.Rep∷Sum.Inr", x[2] }
+            if "Golden.BugListGenericEq.Test∷List.Nil" == x[1] then
+              return _S_cse268
             else
-              return error("No patterns matched")
+              return { "Data.Generic.Rep∷Sum.Inr", x[2] }
             end
           end)()
           return function(v1_S_14)
-            local _S_cse274 = v1_S_14[1]
-            local _S_cse273 = v_S_13[1]
-            if "Data.Generic.Rep∷Sum.Inl" == _S_cse273 then
-              return "Data.Generic.Rep∷Sum.Inl" == _S_cse274
+            local _S_cse270 = v1_S_14[1]
+            local _S_cse269 = v_S_13[1]
+            if "Data.Generic.Rep∷Sum.Inl" == _S_cse269 then
+              return "Data.Generic.Rep∷Sum.Inl" == _S_cse270
             else
-              return "Data.Generic.Rep∷Sum.Inr" == _S_cse273 and ("Data.Generic.Rep∷Sum.Inr" == _S_cse274 and (Data_Eq_eqRowCons_S_w(Data_Eq_eqRowCons_S_w({
+              return "Data.Generic.Rep∷Sum.Inr" == _S_cse269 and ("Data.Generic.Rep∷Sum.Inr" == _S_cse270 and (Data_Eq_eqRowCons_S_w(Data_Eq_eqRowCons_S_w({
                 eqRecord = function()
                   return function() return function() return true end end
                 end
@@ -104,12 +94,10 @@ Golden_BugListGenericEq_Test_eqList = function(dictEq)
             end
           end
         end)()((function()
-          if "Golden.BugListGenericEq.Test∷List.Nil" == _S_cse272 then
-            return _S_cse271
-          elseif "Golden.BugListGenericEq.Test∷List.Cons" == _S_cse272 then
-            return { "Data.Generic.Rep∷Sum.Inr", y[2] }
+          if "Golden.BugListGenericEq.Test∷List.Nil" == y[1] then
+            return _S_cse268
           else
-            return error("No patterns matched")
+            return { "Data.Generic.Rep∷Sum.Inr", y[2] }
           end
         end)())
       end

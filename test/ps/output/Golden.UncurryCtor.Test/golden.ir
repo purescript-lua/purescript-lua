@@ -166,35 +166,21 @@ UberModule
           { qnameModuleName = ModuleName "Golden.UncurryCtor.Test", qnameName = Name "total"
           }, AbsN Nothing
           ( ParamNamed Nothing ( Name "v" ) :| [] )
-          ( Let Nothing
-            ( Standalone
-              ( Nothing, Name "$cse432", ReflectCtor Nothing
-                ( Ref Nothing ( Local ( Name "v" ) ) )
-              ) :| []
+          ( IfThenElse Nothing
+            ( Eq Nothing
+              ( LiteralString Nothing "Golden.UncurryCtor.Test∷IntList.Nil" )
+              ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v" ) ) ) )
             )
-            ( IfThenElse Nothing
-              ( Eq Nothing
-                ( LiteralString Nothing "Golden.UncurryCtor.Test∷IntList.Nil" )
-                ( Ref Nothing ( Local ( Name "$cse432" ) ) )
-              )
-              ( LiteralInt Nothing 0 )
-              ( IfThenElse Nothing
-                ( Eq Nothing
-                  ( LiteralString Nothing "Golden.UncurryCtor.Test∷IntList.Cons" )
-                  ( Ref Nothing ( Local ( Name "$cse432" ) ) )
+            ( LiteralInt Nothing 0 )
+            ( PrimBinOp Nothing PrimAdd
+              ( DataArgumentByIndex Nothing SumType 0 ( Ref Nothing ( Local ( Name "v" ) ) ) )
+              ( AppN Nothing
+                ( Ref Nothing
+                  ( Imported ( ModuleName "Golden.UncurryCtor.Test" ) ( Name "total" ) )
                 )
-                ( PrimBinOp Nothing PrimAdd
-                  ( DataArgumentByIndex Nothing SumType 0 ( Ref Nothing ( Local ( Name "v" ) ) ) )
-                  ( AppN Nothing
-                    ( Ref Nothing
-                      ( Imported ( ModuleName "Golden.UncurryCtor.Test" ) ( Name "total" ) )
-                    )
-                    ( DataArgumentByIndex Nothing SumType 1
-                      ( Ref Nothing ( Local ( Name "v" ) ) ) :| []
-                    )
-                  )
+                ( DataArgumentByIndex Nothing SumType 1
+                  ( Ref Nothing ( Local ( Name "v" ) ) ) :| []
                 )
-                ( Exception Nothing "No patterns matched" )
               )
             )
           )
@@ -304,43 +290,34 @@ UberModule
         ( ParamNamed Nothing ( Name "v" ) :| [] )
         ( Let Nothing
           ( Standalone
-            ( Nothing, Name "$cse434", DataArgumentByIndex Nothing SumType 0
+            ( Nothing, Name "$cse433", DataArgumentByIndex Nothing SumType 0
               ( Ref Nothing ( Local ( Name "v" ) ) )
             ) :| []
           )
           ( Let Nothing
             ( Standalone
-              ( Nothing, Name "$cse433", ReflectCtor Nothing
+              ( Nothing, Name "$cse432", ReflectCtor Nothing
                 ( Ref Nothing ( Local ( Name "v" ) ) )
               ) :| []
             )
             ( IfThenElse Nothing
               ( Eq Nothing
                 ( LiteralString Nothing "Golden.UncurryCtor.Test∷Shape.Origin" )
-                ( Ref Nothing ( Local ( Name "$cse433" ) ) )
+                ( Ref Nothing ( Local ( Name "$cse432" ) ) )
               )
               ( LiteralInt Nothing 0 )
               ( IfThenElse Nothing
                 ( Eq Nothing
                   ( LiteralString Nothing "Golden.UncurryCtor.Test∷Shape.Dot" )
-                  ( Ref Nothing ( Local ( Name "$cse433" ) ) )
+                  ( Ref Nothing ( Local ( Name "$cse432" ) ) )
                 )
-                ( Ref Nothing ( Local ( Name "$cse434" ) ) )
-                ( IfThenElse Nothing
-                  ( Eq Nothing
-                    ( LiteralString Nothing "Golden.UncurryCtor.Test∷Shape.Tri" )
-                    ( Ref Nothing ( Local ( Name "$cse433" ) ) )
-                  )
+                ( Ref Nothing ( Local ( Name "$cse433" ) ) )
+                ( PrimBinOp Nothing PrimAdd
                   ( PrimBinOp Nothing PrimAdd
-                    ( PrimBinOp Nothing PrimAdd
-                      ( Ref Nothing ( Local ( Name "$cse434" ) ) )
-                      ( DataArgumentByIndex Nothing SumType 1
-                        ( Ref Nothing ( Local ( Name "v" ) ) )
-                      )
-                    )
-                    ( DataArgumentByIndex Nothing SumType 2 ( Ref Nothing ( Local ( Name "v" ) ) ) )
+                    ( Ref Nothing ( Local ( Name "$cse433" ) ) )
+                    ( DataArgumentByIndex Nothing SumType 1 ( Ref Nothing ( Local ( Name "v" ) ) ) )
                   )
-                  ( Exception Nothing "No patterns matched" )
+                  ( DataArgumentByIndex Nothing SumType 2 ( Ref Nothing ( Local ( Name "v" ) ) ) )
                 )
               )
             )
@@ -587,28 +564,16 @@ UberModule
                                 )
                                 ( AbsN Nothing
                                   ( ParamNamed Nothing ( Name "v2$307" ) :| [] )
-                                  ( Let Nothing
-                                    ( Standalone
-                                      ( Nothing, Name "$cse435", ReflectCtor Nothing
+                                  ( IfThenElse Nothing
+                                    ( Eq Nothing
+                                      ( LiteralString Nothing "Data.Maybe∷Maybe.Nothing" )
+                                      ( ReflectCtor Nothing
                                         ( Ref Nothing ( Local ( Name "v2$307" ) ) )
-                                      ) :| []
+                                      )
                                     )
-                                    ( IfThenElse Nothing
-                                      ( Eq Nothing
-                                        ( LiteralString Nothing "Data.Maybe∷Maybe.Nothing" )
-                                        ( Ref Nothing ( Local ( Name "$cse435" ) ) )
-                                      )
-                                      ( LiteralInt Nothing 0 )
-                                      ( IfThenElse Nothing
-                                        ( Eq Nothing
-                                          ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
-                                          ( Ref Nothing ( Local ( Name "$cse435" ) ) )
-                                        )
-                                        ( DataArgumentByIndex Nothing SumType 0
-                                          ( Ref Nothing ( Local ( Name "v2$307" ) ) )
-                                        )
-                                        ( Exception Nothing "No patterns matched" )
-                                      )
+                                    ( LiteralInt Nothing 0 )
+                                    ( DataArgumentByIndex Nothing SumType 0
+                                      ( Ref Nothing ( Local ( Name "v2$307" ) ) )
                                     )
                                   ) :| []
                                 )

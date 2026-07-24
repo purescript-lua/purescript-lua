@@ -75,14 +75,11 @@ local Control_Monad_Except_Trans_functorExceptT = function(dictFunctor)
     map = function(f)
       return function(v_S_577)
         return dictFunctor.map(function(m_S_587)
-          local _S_cse6552 = m_S_587[2]
-          local _S_cse6551 = m_S_587[1]
-          if "Data.Either∷Either.Left" == _S_cse6551 then
-            return { "Data.Either∷Either.Left", _S_cse6552 }
-          elseif "Data.Either∷Either.Right" == _S_cse6551 then
-            return { "Data.Either∷Either.Right", (f(_S_cse6552)) }
+          local _S_cse6551 = m_S_587[2]
+          if "Data.Either∷Either.Left" == m_S_587[1] then
+            return { "Data.Either∷Either.Left", _S_cse6551 }
           else
-            return error("No patterns matched")
+            return { "Data.Either∷Either.Right", (f(_S_cse6551)) }
           end
         end)(v_S_577)
       end
@@ -107,17 +104,14 @@ Control_Monad_Except_Trans_bindExceptT = function(dictMonad)
     bind = function(v)
       return function(k)
         return (dictMonad.Bind1()).bind(v)(function(v2_S_585)
-          local _S_cse6554 = v2_S_585[2]
-          local _S_cse6553 = v2_S_585[1]
-          if "Data.Either∷Either.Left" == _S_cse6553 then
+          local _S_cse6552 = v2_S_585[2]
+          if "Data.Either∷Either.Left" == v2_S_585[1] then
             return (dictMonad.Applicative0()).pure({
               "Data.Either∷Either.Left",
-              _S_cse6554
+              _S_cse6552
             })
-          elseif "Data.Either∷Either.Right" == _S_cse6553 then
-            return k(_S_cse6554)
           else
-            return error("No patterns matched")
+            return k(_S_cse6552)
           end
         end)
       end
@@ -238,7 +232,7 @@ local Golden_LongStackBind_Test_add_S_w = function(x_S_591, y_S_592)
   return x_S_591 + y_S_592
 end
 local Golden_LongStackBind_Test_go = (function()
-  local _S_kont6557 = function(x1_S_6558)
+  local _S_kont6554 = function(x1_S_6555)
     return Golden_LongStackBind_Test_bind(Golden_LongStackBind_Test_get)(function( x141 )
       return Golden_LongStackBind_Test_discard(Golden_LongStackBind_Test_put(Golden_LongStackBind_Test_add_S_w(x141, 1)))(function(  )
         return Golden_LongStackBind_Test_bind(Golden_LongStackBind_Test_get)(function( x142 )
@@ -260,7 +254,7 @@ local Golden_LongStackBind_Test_go = (function()
                                         return Golden_LongStackBind_Test_bind(Golden_LongStackBind_Test_get)(function( x150 )
                                           return Golden_LongStackBind_Test_discard(Golden_LongStackBind_Test_put(Golden_LongStackBind_Test_add_S_w(x150, 1)))(function(  )
                                             return Golden_LongStackBind_Test_bind(Golden_LongStackBind_Test_get)(function( final )
-                                              return Control_Applicative_pure(Control_Monad_State_Trans_applicativeStateT(Golden_LongStackBind_Test_monadExceptT))(Golden_LongStackBind_Test_add_S_w(x1_S_6558, final))
+                                              return Control_Applicative_pure(Control_Monad_State_Trans_applicativeStateT(Golden_LongStackBind_Test_monadExceptT))(Golden_LongStackBind_Test_add_S_w(x1_S_6555, final))
                                             end)
                                           end)
                                         end)
@@ -283,7 +277,7 @@ local Golden_LongStackBind_Test_go = (function()
       end)
     end)
   end
-  local _S_kont6559 = function(x1_S_6560)
+  local _S_kont6556 = function(x1_S_6557)
     return Golden_LongStackBind_Test_bind(Golden_LongStackBind_Test_get)(function( x121 )
       return Golden_LongStackBind_Test_discard(Golden_LongStackBind_Test_put(Golden_LongStackBind_Test_add_S_w(x121, 1)))(function(  )
         return Golden_LongStackBind_Test_bind(Golden_LongStackBind_Test_get)(function( x122 )
@@ -324,7 +318,7 @@ local Golden_LongStackBind_Test_go = (function()
                                                                               return Golden_LongStackBind_Test_discard(Golden_LongStackBind_Test_put(Golden_LongStackBind_Test_add_S_w(x139, 1)))(function(  )
                                                                                 return Golden_LongStackBind_Test_bind(Golden_LongStackBind_Test_get)(function( x140 )
                                                                                   return Golden_LongStackBind_Test_discard(Golden_LongStackBind_Test_put(Golden_LongStackBind_Test_add_S_w(x140, 1)))(function(  )
-                                                                                    return _S_kont6557(x1_S_6560)
+                                                                                    return _S_kont6554(x1_S_6557)
                                                                                   end)
                                                                                 end)
                                                                               end)
@@ -366,7 +360,7 @@ local Golden_LongStackBind_Test_go = (function()
       end)
     end)
   end
-  local _S_kont6561 = function(x1_S_6562)
+  local _S_kont6558 = function(x1_S_6559)
     return Golden_LongStackBind_Test_bind(Golden_LongStackBind_Test_get)(function( x101 )
       return Golden_LongStackBind_Test_discard(Golden_LongStackBind_Test_put(Golden_LongStackBind_Test_add_S_w(x101, 1)))(function(  )
         return Golden_LongStackBind_Test_bind(Golden_LongStackBind_Test_get)(function( x102 )
@@ -407,7 +401,7 @@ local Golden_LongStackBind_Test_go = (function()
                                                                               return Golden_LongStackBind_Test_discard(Golden_LongStackBind_Test_put(Golden_LongStackBind_Test_add_S_w(x119, 1)))(function(  )
                                                                                 return Golden_LongStackBind_Test_bind(Golden_LongStackBind_Test_get)(function( x120 )
                                                                                   return Golden_LongStackBind_Test_discard(Golden_LongStackBind_Test_put(Golden_LongStackBind_Test_add_S_w(x120, 1)))(function(  )
-                                                                                    return _S_kont6559(x1_S_6562)
+                                                                                    return _S_kont6556(x1_S_6559)
                                                                                   end)
                                                                                 end)
                                                                               end)
@@ -449,7 +443,7 @@ local Golden_LongStackBind_Test_go = (function()
       end)
     end)
   end
-  local _S_kont6563 = function(x1_S_6564)
+  local _S_kont6560 = function(x1_S_6561)
     return Golden_LongStackBind_Test_bind(Golden_LongStackBind_Test_get)(function( x81 )
       return Golden_LongStackBind_Test_discard(Golden_LongStackBind_Test_put(Golden_LongStackBind_Test_add_S_w(x81, 1)))(function(  )
         return Golden_LongStackBind_Test_bind(Golden_LongStackBind_Test_get)(function( x82 )
@@ -490,7 +484,7 @@ local Golden_LongStackBind_Test_go = (function()
                                                                               return Golden_LongStackBind_Test_discard(Golden_LongStackBind_Test_put(Golden_LongStackBind_Test_add_S_w(x99, 1)))(function(  )
                                                                                 return Golden_LongStackBind_Test_bind(Golden_LongStackBind_Test_get)(function( x100 )
                                                                                   return Golden_LongStackBind_Test_discard(Golden_LongStackBind_Test_put(Golden_LongStackBind_Test_add_S_w(x100, 1)))(function(  )
-                                                                                    return _S_kont6561(x1_S_6564)
+                                                                                    return _S_kont6558(x1_S_6561)
                                                                                   end)
                                                                                 end)
                                                                               end)
@@ -532,7 +526,7 @@ local Golden_LongStackBind_Test_go = (function()
       end)
     end)
   end
-  local _S_kont6565 = function(x1_S_6566)
+  local _S_kont6562 = function(x1_S_6563)
     return Golden_LongStackBind_Test_bind(Golden_LongStackBind_Test_get)(function( x61 )
       return Golden_LongStackBind_Test_discard(Golden_LongStackBind_Test_put(Golden_LongStackBind_Test_add_S_w(x61, 1)))(function(  )
         return Golden_LongStackBind_Test_bind(Golden_LongStackBind_Test_get)(function( x62 )
@@ -573,7 +567,7 @@ local Golden_LongStackBind_Test_go = (function()
                                                                               return Golden_LongStackBind_Test_discard(Golden_LongStackBind_Test_put(Golden_LongStackBind_Test_add_S_w(x79, 1)))(function(  )
                                                                                 return Golden_LongStackBind_Test_bind(Golden_LongStackBind_Test_get)(function( x80 )
                                                                                   return Golden_LongStackBind_Test_discard(Golden_LongStackBind_Test_put(Golden_LongStackBind_Test_add_S_w(x80, 1)))(function(  )
-                                                                                    return _S_kont6563(x1_S_6566)
+                                                                                    return _S_kont6560(x1_S_6563)
                                                                                   end)
                                                                                 end)
                                                                               end)
@@ -615,7 +609,7 @@ local Golden_LongStackBind_Test_go = (function()
       end)
     end)
   end
-  local _S_kont6567 = function(x1_S_6568)
+  local _S_kont6564 = function(x1_S_6565)
     return Golden_LongStackBind_Test_bind(Golden_LongStackBind_Test_get)(function( x41 )
       return Golden_LongStackBind_Test_discard(Golden_LongStackBind_Test_put(Golden_LongStackBind_Test_add_S_w(x41, 1)))(function(  )
         return Golden_LongStackBind_Test_bind(Golden_LongStackBind_Test_get)(function( x42 )
@@ -656,7 +650,7 @@ local Golden_LongStackBind_Test_go = (function()
                                                                               return Golden_LongStackBind_Test_discard(Golden_LongStackBind_Test_put(Golden_LongStackBind_Test_add_S_w(x59, 1)))(function(  )
                                                                                 return Golden_LongStackBind_Test_bind(Golden_LongStackBind_Test_get)(function( x60 )
                                                                                   return Golden_LongStackBind_Test_discard(Golden_LongStackBind_Test_put(Golden_LongStackBind_Test_add_S_w(x60, 1)))(function(  )
-                                                                                    return _S_kont6565(x1_S_6568)
+                                                                                    return _S_kont6562(x1_S_6565)
                                                                                   end)
                                                                                 end)
                                                                               end)
@@ -698,7 +692,7 @@ local Golden_LongStackBind_Test_go = (function()
       end)
     end)
   end
-  local _S_kont6569 = function(x1_S_6570)
+  local _S_kont6566 = function(x1_S_6567)
     return Golden_LongStackBind_Test_bind(Golden_LongStackBind_Test_get)(function( x21 )
       return Golden_LongStackBind_Test_discard(Golden_LongStackBind_Test_put(Golden_LongStackBind_Test_add_S_w(x21, 1)))(function(  )
         return Golden_LongStackBind_Test_bind(Golden_LongStackBind_Test_get)(function( x22 )
@@ -739,7 +733,7 @@ local Golden_LongStackBind_Test_go = (function()
                                                                               return Golden_LongStackBind_Test_discard(Golden_LongStackBind_Test_put(Golden_LongStackBind_Test_add_S_w(x39, 1)))(function(  )
                                                                                 return Golden_LongStackBind_Test_bind(Golden_LongStackBind_Test_get)(function( x40 )
                                                                                   return Golden_LongStackBind_Test_discard(Golden_LongStackBind_Test_put(Golden_LongStackBind_Test_add_S_w(x40, 1)))(function(  )
-                                                                                    return _S_kont6567(x1_S_6570)
+                                                                                    return _S_kont6564(x1_S_6567)
                                                                                   end)
                                                                                 end)
                                                                               end)
@@ -821,7 +815,7 @@ local Golden_LongStackBind_Test_go = (function()
                                                                             return Golden_LongStackBind_Test_discard(Golden_LongStackBind_Test_put(Golden_LongStackBind_Test_add_S_w(x19, 1)))(function(  )
                                                                               return Golden_LongStackBind_Test_bind(Golden_LongStackBind_Test_get)(function( x20 )
                                                                                 return Golden_LongStackBind_Test_discard(Golden_LongStackBind_Test_put(Golden_LongStackBind_Test_add_S_w(x20, 1)))(function(  )
-                                                                                  return _S_kont6569(x1)
+                                                                                  return _S_kont6566(x1)
                                                                                 end)
                                                                               end)
                                                                             end)
@@ -867,22 +861,17 @@ local Golden_LongStackBind_Test_compute = Unsafe_Coerce_foreign.unsafeCoerce((fu
   local v_S_605 = Golden_LongStackBind_Test_go(0)
   if "Data.Either∷Either.Left" == v_S_605[1] then
     return { "Data.Either∷Either.Left", v_S_605[2] }
-  elseif "Data.Either∷Either.Right" == v_S_605[1] then
-    return { "Data.Either∷Either.Right", v_S_605[2][1] }
   else
-    return error("No patterns matched")
+    return { "Data.Either∷Either.Right", v_S_605[2][1] }
   end
 end)())
 return (function()
-  local _S_cse6556 = Golden_LongStackBind_Test_compute[2]
-  local _S_cse6555 = Golden_LongStackBind_Test_compute[1]
+  local _S_cse6553 = Golden_LongStackBind_Test_compute[2]
   return Effect_Console_foreign.log((function()
-    if "Data.Either∷Either.Left" == _S_cse6555 then
-      return "(Left " .. Data_Show_foreign.showStringImpl(_S_cse6556) .. ")"
-    elseif "Data.Either∷Either.Right" == _S_cse6555 then
-      return "(Right " .. Data_Show_foreign.showIntImpl(_S_cse6556) .. ")"
+    if "Data.Either∷Either.Left" == Golden_LongStackBind_Test_compute[1] then
+      return "(Left " .. Data_Show_foreign.showStringImpl(_S_cse6553) .. ")"
     else
-      return error("No patterns matched")
+      return "(Right " .. Data_Show_foreign.showIntImpl(_S_cse6553) .. ")"
     end
   end)())
 end)()()

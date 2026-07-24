@@ -34,18 +34,13 @@ local Golden_SpecConstr_Test_stepDown_S_sc1Just = function( stepDown_S_sc1Just_S
   end
 end
 local Golden_SpecConstr_Test_stepDown = function(m)
-  local _S_cse502 = m[2]
-  local _S_cse501 = m[1]
-  if "Data.Maybe∷Maybe.Nothing" == _S_cse501 then
+  local _S_cse501 = m[2]
+  if "Data.Maybe∷Maybe.Nothing" == m[1] then
     return 0
-  elseif "Data.Maybe∷Maybe.Just" == _S_cse501 then
-    if _S_cse502 == 0 then
-      return 42
-    else
-      return Golden_SpecConstr_Test_stepDown_S_sc1Just(_S_cse502 - 1)
-    end
+  elseif _S_cse501 == 0 then
+    return 42
   else
-    return error("No patterns matched")
+    return Golden_SpecConstr_Test_stepDown_S_sc1Just(_S_cse501 - 1)
   end
 end
 local Golden_SpecConstr_Test_ping_S_sc1Tuple
@@ -58,12 +53,12 @@ local Golden_SpecConstr_Test_pong_S_sc1Tuple = function( pong_S_sc1Tuple_S_f1
   end
 end
 M.Golden_SpecConstr_Test_pong = function(t)
-  local _S_cse504 = t[2]
-  local _S_cse503 = t[1]
-  if _S_cse503 == 0 then
-    return _S_cse504
+  local _S_cse503 = t[2]
+  local _S_cse502 = t[1]
+  if _S_cse502 == 0 then
+    return _S_cse503
   else
-    return Golden_SpecConstr_Test_ping_S_sc1Tuple(_S_cse503 - 1, _S_cse504 + 2)
+    return Golden_SpecConstr_Test_ping_S_sc1Tuple(_S_cse502 - 1, _S_cse503 + 2)
   end
 end
 Golden_SpecConstr_Test_ping_S_sc1Tuple = function( ping_S_sc1Tuple_S_f1
@@ -75,12 +70,12 @@ Golden_SpecConstr_Test_ping_S_sc1Tuple = function( ping_S_sc1Tuple_S_f1
   end
 end
 M.Golden_SpecConstr_Test_ping = function(t)
-  local _S_cse506 = t[2]
-  local _S_cse505 = t[1]
-  if _S_cse505 == 0 then
-    return _S_cse506
+  local _S_cse505 = t[2]
+  local _S_cse504 = t[1]
+  if _S_cse504 == 0 then
+    return _S_cse505
   else
-    return Golden_SpecConstr_Test_pong_S_sc1Tuple(_S_cse505 - 1, _S_cse506 + 1)
+    return Golden_SpecConstr_Test_pong_S_sc1Tuple(_S_cse504 - 1, _S_cse505 + 1)
   end
 end
 local Golden_SpecConstr_Test_blind_S_w

@@ -24,6 +24,7 @@ import Data.Traversable (mapAccumM)
 import Language.PureScript.Backend.IR.Inliner qualified as Inliner
 import Language.PureScript.Backend.IR.Names
   ( CtorName (renderCtorName)
+  , FieldName
   , ModuleName (ModuleName)
   , Name (Name, nameToText)
   , PropName
@@ -78,6 +79,15 @@ instance Monoid Info where
 
 data AlgebraicType = SumType | ProductType
   deriving stock (Generic, Eq, Ord, Show, Enum, Bounded)
+
+{- | Every data type declared across the compiled modules: its shape and
+the complete constructor set (with each constructor's fields), keyed by
+the declaring module and type name. Collected once from CoreFn by
+'Language.PureScript.Backend.IR.collectDataDeclarations'; authoritative,
+so a constructor absent from a type's inner map does not exist.
+-}
+type DataTypes =
+  Map (ModuleName, TyName) (AlgebraicType, Map CtorName [FieldName])
 
 data Parameter ann = ParamUnused ann | ParamNamed ann Name
   deriving stock (Show, Eq, Ord, Functor, Foldable, Traversable)

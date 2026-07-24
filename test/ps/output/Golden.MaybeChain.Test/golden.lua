@@ -9,14 +9,7 @@ local Data_Maybe_Just = function(value0)
   return { "Data.Maybe∷Maybe.Just", value0 }
 end
 local Data_Maybe_maybe_S_w = function(v, v1, v2)
-  local _S_cse320 = v2[1]
-  if "Data.Maybe∷Maybe.Nothing" == _S_cse320 then
-    return v
-  elseif "Data.Maybe∷Maybe.Just" == _S_cse320 then
-    return v1(v2[2])
-  else
-    return error("No patterns matched")
-  end
+  if "Data.Maybe∷Maybe.Nothing" == v2[1] then return v else return v1(v2[2]) end
 end
 local Golden_MaybeChain_Test_identity = function(x_S_311) return x_S_311 end
 local Golden_MaybeChain_Test_map_S_w = function(v_S_307, v1_S_308)
@@ -27,9 +20,9 @@ local Golden_MaybeChain_Test_map_S_w = function(v_S_307, v1_S_308)
   end
 end
 return (function()
-  local _S_cse321 = function(x_S_0) return x_S_0 end
-  local _ = Effect_Console_log(Data_Show_showIntImpl(Data_Maybe_maybe_S_w(0, Golden_MaybeChain_Test_identity, Data_Maybe_maybe_S_w(Data_Maybe_Nothing, Data_Maybe_Just, Golden_MaybeChain_Test_map_S_w(_S_cse321, Data_Maybe_Nothing)))))()
-  return Effect_Console_log(Data_Show_showIntImpl(Data_Maybe_maybe_S_w(0, Golden_MaybeChain_Test_identity, Data_Maybe_maybe_S_w(Data_Maybe_Nothing, Data_Maybe_Just, Golden_MaybeChain_Test_map_S_w(_S_cse321, {
+  local _S_cse320 = function(x_S_0) return x_S_0 end
+  local _ = Effect_Console_log(Data_Show_showIntImpl(Data_Maybe_maybe_S_w(0, Golden_MaybeChain_Test_identity, Data_Maybe_maybe_S_w(Data_Maybe_Nothing, Data_Maybe_Just, Golden_MaybeChain_Test_map_S_w(_S_cse320, Data_Maybe_Nothing)))))()
+  return Effect_Console_log(Data_Show_showIntImpl(Data_Maybe_maybe_S_w(0, Golden_MaybeChain_Test_identity, Data_Maybe_maybe_S_w(Data_Maybe_Nothing, Data_Maybe_Just, Golden_MaybeChain_Test_map_S_w(_S_cse320, {
     "Data.Maybe∷Maybe.Just",
     42
   })))))()

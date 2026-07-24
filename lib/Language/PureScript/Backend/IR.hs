@@ -43,7 +43,7 @@ data Context = Context
   , contextModule
       ∷ Cfn.Module Cfn.Ann
   , contextDataTypes
-      ∷ Map (ModuleName, TyName) (AlgebraicType, Map CtorName [FieldName])
+      ∷ DataTypes
   , lastGeneratedNameIndex
       ∷ Integer
   , needsRuntimeLazy
@@ -101,7 +101,7 @@ runRepM ctx (RepM m) = do
 mkModule
   ∷ Inliner.Directives
   → Cfn.Module Cfn.Ann
-  → Map (ModuleName, TyName) (AlgebraicType, Map CtorName [FieldName])
+  → DataTypes
   → Either CoreFnError (Tagged "needsRuntimeLazy" Bool, Module)
 mkModule directives cfnModule contextDataTypes = do
   (localModes, exportModes) ← parseAnnotations cfnModule
@@ -233,7 +233,7 @@ mkForeigns = do
 
 collectDataDeclarations
   ∷ Map ModuleName (Cfn.Module Cfn.Ann)
-  → Map (ModuleName, TyName) (AlgebraicType, Map CtorName [FieldName])
+  → DataTypes
 collectDataDeclarations cfnModules =
   classify
     <$> Map.fromListWith
@@ -1007,9 +1007,7 @@ data CoreFnErrorReason
   | EmptyBindingGroup
   | NewtypeCtorBinderHasUnexpectedNumberOfNestedBinders
   | CaseBindersNumberMismatch (Tagged "expressions" Int) (Tagged "binders" Int)
-  | TypeNotDeclared
-      (Map (ModuleName, TyName) (AlgebraicType, Map CtorName [FieldName]))
-      TyName
+  | TypeNotDeclared DataTypes TyName
   | UnicodeDecodeError UnicodeException
   | AnnotationParsingError (Megaparsec.ParseErrorBundle Text Void)
   | UnusedAnnotations (Map Inliner.Target (Maybe Annotation))

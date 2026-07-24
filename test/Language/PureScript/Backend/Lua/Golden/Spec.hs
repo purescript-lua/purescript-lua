@@ -317,7 +317,7 @@ compileCorefn outputDir uberModuleName = do
   -- The checked runner lints every pass boundary (including every fixpoint
   -- iteration), so each golden module doubles as a scope-invariant test of
   -- the whole pipeline.
-  either (fail . show) pure (optimizedUberModuleChecked liftedModule)
+  either (fail . show) pure (optimizedUberModuleChecked dataDecls liftedModule)
 
 {- | Read the optional @directives.txt@ fixture sitting next to a golden
 module's golden files.

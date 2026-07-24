@@ -5,20 +5,17 @@ local Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
 }
 local Golden_LongMaybeBind_Test_bind_S_w = function(v_S_305, v1_S_306)
-  local _S_cse1230 = v_S_305[1]
-  if "Data.Maybe∷Maybe.Just" == _S_cse1230 then
+  if "Data.Maybe∷Maybe.Just" == v_S_305[1] then
     return v1_S_306(v_S_305[2])
-  elseif "Data.Maybe∷Maybe.Nothing" == _S_cse1230 then
-    return { "Data.Maybe∷Maybe.Nothing" }
   else
-    return error("No patterns matched")
+    return { "Data.Maybe∷Maybe.Nothing" }
   end
 end
 local Golden_LongMaybeBind_Test_compute = (function()
-  local _S_kont1232_S_w = function(x1_S_1233, x277_S_1234)
+  local _S_kont1230_S_w = function(x1_S_1231, x277_S_1232)
     return Golden_LongMaybeBind_Test_bind_S_w({
       "Data.Maybe∷Maybe.Just",
-      x277_S_1234 + 1
+      x277_S_1232 + 1
     }, function(x278)
       return Golden_LongMaybeBind_Test_bind_S_w({
         "Data.Maybe∷Maybe.Just",
@@ -110,7 +107,7 @@ local Golden_LongMaybeBind_Test_compute = (function()
                                                 }, function(x300)
                                                   return {
                                                     "Data.Maybe∷Maybe.Just",
-                                                    x1_S_1233 + x300
+                                                    x1_S_1231 + x300
                                                   }
                                                 end)
                                               end)
@@ -136,10 +133,10 @@ local Golden_LongMaybeBind_Test_compute = (function()
       end)
     end)
   end
-  local _S_kont1235_S_w = function(x1_S_1236, x238_S_1237)
+  local _S_kont1233_S_w = function(x1_S_1234, x238_S_1235)
     return Golden_LongMaybeBind_Test_bind_S_w({
       "Data.Maybe∷Maybe.Just",
-      x238_S_1237 + 1
+      x238_S_1235 + 1
     }, function(x239)
       return Golden_LongMaybeBind_Test_bind_S_w({
         "Data.Maybe∷Maybe.Just",
@@ -297,7 +294,7 @@ local Golden_LongMaybeBind_Test_compute = (function()
                                                                                     "Data.Maybe∷Maybe.Just",
                                                                                     x276 + 1
                                                                                   }, function( x277 )
-                                                                                    return _S_kont1232_S_w(x1_S_1236, x277)
+                                                                                    return _S_kont1230_S_w(x1_S_1234, x277)
                                                                                   end)
                                                                                 end)
                                                                               end)
@@ -339,10 +336,10 @@ local Golden_LongMaybeBind_Test_compute = (function()
       end)
     end)
   end
-  local _S_kont1238_S_w = function(x1_S_1239, x198_S_1240)
+  local _S_kont1236_S_w = function(x1_S_1237, x198_S_1238)
     return Golden_LongMaybeBind_Test_bind_S_w({
       "Data.Maybe∷Maybe.Just",
-      x198_S_1240 + 1
+      x198_S_1238 + 1
     }, function(x199)
       return Golden_LongMaybeBind_Test_bind_S_w({
         "Data.Maybe∷Maybe.Just",
@@ -500,7 +497,7 @@ local Golden_LongMaybeBind_Test_compute = (function()
                                                                                     "Data.Maybe∷Maybe.Just",
                                                                                     x237 + 1
                                                                                   }, function( x238 )
-                                                                                    return _S_kont1235_S_w(x1_S_1239, x238)
+                                                                                    return _S_kont1233_S_w(x1_S_1237, x238)
                                                                                   end)
                                                                                 end)
                                                                               end)
@@ -542,10 +539,10 @@ local Golden_LongMaybeBind_Test_compute = (function()
       end)
     end)
   end
-  local _S_kont1241_S_w = function(x1_S_1242, x158_S_1243)
+  local _S_kont1239_S_w = function(x1_S_1240, x158_S_1241)
     return Golden_LongMaybeBind_Test_bind_S_w({
       "Data.Maybe∷Maybe.Just",
-      x158_S_1243 + 1
+      x158_S_1241 + 1
     }, function(x159)
       return Golden_LongMaybeBind_Test_bind_S_w({
         "Data.Maybe∷Maybe.Just",
@@ -703,7 +700,7 @@ local Golden_LongMaybeBind_Test_compute = (function()
                                                                                     "Data.Maybe∷Maybe.Just",
                                                                                     x197 + 1
                                                                                   }, function( x198 )
-                                                                                    return _S_kont1238_S_w(x1_S_1242, x198)
+                                                                                    return _S_kont1236_S_w(x1_S_1240, x198)
                                                                                   end)
                                                                                 end)
                                                                               end)
@@ -745,10 +742,10 @@ local Golden_LongMaybeBind_Test_compute = (function()
       end)
     end)
   end
-  local _S_kont1244_S_w = function(x1_S_1245, x119_S_1246)
+  local _S_kont1242_S_w = function(x1_S_1243, x119_S_1244)
     return Golden_LongMaybeBind_Test_bind_S_w({
       "Data.Maybe∷Maybe.Just",
-      x119_S_1246 + 1
+      x119_S_1244 + 1
     }, function(x120)
       return Golden_LongMaybeBind_Test_bind_S_w({
         "Data.Maybe∷Maybe.Just",
@@ -906,7 +903,7 @@ local Golden_LongMaybeBind_Test_compute = (function()
                                                                                     "Data.Maybe∷Maybe.Just",
                                                                                     x157 + 1
                                                                                   }, function( x158 )
-                                                                                    return _S_kont1241_S_w(x1_S_1245, x158)
+                                                                                    return _S_kont1239_S_w(x1_S_1243, x158)
                                                                                   end)
                                                                                 end)
                                                                               end)
@@ -948,10 +945,10 @@ local Golden_LongMaybeBind_Test_compute = (function()
       end)
     end)
   end
-  local _S_kont1247_S_w = function(x1_S_1248, x79_S_1249)
+  local _S_kont1245_S_w = function(x1_S_1246, x79_S_1247)
     return Golden_LongMaybeBind_Test_bind_S_w({
       "Data.Maybe∷Maybe.Just",
-      x79_S_1249 + 1
+      x79_S_1247 + 1
     }, function(x80)
       return Golden_LongMaybeBind_Test_bind_S_w({
         "Data.Maybe∷Maybe.Just",
@@ -1109,7 +1106,7 @@ local Golden_LongMaybeBind_Test_compute = (function()
                                                                                     "Data.Maybe∷Maybe.Just",
                                                                                     x118 + 1
                                                                                   }, function( x119 )
-                                                                                    return _S_kont1244_S_w(x1_S_1248, x119)
+                                                                                    return _S_kont1242_S_w(x1_S_1246, x119)
                                                                                   end)
                                                                                 end)
                                                                               end)
@@ -1151,10 +1148,10 @@ local Golden_LongMaybeBind_Test_compute = (function()
       end)
     end)
   end
-  local _S_kont1250_S_w = function(x1_S_1251, x40_S_1252)
+  local _S_kont1248_S_w = function(x1_S_1249, x40_S_1250)
     return Golden_LongMaybeBind_Test_bind_S_w({
       "Data.Maybe∷Maybe.Just",
-      x40_S_1252 + 1
+      x40_S_1250 + 1
     }, function(x41)
       return Golden_LongMaybeBind_Test_bind_S_w({
         "Data.Maybe∷Maybe.Just",
@@ -1312,7 +1309,7 @@ local Golden_LongMaybeBind_Test_compute = (function()
                                                                                     "Data.Maybe∷Maybe.Just",
                                                                                     x78 + 1
                                                                                   }, function( x79 )
-                                                                                    return _S_kont1247_S_w(x1_S_1251, x79)
+                                                                                    return _S_kont1245_S_w(x1_S_1249, x79)
                                                                                   end)
                                                                                 end)
                                                                               end)
@@ -1514,7 +1511,7 @@ local Golden_LongMaybeBind_Test_compute = (function()
                                                                                   "Data.Maybe∷Maybe.Just",
                                                                                   x39 + 1
                                                                                 }, function( x40 )
-                                                                                  return _S_kont1250_S_w(x1, x40)
+                                                                                  return _S_kont1248_S_w(x1, x40)
                                                                                 end)
                                                                               end)
                                                                             end)
@@ -1556,15 +1553,10 @@ local Golden_LongMaybeBind_Test_compute = (function()
     end)
   end)
 end)()
-return (function()
-  local _S_cse1231 = Golden_LongMaybeBind_Test_compute[1]
-  return Effect_Console_foreign.log((function()
-    if "Data.Maybe∷Maybe.Just" == _S_cse1231 then
-      return "(Just " .. Data_Show_foreign.showIntImpl(Golden_LongMaybeBind_Test_compute[2]) .. ")"
-    elseif "Data.Maybe∷Maybe.Nothing" == _S_cse1231 then
-      return "Nothing"
-    else
-      return error("No patterns matched")
-    end
-  end)())
-end)()()
+return Effect_Console_foreign.log((function()
+  if "Data.Maybe∷Maybe.Just" == Golden_LongMaybeBind_Test_compute[1] then
+    return "(Just " .. Data_Show_foreign.showIntImpl(Golden_LongMaybeBind_Test_compute[2]) .. ")"
+  else
+    return "Nothing"
+  end
+end)())()

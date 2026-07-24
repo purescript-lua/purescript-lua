@@ -114,10 +114,8 @@ return (function()
                   local _ = Effect_Ref_foreign.write(e_S_19)(r_S_16)()
                   return false
                 end
-              elseif "Control.Monad.Rec.Class∷Step.Done" == v0_S_17[1] then
-                return Effect_pureE(true)
               else
-                return error("No patterns matched")
+                return Effect_pureE(true)
               end
             end)()()
           end)()

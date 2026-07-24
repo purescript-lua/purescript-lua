@@ -58,8 +58,8 @@ compileModules outputDir foreignDir lintIR limits directives appOrModule = do
   liftedModule ← ForeignLift.liftForeigns foreignDir linkedModule
   uberModule ←
     if untag lintIR
-      then Oops.hoistEither (optimizedUberModuleChecked liftedModule)
-      else pure (optimizedUberModule liftedModule)
+      then Oops.hoistEither (optimizedUberModuleChecked dataDecls liftedModule)
+      else pure (optimizedUberModule dataDecls liftedModule)
   -- See Note [The PSLUA_runtime_lazy coupling] in Language.PureScript.Names
   let needsRuntimeLazy = Tagged (any untag needsRuntimeLazys)
   chunk ← Lua.fromUberModule foreignDir needsRuntimeLazy appOrModule uberModule

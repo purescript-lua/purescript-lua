@@ -57,28 +57,23 @@ end
 local Golden_UncurryCtor_Test_unbox = function(v) return v end
 local Golden_UncurryCtor_Test_total
 Golden_UncurryCtor_Test_total = function(v)
-  local _S_cse432 = v[1]
-  if "Golden.UncurryCtor.Test∷IntList.Nil" == _S_cse432 then
+  if "Golden.UncurryCtor.Test∷IntList.Nil" == v[1] then
     return 0
-  elseif "Golden.UncurryCtor.Test∷IntList.Cons" == _S_cse432 then
-    return v[2] + Golden_UncurryCtor_Test_total(v[3])
   else
-    return error("No patterns matched")
+    return v[2] + Golden_UncurryCtor_Test_total(v[3])
   end
 end
 local Golden_UncurryCtor_Test_range = Golden_UncurryCtor_Test_Cons_S_w(1, Golden_UncurryCtor_Test_Cons_S_w(2, Golden_UncurryCtor_Test_Cons_S_w(3, Golden_UncurryCtor_Test_Cons_S_w(4, Golden_UncurryCtor_Test_Cons_S_w(5, Golden_UncurryCtor_Test_Cons_S_w(6, Golden_UncurryCtor_Test_Cons_S_w(7, Golden_UncurryCtor_Test_Cons_S_w(8, Golden_UncurryCtor_Test_Cons_S_w(9, Golden_UncurryCtor_Test_Cons_S_w(10, Golden_UncurryCtor_Test_Nil))))))))))
 local Golden_UncurryCtor_Test_pairSum = function(v) return v[1] + v[2] end
 local Golden_UncurryCtor_Test_area = function(v)
-  local _S_cse434 = v[2]
-  local _S_cse433 = v[1]
-  if "Golden.UncurryCtor.Test∷Shape.Origin" == _S_cse433 then
+  local _S_cse433 = v[2]
+  local _S_cse432 = v[1]
+  if "Golden.UncurryCtor.Test∷Shape.Origin" == _S_cse432 then
     return 0
-  elseif "Golden.UncurryCtor.Test∷Shape.Dot" == _S_cse433 then
-    return _S_cse434
-  elseif "Golden.UncurryCtor.Test∷Shape.Tri" == _S_cse433 then
-    return _S_cse434 + v[3] + v[4]
+  elseif "Golden.UncurryCtor.Test∷Shape.Dot" == _S_cse432 then
+    return _S_cse433
   else
-    return error("No patterns matched")
+    return _S_cse433 + v[3] + v[4]
   end
 end
 return (function()
@@ -95,13 +90,10 @@ return (function()
       local _ = Effect_Console_logShow_S_w({
         show = Data_Show_foreign.showArrayImpl(Data_Show_show(Data_Show_showInt))
       }, Data_Functor_arrayMap(function(v2_S_307)
-        local _S_cse435 = v2_S_307[1]
-        if "Data.Maybe∷Maybe.Nothing" == _S_cse435 then
+        if "Data.Maybe∷Maybe.Nothing" == v2_S_307[1] then
           return 0
-        elseif "Data.Maybe∷Maybe.Just" == _S_cse435 then
-          return v2_S_307[2]
         else
-          return error("No patterns matched")
+          return v2_S_307[2]
         end
       end)(Data_Functor_arrayMap(function(value0_S_308)
         return { "Data.Maybe∷Maybe.Just", value0_S_308 }

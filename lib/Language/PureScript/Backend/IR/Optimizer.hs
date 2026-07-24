@@ -50,6 +50,7 @@ import Language.PureScript.Backend.IR.Types
   ( AlgebraicType (SumType)
   , Ann
   , Capture (..)
+  , DataTypes
   , Exp
   , Grouping (..)
   , Parameter (..)
@@ -91,26 +92,34 @@ import Language.PureScript.Backend.IR.Types
 import Language.PureScript.Backend.IR.Uncurry (uncurryWorkerWrapper)
 import Language.PureScript.Backend.IR.Uniquify (uniquifyNames)
 
-optimizedUberModule ∷ UberModule → UberModule
-optimizedUberModule uber =
-  runSupply (runSteps (optimizerPipeline (collectInlinePolicy uber)) uber)
+optimizedUberModule ∷ DataTypes → UberModule → UberModule
+optimizedUberModule dataTypes uber =
+  runSupply
+    (runSteps (optimizerPipeline dataTypes (collectInlinePolicy uber)) uber)
 
 {- | 'optimizedUberModule' with every pass's contract checked by the
 linter, failing with the name of the offending pass. Used by the test
 suite always, and by the CLI behind the @--lint-ir@ flag.
 -}
-optimizedUberModuleChecked ∷ UberModule → Either PassCheckFailure UberModule
-optimizedUberModuleChecked uber =
+optimizedUberModuleChecked
+  ∷ DataTypes → UberModule → Either PassCheckFailure UberModule
+optimizedUberModuleChecked dataTypes uber =
   runSupply
-    (runStepsChecked (optimizerPipeline (collectInlinePolicy uber)) uber)
+    ( runStepsChecked
+        (optimizerPipeline dataTypes (collectInlinePolicy uber))
+        uber
+    )
 
-{- | The IR optimization pipeline. The argument is the inlining policy
-collected once from the pristine module before any pass runs: later
-rewrites may strip annotations, so every directive keys off a name (see
-Note [Inline annotations and inlining heuristics]).
+{- | The IR optimization pipeline. The first argument is the data-type
+table collected from CoreFn ('collectDataDeclarations'), consulted by
+the exhaustiveness-driven rewrite ('removeUnreachableMatchDefault');
+the second is the inlining policy collected once from the pristine
+module before any pass runs: later rewrites may strip annotations, so
+every directive keys off a name (see Note [Inline annotations and
+inlining heuristics]).
 -}
-optimizerPipeline ∷ InlinePolicy → [Step]
-optimizerPipeline policy =
+optimizerPipeline ∷ DataTypes → InlinePolicy → [Step]
+optimizerPipeline dataTypes policy =
   [ -- The entry pass (issue #139): establishes the global-uniqueness
     -- condition (GUC = 'UniqueBinders') that every
     -- following pass requires and preserves.
@@ -235,6 +244,9 @@ optimizerPipeline policy =
     RunPass dcePass
   ]
  where
+  ctorTags ∷ CtorTagSets
+  ctorTags = ctorTagSets dataTypes
+
   uniquifyPass =
     Pass
       { passName = "uniquify"
@@ -251,7 +263,7 @@ optimizerPipeline policy =
   optimizePass =
     Pass
       { passName = "optimize"
-      , passRun = optimizeModule SkipCallSites policy
+      , passRun = optimizeModule ctorTags SkipCallSites policy
       , passRequires = guc
       , passEnsures = guc
       }
@@ -262,7 +274,7 @@ optimizerPipeline policy =
   specializePass =
     Pass
       { passName = "specialize"
-      , passRun = optimizeModule InlineCallSites policy
+      , passRun = optimizeModule ctorTags InlineCallSites policy
       , passRequires = guc
       , passEnsures = guc
       }
@@ -568,11 +580,12 @@ bindings, so the use-once decision no longer misjudges a binding whose
 references changed earlier in the same run (issue #143).
 -}
 optimizeModule
-  ∷ CallSiteInlining
+  ∷ CtorTagSets
+  → CallSiteInlining
   → InlinePolicy
   → UberModule
   → SupplyM (UberModule, WasRewritten)
-optimizeModule inlining policy UberModule {..} = runWriterT do
+optimizeModule ctorTags inlining policy UberModule {..} = runWriterT do
   -- See Note [Incremental free-reference counting]
   let initialCounts =
         Map.unionsWith (+) (countFreeRefs . snd <$> uberModuleExports)
@@ -664,7 +677,13 @@ optimizeModule inlining policy UberModule {..} = runWriterT do
       -- both — and the fallback sweep decides instead.
       -- See Note [Bounded call-site inlining growth].
       (e', rewritten) ←
-        lift (optimizedExpressionWithPastes HeuristicPastes policy inlineEnv e)
+        lift $
+          optimizedExpressionWithPastes
+            ctorTags
+            HeuristicPastes
+            policy
+            inlineEnv
+            e
       if expSize e' <= inlineGrowthBudget (expSize e)
         then e' <$ tell rewritten
         else keepSweep DirectedPastesOnly
@@ -672,7 +691,7 @@ optimizeModule inlining policy UberModule {..} = runWriterT do
     keepSweep ∷ CallSitePastes → WriterT WasRewritten SupplyM Exp
     keepSweep pastes = do
       (e', rewritten) ←
-        lift (optimizedExpressionWithPastes pastes policy inlineEnv e)
+        lift (optimizedExpressionWithPastes ctorTags pastes policy inlineEnv e)
       e' <$ tell rewritten
 
   -- See Note [Incremental free-reference counting]
@@ -777,6 +796,27 @@ magic-do recognises; on in the specialize fixpoint that runs after (see
 data CallSiteInlining = InlineCallSites | SkipCallSites
 
 type InlineEnv = Map (Qualified Name) Exp
+
+{- | For every sum-type constructor tag ('ctorId'), the complete tag set
+of the type declaring it — the exhaustiveness oracle of
+'removeUnreachableMatchDefault'. Built once per pipeline
+('optimizerPipeline') from the declared data types, so membership is
+exact: a tag chain covering its type's whole set proves the synthesized
+match default unreachable. Product types are omitted — their matches
+emit no tag tests (see 'Language.PureScript.Backend.IR.mkCaseClauses').
+-}
+type CtorTagSets = Map Text (Set Text)
+
+ctorTagSets ∷ DataTypes → CtorTagSets
+ctorTagSets dataTypes =
+  Map.fromList
+    [ (tag, tags)
+    | ((modName, tyName), (SumType, ctors)) ← Map.toList dataTypes
+    , let tags =
+            Set.fromList
+              [ctorId modName tyName ctorName | ctorName ← Map.keys ctors]
+    , tag ← toList tags
+    ]
 
 {- | The largest expression the call-site inliner will paste, GHC's
 unfolding-use-threshold analogue, sized in IR nodes ('expSize'). Code
@@ -937,23 +977,37 @@ complexityOf = \case
   _ → NonTrivial
 
 {- | Pure wrapper for tests and standalone use: runs the rewrite with
-its own supply and no inlining environment. Production code uses
-'optimizedExpressionM' so all passes share one supply.
+its own supply, no inlining environment and no data-type table.
+Production code uses 'optimizedExpressionM' so all passes share one
+supply.
 -}
 optimizedExpression ∷ Exp → Exp
-optimizedExpression = runSupply . fmap fst . optimizedExpressionM mempty mempty
+optimizedExpression =
+  runSupply . fmap fst . optimizedExpressionM mempty mempty mempty
+
+{- | 'optimizedExpression' with data-type declarations in scope, so the
+exhaustiveness-driven rewrite can consult declared constructor sets
+(see 'removeUnreachableMatchDefault').
+-}
+optimizedExpressionWithTypes ∷ DataTypes → Exp → Exp
+optimizedExpressionWithTypes dataTypes =
+  runSupply
+    . fmap fst
+    . optimizedExpressionM (ctorTagSets dataTypes) mempty mempty
 
 optimizedExpressionM
-  ∷ InlinePolicy → InlineEnv → Exp → SupplyM (Exp, WasRewritten)
-optimizedExpressionM = optimizedExpressionWithPastes HeuristicPastes
+  ∷ CtorTagSets → InlinePolicy → InlineEnv → Exp → SupplyM (Exp, WasRewritten)
+optimizedExpressionM ctorTags =
+  optimizedExpressionWithPastes ctorTags HeuristicPastes
 
 optimizedExpressionWithPastes
-  ∷ CallSitePastes
+  ∷ CtorTagSets
+  → CallSitePastes
   → InlinePolicy
   → InlineEnv
   → Exp
   → SupplyM (Exp, WasRewritten)
-optimizedExpressionWithPastes pastes policy env =
+optimizedExpressionWithPastes ctorTags pastes policy env =
   -- See Note [Eta reduction is unsound]
   rewriteExpBottomUpM
     ( canonicalizeEffectHead
@@ -975,6 +1029,7 @@ optimizedExpressionWithPastes pastes policy env =
         `thenRewrite` removeUnreachableElseBranch
         `thenRewrite` removeIfWithEqualBranches
         `thenRewrite` propagateKnownCondIntoBranches
+        `thenRewrite` removeUnreachableMatchDefault ctorTags
         `thenRewrite` flipNegatedIf
         `thenRewrite` reduceBooleanIf
         `thenRewrite` pushEqIntoIfBranches
@@ -2010,6 +2065,84 @@ propagateKnownCondIntoBranches = \case
         elseBranch' ← substituteCopyM name (literalBool False) elseBranch
         pure . Just $ IfThenElse ann cond thenBranch' elseBranch'
   _ → pure Nothing
+
+{- | Eliminate the unreachable default of an exhaustive closed-sum match
+(issue #224), the N-constructor generalisation of the Boolean collapse
+of issue #223. A @case@ over a sum type lowers to a chain of
+constructor-tag tests with a synthesized catch-all
+(see 'Language.PureScript.Backend.IR.mkCaseClauses'):
+
+> if     tagA == reflectCtor v then a
+> elseif tagB == reflectCtor v then b
+> else   error "No patterns matched"
+
+'reduceKnownConstructor' collapses this chain when the scrutinee is a
+manifest constructor, but over a runtime value nothing local proves the
+default dead: that takes the type's complete constructor set, which is
+global information. The 'CtorTagSets' table carries it. When the tags
+tested along the chain cover the tested type's whole set, the default
+cannot be reached and the final tag test decides nothing, so both go —
+the last branch becomes the unconditional else:
+
+> if tagA == reflectCtor v then a else b
+
+Soundness is unconditional (Note [IR is assumed well-typed] supplies
+the typing): the table holds the declared constructor set, so covering
+it is exact exhaustiveness — no approximation and no assumption about
+foreign code. The set equality also carries the guards: a tag of
+another type in the chain, or a repeated constructor hiding a gap,
+leaves the tested set short of the declared one, and the rule declines.
+Only tag reads of one and the same variable chain up — re-reading an
+immutable binding observes the value the previous test observed (the
+licence of 'propagateKnownCondIntoBranches') — and only a
+literal-on-the-left test participates, the one shape the translation
+emits. Dropping the final test drops a pure read of that variable, the
+same call DCE makes when it drops an unused binding.
+
+The rule meets the in-place read shape above because every optimize
+fixpoint runs before common-subexpression elimination could hoist the
+repeated @reflectCtor v@ reads into a shared binding (see
+'optimizerPipeline'); collapsing to a single read then usually
+dissolves the sharing opportunity altogether. Terminates: each firing
+removes an 'IfThenElse' and the 'Exception' node, and can only re-fire
+on a chain that kept another same-scrutinee default — strictly smaller
+each round.
+-}
+removeUnreachableMatchDefault
+  ∷ Applicative m ⇒ CtorTagSets → RewriteRuleM m Ann
+removeUnreachableMatchDefault ctorTags =
+  pure . \case
+    IfThenElse ann cond thenBranch elseBranch
+      | Just (scrut, tag) ← tagTest cond
+      , Just declared ← Map.lookup tag ctorTags
+      , Just (tested, rebuilt) ←
+          collapseTail scrut (Set.singleton tag) elseBranch
+      , tested == declared →
+          Just (IfThenElse ann cond thenBranch rebuilt)
+    _ → Nothing
+ where
+  -- The constructor tag a condition tests against the variable whose
+  -- tag it reads: the shape 'mkCaseClauses' emits, literal on the left.
+  tagTest ∷ RawExp ann → Maybe (Qualified Name, Text)
+  tagTest = \case
+    Eq _ (LiteralString _ tag) (ReflectCtor _ (Ref _ v)) → Just (v, tag)
+    _ → Nothing
+
+  -- Walk the else-spine of tag tests over the same scrutinee down to
+  -- the synthesized default, accumulating the tested tags; the rebuilt
+  -- spine has the default gone and the last tag test folded to its
+  -- branch.
+  collapseTail ∷ Qualified Name → Set Text → Exp → Maybe (Set Text, Exp)
+  collapseTail scrut tested = \case
+    IfThenElse ann cond thenBranch elseBranch
+      | Just (v, tag) ← tagTest cond
+      , v == scrut →
+          case elseBranch of
+            Exception _ _ → Just (Set.insert tag tested, thenBranch)
+            _ →
+              second (IfThenElse ann cond thenBranch)
+                <$> collapseTail scrut (Set.insert tag tested) elseBranch
+    _ → Nothing
 
 {- | Drop a negated condition by swapping the branches:
 @if not p then a else b@ ⟶ @if p then b else a@. Runs before
