@@ -5,7 +5,7 @@ module Language.PureScript.Backend.Lua.Optimizer.Spec where
 import Language.PureScript.Backend.Lua.Limits (LuaLimits (..), lua51Limits)
 import Language.PureScript.Backend.Lua.Name (name)
 import Language.PureScript.Backend.Lua.Optimizer
-  ( collapseTailScopeCall
+  ( collapseTailLiteralApplication
   , foldCallThroughScopeCall
   , foldFieldProjectionThroughScopeCall
   , foldNotEqual
@@ -205,7 +205,7 @@ spec = describe "Lua AST Optimizer" do
                   (Lua.functionCall (Lua.varName [name|f|]) [Lua.varName [name|b|]])
               ]
       assertEqual (toString $ pShow original) expected $
-        rewriteExpWithRule foldCallThroughScopeCall original
+        rewriteExpWithRule (foldCallThroughScopeCall lua51Limits) original
 
     it "folds a zero-argument run into both branches of a tail if" do
       -- The thunk-selection shape: `(function() if c then return f else
@@ -228,9 +228,12 @@ spec = describe "Lua AST Optimizer" do
                   [Lua.return (Lua.functionCall (Lua.varName [name|g|]) [])]
               ]
       assertEqual (toString $ pShow original) expected $
-        rewriteExpWithRule foldCallThroughScopeCall original
+        rewriteExpWithRule (foldCallThroughScopeCall lua51Limits) original
 
     it "re-folds when the returned expression is itself a scope call" do
+      -- The re-fold pushes the call into the inner scope call, and the
+      -- collapse chained onto each rebuilt literal then flattens the
+      -- nesting into a single scope call.
       let original ∷ Lua.Exp =
             Lua.functionCall
               (Lua.scope [Lua.return (Lua.scope [Lua.return (Lua.varName [name|f|])])])
@@ -238,17 +241,13 @@ spec = describe "Lua AST Optimizer" do
           expected ∷ Lua.Exp =
             Lua.scope
               [ Lua.return
-                  ( Lua.scope
-                      [ Lua.return
-                          ( Lua.functionCall
-                              (Lua.varName [name|f|])
-                              [Lua.varName [name|b|]]
-                          )
-                      ]
+                  ( Lua.functionCall
+                      (Lua.varName [name|f|])
+                      [Lua.varName [name|b|]]
                   )
               ]
       assertEqual (toString $ pShow original) expected $
-        rewriteExpWithRule foldCallThroughScopeCall original
+        rewriteExpWithRule (foldCallThroughScopeCall lua51Limits) original
 
     it "declines when a leading statement contains an early return" do
       let original ∷ Lua.Exp =
@@ -263,7 +262,7 @@ spec = describe "Lua AST Optimizer" do
               )
               []
       assertEqual (toString $ pShow original) original $
-        rewriteExpWithRule foldCallThroughScopeCall original
+        rewriteExpWithRule (foldCallThroughScopeCall lua51Limits) original
 
     it "declines on a fall-off path (tail if without an else)" do
       -- Falling off the end yields nil, which the original code then
@@ -279,7 +278,7 @@ spec = describe "Lua AST Optimizer" do
               )
               []
       assertEqual (toString $ pShow original) original $
-        rewriteExpWithRule foldCallThroughScopeCall original
+        rewriteExpWithRule (foldCallThroughScopeCall lua51Limits) original
 
     it "declines on a multi-valued tail return" do
       let original ∷ Lua.Exp =
@@ -289,7 +288,7 @@ spec = describe "Lua AST Optimizer" do
               )
               []
       assertEqual (toString $ pShow original) original $
-        rewriteExpWithRule foldCallThroughScopeCall original
+        rewriteExpWithRule (foldCallThroughScopeCall lua51Limits) original
 
     it "declines when an argument name collides with a body local" do
       -- Moved inside, `x` would resolve to the callee's local, not the
@@ -303,7 +302,7 @@ spec = describe "Lua AST Optimizer" do
               )
               [Lua.varName [name|x|]]
       assertEqual (toString $ pShow original) original $
-        rewriteExpWithRule foldCallThroughScopeCall original
+        rewriteExpWithRule (foldCallThroughScopeCall lua51Limits) original
 
     it "declines non-atomic arguments on a branching tail" do
       -- Branch pushing duplicates the arguments into every return site;
@@ -339,9 +338,9 @@ spec = describe "Lua AST Optimizer" do
                   ]
               ]
       assertEqual (toString $ pShow nonAtomic) nonAtomic $
-        rewriteExpWithRule foldCallThroughScopeCall nonAtomic
+        rewriteExpWithRule (foldCallThroughScopeCall lua51Limits) nonAtomic
       assertEqual (toString $ pShow atomic) pushed $
-        rewriteExpWithRule foldCallThroughScopeCall atomic
+        rewriteExpWithRule (foldCallThroughScopeCall lua51Limits) atomic
 
     it "declines varargs among the arguments" do
       let original ∷ Lua.Exp =
@@ -349,9 +348,37 @@ spec = describe "Lua AST Optimizer" do
               (Lua.scope [Lua.return (Lua.varName [name|f|])])
               [Lua.Vararg]
       assertEqual (toString $ pShow original) original $
-        rewriteExpWithRule foldCallThroughScopeCall original
+        rewriteExpWithRule (foldCallThroughScopeCall lua51Limits) original
 
-    it "composes with collapseTailScopeCall into a zero-closure tail" do
+    it "re-collapses the literal it rebuilds, in any position" do
+      -- The pushed application may land on a returned function literal —
+      -- a beta-redex built at a depth the bottom-up driver has already
+      -- passed. The fold hands the rebuilt literal to
+      -- 'collapseTailLiteralApplication' itself, so the redex reduces
+      -- even when the scope call sits in expression position (a table
+      -- row, an operand), where no enclosing function tail would.
+      let original ∷ Lua.Exp =
+            Lua.functionCall
+              ( Lua.scope
+                  [ Lua.local1 [name|h|] (Lua.Integer 1)
+                  , Lua.return
+                      ( Lua.functionDef
+                          [Lua.ParamNamed [name|x|]]
+                          [Lua.return (Lua.varName [name|x|])]
+                      )
+                  ]
+              )
+              [Lua.varName [name|b|]]
+          expected ∷ Lua.Exp =
+            Lua.scope
+              [ Lua.local1 [name|h|] (Lua.Integer 1)
+              , Lua.local1 [name|x|] (Lua.varName [name|b|])
+              , Lua.return (Lua.varName [name|x|])
+              ]
+      assertEqual (toString $ pShow original) expected $
+        rewriteExpWithRule (foldCallThroughScopeCall lua51Limits) original
+
+    it "composes with the tail-literal collapse into a zero-closure tail" do
       -- The end-to-end #230-family result: `return (function() if c then
       -- return f else return g end end)()()` in a function tail loses
       -- both the closure and the extra calls.
@@ -384,7 +411,7 @@ spec = describe "Lua AST Optimizer" do
       assertEqual (toString $ pShow original) expected $
         optimizeStatement lua51Limits original
 
-  describe "collapseTailScopeCall" do
+  describe "collapseTailLiteralApplication" do
     it "splices a tail scope call into the enclosing function body" do
       -- The residual magic-do shape from issue #230: an effectful
       -- uncurried definition runs its do-chunk through a tail IIFE.
@@ -407,7 +434,7 @@ spec = describe "Lua AST Optimizer" do
               , Lua.return (Lua.varName [name|c|])
               ]
       assertEqual (toString $ pShow original) expected $
-        rewriteExpWithRule (collapseTailScopeCall lua51Limits) original
+        rewriteExpWithRule (collapseTailLiteralApplication lua51Limits) original
 
     it "re-collapses a tail exposed by its own merge, without a traversal" do
       -- The bare rule (no bottom-up driver) must flatten both levels:
@@ -431,7 +458,7 @@ spec = describe "Lua AST Optimizer" do
               , Lua.return (Lua.varName [name|a|])
               ]
       assertEqual (toString $ pShow original) expected $
-        collapseTailScopeCall lua51Limits original
+        collapseTailLiteralApplication lua51Limits original
 
     it "splices nested tail scope calls bottom-up in one pass" do
       let original ∷ Lua.Exp =
@@ -457,7 +484,7 @@ spec = describe "Lua AST Optimizer" do
               , Lua.return (Lua.varName [name|b|])
               ]
       assertEqual (toString $ pShow original) expected $
-        rewriteExpWithRule (collapseTailScopeCall lua51Limits) original
+        rewriteExpWithRule (collapseTailLiteralApplication lua51Limits) original
 
     it "splices past a leading early return" do
       -- An early return among the leading statements exits the parent on
@@ -481,7 +508,7 @@ spec = describe "Lua AST Optimizer" do
               , Lua.return (Lua.Integer 2)
               ]
       assertEqual (toString $ pShow original) expected $
-        rewriteExpWithRule (collapseTailScopeCall lua51Limits) original
+        rewriteExpWithRule (collapseTailLiteralApplication lua51Limits) original
 
     it "splices a body that falls off the end (zero return values)" do
       -- Both before and after, the parent returns no values.
@@ -499,9 +526,59 @@ spec = describe "Lua AST Optimizer" do
               , Lua.CallStatement (Lua.ann (Lua.error "eff"))
               ]
       assertEqual (toString $ pShow original) expected $
-        rewriteExpWithRule (collapseTailScopeCall lua51Limits) original
+        rewriteExpWithRule (collapseTailLiteralApplication lua51Limits) original
 
-    it "declines when the called literal takes parameters" do
+    it "splices an applied literal, binding its parameters as locals" do
+      -- The beta-redex 'foldCallThroughScopeCall' leaves behind (#295):
+      -- the parameter binding becomes a simultaneous `local`.
+      let original ∷ Lua.Exp =
+            Lua.functionDef
+              [Lua.ParamNamed [name|b|]]
+              [ Lua.return
+                  ( Lua.functionCall
+                      ( Lua.functionDef
+                          [Lua.ParamNamed [name|x|]]
+                          [Lua.return (Lua.varName [name|x|])]
+                      )
+                      [Lua.varName [name|b|]]
+                  )
+              ]
+          expected ∷ Lua.Exp =
+            Lua.functionDef
+              [Lua.ParamNamed [name|b|]]
+              [ Lua.local1 [name|x|] (Lua.varName [name|b|])
+              , Lua.return (Lua.varName [name|x|])
+              ]
+      assertEqual (toString $ pShow original) expected $
+        rewriteExpWithRule (collapseTailLiteralApplication lua51Limits) original
+
+    it "binds parameters missing an argument to nil, as the call did" do
+      -- One `local x, y = 1` nil-fills y exactly as Lua's call
+      -- adjustment did.
+      let original ∷ Lua.Exp =
+            Lua.functionDef
+              []
+              [ Lua.return
+                  ( Lua.functionCall
+                      ( Lua.functionDef
+                          [Lua.ParamNamed [name|x|], Lua.ParamNamed [name|y|]]
+                          [Lua.return (Lua.varName [name|y|])]
+                      )
+                      [Lua.Integer 1]
+                  )
+              ]
+          expected ∷ Lua.Exp =
+            Lua.functionDef
+              []
+              [ Lua.localN ([name|x|] :| [[name|y|]]) (Lua.Integer 1)
+              , Lua.return (Lua.varName [name|y|])
+              ]
+      assertEqual (toString $ pShow original) expected $
+        rewriteExpWithRule (collapseTailLiteralApplication lua51Limits) original
+
+    it "re-collapses through a parameterized merge, without a traversal" do
+      -- The bare rule must flatten both levels when the outer merge
+      -- exposes another applied literal in tail position.
       let original ∷ Lua.Exp =
             Lua.functionDef
               []
@@ -509,13 +586,117 @@ spec = describe "Lua AST Optimizer" do
                   ( Lua.functionCall
                       ( Lua.functionDef
                           [Lua.ParamNamed [name|x|]]
-                          [Lua.return (Lua.varName [name|x|])]
+                          [ Lua.return
+                              ( Lua.functionCall
+                                  ( Lua.functionDef
+                                      [Lua.ParamNamed [name|y|]]
+                                      [Lua.return (Lua.varName [name|x|])]
+                                  )
+                                  [Lua.Integer 2]
+                              )
+                          ]
                       )
                       [Lua.Integer 1]
                   )
               ]
+          expected ∷ Lua.Exp =
+            Lua.functionDef
+              []
+              [ Lua.local1 [name|x|] (Lua.Integer 1)
+              , Lua.local1 [name|y|] (Lua.Integer 2)
+              , Lua.return (Lua.varName [name|x|])
+              ]
+      assertEqual (toString $ pShow original) expected $
+        collapseTailLiteralApplication lua51Limits original
+
+    it "declines a nullary literal applied to arguments" do
+      -- There is no `local` binding zero names, and dropping the
+      -- arguments would drop their effects.
+      let original ∷ Lua.Exp =
+            Lua.functionDef
+              []
+              [ Lua.return
+                  ( Lua.functionCall
+                      (Lua.functionDef [] [Lua.return (Lua.Integer 1)])
+                      [Lua.Integer 2]
+                  )
+              ]
       assertEqual (toString $ pShow original) original $
-        rewriteExpWithRule (collapseTailScopeCall lua51Limits) original
+        rewriteExpWithRule (collapseTailLiteralApplication lua51Limits) original
+
+    it "declines vararg and unused parameters" do
+      -- Neither `...` nor an unnamed parameter can be bound by a `local`.
+      let decline ∷ Lua.Param → IO ()
+          decline param = do
+            let original ∷ Lua.Exp =
+                  Lua.functionDef
+                    []
+                    [ Lua.return
+                        ( Lua.functionCall
+                            ( Lua.functionDef
+                                [param]
+                                [Lua.return (Lua.Integer 1)]
+                            )
+                            [Lua.Integer 2]
+                        )
+                    ]
+            assertEqual (toString $ pShow original) original $
+              rewriteExpWithRule
+                (collapseTailLiteralApplication lua51Limits)
+                original
+      decline Lua.ParamVararg
+      decline Lua.ParamUnused
+
+    it "declines a duplicate parameter name" do
+      -- `local x, x = 1, 2` does bind the last occurrence, like the
+      -- call did, but the shape never comes out of lowering — declining
+      -- is simpler than reasoning about it.
+      let original ∷ Lua.Exp =
+            Lua.functionDef
+              []
+              [ Lua.return
+                  ( Lua.functionCall
+                      ( Lua.functionDef
+                          [Lua.ParamNamed [name|x|], Lua.ParamNamed [name|x|]]
+                          [Lua.return (Lua.varName [name|x|])]
+                      )
+                      [Lua.Integer 1, Lua.Integer 2]
+                  )
+              ]
+      assertEqual (toString $ pShow original) original $
+        rewriteExpWithRule (collapseTailLiteralApplication lua51Limits) original
+
+    it "counts bound parameters against the local budget" do
+      -- With maxLocals = 22 the working ceiling is 2: one parameter,
+      -- one leading local and the bound parameter (3 slots) must not
+      -- merge into one activation; one more slot of headroom admits the
+      -- same splice.
+      let tinyLimits = lua51Limits {maxLocals = 22}
+          roomyLimits = lua51Limits {maxLocals = 23}
+          original ∷ Lua.Exp =
+            Lua.functionDef
+              [Lua.ParamNamed [name|a|]]
+              [ Lua.local1 [name|b|] (Lua.Integer 1)
+              , Lua.return
+                  ( Lua.functionCall
+                      ( Lua.functionDef
+                          [Lua.ParamNamed [name|c|]]
+                          [Lua.return (Lua.varName [name|c|])]
+                      )
+                      [Lua.varName [name|b|]]
+                  )
+              ]
+          expected ∷ Lua.Exp =
+            Lua.functionDef
+              [Lua.ParamNamed [name|a|]]
+              [ Lua.local1 [name|b|] (Lua.Integer 1)
+              , Lua.local1 [name|c|] (Lua.varName [name|b|])
+              , Lua.return (Lua.varName [name|c|])
+              ]
+      assertEqual (toString $ pShow original) original $
+        rewriteExpWithRule (collapseTailLiteralApplication tinyLimits) original
+      assertEqual (toString $ pShow original) expected $
+        rewriteExpWithRule (collapseTailLiteralApplication roomyLimits) original
 
     it "declines when the merged body exceeds the local budget" do
       -- With maxLocals = 22 the working ceiling is 2: one parameter plus
@@ -542,9 +723,9 @@ spec = describe "Lua AST Optimizer" do
               , Lua.return (Lua.varName [name|c|])
               ]
       assertEqual (toString $ pShow original) original $
-        rewriteExpWithRule (collapseTailScopeCall tinyLimits) original
+        rewriteExpWithRule (collapseTailLiteralApplication tinyLimits) original
       assertEqual (toString $ pShow original) expected $
-        rewriteExpWithRule (collapseTailScopeCall roomyLimits) original
+        rewriteExpWithRule (collapseTailLiteralApplication roomyLimits) original
 
     it "declines when the spliced statements use varargs in their scope" do
       -- A no-parameter function cannot legally mention `...`; on such
@@ -555,7 +736,7 @@ spec = describe "Lua AST Optimizer" do
               [Lua.ParamVararg]
               [Lua.return (Lua.scope [Lua.Return [Lua.ann Lua.Vararg]])]
       assertEqual (toString $ pShow original) original $
-        rewriteExpWithRule (collapseTailScopeCall lua51Limits) original
+        rewriteExpWithRule (collapseTailLiteralApplication lua51Limits) original
 
     it "splices past varargs owned by a nested function literal" do
       let inner ∷ [Lua.Statement] =
@@ -572,7 +753,7 @@ spec = describe "Lua AST Optimizer" do
             Lua.functionDef [] [Lua.return (Lua.scope inner)]
           expected ∷ Lua.Exp = Lua.functionDef [] inner
       assertEqual (toString $ pShow original) expected $
-        rewriteExpWithRule (collapseTailScopeCall lua51Limits) original
+        rewriteExpWithRule (collapseTailLiteralApplication lua51Limits) original
 
   describe "foldNotEqual" do
     it "rewrites not (a == b) to a ~= b" do

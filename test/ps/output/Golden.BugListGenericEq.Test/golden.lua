@@ -75,29 +75,28 @@ Golden_BugListGenericEq_Test_eqList = function(dictEq)
             return { "Data.Generic.Rep∷Sum.Inr", x[2] }
           end
         end)()
-        return (function(v1_S_14)
-          local _S_cse270 = v1_S_14[1]
-          local _S_cse269 = v_S_13[1]
-          if "Data.Generic.Rep∷Sum.Inl" == _S_cse269 then
-            return "Data.Generic.Rep∷Sum.Inl" == _S_cse270
-          else
-            return "Data.Generic.Rep∷Sum.Inr" == _S_cse269 and ("Data.Generic.Rep∷Sum.Inr" == _S_cse270 and (Data_Eq_eqRowCons_S_w(Data_Eq_eqRowCons_S_w({
-              eqRecord = function()
-                return function() return function() return true end end
-              end
-            }, nil, {
-              reflectSymbol = function() return "tail" end
-            }, Golden_BugListGenericEq_Test_eqList(dictEq)), nil, {
-              reflectSymbol = function() return "head" end
-            }, dictEq)).eqRecord(Type_Proxy_Proxy)(v_S_13[2])(v1_S_14[2]))
-          end
-        end)((function()
+        local v1_S_14 = (function()
           if "Golden.BugListGenericEq.Test∷List.Nil" == y[1] then
             return _S_cse268
           else
             return { "Data.Generic.Rep∷Sum.Inr", y[2] }
           end
-        end)())
+        end)()
+        local _S_cse270 = v1_S_14[1]
+        local _S_cse269 = v_S_13[1]
+        if "Data.Generic.Rep∷Sum.Inl" == _S_cse269 then
+          return "Data.Generic.Rep∷Sum.Inl" == _S_cse270
+        else
+          return "Data.Generic.Rep∷Sum.Inr" == _S_cse269 and ("Data.Generic.Rep∷Sum.Inr" == _S_cse270 and (Data_Eq_eqRowCons_S_w(Data_Eq_eqRowCons_S_w({
+            eqRecord = function()
+              return function() return function() return true end end
+            end
+          }, nil, {
+            reflectSymbol = function() return "tail" end
+          }, Golden_BugListGenericEq_Test_eqList(dictEq)), nil, {
+            reflectSymbol = function() return "head" end
+          }, dictEq)).eqRecord(Type_Proxy_Proxy)(v_S_13[2])(v1_S_14[2]))
+        end
       end
     end
   }
