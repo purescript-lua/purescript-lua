@@ -15,7 +15,11 @@ import Language.PureScript.Backend.IR.Inliner qualified as Inliner
 import Language.PureScript.Backend.IR.Linker (LinkMode (..))
 import Language.PureScript.Backend.IR.Linker qualified as IR
 import Language.PureScript.Backend.IR.Linker qualified as Linker
+import Language.PureScript.Backend.IR.Linter qualified as Linter
 import Language.PureScript.Backend.IR.Optimizer (optimizedUberModuleChecked)
+import Language.PureScript.Backend.IR.Pass
+  ( PassCheckFailure (ResultDanglingImports)
+  )
 import Language.PureScript.Backend.Lua qualified as Lua
 import Language.PureScript.Backend.Lua.ForeignLift qualified as ForeignLift
 import Language.PureScript.Backend.Lua.Limits (LuaLimits, lua51Limits)
@@ -317,7 +321,15 @@ compileCorefn outputDir uberModuleName = do
   -- The checked runner lints every pass boundary (including every fixpoint
   -- iteration), so each golden module doubles as a scope-invariant test of
   -- the whole pipeline.
-  either (fail . show) pure (optimizedUberModuleChecked dataDecls liftedModule)
+  optimized ←
+    either (fail . show) pure (optimizedUberModuleChecked dataDecls liftedModule)
+  -- Golden modules are closed (real linker output), so the optimized result
+  -- must resolve every imported reference — a dangling one compiles to a nil
+  -- call at runtime (issue #297). Unit fixtures cannot carry this check;
+  -- the golden corpus is where it bites.
+  case nonEmpty (Linter.lintDanglingImports optimized) of
+    Nothing → pure optimized
+    Just violations → fail (show (ResultDanglingImports violations))
 
 {- | Read the optional @directives.txt@ fixture sitting next to a golden
 module's golden files.

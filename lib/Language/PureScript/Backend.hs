@@ -7,11 +7,14 @@ import Data.Tagged (Tagged (..), untag)
 import Language.PureScript.Backend.IR qualified as IR
 import Language.PureScript.Backend.IR.Inliner qualified as Inliner
 import Language.PureScript.Backend.IR.Linker qualified as Linker
+import Language.PureScript.Backend.IR.Linter qualified as Linter
 import Language.PureScript.Backend.IR.Optimizer
   ( optimizedUberModule
   , optimizedUberModuleChecked
   )
-import Language.PureScript.Backend.IR.Pass (PassCheckFailure)
+import Language.PureScript.Backend.IR.Pass
+  ( PassCheckFailure (ResultDanglingImports)
+  )
 import Language.PureScript.Backend.Lua qualified as Lua
 import Language.PureScript.Backend.Lua.ForeignLift qualified as ForeignLift
 import Language.PureScript.Backend.Lua.Limits (LuaLimits)
@@ -60,6 +63,13 @@ compileModules outputDir foreignDir lintIR limits directives appOrModule = do
     if untag lintIR
       then Oops.hoistEither (optimizedUberModuleChecked dataDecls liftedModule)
       else pure (optimizedUberModule dataDecls liftedModule)
+  -- A dangling imported reference compiles to a read of a never-assigned
+  -- module-table field — a nil call at runtime — so refuse to emit code for
+  -- it (issue #297). Unconditional, unlike the per-pass linting behind
+  -- --lint-ir: one O(module) scan of the final result.
+  whenJust
+    (nonEmpty (Linter.lintDanglingImports uberModule))
+    (Oops.throw . ResultDanglingImports)
   -- See Note [The PSLUA_runtime_lazy coupling] in Language.PureScript.Names
   let needsRuntimeLazy = Tagged (any untag needsRuntimeLazys)
   chunk ← Lua.fromUberModule foreignDir needsRuntimeLazy appOrModule uberModule

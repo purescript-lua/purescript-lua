@@ -1,0 +1,162 @@
+UberModule
+  { uberModuleBindings =
+    [ Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Unit", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Data.Unit" ) ".spago/p/prelude/5718c84fdde6247749cb053e816df696c30fe691/src/Data/Unit.purs"
+        [ ( Just Never, Name "unit" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Unit", qnameName = Name "unit"
+        }, ObjectProp ( Just Never )
+        ( Ref Nothing ( Imported ( ModuleName "Data.Unit" ) ( Name "foreign" ) ) )
+        ( PropName "unit" )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Show", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Data.Show" ) ".spago/p/prelude/5718c84fdde6247749cb053e816df696c30fe691/src/Data/Show.purs"
+        [ ( Nothing, Name "showIntImpl" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Control.Monad.ST.Internal", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Control.Monad.ST.Internal" ) ".spago/p/st/6d41fd264a05b9a089e79322b22b906597ea7c36/src/Control/Monad/ST/Internal.purs"
+        [
+          ( Nothing, Name "map_" ),
+          ( Nothing, Name "bind_" ),
+          ( Nothing, Name "run" ),
+          ( Nothing, Name "new" ),
+          ( Nothing, Name "read" ),
+          ( Nothing, Name "write" )
+        ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Effect.Console" ) ".spago/p/console/f82835a0b873aafe6bd7b14dd30cc150553d4ab9/src/Effect/Console.purs"
+        [ ( Nothing, Name "log" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "log"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
+        ( PropName "log" )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.MixedDiscardFloat.Test", qnameName = Name "stCount"
+        }, AppN Nothing
+        ( ObjectProp Nothing
+          ( Ref Nothing
+            ( Imported ( ModuleName "Control.Monad.ST.Internal" ) ( Name "foreign" ) )
+          )
+          ( PropName "run" )
+        )
+        ( AbsN Nothing
+          ( ParamUnused Nothing :| [] )
+          ( Let Nothing
+            ( Standalone
+              ( Nothing, Name "r", AppN Nothing
+                ( AppN Nothing
+                  ( ObjectProp Nothing
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Control.Monad.ST.Internal" ) ( Name "foreign" ) )
+                    )
+                    ( PropName "new" )
+                  )
+                  ( LiteralInt Nothing 1 :| [] )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              ) :|
+              [ Standalone
+                ( Nothing, Name "_", AppN Nothing
+                  ( AppN Nothing
+                    ( AppN Nothing
+                      ( ObjectProp Nothing
+                        ( Ref Nothing
+                          ( Imported ( ModuleName "Control.Monad.ST.Internal" ) ( Name "foreign" ) )
+                        )
+                        ( PropName "map_" )
+                      )
+                      ( AbsN Nothing
+                        ( ParamUnused Nothing :| [] )
+                        ( Ref Nothing
+                          ( Imported ( ModuleName "Data.Unit" ) ( Name "unit" ) )
+                        ) :| []
+                      )
+                    )
+                    ( AppN Nothing
+                      ( AppN Nothing
+                        ( ObjectProp Nothing
+                          ( Ref Nothing
+                            ( Imported
+                              ( ModuleName "Control.Monad.ST.Internal" )
+                              ( Name "foreign" )
+                            )
+                          )
+                          ( PropName "write" )
+                        )
+                        ( LiteralInt Nothing 2 :| [] )
+                      )
+                      ( Ref Nothing ( Local ( Name "r" ) ) :| [] ) :| []
+                    )
+                  )
+                  ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+                )
+              ]
+            )
+            ( AppN Nothing
+              ( AppN Nothing
+                ( ObjectProp Nothing
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Control.Monad.ST.Internal" ) ( Name "foreign" ) )
+                  )
+                  ( PropName "read" )
+                )
+                ( Ref Nothing ( Local ( Name "r" ) ) :| [] )
+              )
+              ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+            )
+          ) :| []
+        )
+      )
+    ], uberModuleForeigns = [], uberModuleExports =
+    [
+      ( Name "stCount", Ref Nothing
+        ( Imported ( ModuleName "Golden.MixedDiscardFloat.Test" ) ( Name "stCount" ) )
+      ),
+      ( Name "main", AbsN Nothing
+        ( ParamUnused Nothing :| [] )
+        ( Let Nothing
+          ( Standalone
+            ( Nothing, Name "_", AppN Nothing
+              ( AppN Nothing
+                ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+                ( LiteralString Nothing "st:" :| [] )
+              )
+              ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+            ) :| []
+          )
+          ( AppN Nothing
+            ( AppN Nothing
+              ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+              ( AppN Nothing
+                ( ObjectProp Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
+                  ( PropName "showIntImpl" )
+                )
+                ( Ref Nothing
+                  ( Imported
+                    ( ModuleName "Golden.MixedDiscardFloat.Test" )
+                    ( Name "stCount" )
+                  ) :| []
+                ) :| []
+              )
+            )
+            ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+          )
+        )
+      )
+    ]
+  }

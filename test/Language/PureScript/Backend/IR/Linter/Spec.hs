@@ -6,6 +6,7 @@ import Language.PureScript.Backend.IR.Linker (UberModule (..))
 import Language.PureScript.Backend.IR.Linter
   ( Site (..)
   , Violation (..)
+  , lintDanglingImports
   , lintUniqueBinders
   , lintWellApplied
   , lintWellScoped
@@ -31,6 +32,7 @@ import Language.PureScript.Backend.IR.Types
   , noAnn
   , paramNamed
   , paramUnused
+  , refImported
   , refLocal
   , values
   )
@@ -106,6 +108,53 @@ spec = describe "IR Linter" do
     unboundLocals
       (lets (Standalone (noAnn, x, literalInt 1) :| []) (refLocal x))
       `shouldBe` []
+
+  -- See issue #297: a manufactured reference to a DCE'd binding
+  -- compiles to a nil call, so closed modules must resolve every
+  -- imported reference.
+  describe "DanglingImports" do
+    let m = moduleNameFromString "M"
+        thereQ = QName m (Name "there")
+        goneQ = QName m (Name "gone")
+        refThere = refImported m (Name "there")
+        refGone = refImported m (Name "gone")
+
+    it "accepts a reference to a top-level binding" do
+      lintDanglingImports
+        ( (inBinding refThere)
+            { uberModuleBindings =
+                [ Standalone (itQName, refThere)
+                , Standalone (thereQ, literalInt 1)
+                ]
+            }
+        )
+        `shouldBe` []
+
+    it "accepts a reference to a foreign" do
+      lintDanglingImports
+        ((inBinding refThere) {uberModuleForeigns = [(thereQ, literalInt 1)]})
+        `shouldBe` []
+
+    it "exempts the Prim marker namespace" do
+      lintDanglingImports
+        (inBinding (refImported (moduleNameFromString "Prim") (Name "undefined")))
+        `shouldBe` []
+
+    it "flags an unresolvable imported reference at every site" do
+      lintDanglingImports
+        UberModule
+          { uberModuleBindings = [Standalone (itQName, refGone)]
+          , uberModuleForeigns = [(thereQ, refGone)]
+          , uberModuleExports = [(Name "it", refGone)]
+          }
+        `shouldBe` [ DanglingImport (InBinding itQName) goneQ
+                   , DanglingImport (InForeign thereQ) goneQ
+                   , DanglingImport (InExport (Name "it")) goneQ
+                   ]
+
+    it "reports each dangling name once per site" do
+      lintDanglingImports (inBinding (application refGone refGone))
+        `shouldBe` [DanglingImport (InBinding itQName) goneQ]
 
   describe "UniqueBinders" do
     let x = Name "x"

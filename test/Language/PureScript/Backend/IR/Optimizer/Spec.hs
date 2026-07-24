@@ -29,6 +29,7 @@ import Language.PureScript.Backend.IR.Optimizer
   ( CallSiteInlining (SkipCallSites)
   , optimizeModule
   , optimizedExpression
+  , optimizedExpressionWithCanon
   , optimizedExpressionWithTypes
   , optimizedUberModule
   , optimizedUberModuleChecked
@@ -202,13 +203,24 @@ spec = describe "IR Optimizer" do
         purE =
           refImported (moduleNameFromString "Control.Applicative") (Name "pure")
         effBindE = refImported eff (Name "bindE")
+        -- The canonical accessor bindings must be live for the rule to
+        -- manufacture references to them (issue #297); the right-hand
+        -- sides are only read through alias resolution, so stubs do.
+        targets =
+          Map.fromList
+            [ (QName eff (Name "bindE"), literalInt 0)
+            , (QName eff (Name "pureE"), literalInt 0)
+            , (QName cmsi (Name "bind_"), literalInt 0)
+            , (QName cmsi (Name "pure_"), literalInt 0)
+            ]
+        optimize = optimizedExpressionWithCanon targets
 
     it "rewrites a bind·dictionary pair exposed after linking" do
-      optimizedExpression (application bind (refImported eff (Name "bindEffect")))
+      optimize (application bind (refImported eff (Name "bindEffect")))
         `shouldBe` effBindE
 
     it "rewrites the discard·discardUnit·dictionary triple" do
-      optimizedExpression
+      optimize
         ( application
             (application discard discardUnit)
             (refImported cmsi (Name "bindST"))
@@ -216,19 +228,44 @@ spec = describe "IR Optimizer" do
         `shouldBe` refImported cmsi (Name "bind_")
 
     it "rewrites a pure·dictionary pair" do
-      optimizedExpression
-        (application purE (refImported cmsi (Name "applicativeST")))
+      optimize (application purE (refImported cmsi (Name "applicativeST")))
         `shouldBe` refImported cmsi (Name "pure_")
 
     it "is idempotent" do
-      optimizedExpression effBindE `shouldBe` effBindE
+      optimize effBindE `shouldBe` effBindE
 
     it "leaves a non-Effect dictionary alone" do
       let original =
             application
               bind
               (refImported (moduleNameFromString "Data.Maybe") (Name "bindMaybe"))
-      optimizedExpression original `shouldBe` original
+      optimize original `shouldBe` original
+
+    it "resolves the head through the two-stage purs CSE float (#297)" do
+      -- With discard instantiated at a second dictionary elsewhere in
+      -- the module, purs CSE floats the shared partial application:
+      --   discard' = discard discardUnit; discard1 = discard' bindST
+      -- so the row's head hides behind a module-local alias.
+      let testMod = moduleNameFromString "Test"
+          aliasQ = QName testMod (Name "discard")
+          env = Map.insert aliasQ (application discard discardUnit) targets
+      optimizedExpressionWithCanon
+        env
+        ( application
+            (refImported testMod (Name "discard"))
+            (refImported cmsi (Name "bindST"))
+        )
+        `shouldBe` refImported cmsi (Name "bind_")
+
+    it "declines to reference a canonical target the module lost (#297)" do
+      -- No binding for Effect.pureE in scope: manufacturing the
+      -- reference would dangle, so the dictionary application stays.
+      let original =
+            application purE (refImported eff (Name "applicativeEffect"))
+      optimizedExpressionWithCanon
+        (Map.delete (QName eff (Name "pureE")) targets)
+        original
+        `shouldBe` original
 
   -- A magic-do effect run (@m $magicDoRun@, see 'isEffectRun') bound by a
   -- Let statement is kept by dead-code elimination even when its binder

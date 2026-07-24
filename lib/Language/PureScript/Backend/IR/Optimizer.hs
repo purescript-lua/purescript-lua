@@ -13,7 +13,9 @@ import GHC.Generics (Generically (..))
 import Language.PureScript.Backend.IR.CSE (eliminateCommonSubexpressions)
 import Language.PureScript.Backend.IR.Cpr (cprWorkerWrapper)
 import Language.PureScript.Backend.IR.DCE (eliminateDeadCode)
-import Language.PureScript.Backend.IR.EffectNames (canonicalizeEffectApp)
+import Language.PureScript.Backend.IR.EffectNames
+  ( canonicalizeEffectAppInModule
+  )
 import Language.PureScript.Backend.IR.FlattenDeepBinds (flattenDeepBindsM)
 import Language.PureScript.Backend.IR.FloatIn (floatIn)
 import Language.PureScript.Backend.IR.Inliner (Annotation (..))
@@ -618,6 +620,22 @@ optimizeModule ctorTags inlining policy UberModule {..} = runWriterT do
         , qname `Set.notMember` policyNever policy
         ]
 
+  -- Top-level bindings the Effect/ST canonicalization may resolve
+  -- aliases through and manufacture references into (issue #297; see
+  -- 'canonicalizeEffectHead'). Unlike 'inlineEnv' it is unconditional —
+  -- canonicalization must complete in the pre-magicDo runs — and it
+  -- includes the foreigns, which hold the canonical accessor bindings
+  -- until 'mergeForeigns' folds them into the main bindings. A by-value
+  -- snapshot: resolution only reads right-hand sides, and a reference
+  -- manufactured into a binding this run later drops is substituted
+  -- away with the binding's other use sites ('withBinding'), so
+  -- staleness cannot dangle.
+  canonEnv ∷ CanonEnv
+  canonEnv =
+    Map.fromList $
+      [(qname, expr) | Standalone (qname, expr) ← uberModuleBindings]
+        <> uberModuleForeigns
+
   -- An @inline never@ name may not be pasted at all; an @inline arity=N@
   -- name is pasted only at qualifying call sites — pasting the whole
   -- binding would reach under-applied sites too.
@@ -680,6 +698,7 @@ optimizeModule ctorTags inlining policy UberModule {..} = runWriterT do
         lift $
           optimizedExpressionWithPastes
             ctorTags
+            canonEnv
             HeuristicPastes
             policy
             inlineEnv
@@ -691,7 +710,15 @@ optimizeModule ctorTags inlining policy UberModule {..} = runWriterT do
     keepSweep ∷ CallSitePastes → WriterT WasRewritten SupplyM Exp
     keepSweep pastes = do
       (e', rewritten) ←
-        lift (optimizedExpressionWithPastes ctorTags pastes policy inlineEnv e)
+        lift
+          ( optimizedExpressionWithPastes
+              ctorTags
+              canonEnv
+              pastes
+              policy
+              inlineEnv
+              e
+          )
       e' <$ tell rewritten
 
   -- See Note [Incremental free-reference counting]
@@ -796,6 +823,14 @@ magic-do recognises; on in the specialize fixpoint that runs after (see
 data CallSiteInlining = InlineCallSites | SkipCallSites
 
 type InlineEnv = Map (Qualified Name) Exp
+
+{- | Top-level bindings visible to the Effect/ST canonicalization
+('canonicalizeEffectHead'): alias resolution reads their right-hand
+sides, and a canonical reference is manufactured only for a name the
+map still holds (issue #297). Built per 'optimizeModule' run from the
+'Standalone' bindings plus the foreigns.
+-}
+type CanonEnv = Map QName Exp
 
 {- | For every sum-type constructor tag ('ctorId'), the complete tag set
 of the type declaring it — the exhaustiveness oracle of
@@ -977,13 +1012,13 @@ complexityOf = \case
   _ → NonTrivial
 
 {- | Pure wrapper for tests and standalone use: runs the rewrite with
-its own supply, no inlining environment and no data-type table.
-Production code uses 'optimizedExpressionM' so all passes share one
-supply.
+its own supply, no inlining environment, no top-level bindings and no
+data-type table. Production code uses 'optimizedExpressionM' so all
+passes share one supply.
 -}
 optimizedExpression ∷ Exp → Exp
 optimizedExpression =
-  runSupply . fmap fst . optimizedExpressionM mempty mempty mempty
+  runSupply . fmap fst . optimizedExpressionM mempty mempty mempty mempty
 
 {- | 'optimizedExpression' with data-type declarations in scope, so the
 exhaustiveness-driven rewrite can consult declared constructor sets
@@ -993,24 +1028,39 @@ optimizedExpressionWithTypes ∷ DataTypes → Exp → Exp
 optimizedExpressionWithTypes dataTypes =
   runSupply
     . fmap fst
-    . optimizedExpressionM (ctorTagSets dataTypes) mempty mempty
+    . optimizedExpressionM (ctorTagSets dataTypes) mempty mempty mempty
+
+{- | 'optimizedExpression' with top-level bindings visible to the
+Effect/ST canonicalization ('canonicalizeEffectHead'), for tests
+exercising that rule: it only manufactures references the environment
+can still resolve.
+-}
+optimizedExpressionWithCanon ∷ CanonEnv → Exp → Exp
+optimizedExpressionWithCanon canon =
+  runSupply . fmap fst . optimizedExpressionM mempty canon mempty mempty
 
 optimizedExpressionM
-  ∷ CtorTagSets → InlinePolicy → InlineEnv → Exp → SupplyM (Exp, WasRewritten)
-optimizedExpressionM ctorTags =
-  optimizedExpressionWithPastes ctorTags HeuristicPastes
+  ∷ CtorTagSets
+  → CanonEnv
+  → InlinePolicy
+  → InlineEnv
+  → Exp
+  → SupplyM (Exp, WasRewritten)
+optimizedExpressionM ctorTags canon =
+  optimizedExpressionWithPastes ctorTags canon HeuristicPastes
 
 optimizedExpressionWithPastes
   ∷ CtorTagSets
+  → CanonEnv
   → CallSitePastes
   → InlinePolicy
   → InlineEnv
   → Exp
   → SupplyM (Exp, WasRewritten)
-optimizedExpressionWithPastes ctorTags pastes policy env =
+optimizedExpressionWithPastes ctorTags canon pastes policy env =
   -- See Note [Eta reduction is unsound]
   rewriteExpBottomUpM
-    ( canonicalizeEffectHead
+    ( canonicalizeEffectHead canon
         `thenRewrite` constantFolding
         `thenRewrite` reduceObjectProp
         `thenRewrite` reduceArrayRead
@@ -1044,10 +1094,13 @@ dictionary application into a reference to the real foreign method. The
 translation tier cannot see a dictionary reference that is 'Local'
 inside its defining module — it only becomes 'Imported' once the
 linker requalifies it — and alias dissolution can expose further pairs
-mid-pipeline. Strictly shrinking (two nodes to one), so fixpoint-safe.
+mid-pipeline. The 'CanonEnv' lets the rule match heads hidden behind
+top-level aliases (the purs CSE floats of issue #297) and stops it from
+manufacturing a reference to an accessor binding the module no longer
+has. Strictly shrinking (two nodes to one), so fixpoint-safe.
 -}
-canonicalizeEffectHead ∷ Applicative m ⇒ RewriteRuleM m Ann
-canonicalizeEffectHead = pure . canonicalizeEffectApp
+canonicalizeEffectHead ∷ Applicative m ⇒ CanonEnv → RewriteRuleM m Ann
+canonicalizeEffectHead canon = pure . canonicalizeEffectAppInModule canon
 
 {- Note [IR is assumed well-typed]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
