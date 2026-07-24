@@ -2,9 +2,11 @@
 
 module Language.PureScript.Backend.Lua.Optimizer.Spec where
 
+import Language.PureScript.Backend.Lua.Limits (LuaLimits (..), lua51Limits)
 import Language.PureScript.Backend.Lua.Name (name)
 import Language.PureScript.Backend.Lua.Optimizer
-  ( foldFieldProjectionThroughScopeCall
+  ( collapseTailScopeCall
+  , foldFieldProjectionThroughScopeCall
   , foldNotEqual
   , reduceTableDefinitionAccessor
   , rewriteExpWithRule
@@ -80,7 +82,7 @@ spec = describe "Lua AST Optimizer" do
               , Lua.return (Lua.varName [name|refEq|])
               ]
       assertEqual (toString $ pShow original) expected $
-        rewriteExpWithRule foldFieldProjectionThroughScopeCall original
+        rewriteExpWithRule (foldFieldProjectionThroughScopeCall lua51Limits) original
 
     it "folds through the call even when the field can't be reduced further" do
       -- The returned value isn't an unambiguous table constructor here, so
@@ -100,13 +102,13 @@ spec = describe "Lua AST Optimizer" do
                   (Lua.varField (Lua.varName [name|refEq|]) [name|eqCharImpl|])
               ]
       assertEqual (toString $ pShow original) expected $
-        rewriteExpWithRule foldFieldProjectionThroughScopeCall original
+        rewriteExpWithRule (foldFieldProjectionThroughScopeCall lua51Limits) original
 
     it "declines when the callee isn't a no-arg immediately-invoked function" do
       let original ∷ Lua.Exp =
             Lua.varField (Lua.varName [name|notACall|]) [name|eqCharImpl|]
       assertEqual (toString $ pShow original) original $
-        rewriteExpWithRule foldFieldProjectionThroughScopeCall original
+        rewriteExpWithRule (foldFieldProjectionThroughScopeCall lua51Limits) original
 
     it "declines when a leading statement contains an early return" do
       -- Projecting only into the final return would leave the early
@@ -123,7 +125,7 @@ spec = describe "Lua AST Optimizer" do
               )
               [name|foo|]
       assertEqual (toString $ pShow original) original $
-        rewriteExpWithRule foldFieldProjectionThroughScopeCall original
+        rewriteExpWithRule (foldFieldProjectionThroughScopeCall lua51Limits) original
 
     it "declines when a leading loop body contains a return" do
       -- A `return` at the body level of a `while` exits the call the same
@@ -139,7 +141,7 @@ spec = describe "Lua AST Optimizer" do
               )
               [name|foo|]
       assertEqual (toString $ pShow original) original $
-        rewriteExpWithRule foldFieldProjectionThroughScopeCall original
+        rewriteExpWithRule (foldFieldProjectionThroughScopeCall lua51Limits) original
 
     it "folds past a leading loop without a return" do
       let scopeBody ∷ Lua.Exp → [Lua.Statement]
@@ -159,7 +161,7 @@ spec = describe "Lua AST Optimizer" do
                   (Lua.varField (Lua.varName [name|b|]) [name|foo|])
               )
       assertEqual (toString $ pShow original) expected $
-        rewriteExpWithRule foldFieldProjectionThroughScopeCall original
+        rewriteExpWithRule (foldFieldProjectionThroughScopeCall lua51Limits) original
 
     it "folds past a leading local function whose body returns" do
       -- A `return` inside a nested (local) function belongs to a different
@@ -182,7 +184,173 @@ spec = describe "Lua AST Optimizer" do
                   (Lua.varField (Lua.varName [name|b|]) [name|foo|])
               )
       assertEqual (toString $ pShow original) expected $
-        rewriteExpWithRule foldFieldProjectionThroughScopeCall original
+        rewriteExpWithRule (foldFieldProjectionThroughScopeCall lua51Limits) original
+
+  describe "collapseTailScopeCall" do
+    it "splices a tail scope call into the enclosing function body" do
+      -- The residual magic-do shape from issue #230: an effectful
+      -- uncurried definition runs its do-chunk through a tail IIFE.
+      let original ∷ Lua.Exp =
+            Lua.functionDef
+              [Lua.ParamNamed [name|a|]]
+              [ Lua.local1 [name|b|] (Lua.Integer 1)
+              , Lua.return
+                  ( Lua.scope
+                      [ Lua.local1 [name|c|] (Lua.varName [name|a|])
+                      , Lua.return (Lua.varName [name|c|])
+                      ]
+                  )
+              ]
+          expected ∷ Lua.Exp =
+            Lua.functionDef
+              [Lua.ParamNamed [name|a|]]
+              [ Lua.local1 [name|b|] (Lua.Integer 1)
+              , Lua.local1 [name|c|] (Lua.varName [name|a|])
+              , Lua.return (Lua.varName [name|c|])
+              ]
+      assertEqual (toString $ pShow original) expected $
+        rewriteExpWithRule (collapseTailScopeCall lua51Limits) original
+
+    it "splices nested tail scope calls bottom-up in one pass" do
+      let original ∷ Lua.Exp =
+            Lua.functionDef
+              []
+              [ Lua.return
+                  ( Lua.scope
+                      [ Lua.local1 [name|a|] (Lua.Integer 1)
+                      , Lua.return
+                          ( Lua.scope
+                              [ Lua.local1 [name|b|] (Lua.Integer 2)
+                              , Lua.return (Lua.varName [name|b|])
+                              ]
+                          )
+                      ]
+                  )
+              ]
+          expected ∷ Lua.Exp =
+            Lua.functionDef
+              []
+              [ Lua.local1 [name|a|] (Lua.Integer 1)
+              , Lua.local1 [name|b|] (Lua.Integer 2)
+              , Lua.return (Lua.varName [name|b|])
+              ]
+      assertEqual (toString $ pShow original) expected $
+        rewriteExpWithRule (collapseTailScopeCall lua51Limits) original
+
+    it "splices past a leading early return" do
+      -- An early return among the leading statements exits the parent on
+      -- its own path either way; only the final statement is replaced.
+      let original ∷ Lua.Exp =
+            Lua.functionDef
+              []
+              [ Lua.ifThenElse
+                  (Lua.Boolean True)
+                  [Lua.return (Lua.Integer 1)]
+                  []
+              , Lua.return (Lua.scope [Lua.return (Lua.Integer 2)])
+              ]
+          expected ∷ Lua.Exp =
+            Lua.functionDef
+              []
+              [ Lua.ifThenElse
+                  (Lua.Boolean True)
+                  [Lua.return (Lua.Integer 1)]
+                  []
+              , Lua.return (Lua.Integer 2)
+              ]
+      assertEqual (toString $ pShow original) expected $
+        rewriteExpWithRule (collapseTailScopeCall lua51Limits) original
+
+    it "splices a body that falls off the end (zero return values)" do
+      -- Both before and after, the parent returns no values.
+      let original ∷ Lua.Exp =
+            Lua.functionDef
+              []
+              [ Lua.local1 [name|a|] (Lua.Integer 1)
+              , Lua.return
+                  (Lua.scope [Lua.CallStatement (Lua.ann (Lua.error "eff"))])
+              ]
+          expected ∷ Lua.Exp =
+            Lua.functionDef
+              []
+              [ Lua.local1 [name|a|] (Lua.Integer 1)
+              , Lua.CallStatement (Lua.ann (Lua.error "eff"))
+              ]
+      assertEqual (toString $ pShow original) expected $
+        rewriteExpWithRule (collapseTailScopeCall lua51Limits) original
+
+    it "declines when the called literal takes parameters" do
+      let original ∷ Lua.Exp =
+            Lua.functionDef
+              []
+              [ Lua.return
+                  ( Lua.functionCall
+                      ( Lua.functionDef
+                          [Lua.ParamNamed [name|x|]]
+                          [Lua.return (Lua.varName [name|x|])]
+                      )
+                      [Lua.Integer 1]
+                  )
+              ]
+      assertEqual (toString $ pShow original) original $
+        rewriteExpWithRule (collapseTailScopeCall lua51Limits) original
+
+    it "declines when the merged body exceeds the local budget" do
+      -- With maxLocals = 22 the working ceiling is 2: one parameter plus
+      -- two merged locals (3 slots) must not be spliced into one
+      -- activation; one more slot of headroom admits the same splice.
+      let tinyLimits = lua51Limits {maxLocals = 22}
+          roomyLimits = lua51Limits {maxLocals = 23}
+          original ∷ Lua.Exp =
+            Lua.functionDef
+              [Lua.ParamNamed [name|a|]]
+              [ Lua.local1 [name|b|] (Lua.Integer 1)
+              , Lua.return
+                  ( Lua.scope
+                      [ Lua.local1 [name|c|] (Lua.Integer 2)
+                      , Lua.return (Lua.varName [name|c|])
+                      ]
+                  )
+              ]
+          expected ∷ Lua.Exp =
+            Lua.functionDef
+              [Lua.ParamNamed [name|a|]]
+              [ Lua.local1 [name|b|] (Lua.Integer 1)
+              , Lua.local1 [name|c|] (Lua.Integer 2)
+              , Lua.return (Lua.varName [name|c|])
+              ]
+      assertEqual (toString $ pShow original) original $
+        rewriteExpWithRule (collapseTailScopeCall tinyLimits) original
+      assertEqual (toString $ pShow original) expected $
+        rewriteExpWithRule (collapseTailScopeCall roomyLimits) original
+
+    it "declines when the spliced statements use varargs in their scope" do
+      -- A no-parameter function cannot legally mention `...`; on such
+      -- (only ever hand-written) input the splice would rebind `...` to
+      -- the parent's varargs instead of failing to load.
+      let original ∷ Lua.Exp =
+            Lua.functionDef
+              [Lua.ParamVararg]
+              [Lua.return (Lua.scope [Lua.Return [Lua.ann Lua.Vararg]])]
+      assertEqual (toString $ pShow original) original $
+        rewriteExpWithRule (collapseTailScopeCall lua51Limits) original
+
+    it "splices past varargs owned by a nested function literal" do
+      let inner ∷ [Lua.Statement] =
+            [ Lua.local1
+                [name|f|]
+                ( Lua.functionDef
+                    [Lua.ParamVararg]
+                    [Lua.Return [Lua.ann Lua.Vararg]]
+                )
+            , Lua.return
+                (Lua.functionCall (Lua.varName [name|f|]) [Lua.Integer 1])
+            ]
+          original ∷ Lua.Exp =
+            Lua.functionDef [] [Lua.return (Lua.scope inner)]
+          expected ∷ Lua.Exp = Lua.functionDef [] inner
+      assertEqual (toString $ pShow original) expected $
+        rewriteExpWithRule (collapseTailScopeCall lua51Limits) original
 
   describe "foldNotEqual" do
     it "rewrites not (a == b) to a ~= b" do

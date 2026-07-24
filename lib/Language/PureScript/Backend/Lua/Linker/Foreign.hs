@@ -3,6 +3,9 @@ module Language.PureScript.Backend.Lua.Linker.Foreign
   , parseForeignSource
   , interpretForeignModule
   , Error (..)
+
+    -- * Shared with "Language.PureScript.Backend.Lua.Optimizer"
+  , chunkScopeUsesVararg
   ) where
 
 import Control.Monad.Trans.Except (except)

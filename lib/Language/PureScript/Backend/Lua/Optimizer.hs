@@ -3,7 +3,8 @@ module Language.PureScript.Backend.Lua.Optimizer where
 import Control.Monad.Trans.Accum (Accum, add, execAccum)
 import Data.Map qualified as Map
 import Language.PureScript.Backend.Lua.Fixture qualified as Fixture
-import Language.PureScript.Backend.Lua.Limits (LuaLimits)
+import Language.PureScript.Backend.Lua.Limits (LuaLimits, workingLocalCeiling)
+import Language.PureScript.Backend.Lua.Linker.Foreign (chunkScopeUsesVararg)
 import Language.PureScript.Backend.Lua.Localize (localizeChunk)
 import Language.PureScript.Backend.Lua.Name qualified as Lua
 import Language.PureScript.Backend.Lua.Promote (promoteChunk)
@@ -38,7 +39,7 @@ optimizeChunk ∷ LuaLimits → Chunk → Chunk
 optimizeChunk limits =
   localizeChunk limits Fixture.moduleName
     . promoteChunk limits Fixture.moduleName
-    . fmap optimizeStatement
+    . fmap (optimizeStatement limits)
 
 substituteVarForValue ∷ Lua.Name → Exp → Chunk → Chunk
 substituteVarForValue name inlinee =
@@ -57,16 +58,18 @@ countRefs = everywhereStatM pure countRefsInExpression >>> (`execAccum` mempty)
       add (Map.singleton name (Sum 1)) $> expr
     expr → pure expr
 
-optimizeStatement ∷ Statement → Statement
-optimizeStatement = everywhereStat identity optimizeExpression
+optimizeStatement ∷ LuaLimits → Statement → Statement
+optimizeStatement limits =
+  everywhereStat identity (optimizeExpression limits)
 
-optimizeExpression ∷ Exp → Exp
-optimizeExpression = foldr (>>>) identity rewriteRulesInOrder
+optimizeExpression ∷ LuaLimits → Exp → Exp
+optimizeExpression limits = foldr (>>>) identity (rewriteRulesInOrder limits)
 
-rewriteRulesInOrder ∷ [RewriteRule]
-rewriteRulesInOrder =
+rewriteRulesInOrder ∷ LuaLimits → [RewriteRule]
+rewriteRulesInOrder limits =
   [ reduceTableDefinitionAccessor
-  , foldFieldProjectionThroughScopeCall
+  , foldFieldProjectionThroughScopeCall limits
+  , collapseTailScopeCall limits
   , foldNotEqual
   ]
 
@@ -128,7 +131,8 @@ side effect crosses the call boundary since both happen within the same
 activation. The new @e.foo@ projection is immediately re-optimized (rather
 than waiting for a later pass) so that, e.g., 'reduceTableDefinitionAccessor'
 sees through to a table constructor that would otherwise be hidden behind
-the call. See issue #159.
+the call; the 'LuaLimits' are only forwarded to that re-optimization.
+See issue #159.
 
 The rule declines when a leading statement contains a body-level 'Return':
 such an early return exits the call on a path the projection would not
@@ -136,12 +140,12 @@ cover. A 'Return' inside a nested 'Function' (or 'LocalFunction') belongs
 to a different activation and does not count, while a 'Return' inside a
 loop or 'Do' block at body level does.
 -}
-foldFieldProjectionThroughScopeCall ∷ RewriteRule
-foldFieldProjectionThroughScopeCall original
+foldFieldProjectionThroughScopeCall ∷ LuaLimits → RewriteRule
+foldFieldProjectionThroughScopeCall limits original
   | Just (accessedField, leading, returnExp) ←
       matchScopeCallProjection original =
       let projectedReturnValue =
-            optimizeExpression (Lua.varField returnExp accessedField)
+            optimizeExpression limits (Lua.varField returnExp accessedField)
           returnStatement = Lua.ann (Return [Lua.ann projectedReturnValue])
        in FunctionCall (Lua.ann (Function [] (leading <> [returnStatement]))) []
   | otherwise = original
@@ -183,6 +187,95 @@ foldFieldProjectionThroughScopeCall original
     Local {} → False
     CallStatement {} → False
     Break → False
+
+{- | Rewrites @function(…) …; return (function() <stmts> end)() end@ to
+@function(…) …; <stmts> end@: a no-argument, immediately-invoked function
+in tail position is spliced into the enclosing function body. The shape is
+what magic-do's chunked statement sequences lower to inside an n-ary
+function literal — one closure allocation and one extra call on every
+invocation. See issue #230.
+
+Tail position is what makes the splice safe. The parent's @return call@
+forwarded /all/ of the call's results (an explicit 'Paren' would adjust
+them to one and correctly fails the match), so after the splice the inner
+@return@s — or falling off the end, for an empty result — produce the
+same values directly. Early @return@s among the leading statements exit
+the parent on their own paths before the splice point either way, so
+unlike 'foldFieldProjectionThroughScopeCall' this rule does not need to
+decline on them. And because the splice point is the parent's last
+statement, no parent code follows it: Lua's local scoping is positional,
+so the spliced statements see exactly the environment the called
+function closed over, and the locals they declare — including
+re-declarations of a name the parent already binds, which are legal and
+shadow only from that point on — cannot capture any later read.
+
+Conditions checked:
+
+* The spliced statements must not mention @...@ in their own scope
+  ('chunkScopeUsesVararg'): a no-parameter function cannot legally do so,
+  but on such (only ever hand-written) input the splice would rebind
+  @...@ to the parent's varargs instead of failing to load.
+
+* A local budget: the splice undoes exactly the chunking with which
+  magic-do keeps any single function's locals bounded (issue #19), so the
+  merged body must fit the same 'workingLocalCeiling' the storage passes
+  budget against — parameters plus 'activationLocalSlots'. One magic-do
+  chunk ('Language.PureScript.Backend.IR.MagicDo.chunkSize' statements)
+  fits a typical parent, while two adjacent chunks exceed the ceiling and
+  keep their boundary. The passes running later stay sound either way:
+  'localizeChunk' budgets its cache locals against what is actually
+  declared after the splice, and only gains upvalue headroom from the
+  disappearing proto.
+-}
+collapseTailScopeCall ∷ LuaLimits → RewriteRule
+collapseTailScopeCall limits = \case
+  Function params body
+    | Just (leading, spliced) ← matchTailScopeCall body
+    , not (chunkScopeUsesVararg spliced)
+    , let merged = leading <> spliced
+    , length params + activationLocalSlots merged
+        <= workingLocalCeiling limits →
+        Function params merged
+  e → e
+ where
+  -- Splits a function body whose last statement is a single-valued
+  -- 'Return' of a no-argument immediately-invoked function literal into
+  -- the leading statements and the statements to splice.
+  matchTailScopeCall
+    ∷ [Annotated Comments StatementF]
+    → Maybe ([Annotated Comments StatementF], [Annotated Comments StatementF])
+  matchTailScopeCall body = case reverse body of
+    Ann (Return [Ann (FunctionCall (Ann (Function [] spliced)) [])])
+      : reverseLeading →
+        Just (reverse reverseLeading, spliced)
+    _ → Nothing
+
+{- | Over-approximates the local-variable slots a block occupies in the
+activation of its enclosing function: declarations at every block depth
+count, while nested function literals are separate protos with their own
+register space and are not entered. The over-approximation — sibling
+blocks release their slots at runtime but are counted cumulatively — is
+safe for budgeting: it can only decline a rewrite, never admit one over
+the limit.
+-}
+activationLocalSlots ∷ [Annotated Comments StatementF] → Int
+activationLocalSlots = sum . fmap (slots . Lua.unAnn)
+ where
+  slots ∷ StatementF Comments → Int
+  slots = \case
+    Local names _values → length names
+    LocalFunction {} → 1
+    ForNum _name _start _limit _step body → 1 + activationLocalSlots body
+    ForIn names _exprs body → length names + activationLocalSlots body
+    IfThenElse _predicate thenBlock elseBlock →
+      activationLocalSlots thenBlock + activationLocalSlots elseBlock
+    Do body → activationLocalSlots body
+    While _predicate body → activationLocalSlots body
+    Repeat body _predicate → activationLocalSlots body
+    Assign {} → 0
+    Return {} → 0
+    CallStatement {} → 0
+    Break → 0
 
 {- | Rewrites @not (a == b)@ to @a ~= b@ and @not (a ~= b)@ to @a == b@.
 Lua's @~=@ is exactly the negation of @==@, so the rewrite is
