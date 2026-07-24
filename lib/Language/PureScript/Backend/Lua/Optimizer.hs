@@ -21,6 +21,7 @@ import Language.PureScript.Backend.Lua.Types
   , Comments
   , Exp
   , ExpF (..)
+  , ParamF (..)
   , Statement
   , StatementF (..)
   , TableRowF (..)
@@ -71,7 +72,7 @@ rewriteRulesInOrder limits =
   [ reduceTableDefinitionAccessor
   , foldFieldProjectionThroughScopeCall limits
   , foldCallThroughScopeCall
-  , collapseTailScopeCall limits
+  , collapseTailLiteralApplication limits
   , foldNotEqual
   ]
 
@@ -199,7 +200,7 @@ no-argument, immediately-invoked function is folded into its @return@s.
 The shape is how the code generator runs a selected thunk — "pick an
 effect, then run it" lowers to a scope call immediately applied — and
 folding the application inward exposes a plain scope call that
-'collapseTailScopeCall' can then splice away. The freshly built call is
+'collapseTailLiteralApplication' can then splice away. The freshly built call is
 folded once more by this same rule, in case the returned expression is
 itself an applied scope call.
 
@@ -319,12 +320,16 @@ declaredNamesInActivation = foldMap (declared . Lua.unAnn)
     CallStatement {} → mempty
     Break → mempty
 
-{- | Rewrites @function(…) …; return (function() <stmts> end)() end@ to
-@function(…) …; <stmts> end@: a no-argument, immediately-invoked function
-in tail position is spliced into the enclosing function body. The shape is
-what magic-do's chunked statement sequences lower to inside an n-ary
-function literal — one closure allocation and one extra call on every
-invocation. See issue #230.
+{- | Rewrites @function(…) …; return (function(p1, …) <stmts> end)(a1, …)
+end@ to @function(…) …; local p1, … = a1, …; <stmts> end@: an
+immediately-applied function literal in tail position is spliced into the
+enclosing function body, its parameters bound as locals (no binding
+statement when the literal is nullary). The nullary shape is what
+magic-do's chunked statement sequences lower to inside an n-ary function
+literal (issue #230); the parameterized shape is the beta-redex
+'foldCallThroughScopeCall' leaves behind when the tail it pushed the
+application into returned a literal (issue #295). Either way the cost is
+one closure allocation and one extra call on every invocation.
 
 Tail position is what makes the splice safe. The parent's @return call@
 forwarded /all/ of the call's results (an explicit 'Paren' would adjust
@@ -340,55 +345,94 @@ function closed over, and the locals they declare — including
 re-declarations of a name the parent already binds, which are legal and
 shadow only from that point on — cannot capture any later read.
 
+The one-statement @local@ is the exact translation of Lua's call binding:
+the whole initializer list is evaluated before any name binds (so an
+argument reading an outer @x@ can never see a parameter named @x@), a
+multi-valued expression last in the list expands, missing values fill
+with @nil@, and extra values are evaluated, then discarded — the same
+adjustment rules the call performed. And the arguments do not move across
+a scope boundary: the call site already was the parent's last statement,
+so they are evaluated in the same environment at the same program point
+in both forms — which is also why @...@ among the arguments needs no
+check, unlike in 'foldCallThroughScopeCall'.
+
 Conditions checked:
 
+* Every parameter of the called literal is a 'ParamNamed', no name
+  repeating: a 'ParamVararg' cannot be bound by a @local@, a
+  'ParamUnused' has no name to bind, and while @local x, x = …@ does
+  reproduce a duplicate-parameter call — both bind the last occurrence —
+  declining removes the need to reason about it. IR-derived literals
+  always name their parameters distinctly, so declining costs nothing.
+
+* A nullary literal applied to arguments declines: no @local@ binds zero
+  names, and dropping the arguments would drop their effects.
+
 * The spliced statements must not mention @...@ in their own scope
-  ('chunkScopeUsesVararg'): a no-parameter function cannot legally do so,
-  but on such (only ever hand-written) input the splice would rebind
+  ('chunkScopeUsesVararg'): a parameterless function cannot legally do
+  so, but on such (only ever hand-written) input the splice would rebind
   @...@ to the parent's varargs instead of failing to load.
 
 * A local budget: the splice undoes exactly the chunking with which
   magic-do keeps any single function's locals bounded (issue #19), so the
-  merged body must fit the same 'workingLocalCeiling' the storage passes
-  budget against — parameters plus 'activationLocalSlots'. One magic-do
-  chunk ('Language.PureScript.Backend.IR.MagicDo.chunkSize' statements)
-  fits a typical parent, while two adjacent chunks exceed the ceiling and
-  keep their boundary. The passes running later stay sound either way:
+  merged body — parameter binding included — must fit the same
+  'workingLocalCeiling' the storage passes budget against: parameters
+  plus 'activationLocalSlots'. One magic-do chunk
+  ('Language.PureScript.Backend.IR.MagicDo.chunkSize' statements) fits a
+  typical parent, while two adjacent chunks exceed the ceiling and keep
+  their boundary. The passes running later stay sound either way:
   'localizeChunk' budgets its cache locals against what is actually
   declared after the splice, and only gains upvalue headroom from the
   disappearing proto.
 
 The rule re-applies itself to the merged function: the new tail may again
-be a scope-call return — 'foldCallThroughScopeCall' builds such tails at
-depths the bottom-up driver has already passed — and every round
+be an applied-literal return — 'foldCallThroughScopeCall' builds such
+tails at depths the bottom-up driver has already passed — and every round
 re-checks the conditions above.
 -}
-collapseTailScopeCall ∷ LuaLimits → RewriteRule
-collapseTailScopeCall limits = \case
+collapseTailLiteralApplication ∷ LuaLimits → RewriteRule
+collapseTailLiteralApplication limits = \case
   Function params body
-    | Just (leading, spliced) ← matchTailScopeCall body
+    | Just (leading, binding, spliced) ← matchTailLiteralApplication body
     , not (chunkScopeUsesVararg spliced)
-    , let merged = leading <> spliced
+    , let merged = leading <> binding <> spliced
     , length params + activationLocalSlots merged
         <= workingLocalCeiling limits →
-        -- The merged tail may itself be a scope-call return — one
+        -- The merged tail may itself be an applied-literal return — one
         -- 'foldCallThroughScopeCall' built after the bottom-up driver had
         -- already passed that depth — so keep collapsing while the budget
         -- admits it; every round consumes one nesting level.
-        collapseTailScopeCall limits (Function params merged)
+        collapseTailLiteralApplication limits (Function params merged)
   e → e
  where
   -- Splits a function body whose last statement is a single-valued
-  -- 'Return' of a no-argument immediately-invoked function literal into
-  -- the leading statements and the statements to splice.
-  matchTailScopeCall
+  -- 'Return' of an immediately-applied function literal into the leading
+  -- statements, the parameter binding (one simultaneous 'Local', or
+  -- nothing for a nullary literal), and the statements to splice.
+  matchTailLiteralApplication
     ∷ [Annotated Comments StatementF]
-    → Maybe ([Annotated Comments StatementF], [Annotated Comments StatementF])
-  matchTailScopeCall body = case reverse body of
-    Ann (Return [Ann (FunctionCall (Ann (Function [] spliced)) [])])
-      : reverseLeading →
-        Just (reverse reverseLeading, spliced)
+    → Maybe
+        ( [Annotated Comments StatementF]
+        , [Annotated Comments StatementF]
+        , [Annotated Comments StatementF]
+        )
+  matchTailLiteralApplication body = case reverse body of
+    Ann (Return [Ann (FunctionCall (Ann (Function params spliced)) args)])
+      : reverseLeading → do
+        names ← traverse namedParam params
+        binding ← case nonEmpty names of
+          Nothing → [] <$ guard (null args)
+          Just paramNames → do
+            guard (length names == length (ordNub names))
+            Just [Lua.ann (Local paramNames args)]
+        pure (reverse reverseLeading, binding, spliced)
     _ → Nothing
+
+  namedParam ∷ Annotated Comments ParamF → Maybe Lua.Name
+  namedParam (Ann param) = case param of
+    ParamNamed paramName → Just paramName
+    ParamUnused → Nothing
+    ParamVararg → Nothing
 
 {- | Over-approximates the local-variable slots a block occupies in the
 activation of its enclosing function: declarations at every block depth
