@@ -19,10 +19,8 @@ M.Golden_UncurriedLift_Test_mul2 = function(a_S_701, b_S_702)
   return a_S_701 * b_S_702
 end
 local Golden_UncurriedLift_Test_logTwice = function(a_S_673, b_S_674)
-  return (function()
-    local _ = Effect_Console_log(a_S_673)()
-    return Effect_Console_log(b_S_674)()
-  end)()
+  local _ = Effect_Console_log(a_S_673)()
+  return Effect_Console_log(b_S_674)()
 end
 M.Golden_UncurriedLift_Test_add3 = function(a_S_694, b_S_695, c_S_696)
   return a_S_694 + b_S_695 + c_S_696
