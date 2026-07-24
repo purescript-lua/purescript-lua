@@ -210,3 +210,21 @@ hasWholeValueRead name algTy arity = go
       | n == name, readTy == algTy, i < arity → False
     Ref _ (Local n) | n == name → True
     other → any go (toListOf subexpressions other)
+
+{- | The array sibling of 'hasWholeValueRead', for a binder whose
+right-hand side is a literal array of the given length: whether some
+@Ref name@ is reached other than through a foldable array read — a
+length read, or an element read at an in-range index. An out-of-range
+index reads no existing element, so it counts as a whole-value read,
+forcing the caller to decline; well-typed input never indexes past a
+matched length, but the guard keeps the caller sound on the non-GUC /
+generated input 'optimizedExpression' also runs on.
+-}
+hasWholeValueArrayRead ∷ Name → Natural → Exp → Bool
+hasWholeValueArrayRead name len = go
+ where
+  go = \case
+    ArrayLength _ (Ref _ (Local n)) | n == name → False
+    ArrayIndex _ (Ref _ (Local n)) i | n == name, i < len → False
+    Ref _ (Local n) | n == name → True
+    other → any go (toListOf subexpressions other)

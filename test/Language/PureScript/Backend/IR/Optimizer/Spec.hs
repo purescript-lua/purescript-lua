@@ -2,7 +2,7 @@ module Language.PureScript.Backend.IR.Optimizer.Spec where
 
 import Data.Map qualified as Map
 import Data.Text qualified as Text
-import Hedgehog (PropertyT, annotateShow, diff, forAll, (===))
+import Hedgehog (PropertyT, annotateShow, diff, evalEither, forAll, (===))
 import Hedgehog.Gen qualified as Gen
 import Hedgehog.Range qualified as Range
 import Language.PureScript.Backend.IR.Gen qualified as Gen
@@ -54,6 +54,8 @@ import Language.PureScript.Backend.IR.Types
   , alphaEq
   , application
   , applicationN
+  , arrayIndex
+  , arrayLength
   , countFreeRef
   , countFreeRefUsage
   , countFreeRefs
@@ -67,6 +69,7 @@ import Language.PureScript.Backend.IR.Types
   , isLiteral
   , lets
   , listGrouping
+  , literalArray
   , literalBool
   , literalChar
   , literalFloat
@@ -1206,6 +1209,155 @@ spec = describe "IR Optimizer" do
               ifThenElse (tagTest ctorB) (literalInt 2) $
                 ifThenElse (tagTest ctorC) (literalInt 3) deadDefault
       optimizedExpression original `shouldBe` original
+
+  -- A pattern match on a fixed-length array whose scrutinee is a
+  -- manifest array literal is decidable at compile time: the scrutinee
+  -- is let-bound (one length read plus one read per element), the
+  -- length is the IR element count, and the reads are the elements.
+  -- With those folded, the existing equality/branch folds collapse the
+  -- match to its live arm.
+  describe "folds array length and indexing on literal arrays (#225)" do
+    let m = moduleNameFromString "M"
+        v = refLocal (Name "v")
+
+        -- An application: re-evaluating it would repeat the work, so it
+        -- is the shape the element-binder must not duplicate.
+        nonTrivial = application (refImported m (Name "g")) (literalInt 1)
+
+        -- The optimized bodies of 'main' after the checked pipeline
+        -- (mirrors the #214 end-to-end test): 'main' is exported twice
+        -- so it is not itself inlined away, leaving its body to inspect.
+        mainMod = moduleNameFromString "Main"
+        collapsedMainBodies body =
+          optimizedUberModuleChecked
+            mempty
+            Linker.UberModule
+              { uberModuleForeigns = []
+              , uberModuleBindings =
+                  [Standalone (QName mainMod (Name "main"), body)]
+              , uberModuleExports =
+                  [ (Name "r1", refImported mainMod (Name "main"))
+                  , (Name "r2", refImported mainMod (Name "main"))
+                  ]
+              }
+            <&> \optimized →
+              [ e
+              | Standalone (QName _ (Name "main"), e) ←
+                  Linker.uberModuleBindings optimized
+              ]
+
+    it "folds the length of an in-place literal array" do
+      optimizedExpression
+        (arrayLength (literalArray [literalInt 10, literalInt 20]))
+        `shouldBe` literalInt 2
+
+    it "folds the length over non-trivial elements, dropping them" do
+      -- The elements are never evaluated: the same licence
+      -- reduceObjectProp has for a projection's discarded fields.
+      optimizedExpression (arrayLength (literalArray [nonTrivial]))
+        `shouldBe` literalInt 1
+
+    it "folds an in-range index into an in-place literal array" do
+      optimizedExpression
+        (arrayIndex (literalArray [literalInt 10, literalInt 20]) 1)
+        `shouldBe` literalInt 20
+
+    it "declines an out-of-range index into a literal array" do
+      -- Reads no existing element (ill-typed input): left to the runtime.
+      let original = arrayIndex (literalArray [literalInt 10]) 1
+      optimizedExpression original `shouldBe` original
+
+    it "collapses a literal-array match to its result" do
+      -- The motivating shape: case [10, 20] of [a, b] → a + b; _ → -1.
+      -- The scrutinee is read three times, so only the through-the-let
+      -- propagation can unlock the folds. End to end through the checked
+      -- pipeline: it runs DCE (the rewrite chain leaves the spent
+      -- element-binders for DCE to drop) and lints every pass's
+      -- contract. The result is kept under a call so 'main' stays
+      -- non-trivial (a bare literal would inline into the exports).
+      let original =
+            let1 (Name "v") (literalArray [literalInt 10, literalInt 20]) $
+              ifThenElse
+                (eq (literalInt 2) (arrayLength v))
+                ( application
+                    (refImported mainMod (Name "use"))
+                    (primBinOp PrimAdd (arrayIndex v 0) (arrayIndex v 1))
+                )
+                (literalInt (-1))
+      mainBodies ← either (fail . show) pure (collapsedMainBodies original)
+      mainBodies
+        `shouldBe` [application (refImported mainMod (Name "use")) (literalInt 30)]
+
+    it "leaves a match on an unknown array untouched" do
+      let xs = refLocal (Name "xs")
+          original =
+            ifThenElse
+              (eq (literalInt 2) (arrayLength xs))
+              (primBinOp PrimAdd (arrayIndex xs 0) (arrayIndex xs 1))
+              (literalInt (-1))
+      optimizedExpression original `shouldBe` original
+
+    it "binds an element read at several sites once (no duplication)" do
+      -- v's element read twice with a non-trivial value: the element is
+      -- bound to one element-binder read twice, never copied to each site.
+      let original =
+            let1 (Name "v") (literalArray [nonTrivial]) $
+              application
+                (application (refImported m (Name "pair")) (arrayIndex v 0))
+                (arrayIndex v 0)
+          element = Name "$elem0"
+          expected =
+            let1
+              element
+              nonTrivial
+              ( application
+                  (application (refImported m (Name "pair")) (refLocal element))
+                  (refLocal element)
+              )
+      optimizedExpression original `shouldSatisfy` alphaEq expected
+
+    it "declines when the binder is read as a whole value" do
+      -- v also flows into a function whole, so dropping the binding
+      -- would dangle the reference; the binding survives untouched.
+      let original =
+            let1 (Name "v") (literalArray [literalInt 1]) $
+              application
+                (application (refImported m (Name "pair")) (arrayIndex v 0))
+                v
+      optimizedExpression original `shouldBe` original
+
+    prop "collapses to the live arm across scalar elements" do
+      -- Across scalar elements, the match folds all the way down: the
+      -- length check dissolves, the element-binder (trivial) inlines,
+      -- and the dead arm drops — proof the rule fired, since with the
+      -- array Let-bound and read twice nothing else can unlock it.
+      -- Through the checked pipeline, so a GUC or scoping violation
+      -- from folding through the Let fails here rather than pass
+      -- silently.
+      element ← forAll Gen.scalarExp
+      let original =
+            let1 (Name "v") (literalArray [element]) $
+              ifThenElse
+                (eq (literalInt 1) (arrayLength v))
+                (application (refImported mainMod (Name "use")) (arrayIndex v 0))
+                (literalInt (-1))
+      mainBodies ← evalEither (collapsedMainBodies original)
+      mainBodies === [application (refImported mainMod (Name "use")) element]
+
+    prop "declines an out-of-range element read, staying well-scoped" do
+      -- An index past the array's length reads no existing element:
+      -- folding it would mint an element-binder the literal cannot bind,
+      -- then drop the array binding, stranding both. Fuzzed structurally
+      -- (the length is random and the index may exceed it) with
+      -- well-scopedness as the oracle, as for the constructor sibling.
+      len ← forAll (Gen.int (Range.linear 0 3))
+      index ← forAll (Gen.integral (Range.linear 0 5))
+      let original =
+            let1 (Name "v") (literalArray (replicate len (literalInt 1))) $
+              application
+                (application (refImported m (Name "pair")) (arrayIndex v 0))
+                (arrayIndex v index)
+      unboundLocals (optimizedExpression original) === []
 
   -- Case-of-case over the IfThenElse decision tree: a boolean-returning
   -- tree consumed in a strict position (an Eq against a literal, or the

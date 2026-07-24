@@ -1013,6 +1013,7 @@ optimizedExpressionWithPastes ctorTags pastes policy env =
     ( canonicalizeEffectHead
         `thenRewrite` constantFolding
         `thenRewrite` reduceObjectProp
+        `thenRewrite` reduceArrayRead
         `thenRewrite` sinkProjectionIntoLet
         `thenRewrite` cancelLetValuesOfValues
         `thenRewrite` floatLetFromLetValuesRhs
@@ -1021,6 +1022,7 @@ optimizedExpressionWithPastes ctorTags pastes policy env =
         `thenRewrite` reduceKnownConstructor
         `thenRewrite` reduceKnownCtorRefRead env
         `thenRewrite` propagateKnownCtorThroughLet env
+        `thenRewrite` propagateKnownArrayThroughLet
         `thenRewrite` resolveDictionaryProp pastes policy env
         `thenRewrite` inlineAnnotatedProjection policy env
         `thenRewrite` inlineSaturatedCall pastes policy env
@@ -1229,6 +1231,32 @@ reduceObjectProp =
       Just case List.lookup prop (toList patches) of
         Just patched → setAnn ann patched
         Nothing → ObjectProp ann obj prop
+    _ → Nothing
+
+{- | Folds array reads over an in-place array literal, the
+'reduceObjectProp' sibling for arrays (issue #225): the length of a
+literal array is its element count, and an in-range index reads the
+element directly.
+
+The length folds against the IR element count, which is exact — a
+'LiteralArray' codegens to a hole-free positional table, so Lua's @#@
+agrees by construction; no reasoning about @#@ over tables with holes
+is involved. An out-of-range index reads no existing element (possible
+only on ill-typed input, see Note [IR is assumed well-typed]), so the
+rule declines, as 'reduceObjectProp' declines a missing label.
+
+The discarded elements are never evaluated — the same call DCE makes
+when it drops an unused binding unconditionally. The folded value takes
+the read node's own annotation, not the element's, for the reason
+spelled out on 'reduceObjectProp'.
+-}
+reduceArrayRead ∷ Applicative m ⇒ RewriteRuleM m Ann
+reduceArrayRead =
+  pure . \case
+    ArrayLength ann (LiteralArray _ elements) →
+      Just $ LiteralInt ann (fromIntegral (length elements))
+    ArrayIndex ann (LiteralArray _ elements) index →
+      setAnn ann <$> elements !!? fromIntegral index
     _ → Nothing
 
 {- | @(let … in body).label ===> let … in body.label@
@@ -1573,10 +1601,6 @@ propagateKnownCtorThroughLet env = \case
             Just (reverse before, (name, algTy, arity, args, tag), after)
       _ → go (grouping : before) after
 
-  countFreeRefGrouping ∷ Name → Grouping (Ann, Name, Exp) → Natural
-  countFreeRefGrouping name grouping =
-    sum [countFreeRef (Local name) e | (_ann, _n, e) ← listGrouping grouping]
-
   readFieldIndices ∷ Name → AlgebraicType → Exp → Set Natural
   readFieldIndices name algTy = go
    where
@@ -1603,6 +1627,123 @@ propagateKnownCtorThroughLet env = \case
         , readTy == algTy
         , Just f ← Map.lookup i freshFields →
             Ref daAnn (Local f)
+      other → over subexpressions go other
+
+-- | Free references to the name across a grouping's right-hand sides.
+countFreeRefGrouping ∷ Name → Grouping (Ann, Name, Exp) → Natural
+countFreeRefGrouping name grouping =
+  sum [countFreeRef (Local name) e | (_ann, _n, e) ← listGrouping grouping]
+
+{- | The literal-array sibling of 'propagateKnownCtorThroughLet' (issue
+#225). A fixed-length array pattern reads its scrutinee several times —
+one length check plus one read per bound element — so a manifest array
+scrutinee is never in place for 'reduceArrayRead' to fold: the match on
+@case [10, 20] of [a, b] → …@ lands on
+
+> let v = [10, 20] in
+>   if 2 == arrayLength v then … v[0] … v[1] … else fallthrough
+
+and nothing folds: the rules see @ArrayLength (Ref v)@ and
+@ArrayIndex (Ref v) i@, never the literal.
+
+This propagates the literal through a 'Standalone' Let binding into the
+binder's reads. When the binder is read /only/ through in-range array
+reads:
+
+  * each length read becomes the element count (exact for the reason
+    spelled out on 'reduceArrayRead');
+  * each element read (@ArrayIndex v i@, in range) becomes a fresh
+    element-binder @eᵢ@ bound once to the iᵗʰ element — the
+    field-binder discipline of 'propagateKnownCtorThroughLet', so an
+    element read at several sites is evaluated once, not duplicated;
+  * the @v@ binding is dropped, its unread elements discarded with the
+    same licence 'reduceArrayRead' spells out.
+
+Trivial and dead element-binders then inline or DCE away, and the
+folded reads let the surrounding @Eq@ / @if@ meet 'constantFolding' and
+'removeUnreachable*', collapsing the match to its live arm.
+
+The rule declines when the binder is read as a whole value — a sibling
+RHS, a non-eliminating position such as an argument to a function, or
+an out-of-range index (it reads no element, so there is nothing to bind
+for it): dropping the binding would dangle the reference, and keeping
+it while binding the elements would duplicate them. GUC keeps the fresh
+element-binders unique and the binder resolved by name.
+-}
+propagateKnownArrayThroughLet ∷ RewriteRuleM SupplyM Ann
+propagateKnownArrayThroughLet = \case
+  Let ann groupings body
+    | Just (before, (name, elements), after) ←
+        findArrayBinding (toList groupings)
+    , all ((== 0) . countFreeRefGrouping name) (before <> after)
+    , countFreeRef (Local name) body > 0
+    , let len = fromIntegral (length elements) ∷ Natural
+    , not (Query.hasWholeValueArrayRead name len body) → do
+        let readIndices = readElementIndices name body
+        freshElements ←
+          Map.fromList
+            <$> traverse
+              (\i → (i,) <$> freshName "$elem")
+              (toList readIndices)
+        let body' = foldArrayReads name len freshElements body
+            elementBinds =
+              [ Standalone (noAnn, e, element)
+              | (i, e) ← Map.toAscList freshElements
+              , Just element ← [elements !!? fromIntegral i]
+              ]
+        pure . Just $ case nonEmpty (before <> elementBinds <> after) of
+          Nothing → body'
+          Just gs → Let ann gs body'
+  _ → pure Nothing
+ where
+  -- The first Standalone binding whose RHS is an array literal, split
+  -- out from its siblings.
+  findArrayBinding
+    ∷ [Grouping (Ann, Name, Exp)]
+    → Maybe
+        ( [Grouping (Ann, Name, Exp)]
+        , (Name, [Exp])
+        , [Grouping (Ann, Name, Exp)]
+        )
+  findArrayBinding = go []
+   where
+    go
+      ∷ [Grouping (Ann, Name, Exp)]
+      → [Grouping (Ann, Name, Exp)]
+      → Maybe
+          ( [Grouping (Ann, Name, Exp)]
+          , (Name, [Exp])
+          , [Grouping (Ann, Name, Exp)]
+          )
+    go _before [] = Nothing
+    go before (grouping : after) = case grouping of
+      Standalone (_bAnn, name, rhs@(LiteralArray _ elements))
+        -- A self-referencing RHS cannot arise under GUC (a Standalone RHS
+        -- does not see its own binder), but 'optimizedExpression' also runs
+        -- on non-GUC input; dropping the binding would then dangle the
+        -- element-binder that copied the reference (cf. 'inlineLocalBinding').
+        | countFreeRef (Local name) rhs == 0 →
+            Just (reverse before, (name, elements), after)
+      _ → go (grouping : before) after
+
+  readElementIndices ∷ Name → Exp → Set Natural
+  readElementIndices name = go
+   where
+    go e = self e <> foldMap go (toListOf subexpressions e)
+    self = \case
+      ArrayIndex _ (Ref _ (Local n)) i | n == name → Set.singleton i
+      _ → mempty
+
+  foldArrayReads ∷ Name → Natural → Map Natural Name → Exp → Exp
+  foldArrayReads name len freshElements = go
+   where
+    go = \case
+      ArrayLength alAnn (Ref _ (Local n))
+        | n == name → LiteralInt alAnn (fromIntegral len)
+      ArrayIndex aiAnn (Ref _ (Local n)) i
+        | n == name
+        , Just e ← Map.lookup i freshElements →
+            Ref aiAnn (Local e)
       other → over subexpressions go other
 
 {- | The through-a-reference companion of 'reduceKnownConstructor' — the
