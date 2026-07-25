@@ -1,0 +1,163 @@
+local function PSLUA_runtime_lazy(name)
+  return function(init)
+    local state = 0
+    local val = nil
+    return function()
+      if state == 2 then
+        return val
+      elseif state == 1 then
+        return error(name .. " was needed before it finished initializing")
+      else
+        state = 1
+        val = init()
+        state = 2
+        return val
+      end
+    end
+  end
+end
+local M = {}
+local Data_Unit_foreign = { unit = {} }
+local Data_Unit_unit = Data_Unit_foreign.unit
+local Data_Show_foreign = { showIntImpl = function(n) return tostring(n) end }
+local Data_Show_showIntImpl = Data_Show_foreign.showIntImpl
+local Effect_foreign = {
+  pureE = function(a) return function() return a end end,
+  bindE = function(a)
+    return function(f) return function() return f(a())() end end
+  end,
+  whileE = function(f)
+    return function(a) return function() while f() do a() end end end
+  end,
+  forE = function(lo)
+    return function(hi)
+      return function(f)
+        return function() for i = lo, hi - 1 do f(i)() end end
+      end
+    end
+  end,
+  foreachE = function(as)
+    return function(f)
+      return function() for i = 1, #(as) do f(as[i])() end end
+    end
+  end
+}
+M.Effect_forE = Effect_foreign.forE
+M.Effect_foreachE = Effect_foreign.foreachE
+local Effect_pureE = Effect_foreign.pureE
+local Effect_Console_foreign = {
+  log = function(s) return function() print(s) end end
+}
+local Effect_Console_log = Effect_Console_foreign.log
+local Effect_Ref_foreign = {
+  _new = function(val) return function() return { value = val } end end,
+  read = function(ref) return function() return ref.value end end,
+  modifyImpl = function(f)
+    return function(ref)
+      return function()
+        local t = f(ref.value)
+        ref.value = t.state
+        return t.value
+      end
+    end
+  end
+}
+local Effect_Ref__new = Effect_Ref_foreign._new
+local Effect_Ref_read = Effect_Ref_foreign.read
+local Effect_bindEffect
+local Effect_applicativeEffect
+local Effect_monadEffect = {
+  Applicative0 = function() return Effect_applicativeEffect end,
+  Bind1 = function() return Effect_bindEffect end
+}
+local Effect_Lazy_applyEffect
+Effect_bindEffect = {
+  bind = Effect_foreign.bindE,
+  Apply0 = function() return Effect_Lazy_applyEffect(0) end
+}
+Effect_applicativeEffect = {
+  pure = Effect_pureE,
+  Apply0 = function() return Effect_Lazy_applyEffect(0) end
+}
+local Effect_Lazy_functorEffect = PSLUA_runtime_lazy("functorEffect")(function()
+  return {
+    map = function(f_S_38)
+      return function(a_S_39)
+        return (Effect_applicativeEffect.Apply0()).apply(Effect_pureE(f_S_38))(a_S_39)
+      end
+    end
+  }
+end)
+Effect_Lazy_applyEffect = PSLUA_runtime_lazy("applyEffect")(function()
+  return {
+    apply = (function()
+      local bind_S_20 = (Effect_monadEffect.Bind1()).bind
+      return function(f_S_22)
+        return function(a_S_23)
+          return bind_S_20(f_S_22)(function(fPrime_S_24)
+            return bind_S_20(a_S_23)(function(aPrime_S_25)
+              return (Effect_monadEffect.Applicative0()).pure(fPrime_S_24(aPrime_S_25))
+            end)
+          end)
+        end
+      end
+    end)(),
+    Functor0 = function() return Effect_Lazy_functorEffect(0) end
+  }
+end)
+local Effect_functorEffect = Effect_Lazy_functorEffect(0)
+local Effect_Ref_modify__S_w = function(f, s)
+  return Effect_functorEffect.map(function()
+    return Data_Unit_unit
+  end)(Effect_Ref_foreign.modifyImpl(function(s_S_11)
+    local sPrime_S_12 = f(s_S_11)
+    return { state = sPrime_S_12, value = sPrime_S_12 }
+  end)(s))
+end
+local Golden_NativeLoops_Test_logShow = function(a_S_15)
+  return Effect_Console_log(Data_Show_showIntImpl(a_S_15))
+end
+return (function()
+  local _ = Effect_Console_log("forE:")()
+  do
+    local _S_f2 = Golden_NativeLoops_Test_logShow
+    for _S_i3 = 1, 3 do _S_f2(_S_i3)() end
+  end
+  local _ = Effect_Console_log("foreachE:")()
+  local sum_S_0 = Effect_Ref__new(0)()
+  do
+    local _S_xs4 = { [1] = 10, [2] = 20, [3] = 30 }
+    for _S_i5 = 1, #(_S_xs4) do
+      local n_S_1 = _S_xs4[_S_i5]
+      Effect_Ref_modify__S_w(function(v_S_2)
+        return v_S_2 + n_S_1
+      end, sum_S_0)()
+    end
+  end
+  local total_S_3 = Effect_Ref_read(sum_S_0)()
+  local _ = Effect_Console_log(Data_Show_showIntImpl(total_S_3))()
+  local _ = Effect_Console_log("whileE:")()
+  local counter_S_4 = Effect_Ref__new(0)()
+  do
+    local _S_cond6 = Effect_functorEffect.map(function(v0_S_5)
+      return v0_S_5 < 3
+    end)(Effect_Ref_read(counter_S_4))
+    while _S_cond6() do
+      local n0_S_6 = Effect_Ref_read(counter_S_4)()
+      local _ = Effect_Console_log(Data_Show_showIntImpl(n0_S_6))()
+      Effect_Ref_modify__S_w(function(v1_S_7)
+        return v1_S_7 + 1
+      end, counter_S_4)()
+    end
+  end
+  local _ = Effect_Console_log("nested:")()
+  for i_S_8 = 0, 1 do
+    do
+      local _S_xs0 = { [1] = "x", [2] = "y" }
+      for _S_i1 = 1, #(_S_xs0) do
+        local s_S_9 = _S_xs0[_S_i1]
+        Effect_Console_log(Data_Show_showIntImpl(i_S_8) .. s_S_9)()
+      end
+    end
+  end
+end)()

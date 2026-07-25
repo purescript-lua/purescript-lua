@@ -1,0 +1,525 @@
+UberModule
+  { uberModuleBindings =
+    [ Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Unit", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Data.Unit" ) ".spago/p/prelude/5718c84fdde6247749cb053e816df696c30fe691/src/Data/Unit.purs"
+        [ ( Just Never, Name "unit" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Unit", qnameName = Name "unit"
+        }, ObjectProp ( Just Never )
+        ( Ref Nothing ( Imported ( ModuleName "Data.Unit" ) ( Name "foreign" ) ) )
+        ( PropName "unit" )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Show", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Data.Show" ) ".spago/p/prelude/5718c84fdde6247749cb053e816df696c30fe691/src/Data/Show.purs"
+        [ ( Nothing, Name "showIntImpl" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Control.Monad.ST.Internal", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Control.Monad.ST.Internal" ) ".spago/p/st/6d41fd264a05b9a089e79322b22b906597ea7c36/src/Control/Monad/ST/Internal.purs"
+        [
+          ( Nothing, Name "map_" ),
+          ( Nothing, Name "bind_" ),
+          ( Nothing, Name "run" ),
+          ( Nothing, Name "while" ),
+          ( Nothing, Name "for" ),
+          ( Nothing, Name "foreach" ),
+          ( Nothing, Name "new" ),
+          ( Nothing, Name "read" ),
+          ( Nothing, Name "modifyImpl" )
+        ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Control.Monad.ST.Internal", qnameName = Name "map_"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Control.Monad.ST.Internal" ) ( Name "foreign" ) ) )
+        ( PropName "map_" )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Control.Monad.ST.Internal", qnameName = Name "modifyImpl"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Control.Monad.ST.Internal" ) ( Name "foreign" ) ) )
+        ( PropName "modifyImpl" )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Control.Monad.ST.Internal", qnameName = Name "new"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Control.Monad.ST.Internal" ) ( Name "foreign" ) ) )
+        ( PropName "new" )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Control.Monad.ST.Internal", qnameName = Name "read"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Control.Monad.ST.Internal" ) ( Name "foreign" ) ) )
+        ( PropName "read" )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Control.Monad.ST.Internal", qnameName = Name "run"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Control.Monad.ST.Internal" ) ( Name "foreign" ) ) )
+        ( PropName "run" )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Effect.Console" ) ".spago/p/console/f82835a0b873aafe6bd7b14dd30cc150553d4ab9/src/Effect/Console.purs"
+        [ ( Nothing, Name "log" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.NativeLoopsST.Test", qnameName = Name "logShow"
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "a$2" ) :| [] )
+        ( AppN Nothing
+          ( ObjectProp Nothing
+            ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
+            ( PropName "log" )
+          )
+          ( AppN Nothing
+            ( ObjectProp Nothing
+              ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
+              ( PropName "showIntImpl" )
+            )
+            ( Ref Nothing ( Local ( Name "a$2" ) ) :| [] ) :| []
+          )
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.NativeLoopsST.Test", qnameName = Name "sumTo"
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "n" ) :| [] )
+        ( AppN Nothing
+          ( Ref Nothing ( Imported ( ModuleName "Control.Monad.ST.Internal" ) ( Name "run" ) ) )
+          ( AbsN Nothing
+            ( ParamUnused Nothing :| [] )
+            ( Let Nothing
+              ( Standalone
+                ( Nothing, Name "acc", AppN Nothing
+                  ( AppN Nothing
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Control.Monad.ST.Internal" ) ( Name "new" ) )
+                    )
+                    ( LiteralInt Nothing 0 :| [] )
+                  )
+                  ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+                ) :|
+                [ Standalone
+                  ( Nothing, Name "_", AppN Nothing
+                    ( AppN Nothing
+                      ( AppN Nothing
+                        ( AppN Nothing
+                          ( ObjectProp Nothing
+                            ( Ref Nothing
+                              ( Imported
+                                ( ModuleName "Control.Monad.ST.Internal" )
+                                ( Name "foreign" )
+                              )
+                            )
+                            ( PropName "for" )
+                          )
+                          ( LiteralInt Nothing 0 :| [] )
+                        )
+                        ( PrimBinOp Nothing PrimAdd
+                          ( Ref Nothing ( Local ( Name "n" ) ) )
+                          ( LiteralInt Nothing 1 ) :| []
+                        )
+                      )
+                      ( AbsN Nothing
+                        ( ParamNamed Nothing ( Name "i" ) :| [] )
+                        ( AppN Nothing
+                          ( AppN Nothing
+                            ( Ref Nothing
+                              ( Imported
+                                ( ModuleName "Control.Monad.ST.Internal" )
+                                ( Name "modifyImpl" )
+                              )
+                            )
+                            ( AbsN Nothing
+                              ( ParamNamed Nothing ( Name "s$490" ) :| [] )
+                              ( Let Nothing
+                                ( Standalone
+                                  ( Nothing, Name "s'$491", PrimBinOp Nothing PrimAdd
+                                    ( Ref Nothing ( Local ( Name "s$490" ) ) )
+                                    ( Ref Nothing ( Local ( Name "i" ) ) )
+                                  ) :| []
+                                )
+                                ( LiteralObject Nothing
+                                  [
+                                    ( PropName "state", Ref Nothing ( Local ( Name "s'$491" ) ) ),
+                                    ( PropName "value", Ref Nothing ( Local ( Name "s'$491" ) ) )
+                                  ]
+                                )
+                              ) :| []
+                            )
+                          )
+                          ( Ref Nothing ( Local ( Name "acc" ) ) :| [] )
+                        ) :| []
+                      )
+                    )
+                    ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+                  )
+                ]
+              )
+              ( AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Control.Monad.ST.Internal" ) ( Name "read" ) )
+                  )
+                  ( Ref Nothing ( Local ( Name "acc" ) ) :| [] )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              )
+            ) :| []
+          )
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.NativeLoopsST.Test", qnameName = Name "sumArray"
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "xs" ) :| [] )
+        ( AppN Nothing
+          ( Ref Nothing ( Imported ( ModuleName "Control.Monad.ST.Internal" ) ( Name "run" ) ) )
+          ( AbsN Nothing
+            ( ParamUnused Nothing :| [] )
+            ( Let Nothing
+              ( Standalone
+                ( Nothing, Name "acc", AppN Nothing
+                  ( AppN Nothing
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Control.Monad.ST.Internal" ) ( Name "new" ) )
+                    )
+                    ( LiteralInt Nothing 0 :| [] )
+                  )
+                  ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+                ) :|
+                [ Standalone
+                  ( Nothing, Name "_", AppN Nothing
+                    ( AppN Nothing
+                      ( AppN Nothing
+                        ( ObjectProp Nothing
+                          ( Ref Nothing
+                            ( Imported
+                              ( ModuleName "Control.Monad.ST.Internal" )
+                              ( Name "foreign" )
+                            )
+                          )
+                          ( PropName "foreach" )
+                        )
+                        ( Ref Nothing ( Local ( Name "xs" ) ) :| [] )
+                      )
+                      ( AbsN Nothing
+                        ( ParamNamed Nothing ( Name "x" ) :| [] )
+                        ( AppN Nothing
+                          ( AppN Nothing
+                            ( Ref Nothing
+                              ( Imported
+                                ( ModuleName "Control.Monad.ST.Internal" )
+                                ( Name "map_" )
+                              )
+                            )
+                            ( AbsN Nothing
+                              ( ParamUnused Nothing :| [] )
+                              ( Ref Nothing
+                                ( Imported ( ModuleName "Data.Unit" ) ( Name "unit" ) )
+                              ) :| []
+                            )
+                          )
+                          ( AppN Nothing
+                            ( AppN Nothing
+                              ( Ref Nothing
+                                ( Imported
+                                  ( ModuleName "Control.Monad.ST.Internal" )
+                                  ( Name "modifyImpl" )
+                                )
+                              )
+                              ( AbsN Nothing
+                                ( ParamNamed Nothing ( Name "s$483" ) :| [] )
+                                ( Let Nothing
+                                  ( Standalone
+                                    ( Nothing, Name "s'$484", PrimBinOp Nothing PrimAdd
+                                      ( Ref Nothing ( Local ( Name "s$483" ) ) )
+                                      ( Ref Nothing ( Local ( Name "x" ) ) )
+                                    ) :| []
+                                  )
+                                  ( LiteralObject Nothing
+                                    [
+                                      ( PropName "state", Ref Nothing
+                                        ( Local ( Name "s'$484" ) )
+                                      ),
+                                      ( PropName "value", Ref Nothing ( Local ( Name "s'$484" ) ) )
+                                    ]
+                                  )
+                                ) :| []
+                              )
+                            )
+                            ( Ref Nothing ( Local ( Name "acc" ) ) :| [] ) :| []
+                          )
+                        ) :| []
+                      )
+                    )
+                    ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+                  )
+                ]
+              )
+              ( AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Control.Monad.ST.Internal" ) ( Name "read" ) )
+                  )
+                  ( Ref Nothing ( Local ( Name "acc" ) ) :| [] )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              )
+            ) :| []
+          )
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.NativeLoopsST.Test", qnameName = Name "countDown"
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "start" ) :| [] )
+        ( AppN Nothing
+          ( Ref Nothing ( Imported ( ModuleName "Control.Monad.ST.Internal" ) ( Name "run" ) ) )
+          ( AbsN Nothing
+            ( ParamUnused Nothing :| [] )
+            ( Let Nothing
+              ( Standalone
+                ( Nothing, Name "steps", AppN Nothing
+                  ( AppN Nothing
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Control.Monad.ST.Internal" ) ( Name "new" ) )
+                    )
+                    ( LiteralInt Nothing 0 :| [] )
+                  )
+                  ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+                ) :|
+                [ Standalone
+                  ( Nothing, Name "value", AppN Nothing
+                    ( AppN Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Control.Monad.ST.Internal" ) ( Name "new" ) )
+                      )
+                      ( Ref Nothing ( Local ( Name "start" ) ) :| [] )
+                    )
+                    ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+                  ), Standalone
+                  ( Nothing, Name "_", AppN Nothing
+                    ( AppN Nothing
+                      ( AppN Nothing
+                        ( ObjectProp Nothing
+                          ( Ref Nothing
+                            ( Imported
+                              ( ModuleName "Control.Monad.ST.Internal" )
+                              ( Name "foreign" )
+                            )
+                          )
+                          ( PropName "while" )
+                        )
+                        ( AppN Nothing
+                          ( AppN Nothing
+                            ( Ref Nothing
+                              ( Imported
+                                ( ModuleName "Control.Monad.ST.Internal" )
+                                ( Name "map_" )
+                              )
+                            )
+                            ( AbsN Nothing
+                              ( ParamNamed Nothing ( Name "v" ) :| [] )
+                              ( PrimBinOp Nothing PrimAnd
+                                ( PrimNot Nothing
+                                  ( PrimBinOp Nothing PrimLt
+                                    ( Ref Nothing ( Local ( Name "v" ) ) )
+                                    ( LiteralInt Nothing 0 )
+                                  )
+                                )
+                                ( PrimNot Nothing
+                                  ( Eq Nothing
+                                    ( Ref Nothing ( Local ( Name "v" ) ) )
+                                    ( LiteralInt Nothing 0 )
+                                  )
+                                )
+                              ) :| []
+                            )
+                          )
+                          ( AppN Nothing
+                            ( Ref Nothing
+                              ( Imported
+                                ( ModuleName "Control.Monad.ST.Internal" )
+                                ( Name "read" )
+                              )
+                            )
+                            ( Ref Nothing ( Local ( Name "value" ) ) :| [] ) :| []
+                          ) :| []
+                        )
+                      )
+                      ( AbsN Nothing
+                        ( ParamUnused Nothing :| [] )
+                        ( Let Nothing
+                          ( Standalone
+                            ( Nothing, Name "_", AppN Nothing
+                              ( AppN Nothing
+                                ( AppN Nothing
+                                  ( Ref Nothing
+                                    ( Imported
+                                      ( ModuleName "Control.Monad.ST.Internal" )
+                                      ( Name "modifyImpl" )
+                                    )
+                                  )
+                                  ( AbsN Nothing
+                                    ( ParamNamed Nothing ( Name "s$472" ) :| [] )
+                                    ( Let Nothing
+                                      ( Standalone
+                                        ( Nothing, Name "s'$473", PrimBinOp Nothing PrimSub
+                                          ( Ref Nothing ( Local ( Name "s$472" ) ) )
+                                          ( LiteralInt Nothing 1 )
+                                        ) :| []
+                                      )
+                                      ( LiteralObject Nothing
+                                        [
+                                          ( PropName "state", Ref Nothing
+                                            ( Local ( Name "s'$473" ) )
+                                          ),
+                                          ( PropName "value", Ref Nothing
+                                            ( Local ( Name "s'$473" ) )
+                                          )
+                                        ]
+                                      )
+                                    ) :| []
+                                  )
+                                )
+                                ( Ref Nothing ( Local ( Name "value" ) ) :| [] )
+                              )
+                              ( Ref Nothing
+                                ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                              )
+                            ) :| []
+                          )
+                          ( AppN Nothing
+                            ( AppN Nothing
+                              ( AppN Nothing
+                                ( Ref Nothing
+                                  ( Imported
+                                    ( ModuleName "Control.Monad.ST.Internal" )
+                                    ( Name "modifyImpl" )
+                                  )
+                                )
+                                ( AbsN Nothing
+                                  ( ParamNamed Nothing ( Name "s$477" ) :| [] )
+                                  ( Let Nothing
+                                    ( Standalone
+                                      ( Nothing, Name "s'$478", PrimBinOp Nothing PrimAdd
+                                        ( Ref Nothing ( Local ( Name "s$477" ) ) )
+                                        ( LiteralInt Nothing 1 )
+                                      ) :| []
+                                    )
+                                    ( LiteralObject Nothing
+                                      [
+                                        ( PropName "state", Ref Nothing
+                                          ( Local ( Name "s'$478" ) )
+                                        ),
+                                        ( PropName "value", Ref Nothing
+                                          ( Local ( Name "s'$478" ) )
+                                        )
+                                      ]
+                                    )
+                                  ) :| []
+                                )
+                              )
+                              ( Ref Nothing ( Local ( Name "steps" ) ) :| [] )
+                            )
+                            ( Ref Nothing
+                              ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                            )
+                          )
+                        ) :| []
+                      )
+                    )
+                    ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+                  )
+                ]
+              )
+              ( AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Control.Monad.ST.Internal" ) ( Name "read" ) )
+                  )
+                  ( Ref Nothing ( Local ( Name "steps" ) ) :| [] )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              )
+            ) :| []
+          )
+        )
+      )
+    ], uberModuleForeigns = [], uberModuleExports =
+    [
+      ( Name "sumTo", Ref Nothing
+        ( Imported ( ModuleName "Golden.NativeLoopsST.Test" ) ( Name "sumTo" ) )
+      ),
+      ( Name "sumArray", Ref Nothing
+        ( Imported ( ModuleName "Golden.NativeLoopsST.Test" ) ( Name "sumArray" ) )
+      ),
+      ( Name "countDown", Ref Nothing
+        ( Imported ( ModuleName "Golden.NativeLoopsST.Test" ) ( Name "countDown" ) )
+      ),
+      ( Name "main", AbsN Nothing
+        ( ParamUnused Nothing :| [] )
+        ( Let Nothing
+          ( Standalone
+            ( Nothing, Name "_", AppN Nothing
+              ( AppN Nothing
+                ( Ref Nothing
+                  ( Imported ( ModuleName "Golden.NativeLoopsST.Test" ) ( Name "logShow" ) )
+                )
+                ( AppN Nothing
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Golden.NativeLoopsST.Test" ) ( Name "sumTo" ) )
+                  )
+                  ( LiteralInt Nothing 10 :| [] ) :| []
+                )
+              )
+              ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+            ) :|
+            [ Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Golden.NativeLoopsST.Test" ) ( Name "logShow" ) )
+                  )
+                  ( AppN Nothing
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Golden.NativeLoopsST.Test" ) ( Name "sumArray" ) )
+                    )
+                    ( LiteralArray Nothing
+                      [ LiteralInt Nothing 1, LiteralInt Nothing 2, LiteralInt Nothing 3, LiteralInt Nothing 4
+                      ] :| []
+                    ) :| []
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              )
+            ]
+          )
+          ( AppN Nothing
+            ( AppN Nothing
+              ( Ref Nothing
+                ( Imported ( ModuleName "Golden.NativeLoopsST.Test" ) ( Name "logShow" ) )
+              )
+              ( AppN Nothing
+                ( Ref Nothing
+                  ( Imported ( ModuleName "Golden.NativeLoopsST.Test" ) ( Name "countDown" ) )
+                )
+                ( LiteralInt Nothing 5 :| [] ) :| []
+              )
+            )
+            ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+          )
+        )
+      )
+    ]
+  }
