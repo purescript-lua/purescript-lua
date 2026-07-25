@@ -35,6 +35,20 @@ Only a /run/ lowers. A loop application without 'IR.EffectRunArg' — a
 first-class @foreachE arr f@ passed around as a value — compiles to the
 foreign call as before.
 
+Known limitation: unlike magic-do's chain-head recognition, which
+resolves one hop through a top-level alias
+('Language.PureScript.Backend.IR.MagicDo.isCanonicalHead'), this matcher
+resolves none. The optimizer dissolves a bare-'Ref' alias to a
+combinator before code generation, so ordinary code is unaffected; an
+@inline never@ directive pinning such an alias undissolved leaves the
+foreign call in place — a missed optimization, never a miscompile, since
+the foreign implementation is what stays. @Golden.NativeLoopsAliasPin@
+pins that shape. Threading a resolver in here would close it, but
+recognition is due to move into the IR (issue #239 needs the loop
+visible to the optimizer, which a codegen-time match cannot provide),
+and the alias question disappears once a lift keys off the foreign
+import itself.
+
 == Evaluation order and sharing
 
 The foreign combinator receives its arguments evaluated once, in
