@@ -1,0 +1,12 @@
+spec: mutual_step
+runtime: LuaJIT 2.1.1741730670
+workload: n=100000 reps=4 result=5000050000
+aborts (distinct site -- reason):
+  Bench.MutualStep.lua:24 -- NYI: bytecode FNEW
+  Bench.MutualStep.lua:8 -- inner loop in root trace
+bytecode end state (J*=compiled, I*=blacklisted):
+  Bench.MutualStep.lua:7 JLOOP
+  mutual_step.lua:11 JFUNCF
+  mutual_step.lua:13 JFORI
+  mutual_step.lua:13 JFORL
+counts: aborts=2 compiled=4 blacklisted=0
