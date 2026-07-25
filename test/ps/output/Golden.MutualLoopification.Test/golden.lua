@@ -12,25 +12,38 @@ end
 local Golden_MutualLoopification_Test_logShow1 = function(a_S_292)
   return Effect_Console_log(Data_Show_foreign.showIntImpl(a_S_292))
 end
-local Golden_MutualLoopification_Test_zag_S_w
-local Golden_MutualLoopification_Test_zigzag_S_w = function(acc, n)
-  if n == 0 then
-    return acc
-  else
-    return Golden_MutualLoopification_Test_zag_S_w(acc, n, 1)
+local Golden_MutualLoopification_Test_zigzag_S_w_S_loop = function( _S_sel0
+, _S_a1
+, _S_a2
+, _S_a3 )
+  while true do
+    if _S_sel0 == 1 then
+      local acc, n = _S_a1, _S_a2
+      if n == 0 then
+        return acc
+      else
+        _S_sel0, _S_a1, _S_a2, _S_a3 = 2, acc, n, 1
+      end
+    else
+      local acc, n, d = _S_a1, _S_a2, _S_a3
+      if n == 0 then
+        return acc
+      else
+        _S_sel0, _S_a1, _S_a2, _S_a3 = 1, acc + d, n - 1, nil
+      end
+    end
   end
+end
+local Golden_MutualLoopification_Test_zigzag_S_w = function(acc, n)
+  return Golden_MutualLoopification_Test_zigzag_S_w_S_loop(1, acc, n)
 end
 M.Golden_MutualLoopification_Test_zigzag = function(zigzag_S_p1)
   return function(zigzag_S_p2)
     return Golden_MutualLoopification_Test_zigzag_S_w(zigzag_S_p1, zigzag_S_p2)
   end
 end
-Golden_MutualLoopification_Test_zag_S_w = function(acc, n, d)
-  if n == 0 then
-    return acc
-  else
-    return Golden_MutualLoopification_Test_zigzag_S_w(acc + d, n - 1)
-  end
+local Golden_MutualLoopification_Test_zag_S_w = function(acc, n, d)
+  return Golden_MutualLoopification_Test_zigzag_S_w_S_loop(2, acc, n, d)
 end
 M.Golden_MutualLoopification_Test_zag = function(zag_S_p1)
   return function(zag_S_p2)
@@ -55,39 +68,65 @@ Golden_MutualLoopification_Test_treeA = function(n)
   end
 end
 local Golden_MutualLoopification_Test_ticktock = function(n)
+  local tock_S_w_S_loop
   local tock_S_w
-  local tick_S_w
-  tock_S_w = function(acc, k)
-    if k == 0 then return acc else return tick_S_w(acc + 3, k - 1) end
-  end
-  tick_S_w = function(acc0, k0)
-    if k0 == 0 then return acc0 else return tock_S_w(acc0 + 1, k0 - 1) end
-  end
-  return tick_S_w(0, n)
-end
-local Golden_MutualLoopification_Test_stepOther_S_w
-local Golden_MutualLoopification_Test_stepSelf_S_w = function(acc, n)
-  while true do
-    if n == 0 then
-      return acc
-    elseif not(n < 10) and n ~= 10 then
-      acc, n = acc + 10, n - 10
-    else
-      return Golden_MutualLoopification_Test_stepOther_S_w(acc, n)
+  local acc0, k0
+  tock_S_w_S_loop = function(_S_sel4, _S_a5, _S_a6)
+    while true do
+      if _S_sel4 == 1 then
+        local acc, k = _S_a5, _S_a6
+        if k == 0 then
+          return acc
+        else
+          _S_sel4, _S_a5, _S_a6 = 2, acc + 3, k - 1
+        end
+      else
+        local acc0, k0 = _S_a5, _S_a6
+        if k0 == 0 then
+          return acc0
+        else
+          _S_sel4, _S_a5, _S_a6 = 1, acc0 + 1, k0 - 1
+        end
+      end
     end
   end
+  tock_S_w = function(acc, k) return tock_S_w_S_loop(1, acc, k) end
+  acc0, k0 = 0, n
+  return tock_S_w_S_loop(2, acc0, k0)
+end
+local Golden_MutualLoopification_Test_stepSelf_S_w_S_loop = function( _S_sel7
+, _S_a8
+, _S_a9 )
+  while true do
+    if _S_sel7 == 1 then
+      local acc, n = _S_a8, _S_a9
+      if n == 0 then
+        return acc
+      elseif not(n < 10) and n ~= 10 then
+        _S_sel7, _S_a8, _S_a9 = 1, acc + 10, n - 10
+      else
+        _S_sel7, _S_a8, _S_a9 = 2, acc, n
+      end
+    else
+      local acc, n = _S_a8, _S_a9
+      if n == 0 then
+        return acc
+      else
+        _S_sel7, _S_a8, _S_a9 = 1, acc + 1, n - 1
+      end
+    end
+  end
+end
+local Golden_MutualLoopification_Test_stepSelf_S_w = function(acc, n)
+  return Golden_MutualLoopification_Test_stepSelf_S_w_S_loop(1, acc, n)
 end
 M.Golden_MutualLoopification_Test_stepSelf = function(stepSelf_S_p1)
   return function(stepSelf_S_p2)
     return Golden_MutualLoopification_Test_stepSelf_S_w(stepSelf_S_p1, stepSelf_S_p2)
   end
 end
-Golden_MutualLoopification_Test_stepOther_S_w = function(acc, n)
-  if n == 0 then
-    return acc
-  else
-    return Golden_MutualLoopification_Test_stepSelf_S_w(acc + 1, n - 1)
-  end
+local Golden_MutualLoopification_Test_stepOther_S_w = function(acc, n)
+  return Golden_MutualLoopification_Test_stepSelf_S_w_S_loop(2, acc, n)
 end
 M.Golden_MutualLoopification_Test_stepOther = function(stepOther_S_p1)
   return function(stepOther_S_p2)
@@ -101,38 +140,52 @@ end
 Golden_MutualLoopification_Test_isEven = function(n)
   return n == 0 or Golden_MutualLoopification_Test_isOdd(n - 1)
 end
-local Golden_MutualLoopification_Test_green_S_w
-local Golden_MutualLoopification_Test_red_S_w = function(acc, n)
-  if n == 0 then
-    return acc
-  else
-    return Golden_MutualLoopification_Test_green_S_w(acc + 1, n - 1)
+local Golden_MutualLoopification_Test_red_S_w_S_loop = function( _S_sel10
+, _S_a11
+, _S_a12 )
+  while true do
+    if _S_sel10 == 1 then
+      local acc, n = _S_a11, _S_a12
+      if n == 0 then
+        return acc
+      else
+        _S_sel10, _S_a11, _S_a12 = 2, acc + 1, n - 1
+      end
+    elseif _S_sel10 == 2 then
+      local acc, n = _S_a11, _S_a12
+      if n == 0 then
+        return acc
+      else
+        _S_sel10, _S_a11, _S_a12 = 3, acc + 1, n - 1
+      end
+    else
+      local acc, n = _S_a11, _S_a12
+      if n == 0 then
+        return acc
+      else
+        _S_sel10, _S_a11, _S_a12 = 1, acc + 1, n - 1
+      end
+    end
   end
+end
+local Golden_MutualLoopification_Test_red_S_w = function(acc, n)
+  return Golden_MutualLoopification_Test_red_S_w_S_loop(1, acc, n)
 end
 M.Golden_MutualLoopification_Test_red = function(red_S_p1)
   return function(red_S_p2)
     return Golden_MutualLoopification_Test_red_S_w(red_S_p1, red_S_p2)
   end
 end
-local Golden_MutualLoopification_Test_blue_S_w
-Golden_MutualLoopification_Test_green_S_w = function(acc, n)
-  if n == 0 then
-    return acc
-  else
-    return Golden_MutualLoopification_Test_blue_S_w(acc + 1, n - 1)
-  end
+local Golden_MutualLoopification_Test_green_S_w = function(acc, n)
+  return Golden_MutualLoopification_Test_red_S_w_S_loop(2, acc, n)
 end
 M.Golden_MutualLoopification_Test_green = function(green_S_p1)
   return function(green_S_p2)
     return Golden_MutualLoopification_Test_green_S_w(green_S_p1, green_S_p2)
   end
 end
-Golden_MutualLoopification_Test_blue_S_w = function(acc, n)
-  if n == 0 then
-    return acc
-  else
-    return Golden_MutualLoopification_Test_red_S_w(acc + 1, n - 1)
-  end
+local Golden_MutualLoopification_Test_blue_S_w = function(acc, n)
+  return Golden_MutualLoopification_Test_red_S_w_S_loop(3, acc, n)
 end
 M.Golden_MutualLoopification_Test_blue = function(blue_S_p1)
   return function(blue_S_p2)

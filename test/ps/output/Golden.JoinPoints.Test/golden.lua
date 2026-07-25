@@ -9,13 +9,11 @@ local Golden_JoinPoints_Test_logShow = function(a_S_2)
 end
 local Golden_JoinPoints_Test_negate = function(a_S_88) return 0 - a_S_88 end
 local Golden_JoinPoints_Test_sumTriangles = function(m)
-  local go_S_w
-  go_S_w = function(acc, n)
-    while true do
-      if n == 0 then return acc else acc, n = acc + n * (n + 1), n - 1 end
-    end
+  local acc, n
+  acc, n = 0, m
+  while true do
+    if n == 0 then return acc else acc, n = acc + n * (n + 1), n - 1 end
   end
-  return go_S_w(0, m)
 end
 local Golden_JoinPoints_Test_escaping = function(n)
   local go
@@ -25,31 +23,21 @@ local Golden_JoinPoints_Test_escaping = function(n)
   return function(m) return go(m) end
 end
 local Golden_JoinPoints_Test_collatzish = function(n)
-  local go_S_w
-  go_S_w = function(acc, k)
-    while true do
-      if not(k < 0) and k ~= 0 then acc, k = acc + 1, k - 2 else return acc end
-    end
-  end
-  if not(n < 100) and n ~= 100 then
-    return go_S_w(0, n)
-  else
-    return go_S_w(1, n + 3)
+  local acc, k
+  if not(n < 100) and n ~= 100 then acc, k = 0, n else acc, k = 1, n + 3 end
+  while true do
+    if not(k < 0) and k ~= 0 then acc, k = acc + 1, k - 2 else return acc end
   end
 end
 local Golden_JoinPoints_Test_classify = function(n)
-  local finish = function(r) return (r * 10 + r) * 2 - r end
-  if not(n < 0) and n ~= 0 then
-    return finish(n + 1)
-  else
-    return finish(0 - n)
-  end
+  local r
+  if not(n < 0) and n ~= 0 then r = n + 1 else r = 0 - n end
+  return (r * 10 + r) * 2 - r
 end
 local Golden_JoinPoints_Test_chooseEff = function(n)
-  local report = function(m)
-    return Effect_Console_log(Data_Show_showIntImpl(m * 2))
-  end
-  if not(n < 0) and n ~= 0 then return report(n) else return report(0 - n) end
+  local m
+  if not(n < 0) and n ~= 0 then m = n else m = 0 - n end
+  return Effect_Console_log(Data_Show_showIntImpl(m * 2))
 end
 return (function()
   local _ = Golden_JoinPoints_Test_logShow(Golden_JoinPoints_Test_sumTriangles(4))()

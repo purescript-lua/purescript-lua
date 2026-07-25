@@ -15,13 +15,11 @@ M.Golden_Loopification_Test_sumTo = function(sumTo_S_p1)
   end
 end
 local Golden_Loopification_Test_sumSquares = function(m)
-  local go_S_w
-  go_S_w = function(acc, n)
-    while true do
-      if n == 0 then return acc else acc, n = acc + n * n, n - 1 end
-    end
+  local acc, n
+  acc, n = 0, m
+  while true do
+    if n == 0 then return acc else acc, n = acc + n * n, n - 1 end
   end
-  return go_S_w(0, m)
 end
 local Golden_Loopification_Test_sumCPS_S_w
 Golden_Loopification_Test_sumCPS_S_w = function(n, k)

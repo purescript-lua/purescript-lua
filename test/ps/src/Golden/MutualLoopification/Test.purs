@@ -10,8 +10,11 @@ import Prelude
 import Effect (Effect)
 import Effect.Console (logShow)
 
--- The canonical mutual pair: manifest arity 1, so no worker/wrapper
--- split happens and the bindings themselves form the dispatched group.
+-- A known gap, pinned as a canary: the boolean-literal branches fold
+-- to `and`/`or` chains in the IR, burying the sibling call inside an
+-- operand, so this pair stays call-shaped. If a later pass learns to
+-- distribute the fold back into branches, this golden flips to a
+-- dispatcher and proves it.
 isEven :: Int -> Boolean
 isEven n = if n == 0 then true else isOdd (n - 1)
 

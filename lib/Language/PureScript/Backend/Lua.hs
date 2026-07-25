@@ -92,15 +92,61 @@ fromUberModule foreigns needsRuntimeLazy appOrModule uber = (`evalStateT` 0) do
           recBinds ← forM (toList recGroup) \(IR.QName modname name, irExp) →
             (modname,name,) . asExpression
               <$> fromIR foreigns Set.empty modname irExp
-          pure $ DList.fromList do
-            (modname, name, exp) ← recBinds
-            -- A self-recursive member references itself through the
-            -- module-scope table, mirroring the Ref case of 'fromIR'.
-            let self =
-                  Loopify.SelfField
-                    Fixture.moduleName
-                    (qualifyName modname (fromName name))
-            pure $ mkBinding modname (fromName name) (Loopify.loopify self exp)
+          -- A recursive member references itself (and its siblings)
+          -- through the module-scope table, mirroring the Ref case of
+          -- 'fromIR'.
+          let memberSelf modname name =
+                Loopify.SelfField
+                  Fixture.moduleName
+                  (qualifyName modname (fromName name))
+          -- The members of every mutual tail-call cycle lower to one
+          -- while-true dispatcher plus entry wrappers (issue #234); see
+          -- Language.PureScript.Backend.Lua.Loopify.
+          dispatched ←
+            forM
+              ( Loopify.planGroupDispatch
+                  [ (memberSelf modname name, exp)
+                  | (modname, name, exp) ← recBinds
+                  ]
+              )
+              \group → do
+                selector ← freshName "$sel"
+                slots ←
+                  replicateM (Loopify.dispatchArity group) (freshName "$a")
+                let leader = NE.head (Loopify.dispatchMembers group)
+                    -- The leader's Self already carries the qualified
+                    -- module-scope field, so the dispatcher derives its
+                    -- name from it directly.
+                    dispatcherName =
+                      Name.makeSafe $
+                        Name.toText (Loopify.selfName (Loopify.dispatchSelf leader))
+                          <> "$loop"
+                    dispatcherSelf =
+                      Loopify.SelfField Fixture.moduleName dispatcherName
+                    (dispatcherExp, wrappers) =
+                      Loopify.emitDispatchGroup
+                        dispatcherSelf
+                        selector
+                        slots
+                        group
+                pure ((dispatcherName, dispatcherExp), wrappers)
+          let wrapperByIndex = concatMap snd dispatched
+          pure $
+            DList.fromList
+              [ Lua.assign
+                  ( Lua.VarField
+                      (Lua.ann (Lua.varName Fixture.moduleName))
+                      dispatcherName
+                  )
+                  dispatcherExp
+              | ((dispatcherName, dispatcherExp), _) ← dispatched
+              ]
+              <> DList.fromList do
+                (index, (modname, name, exp)) ← zip [0 ..] recBinds
+                let luaExp = case List.lookup index wrapperByIndex of
+                      Just wrapper → wrapper
+                      Nothing → Loopify.loopify (memberSelf modname name) exp
+                pure $ mkBinding modname (fromName name) luaExp
 
     returnExp ←
       case appOrModule of
@@ -137,9 +183,12 @@ mkBinding modname name =
       (Lua.ann (Lua.varName Fixture.moduleName))
       (qualifyName modname name)
 
+-- Chunks are finalized here and in the 'IR.AbsN' case of 'fromIR', so
+-- both fuse the chunk's join points first (issue #234); see
+-- Language.PureScript.Backend.Lua.Loopify.
 asExpression ∷ Either Lua.Chunk Lua.Exp → Lua.Exp
 asExpression = \case
-  Left chunk → Lua.chunkToExpression chunk
+  Left chunk → Lua.chunkToExpression (Loopify.joinifyChunk chunk)
   Right expr → expr
 
 fromName ∷ HasCallStack ⇒ IR.Name → Lua.Name
@@ -262,7 +311,7 @@ fromIR foreigns topLevelNames modname ir = case ir of
               List.dropWhileEnd isUnusedParam (toList params)
           ]
     pure . Right $ case body of
-      Left chunk → Lua.functionDef luaParams chunk
+      Left chunk → Lua.functionDef luaParams (Loopify.joinifyChunk chunk)
       Right e → Lua.functionDef luaParams [Lua.return e]
   -- Running the literal thunk that a saturated lifted @*.Uncurried@ effect
   -- wrapper reduces to — @(\_ -> fn(a, …)) EffectRunArg@ — is just the call
@@ -341,27 +390,61 @@ fromIR foreigns topLevelNames modname ir = case ir of
         IR.Standalone (_ann, name, expr) →
           DList.singleton . Lua.local1 (fromName name) <$> goExp expr
         IR.RecursiveGroup grp → do
-          let binds =
-                toList grp <&> \(_ann, fromName → name, _) →
-                  Lua.local0
-                    ( if Set.member (qualifyName modname name) topLevelNames
-                        then qualifyName modname name
-                        else name
-                    )
-          assignments ← forM (toList grp) \(_ann, fromName → name, expr) → do
+          compiled ← forM (toList grp) \(_ann, name, expr) → do
+            luaExp ← goExp expr
             -- The self-reference mirrors the Ref case below: through the
             -- module-scope table for a top-level name, plain otherwise.
-            let (target, self)
-                  | Set.member (qualifyName modname name) topLevelNames =
-                      ( qualifyName modname name
+            let luaName = fromName name
+                (target, self)
+                  | Set.member (qualifyName modname luaName) topLevelNames =
+                      ( qualifyName modname luaName
                       , Loopify.SelfField
                           Fixture.moduleName
-                          (qualifyName modname name)
+                          (qualifyName modname luaName)
                       )
-                  | otherwise = (name, Loopify.SelfLocal name)
-            goExp expr
-              <&> Lua.assign (Lua.VarName target)
-              . Loopify.loopify self
+                  | otherwise = (luaName, Loopify.SelfLocal luaName)
+            pure (name, target, self, luaExp)
+          -- The members of every mutual tail-call cycle dispatch through
+          -- a shared local (issue #234), mirroring the top-level case in
+          -- 'fromUberModule'.
+          dispatched ←
+            forM
+              ( Loopify.planGroupDispatch
+                  [(self, luaExp) | (_, _, self, luaExp) ← compiled]
+              )
+              \group → do
+                selector ← freshName "$sel"
+                slots ←
+                  replicateM (Loopify.dispatchArity group) (freshName "$a")
+                let leader = NE.head (Loopify.dispatchMembers group)
+                    dispatcherName =
+                      Name.makeSafe $
+                        Name.toText (Loopify.selfName (Loopify.dispatchSelf leader))
+                          <> "$loop"
+                    (dispatcherExp, wrappers) =
+                      Loopify.emitDispatchGroup
+                        (Loopify.SelfLocal dispatcherName)
+                        selector
+                        slots
+                        group
+                pure ((dispatcherName, dispatcherExp), wrappers)
+          let wrapperByIndex = concatMap snd dispatched
+              binds =
+                [ Lua.local0 dispatcherName
+                | ((dispatcherName, _), _) ← dispatched
+                ]
+                  <> [Lua.local0 target | (_, target, _, _) ← compiled]
+              assignments =
+                [ Lua.assign (Lua.VarName dispatcherName) dispatcherExp
+                | ((dispatcherName, dispatcherExp), _) ← dispatched
+                ]
+                  <> [ Lua.assign (Lua.VarName target) luaExp'
+                     | (index, (_, target, self, luaExp)) ←
+                         zip [0 ..] compiled
+                     , let luaExp' = case List.lookup index wrapperByIndex of
+                             Just wrapper → wrapper
+                             Nothing → Loopify.loopify self luaExp
+                     ]
           pure $ DList.fromList binds <> DList.fromList assignments
     pure . Left . DList.toList $
       recs <> either DList.fromList (DList.singleton . Lua.return) body
