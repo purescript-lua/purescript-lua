@@ -1,0 +1,677 @@
+UberModule
+  { uberModuleBindings =
+    [ Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Show", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Data.Show" ) ".spago/p/prelude/5718c84fdde6247749cb053e816df696c30fe691/src/Data/Show.purs"
+        [ ( Nothing, Name "showIntImpl" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Effect.Console" ) ".spago/p/console/f82835a0b873aafe6bd7b14dd30cc150553d4ab9/src/Effect/Console.purs"
+        [ ( Nothing, Name "log" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "log"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
+        ( PropName "log" )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.MutualLoopification.Test", qnameName = Name "logShow"
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "a$294" ) :| [] )
+        ( AppN Nothing
+          ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+          ( IfThenElse Nothing
+            ( Ref Nothing ( Local ( Name "a$294" ) ) )
+            ( LiteralString Nothing "true" )
+            ( LiteralString Nothing "false" ) :| []
+          )
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.MutualLoopification.Test", qnameName = Name "logShow1"
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "a$292" ) :| [] )
+        ( AppN Nothing
+          ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+          ( AppN Nothing
+            ( ObjectProp Nothing
+              ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
+              ( PropName "showIntImpl" )
+            )
+            ( Ref Nothing ( Local ( Name "a$292" ) ) :| [] ) :| []
+          )
+        )
+      ), RecursiveGroup
+      (
+        ( QName
+          { qnameModuleName = ModuleName "Golden.MutualLoopification.Test", qnameName = Name "zigzag$w"
+          }, AbsN Nothing
+          ( ParamNamed Nothing ( Name "acc" ) :| [ ParamNamed Nothing ( Name "n" ) ] )
+          ( IfThenElse Nothing
+            ( Eq Nothing ( Ref Nothing ( Local ( Name "n" ) ) ) ( LiteralInt Nothing 0 ) )
+            ( Ref Nothing ( Local ( Name "acc" ) ) )
+            ( AppN Nothing
+              ( Ref Nothing
+                ( Imported ( ModuleName "Golden.MutualLoopification.Test" ) ( Name "zag$w" ) )
+              )
+              ( Ref Nothing
+                ( Local ( Name "acc" ) ) :|
+                [ Ref Nothing ( Local ( Name "n" ) ), LiteralInt Nothing 1 ]
+              )
+            )
+          )
+        ) :|
+        [
+          ( QName
+            { qnameModuleName = ModuleName "Golden.MutualLoopification.Test", qnameName = Name "zigzag"
+            }, AbsN Nothing
+            ( ParamNamed Nothing ( Name "zigzag$p1" ) :| [] )
+            ( AbsN Nothing
+              ( ParamNamed Nothing ( Name "zigzag$p2" ) :| [] )
+              ( AppN Nothing
+                ( Ref Nothing
+                  ( Imported ( ModuleName "Golden.MutualLoopification.Test" ) ( Name "zigzag$w" ) )
+                )
+                ( Ref Nothing
+                  ( Local ( Name "zigzag$p1" ) ) :|
+                  [ Ref Nothing ( Local ( Name "zigzag$p2" ) ) ]
+                )
+              )
+            )
+          ),
+          ( QName
+            { qnameModuleName = ModuleName "Golden.MutualLoopification.Test", qnameName = Name "zag$w"
+            }, AbsN Nothing
+            ( ParamNamed Nothing
+              ( Name "acc" ) :|
+              [ ParamNamed Nothing ( Name "n" ), ParamNamed Nothing ( Name "d" ) ]
+            )
+            ( IfThenElse Nothing
+              ( Eq Nothing ( Ref Nothing ( Local ( Name "n" ) ) ) ( LiteralInt Nothing 0 ) )
+              ( Ref Nothing ( Local ( Name "acc" ) ) )
+              ( AppN Nothing
+                ( Ref Nothing
+                  ( Imported ( ModuleName "Golden.MutualLoopification.Test" ) ( Name "zigzag$w" ) )
+                )
+                ( PrimBinOp Nothing PrimAdd
+                  ( Ref Nothing ( Local ( Name "acc" ) ) )
+                  ( Ref Nothing ( Local ( Name "d" ) ) ) :|
+                  [ PrimBinOp Nothing PrimSub
+                    ( Ref Nothing ( Local ( Name "n" ) ) )
+                    ( LiteralInt Nothing 1 )
+                  ]
+                )
+              )
+            )
+          ),
+          ( QName
+            { qnameModuleName = ModuleName "Golden.MutualLoopification.Test", qnameName = Name "zag"
+            }, AbsN Nothing
+            ( ParamNamed Nothing ( Name "zag$p1" ) :| [] )
+            ( AbsN Nothing
+              ( ParamNamed Nothing ( Name "zag$p2" ) :| [] )
+              ( AbsN Nothing
+                ( ParamNamed Nothing ( Name "zag$p3" ) :| [] )
+                ( AppN Nothing
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Golden.MutualLoopification.Test" ) ( Name "zag$w" ) )
+                  )
+                  ( Ref Nothing
+                    ( Local ( Name "zag$p1" ) ) :|
+                    [ Ref Nothing
+                      ( Local ( Name "zag$p2" ) ), Ref Nothing
+                      ( Local ( Name "zag$p3" ) )
+                    ]
+                  )
+                )
+              )
+            )
+          )
+        ]
+      ), RecursiveGroup
+      (
+        ( QName
+          { qnameModuleName = ModuleName "Golden.MutualLoopification.Test", qnameName = Name "treeB"
+          }, AbsN Nothing
+          ( ParamNamed Nothing ( Name "n" ) :| [] )
+          ( IfThenElse Nothing
+            ( Eq Nothing ( Ref Nothing ( Local ( Name "n" ) ) ) ( LiteralInt Nothing 0 ) )
+            ( LiteralInt Nothing 2 )
+            ( PrimBinOp Nothing PrimAdd
+              ( LiteralInt Nothing 2 )
+              ( AppN Nothing
+                ( Ref Nothing
+                  ( Imported ( ModuleName "Golden.MutualLoopification.Test" ) ( Name "treeA" ) )
+                )
+                ( PrimBinOp Nothing PrimSub
+                  ( Ref Nothing ( Local ( Name "n" ) ) )
+                  ( LiteralInt Nothing 1 ) :| []
+                )
+              )
+            )
+          )
+        ) :|
+        [
+          ( QName
+            { qnameModuleName = ModuleName "Golden.MutualLoopification.Test", qnameName = Name "treeA"
+            }, AbsN Nothing
+            ( ParamNamed Nothing ( Name "n" ) :| [] )
+            ( IfThenElse Nothing
+              ( Eq Nothing ( Ref Nothing ( Local ( Name "n" ) ) ) ( LiteralInt Nothing 0 ) )
+              ( LiteralInt Nothing 1 )
+              ( PrimBinOp Nothing PrimAdd
+                ( LiteralInt Nothing 1 )
+                ( AppN Nothing
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Golden.MutualLoopification.Test" ) ( Name "treeB" ) )
+                  )
+                  ( PrimBinOp Nothing PrimSub
+                    ( Ref Nothing ( Local ( Name "n" ) ) )
+                    ( LiteralInt Nothing 1 ) :| []
+                  )
+                )
+              )
+            )
+          )
+        ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.MutualLoopification.Test", qnameName = Name "ticktock"
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "n" ) :| [] )
+        ( Let Nothing
+          ( RecursiveGroup
+            (
+              ( Nothing, Name "tock$w", AbsN Nothing
+                ( ParamNamed Nothing ( Name "acc" ) :| [ ParamNamed Nothing ( Name "k" ) ] )
+                ( IfThenElse Nothing
+                  ( Eq Nothing ( Ref Nothing ( Local ( Name "k" ) ) ) ( LiteralInt Nothing 0 ) )
+                  ( Ref Nothing ( Local ( Name "acc" ) ) )
+                  ( AppN Nothing
+                    ( Ref Nothing ( Local ( Name "tick$w" ) ) )
+                    ( PrimBinOp Nothing PrimAdd
+                      ( Ref Nothing ( Local ( Name "acc" ) ) )
+                      ( LiteralInt Nothing 3 ) :|
+                      [ PrimBinOp Nothing PrimSub
+                        ( Ref Nothing ( Local ( Name "k" ) ) )
+                        ( LiteralInt Nothing 1 )
+                      ]
+                    )
+                  )
+                )
+              ) :|
+              [
+                ( Nothing, Name "tick$w", AbsN Nothing
+                  ( ParamNamed Nothing ( Name "acc0" ) :| [ ParamNamed Nothing ( Name "k0" ) ] )
+                  ( IfThenElse Nothing
+                    ( Eq Nothing ( Ref Nothing ( Local ( Name "k0" ) ) ) ( LiteralInt Nothing 0 ) )
+                    ( Ref Nothing ( Local ( Name "acc0" ) ) )
+                    ( AppN Nothing
+                      ( Ref Nothing ( Local ( Name "tock$w" ) ) )
+                      ( PrimBinOp Nothing PrimAdd
+                        ( Ref Nothing ( Local ( Name "acc0" ) ) )
+                        ( LiteralInt Nothing 1 ) :|
+                        [ PrimBinOp Nothing PrimSub
+                          ( Ref Nothing ( Local ( Name "k0" ) ) )
+                          ( LiteralInt Nothing 1 )
+                        ]
+                      )
+                    )
+                  )
+                )
+              ]
+            ) :| []
+          )
+          ( AppN Nothing
+            ( Ref Nothing ( Local ( Name "tick$w" ) ) )
+            ( LiteralInt Nothing 0 :| [ Ref Nothing ( Local ( Name "n" ) ) ] )
+          )
+        )
+      ), RecursiveGroup
+      (
+        ( QName
+          { qnameModuleName = ModuleName "Golden.MutualLoopification.Test", qnameName = Name "stepSelf$w"
+          }, AbsN Nothing
+          ( ParamNamed Nothing ( Name "acc" ) :| [ ParamNamed Nothing ( Name "n" ) ] )
+          ( IfThenElse Nothing
+            ( Eq Nothing ( Ref Nothing ( Local ( Name "n" ) ) ) ( LiteralInt Nothing 0 ) )
+            ( Ref Nothing ( Local ( Name "acc" ) ) )
+            ( IfThenElse Nothing
+              ( PrimBinOp Nothing PrimAnd
+                ( PrimNot Nothing
+                  ( PrimBinOp Nothing PrimLt
+                    ( Ref Nothing ( Local ( Name "n" ) ) )
+                    ( LiteralInt Nothing 10 )
+                  )
+                )
+                ( PrimNot Nothing
+                  ( Eq Nothing ( Ref Nothing ( Local ( Name "n" ) ) ) ( LiteralInt Nothing 10 ) )
+                )
+              )
+              ( AppN Nothing
+                ( Ref Nothing
+                  ( Imported
+                    ( ModuleName "Golden.MutualLoopification.Test" )
+                    ( Name "stepSelf$w" )
+                  )
+                )
+                ( PrimBinOp Nothing PrimAdd
+                  ( Ref Nothing ( Local ( Name "acc" ) ) )
+                  ( LiteralInt Nothing 10 ) :|
+                  [ PrimBinOp Nothing PrimSub
+                    ( Ref Nothing ( Local ( Name "n" ) ) )
+                    ( LiteralInt Nothing 10 )
+                  ]
+                )
+              )
+              ( AppN Nothing
+                ( Ref Nothing
+                  ( Imported
+                    ( ModuleName "Golden.MutualLoopification.Test" )
+                    ( Name "stepOther$w" )
+                  )
+                )
+                ( Ref Nothing ( Local ( Name "acc" ) ) :| [ Ref Nothing ( Local ( Name "n" ) ) ] )
+              )
+            )
+          )
+        ) :|
+        [
+          ( QName
+            { qnameModuleName = ModuleName "Golden.MutualLoopification.Test", qnameName = Name "stepSelf"
+            }, AbsN Nothing
+            ( ParamNamed Nothing ( Name "stepSelf$p1" ) :| [] )
+            ( AbsN Nothing
+              ( ParamNamed Nothing ( Name "stepSelf$p2" ) :| [] )
+              ( AppN Nothing
+                ( Ref Nothing
+                  ( Imported
+                    ( ModuleName "Golden.MutualLoopification.Test" )
+                    ( Name "stepSelf$w" )
+                  )
+                )
+                ( Ref Nothing
+                  ( Local ( Name "stepSelf$p1" ) ) :|
+                  [ Ref Nothing ( Local ( Name "stepSelf$p2" ) ) ]
+                )
+              )
+            )
+          ),
+          ( QName
+            { qnameModuleName = ModuleName "Golden.MutualLoopification.Test", qnameName = Name "stepOther$w"
+            }, AbsN Nothing
+            ( ParamNamed Nothing ( Name "acc" ) :| [ ParamNamed Nothing ( Name "n" ) ] )
+            ( IfThenElse Nothing
+              ( Eq Nothing ( Ref Nothing ( Local ( Name "n" ) ) ) ( LiteralInt Nothing 0 ) )
+              ( Ref Nothing ( Local ( Name "acc" ) ) )
+              ( AppN Nothing
+                ( Ref Nothing
+                  ( Imported
+                    ( ModuleName "Golden.MutualLoopification.Test" )
+                    ( Name "stepSelf$w" )
+                  )
+                )
+                ( PrimBinOp Nothing PrimAdd
+                  ( Ref Nothing ( Local ( Name "acc" ) ) )
+                  ( LiteralInt Nothing 1 ) :|
+                  [ PrimBinOp Nothing PrimSub
+                    ( Ref Nothing ( Local ( Name "n" ) ) )
+                    ( LiteralInt Nothing 1 )
+                  ]
+                )
+              )
+            )
+          ),
+          ( QName
+            { qnameModuleName = ModuleName "Golden.MutualLoopification.Test", qnameName = Name "stepOther"
+            }, AbsN Nothing
+            ( ParamNamed Nothing ( Name "stepOther$p1" ) :| [] )
+            ( AbsN Nothing
+              ( ParamNamed Nothing ( Name "stepOther$p2" ) :| [] )
+              ( AppN Nothing
+                ( Ref Nothing
+                  ( Imported
+                    ( ModuleName "Golden.MutualLoopification.Test" )
+                    ( Name "stepOther$w" )
+                  )
+                )
+                ( Ref Nothing
+                  ( Local ( Name "stepOther$p1" ) ) :|
+                  [ Ref Nothing ( Local ( Name "stepOther$p2" ) ) ]
+                )
+              )
+            )
+          )
+        ]
+      ), RecursiveGroup
+      (
+        ( QName
+          { qnameModuleName = ModuleName "Golden.MutualLoopification.Test", qnameName = Name "isOdd"
+          }, AbsN Nothing
+          ( ParamNamed Nothing ( Name "n" ) :| [] )
+          ( PrimBinOp Nothing PrimAnd
+            ( PrimNot Nothing
+              ( Eq Nothing ( Ref Nothing ( Local ( Name "n" ) ) ) ( LiteralInt Nothing 0 ) )
+            )
+            ( AppN Nothing
+              ( Ref Nothing
+                ( Imported ( ModuleName "Golden.MutualLoopification.Test" ) ( Name "isEven" ) )
+              )
+              ( PrimBinOp Nothing PrimSub
+                ( Ref Nothing ( Local ( Name "n" ) ) )
+                ( LiteralInt Nothing 1 ) :| []
+              )
+            )
+          )
+        ) :|
+        [
+          ( QName
+            { qnameModuleName = ModuleName "Golden.MutualLoopification.Test", qnameName = Name "isEven"
+            }, AbsN Nothing
+            ( ParamNamed Nothing ( Name "n" ) :| [] )
+            ( PrimBinOp Nothing PrimOr
+              ( Eq Nothing ( Ref Nothing ( Local ( Name "n" ) ) ) ( LiteralInt Nothing 0 ) )
+              ( AppN Nothing
+                ( Ref Nothing
+                  ( Imported ( ModuleName "Golden.MutualLoopification.Test" ) ( Name "isOdd" ) )
+                )
+                ( PrimBinOp Nothing PrimSub
+                  ( Ref Nothing ( Local ( Name "n" ) ) )
+                  ( LiteralInt Nothing 1 ) :| []
+                )
+              )
+            )
+          )
+        ]
+      ), RecursiveGroup
+      (
+        ( QName
+          { qnameModuleName = ModuleName "Golden.MutualLoopification.Test", qnameName = Name "red$w"
+          }, AbsN Nothing
+          ( ParamNamed Nothing ( Name "acc" ) :| [ ParamNamed Nothing ( Name "n" ) ] )
+          ( IfThenElse Nothing
+            ( Eq Nothing ( Ref Nothing ( Local ( Name "n" ) ) ) ( LiteralInt Nothing 0 ) )
+            ( Ref Nothing ( Local ( Name "acc" ) ) )
+            ( AppN Nothing
+              ( Ref Nothing
+                ( Imported ( ModuleName "Golden.MutualLoopification.Test" ) ( Name "green$w" ) )
+              )
+              ( PrimBinOp Nothing PrimAdd
+                ( Ref Nothing ( Local ( Name "acc" ) ) )
+                ( LiteralInt Nothing 1 ) :|
+                [ PrimBinOp Nothing PrimSub
+                  ( Ref Nothing ( Local ( Name "n" ) ) )
+                  ( LiteralInt Nothing 1 )
+                ]
+              )
+            )
+          )
+        ) :|
+        [
+          ( QName
+            { qnameModuleName = ModuleName "Golden.MutualLoopification.Test", qnameName = Name "red"
+            }, AbsN Nothing
+            ( ParamNamed Nothing ( Name "red$p1" ) :| [] )
+            ( AbsN Nothing
+              ( ParamNamed Nothing ( Name "red$p2" ) :| [] )
+              ( AppN Nothing
+                ( Ref Nothing
+                  ( Imported ( ModuleName "Golden.MutualLoopification.Test" ) ( Name "red$w" ) )
+                )
+                ( Ref Nothing
+                  ( Local ( Name "red$p1" ) ) :|
+                  [ Ref Nothing ( Local ( Name "red$p2" ) ) ]
+                )
+              )
+            )
+          ),
+          ( QName
+            { qnameModuleName = ModuleName "Golden.MutualLoopification.Test", qnameName = Name "green$w"
+            }, AbsN Nothing
+            ( ParamNamed Nothing ( Name "acc" ) :| [ ParamNamed Nothing ( Name "n" ) ] )
+            ( IfThenElse Nothing
+              ( Eq Nothing ( Ref Nothing ( Local ( Name "n" ) ) ) ( LiteralInt Nothing 0 ) )
+              ( Ref Nothing ( Local ( Name "acc" ) ) )
+              ( AppN Nothing
+                ( Ref Nothing
+                  ( Imported ( ModuleName "Golden.MutualLoopification.Test" ) ( Name "blue$w" ) )
+                )
+                ( PrimBinOp Nothing PrimAdd
+                  ( Ref Nothing ( Local ( Name "acc" ) ) )
+                  ( LiteralInt Nothing 1 ) :|
+                  [ PrimBinOp Nothing PrimSub
+                    ( Ref Nothing ( Local ( Name "n" ) ) )
+                    ( LiteralInt Nothing 1 )
+                  ]
+                )
+              )
+            )
+          ),
+          ( QName
+            { qnameModuleName = ModuleName "Golden.MutualLoopification.Test", qnameName = Name "green"
+            }, AbsN Nothing
+            ( ParamNamed Nothing ( Name "green$p1" ) :| [] )
+            ( AbsN Nothing
+              ( ParamNamed Nothing ( Name "green$p2" ) :| [] )
+              ( AppN Nothing
+                ( Ref Nothing
+                  ( Imported ( ModuleName "Golden.MutualLoopification.Test" ) ( Name "green$w" ) )
+                )
+                ( Ref Nothing
+                  ( Local ( Name "green$p1" ) ) :|
+                  [ Ref Nothing ( Local ( Name "green$p2" ) ) ]
+                )
+              )
+            )
+          ),
+          ( QName
+            { qnameModuleName = ModuleName "Golden.MutualLoopification.Test", qnameName = Name "blue$w"
+            }, AbsN Nothing
+            ( ParamNamed Nothing ( Name "acc" ) :| [ ParamNamed Nothing ( Name "n" ) ] )
+            ( IfThenElse Nothing
+              ( Eq Nothing ( Ref Nothing ( Local ( Name "n" ) ) ) ( LiteralInt Nothing 0 ) )
+              ( Ref Nothing ( Local ( Name "acc" ) ) )
+              ( AppN Nothing
+                ( Ref Nothing
+                  ( Imported ( ModuleName "Golden.MutualLoopification.Test" ) ( Name "red$w" ) )
+                )
+                ( PrimBinOp Nothing PrimAdd
+                  ( Ref Nothing ( Local ( Name "acc" ) ) )
+                  ( LiteralInt Nothing 1 ) :|
+                  [ PrimBinOp Nothing PrimSub
+                    ( Ref Nothing ( Local ( Name "n" ) ) )
+                    ( LiteralInt Nothing 1 )
+                  ]
+                )
+              )
+            )
+          ),
+          ( QName
+            { qnameModuleName = ModuleName "Golden.MutualLoopification.Test", qnameName = Name "blue"
+            }, AbsN Nothing
+            ( ParamNamed Nothing ( Name "blue$p1" ) :| [] )
+            ( AbsN Nothing
+              ( ParamNamed Nothing ( Name "blue$p2" ) :| [] )
+              ( AppN Nothing
+                ( Ref Nothing
+                  ( Imported ( ModuleName "Golden.MutualLoopification.Test" ) ( Name "blue$w" ) )
+                )
+                ( Ref Nothing
+                  ( Local ( Name "blue$p1" ) ) :|
+                  [ Ref Nothing ( Local ( Name "blue$p2" ) ) ]
+                )
+              )
+            )
+          )
+        ]
+      )
+    ], uberModuleForeigns = [], uberModuleExports =
+    [
+      ( Name "isEven", Ref Nothing
+        ( Imported ( ModuleName "Golden.MutualLoopification.Test" ) ( Name "isEven" ) )
+      ),
+      ( Name "isOdd", Ref Nothing
+        ( Imported ( ModuleName "Golden.MutualLoopification.Test" ) ( Name "isOdd" ) )
+      ),
+      ( Name "zigzag", Ref Nothing
+        ( Imported ( ModuleName "Golden.MutualLoopification.Test" ) ( Name "zigzag" ) )
+      ),
+      ( Name "zag", Ref Nothing
+        ( Imported ( ModuleName "Golden.MutualLoopification.Test" ) ( Name "zag" ) )
+      ),
+      ( Name "red", Ref Nothing
+        ( Imported ( ModuleName "Golden.MutualLoopification.Test" ) ( Name "red" ) )
+      ),
+      ( Name "green", Ref Nothing
+        ( Imported ( ModuleName "Golden.MutualLoopification.Test" ) ( Name "green" ) )
+      ),
+      ( Name "blue", Ref Nothing
+        ( Imported ( ModuleName "Golden.MutualLoopification.Test" ) ( Name "blue" ) )
+      ),
+      ( Name "stepSelf", Ref Nothing
+        ( Imported ( ModuleName "Golden.MutualLoopification.Test" ) ( Name "stepSelf" ) )
+      ),
+      ( Name "stepOther", Ref Nothing
+        ( Imported ( ModuleName "Golden.MutualLoopification.Test" ) ( Name "stepOther" ) )
+      ),
+      ( Name "treeA", Ref Nothing
+        ( Imported ( ModuleName "Golden.MutualLoopification.Test" ) ( Name "treeA" ) )
+      ),
+      ( Name "treeB", Ref Nothing
+        ( Imported ( ModuleName "Golden.MutualLoopification.Test" ) ( Name "treeB" ) )
+      ),
+      ( Name "ticktock", Ref Nothing
+        ( Imported ( ModuleName "Golden.MutualLoopification.Test" ) ( Name "ticktock" ) )
+      ),
+      ( Name "main", AbsN Nothing
+        ( ParamUnused Nothing :| [] )
+        ( Let Nothing
+          ( Standalone
+            ( Nothing, Name "_", AppN Nothing
+              ( AppN Nothing
+                ( Ref Nothing
+                  ( Imported ( ModuleName "Golden.MutualLoopification.Test" ) ( Name "logShow" ) )
+                )
+                ( AppN Nothing
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Golden.MutualLoopification.Test" ) ( Name "isEven" ) )
+                  )
+                  ( LiteralInt Nothing 10 :| [] ) :| []
+                )
+              )
+              ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+            ) :|
+            [ Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Golden.MutualLoopification.Test" ) ( Name "logShow" ) )
+                  )
+                  ( AppN Nothing
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Golden.MutualLoopification.Test" ) ( Name "isOdd" ) )
+                    )
+                    ( LiteralInt Nothing 7 :| [] ) :| []
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              ), Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing
+                    ( Imported
+                      ( ModuleName "Golden.MutualLoopification.Test" )
+                      ( Name "logShow1" )
+                    )
+                  )
+                  ( AppN Nothing
+                    ( Ref Nothing
+                      ( Imported
+                        ( ModuleName "Golden.MutualLoopification.Test" )
+                        ( Name "zigzag$w" )
+                      )
+                    )
+                    ( LiteralInt Nothing 0 :| [ LiteralInt Nothing 3 ] ) :| []
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              ), Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing
+                    ( Imported
+                      ( ModuleName "Golden.MutualLoopification.Test" )
+                      ( Name "logShow1" )
+                    )
+                  )
+                  ( AppN Nothing
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Golden.MutualLoopification.Test" ) ( Name "red$w" ) )
+                    )
+                    ( LiteralInt Nothing 0 :| [ LiteralInt Nothing 10 ] ) :| []
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              ), Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing
+                    ( Imported
+                      ( ModuleName "Golden.MutualLoopification.Test" )
+                      ( Name "logShow1" )
+                    )
+                  )
+                  ( AppN Nothing
+                    ( Ref Nothing
+                      ( Imported
+                        ( ModuleName "Golden.MutualLoopification.Test" )
+                        ( Name "stepSelf$w" )
+                      )
+                    )
+                    ( LiteralInt Nothing 0 :| [ LiteralInt Nothing 25 ] ) :| []
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              ), Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing
+                    ( Imported
+                      ( ModuleName "Golden.MutualLoopification.Test" )
+                      ( Name "logShow1" )
+                    )
+                  )
+                  ( AppN Nothing
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Golden.MutualLoopification.Test" ) ( Name "treeA" ) )
+                    )
+                    ( LiteralInt Nothing 5 :| [] ) :| []
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              )
+            ]
+          )
+          ( AppN Nothing
+            ( AppN Nothing
+              ( Ref Nothing
+                ( Imported ( ModuleName "Golden.MutualLoopification.Test" ) ( Name "logShow1" ) )
+              )
+              ( AppN Nothing
+                ( Ref Nothing
+                  ( Imported ( ModuleName "Golden.MutualLoopification.Test" ) ( Name "ticktock" ) )
+                )
+                ( LiteralInt Nothing 5 :| [] ) :| []
+              )
+            )
+            ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+          )
+        )
+      )
+    ]
+  }
