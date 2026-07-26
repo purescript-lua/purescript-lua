@@ -47,19 +47,19 @@ UberModule
             ( ParamUnused Nothing :| [] )
             ( Let Nothing
               ( Standalone
-                ( Nothing, Name "$cse495", AbsN Nothing
-                  ( ParamNamed Nothing ( Name "s$455" ) :| [] )
+                ( Nothing, Name "$cse496", AbsN Nothing
+                  ( ParamNamed Nothing ( Name "s$456" ) :| [] )
                   ( Let Nothing
                     ( Standalone
-                      ( Nothing, Name "s'$456", PrimBinOp Nothing PrimAdd
-                        ( Ref Nothing ( Local ( Name "s$455" ) ) )
+                      ( Nothing, Name "s'$457", PrimBinOp Nothing PrimAdd
+                        ( Ref Nothing ( Local ( Name "s$456" ) ) )
                         ( Ref Nothing ( Local ( Name "n" ) ) )
                       ) :| []
                     )
                     ( LiteralObject Nothing
                       [
-                        ( PropName "state", Ref Nothing ( Local ( Name "s'$456" ) ) ),
-                        ( PropName "value", Ref Nothing ( Local ( Name "s'$456" ) ) )
+                        ( PropName "state", Ref Nothing ( Local ( Name "s'$457" ) ) ),
+                        ( PropName "value", Ref Nothing ( Local ( Name "s'$457" ) ) )
                       ]
                     )
                   )
@@ -89,7 +89,7 @@ UberModule
                               ( Name "modifyImpl" )
                             )
                           )
-                          ( Ref Nothing ( Local ( Name "$cse495" ) ) :| [] )
+                          ( Ref Nothing ( Local ( Name "$cse496" ) ) :| [] )
                         )
                         ( Ref Nothing ( Local ( Name "ref" ) ) :| [] )
                       )
@@ -106,7 +106,7 @@ UberModule
                               ( Name "modifyImpl" )
                             )
                           )
-                          ( Ref Nothing ( Local ( Name "$cse495" ) ) :| [] )
+                          ( Ref Nothing ( Local ( Name "$cse496" ) ) :| [] )
                         )
                         ( Ref Nothing ( Local ( Name "ref" ) ) :| [] )
                       )

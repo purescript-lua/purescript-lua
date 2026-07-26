@@ -46,6 +46,7 @@ import Language.PureScript.Backend.IR.Query
   , resolveKnownCtorApp
   )
 import Language.PureScript.Backend.IR.Query qualified as Query
+import Language.PureScript.Backend.IR.RecordSurgery (foldRecordSurgery)
 import Language.PureScript.Backend.IR.SpecConstr (specConstr)
 import Language.PureScript.Backend.IR.Supply (SupplyM, freshName, runSupply)
 import Language.PureScript.Backend.IR.Types
@@ -1064,6 +1065,7 @@ optimizedExpressionWithPastes ctorTags canon pastes policy env =
     ( canonicalizeEffectHead canon
         `thenRewrite` constantFolding
         `thenRewrite` reassociateConstants
+        `thenRewrite` foldRecordSurgery
         `thenRewrite` reduceObjectProp
         `thenRewrite` reduceArrayRead
         `thenRewrite` sinkProjectionIntoLet

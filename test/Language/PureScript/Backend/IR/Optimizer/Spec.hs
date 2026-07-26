@@ -460,6 +460,122 @@ spec = describe "IR Optimizer" do
       annotateShow optimized
       addKept === [QName mainModule (Name "add")]
 
+  describe "folds Record.Unsafe surgery on manifest records (#236)" do
+    let recordUnsafe = moduleNameFromString "Record.Unsafe"
+        surgery ∷ Text → [Exp] → Exp
+        surgery fn = foldl' application (refImported recordUnsafe (Name fn))
+        a = PropName "a"
+        b = PropName "b"
+
+    it "unsafeGet with a static label reads the field directly" do
+      let original =
+            surgery "unsafeGet" [literalString "a", refLocal (Name "r")]
+      optimizedExpression original
+        `shouldBe` objectProp (refLocal (Name "r")) a
+
+    it "unsafeGet on a record literal folds to the field value" do
+      let original =
+            surgery
+              "unsafeGet"
+              [literalString "a", literalObject [(a, literalInt 42)]]
+      optimizedExpression original `shouldBe` literalInt 42
+
+    it "unsafeSet adds a field to a record literal" do
+      let original =
+            surgery
+              "unsafeSet"
+              [ literalString "b"
+              , literalInt 2
+              , literalObject [(a, literalInt 1)]
+              ]
+      optimizedExpression original
+        `shouldBe` literalObject [(a, literalInt 1), (b, literalInt 2)]
+
+    it "unsafeSet replaces a present field in place" do
+      let original =
+            surgery
+              "unsafeSet"
+              [ literalString "a"
+              , literalInt 3
+              , literalObject [(a, literalInt 1), (b, literalInt 2)]
+              ]
+      optimizedExpression original
+        `shouldBe` literalObject [(a, literalInt 3), (b, literalInt 2)]
+
+    it "unsafeDelete removes a present field from a record literal" do
+      let original =
+            surgery
+              "unsafeDelete"
+              [ literalString "a"
+              , literalObject [(a, literalInt 1), (b, literalInt 2)]
+              ]
+      optimizedExpression original
+        `shouldBe` literalObject [(b, literalInt 2)]
+
+    it "unsafeDelete of an absent field folds to the record itself" do
+      let original =
+            surgery
+              "unsafeDelete"
+              [literalString "z", literalObject [(a, literalInt 1)]]
+      optimizedExpression original
+        `shouldBe` literalObject [(a, literalInt 1)]
+
+    it "unsafeHas answers membership on a record literal" do
+      let has ∷ Text → Exp
+          has label =
+            surgery
+              "unsafeHas"
+              [literalString label, literalObject [(a, literalInt 1)]]
+      optimizedExpression (has "a") `shouldBe` literalBool True
+      optimizedExpression (has "z") `shouldBe` literalBool False
+
+    it "fires on a dissolved foreign-accessor head" do
+      -- Mid-pipeline the accessor binding dissolves into its use sites,
+      -- so the head is a field read off the module's @foreign@ import
+      -- rather than a reference to the accessor name.
+      let accessor =
+            objectProp
+              (refImported recordUnsafe (Name "foreign"))
+              (PropName "unsafeGet")
+          original =
+            application
+              (application accessor (literalString "a"))
+              (literalObject [(a, literalInt 42)])
+      optimizedExpression original `shouldBe` literalInt 42
+
+    it "leaves copying surgery on an unknown record as a call" do
+      for_ ["unsafeDelete", "unsafeHas"] \fn → do
+        let original =
+              surgery fn [literalString "a", refLocal (Name "r")]
+        optimizedExpression original `shouldBe` original
+      let original =
+            surgery
+              "unsafeSet"
+              [literalString "a", literalInt 1, refLocal (Name "r")]
+      optimizedExpression original `shouldBe` original
+
+    it "declines a label the Lua lowering would mangle" do
+      -- makeSafe rewrites these labels on the way into a table key, so
+      -- a folded read would use a different key than the foreign call's
+      -- raw-string lookup.
+      for_ ["not a name", "end", "wr@ng", ""] \label → do
+        let original =
+              surgery
+                "unsafeGet"
+                [literalString label, refLocal (Name "r")]
+        optimizedExpression original `shouldBe` original
+
+    it "declines a dynamic label" do
+      let original =
+            surgery
+              "unsafeGet"
+              [refLocal (Name "l"), literalObject [(a, literalInt 1)]]
+      optimizedExpression original `shouldBe` original
+
+    it "declines a partially applied surgery" do
+      let original = surgery "unsafeSet" [literalString "a", literalInt 1]
+      optimizedExpression original `shouldBe` original
+
   describe "folds case-of-known-constructor (#177)" do
     let maybeMod = moduleNameFromString "Data.Maybe"
         maybeTy = TyName "Maybe"

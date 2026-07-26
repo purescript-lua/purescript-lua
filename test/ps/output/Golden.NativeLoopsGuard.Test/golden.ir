@@ -171,7 +171,7 @@ UberModule
                 [
                   ( PropName "apply", Let Nothing
                     ( Standalone
-                      ( Nothing, Name "bind$1430", ObjectProp Nothing
+                      ( Nothing, Name "bind$1433", ObjectProp Nothing
                         ( AppN Nothing
                           ( ObjectProp Nothing
                             ( Ref Nothing
@@ -187,23 +187,23 @@ UberModule
                       ) :| []
                     )
                     ( AbsN Nothing
-                      ( ParamNamed Nothing ( Name "f$1431" ) :| [] )
+                      ( ParamNamed Nothing ( Name "f$1434" ) :| [] )
                       ( AbsN Nothing
-                        ( ParamNamed Nothing ( Name "a$1432" ) :| [] )
+                        ( ParamNamed Nothing ( Name "a$1435" ) :| [] )
                         ( AppN Nothing
                           ( AppN Nothing
-                            ( Ref Nothing ( Local ( Name "bind$1430" ) ) )
-                            ( Ref Nothing ( Local ( Name "f$1431" ) ) :| [] )
+                            ( Ref Nothing ( Local ( Name "bind$1433" ) ) )
+                            ( Ref Nothing ( Local ( Name "f$1434" ) ) :| [] )
                           )
                           ( AbsN Nothing
-                            ( ParamNamed Nothing ( Name "f'$1433" ) :| [] )
+                            ( ParamNamed Nothing ( Name "f'$1436" ) :| [] )
                             ( AppN Nothing
                               ( AppN Nothing
-                                ( Ref Nothing ( Local ( Name "bind$1430" ) ) )
-                                ( Ref Nothing ( Local ( Name "a$1432" ) ) :| [] )
+                                ( Ref Nothing ( Local ( Name "bind$1433" ) ) )
+                                ( Ref Nothing ( Local ( Name "a$1435" ) ) :| [] )
                               )
                               ( AbsN Nothing
-                                ( ParamNamed Nothing ( Name "a'$1434" ) :| [] )
+                                ( ParamNamed Nothing ( Name "a'$1437" ) :| [] )
                                 ( AppN Nothing
                                   ( ObjectProp Nothing
                                     ( AppN Nothing
@@ -226,8 +226,8 @@ UberModule
                                     ( PropName "pure" )
                                   )
                                   ( AppN Nothing
-                                    ( Ref Nothing ( Local ( Name "f'$1433" ) ) )
-                                    ( Ref Nothing ( Local ( Name "a'$1434" ) ) :| [] ) :| []
+                                    ( Ref Nothing ( Local ( Name "f'$1436" ) ) )
+                                    ( Ref Nothing ( Local ( Name "a'$1437" ) ) :| [] ) :| []
                                   )
                                 ) :| []
                               )
@@ -261,10 +261,10 @@ UberModule
       ( QName
         { qnameModuleName = ModuleName "Golden.NativeLoopsGuard.Test", qnameName = Name "when$w"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "v$1437" ) :| [ ParamNamed Nothing ( Name "v1$1438" ) ] )
+        ( ParamNamed Nothing ( Name "v$1440" ) :| [ ParamNamed Nothing ( Name "v1$1441" ) ] )
         ( IfThenElse Nothing
-          ( Ref Nothing ( Local ( Name "v$1437" ) ) )
-          ( Ref Nothing ( Local ( Name "v1$1438" ) ) )
+          ( Ref Nothing ( Local ( Name "v$1440" ) ) )
+          ( Ref Nothing ( Local ( Name "v1$1441" ) ) )
           ( AppN Nothing
             ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "pureE" ) ) )
             ( Ref Nothing ( Imported ( ModuleName "Data.Unit" ) ( Name "unit" ) ) :| [] )
@@ -314,18 +314,18 @@ UberModule
         ( ParamNamed Nothing ( Name "xs" ) :| [ ParamNamed Nothing ( Name "f" ) ] )
         ( Let Nothing
           ( Standalone
-            ( Nothing, Name "v2$1427", AppN Nothing
+            ( Nothing, Name "v2$1430", AppN Nothing
               ( ObjectProp Nothing
                 ( Ref Nothing ( Imported ( ModuleName "Data.Array" ) ( Name "foreign" ) ) )
                 ( PropName "indexImpl" )
               )
               ( AbsN Nothing
-                ( ParamNamed Nothing ( Name "value0$1428" ) :| [] )
+                ( ParamNamed Nothing ( Name "value0$1431" ) :| [] )
                 ( Ctor Nothing SumType
                   ( ModuleName "Data.Maybe" )
                   ( TyName "Maybe" )
                   ( CtorName "Just" )
-                  [ Ref Nothing ( Local ( Name "value0$1428" ) ) ]
+                  [ Ref Nothing ( Local ( Name "value0$1431" ) ) ]
                 ) :|
                 [ Ctor Nothing SumType
                   ( ModuleName "Data.Maybe" )
@@ -339,7 +339,7 @@ UberModule
           ( IfThenElse Nothing
             ( Eq Nothing
               ( LiteralString Nothing "Data.Maybe∷Maybe.Nothing" )
-              ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v2$1427" ) ) ) )
+              ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v2$1430" ) ) ) )
             )
             ( AppN Nothing
               ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "pureE" ) ) )
@@ -348,7 +348,7 @@ UberModule
             ( AppN Nothing
               ( Ref Nothing ( Local ( Name "f" ) ) )
               ( DataArgumentByIndex Nothing SumType 0
-                ( Ref Nothing ( Local ( Name "v2$1427" ) ) ) :| []
+                ( Ref Nothing ( Local ( Name "v2$1430" ) ) ) :| []
               )
             )
           )
@@ -378,20 +378,20 @@ UberModule
     ], uberModuleForeigns = [], uberModuleExports =
     [
       ( Name "forE", AbsN Nothing
-        ( ParamNamed Nothing ( Name "forE$p1$1459" ) :| [] )
+        ( ParamNamed Nothing ( Name "forE$p1$1462" ) :| [] )
         ( AbsN Nothing
-          ( ParamNamed Nothing ( Name "forE$p2$1460" ) :| [] )
+          ( ParamNamed Nothing ( Name "forE$p2$1463" ) :| [] )
           ( AbsN Nothing
-            ( ParamNamed Nothing ( Name "forE$p3$1461" ) :| [] )
+            ( ParamNamed Nothing ( Name "forE$p3$1464" ) :| [] )
             ( AppN Nothing
               ( Ref Nothing
                 ( Imported ( ModuleName "Golden.NativeLoopsGuard.Test" ) ( Name "forE$w" ) )
               )
               ( Ref Nothing
-                ( Local ( Name "forE$p1$1459" ) ) :|
+                ( Local ( Name "forE$p1$1462" ) ) :|
                 [ Ref Nothing
-                  ( Local ( Name "forE$p2$1460" ) ), Ref Nothing
-                  ( Local ( Name "forE$p3$1461" ) )
+                  ( Local ( Name "forE$p2$1463" ) ), Ref Nothing
+                  ( Local ( Name "forE$p3$1464" ) )
                 ]
               )
             )
@@ -399,31 +399,31 @@ UberModule
         )
       ),
       ( Name "foreachE", AbsN Nothing
-        ( ParamNamed Nothing ( Name "foreachE$p1$1462" ) :| [] )
+        ( ParamNamed Nothing ( Name "foreachE$p1$1465" ) :| [] )
         ( AbsN Nothing
-          ( ParamNamed Nothing ( Name "foreachE$p2$1463" ) :| [] )
+          ( ParamNamed Nothing ( Name "foreachE$p2$1466" ) :| [] )
           ( AppN Nothing
             ( Ref Nothing
               ( Imported ( ModuleName "Golden.NativeLoopsGuard.Test" ) ( Name "foreachE$w" ) )
             )
             ( Ref Nothing
-              ( Local ( Name "foreachE$p1$1462" ) ) :|
-              [ Ref Nothing ( Local ( Name "foreachE$p2$1463" ) ) ]
+              ( Local ( Name "foreachE$p1$1465" ) ) :|
+              [ Ref Nothing ( Local ( Name "foreachE$p2$1466" ) ) ]
             )
           )
         )
       ),
       ( Name "whileE", AbsN Nothing
-        ( ParamNamed Nothing ( Name "whileE$p1$1464" ) :| [] )
+        ( ParamNamed Nothing ( Name "whileE$p1$1467" ) :| [] )
         ( AbsN Nothing
-          ( ParamNamed Nothing ( Name "whileE$p2$1465" ) :| [] )
+          ( ParamNamed Nothing ( Name "whileE$p2$1468" ) :| [] )
           ( AppN Nothing
             ( Ref Nothing
               ( Imported ( ModuleName "Golden.NativeLoopsGuard.Test" ) ( Name "whileE$w" ) )
             )
             ( Ref Nothing
-              ( Local ( Name "whileE$p1$1464" ) ) :|
-              [ Ref Nothing ( Local ( Name "whileE$p2$1465" ) ) ]
+              ( Local ( Name "whileE$p1$1467" ) ) :|
+              [ Ref Nothing ( Local ( Name "whileE$p2$1468" ) ) ]
             )
           )
         )

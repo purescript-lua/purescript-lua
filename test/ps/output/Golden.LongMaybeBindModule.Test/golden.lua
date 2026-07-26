@@ -1,18 +1,18 @@
 local Data_Unit_foreign = { unit = {} }
 local Data_Unit_unit = Data_Unit_foreign.unit
-local Golden_LongMaybeBindModule_Test_bind_S_w = function(v_S_580, v1_S_581)
-  if "Data.Maybe∷Maybe.Just" == v_S_580[1] then
-    return v1_S_581(v_S_580[2])
+local Golden_LongMaybeBindModule_Test_bind_S_w = function(v_S_581, v1_S_582)
+  if "Data.Maybe∷Maybe.Just" == v_S_581[1] then
+    return v1_S_582(v_S_581[2])
   else
     return { "Data.Maybe∷Maybe.Nothing" }
   end
 end
 return {
   compute = (function()
-    local _S_kont1494_S_w = function(x1_S_0_S_1495, x277_S_276_S_1496)
+    local _S_kont1495_S_w = function(x1_S_0_S_1496, x277_S_276_S_1497)
       return Golden_LongMaybeBindModule_Test_bind_S_w({
         "Data.Maybe∷Maybe.Just",
-        x277_S_276_S_1496 + 1
+        x277_S_276_S_1497 + 1
       }, function(x278_S_277)
         return Golden_LongMaybeBindModule_Test_bind_S_w({
           "Data.Maybe∷Maybe.Just",
@@ -104,7 +104,7 @@ return {
                                                   }, function(x300_S_299)
                                                     return {
                                                       "Data.Maybe∷Maybe.Just",
-                                                      x1_S_0_S_1495 + x300_S_299
+                                                      x1_S_0_S_1496 + x300_S_299
                                                     }
                                                   end)
                                                 end)
@@ -130,10 +130,10 @@ return {
         end)
       end)
     end
-    local _S_kont1497_S_w = function(x1_S_0_S_1498, x238_S_237_S_1499)
+    local _S_kont1498_S_w = function(x1_S_0_S_1499, x238_S_237_S_1500)
       return Golden_LongMaybeBindModule_Test_bind_S_w({
         "Data.Maybe∷Maybe.Just",
-        x238_S_237_S_1499 + 1
+        x238_S_237_S_1500 + 1
       }, function(x239_S_238)
         return Golden_LongMaybeBindModule_Test_bind_S_w({
           "Data.Maybe∷Maybe.Just",
@@ -291,7 +291,7 @@ return {
                                                                                       "Data.Maybe∷Maybe.Just",
                                                                                       x276_S_275 + 1
                                                                                     }, function( x277_S_276 )
-                                                                                      return _S_kont1494_S_w(x1_S_0_S_1498, x277_S_276)
+                                                                                      return _S_kont1495_S_w(x1_S_0_S_1499, x277_S_276)
                                                                                     end)
                                                                                   end)
                                                                                 end)
@@ -333,10 +333,10 @@ return {
         end)
       end)
     end
-    local _S_kont1500_S_w = function(x1_S_0_S_1501, x198_S_197_S_1502)
+    local _S_kont1501_S_w = function(x1_S_0_S_1502, x198_S_197_S_1503)
       return Golden_LongMaybeBindModule_Test_bind_S_w({
         "Data.Maybe∷Maybe.Just",
-        x198_S_197_S_1502 + 1
+        x198_S_197_S_1503 + 1
       }, function(x199_S_198)
         return Golden_LongMaybeBindModule_Test_bind_S_w({
           "Data.Maybe∷Maybe.Just",
@@ -494,7 +494,7 @@ return {
                                                                                       "Data.Maybe∷Maybe.Just",
                                                                                       x237_S_236 + 1
                                                                                     }, function( x238_S_237 )
-                                                                                      return _S_kont1497_S_w(x1_S_0_S_1501, x238_S_237)
+                                                                                      return _S_kont1498_S_w(x1_S_0_S_1502, x238_S_237)
                                                                                     end)
                                                                                   end)
                                                                                 end)
@@ -536,10 +536,10 @@ return {
         end)
       end)
     end
-    local _S_kont1503_S_w = function(x1_S_0_S_1504, x158_S_157_S_1505)
+    local _S_kont1504_S_w = function(x1_S_0_S_1505, x158_S_157_S_1506)
       return Golden_LongMaybeBindModule_Test_bind_S_w({
         "Data.Maybe∷Maybe.Just",
-        x158_S_157_S_1505 + 1
+        x158_S_157_S_1506 + 1
       }, function(x159_S_158)
         return Golden_LongMaybeBindModule_Test_bind_S_w({
           "Data.Maybe∷Maybe.Just",
@@ -697,7 +697,7 @@ return {
                                                                                       "Data.Maybe∷Maybe.Just",
                                                                                       x197_S_196 + 1
                                                                                     }, function( x198_S_197 )
-                                                                                      return _S_kont1500_S_w(x1_S_0_S_1504, x198_S_197)
+                                                                                      return _S_kont1501_S_w(x1_S_0_S_1505, x198_S_197)
                                                                                     end)
                                                                                   end)
                                                                                 end)
@@ -739,10 +739,10 @@ return {
         end)
       end)
     end
-    local _S_kont1506_S_w = function(x1_S_0_S_1507, x119_S_118_S_1508)
+    local _S_kont1507_S_w = function(x1_S_0_S_1508, x119_S_118_S_1509)
       return Golden_LongMaybeBindModule_Test_bind_S_w({
         "Data.Maybe∷Maybe.Just",
-        x119_S_118_S_1508 + 1
+        x119_S_118_S_1509 + 1
       }, function(x120_S_119)
         return Golden_LongMaybeBindModule_Test_bind_S_w({
           "Data.Maybe∷Maybe.Just",
@@ -900,7 +900,7 @@ return {
                                                                                       "Data.Maybe∷Maybe.Just",
                                                                                       x157_S_156 + 1
                                                                                     }, function( x158_S_157 )
-                                                                                      return _S_kont1503_S_w(x1_S_0_S_1507, x158_S_157)
+                                                                                      return _S_kont1504_S_w(x1_S_0_S_1508, x158_S_157)
                                                                                     end)
                                                                                   end)
                                                                                 end)
@@ -942,10 +942,10 @@ return {
         end)
       end)
     end
-    local _S_kont1509_S_w = function(x1_S_0_S_1510, x79_S_78_S_1511)
+    local _S_kont1510_S_w = function(x1_S_0_S_1511, x79_S_78_S_1512)
       return Golden_LongMaybeBindModule_Test_bind_S_w({
         "Data.Maybe∷Maybe.Just",
-        x79_S_78_S_1511 + 1
+        x79_S_78_S_1512 + 1
       }, function(x80_S_79)
         return Golden_LongMaybeBindModule_Test_bind_S_w({
           "Data.Maybe∷Maybe.Just",
@@ -1103,7 +1103,7 @@ return {
                                                                                       "Data.Maybe∷Maybe.Just",
                                                                                       x118_S_117 + 1
                                                                                     }, function( x119_S_118 )
-                                                                                      return _S_kont1506_S_w(x1_S_0_S_1510, x119_S_118)
+                                                                                      return _S_kont1507_S_w(x1_S_0_S_1511, x119_S_118)
                                                                                     end)
                                                                                   end)
                                                                                 end)
@@ -1145,10 +1145,10 @@ return {
         end)
       end)
     end
-    local _S_kont1512_S_w = function(x1_S_0_S_1513, x40_S_39_S_1514)
+    local _S_kont1513_S_w = function(x1_S_0_S_1514, x40_S_39_S_1515)
       return Golden_LongMaybeBindModule_Test_bind_S_w({
         "Data.Maybe∷Maybe.Just",
-        x40_S_39_S_1514 + 1
+        x40_S_39_S_1515 + 1
       }, function(x41_S_40)
         return Golden_LongMaybeBindModule_Test_bind_S_w({
           "Data.Maybe∷Maybe.Just",
@@ -1306,7 +1306,7 @@ return {
                                                                                       "Data.Maybe∷Maybe.Just",
                                                                                       x78_S_77 + 1
                                                                                     }, function( x79_S_78 )
-                                                                                      return _S_kont1509_S_w(x1_S_0_S_1513, x79_S_78)
+                                                                                      return _S_kont1510_S_w(x1_S_0_S_1514, x79_S_78)
                                                                                     end)
                                                                                   end)
                                                                                 end)
@@ -1508,7 +1508,7 @@ return {
                                                                                     "Data.Maybe∷Maybe.Just",
                                                                                     x39_S_38 + 1
                                                                                   }, function( x40_S_39 )
-                                                                                    return _S_kont1512_S_w(x1_S_0, x40_S_39)
+                                                                                    return _S_kont1513_S_w(x1_S_0, x40_S_39)
                                                                                   end)
                                                                                 end)
                                                                               end)

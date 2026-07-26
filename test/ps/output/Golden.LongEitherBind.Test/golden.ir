@@ -28,7 +28,7 @@ UberModule
       ),
       ( Name "main", Let Nothing
         ( Standalone
-          ( Nothing, Name "$cse2149", DataArgumentByIndex Nothing SumType 0
+          ( Nothing, Name "$cse2150", DataArgumentByIndex Nothing SumType 0
             ( Ref Nothing
               ( Imported ( ModuleName "Golden.LongEitherBind.Test" ) ( Name "compute" ) )
             )
@@ -56,7 +56,7 @@ UberModule
                     ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
                     ( PropName "showStringImpl" )
                   )
-                  ( Ref Nothing ( Local ( Name "$cse2149" ) ) :| [] )
+                  ( Ref Nothing ( Local ( Name "$cse2150" ) ) :| [] )
                 )
                 ( LiteralString Nothing ")" )
               )
@@ -69,7 +69,7 @@ UberModule
                     ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
                     ( PropName "showIntImpl" )
                   )
-                  ( Ref Nothing ( Local ( Name "$cse2149" ) ) :| [] )
+                  ( Ref Nothing ( Local ( Name "$cse2150" ) ) :| [] )
                 )
                 ( LiteralString Nothing ")" )
               )

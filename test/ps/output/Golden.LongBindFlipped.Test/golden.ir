@@ -16,16 +16,16 @@ UberModule
       ( QName
         { qnameModuleName = ModuleName "Golden.LongBindFlipped.Test", qnameName = Name "bindFlipped$w"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "b$310" ) :| [ ParamNamed Nothing ( Name "a$311" ) ] )
+        ( ParamNamed Nothing ( Name "b$311" ) :| [ ParamNamed Nothing ( Name "a$312" ) ] )
         ( IfThenElse Nothing
           ( Eq Nothing
             ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
-            ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "a$311" ) ) ) )
+            ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "a$312" ) ) ) )
           )
           ( AppN Nothing
-            ( Ref Nothing ( Local ( Name "b$310" ) ) )
+            ( Ref Nothing ( Local ( Name "b$311" ) ) )
             ( DataArgumentByIndex Nothing SumType 0
-              ( Ref Nothing ( Local ( Name "a$311" ) ) ) :| []
+              ( Ref Nothing ( Local ( Name "a$312" ) ) ) :| []
             )
           )
           ( Ctor Nothing SumType
@@ -53,7 +53,7 @@ UberModule
         { qnameModuleName = ModuleName "Golden.LongBindFlipped.Test", qnameName = Name "compute"
         }, Let Nothing
         ( Standalone
-          ( Nothing, Name "$tmp332", AppN Nothing
+          ( Nothing, Name "$tmp333", AppN Nothing
             ( Ref Nothing
               ( Imported ( ModuleName "Golden.LongBindFlipped.Test" ) ( Name "bindFlipped$w" ) )
             )
@@ -605,559 +605,6 @@ UberModule
             )
           ) :|
           [ Standalone
-            ( Nothing, Name "$tmp333", AppN Nothing
-              ( Ref Nothing
-                ( Imported ( ModuleName "Golden.LongBindFlipped.Test" ) ( Name "bindFlipped$w" ) )
-              )
-              ( Ref Nothing
-                ( Imported ( ModuleName "Golden.LongBindFlipped.Test" ) ( Name "inc" ) ) :|
-                [ AppN Nothing
-                  ( Ref Nothing
-                    ( Imported
-                      ( ModuleName "Golden.LongBindFlipped.Test" )
-                      ( Name "bindFlipped$w" )
-                    )
-                  )
-                  ( Ref Nothing
-                    ( Imported ( ModuleName "Golden.LongBindFlipped.Test" ) ( Name "inc" ) ) :|
-                    [ AppN Nothing
-                      ( Ref Nothing
-                        ( Imported
-                          ( ModuleName "Golden.LongBindFlipped.Test" )
-                          ( Name "bindFlipped$w" )
-                        )
-                      )
-                      ( Ref Nothing
-                        ( Imported ( ModuleName "Golden.LongBindFlipped.Test" ) ( Name "inc" ) ) :|
-                        [ AppN Nothing
-                          ( Ref Nothing
-                            ( Imported
-                              ( ModuleName "Golden.LongBindFlipped.Test" )
-                              ( Name "bindFlipped$w" )
-                            )
-                          )
-                          ( Ref Nothing
-                            ( Imported
-                              ( ModuleName "Golden.LongBindFlipped.Test" )
-                              ( Name "inc" )
-                            ) :|
-                            [ AppN Nothing
-                              ( Ref Nothing
-                                ( Imported
-                                  ( ModuleName "Golden.LongBindFlipped.Test" )
-                                  ( Name "bindFlipped$w" )
-                                )
-                              )
-                              ( Ref Nothing
-                                ( Imported
-                                  ( ModuleName "Golden.LongBindFlipped.Test" )
-                                  ( Name "inc" )
-                                ) :|
-                                [ AppN Nothing
-                                  ( Ref Nothing
-                                    ( Imported
-                                      ( ModuleName "Golden.LongBindFlipped.Test" )
-                                      ( Name "bindFlipped$w" )
-                                    )
-                                  )
-                                  ( Ref Nothing
-                                    ( Imported
-                                      ( ModuleName "Golden.LongBindFlipped.Test" )
-                                      ( Name "inc" )
-                                    ) :|
-                                    [ AppN Nothing
-                                      ( Ref Nothing
-                                        ( Imported
-                                          ( ModuleName "Golden.LongBindFlipped.Test" )
-                                          ( Name "bindFlipped$w" )
-                                        )
-                                      )
-                                      ( Ref Nothing
-                                        ( Imported
-                                          ( ModuleName "Golden.LongBindFlipped.Test" )
-                                          ( Name "inc" )
-                                        ) :|
-                                        [ AppN Nothing
-                                          ( Ref Nothing
-                                            ( Imported
-                                              ( ModuleName "Golden.LongBindFlipped.Test" )
-                                              ( Name "bindFlipped$w" )
-                                            )
-                                          )
-                                          ( Ref Nothing
-                                            ( Imported
-                                              ( ModuleName "Golden.LongBindFlipped.Test" )
-                                              ( Name "inc" )
-                                            ) :|
-                                            [ AppN Nothing
-                                              ( Ref Nothing
-                                                ( Imported
-                                                  ( ModuleName "Golden.LongBindFlipped.Test" )
-                                                  ( Name "bindFlipped$w" )
-                                                )
-                                              )
-                                              ( Ref Nothing
-                                                ( Imported
-                                                  ( ModuleName "Golden.LongBindFlipped.Test" )
-                                                  ( Name "inc" )
-                                                ) :|
-                                                [ AppN Nothing
-                                                  ( Ref Nothing
-                                                    ( Imported
-                                                      ( ModuleName "Golden.LongBindFlipped.Test" )
-                                                      ( Name "bindFlipped$w" )
-                                                    )
-                                                  )
-                                                  ( Ref Nothing
-                                                    ( Imported
-                                                      ( ModuleName "Golden.LongBindFlipped.Test" )
-                                                      ( Name "inc" )
-                                                    ) :|
-                                                    [ AppN Nothing
-                                                      ( Ref Nothing
-                                                        ( Imported
-                                                          ( ModuleName "Golden.LongBindFlipped.Test" )
-                                                          ( Name "bindFlipped$w" )
-                                                        )
-                                                      )
-                                                      ( Ref Nothing
-                                                        ( Imported
-                                                          ( ModuleName "Golden.LongBindFlipped.Test" )
-                                                          ( Name "inc" )
-                                                        ) :|
-                                                        [ AppN Nothing
-                                                          ( Ref Nothing
-                                                            ( Imported
-                                                              ( ModuleName "Golden.LongBindFlipped.Test" )
-                                                              ( Name "bindFlipped$w" )
-                                                            )
-                                                          )
-                                                          ( Ref Nothing
-                                                            ( Imported
-                                                              ( ModuleName "Golden.LongBindFlipped.Test" )
-                                                              ( Name "inc" )
-                                                            ) :|
-                                                            [ AppN Nothing
-                                                              ( Ref Nothing
-                                                                ( Imported
-                                                                  ( ModuleName "Golden.LongBindFlipped.Test" )
-                                                                  ( Name "bindFlipped$w" )
-                                                                )
-                                                              )
-                                                              ( Ref Nothing
-                                                                ( Imported
-                                                                  ( ModuleName "Golden.LongBindFlipped.Test" )
-                                                                  ( Name "inc" )
-                                                                ) :|
-                                                                [ AppN Nothing
-                                                                  ( Ref Nothing
-                                                                    ( Imported
-                                                                      ( ModuleName "Golden.LongBindFlipped.Test" )
-                                                                      ( Name "bindFlipped$w" )
-                                                                    )
-                                                                  )
-                                                                  ( Ref Nothing
-                                                                    ( Imported
-                                                                      ( ModuleName "Golden.LongBindFlipped.Test" )
-                                                                      ( Name "inc" )
-                                                                    ) :|
-                                                                    [ AppN Nothing
-                                                                      ( Ref Nothing
-                                                                        ( Imported
-                                                                          ( ModuleName "Golden.LongBindFlipped.Test" )
-                                                                          ( Name "bindFlipped$w" )
-                                                                        )
-                                                                      )
-                                                                      ( Ref Nothing
-                                                                        ( Imported
-                                                                          ( ModuleName "Golden.LongBindFlipped.Test" )
-                                                                          ( Name "inc" )
-                                                                        ) :|
-                                                                        [ AppN Nothing
-                                                                          ( Ref Nothing
-                                                                            ( Imported
-                                                                              ( ModuleName "Golden.LongBindFlipped.Test" )
-                                                                              ( Name "bindFlipped$w" )
-                                                                            )
-                                                                          )
-                                                                          ( Ref Nothing
-                                                                            ( Imported
-                                                                              ( ModuleName "Golden.LongBindFlipped.Test" )
-                                                                              ( Name "inc" )
-                                                                            ) :|
-                                                                            [ AppN Nothing
-                                                                              ( Ref Nothing
-                                                                                ( Imported
-                                                                                  ( ModuleName "Golden.LongBindFlipped.Test" )
-                                                                                  ( Name "bindFlipped$w" )
-                                                                                )
-                                                                              )
-                                                                              ( Ref Nothing
-                                                                                ( Imported
-                                                                                  ( ModuleName "Golden.LongBindFlipped.Test" )
-                                                                                  ( Name "inc" )
-                                                                                ) :|
-                                                                                [ AppN Nothing
-                                                                                  ( Ref Nothing
-                                                                                    ( Imported
-                                                                                      ( ModuleName "Golden.LongBindFlipped.Test" )
-                                                                                      ( Name "bindFlipped$w" )
-                                                                                    )
-                                                                                  )
-                                                                                  ( Ref Nothing
-                                                                                    ( Imported
-                                                                                      ( ModuleName "Golden.LongBindFlipped.Test" )
-                                                                                      ( Name "inc" )
-                                                                                    ) :|
-                                                                                    [ AppN Nothing
-                                                                                      ( Ref Nothing
-                                                                                        ( Imported
-                                                                                          ( ModuleName "Golden.LongBindFlipped.Test" )
-                                                                                          ( Name "bindFlipped$w" )
-                                                                                        )
-                                                                                      )
-                                                                                      ( Ref Nothing
-                                                                                        ( Imported
-                                                                                          ( ModuleName "Golden.LongBindFlipped.Test" )
-                                                                                          ( Name "inc" )
-                                                                                        ) :|
-                                                                                        [ AppN Nothing
-                                                                                          ( Ref Nothing
-                                                                                            ( Imported
-                                                                                              ( ModuleName "Golden.LongBindFlipped.Test" )
-                                                                                              ( Name "bindFlipped$w" )
-                                                                                            )
-                                                                                          )
-                                                                                          ( Ref Nothing
-                                                                                            ( Imported
-                                                                                              ( ModuleName "Golden.LongBindFlipped.Test" )
-                                                                                              ( Name "inc" )
-                                                                                            ) :|
-                                                                                            [ AppN Nothing
-                                                                                              ( Ref Nothing
-                                                                                                ( Imported
-                                                                                                  ( ModuleName "Golden.LongBindFlipped.Test" )
-                                                                                                  ( Name "bindFlipped$w" )
-                                                                                                )
-                                                                                              )
-                                                                                              ( Ref Nothing
-                                                                                                ( Imported
-                                                                                                  ( ModuleName "Golden.LongBindFlipped.Test" )
-                                                                                                  ( Name "inc" )
-                                                                                                ) :|
-                                                                                                [ AppN Nothing
-                                                                                                  ( Ref Nothing
-                                                                                                    ( Imported
-                                                                                                      ( ModuleName "Golden.LongBindFlipped.Test" )
-                                                                                                      ( Name "bindFlipped$w" )
-                                                                                                    )
-                                                                                                  )
-                                                                                                  ( Ref Nothing
-                                                                                                    ( Imported
-                                                                                                      ( ModuleName "Golden.LongBindFlipped.Test" )
-                                                                                                      ( Name "inc" )
-                                                                                                    ) :|
-                                                                                                    [ AppN Nothing
-                                                                                                      ( Ref Nothing
-                                                                                                        ( Imported
-                                                                                                          ( ModuleName "Golden.LongBindFlipped.Test" )
-                                                                                                          ( Name "bindFlipped$w" )
-                                                                                                        )
-                                                                                                      )
-                                                                                                      ( Ref Nothing
-                                                                                                        ( Imported
-                                                                                                          ( ModuleName "Golden.LongBindFlipped.Test" )
-                                                                                                          ( Name "inc" )
-                                                                                                        ) :|
-                                                                                                        [ AppN Nothing
-                                                                                                          ( Ref Nothing
-                                                                                                            ( Imported
-                                                                                                              ( ModuleName "Golden.LongBindFlipped.Test" )
-                                                                                                              ( Name "bindFlipped$w" )
-                                                                                                            )
-                                                                                                          )
-                                                                                                          ( Ref Nothing
-                                                                                                            ( Imported
-                                                                                                              ( ModuleName "Golden.LongBindFlipped.Test" )
-                                                                                                              ( Name "inc" )
-                                                                                                            ) :|
-                                                                                                            [ AppN Nothing
-                                                                                                              ( Ref Nothing
-                                                                                                                ( Imported
-                                                                                                                  ( ModuleName "Golden.LongBindFlipped.Test" )
-                                                                                                                  ( Name "bindFlipped$w" )
-                                                                                                                )
-                                                                                                              )
-                                                                                                              ( Ref Nothing
-                                                                                                                ( Imported
-                                                                                                                  ( ModuleName "Golden.LongBindFlipped.Test" )
-                                                                                                                  ( Name "inc" )
-                                                                                                                ) :|
-                                                                                                                [ AppN Nothing
-                                                                                                                  ( Ref Nothing
-                                                                                                                    ( Imported
-                                                                                                                      ( ModuleName "Golden.LongBindFlipped.Test" )
-                                                                                                                      ( Name "bindFlipped$w" )
-                                                                                                                    )
-                                                                                                                  )
-                                                                                                                  ( Ref Nothing
-                                                                                                                    ( Imported
-                                                                                                                      ( ModuleName "Golden.LongBindFlipped.Test" )
-                                                                                                                      ( Name "inc" )
-                                                                                                                    ) :|
-                                                                                                                    [ AppN Nothing
-                                                                                                                      ( Ref Nothing
-                                                                                                                        ( Imported
-                                                                                                                          ( ModuleName "Golden.LongBindFlipped.Test" )
-                                                                                                                          ( Name "bindFlipped$w" )
-                                                                                                                        )
-                                                                                                                      )
-                                                                                                                      ( Ref Nothing
-                                                                                                                        ( Imported
-                                                                                                                          ( ModuleName "Golden.LongBindFlipped.Test" )
-                                                                                                                          ( Name "inc" )
-                                                                                                                        ) :|
-                                                                                                                        [ AppN Nothing
-                                                                                                                          ( Ref Nothing
-                                                                                                                            ( Imported
-                                                                                                                              ( ModuleName "Golden.LongBindFlipped.Test" )
-                                                                                                                              ( Name "bindFlipped$w" )
-                                                                                                                            )
-                                                                                                                          )
-                                                                                                                          ( Ref Nothing
-                                                                                                                            ( Imported
-                                                                                                                              ( ModuleName "Golden.LongBindFlipped.Test" )
-                                                                                                                              ( Name "inc" )
-                                                                                                                            ) :|
-                                                                                                                            [ AppN Nothing
-                                                                                                                              ( Ref Nothing
-                                                                                                                                ( Imported
-                                                                                                                                  ( ModuleName "Golden.LongBindFlipped.Test" )
-                                                                                                                                  ( Name "bindFlipped$w" )
-                                                                                                                                )
-                                                                                                                              )
-                                                                                                                              ( Ref Nothing
-                                                                                                                                ( Imported
-                                                                                                                                  ( ModuleName "Golden.LongBindFlipped.Test" )
-                                                                                                                                  ( Name "inc" )
-                                                                                                                                ) :|
-                                                                                                                                [ AppN Nothing
-                                                                                                                                  ( Ref Nothing
-                                                                                                                                    ( Imported
-                                                                                                                                      ( ModuleName "Golden.LongBindFlipped.Test" )
-                                                                                                                                      ( Name "bindFlipped$w" )
-                                                                                                                                    )
-                                                                                                                                  )
-                                                                                                                                  ( Ref Nothing
-                                                                                                                                    ( Imported
-                                                                                                                                      ( ModuleName "Golden.LongBindFlipped.Test" )
-                                                                                                                                      ( Name "inc" )
-                                                                                                                                    ) :|
-                                                                                                                                    [ AppN Nothing
-                                                                                                                                      ( Ref Nothing
-                                                                                                                                        ( Imported
-                                                                                                                                          ( ModuleName "Golden.LongBindFlipped.Test" )
-                                                                                                                                          ( Name "bindFlipped$w" )
-                                                                                                                                        )
-                                                                                                                                      )
-                                                                                                                                      ( Ref Nothing
-                                                                                                                                        ( Imported
-                                                                                                                                          ( ModuleName "Golden.LongBindFlipped.Test" )
-                                                                                                                                          ( Name "inc" )
-                                                                                                                                        ) :|
-                                                                                                                                        [ AppN Nothing
-                                                                                                                                          ( Ref Nothing
-                                                                                                                                            ( Imported
-                                                                                                                                              ( ModuleName "Golden.LongBindFlipped.Test" )
-                                                                                                                                              ( Name "bindFlipped$w" )
-                                                                                                                                            )
-                                                                                                                                          )
-                                                                                                                                          ( Ref Nothing
-                                                                                                                                            ( Imported
-                                                                                                                                              ( ModuleName "Golden.LongBindFlipped.Test" )
-                                                                                                                                              ( Name "inc" )
-                                                                                                                                            ) :|
-                                                                                                                                            [ AppN Nothing
-                                                                                                                                              ( Ref Nothing
-                                                                                                                                                ( Imported
-                                                                                                                                                  ( ModuleName "Golden.LongBindFlipped.Test" )
-                                                                                                                                                  ( Name "bindFlipped$w" )
-                                                                                                                                                )
-                                                                                                                                              )
-                                                                                                                                              ( Ref Nothing
-                                                                                                                                                ( Imported
-                                                                                                                                                  ( ModuleName "Golden.LongBindFlipped.Test" )
-                                                                                                                                                  ( Name "inc" )
-                                                                                                                                                ) :|
-                                                                                                                                                [ AppN Nothing
-                                                                                                                                                  ( Ref Nothing
-                                                                                                                                                    ( Imported
-                                                                                                                                                      ( ModuleName "Golden.LongBindFlipped.Test" )
-                                                                                                                                                      ( Name "bindFlipped$w" )
-                                                                                                                                                    )
-                                                                                                                                                  )
-                                                                                                                                                  ( Ref Nothing
-                                                                                                                                                    ( Imported
-                                                                                                                                                      ( ModuleName "Golden.LongBindFlipped.Test" )
-                                                                                                                                                      ( Name "inc" )
-                                                                                                                                                    ) :|
-                                                                                                                                                    [ AppN Nothing
-                                                                                                                                                      ( Ref Nothing
-                                                                                                                                                        ( Imported
-                                                                                                                                                          ( ModuleName "Golden.LongBindFlipped.Test" )
-                                                                                                                                                          ( Name "bindFlipped$w" )
-                                                                                                                                                        )
-                                                                                                                                                      )
-                                                                                                                                                      ( Ref Nothing
-                                                                                                                                                        ( Imported
-                                                                                                                                                          ( ModuleName "Golden.LongBindFlipped.Test" )
-                                                                                                                                                          ( Name "inc" )
-                                                                                                                                                        ) :|
-                                                                                                                                                        [ AppN Nothing
-                                                                                                                                                          ( Ref Nothing
-                                                                                                                                                            ( Imported
-                                                                                                                                                              ( ModuleName "Golden.LongBindFlipped.Test" )
-                                                                                                                                                              ( Name "bindFlipped$w" )
-                                                                                                                                                            )
-                                                                                                                                                          )
-                                                                                                                                                          ( Ref Nothing
-                                                                                                                                                            ( Imported
-                                                                                                                                                              ( ModuleName "Golden.LongBindFlipped.Test" )
-                                                                                                                                                              ( Name "inc" )
-                                                                                                                                                            ) :|
-                                                                                                                                                            [ AppN Nothing
-                                                                                                                                                              ( Ref Nothing
-                                                                                                                                                                ( Imported
-                                                                                                                                                                  ( ModuleName "Golden.LongBindFlipped.Test" )
-                                                                                                                                                                  ( Name "bindFlipped$w" )
-                                                                                                                                                                )
-                                                                                                                                                              )
-                                                                                                                                                              ( Ref Nothing
-                                                                                                                                                                ( Imported
-                                                                                                                                                                  ( ModuleName "Golden.LongBindFlipped.Test" )
-                                                                                                                                                                  ( Name "inc" )
-                                                                                                                                                                ) :|
-                                                                                                                                                                [ AppN Nothing
-                                                                                                                                                                  ( Ref Nothing
-                                                                                                                                                                    ( Imported
-                                                                                                                                                                      ( ModuleName "Golden.LongBindFlipped.Test" )
-                                                                                                                                                                      ( Name "bindFlipped$w" )
-                                                                                                                                                                    )
-                                                                                                                                                                  )
-                                                                                                                                                                  ( Ref Nothing
-                                                                                                                                                                    ( Imported
-                                                                                                                                                                      ( ModuleName "Golden.LongBindFlipped.Test" )
-                                                                                                                                                                      ( Name "inc" )
-                                                                                                                                                                    ) :|
-                                                                                                                                                                    [ AppN Nothing
-                                                                                                                                                                      ( Ref Nothing
-                                                                                                                                                                        ( Imported
-                                                                                                                                                                          ( ModuleName "Golden.LongBindFlipped.Test" )
-                                                                                                                                                                          ( Name "bindFlipped$w" )
-                                                                                                                                                                        )
-                                                                                                                                                                      )
-                                                                                                                                                                      ( Ref Nothing
-                                                                                                                                                                        ( Imported
-                                                                                                                                                                          ( ModuleName "Golden.LongBindFlipped.Test" )
-                                                                                                                                                                          ( Name "inc" )
-                                                                                                                                                                        ) :|
-                                                                                                                                                                        [ AppN Nothing
-                                                                                                                                                                          ( Ref Nothing
-                                                                                                                                                                            ( Imported
-                                                                                                                                                                              ( ModuleName "Golden.LongBindFlipped.Test" )
-                                                                                                                                                                              ( Name "bindFlipped$w" )
-                                                                                                                                                                            )
-                                                                                                                                                                          )
-                                                                                                                                                                          ( Ref Nothing
-                                                                                                                                                                            ( Imported
-                                                                                                                                                                              ( ModuleName "Golden.LongBindFlipped.Test" )
-                                                                                                                                                                              ( Name "inc" )
-                                                                                                                                                                            ) :|
-                                                                                                                                                                            [ Ref Nothing
-                                                                                                                                                                              ( Local
-                                                                                                                                                                                ( Name "$tmp332" )
-                                                                                                                                                                              )
-                                                                                                                                                                            ]
-                                                                                                                                                                          )
-                                                                                                                                                                        ]
-                                                                                                                                                                      )
-                                                                                                                                                                    ]
-                                                                                                                                                                  )
-                                                                                                                                                                ]
-                                                                                                                                                              )
-                                                                                                                                                            ]
-                                                                                                                                                          )
-                                                                                                                                                        ]
-                                                                                                                                                      )
-                                                                                                                                                    ]
-                                                                                                                                                  )
-                                                                                                                                                ]
-                                                                                                                                              )
-                                                                                                                                            ]
-                                                                                                                                          )
-                                                                                                                                        ]
-                                                                                                                                      )
-                                                                                                                                    ]
-                                                                                                                                  )
-                                                                                                                                ]
-                                                                                                                              )
-                                                                                                                            ]
-                                                                                                                          )
-                                                                                                                        ]
-                                                                                                                      )
-                                                                                                                    ]
-                                                                                                                  )
-                                                                                                                ]
-                                                                                                              )
-                                                                                                            ]
-                                                                                                          )
-                                                                                                        ]
-                                                                                                      )
-                                                                                                    ]
-                                                                                                  )
-                                                                                                ]
-                                                                                              )
-                                                                                            ]
-                                                                                          )
-                                                                                        ]
-                                                                                      )
-                                                                                    ]
-                                                                                  )
-                                                                                ]
-                                                                              )
-                                                                            ]
-                                                                          )
-                                                                        ]
-                                                                      )
-                                                                    ]
-                                                                  )
-                                                                ]
-                                                              )
-                                                            ]
-                                                          )
-                                                        ]
-                                                      )
-                                                    ]
-                                                  )
-                                                ]
-                                              )
-                                            ]
-                                          )
-                                        ]
-                                      )
-                                    ]
-                                  )
-                                ]
-                              )
-                            ]
-                          )
-                        ]
-                      )
-                    ]
-                  )
-                ]
-              )
-            ), Standalone
             ( Nothing, Name "$tmp334", AppN Nothing
               ( Ref Nothing
                 ( Imported ( ModuleName "Golden.LongBindFlipped.Test" ) ( Name "bindFlipped$w" ) )
@@ -3922,6 +3369,559 @@ UberModule
                   )
                 ]
               )
+            ), Standalone
+            ( Nothing, Name "$tmp339", AppN Nothing
+              ( Ref Nothing
+                ( Imported ( ModuleName "Golden.LongBindFlipped.Test" ) ( Name "bindFlipped$w" ) )
+              )
+              ( Ref Nothing
+                ( Imported ( ModuleName "Golden.LongBindFlipped.Test" ) ( Name "inc" ) ) :|
+                [ AppN Nothing
+                  ( Ref Nothing
+                    ( Imported
+                      ( ModuleName "Golden.LongBindFlipped.Test" )
+                      ( Name "bindFlipped$w" )
+                    )
+                  )
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Golden.LongBindFlipped.Test" ) ( Name "inc" ) ) :|
+                    [ AppN Nothing
+                      ( Ref Nothing
+                        ( Imported
+                          ( ModuleName "Golden.LongBindFlipped.Test" )
+                          ( Name "bindFlipped$w" )
+                        )
+                      )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Golden.LongBindFlipped.Test" ) ( Name "inc" ) ) :|
+                        [ AppN Nothing
+                          ( Ref Nothing
+                            ( Imported
+                              ( ModuleName "Golden.LongBindFlipped.Test" )
+                              ( Name "bindFlipped$w" )
+                            )
+                          )
+                          ( Ref Nothing
+                            ( Imported
+                              ( ModuleName "Golden.LongBindFlipped.Test" )
+                              ( Name "inc" )
+                            ) :|
+                            [ AppN Nothing
+                              ( Ref Nothing
+                                ( Imported
+                                  ( ModuleName "Golden.LongBindFlipped.Test" )
+                                  ( Name "bindFlipped$w" )
+                                )
+                              )
+                              ( Ref Nothing
+                                ( Imported
+                                  ( ModuleName "Golden.LongBindFlipped.Test" )
+                                  ( Name "inc" )
+                                ) :|
+                                [ AppN Nothing
+                                  ( Ref Nothing
+                                    ( Imported
+                                      ( ModuleName "Golden.LongBindFlipped.Test" )
+                                      ( Name "bindFlipped$w" )
+                                    )
+                                  )
+                                  ( Ref Nothing
+                                    ( Imported
+                                      ( ModuleName "Golden.LongBindFlipped.Test" )
+                                      ( Name "inc" )
+                                    ) :|
+                                    [ AppN Nothing
+                                      ( Ref Nothing
+                                        ( Imported
+                                          ( ModuleName "Golden.LongBindFlipped.Test" )
+                                          ( Name "bindFlipped$w" )
+                                        )
+                                      )
+                                      ( Ref Nothing
+                                        ( Imported
+                                          ( ModuleName "Golden.LongBindFlipped.Test" )
+                                          ( Name "inc" )
+                                        ) :|
+                                        [ AppN Nothing
+                                          ( Ref Nothing
+                                            ( Imported
+                                              ( ModuleName "Golden.LongBindFlipped.Test" )
+                                              ( Name "bindFlipped$w" )
+                                            )
+                                          )
+                                          ( Ref Nothing
+                                            ( Imported
+                                              ( ModuleName "Golden.LongBindFlipped.Test" )
+                                              ( Name "inc" )
+                                            ) :|
+                                            [ AppN Nothing
+                                              ( Ref Nothing
+                                                ( Imported
+                                                  ( ModuleName "Golden.LongBindFlipped.Test" )
+                                                  ( Name "bindFlipped$w" )
+                                                )
+                                              )
+                                              ( Ref Nothing
+                                                ( Imported
+                                                  ( ModuleName "Golden.LongBindFlipped.Test" )
+                                                  ( Name "inc" )
+                                                ) :|
+                                                [ AppN Nothing
+                                                  ( Ref Nothing
+                                                    ( Imported
+                                                      ( ModuleName "Golden.LongBindFlipped.Test" )
+                                                      ( Name "bindFlipped$w" )
+                                                    )
+                                                  )
+                                                  ( Ref Nothing
+                                                    ( Imported
+                                                      ( ModuleName "Golden.LongBindFlipped.Test" )
+                                                      ( Name "inc" )
+                                                    ) :|
+                                                    [ AppN Nothing
+                                                      ( Ref Nothing
+                                                        ( Imported
+                                                          ( ModuleName "Golden.LongBindFlipped.Test" )
+                                                          ( Name "bindFlipped$w" )
+                                                        )
+                                                      )
+                                                      ( Ref Nothing
+                                                        ( Imported
+                                                          ( ModuleName "Golden.LongBindFlipped.Test" )
+                                                          ( Name "inc" )
+                                                        ) :|
+                                                        [ AppN Nothing
+                                                          ( Ref Nothing
+                                                            ( Imported
+                                                              ( ModuleName "Golden.LongBindFlipped.Test" )
+                                                              ( Name "bindFlipped$w" )
+                                                            )
+                                                          )
+                                                          ( Ref Nothing
+                                                            ( Imported
+                                                              ( ModuleName "Golden.LongBindFlipped.Test" )
+                                                              ( Name "inc" )
+                                                            ) :|
+                                                            [ AppN Nothing
+                                                              ( Ref Nothing
+                                                                ( Imported
+                                                                  ( ModuleName "Golden.LongBindFlipped.Test" )
+                                                                  ( Name "bindFlipped$w" )
+                                                                )
+                                                              )
+                                                              ( Ref Nothing
+                                                                ( Imported
+                                                                  ( ModuleName "Golden.LongBindFlipped.Test" )
+                                                                  ( Name "inc" )
+                                                                ) :|
+                                                                [ AppN Nothing
+                                                                  ( Ref Nothing
+                                                                    ( Imported
+                                                                      ( ModuleName "Golden.LongBindFlipped.Test" )
+                                                                      ( Name "bindFlipped$w" )
+                                                                    )
+                                                                  )
+                                                                  ( Ref Nothing
+                                                                    ( Imported
+                                                                      ( ModuleName "Golden.LongBindFlipped.Test" )
+                                                                      ( Name "inc" )
+                                                                    ) :|
+                                                                    [ AppN Nothing
+                                                                      ( Ref Nothing
+                                                                        ( Imported
+                                                                          ( ModuleName "Golden.LongBindFlipped.Test" )
+                                                                          ( Name "bindFlipped$w" )
+                                                                        )
+                                                                      )
+                                                                      ( Ref Nothing
+                                                                        ( Imported
+                                                                          ( ModuleName "Golden.LongBindFlipped.Test" )
+                                                                          ( Name "inc" )
+                                                                        ) :|
+                                                                        [ AppN Nothing
+                                                                          ( Ref Nothing
+                                                                            ( Imported
+                                                                              ( ModuleName "Golden.LongBindFlipped.Test" )
+                                                                              ( Name "bindFlipped$w" )
+                                                                            )
+                                                                          )
+                                                                          ( Ref Nothing
+                                                                            ( Imported
+                                                                              ( ModuleName "Golden.LongBindFlipped.Test" )
+                                                                              ( Name "inc" )
+                                                                            ) :|
+                                                                            [ AppN Nothing
+                                                                              ( Ref Nothing
+                                                                                ( Imported
+                                                                                  ( ModuleName "Golden.LongBindFlipped.Test" )
+                                                                                  ( Name "bindFlipped$w" )
+                                                                                )
+                                                                              )
+                                                                              ( Ref Nothing
+                                                                                ( Imported
+                                                                                  ( ModuleName "Golden.LongBindFlipped.Test" )
+                                                                                  ( Name "inc" )
+                                                                                ) :|
+                                                                                [ AppN Nothing
+                                                                                  ( Ref Nothing
+                                                                                    ( Imported
+                                                                                      ( ModuleName "Golden.LongBindFlipped.Test" )
+                                                                                      ( Name "bindFlipped$w" )
+                                                                                    )
+                                                                                  )
+                                                                                  ( Ref Nothing
+                                                                                    ( Imported
+                                                                                      ( ModuleName "Golden.LongBindFlipped.Test" )
+                                                                                      ( Name "inc" )
+                                                                                    ) :|
+                                                                                    [ AppN Nothing
+                                                                                      ( Ref Nothing
+                                                                                        ( Imported
+                                                                                          ( ModuleName "Golden.LongBindFlipped.Test" )
+                                                                                          ( Name "bindFlipped$w" )
+                                                                                        )
+                                                                                      )
+                                                                                      ( Ref Nothing
+                                                                                        ( Imported
+                                                                                          ( ModuleName "Golden.LongBindFlipped.Test" )
+                                                                                          ( Name "inc" )
+                                                                                        ) :|
+                                                                                        [ AppN Nothing
+                                                                                          ( Ref Nothing
+                                                                                            ( Imported
+                                                                                              ( ModuleName "Golden.LongBindFlipped.Test" )
+                                                                                              ( Name "bindFlipped$w" )
+                                                                                            )
+                                                                                          )
+                                                                                          ( Ref Nothing
+                                                                                            ( Imported
+                                                                                              ( ModuleName "Golden.LongBindFlipped.Test" )
+                                                                                              ( Name "inc" )
+                                                                                            ) :|
+                                                                                            [ AppN Nothing
+                                                                                              ( Ref Nothing
+                                                                                                ( Imported
+                                                                                                  ( ModuleName "Golden.LongBindFlipped.Test" )
+                                                                                                  ( Name "bindFlipped$w" )
+                                                                                                )
+                                                                                              )
+                                                                                              ( Ref Nothing
+                                                                                                ( Imported
+                                                                                                  ( ModuleName "Golden.LongBindFlipped.Test" )
+                                                                                                  ( Name "inc" )
+                                                                                                ) :|
+                                                                                                [ AppN Nothing
+                                                                                                  ( Ref Nothing
+                                                                                                    ( Imported
+                                                                                                      ( ModuleName "Golden.LongBindFlipped.Test" )
+                                                                                                      ( Name "bindFlipped$w" )
+                                                                                                    )
+                                                                                                  )
+                                                                                                  ( Ref Nothing
+                                                                                                    ( Imported
+                                                                                                      ( ModuleName "Golden.LongBindFlipped.Test" )
+                                                                                                      ( Name "inc" )
+                                                                                                    ) :|
+                                                                                                    [ AppN Nothing
+                                                                                                      ( Ref Nothing
+                                                                                                        ( Imported
+                                                                                                          ( ModuleName "Golden.LongBindFlipped.Test" )
+                                                                                                          ( Name "bindFlipped$w" )
+                                                                                                        )
+                                                                                                      )
+                                                                                                      ( Ref Nothing
+                                                                                                        ( Imported
+                                                                                                          ( ModuleName "Golden.LongBindFlipped.Test" )
+                                                                                                          ( Name "inc" )
+                                                                                                        ) :|
+                                                                                                        [ AppN Nothing
+                                                                                                          ( Ref Nothing
+                                                                                                            ( Imported
+                                                                                                              ( ModuleName "Golden.LongBindFlipped.Test" )
+                                                                                                              ( Name "bindFlipped$w" )
+                                                                                                            )
+                                                                                                          )
+                                                                                                          ( Ref Nothing
+                                                                                                            ( Imported
+                                                                                                              ( ModuleName "Golden.LongBindFlipped.Test" )
+                                                                                                              ( Name "inc" )
+                                                                                                            ) :|
+                                                                                                            [ AppN Nothing
+                                                                                                              ( Ref Nothing
+                                                                                                                ( Imported
+                                                                                                                  ( ModuleName "Golden.LongBindFlipped.Test" )
+                                                                                                                  ( Name "bindFlipped$w" )
+                                                                                                                )
+                                                                                                              )
+                                                                                                              ( Ref Nothing
+                                                                                                                ( Imported
+                                                                                                                  ( ModuleName "Golden.LongBindFlipped.Test" )
+                                                                                                                  ( Name "inc" )
+                                                                                                                ) :|
+                                                                                                                [ AppN Nothing
+                                                                                                                  ( Ref Nothing
+                                                                                                                    ( Imported
+                                                                                                                      ( ModuleName "Golden.LongBindFlipped.Test" )
+                                                                                                                      ( Name "bindFlipped$w" )
+                                                                                                                    )
+                                                                                                                  )
+                                                                                                                  ( Ref Nothing
+                                                                                                                    ( Imported
+                                                                                                                      ( ModuleName "Golden.LongBindFlipped.Test" )
+                                                                                                                      ( Name "inc" )
+                                                                                                                    ) :|
+                                                                                                                    [ AppN Nothing
+                                                                                                                      ( Ref Nothing
+                                                                                                                        ( Imported
+                                                                                                                          ( ModuleName "Golden.LongBindFlipped.Test" )
+                                                                                                                          ( Name "bindFlipped$w" )
+                                                                                                                        )
+                                                                                                                      )
+                                                                                                                      ( Ref Nothing
+                                                                                                                        ( Imported
+                                                                                                                          ( ModuleName "Golden.LongBindFlipped.Test" )
+                                                                                                                          ( Name "inc" )
+                                                                                                                        ) :|
+                                                                                                                        [ AppN Nothing
+                                                                                                                          ( Ref Nothing
+                                                                                                                            ( Imported
+                                                                                                                              ( ModuleName "Golden.LongBindFlipped.Test" )
+                                                                                                                              ( Name "bindFlipped$w" )
+                                                                                                                            )
+                                                                                                                          )
+                                                                                                                          ( Ref Nothing
+                                                                                                                            ( Imported
+                                                                                                                              ( ModuleName "Golden.LongBindFlipped.Test" )
+                                                                                                                              ( Name "inc" )
+                                                                                                                            ) :|
+                                                                                                                            [ AppN Nothing
+                                                                                                                              ( Ref Nothing
+                                                                                                                                ( Imported
+                                                                                                                                  ( ModuleName "Golden.LongBindFlipped.Test" )
+                                                                                                                                  ( Name "bindFlipped$w" )
+                                                                                                                                )
+                                                                                                                              )
+                                                                                                                              ( Ref Nothing
+                                                                                                                                ( Imported
+                                                                                                                                  ( ModuleName "Golden.LongBindFlipped.Test" )
+                                                                                                                                  ( Name "inc" )
+                                                                                                                                ) :|
+                                                                                                                                [ AppN Nothing
+                                                                                                                                  ( Ref Nothing
+                                                                                                                                    ( Imported
+                                                                                                                                      ( ModuleName "Golden.LongBindFlipped.Test" )
+                                                                                                                                      ( Name "bindFlipped$w" )
+                                                                                                                                    )
+                                                                                                                                  )
+                                                                                                                                  ( Ref Nothing
+                                                                                                                                    ( Imported
+                                                                                                                                      ( ModuleName "Golden.LongBindFlipped.Test" )
+                                                                                                                                      ( Name "inc" )
+                                                                                                                                    ) :|
+                                                                                                                                    [ AppN Nothing
+                                                                                                                                      ( Ref Nothing
+                                                                                                                                        ( Imported
+                                                                                                                                          ( ModuleName "Golden.LongBindFlipped.Test" )
+                                                                                                                                          ( Name "bindFlipped$w" )
+                                                                                                                                        )
+                                                                                                                                      )
+                                                                                                                                      ( Ref Nothing
+                                                                                                                                        ( Imported
+                                                                                                                                          ( ModuleName "Golden.LongBindFlipped.Test" )
+                                                                                                                                          ( Name "inc" )
+                                                                                                                                        ) :|
+                                                                                                                                        [ AppN Nothing
+                                                                                                                                          ( Ref Nothing
+                                                                                                                                            ( Imported
+                                                                                                                                              ( ModuleName "Golden.LongBindFlipped.Test" )
+                                                                                                                                              ( Name "bindFlipped$w" )
+                                                                                                                                            )
+                                                                                                                                          )
+                                                                                                                                          ( Ref Nothing
+                                                                                                                                            ( Imported
+                                                                                                                                              ( ModuleName "Golden.LongBindFlipped.Test" )
+                                                                                                                                              ( Name "inc" )
+                                                                                                                                            ) :|
+                                                                                                                                            [ AppN Nothing
+                                                                                                                                              ( Ref Nothing
+                                                                                                                                                ( Imported
+                                                                                                                                                  ( ModuleName "Golden.LongBindFlipped.Test" )
+                                                                                                                                                  ( Name "bindFlipped$w" )
+                                                                                                                                                )
+                                                                                                                                              )
+                                                                                                                                              ( Ref Nothing
+                                                                                                                                                ( Imported
+                                                                                                                                                  ( ModuleName "Golden.LongBindFlipped.Test" )
+                                                                                                                                                  ( Name "inc" )
+                                                                                                                                                ) :|
+                                                                                                                                                [ AppN Nothing
+                                                                                                                                                  ( Ref Nothing
+                                                                                                                                                    ( Imported
+                                                                                                                                                      ( ModuleName "Golden.LongBindFlipped.Test" )
+                                                                                                                                                      ( Name "bindFlipped$w" )
+                                                                                                                                                    )
+                                                                                                                                                  )
+                                                                                                                                                  ( Ref Nothing
+                                                                                                                                                    ( Imported
+                                                                                                                                                      ( ModuleName "Golden.LongBindFlipped.Test" )
+                                                                                                                                                      ( Name "inc" )
+                                                                                                                                                    ) :|
+                                                                                                                                                    [ AppN Nothing
+                                                                                                                                                      ( Ref Nothing
+                                                                                                                                                        ( Imported
+                                                                                                                                                          ( ModuleName "Golden.LongBindFlipped.Test" )
+                                                                                                                                                          ( Name "bindFlipped$w" )
+                                                                                                                                                        )
+                                                                                                                                                      )
+                                                                                                                                                      ( Ref Nothing
+                                                                                                                                                        ( Imported
+                                                                                                                                                          ( ModuleName "Golden.LongBindFlipped.Test" )
+                                                                                                                                                          ( Name "inc" )
+                                                                                                                                                        ) :|
+                                                                                                                                                        [ AppN Nothing
+                                                                                                                                                          ( Ref Nothing
+                                                                                                                                                            ( Imported
+                                                                                                                                                              ( ModuleName "Golden.LongBindFlipped.Test" )
+                                                                                                                                                              ( Name "bindFlipped$w" )
+                                                                                                                                                            )
+                                                                                                                                                          )
+                                                                                                                                                          ( Ref Nothing
+                                                                                                                                                            ( Imported
+                                                                                                                                                              ( ModuleName "Golden.LongBindFlipped.Test" )
+                                                                                                                                                              ( Name "inc" )
+                                                                                                                                                            ) :|
+                                                                                                                                                            [ AppN Nothing
+                                                                                                                                                              ( Ref Nothing
+                                                                                                                                                                ( Imported
+                                                                                                                                                                  ( ModuleName "Golden.LongBindFlipped.Test" )
+                                                                                                                                                                  ( Name "bindFlipped$w" )
+                                                                                                                                                                )
+                                                                                                                                                              )
+                                                                                                                                                              ( Ref Nothing
+                                                                                                                                                                ( Imported
+                                                                                                                                                                  ( ModuleName "Golden.LongBindFlipped.Test" )
+                                                                                                                                                                  ( Name "inc" )
+                                                                                                                                                                ) :|
+                                                                                                                                                                [ AppN Nothing
+                                                                                                                                                                  ( Ref Nothing
+                                                                                                                                                                    ( Imported
+                                                                                                                                                                      ( ModuleName "Golden.LongBindFlipped.Test" )
+                                                                                                                                                                      ( Name "bindFlipped$w" )
+                                                                                                                                                                    )
+                                                                                                                                                                  )
+                                                                                                                                                                  ( Ref Nothing
+                                                                                                                                                                    ( Imported
+                                                                                                                                                                      ( ModuleName "Golden.LongBindFlipped.Test" )
+                                                                                                                                                                      ( Name "inc" )
+                                                                                                                                                                    ) :|
+                                                                                                                                                                    [ AppN Nothing
+                                                                                                                                                                      ( Ref Nothing
+                                                                                                                                                                        ( Imported
+                                                                                                                                                                          ( ModuleName "Golden.LongBindFlipped.Test" )
+                                                                                                                                                                          ( Name "bindFlipped$w" )
+                                                                                                                                                                        )
+                                                                                                                                                                      )
+                                                                                                                                                                      ( Ref Nothing
+                                                                                                                                                                        ( Imported
+                                                                                                                                                                          ( ModuleName "Golden.LongBindFlipped.Test" )
+                                                                                                                                                                          ( Name "inc" )
+                                                                                                                                                                        ) :|
+                                                                                                                                                                        [ AppN Nothing
+                                                                                                                                                                          ( Ref Nothing
+                                                                                                                                                                            ( Imported
+                                                                                                                                                                              ( ModuleName "Golden.LongBindFlipped.Test" )
+                                                                                                                                                                              ( Name "bindFlipped$w" )
+                                                                                                                                                                            )
+                                                                                                                                                                          )
+                                                                                                                                                                          ( Ref Nothing
+                                                                                                                                                                            ( Imported
+                                                                                                                                                                              ( ModuleName "Golden.LongBindFlipped.Test" )
+                                                                                                                                                                              ( Name "inc" )
+                                                                                                                                                                            ) :|
+                                                                                                                                                                            [ Ref Nothing
+                                                                                                                                                                              ( Local
+                                                                                                                                                                                ( Name "$tmp338" )
+                                                                                                                                                                              )
+                                                                                                                                                                            ]
+                                                                                                                                                                          )
+                                                                                                                                                                        ]
+                                                                                                                                                                      )
+                                                                                                                                                                    ]
+                                                                                                                                                                  )
+                                                                                                                                                                ]
+                                                                                                                                                              )
+                                                                                                                                                            ]
+                                                                                                                                                          )
+                                                                                                                                                        ]
+                                                                                                                                                      )
+                                                                                                                                                    ]
+                                                                                                                                                  )
+                                                                                                                                                ]
+                                                                                                                                              )
+                                                                                                                                            ]
+                                                                                                                                          )
+                                                                                                                                        ]
+                                                                                                                                      )
+                                                                                                                                    ]
+                                                                                                                                  )
+                                                                                                                                ]
+                                                                                                                              )
+                                                                                                                            ]
+                                                                                                                          )
+                                                                                                                        ]
+                                                                                                                      )
+                                                                                                                    ]
+                                                                                                                  )
+                                                                                                                ]
+                                                                                                              )
+                                                                                                            ]
+                                                                                                          )
+                                                                                                        ]
+                                                                                                      )
+                                                                                                    ]
+                                                                                                  )
+                                                                                                ]
+                                                                                              )
+                                                                                            ]
+                                                                                          )
+                                                                                        ]
+                                                                                      )
+                                                                                    ]
+                                                                                  )
+                                                                                ]
+                                                                              )
+                                                                            ]
+                                                                          )
+                                                                        ]
+                                                                      )
+                                                                    ]
+                                                                  )
+                                                                ]
+                                                              )
+                                                            ]
+                                                          )
+                                                        ]
+                                                      )
+                                                    ]
+                                                  )
+                                                ]
+                                              )
+                                            ]
+                                          )
+                                        ]
+                                      )
+                                    ]
+                                  )
+                                ]
+                              )
+                            ]
+                          )
+                        ]
+                      )
+                    ]
+                  )
+                ]
+              )
             )
           ]
         )
@@ -4149,7 +4149,7 @@ UberModule
                                                                                         ) :|
                                                                                         [ Ref Nothing
                                                                                           ( Local
-                                                                                            ( Name "$tmp338" )
+                                                                                            ( Name "$tmp339" )
                                                                                           )
                                                                                         ]
                                                                                       )

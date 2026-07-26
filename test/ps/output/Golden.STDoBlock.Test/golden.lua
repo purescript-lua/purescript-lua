@@ -23,13 +23,13 @@ local Effect_Console_foreign = {
 }
 local Golden_STDoBlock_Test_sumTwice = function(n)
   return Control_Monad_ST_Internal_foreign.run(function()
-    local _S_cse495 = function(s_S_455)
-      local sPrime_S_456 = s_S_455 + n
-      return { state = sPrime_S_456, value = sPrime_S_456 }
+    local _S_cse496 = function(s_S_456)
+      local sPrime_S_457 = s_S_456 + n
+      return { state = sPrime_S_457, value = sPrime_S_457 }
     end
     local ref = Control_Monad_ST_Internal_foreign.new(0)()
-    local _ = Control_Monad_ST_Internal_modifyImpl(_S_cse495)(ref)()
-    local _ = Control_Monad_ST_Internal_modifyImpl(_S_cse495)(ref)()
+    local _ = Control_Monad_ST_Internal_modifyImpl(_S_cse496)(ref)()
+    local _ = Control_Monad_ST_Internal_modifyImpl(_S_cse496)(ref)()
     local total = Control_Monad_ST_Internal_foreign.read(ref)()
     return total + 1
   end)

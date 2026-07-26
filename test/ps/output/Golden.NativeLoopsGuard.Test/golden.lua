@@ -77,12 +77,12 @@ end)
 Effect_Lazy_applyEffect = PSLUA_runtime_lazy("applyEffect")(function()
   return {
     apply = (function()
-      local bind_S_1430 = (Effect_monadEffect.Bind1()).bind
-      return function(f_S_1431)
-        return function(a_S_1432)
-          return bind_S_1430(f_S_1431)(function(fPrime_S_1433)
-            return bind_S_1430(a_S_1432)(function(aPrime_S_1434)
-              return (Effect_monadEffect.Applicative0()).pure(fPrime_S_1433(aPrime_S_1434))
+      local bind_S_1433 = (Effect_monadEffect.Bind1()).bind
+      return function(f_S_1434)
+        return function(a_S_1435)
+          return bind_S_1433(f_S_1434)(function(fPrime_S_1436)
+            return bind_S_1433(a_S_1435)(function(aPrime_S_1437)
+              return (Effect_monadEffect.Applicative0()).pure(fPrime_S_1436(aPrime_S_1437))
             end)
           end)
         end
@@ -92,8 +92,8 @@ Effect_Lazy_applyEffect = PSLUA_runtime_lazy("applyEffect")(function()
   }
 end)
 local Effect_functorEffect = Effect_Lazy_functorEffect(0)
-local Golden_NativeLoopsGuard_Test_when_S_w = function(v_S_1437, v1_S_1438)
-  if v_S_1437 then return v1_S_1438 else return Effect_pureE(Data_Unit_unit) end
+local Golden_NativeLoopsGuard_Test_when_S_w = function(v_S_1440, v1_S_1441)
+  if v_S_1440 then return v1_S_1441 else return Effect_pureE(Data_Unit_unit) end
 end
 local Golden_NativeLoopsGuard_Test_logShow = function(a_S_6)
   return Effect_Console_log(Data_Show_showIntImpl(a_S_6))
@@ -105,13 +105,13 @@ local Golden_NativeLoopsGuard_Test_whileE_S_w = function(cond, act)
   end
 end
 local Golden_NativeLoopsGuard_Test_foreachE_S_w = function(xs, f)
-  local v2_S_1427 = Data_Array_foreign.indexImpl(function(value0_S_1428)
-    return { "Data.Maybe∷Maybe.Just", value0_S_1428 }
+  local v2_S_1430 = Data_Array_foreign.indexImpl(function(value0_S_1431)
+    return { "Data.Maybe∷Maybe.Just", value0_S_1431 }
   end, { "Data.Maybe∷Maybe.Nothing" }, xs, 0)
-  if "Data.Maybe∷Maybe.Nothing" == v2_S_1427[1] then
+  if "Data.Maybe∷Maybe.Nothing" == v2_S_1430[1] then
     return Effect_pureE(Data_Unit_unit)
   else
-    return f(v2_S_1427[2])
+    return f(v2_S_1430[2])
   end
 end
 local Golden_NativeLoopsGuard_Test_forE_S_w = function(lo, hi, f)

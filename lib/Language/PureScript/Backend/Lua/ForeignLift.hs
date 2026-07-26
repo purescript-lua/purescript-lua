@@ -140,11 +140,13 @@ import Prelude hiding (show)
 -- Allowlist -------------------------------------------------------------------
 
 {- | The foreign exports lifted into the IR: the arithmetic, comparison,
-boolean, and concatenation core of the prelude (issue #178), plus both
+boolean, and concatenation core of the prelude (issue #178), both
 halves of the @*.Uncurried@ wrappers — @run@ (issue #198) and @mk@
-(issue #227). Membership is a hard contract (see the module header): a
-listed export that fails to lift is a compile error. A broader allowlist
-is follow-up work (issue #187).
+(issue #227) — and the identity coercion @Unsafe.Coerce.unsafeCoerce@
+(issue #236), whose lifted @λx. x@ beta-reduces away at every applied
+site. Membership is a hard contract (see the module header): a listed
+export that fails to lift is a compile error. A broader allowlist is
+follow-up work (issue #187).
 
 A warning to that follow-up: do /not/ list the Effect\/ST core —
 @Effect.bindE@\/@pureE@, @Control.Monad.ST.Internal.bind_@\/@pure_@ —
@@ -183,6 +185,7 @@ allowlist =
         ]
       )
     , ("Data.Semigroup", ["concatString"])
+    , ("Unsafe.Coerce", ["unsafeCoerce"])
     , -- Both halves of the uncurried FFI wrappers: @run@ (issue #198)
       -- and @mk@ (issue #227). @runFn0@/@mkFn0@ are absent by policy,
       -- not liftability: their bodies force a /pure/ @Fn0@ with a

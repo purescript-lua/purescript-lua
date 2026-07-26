@@ -11,8 +11,8 @@ local Data_Identity_applyIdentity = {
   apply = function(v) return function(v1) return v(v1) end end,
   Functor0 = function()
     return {
-      map = function(f_S_521)
-        return function(m_S_522) return f_S_521(m_S_522) end
+      map = function(f_S_523)
+        return function(m_S_524) return f_S_523(m_S_524) end
       end
     }
   end
@@ -20,7 +20,7 @@ local Data_Identity_applyIdentity = {
 local Data_Identity_monadIdentity = {
   Applicative0 = function()
     return {
-      pure = function(x_S_523) return x_S_523 end,
+      pure = function(x_S_525) return x_S_525 end,
       Apply0 = function() return Data_Identity_applyIdentity end
     }
   end,
@@ -65,13 +65,13 @@ end
 Control_Monad_State_Trans_applyStateT = function(dictMonad)
   return {
     apply = (function()
-      local dictMonad_S_524 = Control_Monad_State_Trans_monadStateT(dictMonad)
-      local bind_S_525 = (dictMonad_S_524.Bind1()).bind
-      return function(f_S_526)
-        return function(a_S_527)
-          return bind_S_525(f_S_526)(function(fPrime_S_528)
-            return bind_S_525(a_S_527)(function(aPrime_S_529)
-              return (dictMonad_S_524.Applicative0()).pure(fPrime_S_528(aPrime_S_529))
+      local dictMonad_S_526 = Control_Monad_State_Trans_monadStateT(dictMonad)
+      local bind_S_527 = (dictMonad_S_526.Bind1()).bind
+      return function(f_S_528)
+        return function(a_S_529)
+          return bind_S_527(f_S_528)(function(fPrime_S_530)
+            return bind_S_527(a_S_529)(function(aPrime_S_531)
+              return (dictMonad_S_526.Applicative0()).pure(fPrime_S_530(aPrime_S_531))
             end)
           end)
         end
@@ -79,12 +79,12 @@ Control_Monad_State_Trans_applyStateT = function(dictMonad)
     end)(),
     Functor0 = function()
       return {
-        map = function(f_S_517)
-          return function(v_S_518)
-            return function(s_S_519)
-              return (((dictMonad.Bind1()).Apply0()).Functor0()).map(function( v1_S_520 )
-                return Data_Tuple_Tuple_S_w(f_S_517(v1_S_520[1]), v1_S_520[2])
-              end)(v_S_518(s_S_519))
+        map = function(f_S_519)
+          return function(v_S_520)
+            return function(s_S_521)
+              return (((dictMonad.Bind1()).Apply0()).Functor0()).map(function( v1_S_522 )
+                return Data_Tuple_Tuple_S_w(f_S_519(v1_S_522[1]), v1_S_522[2])
+              end)(v_S_520(s_S_521))
             end
           end
         end
@@ -106,8 +106,8 @@ Control_Monad_State_Trans_applicativeStateT = function(dictMonad)
 end
 local Golden_CprState_Test_bindStateT = Control_Monad_State_Trans_bindStateT(Data_Identity_monadIdentity)
 local Golden_CprState_Test_bind = Golden_CprState_Test_bindStateT.bind
-local Golden_CprState_Test_get = function(x_S_636)
-  return Data_Tuple_Tuple_S_w(x_S_636, x_S_636)
+local Golden_CprState_Test_get = function(x_S_638)
+  return Data_Tuple_Tuple_S_w(x_S_638, x_S_638)
 end
 local Golden_CprState_Test_discard = Golden_CprState_Test_bindStateT.bind
 local Golden_CprState_Test_go = Golden_CprState_Test_bind(Golden_CprState_Test_get)(function( x1 )

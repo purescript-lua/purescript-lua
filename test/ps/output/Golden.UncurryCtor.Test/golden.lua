@@ -28,8 +28,8 @@ local Data_Show_show = function(dict) return dict.show end
 local Effect_Console_logShow_S_w = function(dictShow, a)
   return Effect_Console_foreign.log(dictShow.show(a))
 end
-local Golden_UncurryCtor_Test_logShow = function(logShow_S_p2_S_325)
-  return Effect_Console_logShow_S_w(Data_Show_showInt, logShow_S_p2_S_325)
+local Golden_UncurryCtor_Test_logShow = function(logShow_S_p2_S_326)
+  return Effect_Console_logShow_S_w(Data_Show_showInt, logShow_S_p2_S_326)
 end
 local Golden_UncurryCtor_Test_Origin = {
   "Golden.UncurryCtor.Test∷Shape.Origin"
@@ -66,14 +66,14 @@ end
 local Golden_UncurryCtor_Test_range = Golden_UncurryCtor_Test_Cons_S_w(1, Golden_UncurryCtor_Test_Cons_S_w(2, Golden_UncurryCtor_Test_Cons_S_w(3, Golden_UncurryCtor_Test_Cons_S_w(4, Golden_UncurryCtor_Test_Cons_S_w(5, Golden_UncurryCtor_Test_Cons_S_w(6, Golden_UncurryCtor_Test_Cons_S_w(7, Golden_UncurryCtor_Test_Cons_S_w(8, Golden_UncurryCtor_Test_Cons_S_w(9, Golden_UncurryCtor_Test_Cons_S_w(10, Golden_UncurryCtor_Test_Nil))))))))))
 local Golden_UncurryCtor_Test_pairSum = function(v) return v[1] + v[2] end
 local Golden_UncurryCtor_Test_area = function(v)
-  local _S_cse433 = v[2]
-  local _S_cse432 = v[1]
-  if "Golden.UncurryCtor.Test∷Shape.Origin" == _S_cse432 then
+  local _S_cse434 = v[2]
+  local _S_cse433 = v[1]
+  if "Golden.UncurryCtor.Test∷Shape.Origin" == _S_cse433 then
     return 0
-  elseif "Golden.UncurryCtor.Test∷Shape.Dot" == _S_cse432 then
-    return _S_cse433
+  elseif "Golden.UncurryCtor.Test∷Shape.Dot" == _S_cse433 then
+    return _S_cse434
   else
-    return _S_cse433 + v[3] + v[4]
+    return _S_cse434 + v[3] + v[4]
   end
 end
 return (function()
@@ -87,14 +87,14 @@ return (function()
   local _ = Golden_UncurryCtor_Test_logShow(Golden_UncurryCtor_Test_area(mk_S_0(30)))()
   local _ = Effect_Console_logShow_S_w({
     show = Data_Show_foreign.showArrayImpl(Data_Show_show(Data_Show_showInt))
-  }, Data_Functor_arrayMap(function(v2_S_307)
-    if "Data.Maybe∷Maybe.Nothing" == v2_S_307[1] then
+  }, Data_Functor_arrayMap(function(v2_S_308)
+    if "Data.Maybe∷Maybe.Nothing" == v2_S_308[1] then
       return 0
     else
-      return v2_S_307[2]
+      return v2_S_308[2]
     end
-  end)(Data_Functor_arrayMap(function(value0_S_308)
-    return { "Data.Maybe∷Maybe.Just", value0_S_308 }
+  end)(Data_Functor_arrayMap(function(value0_S_309)
+    return { "Data.Maybe∷Maybe.Just", value0_S_309 }
   end)({ [1] = 1, [2] = 2, [3] = 3 })))()
   return Golden_UncurryCtor_Test_logShow(Golden_UncurryCtor_Test_total(Golden_UncurryCtor_Test_range))()
 end)()

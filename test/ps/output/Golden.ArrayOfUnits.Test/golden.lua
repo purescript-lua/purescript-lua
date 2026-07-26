@@ -56,10 +56,10 @@ Data_Foldable_foldableArray = {
   foldr = Data_Foldable_foreign.foldrArray,
   foldl = Data_Foldable_foreign.foldlArray,
   foldMap = function(dictMonoid)
-    return function(f_S_916)
-      return Data_Foldable_foldableArray.foldr(function(x_S_917)
-        return function(acc_S_918)
-          return (dictMonoid.Semigroup0()).append(f_S_916(x_S_917))(acc_S_918)
+    return function(f_S_919)
+      return Data_Foldable_foldableArray.foldr(function(x_S_920)
+        return function(acc_S_921)
+          return (dictMonoid.Semigroup0()).append(f_S_919(x_S_920))(acc_S_921)
         end
       end)(dictMonoid.mempty)
     end
@@ -115,20 +115,20 @@ return (function()
     [2] = Data_Unit_unit,
     [3] = Data_Unit_unit
   }
-  local _ = Data_Foldable_foldableArray.foldr(function(x_S_940)
-    local dictApply_S_925 = Effect_applicativeEffect.Apply0()
-    local a_S_926 = Effect_Console_logShow_S_w({
+  local _ = Data_Foldable_foldableArray.foldr(function(x_S_943)
+    local dictApply_S_928 = Effect_applicativeEffect.Apply0()
+    local a_S_929 = Effect_Console_logShow_S_w({
       show = function() return "unit" end
-    }, x_S_940)
-    return function(b_S_927)
-      return dictApply_S_925.apply((dictApply_S_925.Functor0()).map(function()
-        return function(x_S_934) return x_S_934 end
-      end)(a_S_926))(b_S_927)
+    }, x_S_943)
+    return function(b_S_930)
+      return dictApply_S_928.apply((dictApply_S_928.Functor0()).map(function()
+        return function(x_S_937) return x_S_937 end
+      end)(a_S_929))(b_S_930)
     end
   end)(Effect_pureE(Data_Unit_unit))(arr_S_0)()
   return Effect_Console_logShow_S_w({
     show = Data_Show_foreign.showIntImpl
-  }, Data_Foldable_foldableArray.foldl(function(c_S_913)
-    return function() return 1 + c_S_913 end
+  }, Data_Foldable_foldableArray.foldl(function(c_S_916)
+    return function() return 1 + c_S_916 end
   end)(0)(arr_S_0))()
 end)()

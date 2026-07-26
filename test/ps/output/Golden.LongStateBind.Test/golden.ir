@@ -54,12 +54,12 @@ UberModule
             ( LiteralObject Nothing
               [
                 ( PropName "map", AbsN Nothing
-                  ( ParamNamed Nothing ( Name "f$521" ) :| [] )
+                  ( ParamNamed Nothing ( Name "f$523" ) :| [] )
                   ( AbsN Nothing
-                    ( ParamNamed Nothing ( Name "m$522" ) :| [] )
+                    ( ParamNamed Nothing ( Name "m$524" ) :| [] )
                     ( AppN Nothing
-                      ( Ref Nothing ( Local ( Name "f$521" ) ) )
-                      ( Ref Nothing ( Local ( Name "m$522" ) ) :| [] )
+                      ( Ref Nothing ( Local ( Name "f$523" ) ) )
+                      ( Ref Nothing ( Local ( Name "m$524" ) ) :| [] )
                     )
                   )
                 )
@@ -77,8 +77,8 @@ UberModule
             ( LiteralObject Nothing
               [
                 ( PropName "pure", AbsN Nothing
-                  ( ParamNamed Nothing ( Name "x$523" ) :| [] )
-                  ( Ref Nothing ( Local ( Name "x$523" ) ) )
+                  ( ParamNamed Nothing ( Name "x$525" ) :| [] )
+                  ( Ref Nothing ( Local ( Name "x$525" ) ) )
                 ),
                 ( PropName "Apply0", AbsN Nothing
                   ( ParamUnused Nothing :| [] )
@@ -215,7 +215,7 @@ UberModule
               [
                 ( PropName "apply", Let Nothing
                   ( Standalone
-                    ( Nothing, Name "dictMonad$524", AppN Nothing
+                    ( Nothing, Name "dictMonad$526", AppN Nothing
                       ( Ref Nothing
                         ( Imported
                           ( ModuleName "Control.Monad.State.Trans" )
@@ -227,10 +227,10 @@ UberModule
                   )
                   ( Let Nothing
                     ( Standalone
-                      ( Nothing, Name "bind$525", ObjectProp Nothing
+                      ( Nothing, Name "bind$527", ObjectProp Nothing
                         ( AppN Nothing
                           ( ObjectProp Nothing
-                            ( Ref Nothing ( Local ( Name "dictMonad$524" ) ) )
+                            ( Ref Nothing ( Local ( Name "dictMonad$526" ) ) )
                             ( PropName "Bind1" )
                           )
                           ( Ref Nothing
@@ -241,28 +241,28 @@ UberModule
                       ) :| []
                     )
                     ( AbsN Nothing
-                      ( ParamNamed Nothing ( Name "f$526" ) :| [] )
+                      ( ParamNamed Nothing ( Name "f$528" ) :| [] )
                       ( AbsN Nothing
-                        ( ParamNamed Nothing ( Name "a$527" ) :| [] )
+                        ( ParamNamed Nothing ( Name "a$529" ) :| [] )
                         ( AppN Nothing
                           ( AppN Nothing
-                            ( Ref Nothing ( Local ( Name "bind$525" ) ) )
-                            ( Ref Nothing ( Local ( Name "f$526" ) ) :| [] )
+                            ( Ref Nothing ( Local ( Name "bind$527" ) ) )
+                            ( Ref Nothing ( Local ( Name "f$528" ) ) :| [] )
                           )
                           ( AbsN Nothing
-                            ( ParamNamed Nothing ( Name "f'$528" ) :| [] )
+                            ( ParamNamed Nothing ( Name "f'$530" ) :| [] )
                             ( AppN Nothing
                               ( AppN Nothing
-                                ( Ref Nothing ( Local ( Name "bind$525" ) ) )
-                                ( Ref Nothing ( Local ( Name "a$527" ) ) :| [] )
+                                ( Ref Nothing ( Local ( Name "bind$527" ) ) )
+                                ( Ref Nothing ( Local ( Name "a$529" ) ) :| [] )
                               )
                               ( AbsN Nothing
-                                ( ParamNamed Nothing ( Name "a'$529" ) :| [] )
+                                ( ParamNamed Nothing ( Name "a'$531" ) :| [] )
                                 ( AppN Nothing
                                   ( ObjectProp Nothing
                                     ( AppN Nothing
                                       ( ObjectProp Nothing
-                                        ( Ref Nothing ( Local ( Name "dictMonad$524" ) ) )
+                                        ( Ref Nothing ( Local ( Name "dictMonad$526" ) ) )
                                         ( PropName "Applicative0" )
                                       )
                                       ( Ref Nothing
@@ -275,8 +275,8 @@ UberModule
                                     ( PropName "pure" )
                                   )
                                   ( AppN Nothing
-                                    ( Ref Nothing ( Local ( Name "f'$528" ) ) )
-                                    ( Ref Nothing ( Local ( Name "a'$529" ) ) :| [] ) :| []
+                                    ( Ref Nothing ( Local ( Name "f'$530" ) ) )
+                                    ( Ref Nothing ( Local ( Name "a'$531" ) ) :| [] ) :| []
                                   )
                                 ) :| []
                               )
@@ -292,11 +292,11 @@ UberModule
                   ( LiteralObject Nothing
                     [
                       ( PropName "map", AbsN Nothing
-                        ( ParamNamed Nothing ( Name "f$517" ) :| [] )
+                        ( ParamNamed Nothing ( Name "f$519" ) :| [] )
                         ( AbsN Nothing
-                          ( ParamNamed Nothing ( Name "v$518" ) :| [] )
+                          ( ParamNamed Nothing ( Name "v$520" ) :| [] )
                           ( AbsN Nothing
-                            ( ParamNamed Nothing ( Name "s$519" ) :| [] )
+                            ( ParamNamed Nothing ( Name "s$521" ) :| [] )
                             ( AppN Nothing
                               ( AppN Nothing
                                 ( ObjectProp Nothing
@@ -334,26 +334,26 @@ UberModule
                                   ( PropName "map" )
                                 )
                                 ( AbsN Nothing
-                                  ( ParamNamed Nothing ( Name "v1$520" ) :| [] )
+                                  ( ParamNamed Nothing ( Name "v1$522" ) :| [] )
                                   ( AppN Nothing
                                     ( Ref Nothing
                                       ( Imported ( ModuleName "Data.Tuple" ) ( Name "Tuple$w" ) )
                                     )
                                     ( AppN Nothing
-                                      ( Ref Nothing ( Local ( Name "f$517" ) ) )
+                                      ( Ref Nothing ( Local ( Name "f$519" ) ) )
                                       ( DataArgumentByIndex Nothing ProductType 0
-                                        ( Ref Nothing ( Local ( Name "v1$520" ) ) ) :| []
+                                        ( Ref Nothing ( Local ( Name "v1$522" ) ) ) :| []
                                       ) :|
                                       [ DataArgumentByIndex Nothing ProductType 1
-                                        ( Ref Nothing ( Local ( Name "v1$520" ) ) )
+                                        ( Ref Nothing ( Local ( Name "v1$522" ) ) )
                                       ]
                                     )
                                   ) :| []
                                 )
                               )
                               ( AppN Nothing
-                                ( Ref Nothing ( Local ( Name "v$518" ) ) )
-                                ( Ref Nothing ( Local ( Name "s$519" ) ) :| [] ) :| []
+                                ( Ref Nothing ( Local ( Name "v$520" ) ) )
+                                ( Ref Nothing ( Local ( Name "s$521" ) ) :| [] ) :| []
                               )
                             )
                           )
@@ -431,10 +431,10 @@ UberModule
       ( QName
         { qnameModuleName = ModuleName "Golden.LongStateBind.Test", qnameName = Name "get"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "x$1756" ) :| [] )
+        ( ParamNamed Nothing ( Name "x$1758" ) :| [] )
         ( AppN Nothing
           ( Ref Nothing ( Imported ( ModuleName "Data.Tuple" ) ( Name "Tuple$w" ) ) )
-          ( Ref Nothing ( Local ( Name "x$1756" ) ) :| [ Ref Nothing ( Local ( Name "x$1756" ) ) ] )
+          ( Ref Nothing ( Local ( Name "x$1758" ) ) :| [ Ref Nothing ( Local ( Name "x$1758" ) ) ] )
         )
       ), Standalone
       ( QName
@@ -449,10 +449,10 @@ UberModule
         { qnameModuleName = ModuleName "Golden.LongStateBind.Test", qnameName = Name "go"
         }, Let Nothing
         ( Standalone
-          ( Nothing, Name "$kont1766$w", AbsN Nothing
+          ( Nothing, Name "$kont1768$w", AbsN Nothing
             ( ParamNamed Nothing
-              ( Name "x1$1767" ) :|
-              [ ParamNamed Nothing ( Name "x100$1768" ) ]
+              ( Name "x1$1769" ) :|
+              [ ParamNamed Nothing ( Name "x100$1770" ) ]
             )
             ( AppN Nothing
               ( AppN Nothing
@@ -989,12 +989,12 @@ UberModule
                                                                                                     ( PrimBinOp Nothing PrimAdd
                                                                                                       ( Ref Nothing
                                                                                                         ( Local
-                                                                                                          ( Name "x1$1767" )
+                                                                                                          ( Name "x1$1769" )
                                                                                                         )
                                                                                                       )
                                                                                                       ( Ref Nothing
                                                                                                         ( Local
-                                                                                                          ( Name "x100$1768" )
+                                                                                                          ( Name "x100$1770" )
                                                                                                         )
                                                                                                       )
                                                                                                     )
@@ -1049,10 +1049,10 @@ UberModule
             )
           ) :|
           [ Standalone
-            ( Nothing, Name "$kont1769$w", AbsN Nothing
+            ( Nothing, Name "$kont1771$w", AbsN Nothing
               ( ParamNamed Nothing
-                ( Name "x1$1770" ) :|
-                [ ParamNamed Nothing ( Name "x100$1771" ) ]
+                ( Name "x1$1772" ) :|
+                [ ParamNamed Nothing ( Name "x100$1773" ) ]
               )
               ( AppN Nothing
                 ( AppN Nothing
@@ -2103,16 +2103,16 @@ UberModule
                                                                                                                                                                               ( AppN Nothing
                                                                                                                                                                                 ( Ref Nothing
                                                                                                                                                                                   ( Local
-                                                                                                                                                                                    ( Name "$kont1766$w" )
+                                                                                                                                                                                    ( Name "$kont1768$w" )
                                                                                                                                                                                   )
                                                                                                                                                                                 )
                                                                                                                                                                                 ( Ref Nothing
                                                                                                                                                                                   ( Local
-                                                                                                                                                                                    ( Name "x1$1770" )
+                                                                                                                                                                                    ( Name "x1$1772" )
                                                                                                                                                                                   ) :|
                                                                                                                                                                                   [ Ref Nothing
                                                                                                                                                                                     ( Local
-                                                                                                                                                                                      ( Name "x100$1771" )
+                                                                                                                                                                                      ( Name "x100$1773" )
                                                                                                                                                                                     )
                                                                                                                                                                                   ]
                                                                                                                                                                                 )
@@ -2198,10 +2198,10 @@ UberModule
                 )
               )
             ), Standalone
-            ( Nothing, Name "$kont1772$w", AbsN Nothing
+            ( Nothing, Name "$kont1774$w", AbsN Nothing
               ( ParamNamed Nothing
-                ( Name "x1$1773" ) :|
-                [ ParamNamed Nothing ( Name "x100$1774" ) ]
+                ( Name "x1$1775" ) :|
+                [ ParamNamed Nothing ( Name "x100$1776" ) ]
               )
               ( AppN Nothing
                 ( AppN Nothing
@@ -3252,16 +3252,16 @@ UberModule
                                                                                                                                                                               ( AppN Nothing
                                                                                                                                                                                 ( Ref Nothing
                                                                                                                                                                                   ( Local
-                                                                                                                                                                                    ( Name "$kont1769$w" )
+                                                                                                                                                                                    ( Name "$kont1771$w" )
                                                                                                                                                                                   )
                                                                                                                                                                                 )
                                                                                                                                                                                 ( Ref Nothing
                                                                                                                                                                                   ( Local
-                                                                                                                                                                                    ( Name "x1$1773" )
+                                                                                                                                                                                    ( Name "x1$1775" )
                                                                                                                                                                                   ) :|
                                                                                                                                                                                   [ Ref Nothing
                                                                                                                                                                                     ( Local
-                                                                                                                                                                                      ( Name "x100$1774" )
+                                                                                                                                                                                      ( Name "x100$1776" )
                                                                                                                                                                                     )
                                                                                                                                                                                   ]
                                                                                                                                                                                 )
@@ -3347,8 +3347,8 @@ UberModule
                 )
               )
             ), Standalone
-            ( Nothing, Name "$kont1775", AbsN Nothing
-              ( ParamNamed Nothing ( Name "x1$1776" ) :| [] )
+            ( Nothing, Name "$kont1777", AbsN Nothing
+              ( ParamNamed Nothing ( Name "x1$1778" ) :| [] )
               ( AppN Nothing
                 ( AppN Nothing
                   ( Ref Nothing
@@ -4398,12 +4398,12 @@ UberModule
                                                                                                                                                                               ( AppN Nothing
                                                                                                                                                                                 ( Ref Nothing
                                                                                                                                                                                   ( Local
-                                                                                                                                                                                    ( Name "$kont1772$w" )
+                                                                                                                                                                                    ( Name "$kont1774$w" )
                                                                                                                                                                                   )
                                                                                                                                                                                 )
                                                                                                                                                                                 ( Ref Nothing
                                                                                                                                                                                   ( Local
-                                                                                                                                                                                    ( Name "x1$1776" )
+                                                                                                                                                                                    ( Name "x1$1778" )
                                                                                                                                                                                   ) :|
                                                                                                                                                                                   [ Ref Nothing
                                                                                                                                                                                     ( Local
@@ -4493,8 +4493,8 @@ UberModule
                 )
               )
             ), Standalone
-            ( Nothing, Name "$kont1777", AbsN Nothing
-              ( ParamNamed Nothing ( Name "x1$1778" ) :| [] )
+            ( Nothing, Name "$kont1779", AbsN Nothing
+              ( ParamNamed Nothing ( Name "x1$1780" ) :| [] )
               ( AppN Nothing
                 ( AppN Nothing
                   ( Ref Nothing
@@ -5544,12 +5544,12 @@ UberModule
                                                                                                                                                                               ( AppN Nothing
                                                                                                                                                                                 ( Ref Nothing
                                                                                                                                                                                   ( Local
-                                                                                                                                                                                    ( Name "$kont1775" )
+                                                                                                                                                                                    ( Name "$kont1777" )
                                                                                                                                                                                   )
                                                                                                                                                                                 )
                                                                                                                                                                                 ( Ref Nothing
                                                                                                                                                                                   ( Local
-                                                                                                                                                                                    ( Name "x1$1778" )
+                                                                                                                                                                                    ( Name "x1$1780" )
                                                                                                                                                                                   ) :| []
                                                                                                                                                                                 )
                                                                                                                                                                               ) :| []
@@ -5634,8 +5634,8 @@ UberModule
                 )
               )
             ), Standalone
-            ( Nothing, Name "$kont1779", AbsN Nothing
-              ( ParamNamed Nothing ( Name "x1$1780" ) :| [] )
+            ( Nothing, Name "$kont1781", AbsN Nothing
+              ( ParamNamed Nothing ( Name "x1$1782" ) :| [] )
               ( AppN Nothing
                 ( AppN Nothing
                   ( Ref Nothing
@@ -6685,12 +6685,12 @@ UberModule
                                                                                                                                                                               ( AppN Nothing
                                                                                                                                                                                 ( Ref Nothing
                                                                                                                                                                                   ( Local
-                                                                                                                                                                                    ( Name "$kont1777" )
+                                                                                                                                                                                    ( Name "$kont1779" )
                                                                                                                                                                                   )
                                                                                                                                                                                 )
                                                                                                                                                                                 ( Ref Nothing
                                                                                                                                                                                   ( Local
-                                                                                                                                                                                    ( Name "x1$1780" )
+                                                                                                                                                                                    ( Name "x1$1782" )
                                                                                                                                                                                   ) :| []
                                                                                                                                                                                 )
                                                                                                                                                                               ) :| []
@@ -6775,8 +6775,8 @@ UberModule
                 )
               )
             ), Standalone
-            ( Nothing, Name "$kont1781", AbsN Nothing
-              ( ParamNamed Nothing ( Name "x1$1782" ) :| [] )
+            ( Nothing, Name "$kont1783", AbsN Nothing
+              ( ParamNamed Nothing ( Name "x1$1784" ) :| [] )
               ( AppN Nothing
                 ( AppN Nothing
                   ( Ref Nothing
@@ -7826,12 +7826,12 @@ UberModule
                                                                                                                                                                               ( AppN Nothing
                                                                                                                                                                                 ( Ref Nothing
                                                                                                                                                                                   ( Local
-                                                                                                                                                                                    ( Name "$kont1779" )
+                                                                                                                                                                                    ( Name "$kont1781" )
                                                                                                                                                                                   )
                                                                                                                                                                                 )
                                                                                                                                                                                 ( Ref Nothing
                                                                                                                                                                                   ( Local
-                                                                                                                                                                                    ( Name "x1$1782" )
+                                                                                                                                                                                    ( Name "x1$1784" )
                                                                                                                                                                                   ) :| []
                                                                                                                                                                                 )
                                                                                                                                                                               ) :| []
@@ -8945,7 +8945,7 @@ UberModule
                                                                                                                                                                         ( AppN Nothing
                                                                                                                                                                           ( Ref Nothing
                                                                                                                                                                             ( Local
-                                                                                                                                                                              ( Name "$kont1781" )
+                                                                                                                                                                              ( Name "$kont1783" )
                                                                                                                                                                             )
                                                                                                                                                                           )
                                                                                                                                                                           ( Ref Nothing

@@ -272,24 +272,24 @@ UberModule
                     ( PropName "tailRecM" )
                   )
                   ( AbsN Nothing
-                    ( ParamNamed Nothing ( Name "o$482" ) :| [] )
+                    ( ParamNamed Nothing ( Name "o$483" ) :| [] )
                     ( Let Nothing
                       ( Standalone
-                        ( Nothing, Name "$cse532", ObjectProp Nothing
-                          ( Ref Nothing ( Local ( Name "o$482" ) ) )
+                        ( Nothing, Name "$cse533", ObjectProp Nothing
+                          ( Ref Nothing ( Local ( Name "o$483" ) ) )
                           ( PropName "a" )
                         ) :| []
                       )
                       ( Let Nothing
                         ( Standalone
-                          ( Nothing, Name "$cse531", ObjectProp Nothing
-                            ( Ref Nothing ( Local ( Name "o$482" ) ) )
+                          ( Nothing, Name "$cse532", ObjectProp Nothing
+                            ( Ref Nothing ( Local ( Name "o$483" ) ) )
                             ( PropName "b" )
                           ) :| []
                         )
                         ( IfThenElse Nothing
                           ( PrimBinOp Nothing PrimLt
-                            ( Ref Nothing ( Local ( Name "$cse531" ) ) )
+                            ( Ref Nothing ( Local ( Name "$cse532" ) ) )
                             ( Ref Nothing ( Local ( Name "n" ) ) )
                           )
                           ( AppN Nothing
@@ -301,11 +301,11 @@ UberModule
                               [ LiteralObject Nothing
                                 [
                                   ( PropName "a", PrimBinOp Nothing PrimAdd
+                                    ( Ref Nothing ( Local ( Name "$cse533" ) ) )
                                     ( Ref Nothing ( Local ( Name "$cse532" ) ) )
-                                    ( Ref Nothing ( Local ( Name "$cse531" ) ) )
                                   ),
                                   ( PropName "b", PrimBinOp Nothing PrimAdd
-                                    ( Ref Nothing ( Local ( Name "$cse531" ) ) )
+                                    ( Ref Nothing ( Local ( Name "$cse532" ) ) )
                                     ( LiteralInt Nothing 1 )
                                   )
                                 ]
@@ -318,7 +318,7 @@ UberModule
                               ( ModuleName "Control.Monad.Rec.Class" )
                               ( TyName "Step" )
                               ( CtorName "Done" )
-                              [ Ref Nothing ( Local ( Name "$cse532" ) ) ] :| []
+                              [ Ref Nothing ( Local ( Name "$cse533" ) ) ] :| []
                             )
                           )
                         )

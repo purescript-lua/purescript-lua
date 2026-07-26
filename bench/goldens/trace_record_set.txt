@@ -2,30 +2,22 @@ spec: record_set
 runtime: LuaJIT 2.1.1741730670
 workload: n=1000000 reps=4 result=15000450000
 aborts (distinct site -- reason):
-  Bench.RecordSet.lua:10 -- NYI: bytecode FNEW
-  Bench.RecordSet.lua:11 -- NYI: bytecode FNEW
-  Bench.RecordSet.lua:2 -- NYI: bytecode FNEW
-  Bench.RecordSet.lua:21 -- NYI: bytecode FNEW
-  Bench.RecordSet.lua:42 -- NYI: bytecode FNEW
-  Bench.RecordSet.lua:43 -- NYI: bytecode FNEW
-  Bench.RecordSet.lua:51 -- inner loop in root trace
-  Bench.RecordSet.lua:7 -- inner loop in root trace
-  Bench.RecordSet.lua:75 -- NYI: bytecode FNEW
-  Bench.RecordSet.lua:76 -- NYI: bytecode FNEW
+  Bench.RecordSet.lua:29 -- NYI: bytecode FNEW
+  Bench.RecordSet.lua:30 -- NYI: bytecode FNEW
+  Bench.RecordSet.lua:38 -- inner loop in root trace
+  Bench.RecordSet.lua:62 -- NYI: bytecode FNEW
+  Bench.RecordSet.lua:63 -- NYI: bytecode FNEW
+  Bench.RecordSet.lua:65 -- NYI: bytecode UCLO
+  Bench.RecordSet.lua:8 -- NYI: bytecode FNEW
 bytecode end state (J*=compiled, I*=blacklisted):
-  Bench.RecordSet.lua:19 IFORL
-  Bench.RecordSet.lua:2 IFUNCF
-  Bench.RecordSet.lua:2 JFUNCF
-  Bench.RecordSet.lua:3 IFUNCF
-  Bench.RecordSet.lua:4 IFUNCF
-  Bench.RecordSet.lua:40 IFORL
-  Bench.RecordSet.lua:5 IFUNCF
-  Bench.RecordSet.lua:51 JLOOP
-  Bench.RecordSet.lua:7 JLOOP
-  Bench.RecordSet.lua:72 IFUNCF
-  Bench.RecordSet.lua:73 IFUNCF
-  Bench.RecordSet.lua:76 IFUNCF
-  record_set.lua:19 JFUNCF
+  Bench.RecordSet.lua:27 IFORL
+  Bench.RecordSet.lua:3 JFUNCF
+  Bench.RecordSet.lua:38 JLOOP
+  Bench.RecordSet.lua:59 IFUNCF
+  Bench.RecordSet.lua:6 JFORI
+  Bench.RecordSet.lua:6 JFORL
+  Bench.RecordSet.lua:60 JFUNCF
+  Bench.RecordSet.lua:63 JFUNCF
   record_set.lua:21 JFORI
   record_set.lua:21 JFORL
-counts: aborts=10 compiled=6 blacklisted=9
+counts: aborts=7 compiled=8 blacklisted=2

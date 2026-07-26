@@ -8,14 +8,14 @@ local Effect_Console_log = Effect_Console_foreign.log
 local Data_Tuple_Tuple_S_w = function(value0, value1)
   return { value0, value1 }
 end
-local Golden_CprResult_Test_sub_S_w = function(x_S_524, y_S_525)
-  return x_S_524 - y_S_525
+local Golden_CprResult_Test_sub_S_w = function(x_S_525, y_S_526)
+  return x_S_525 - y_S_526
 end
-local Golden_CprResult_Test_logShow = function(a_S_521)
-  return Effect_Console_log(Data_Show_showIntImpl(a_S_521))
+local Golden_CprResult_Test_logShow = function(a_S_522)
+  return Effect_Console_log(Data_Show_showIntImpl(a_S_522))
 end
-local Golden_CprResult_Test_logShow1 = function(a_S_518)
-  return Effect_Console_log("(Tuple " .. Data_Show_showIntImpl(a_S_518[1]) .. " " .. Data_Show_showIntImpl(a_S_518[2]) .. ")")
+local Golden_CprResult_Test_logShow1 = function(a_S_519)
+  return Effect_Console_log("(Tuple " .. Data_Show_showIntImpl(a_S_519[1]) .. " " .. Data_Show_showIntImpl(a_S_519[2]) .. ")")
 end
 M.Golden_CprResult_Test_step = function(s)
   return Data_Tuple_Tuple_S_w(s * 2, s + 1)
@@ -49,8 +49,8 @@ local Golden_CprResult_Test_branchy = function(branchy_S_p1)
 end
 local Golden_CprResult_Test_keepBranchy = Golden_CprResult_Test_branchy(3)
 M.Golden_CprResult_Test_useBranchy = function(n)
-  local _S_v595, _S_v596 = Golden_CprResult_Test_branchy_S_r(n)
-  return _S_v595 - _S_v596
+  local _S_v596, _S_v597 = Golden_CprResult_Test_branchy_S_r(n)
+  return _S_v596 - _S_v597
 end
 local Golden_CprResult_Test_big_S_r = function(n)
   local a1 = n + 1
@@ -75,23 +75,23 @@ M.Golden_CprResult_Test_big = function(big_S_p1)
   return { big_S_v1, big_S_v2 }
 end
 M.Golden_CprResult_Test_useBig = function(n)
-  local _S_v597, _S_v598 = Golden_CprResult_Test_big_S_r(n)
-  return _S_v597 + _S_v598
+  local _S_v598, _S_v599 = Golden_CprResult_Test_big_S_r(n)
+  return _S_v598 + _S_v599
 end
 return (function()
   local _ = Golden_CprResult_Test_logShow(16)()
   local _ = Golden_CprResult_Test_logShow1(Golden_CprResult_Test_pair)()
   local _ = Golden_CprResult_Test_logShow((function()
-    local _S_v599, _S_v600 = Golden_CprResult_Test_branchy_S_r(7)
-    return Golden_CprResult_Test_sub_S_w(_S_v599, _S_v600)
+    local _S_v600, _S_v601 = Golden_CprResult_Test_branchy_S_r(7)
+    return Golden_CprResult_Test_sub_S_w(_S_v600, _S_v601)
   end)())()
   local _ = Golden_CprResult_Test_logShow((function()
-    local _S_v601, _S_v602 = Golden_CprResult_Test_branchy_S_r(-7)
-    return Golden_CprResult_Test_sub_S_w(_S_v601, _S_v602)
+    local _S_v602, _S_v603 = Golden_CprResult_Test_branchy_S_r(-7)
+    return Golden_CprResult_Test_sub_S_w(_S_v602, _S_v603)
   end)())()
   local _ = Golden_CprResult_Test_logShow1(Golden_CprResult_Test_keepBranchy)()
   return Golden_CprResult_Test_logShow((function()
-    local _S_v603, _S_v604 = Golden_CprResult_Test_big_S_r(3)
-    return _S_v603 + _S_v604
+    local _S_v604, _S_v605 = Golden_CprResult_Test_big_S_r(3)
+    return _S_v604 + _S_v605
   end)())()
 end)()
