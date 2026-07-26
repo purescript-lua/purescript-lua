@@ -1030,6 +1030,112 @@ spec = describe "IR Optimizer" do
       let original = primBinOp PrimAdd (refLocal (Name "x")) (literalInt 1)
       optimizedExpression original `shouldBe` original
 
+  -- See Note [Reassociating constant chains] in the optimizer.
+  describe "reassociates constant chains (#235)" do
+    let x = refLocal (Name "x")
+        y = refLocal (Name "y")
+
+    it "coalesces int literals across a variable in an add chain" do
+      optimizedExpression
+        (primBinOp PrimAdd (primBinOp PrimAdd (literalInt 1) x) (literalInt 2))
+        `shouldBe` primBinOp PrimAdd x (literalInt 3)
+
+    it "coalesces through a right-nested add chain" do
+      optimizedExpression
+        (primBinOp PrimAdd (literalInt 1) (primBinOp PrimAdd x (literalInt 2)))
+        `shouldBe` primBinOp PrimAdd x (literalInt 3)
+
+    it "coalesces scattered literals, keeping variable operand order" do
+      let chain =
+            primBinOp
+              PrimAdd
+              ( primBinOp
+                  PrimAdd
+                  ( primBinOp
+                      PrimAdd
+                      (primBinOp PrimAdd (literalInt 1) x)
+                      (literalInt 2)
+                  )
+                  y
+              )
+              (literalInt 3)
+      optimizedExpression chain
+        `shouldBe` primBinOp PrimAdd (primBinOp PrimAdd x y) (literalInt 6)
+
+    it "coalesces int literals in a mul chain" do
+      optimizedExpression
+        (primBinOp PrimMul (primBinOp PrimMul (literalInt 2) x) (literalInt 30))
+        `shouldBe` primBinOp PrimMul x (literalInt 60)
+
+    it "treats a different-op subtree as an opaque operand" do
+      -- The Sub node sits inside the + spine as one operand: the
+      -- constants around it still coalesce.
+      let original =
+            primBinOp
+              PrimAdd
+              ( primBinOp
+                  PrimAdd
+                  (literalInt 1)
+                  (primBinOp PrimSub x (literalInt 2))
+              )
+              (literalInt 3)
+      optimizedExpression original
+        `shouldBe` primBinOp
+          PrimAdd
+          (primBinOp PrimSub x (literalInt 2))
+          (literalInt 4)
+
+    it "coalesces adjacent string literals in a concat chain" do
+      optimizedExpression
+        ( primBinOp
+            PrimConcat
+            (primBinOp PrimConcat x (literalString "a"))
+            (literalString "b")
+        )
+        `shouldBe` primBinOp PrimConcat x (literalString "ab")
+
+    it "does not commute string literals around a variable" do
+      let original =
+            primBinOp
+              PrimConcat
+              (primBinOp PrimConcat (literalString "a") x)
+              (literalString "b")
+      optimizedExpression original `shouldBe` original
+
+    it "leaves a non-associative chain untouched" do
+      let original =
+            primBinOp
+              PrimSub
+              (primBinOp PrimSub x (literalInt 1))
+              (literalInt 2)
+      optimizedExpression original `shouldBe` original
+
+    it "leaves a short-circuit chain untouched" do
+      let a = refLocal (Name "a")
+          original =
+            primBinOp
+              PrimAnd
+              (primBinOp PrimAnd a (literalBool False))
+              (literalBool False)
+      optimizedExpression original `shouldBe` original
+
+    it "leaves a float chain untouched (IEEE + is not associative)" do
+      let original =
+            primBinOp
+              PrimAdd
+              (primBinOp PrimAdd (literalFloat 0.5) x)
+              (literalFloat 0.25)
+      optimizedExpression original `shouldBe` original
+
+    it "bails when the coalesced constant would exceed ±2^53" do
+      let big = 2 ^ (53 ∷ Int)
+          original =
+            primBinOp
+              PrimAdd
+              (primBinOp PrimAdd (literalInt big) x)
+              (literalInt 1)
+      optimizedExpression original `shouldBe` original
+
   describe "simplifies boolean ifs (#178)" do
     let cond = primBinOp PrimLt (refLocal (Name "a")) (refLocal (Name "b"))
 
@@ -2344,13 +2450,14 @@ spec = describe "IR Optimizer" do
                    ]
 
     it "bypasses the size budget at a directed site" do
-      -- λa. a + 1 + 2 + … — far over 'inlineSizeBudget', so only the
-      -- directive can paste it. After the paste, constant folding
-      -- collapses each export to a literal.
+      -- λa. a - 1 - 2 - … — far over 'inlineSizeBudget' (and built on
+      -- @-@, which no rewrite coalesces), so only the directive can
+      -- paste it. After the paste, constant folding collapses each
+      -- export to a literal.
       let bigDef =
             abstraction (paramNamed (Name "a")) $
               foldl'
-                (\acc i → primBinOp PrimAdd acc (literalInt i))
+                (\acc i → primBinOp PrimSub acc (literalInt i))
                 (refLocal (Name "a"))
                 [1 .. 40]
       optimized ←
@@ -2366,8 +2473,8 @@ spec = describe "IR Optimizer" do
             }
       namesOf optimized `shouldBe` []
       Linker.uberModuleExports optimized
-        `shouldBe` [ (Name "main1", literalInt 820)
-                   , (Name "main2", literalInt 920)
+        `shouldBe` [ (Name "main1", literalInt (-820))
+                   , (Name "main2", literalInt (-720))
                    ]
 
     it "pastes a non-lambda definition at a directed site" do
@@ -2428,13 +2535,16 @@ spec = describe "IR Optimizer" do
           | Standalone (QName _ (Name name), _) ←
               Linker.uberModuleBindings uber
           ]
-        addChain ∷ Exp → [Integer] → Exp
-        addChain = foldl' \acc i → primBinOp PrimAdd acc (literalInt i)
+        -- Size padding built on @-@, which no rewrite coalesces: an
+        -- add chain would reassociate into one constant (#235) and
+        -- collapse the over-budget premise these tests rest on.
+        subChain ∷ Exp → [Integer] → Exp
+        subChain = foldl' \acc i → primBinOp PrimSub acc (literalInt i)
         dictName = QName mainModule (Name "dict")
         dictRef = refImported mainModule (Name "dict")
         fName = QName mainModule (Name "f")
         fRef = refImported mainModule (Name "f")
-        -- λd. {m: λx. d + x + 1 + … + 38, pad: d} — a dictionary
+        -- λd. {m: λx. d + x - 1 - … - 38, pad: d} — a dictionary
         -- constructor whose size is far over 'inlineSizeBudget', so only
         -- a directive can paste it. The field annotation goes on `m`.
         bigCtor fieldAnn =
@@ -2443,7 +2553,7 @@ spec = describe "IR Optimizer" do
               [
                 ( m
                 , setAnn fieldAnn . abstraction (paramNamed (Name "x")) $
-                    addChain
+                    subChain
                       ( primBinOp
                           PrimAdd
                           (refLocal (Name "d"))
@@ -2504,7 +2614,7 @@ spec = describe "IR Optimizer" do
               [
                 ( m
                 , setAnn (Just Always) . abstraction (paramNamed (Name "x")) $
-                    addChain (refLocal (Name "x")) [1 .. 40]
+                    subChain (refLocal (Name "x")) [1 .. 40]
                 )
               ]
           site x = application (objectProp dictRef m) (literalInt x)
@@ -2518,8 +2628,8 @@ spec = describe "IR Optimizer" do
             }
       namesOf optimized `shouldBe` []
       Linker.uberModuleExports optimized
-        `shouldBe` [ (Name "main1", literalInt 820)
-                   , (Name "main2", literalInt 920)
+        `shouldBe` [ (Name "main1", literalInt (-820))
+                   , (Name "main2", literalInt (-720))
                    ]
 
     it ".label arity=1 resolves only applied projections" do
@@ -2564,7 +2674,7 @@ spec = describe "IR Optimizer" do
             }
       namesOf optimized `shouldBe` ["f"]
       Linker.uberModuleExports optimized
-        `shouldBe` [ (Name "main1", literalInt 748)
+        `shouldBe` [ (Name "main1", literalInt (-734))
                    , (Name "main2", sitePad)
                    ]
 
@@ -2585,7 +2695,7 @@ spec = describe "IR Optimizer" do
             }
       namesOf optimized `shouldBe` ["f"]
       Linker.uberModuleExports optimized
-        `shouldBe` [ (Name "main1", literalInt 748)
+        `shouldBe` [ (Name "main1", literalInt (-734))
                    , (Name "main2", siteBare)
                    ]
 

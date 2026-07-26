@@ -71,17 +71,8 @@ UberModule
                   ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
                   ( PrimBinOp Nothing PrimAdd
                     ( PrimBinOp Nothing PrimAdd
-                      ( PrimBinOp Nothing PrimAdd
-                        ( PrimBinOp Nothing PrimAdd
-                          ( LiteralInt Nothing 1 )
-                          ( Ref Nothing
-                            ( Imported
-                              ( ModuleName "Golden.ConstantChains.Test" )
-                              ( Name "anInt" )
-                            )
-                          )
-                        )
-                        ( LiteralInt Nothing 2 )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Golden.ConstantChains.Test" ) ( Name "anInt" ) )
                       )
                       ( Ref Nothing
                         ( Imported
@@ -90,7 +81,7 @@ UberModule
                         )
                       )
                     )
-                    ( LiteralInt Nothing 3 ) :| []
+                    ( LiteralInt Nothing 6 ) :| []
                   ) :| []
                 )
               )
@@ -103,13 +94,10 @@ UberModule
                   ( AppN Nothing
                     ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
                     ( PrimBinOp Nothing PrimMul
-                      ( PrimBinOp Nothing PrimMul
-                        ( LiteralInt Nothing 2 )
-                        ( Ref Nothing
-                          ( Imported ( ModuleName "Golden.ConstantChains.Test" ) ( Name "anInt" ) )
-                        )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Golden.ConstantChains.Test" ) ( Name "anInt" ) )
                       )
-                      ( LiteralInt Nothing 30 ) :| []
+                      ( LiteralInt Nothing 60 ) :| []
                     ) :| []
                   )
                 )
@@ -121,13 +109,10 @@ UberModule
             ( AppN Nothing
               ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
               ( PrimBinOp Nothing PrimConcat
-                ( PrimBinOp Nothing PrimConcat
-                  ( Ref Nothing
-                    ( Imported ( ModuleName "Golden.ConstantChains.Test" ) ( Name "aString" ) )
-                  )
-                  ( LiteralString Nothing ", " )
+                ( Ref Nothing
+                  ( Imported ( ModuleName "Golden.ConstantChains.Test" ) ( Name "aString" ) )
                 )
-                ( LiteralString Nothing "world" ) :| []
+                ( LiteralString Nothing ", world" ) :| []
               )
             )
             ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
