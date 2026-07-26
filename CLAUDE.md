@@ -361,6 +361,61 @@ often enough; add more when the bug spans several code paths).
 5. If golden tests fail, inspect `actual.*` files in `test/ps/output/`
 6. Update golden files if changes are correct
 
+## Working Conventions
+
+### Testing discipline
+
+- Run the full suite (`cabal test all`) and reach green before opening or
+  updating a PR. A single green run does not cover randomized property tests:
+  when a change touches the optimizer/rewrite rules or anything exercised by
+  Hedgehog generators, re-run the affected spec groups ~10+ times with fresh
+  seeds (e.g. `$(cabal list-bin spec) --match "IR Optimizer"` in a loop with
+  `timeout`). Treat a hang as a failing test, not flakiness.
+- Compiler warnings are fixed or explicitly disabled, never tolerated.
+  "The rest of the file warns the same way" is not a justification. Most `-W`
+  flags here are plain warnings (only a scoped set is `-Werror=`), so a green
+  build can still carry them — check explicitly, and `cabal clean` first to
+  see the full set (haskell.nix content-hashes, so incremental builds don't
+  re-emit warnings).
+
+### Source comments and naming
+
+- Comments describe the present code — what it does and why, in present
+  tense. No history ("used to", "was moved from"): git carries that.
+- Issue numbers appear in code comments only as genuine bug pointers (where
+  the issue carries a reproduction the comment cannot); traceability refs
+  belong in commit messages and PR bodies. A single issue anchor in a
+  regression test's title is fine.
+- Avoid "honest"/"honesty" phrasing in comments; state the contract
+  obligation directly ("returns 'Just' only when it changed something").
+- Fairbairn threshold: don't name a trivial expression used once — inline
+  it. A binding earns a name by multiple use or by taming real complexity.
+- Rationale needed by two or more sites becomes one GHC-style
+  `Note [...]` with `See Note` references, not duplicated prose.
+
+### GitHub text (PRs, issues, comments)
+
+- Write each paragraph as one continuous line; blank lines separate blocks.
+- Text must be self-contained: don't assume the reader remembers code names
+  or codebase facts — gloss each identifier on first mention (one clause,
+  not a paragraph) and present the idea from scratch, concisely. Assume
+  general PL literacy, not codebase familiarity.
+- Illustrate every load-bearing claim with code: before/after output quoted
+  verbatim from real artifacts (never fabricated or name-normalized),
+  rewrite chains, or a minimal repro.
+- No Claude session links or trailers in commits, PRs, or issues.
+- Findings out of scope for the current task (bugs, gaps, ideas) are offered
+  as GitHub issues rather than left in conversation; issues for
+  `purescript-lua-*` fork repos also get a thin proxy issue here, so this
+  tracker aggregates everything.
+
+### Git
+
+- `main` requires signed commits. A `git filter-branch` rewrite strips
+  signatures and the PR blocks with green CI (`mergeStateStatus: BLOCKED`);
+  re-sign with `git rebase --force-rebase origin/main`, verify with
+  `git log --format='%h %G? %s'`, then push with lease.
+
 ## Versioning and Releases
 
 `pslua` follows the **Package Versioning Policy (PVP)**, not SemVer: versions
