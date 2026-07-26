@@ -5,8 +5,6 @@ aborts (distinct site -- reason):
   Bench.TupleFold.lua:12 -- NYI: bytecode FNEW
   Bench.TupleFold.lua:13 -- NYI: bytecode UCLO
   Bench.TupleFold.lua:6 -- inner loop in root trace
-  tuple_fold.lua:22 -- inner loop in root trace
 bytecode end state (J*=compiled, I*=blacklisted):
   Bench.TupleFold.lua:5 JLOOP
-  tuple_fold.lua:21 JLOOP
-counts: aborts=4 compiled=2 blacklisted=0
+counts: aborts=3 compiled=1 blacklisted=0
