@@ -1,0 +1,384 @@
+UberModule
+  { uberModuleBindings =
+    [ Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Record.Unsafe", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Record.Unsafe" ) ".spago/p/prelude/5718c84fdde6247749cb053e816df696c30fe691/src/Record/Unsafe.purs"
+        [
+          ( Nothing, Name "unsafeHas" ),
+          ( Nothing, Name "unsafeGet" ),
+          ( Nothing, Name "unsafeSet" ),
+          ( Nothing, Name "unsafeDelete" )
+        ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Record.Unsafe", qnameName = Name "unsafeDelete"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Record.Unsafe" ) ( Name "foreign" ) ) )
+        ( PropName "unsafeDelete" )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Record.Unsafe", qnameName = Name "unsafeGet"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Record.Unsafe" ) ( Name "foreign" ) ) )
+        ( PropName "unsafeGet" )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Record.Unsafe", qnameName = Name "unsafeHas"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Record.Unsafe" ) ( Name "foreign" ) ) )
+        ( PropName "unsafeHas" )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Record.Unsafe", qnameName = Name "unsafeSet"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Record.Unsafe" ) ( Name "foreign" ) ) )
+        ( PropName "unsafeSet" )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Show", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Data.Show" ) ".spago/p/prelude/5718c84fdde6247749cb053e816df696c30fe691/src/Data/Show.purs"
+        [ ( Nothing, Name "showIntImpl" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Effect.Console" ) ".spago/p/console/f82835a0b873aafe6bd7b14dd30cc150553d4ab9/src/Effect/Console.purs"
+        [ ( Nothing, Name "log" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "log"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
+        ( PropName "log" )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Effect.Ref", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Effect.Ref" ) ".spago/p/refs/ee6e959ec21b752622e105a14816e7983b21b9a5/src/Effect/Ref.purs"
+        [ ( Nothing, Name "_new" ), ( Nothing, Name "read" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Unsafe.Coerce", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Unsafe.Coerce" ) ".spago/p/unsafe-coerce/7a4c95f14b8118d9fb052e130d6e862fa3f5166a/src/Unsafe/Coerce.purs"
+        [ ( Nothing, Name "unsafeCoerce" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.RecordSurgery.Test", qnameName = Name "logShow"
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "a$223" ) :| [] )
+        ( AppN Nothing
+          ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+          ( AppN Nothing
+            ( ObjectProp Nothing
+              ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
+              ( PropName "showIntImpl" )
+            )
+            ( Ref Nothing ( Local ( Name "a$223" ) ) :| [] ) :| []
+          )
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.RecordSurgery.Test", qnameName = Name "logShow1"
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "a$221" ) :| [] )
+        ( AppN Nothing
+          ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+          ( IfThenElse Nothing
+            ( Ref Nothing ( Local ( Name "a$221" ) ) )
+            ( LiteralString Nothing "true" )
+            ( LiteralString Nothing "false" ) :| []
+          )
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.RecordSurgery.Test", qnameName = Name "replaced"
+        }, AppN Nothing
+        ( AppN Nothing
+          ( AppN Nothing
+            ( Ref Nothing ( Imported ( ModuleName "Record.Unsafe" ) ( Name "unsafeSet" ) ) )
+            ( LiteralString Nothing "a" :| [] )
+          )
+          ( LiteralInt Nothing 3 :| [] )
+        )
+        ( LiteralObject Nothing [ ( PropName "a", LiteralInt Nothing 1 ) ] :| [] )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.RecordSurgery.Test", qnameName = Name "present"
+        }, AppN Nothing
+        ( AppN Nothing
+          ( Ref Nothing ( Imported ( ModuleName "Record.Unsafe" ) ( Name "unsafeHas" ) ) )
+          ( LiteralString Nothing "a" :| [] )
+        )
+        ( LiteralObject Nothing [ ( PropName "a", LiteralInt Nothing 1 ) ] :| [] )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.RecordSurgery.Test", qnameName = Name "inserted"
+        }, AppN Nothing
+        ( AppN Nothing
+          ( AppN Nothing
+            ( Ref Nothing ( Imported ( ModuleName "Record.Unsafe" ) ( Name "unsafeSet" ) ) )
+            ( LiteralString Nothing "b" :| [] )
+          )
+          ( LiteralInt Nothing 2 :| [] )
+        )
+        ( LiteralObject Nothing [ ( PropName "a", LiteralInt Nothing 1 ) ] :| [] )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.RecordSurgery.Test", qnameName = Name "got"
+        }, AppN Nothing
+        ( AppN Nothing
+          ( Ref Nothing ( Imported ( ModuleName "Record.Unsafe" ) ( Name "unsafeGet" ) ) )
+          ( LiteralString Nothing "a" :| [] )
+        )
+        ( LiteralObject Nothing [ ( PropName "a", LiteralInt Nothing 42 ) ] :| [] )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.RecordSurgery.Test", qnameName = Name "deleted"
+        }, AppN Nothing
+        ( AppN Nothing
+          ( Ref Nothing ( Imported ( ModuleName "Record.Unsafe" ) ( Name "unsafeDelete" ) ) )
+          ( LiteralString Nothing "a" :| [] )
+        )
+        ( LiteralObject Nothing
+          [ ( PropName "a", LiteralInt Nothing 1 ), ( PropName "b", LiteralInt Nothing 2 ) ] :| []
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.RecordSurgery.Test", qnameName = Name "coerced"
+        }, AppN Nothing
+        ( ObjectProp Nothing
+          ( Ref Nothing ( Imported ( ModuleName "Unsafe.Coerce" ) ( Name "foreign" ) ) )
+          ( PropName "unsafeCoerce" )
+        )
+        ( LiteralInt Nothing 7 :| [] )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.RecordSurgery.Test", qnameName = Name "absent"
+        }, AppN Nothing
+        ( AppN Nothing
+          ( Ref Nothing ( Imported ( ModuleName "Record.Unsafe" ) ( Name "unsafeHas" ) ) )
+          ( LiteralString Nothing "z" :| [] )
+        )
+        ( LiteralObject Nothing [ ( PropName "a", LiteralInt Nothing 1 ) ] :| [] )
+      )
+    ], uberModuleForeigns = [], uberModuleExports =
+    [
+      ( Name "inserted", Ref Nothing
+        ( Imported ( ModuleName "Golden.RecordSurgery.Test" ) ( Name "inserted" ) )
+      ),
+      ( Name "replaced", Ref Nothing
+        ( Imported ( ModuleName "Golden.RecordSurgery.Test" ) ( Name "replaced" ) )
+      ),
+      ( Name "deleted", Ref Nothing
+        ( Imported ( ModuleName "Golden.RecordSurgery.Test" ) ( Name "deleted" ) )
+      ),
+      ( Name "got", Ref Nothing
+        ( Imported ( ModuleName "Golden.RecordSurgery.Test" ) ( Name "got" ) )
+      ),
+      ( Name "present", Ref Nothing
+        ( Imported ( ModuleName "Golden.RecordSurgery.Test" ) ( Name "present" ) )
+      ),
+      ( Name "absent", Ref Nothing
+        ( Imported ( ModuleName "Golden.RecordSurgery.Test" ) ( Name "absent" ) )
+      ),
+      ( Name "coerced", Ref Nothing
+        ( Imported ( ModuleName "Golden.RecordSurgery.Test" ) ( Name "coerced" ) )
+      ),
+      ( Name "main", AbsN Nothing
+        ( ParamUnused Nothing :| [] )
+        ( Let Nothing
+          ( Standalone
+            ( Nothing, Name "ref$0", AppN Nothing
+              ( AppN Nothing
+                ( ObjectProp Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Effect.Ref" ) ( Name "foreign" ) ) )
+                  ( PropName "_new" )
+                )
+                ( LiteralObject Nothing
+                  [
+                    ( PropName "k", LiteralInt Nothing 9 ),
+                    ( PropName "n", LiteralInt Nothing 1 )
+                  ] :| []
+                )
+              )
+              ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+            ) :|
+            [ Standalone
+              ( Nothing, Name "dyn$1", AppN Nothing
+                ( AppN Nothing
+                  ( ObjectProp Nothing
+                    ( Ref Nothing ( Imported ( ModuleName "Effect.Ref" ) ( Name "foreign" ) ) )
+                    ( PropName "read" )
+                  )
+                  ( Ref Nothing ( Local ( Name "ref$0" ) ) :| [] )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              ), Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Golden.RecordSurgery.Test" ) ( Name "logShow" ) )
+                  )
+                  ( PrimBinOp Nothing PrimAdd
+                    ( ObjectProp Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Golden.RecordSurgery.Test" ) ( Name "inserted" ) )
+                      )
+                      ( PropName "a" )
+                    )
+                    ( ObjectProp Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Golden.RecordSurgery.Test" ) ( Name "inserted" ) )
+                      )
+                      ( PropName "b" )
+                    ) :| []
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              ), Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Golden.RecordSurgery.Test" ) ( Name "logShow" ) )
+                  )
+                  ( ObjectProp Nothing
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Golden.RecordSurgery.Test" ) ( Name "replaced" ) )
+                    )
+                    ( PropName "a" ) :| []
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              ), Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Golden.RecordSurgery.Test" ) ( Name "logShow" ) )
+                  )
+                  ( ObjectProp Nothing
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Golden.RecordSurgery.Test" ) ( Name "deleted" ) )
+                    )
+                    ( PropName "b" ) :| []
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              ), Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Golden.RecordSurgery.Test" ) ( Name "logShow" ) )
+                  )
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Golden.RecordSurgery.Test" ) ( Name "got" ) ) :| []
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              ), Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Golden.RecordSurgery.Test" ) ( Name "logShow1" ) )
+                  )
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Golden.RecordSurgery.Test" ) ( Name "present" ) ) :| []
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              ), Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Golden.RecordSurgery.Test" ) ( Name "logShow1" ) )
+                  )
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Golden.RecordSurgery.Test" ) ( Name "absent" ) ) :| []
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              ), Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Golden.RecordSurgery.Test" ) ( Name "logShow" ) )
+                  )
+                  ( AppN Nothing
+                    ( AppN Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Record.Unsafe" ) ( Name "unsafeGet" ) )
+                      )
+                      ( LiteralString Nothing "k" :| [] )
+                    )
+                    ( AppN Nothing
+                      ( AppN Nothing
+                        ( AppN Nothing
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Record.Unsafe" ) ( Name "unsafeSet" ) )
+                          )
+                          ( LiteralString Nothing "k" :| [] )
+                        )
+                        ( PrimBinOp Nothing PrimAdd
+                          ( AppN Nothing
+                            ( AppN Nothing
+                              ( Ref Nothing
+                                ( Imported ( ModuleName "Record.Unsafe" ) ( Name "unsafeGet" ) )
+                              )
+                              ( LiteralString Nothing "k" :| [] )
+                            )
+                            ( Ref Nothing ( Local ( Name "dyn$1" ) ) :| [] )
+                          )
+                          ( LiteralInt Nothing 1 ) :| []
+                        )
+                      )
+                      ( Ref Nothing ( Local ( Name "dyn$1" ) ) :| [] ) :| []
+                    ) :| []
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              ), Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Golden.RecordSurgery.Test" ) ( Name "logShow1" ) )
+                  )
+                  ( AppN Nothing
+                    ( AppN Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Record.Unsafe" ) ( Name "unsafeHas" ) )
+                      )
+                      ( LiteralString Nothing "k" :| [] )
+                    )
+                    ( AppN Nothing
+                      ( AppN Nothing
+                        ( Ref Nothing
+                          ( Imported ( ModuleName "Record.Unsafe" ) ( Name "unsafeDelete" ) )
+                        )
+                        ( LiteralString Nothing "k" :| [] )
+                      )
+                      ( Ref Nothing ( Local ( Name "dyn$1" ) ) :| [] ) :| []
+                    ) :| []
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              )
+            ]
+          )
+          ( AppN Nothing
+            ( AppN Nothing
+              ( Ref Nothing
+                ( Imported ( ModuleName "Golden.RecordSurgery.Test" ) ( Name "logShow" ) )
+              )
+              ( Ref Nothing
+                ( Imported ( ModuleName "Golden.RecordSurgery.Test" ) ( Name "coerced" ) ) :| []
+              )
+            )
+            ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+          )
+        )
+      )
+    ]
+  }
