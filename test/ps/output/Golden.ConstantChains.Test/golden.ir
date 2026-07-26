@@ -1,0 +1,123 @@
+UberModule
+  { uberModuleBindings =
+    [ Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Show", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Data.Show" ) ".spago/p/prelude/5718c84fdde6247749cb053e816df696c30fe691/src/Data/Show.purs"
+        [ ( Nothing, Name "showIntImpl" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Show", qnameName = Name "showIntImpl"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
+        ( PropName "showIntImpl" )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Effect.Console" ) ".spago/p/console/f82835a0b873aafe6bd7b14dd30cc150553d4ab9/src/Effect/Console.purs"
+        [ ( Nothing, Name "log" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "log"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
+        ( PropName "log" )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.ConstantChains.Test", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Golden.ConstantChains.Test" ) "src/Golden/ConstantChains/Test.purs"
+        [ ( Nothing, Name "anInt" ), ( Nothing, Name "anotherInt" ), ( Nothing, Name "aString" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.ConstantChains.Test", qnameName = Name "aString"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Golden.ConstantChains.Test" ) ( Name "foreign" ) ) )
+        ( PropName "aString" )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.ConstantChains.Test", qnameName = Name "anInt"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Golden.ConstantChains.Test" ) ( Name "foreign" ) ) )
+        ( PropName "anInt" )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.ConstantChains.Test", qnameName = Name "anotherInt"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Golden.ConstantChains.Test" ) ( Name "foreign" ) ) )
+        ( PropName "anotherInt" )
+      )
+    ], uberModuleForeigns = [], uberModuleExports =
+    [
+      ( Name "anInt", Ref Nothing
+        ( Imported ( ModuleName "Golden.ConstantChains.Test" ) ( Name "anInt" ) )
+      ),
+      ( Name "anotherInt", Ref Nothing
+        ( Imported ( ModuleName "Golden.ConstantChains.Test" ) ( Name "anotherInt" ) )
+      ),
+      ( Name "aString", Ref Nothing
+        ( Imported ( ModuleName "Golden.ConstantChains.Test" ) ( Name "aString" ) )
+      ),
+      ( Name "main", AbsN Nothing
+        ( ParamUnused Nothing :| [] )
+        ( Let Nothing
+          ( Standalone
+            ( Nothing, Name "_", AppN Nothing
+              ( AppN Nothing
+                ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+                ( AppN Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
+                  ( PrimBinOp Nothing PrimAdd
+                    ( PrimBinOp Nothing PrimAdd
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Golden.ConstantChains.Test" ) ( Name "anInt" ) )
+                      )
+                      ( Ref Nothing
+                        ( Imported
+                          ( ModuleName "Golden.ConstantChains.Test" )
+                          ( Name "anotherInt" )
+                        )
+                      )
+                    )
+                    ( LiteralInt Nothing 6 ) :| []
+                  ) :| []
+                )
+              )
+              ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+            ) :|
+            [ Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+                  ( AppN Nothing
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
+                    ( PrimBinOp Nothing PrimMul
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Golden.ConstantChains.Test" ) ( Name "anInt" ) )
+                      )
+                      ( LiteralInt Nothing 60 ) :| []
+                    ) :| []
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              )
+            ]
+          )
+          ( AppN Nothing
+            ( AppN Nothing
+              ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+              ( PrimBinOp Nothing PrimConcat
+                ( Ref Nothing
+                  ( Imported ( ModuleName "Golden.ConstantChains.Test" ) ( Name "aString" ) )
+                )
+                ( LiteralString Nothing ", world" ) :| []
+              )
+            )
+            ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+          )
+        )
+      )
+    ]
+  }

@@ -71,6 +71,7 @@ import Language.PureScript.Backend.IR.Types
   , getAnn
   , isEffectRun
   , isForeignImport
+  , isLiteral
   , isNonRecursiveLiteral
   , lets
   , listGrouping
@@ -1062,6 +1063,7 @@ optimizedExpressionWithPastes ctorTags canon pastes policy env =
   rewriteExpBottomUpM
     ( canonicalizeEffectHead canon
         `thenRewrite` constantFolding
+        `thenRewrite` reassociateConstants
         `thenRewrite` reduceObjectProp
         `thenRewrite` reduceArrayRead
         `thenRewrite` sinkProjectionIntoLet
@@ -1253,6 +1255,105 @@ foldEqLiterals l r = case (l, r) of
   (LiteralChar _ a, LiteralChar _ b) → Just (a == b)
   (LiteralString _ a, LiteralString _ b) → Just (a == b)
   _ → Nothing
+
+{- Note [Reassociating constant chains]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+'constantFolding' folds a primop only when both operands are literals,
+so a chain like @1 + x + 2 + y + 3@ keeps all three constants apart.
+'reassociateConstants' flattens a same-operator tree into its operand
+list and coalesces the literal operands into one, for the operators
+where reassociation is exact:
+
+  * @+@ and @*@ over Int are associative and commutative: on the ±2^53
+    plateau every value is an exact IEEE double and both operations are
+    exact integer arithmetic (see Note [Folding primops follows
+    Lua 5.1]). All int literals of the spine fold into a single
+    constant, appended after the non-literal operands, whose relative
+    evaluation order is preserved: @1 + x + 2 + y + 3@ becomes
+    @x + y + 6@. The rule declines when any input literal or the
+    folded result leaves the plateau — a coalesced literal must be a
+    value the runtime holds exactly. It also declines when the spine
+    carries a literal of any other kind: a float literal makes it a
+    float chain, where IEEE @+@/@*@ are not associative and no
+    per-constant guard makes reassociation around a variable sound;
+    any other kind is ill-typed input (Note [IR is assumed
+    well-typed]).
+  * @..@ is associative but not commutative, so only /adjacent/ string
+    literals coalesce: @x .. "a" .. "b"@ becomes @x .. "ab"@, while
+    @"a" .. x .. "b"@ is left alone. Non-string operands stay in place
+    as opaque separators — an FFI-lifted @..@ can hold a number the
+    runtime coerces, so they are neither folded nor moved.
+
+A subtree of a different operator is a single opaque operand of the
+spine, and constants coalesce around it. @-@/@\/@/@%@ spines are not
+associative and never fire; @and@/@or@ short-circuit, so reassociating
+them would change which operands get evaluated.
+
+A coalesced identity element is kept, not dropped: @1 + x + (-1)@
+rebuilds as @x + 0@. Dropping the literal is only sound when the
+remaining operand has the operator's type, which an FFI-lifted chain
+does not guarantee (@n .. ""@ coerces a number to a string, and
+@-0.0 + 0@ flips the sign bit).
+
+The rule fires only when it coalesces at least two literals, and its
+result contains no spine with two coalesceable literals, so it is a
+fixed point of itself — the bottom-up driver's re-application
+terminates.
+-}
+reassociateConstants ∷ Applicative m ⇒ RewriteRuleM m Ann
+reassociateConstants =
+  pure . \case
+    e@(PrimBinOp ann op _ _)
+      | op == PrimAdd || op == PrimMul →
+          setAnn ann <$> coalesceIntChain op (flattenChain op e)
+      | op == PrimConcat →
+          setAnn ann <$> coalesceConcatChain (flattenChain op e)
+    _ → Nothing
+
+{- | The left-to-right operand list of a same-operator tree:
+@(1 + x) + (2 + y)@ flattens to @[1, x, 2, y]@.
+-}
+flattenChain ∷ PrimOp → Exp → [Exp]
+flattenChain op = flip go []
+ where
+  go e acc = case e of
+    PrimBinOp _ op' a b | op' == op → go a (go b acc)
+    _ → e : acc
+
+{- | Coalesce the int literals of a flattened @+@/@*@ spine into one
+constant, placed after the non-literal operands. Guards and rebuild
+shape per Note [Reassociating constant chains].
+-}
+coalesceIntChain ∷ PrimOp → [Exp] → Maybe Exp
+coalesceIntChain op operands
+  | length ints >= 2
+  , not (any isLiteral others)
+  , all ((<= maxSafeInteger) . abs) (total : ints) =
+      Just case others of
+        [] → literalInt total
+        (o : os) → foldl' (primBinOp op) o (os <> [literalInt total])
+  | otherwise = Nothing
+ where
+  ints = [i | LiteralInt _ i ← operands]
+  others = filter (\case LiteralInt _ _ → False; _ → True) operands
+  total = if op == PrimMul then product ints else sum ints
+
+{- | Coalesce every run of adjacent string literals in a flattened
+@..@ spine, leaving all other operands in place. Fires only when some
+run actually merged. See Note [Reassociating constant chains].
+-}
+coalesceConcatChain ∷ [Exp] → Maybe Exp
+coalesceConcatChain operands = case mergeRuns operands of
+  merged@(o : os)
+    | length merged < length operands →
+        Just (foldl' (primBinOp PrimConcat) o os)
+  _ → Nothing
+ where
+  mergeRuns = \case
+    LiteralString _ a : LiteralString _ b : rest →
+      mergeRuns (literalString (a <> b) : rest)
+    e : rest → e : mergeRuns rest
+    [] → []
 
 {- | Folds a record projection into the record constructor:
 @{ foo: 1, bar: 2 }.foo@ becomes @1@, and a projection through a record

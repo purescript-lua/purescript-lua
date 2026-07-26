@@ -61,12 +61,12 @@ UberModule
               ( ParamNamed Nothing ( Name "a" ) :| [] )
               ( AbsN Nothing
                 ( ParamNamed Nothing ( Name "b" ) :| [] )
-                ( PrimBinOp Nothing PrimAdd
-                  ( PrimBinOp Nothing PrimAdd
-                    ( PrimBinOp Nothing PrimAdd
-                      ( PrimBinOp Nothing PrimAdd
-                        ( PrimBinOp Nothing PrimAdd
-                          ( PrimBinOp Nothing PrimAdd
+                ( PrimBinOp Nothing PrimSub
+                  ( PrimBinOp Nothing PrimSub
+                    ( PrimBinOp Nothing PrimSub
+                      ( PrimBinOp Nothing PrimSub
+                        ( PrimBinOp Nothing PrimSub
+                          ( PrimBinOp Nothing PrimSub
                             ( PrimBinOp Nothing PrimAdd
                               ( PrimBinOp Nothing PrimAdd
                                 ( Ref Nothing ( Local ( Name "a" ) ) )
@@ -92,12 +92,12 @@ UberModule
               ( ParamNamed Nothing ( Name "a0" ) :| [] )
               ( AbsN Nothing
                 ( ParamNamed Nothing ( Name "b0" ) :| [] )
-                ( PrimBinOp Nothing PrimAdd
-                  ( PrimBinOp Nothing PrimAdd
-                    ( PrimBinOp Nothing PrimAdd
-                      ( PrimBinOp Nothing PrimAdd
-                        ( PrimBinOp Nothing PrimAdd
-                          ( PrimBinOp Nothing PrimAdd
+                ( PrimBinOp Nothing PrimSub
+                  ( PrimBinOp Nothing PrimSub
+                    ( PrimBinOp Nothing PrimSub
+                      ( PrimBinOp Nothing PrimSub
+                        ( PrimBinOp Nothing PrimSub
+                          ( PrimBinOp Nothing PrimSub
                             ( PrimBinOp Nothing PrimAdd
                               ( PrimBinOp Nothing PrimSub
                                 ( Ref Nothing ( Local ( Name "a0" ) ) )
@@ -123,12 +123,12 @@ UberModule
               ( ParamNamed Nothing ( Name "a1" ) :| [] )
               ( AbsN Nothing
                 ( ParamNamed Nothing ( Name "b1" ) :| [] )
-                ( PrimBinOp Nothing PrimAdd
-                  ( PrimBinOp Nothing PrimAdd
-                    ( PrimBinOp Nothing PrimAdd
-                      ( PrimBinOp Nothing PrimAdd
-                        ( PrimBinOp Nothing PrimAdd
-                          ( PrimBinOp Nothing PrimAdd
+                ( PrimBinOp Nothing PrimSub
+                  ( PrimBinOp Nothing PrimSub
+                    ( PrimBinOp Nothing PrimSub
+                      ( PrimBinOp Nothing PrimSub
+                        ( PrimBinOp Nothing PrimSub
+                          ( PrimBinOp Nothing PrimSub
                             ( PrimBinOp Nothing PrimAdd
                               ( PrimBinOp Nothing PrimMul
                                 ( Ref Nothing ( Local ( Name "a1" ) ) )
@@ -154,10 +154,10 @@ UberModule
               ( ParamNamed Nothing ( Name "a2" ) :| [] )
               ( AbsN Nothing
                 ( ParamNamed Nothing ( Name "b2" ) :| [] )
-                ( PrimBinOp Nothing PrimAdd
-                  ( PrimBinOp Nothing PrimAdd
-                    ( PrimBinOp Nothing PrimAdd
-                      ( PrimBinOp Nothing PrimAdd
+                ( PrimBinOp Nothing PrimSub
+                  ( PrimBinOp Nothing PrimSub
+                    ( PrimBinOp Nothing PrimSub
+                      ( PrimBinOp Nothing PrimSub
                         ( PrimBinOp Nothing PrimAdd
                           ( PrimBinOp Nothing PrimAdd
                             ( PrimBinOp Nothing PrimMul
@@ -196,7 +196,7 @@ UberModule
         ( ParamUnused Nothing :| [] )
         ( Let Nothing
           ( Standalone
-            ( Nothing, Name "$cse348", ObjectProp Nothing
+            ( Nothing, Name "$cse352", ObjectProp Nothing
               ( Ref Nothing
                 ( Imported ( ModuleName "Golden.DirectiveAccessor.Test" ) ( Name "ops" ) )
               )
@@ -212,7 +212,7 @@ UberModule
                     ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
                     ( AppN Nothing
                       ( AppN Nothing
-                        ( Ref Nothing ( Local ( Name "$cse348" ) ) )
+                        ( Ref Nothing ( Local ( Name "$cse352" ) ) )
                         ( LiteralInt Nothing 6 :| [] )
                       )
                       ( LiteralInt Nothing 7 :| [] ) :| []
@@ -231,7 +231,7 @@ UberModule
                       )
                       ( AppN Nothing
                         ( AppN Nothing
-                          ( Ref Nothing ( Local ( Name "$cse348" ) ) )
+                          ( Ref Nothing ( Local ( Name "$cse352" ) ) )
                           ( LiteralInt Nothing 2 :| [] )
                         )
                         ( LiteralInt Nothing 3 :| [] ) :| []
@@ -247,7 +247,7 @@ UberModule
                       ( Ref Nothing
                         ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) )
                       )
-                      ( LiteralInt Nothing 252 :| [] ) :| []
+                      ( LiteralInt Nothing ( -168 ) :| [] ) :| []
                     )
                   )
                   ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
