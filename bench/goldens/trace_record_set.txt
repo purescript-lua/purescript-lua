@@ -5,9 +5,9 @@ aborts (distinct site -- reason):
   Bench.RecordSet.lua:29 -- NYI: bytecode FNEW
   Bench.RecordSet.lua:30 -- NYI: bytecode FNEW
   Bench.RecordSet.lua:38 -- inner loop in root trace
-  Bench.RecordSet.lua:62 -- NYI: bytecode FNEW
-  Bench.RecordSet.lua:63 -- NYI: bytecode FNEW
-  Bench.RecordSet.lua:65 -- NYI: bytecode UCLO
+  Bench.RecordSet.lua:60 -- NYI: bytecode FNEW
+  Bench.RecordSet.lua:61 -- NYI: bytecode FNEW
+  Bench.RecordSet.lua:63 -- NYI: bytecode UCLO
   Bench.RecordSet.lua:8 -- NYI: bytecode FNEW
 bytecode end state (J*=compiled, I*=blacklisted):
   Bench.RecordSet.lua:27 IFORL
@@ -17,7 +17,8 @@ bytecode end state (J*=compiled, I*=blacklisted):
   Bench.RecordSet.lua:6 JFORI
   Bench.RecordSet.lua:6 JFORL
   Bench.RecordSet.lua:60 JFUNCF
-  Bench.RecordSet.lua:63 JFUNCF
+  Bench.RecordSet.lua:61 JFUNCF
+  record_set.lua:19 JFUNCF
   record_set.lua:21 JFORI
   record_set.lua:21 JFORL
-counts: aborts=7 compiled=8 blacklisted=2
+counts: aborts=7 compiled=9 blacklisted=2
