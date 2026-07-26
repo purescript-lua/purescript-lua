@@ -168,6 +168,99 @@ spec = describe "Lua.fromUberModule" do
           (shortCall topSelf (IR.App IR.noAnn (ref "g") (ref "x")))
       rendered `shouldSatisfy` (not . Text.isInfixOf "while true do")
 
+  describe "loopification of mutual recursion (#234)" do
+    it "lowers a mutual pair to a single while-true dispatcher" do
+      rendered ←
+        compileMutualGroup (("ping", mutualPing) :| [("pong", mutualPong)])
+      rendered `shouldSatisfy` Text.isInfixOf "while true do"
+      -- Sibling transitions set the selector and all slots at once.
+      rendered `shouldSatisfy` Text.isInfixOf "_S_sel0, _S_a1, _S_a2 = 2, n, acc"
+      rendered `shouldSatisfy` Text.isInfixOf "_S_sel0, _S_a1, _S_a2 = 1, b, a"
+      -- Each branch rebinds its parameters from the shared slots.
+      rendered `shouldSatisfy` Text.isInfixOf "local acc, n = _S_a1, _S_a2"
+      -- Entry wrappers delegate to the dispatcher…
+      rendered
+        `shouldSatisfy` Text.isInfixOf
+          "return M.Test_Loopify_ping_S_loop(1, acc, n)"
+      rendered
+        `shouldSatisfy` Text.isInfixOf
+          "return M.Test_Loopify_ping_S_loop(2, a, b)"
+      -- …and no cross-call between the members remains.
+      rendered `shouldSatisfy` (not . Text.isInfixOf "M.Test_Loopify_pong(")
+
+    it "keeps a group without a spine tail-call cycle untouched" do
+      rendered ←
+        compileMutualGroup (("ping", nonTailPing) :| [("pong", mutualPong)])
+      rendered `shouldSatisfy` (not . Text.isInfixOf "while true do")
+      rendered `shouldSatisfy` (not . Text.isInfixOf "_S_loop")
+      rendered `shouldSatisfy` Text.isInfixOf "M.Test_Loopify_pong(n, acc)"
+
+    it "pads a narrower member's transition with nil" do
+      rendered ←
+        compileMutualGroup (("uno", unoCallsDos) :| [("dos", dosCallsUno)])
+      rendered `shouldSatisfy` Text.isInfixOf "_S_sel0, _S_a1, _S_a2 = 2, n, 1"
+      rendered `shouldSatisfy` Text.isInfixOf "_S_sel0, _S_a1, _S_a2 = 1, a, nil"
+
+    it "dispatches a Let-bound mutual pair through a local dispatcher" do
+      rendered ← compileExportedExpr letMutualLoop
+      rendered `shouldSatisfy` Text.isInfixOf "local tick_S_loop"
+      rendered `shouldSatisfy` Text.isInfixOf "while true do"
+      rendered `shouldSatisfy` Text.isInfixOf "_S_sel0, _S_a1, _S_a2 = 2, k, c"
+      rendered `shouldSatisfy` Text.isInfixOf "return tick_S_loop(1, c, k)"
+
+    it "leaves a member outside the cycle referencing dispatched entries" do
+      rendered ←
+        compileMutualGroup
+          (("wA", waCallsWb) :| [("wB", wbCallsWa), ("pw", curriedOverWa)])
+      rendered `shouldSatisfy` Text.isInfixOf "while true do"
+      -- The curried member keeps its reference; it now hits wA's entry
+      -- wrapper, whose binding survives under the original name.
+      rendered `shouldSatisfy` Text.isInfixOf "return M.Test_Loopify_wA(x, y)"
+      rendered `shouldSatisfy` (not . Text.isInfixOf "M.Test_Loopify_wB(")
+
+  describe "join points (#234)" do
+    it "fuses a Let-bound recursive worker into the enclosing body" do
+      rendered ← compileExportedExpr letRecLoop
+      -- The function shell and its entry call are gone; the entry
+      -- became a parameter assignment falling through into the loop.
+      rendered `shouldSatisfy` (not . Text.isInfixOf "local go")
+      rendered `shouldSatisfy` (not . Text.isInfixOf "go(")
+      rendered `shouldSatisfy` Text.isInfixOf "local acc, n"
+      rendered `shouldSatisfy` Text.isInfixOf "acc, n = 0, m"
+      rendered `shouldSatisfy` Text.isInfixOf "while true do"
+
+    it "fuses a non-recursive continuation called from two branches" do
+      rendered ← compileExportedExpr joinContinuation
+      rendered `shouldSatisfy` (not . Text.isInfixOf "finish")
+      rendered `shouldSatisfy` Text.isInfixOf "r = a"
+      rendered `shouldSatisfy` Text.isInfixOf "r = b"
+      rendered `shouldSatisfy` Text.isInfixOf "return g(r)"
+      -- No self-recursion, so no loop either.
+      rendered `shouldSatisfy` (not . Text.isInfixOf "while true do")
+
+    it "fuses chained join points" do
+      rendered ← compileExportedExpr chainedJoins
+      rendered `shouldSatisfy` (not . Text.isInfixOf "k1")
+      rendered `shouldSatisfy` (not . Text.isInfixOf "k2")
+      rendered `shouldSatisfy` Text.isInfixOf "return g(b)"
+
+    it "keeps a helper that escapes into a closure" do
+      rendered ← compileExportedExpr escapingHelper
+      rendered `shouldSatisfy` Text.isInfixOf "local esc"
+      rendered `shouldSatisfy` Text.isInfixOf "esc(m)"
+
+    it "keeps a helper with a non-tail call site" do
+      rendered ← compileExportedExpr nonTailHelper
+      rendered `shouldSatisfy` Text.isInfixOf "local h"
+      rendered `shouldSatisfy` Text.isInfixOf "h(n)"
+
+    it "declines when a spine leaf returns a call" do
+      rendered ← compileExportedExpr callLeafBeside
+      -- Fusing would bury the sibling `return f(n)` mid-chunk, robbing
+      -- the enclosing binding's own loopification of a tail position.
+      rendered `shouldSatisfy` Text.isInfixOf "local k"
+      rendered `shouldSatisfy` Text.isInfixOf "k(n)"
+
   describe "foreign export check (#249)" do
     it "rejects a declared foreign name missing from the FFI exports" do
       result ← compileForeignModule "return { foo = 42 }" ["foo", "bar"]
@@ -207,6 +300,22 @@ compileRecBinding expr =
           ]
       , uberModuleForeigns = []
       , uberModuleExports = [(IR.Name "value", topSelf)]
+      }
+
+{- | Compile a module with one top-level 'IR.RecursiveGroup' holding the
+given members, the first of which is exported.
+-}
+compileMutualGroup ∷ NonEmpty (Text, IR.Exp) → IO Text
+compileMutualGroup members =
+  compileUberModule
+    UberModule
+      { uberModuleBindings =
+          [ IR.RecursiveGroup $
+              members <&> \(name, expr) →
+                (IR.QName testModuleName (IR.Name name), expr)
+          ]
+      , uberModuleForeigns = []
+      , uberModuleExports = [(IR.Name "value", topRef (fst (head members)))]
       }
 
 testModuleName ∷ IR.ModuleName
@@ -453,6 +562,233 @@ shortCall self arg =
       (ref "p")
       (ref "acc")
       (IR.AppN IR.noAnn self (arg :| [primUndefined]))
+
+-- Mutual loopification fixtures (#234) ----------------------------------------
+
+-- | A reference to the given top-level binding of the test module.
+topRef ∷ Text → IR.Exp
+topRef = IR.Ref IR.noAnn . IR.Imported testModuleName . IR.Name
+
+{- | @ping acc n = if p then acc else pong n acc@ — tail-calls its
+sibling with the arguments swapped.
+-}
+mutualPing ∷ IR.Exp
+mutualPing =
+  absN ["acc", "n"] $
+    IR.IfThenElse
+      IR.noAnn
+      (ref "p")
+      (ref "acc")
+      (IR.AppN IR.noAnn (topRef "pong") (ref "n" :| [ref "acc"]))
+
+-- | @pong a b = if q then b else ping b a@.
+mutualPong ∷ IR.Exp
+mutualPong =
+  absN ["a", "b"] $
+    IR.IfThenElse
+      IR.noAnn
+      (ref "q")
+      (ref "b")
+      (IR.AppN IR.noAnn (topRef "ping") (ref "b" :| [ref "a"]))
+
+{- | @ping acc n = if p then acc else f (pong n acc)@ — the sibling call
+is an operand, so the pair has no tail-call cycle.
+-}
+nonTailPing ∷ IR.Exp
+nonTailPing =
+  absN ["acc", "n"] $
+    IR.IfThenElse
+      IR.noAnn
+      (ref "p")
+      (ref "acc")
+      ( IR.App
+          IR.noAnn
+          (ref "f")
+          (IR.AppN IR.noAnn (topRef "pong") (ref "n" :| [ref "acc"]))
+      )
+
+-- | @uno n = if p then n else dos n 1@ — the narrower member.
+unoCallsDos ∷ IR.Exp
+unoCallsDos =
+  absN ["n"] $
+    IR.IfThenElse
+      IR.noAnn
+      (ref "p")
+      (ref "n")
+      ( IR.AppN
+          IR.noAnn
+          (topRef "dos")
+          (ref "n" :| [IR.LiteralInt IR.noAnn 1])
+      )
+
+-- | @dos a b = if q then b else uno a@ — transitions back one slot short.
+dosCallsUno ∷ IR.Exp
+dosCallsUno =
+  absN ["a", "b"] $
+    IR.IfThenElse
+      IR.noAnn
+      (ref "q")
+      (ref "b")
+      (IR.AppN IR.noAnn (topRef "uno") (ref "a" :| []))
+
+-- | @\\m → let tick c k = … tock …; tock d j = … tick … in tick 0 m@.
+letMutualLoop ∷ IR.Exp
+letMutualLoop =
+  IR.Abs IR.noAnn (IR.ParamNamed IR.noAnn (IR.Name "m")) $
+    IR.Let
+      IR.noAnn
+      ( IR.RecursiveGroup
+          ( ( IR.noAnn
+            , IR.Name "tick"
+            , absN ["c", "k"] $
+                IR.IfThenElse
+                  IR.noAnn
+                  (ref "p")
+                  (ref "c")
+                  (IR.AppN IR.noAnn (ref "tock") (ref "k" :| [ref "c"]))
+            )
+              :| [
+                   ( IR.noAnn
+                   , IR.Name "tock"
+                   , absN ["d", "j"] $
+                       IR.IfThenElse
+                         IR.noAnn
+                         (ref "q")
+                         (ref "d")
+                         (IR.AppN IR.noAnn (ref "tick") (ref "j" :| [ref "d"]))
+                   )
+                 ]
+          )
+          :| []
+      )
+      ( IR.AppN
+          IR.noAnn
+          (ref "tick")
+          (IR.LiteralInt IR.noAnn 0 :| [ref "m"])
+      )
+
+-- | @wA x1 y1 = if p then x1 else wB y1 x1@.
+waCallsWb ∷ IR.Exp
+waCallsWb =
+  absN ["x1", "y1"] $
+    IR.IfThenElse
+      IR.noAnn
+      (ref "p")
+      (ref "x1")
+      (IR.AppN IR.noAnn (topRef "wB") (ref "y1" :| [ref "x1"]))
+
+-- | @wB x2 y2 = if q then x2 else wA y2 x2@.
+wbCallsWa ∷ IR.Exp
+wbCallsWa =
+  absN ["x2", "y2"] $
+    IR.IfThenElse
+      IR.noAnn
+      (ref "q")
+      (ref "x2")
+      (IR.AppN IR.noAnn (topRef "wA") (ref "y2" :| [ref "x2"]))
+
+{- | @pw x = \\y → wA x y@ — references a dispatched member from under a
+nested lambda, the shape of an uncurrying wrapper left in the group.
+-}
+curriedOverWa ∷ IR.Exp
+curriedOverWa =
+  IR.Abs IR.noAnn (IR.ParamNamed IR.noAnn (IR.Name "x")) $
+    IR.Abs IR.noAnn (IR.ParamNamed IR.noAnn (IR.Name "y")) $
+      IR.AppN IR.noAnn (topRef "wA") (ref "x" :| [ref "y"])
+
+-- Join-point fixtures (#234) --------------------------------------------------
+
+{- | @\\n → let finish r = g r in if c then finish a else finish b@ — a
+non-recursive continuation tail-called from both branches.
+-}
+joinContinuation ∷ IR.Exp
+joinContinuation =
+  IR.Abs IR.noAnn (IR.ParamNamed IR.noAnn (IR.Name "n")) $
+    IR.Let
+      IR.noAnn
+      ( IR.Standalone
+          ( IR.noAnn
+          , IR.Name "finish"
+          , absN ["r"] (IR.App IR.noAnn (ref "g") (ref "r"))
+          )
+          :| []
+      )
+      ( IR.IfThenElse
+          IR.noAnn
+          (ref "c")
+          (IR.AppN IR.noAnn (ref "finish") (ref "a" :| []))
+          (IR.AppN IR.noAnn (ref "finish") (ref "b" :| []))
+      )
+
+{- | @\\n → let k2 b = g b; k1 a = k2 a in k1 n@ — the body enters k1,
+whose own tail position enters k2; both fuse, one per round.
+-}
+chainedJoins ∷ IR.Exp
+chainedJoins =
+  IR.Abs IR.noAnn (IR.ParamNamed IR.noAnn (IR.Name "n")) $
+    IR.Let
+      IR.noAnn
+      ( IR.Standalone
+          ( IR.noAnn
+          , IR.Name "k2"
+          , absN ["b"] (IR.App IR.noAnn (ref "g") (ref "b"))
+          )
+          :| [ IR.Standalone
+                 ( IR.noAnn
+                 , IR.Name "k1"
+                 , absN ["a"] (IR.AppN IR.noAnn (ref "k2") (ref "a" :| []))
+                 )
+             ]
+      )
+      (IR.AppN IR.noAnn (ref "k1") (ref "n" :| []))
+
+{- | @\\n → let esc a = a in \\m → esc m@ — the helper is referenced from
+inside the returned closure, so it must keep its function shell.
+-}
+escapingHelper ∷ IR.Exp
+escapingHelper =
+  IR.Abs IR.noAnn (IR.ParamNamed IR.noAnn (IR.Name "n")) $
+    IR.Let
+      IR.noAnn
+      ( IR.Standalone (IR.noAnn, IR.Name "esc", absN ["a"] (ref "a"))
+          :| []
+      )
+      ( IR.Abs IR.noAnn (IR.ParamNamed IR.noAnn (IR.Name "m")) $
+          IR.AppN IR.noAnn (ref "esc") (ref "m" :| [])
+      )
+
+-- | @\\n → let h a = a in g (h n)@ — the helper's call is an operand.
+nonTailHelper ∷ IR.Exp
+nonTailHelper =
+  IR.Abs IR.noAnn (IR.ParamNamed IR.noAnn (IR.Name "n")) $
+    IR.Let
+      IR.noAnn
+      ( IR.Standalone (IR.noAnn, IR.Name "h", absN ["a"] (ref "a"))
+          :| []
+      )
+      ( IR.App
+          IR.noAnn
+          (ref "g")
+          (IR.AppN IR.noAnn (ref "h") (ref "n" :| []))
+      )
+
+{- | @\\n → let k a = a in if c then k n else f n@ — one branch enters
+the join point, the other tail-calls something else.
+-}
+callLeafBeside ∷ IR.Exp
+callLeafBeside =
+  IR.Abs IR.noAnn (IR.ParamNamed IR.noAnn (IR.Name "n")) $
+    IR.Let
+      IR.noAnn
+      ( IR.Standalone (IR.noAnn, IR.Name "k", absN ["a"] (ref "a"))
+          :| []
+      )
+      ( IR.IfThenElse
+          IR.noAnn
+          (ref "c")
+          (IR.AppN IR.noAnn (ref "k") (ref "n" :| []))
+          (IR.AppN IR.noAnn (ref "f") (ref "n" :| []))
+      )
 
 -- Multi-value fixtures (#206) -------------------------------------------------
 

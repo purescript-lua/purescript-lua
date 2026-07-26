@@ -29,31 +29,39 @@ local Effect_Console_logShow_S_w = function(dictShow, a)
   return Effect_Console_foreign.log(dictShow.show(a))
 end
 M.Golden_Uncurry_Test_sumTo = function(m)
-  local go_S_w
-  go_S_w = function(acc, n)
-    while true do if n == 0 then return acc else acc, n = acc + n, n - 1 end end
-  end
-  return go_S_w(0, m)
+  local acc, n
+  acc, n = 0, m
+  while true do if n == 0 then return acc else acc, n = acc + n, n - 1 end end
 end
-local Golden_Uncurry_Test_evenSteps_S_w
-local Golden_Uncurry_Test_oddSteps_S_w = function(acc, n)
-  if n == 0 then
-    return acc
-  else
-    return Golden_Uncurry_Test_evenSteps_S_w(acc + 1, n - 1)
+local Golden_Uncurry_Test_oddSteps_S_w_S_loop = function(_S_sel0, _S_a1, _S_a2)
+  while true do
+    if _S_sel0 == 1 then
+      local acc, n = _S_a1, _S_a2
+      if n == 0 then
+        return acc
+      else
+        _S_sel0, _S_a1, _S_a2 = 2, acc + 1, n - 1
+      end
+    else
+      local acc, n = _S_a1, _S_a2
+      if n == 0 then
+        return acc
+      else
+        _S_sel0, _S_a1, _S_a2 = 1, acc + 1, n - 1
+      end
+    end
   end
+end
+local Golden_Uncurry_Test_oddSteps_S_w = function(acc, n)
+  return Golden_Uncurry_Test_oddSteps_S_w_S_loop(1, acc, n)
 end
 M.Golden_Uncurry_Test_oddSteps = function(oddSteps_S_p1)
   return function(oddSteps_S_p2)
     return Golden_Uncurry_Test_oddSteps_S_w(oddSteps_S_p1, oddSteps_S_p2)
   end
 end
-Golden_Uncurry_Test_evenSteps_S_w = function(acc, n)
-  if n == 0 then
-    return acc
-  else
-    return Golden_Uncurry_Test_oddSteps_S_w(acc + 1, n - 1)
-  end
+local Golden_Uncurry_Test_evenSteps_S_w = function(acc, n)
+  return Golden_Uncurry_Test_oddSteps_S_w_S_loop(2, acc, n)
 end
 M.Golden_Uncurry_Test_evenSteps = function(evenSteps_S_p1)
   return function(evenSteps_S_p2)
@@ -81,30 +89,26 @@ return (function()
   local _ = Effect_Console_logShow_S_w(Data_Show_showInt, Golden_Uncurry_Test_evenSteps_S_w(0, 10))()
   local _ = Effect_Console_logShow_S_w(Data_Show_showInt, Golden_Uncurry_Test_oddSteps_S_w(0, 7))()
   local _ = Effect_Console_logShow_S_w(Data_Show_showInt, (function()
-    local go_S_w_S_326
-    go_S_w_S_326 = function(acc_S_327, n_S_328)
-      while true do
-        if n_S_328 == 0 then
-          return acc_S_327
-        else
-          acc_S_327, n_S_328 = acc_S_327 + n_S_328, n_S_328 - 1
-        end
+    local acc_S_327, n_S_328
+    acc_S_327, n_S_328 = 0, 10
+    while true do
+      if n_S_328 == 0 then
+        return acc_S_327
+      else
+        acc_S_327, n_S_328 = acc_S_327 + n_S_328, n_S_328 - 1
       end
     end
-    return go_S_w_S_326(0, 10)
   end)())()
   local _ = Effect_Console_logShow_S_w(Data_Show_showInt, (function()
-    local go_S_w_S_331
-    go_S_w_S_331 = function(acc_S_332, n_S_333)
-      while true do
-        if n_S_333 == 0 then
-          return acc_S_332
-        else
-          acc_S_332, n_S_333 = acc_S_332 + n_S_333, n_S_333 - 1
-        end
+    local acc_S_332, n_S_333
+    acc_S_332, n_S_333 = 0, 100
+    while true do
+      if n_S_333 == 0 then
+        return acc_S_332
+      else
+        acc_S_332, n_S_333 = acc_S_332 + n_S_333, n_S_333 - 1
       end
     end
-    return go_S_w_S_331(0, 100)
   end)())()
   local _ = Effect_Console_logShow_S_w(Data_Show_showInt, 6)()
   local _ = Effect_Console_logShow_S_w(Data_Show_showInt, 9)()
