@@ -5,12 +5,12 @@ end
 local Data_Maybe_maybe_S_w = function(v, v1, v2)
   if "Data.Maybe∷Maybe.Nothing" == v2[1] then return v else return v1(v2[2]) end
 end
-local Golden_MaybeChainModule_Test_identity = function(x_S_289)
-  return x_S_289
+local Golden_MaybeChainModule_Test_identity = function(x_S_290)
+  return x_S_290
 end
-local Golden_MaybeChainModule_Test_map_S_w = function(v_S_286, v1_S_287)
-  if "Data.Maybe∷Maybe.Just" == v1_S_287[1] then
-    return { "Data.Maybe∷Maybe.Just", (v_S_286(v1_S_287[2])) }
+local Golden_MaybeChainModule_Test_map_S_w = function(v_S_287, v1_S_288)
+  if "Data.Maybe∷Maybe.Just" == v1_S_288[1] then
+    return { "Data.Maybe∷Maybe.Just", (v_S_287(v1_S_288[2])) }
   else
     return Data_Maybe_Nothing
   end

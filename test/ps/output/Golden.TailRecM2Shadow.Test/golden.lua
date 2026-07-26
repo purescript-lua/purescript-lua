@@ -84,16 +84,16 @@ local Golden_TailRecM2Shadow_Test_sumFrom = function(dictMonadRec)
   local pure = ((dictMonadRec.Monad0()).Applicative0()).pure
   return function(b)
     return function(n)
-      return dictMonadRec.tailRecM(function(o_S_482)
-        local _S_cse532 = o_S_482.a
-        local _S_cse531 = o_S_482.b
-        if _S_cse531 < n then
+      return dictMonadRec.tailRecM(function(o_S_483)
+        local _S_cse533 = o_S_483.a
+        local _S_cse532 = o_S_483.b
+        if _S_cse532 < n then
           return pure({
             "Control.Monad.Rec.Class∷Step.Loop",
-            { a = _S_cse532 + _S_cse531, b = _S_cse531 + 1 }
+            { a = _S_cse533 + _S_cse532, b = _S_cse532 + 1 }
           })
         else
-          return pure({ "Control.Monad.Rec.Class∷Step.Done", _S_cse532 })
+          return pure({ "Control.Monad.Rec.Class∷Step.Done", _S_cse533 })
         end
       end)({ a = b, b = 0 })
     end

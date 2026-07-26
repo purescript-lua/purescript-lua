@@ -27,7 +27,7 @@ UberModule
         ( AppN Nothing
           ( Let Nothing
             ( Standalone
-              ( Nothing, Name "v$625", IfThenElse Nothing
+              ( Nothing, Name "v$626", IfThenElse Nothing
                 ( Eq Nothing
                   ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
                   ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "a$133" ) ) ) )
@@ -37,24 +37,24 @@ UberModule
                   ( TyName "Maybe" )
                   ( CtorName "Just" )
                   [ AbsN Nothing
-                    ( ParamNamed Nothing ( Name "x$318" ) :| [] )
-                    ( Ref Nothing ( Local ( Name "x$318" ) ) )
+                    ( ParamNamed Nothing ( Name "x$319" ) :| [] )
+                    ( Ref Nothing ( Local ( Name "x$319" ) ) )
                   ]
                 )
                 ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) )
               ) :| []
             )
             ( AbsN Nothing
-              ( ParamNamed Nothing ( Name "v1$626" ) :| [] )
+              ( ParamNamed Nothing ( Name "v1$627" ) :| [] )
               ( IfThenElse Nothing
                 ( Eq Nothing
                   ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
-                  ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v$625" ) ) ) )
+                  ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v$626" ) ) ) )
                 )
                 ( IfThenElse Nothing
                   ( Eq Nothing
                     ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
-                    ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v1$626" ) ) ) )
+                    ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v1$627" ) ) ) )
                   )
                   ( Ctor Nothing SumType
                     ( ModuleName "Data.Maybe" )
@@ -62,10 +62,10 @@ UberModule
                     ( CtorName "Just" )
                     [ AppN Nothing
                       ( DataArgumentByIndex Nothing SumType 0
-                        ( Ref Nothing ( Local ( Name "v$625" ) ) )
+                        ( Ref Nothing ( Local ( Name "v$626" ) ) )
                       )
                       ( DataArgumentByIndex Nothing SumType 0
-                        ( Ref Nothing ( Local ( Name "v1$626" ) ) ) :| []
+                        ( Ref Nothing ( Local ( Name "v1$627" ) ) ) :| []
                       )
                     ]
                   )
@@ -82,7 +82,7 @@ UberModule
         { qnameModuleName = ModuleName "Golden.LongApplyChain.Test", qnameName = Name "compute"
         }, Let Nothing
         ( Standalone
-          ( Nothing, Name "$tmp646", AppN Nothing
+          ( Nothing, Name "$tmp647", AppN Nothing
             ( Ref Nothing
               ( Imported ( ModuleName "Golden.LongApplyChain.Test" ) ( Name "applySecond$w" ) )
             )
@@ -640,565 +640,6 @@ UberModule
             )
           ) :|
           [ Standalone
-            ( Nothing, Name "$tmp647", AppN Nothing
-              ( Ref Nothing
-                ( Imported ( ModuleName "Golden.LongApplyChain.Test" ) ( Name "applySecond$w" ) )
-              )
-              ( AppN Nothing
-                ( Ref Nothing
-                  ( Imported ( ModuleName "Golden.LongApplyChain.Test" ) ( Name "applySecond$w" ) )
-                )
-                ( AppN Nothing
-                  ( Ref Nothing
-                    ( Imported
-                      ( ModuleName "Golden.LongApplyChain.Test" )
-                      ( Name "applySecond$w" )
-                    )
-                  )
-                  ( AppN Nothing
-                    ( Ref Nothing
-                      ( Imported
-                        ( ModuleName "Golden.LongApplyChain.Test" )
-                        ( Name "applySecond$w" )
-                      )
-                    )
-                    ( AppN Nothing
-                      ( Ref Nothing
-                        ( Imported
-                          ( ModuleName "Golden.LongApplyChain.Test" )
-                          ( Name "applySecond$w" )
-                        )
-                      )
-                      ( AppN Nothing
-                        ( Ref Nothing
-                          ( Imported
-                            ( ModuleName "Golden.LongApplyChain.Test" )
-                            ( Name "applySecond$w" )
-                          )
-                        )
-                        ( AppN Nothing
-                          ( Ref Nothing
-                            ( Imported
-                              ( ModuleName "Golden.LongApplyChain.Test" )
-                              ( Name "applySecond$w" )
-                            )
-                          )
-                          ( AppN Nothing
-                            ( Ref Nothing
-                              ( Imported
-                                ( ModuleName "Golden.LongApplyChain.Test" )
-                                ( Name "applySecond$w" )
-                              )
-                            )
-                            ( AppN Nothing
-                              ( Ref Nothing
-                                ( Imported
-                                  ( ModuleName "Golden.LongApplyChain.Test" )
-                                  ( Name "applySecond$w" )
-                                )
-                              )
-                              ( AppN Nothing
-                                ( Ref Nothing
-                                  ( Imported
-                                    ( ModuleName "Golden.LongApplyChain.Test" )
-                                    ( Name "applySecond$w" )
-                                  )
-                                )
-                                ( AppN Nothing
-                                  ( Ref Nothing
-                                    ( Imported
-                                      ( ModuleName "Golden.LongApplyChain.Test" )
-                                      ( Name "applySecond$w" )
-                                    )
-                                  )
-                                  ( AppN Nothing
-                                    ( Ref Nothing
-                                      ( Imported
-                                        ( ModuleName "Golden.LongApplyChain.Test" )
-                                        ( Name "applySecond$w" )
-                                      )
-                                    )
-                                    ( AppN Nothing
-                                      ( Ref Nothing
-                                        ( Imported
-                                          ( ModuleName "Golden.LongApplyChain.Test" )
-                                          ( Name "applySecond$w" )
-                                        )
-                                      )
-                                      ( AppN Nothing
-                                        ( Ref Nothing
-                                          ( Imported
-                                            ( ModuleName "Golden.LongApplyChain.Test" )
-                                            ( Name "applySecond$w" )
-                                          )
-                                        )
-                                        ( AppN Nothing
-                                          ( Ref Nothing
-                                            ( Imported
-                                              ( ModuleName "Golden.LongApplyChain.Test" )
-                                              ( Name "applySecond$w" )
-                                            )
-                                          )
-                                          ( AppN Nothing
-                                            ( Ref Nothing
-                                              ( Imported
-                                                ( ModuleName "Golden.LongApplyChain.Test" )
-                                                ( Name "applySecond$w" )
-                                              )
-                                            )
-                                            ( AppN Nothing
-                                              ( Ref Nothing
-                                                ( Imported
-                                                  ( ModuleName "Golden.LongApplyChain.Test" )
-                                                  ( Name "applySecond$w" )
-                                                )
-                                              )
-                                              ( AppN Nothing
-                                                ( Ref Nothing
-                                                  ( Imported
-                                                    ( ModuleName "Golden.LongApplyChain.Test" )
-                                                    ( Name "applySecond$w" )
-                                                  )
-                                                )
-                                                ( AppN Nothing
-                                                  ( Ref Nothing
-                                                    ( Imported
-                                                      ( ModuleName "Golden.LongApplyChain.Test" )
-                                                      ( Name "applySecond$w" )
-                                                    )
-                                                  )
-                                                  ( AppN Nothing
-                                                    ( Ref Nothing
-                                                      ( Imported
-                                                        ( ModuleName "Golden.LongApplyChain.Test" )
-                                                        ( Name "applySecond$w" )
-                                                      )
-                                                    )
-                                                    ( AppN Nothing
-                                                      ( Ref Nothing
-                                                        ( Imported
-                                                          ( ModuleName "Golden.LongApplyChain.Test" )
-                                                          ( Name "applySecond$w" )
-                                                        )
-                                                      )
-                                                      ( AppN Nothing
-                                                        ( Ref Nothing
-                                                          ( Imported
-                                                            ( ModuleName "Golden.LongApplyChain.Test" )
-                                                            ( Name "applySecond$w" )
-                                                          )
-                                                        )
-                                                        ( AppN Nothing
-                                                          ( Ref Nothing
-                                                            ( Imported
-                                                              ( ModuleName "Golden.LongApplyChain.Test" )
-                                                              ( Name "applySecond$w" )
-                                                            )
-                                                          )
-                                                          ( AppN Nothing
-                                                            ( Ref Nothing
-                                                              ( Imported
-                                                                ( ModuleName "Golden.LongApplyChain.Test" )
-                                                                ( Name "applySecond$w" )
-                                                              )
-                                                            )
-                                                            ( AppN Nothing
-                                                              ( Ref Nothing
-                                                                ( Imported
-                                                                  ( ModuleName "Golden.LongApplyChain.Test" )
-                                                                  ( Name "applySecond$w" )
-                                                                )
-                                                              )
-                                                              ( AppN Nothing
-                                                                ( Ref Nothing
-                                                                  ( Imported
-                                                                    ( ModuleName "Golden.LongApplyChain.Test" )
-                                                                    ( Name "applySecond$w" )
-                                                                  )
-                                                                )
-                                                                ( AppN Nothing
-                                                                  ( Ref Nothing
-                                                                    ( Imported
-                                                                      ( ModuleName "Golden.LongApplyChain.Test" )
-                                                                      ( Name "applySecond$w" )
-                                                                    )
-                                                                  )
-                                                                  ( AppN Nothing
-                                                                    ( Ref Nothing
-                                                                      ( Imported
-                                                                        ( ModuleName "Golden.LongApplyChain.Test" )
-                                                                        ( Name "applySecond$w" )
-                                                                      )
-                                                                    )
-                                                                    ( AppN Nothing
-                                                                      ( Ref Nothing
-                                                                        ( Imported
-                                                                          ( ModuleName "Golden.LongApplyChain.Test" )
-                                                                          ( Name "applySecond$w" )
-                                                                        )
-                                                                      )
-                                                                      ( AppN Nothing
-                                                                        ( Ref Nothing
-                                                                          ( Imported
-                                                                            ( ModuleName "Golden.LongApplyChain.Test" )
-                                                                            ( Name "applySecond$w" )
-                                                                          )
-                                                                        )
-                                                                        ( AppN Nothing
-                                                                          ( Ref Nothing
-                                                                            ( Imported
-                                                                              ( ModuleName "Golden.LongApplyChain.Test" )
-                                                                              ( Name "applySecond$w" )
-                                                                            )
-                                                                          )
-                                                                          ( AppN Nothing
-                                                                            ( Ref Nothing
-                                                                              ( Imported
-                                                                                ( ModuleName "Golden.LongApplyChain.Test" )
-                                                                                ( Name "applySecond$w" )
-                                                                              )
-                                                                            )
-                                                                            ( AppN Nothing
-                                                                              ( Ref Nothing
-                                                                                ( Imported
-                                                                                  ( ModuleName "Golden.LongApplyChain.Test" )
-                                                                                  ( Name "applySecond$w" )
-                                                                                )
-                                                                              )
-                                                                              ( AppN Nothing
-                                                                                ( Ref Nothing
-                                                                                  ( Imported
-                                                                                    ( ModuleName "Golden.LongApplyChain.Test" )
-                                                                                    ( Name "applySecond$w" )
-                                                                                  )
-                                                                                )
-                                                                                ( AppN Nothing
-                                                                                  ( Ref Nothing
-                                                                                    ( Imported
-                                                                                      ( ModuleName "Golden.LongApplyChain.Test" )
-                                                                                      ( Name "applySecond$w" )
-                                                                                    )
-                                                                                  )
-                                                                                  ( AppN Nothing
-                                                                                    ( Ref Nothing
-                                                                                      ( Imported
-                                                                                        ( ModuleName "Golden.LongApplyChain.Test" )
-                                                                                        ( Name "applySecond$w" )
-                                                                                      )
-                                                                                    )
-                                                                                    ( AppN Nothing
-                                                                                      ( Ref Nothing
-                                                                                        ( Imported
-                                                                                          ( ModuleName "Golden.LongApplyChain.Test" )
-                                                                                          ( Name "applySecond$w" )
-                                                                                        )
-                                                                                      )
-                                                                                      ( AppN Nothing
-                                                                                        ( Ref Nothing
-                                                                                          ( Imported
-                                                                                            ( ModuleName "Golden.LongApplyChain.Test" )
-                                                                                            ( Name "applySecond$w" )
-                                                                                          )
-                                                                                        )
-                                                                                        ( AppN Nothing
-                                                                                          ( Ref Nothing
-                                                                                            ( Imported
-                                                                                              ( ModuleName "Golden.LongApplyChain.Test" )
-                                                                                              ( Name "applySecond$w" )
-                                                                                            )
-                                                                                          )
-                                                                                          ( AppN Nothing
-                                                                                            ( Ref Nothing
-                                                                                              ( Imported
-                                                                                                ( ModuleName "Golden.LongApplyChain.Test" )
-                                                                                                ( Name "applySecond$w" )
-                                                                                              )
-                                                                                            )
-                                                                                            ( Ref Nothing
-                                                                                              ( Local
-                                                                                                ( Name "$tmp646" )
-                                                                                              ) :|
-                                                                                              [ Ctor Nothing SumType
-                                                                                                ( ModuleName "Data.Maybe" )
-                                                                                                ( TyName "Maybe" )
-                                                                                                ( CtorName "Just" )
-                                                                                                [ LiteralInt Nothing 42 ]
-                                                                                              ]
-                                                                                            ) :|
-                                                                                            [ Ctor Nothing SumType
-                                                                                              ( ModuleName "Data.Maybe" )
-                                                                                              ( TyName "Maybe" )
-                                                                                              ( CtorName "Just" )
-                                                                                              [ LiteralInt Nothing 43 ]
-                                                                                            ]
-                                                                                          ) :|
-                                                                                          [ Ctor Nothing SumType
-                                                                                            ( ModuleName "Data.Maybe" )
-                                                                                            ( TyName "Maybe" )
-                                                                                            ( CtorName "Just" )
-                                                                                            [ LiteralInt Nothing 44 ]
-                                                                                          ]
-                                                                                        ) :|
-                                                                                        [ Ctor Nothing SumType
-                                                                                          ( ModuleName "Data.Maybe" )
-                                                                                          ( TyName "Maybe" )
-                                                                                          ( CtorName "Just" )
-                                                                                          [ LiteralInt Nothing 45 ]
-                                                                                        ]
-                                                                                      ) :|
-                                                                                      [ Ctor Nothing SumType
-                                                                                        ( ModuleName "Data.Maybe" )
-                                                                                        ( TyName "Maybe" )
-                                                                                        ( CtorName "Just" )
-                                                                                        [ LiteralInt Nothing 46 ]
-                                                                                      ]
-                                                                                    ) :|
-                                                                                    [ Ctor Nothing SumType
-                                                                                      ( ModuleName "Data.Maybe" )
-                                                                                      ( TyName "Maybe" )
-                                                                                      ( CtorName "Just" )
-                                                                                      [ LiteralInt Nothing 47 ]
-                                                                                    ]
-                                                                                  ) :|
-                                                                                  [ Ctor Nothing SumType
-                                                                                    ( ModuleName "Data.Maybe" )
-                                                                                    ( TyName "Maybe" )
-                                                                                    ( CtorName "Just" )
-                                                                                    [ LiteralInt Nothing 48 ]
-                                                                                  ]
-                                                                                ) :|
-                                                                                [ Ctor Nothing SumType
-                                                                                  ( ModuleName "Data.Maybe" )
-                                                                                  ( TyName "Maybe" )
-                                                                                  ( CtorName "Just" )
-                                                                                  [ LiteralInt Nothing 49 ]
-                                                                                ]
-                                                                              ) :|
-                                                                              [ Ctor Nothing SumType
-                                                                                ( ModuleName "Data.Maybe" )
-                                                                                ( TyName "Maybe" )
-                                                                                ( CtorName "Just" )
-                                                                                [ LiteralInt Nothing 50 ]
-                                                                              ]
-                                                                            ) :|
-                                                                            [ Ctor Nothing SumType
-                                                                              ( ModuleName "Data.Maybe" )
-                                                                              ( TyName "Maybe" )
-                                                                              ( CtorName "Just" )
-                                                                              [ LiteralInt Nothing 51 ]
-                                                                            ]
-                                                                          ) :|
-                                                                          [ Ctor Nothing SumType
-                                                                            ( ModuleName "Data.Maybe" )
-                                                                            ( TyName "Maybe" )
-                                                                            ( CtorName "Just" )
-                                                                            [ LiteralInt Nothing 52 ]
-                                                                          ]
-                                                                        ) :|
-                                                                        [ Ctor Nothing SumType
-                                                                          ( ModuleName "Data.Maybe" )
-                                                                          ( TyName "Maybe" )
-                                                                          ( CtorName "Just" )
-                                                                          [ LiteralInt Nothing 53 ]
-                                                                        ]
-                                                                      ) :|
-                                                                      [ Ctor Nothing SumType
-                                                                        ( ModuleName "Data.Maybe" )
-                                                                        ( TyName "Maybe" )
-                                                                        ( CtorName "Just" )
-                                                                        [ LiteralInt Nothing 54 ]
-                                                                      ]
-                                                                    ) :|
-                                                                    [ Ctor Nothing SumType
-                                                                      ( ModuleName "Data.Maybe" )
-                                                                      ( TyName "Maybe" )
-                                                                      ( CtorName "Just" )
-                                                                      [ LiteralInt Nothing 55 ]
-                                                                    ]
-                                                                  ) :|
-                                                                  [ Ctor Nothing SumType
-                                                                    ( ModuleName "Data.Maybe" )
-                                                                    ( TyName "Maybe" )
-                                                                    ( CtorName "Just" )
-                                                                    [ LiteralInt Nothing 56 ]
-                                                                  ]
-                                                                ) :|
-                                                                [ Ctor Nothing SumType
-                                                                  ( ModuleName "Data.Maybe" )
-                                                                  ( TyName "Maybe" )
-                                                                  ( CtorName "Just" )
-                                                                  [ LiteralInt Nothing 57 ]
-                                                                ]
-                                                              ) :|
-                                                              [ Ctor Nothing SumType
-                                                                ( ModuleName "Data.Maybe" )
-                                                                ( TyName "Maybe" )
-                                                                ( CtorName "Just" )
-                                                                [ LiteralInt Nothing 58 ]
-                                                              ]
-                                                            ) :|
-                                                            [ Ctor Nothing SumType
-                                                              ( ModuleName "Data.Maybe" )
-                                                              ( TyName "Maybe" )
-                                                              ( CtorName "Just" )
-                                                              [ LiteralInt Nothing 59 ]
-                                                            ]
-                                                          ) :|
-                                                          [ Ctor Nothing SumType
-                                                            ( ModuleName "Data.Maybe" )
-                                                            ( TyName "Maybe" )
-                                                            ( CtorName "Just" )
-                                                            [ LiteralInt Nothing 60 ]
-                                                          ]
-                                                        ) :|
-                                                        [ Ctor Nothing SumType
-                                                          ( ModuleName "Data.Maybe" )
-                                                          ( TyName "Maybe" )
-                                                          ( CtorName "Just" )
-                                                          [ LiteralInt Nothing 61 ]
-                                                        ]
-                                                      ) :|
-                                                      [ Ctor Nothing SumType
-                                                        ( ModuleName "Data.Maybe" )
-                                                        ( TyName "Maybe" )
-                                                        ( CtorName "Just" )
-                                                        [ LiteralInt Nothing 62 ]
-                                                      ]
-                                                    ) :|
-                                                    [ Ctor Nothing SumType
-                                                      ( ModuleName "Data.Maybe" )
-                                                      ( TyName "Maybe" )
-                                                      ( CtorName "Just" )
-                                                      [ LiteralInt Nothing 63 ]
-                                                    ]
-                                                  ) :|
-                                                  [ Ctor Nothing SumType
-                                                    ( ModuleName "Data.Maybe" )
-                                                    ( TyName "Maybe" )
-                                                    ( CtorName "Just" )
-                                                    [ LiteralInt Nothing 64 ]
-                                                  ]
-                                                ) :|
-                                                [ Ctor Nothing SumType
-                                                  ( ModuleName "Data.Maybe" )
-                                                  ( TyName "Maybe" )
-                                                  ( CtorName "Just" )
-                                                  [ LiteralInt Nothing 65 ]
-                                                ]
-                                              ) :|
-                                              [ Ctor Nothing SumType
-                                                ( ModuleName "Data.Maybe" )
-                                                ( TyName "Maybe" )
-                                                ( CtorName "Just" )
-                                                [ LiteralInt Nothing 66 ]
-                                              ]
-                                            ) :|
-                                            [ Ctor Nothing SumType
-                                              ( ModuleName "Data.Maybe" )
-                                              ( TyName "Maybe" )
-                                              ( CtorName "Just" )
-                                              [ LiteralInt Nothing 67 ]
-                                            ]
-                                          ) :|
-                                          [ Ctor Nothing SumType
-                                            ( ModuleName "Data.Maybe" )
-                                            ( TyName "Maybe" )
-                                            ( CtorName "Just" )
-                                            [ LiteralInt Nothing 68 ]
-                                          ]
-                                        ) :|
-                                        [ Ctor Nothing SumType
-                                          ( ModuleName "Data.Maybe" )
-                                          ( TyName "Maybe" )
-                                          ( CtorName "Just" )
-                                          [ LiteralInt Nothing 69 ]
-                                        ]
-                                      ) :|
-                                      [ Ctor Nothing SumType
-                                        ( ModuleName "Data.Maybe" )
-                                        ( TyName "Maybe" )
-                                        ( CtorName "Just" )
-                                        [ LiteralInt Nothing 70 ]
-                                      ]
-                                    ) :|
-                                    [ Ctor Nothing SumType
-                                      ( ModuleName "Data.Maybe" )
-                                      ( TyName "Maybe" )
-                                      ( CtorName "Just" )
-                                      [ LiteralInt Nothing 71 ]
-                                    ]
-                                  ) :|
-                                  [ Ctor Nothing SumType
-                                    ( ModuleName "Data.Maybe" )
-                                    ( TyName "Maybe" )
-                                    ( CtorName "Just" )
-                                    [ LiteralInt Nothing 72 ]
-                                  ]
-                                ) :|
-                                [ Ctor Nothing SumType
-                                  ( ModuleName "Data.Maybe" )
-                                  ( TyName "Maybe" )
-                                  ( CtorName "Just" )
-                                  [ LiteralInt Nothing 73 ]
-                                ]
-                              ) :|
-                              [ Ctor Nothing SumType
-                                ( ModuleName "Data.Maybe" )
-                                ( TyName "Maybe" )
-                                ( CtorName "Just" )
-                                [ LiteralInt Nothing 74 ]
-                              ]
-                            ) :|
-                            [ Ctor Nothing SumType
-                              ( ModuleName "Data.Maybe" )
-                              ( TyName "Maybe" )
-                              ( CtorName "Just" )
-                              [ LiteralInt Nothing 75 ]
-                            ]
-                          ) :|
-                          [ Ctor Nothing SumType
-                            ( ModuleName "Data.Maybe" )
-                            ( TyName "Maybe" )
-                            ( CtorName "Just" )
-                            [ LiteralInt Nothing 76 ]
-                          ]
-                        ) :|
-                        [ Ctor Nothing SumType
-                          ( ModuleName "Data.Maybe" )
-                          ( TyName "Maybe" )
-                          ( CtorName "Just" )
-                          [ LiteralInt Nothing 77 ]
-                        ]
-                      ) :|
-                      [ Ctor Nothing SumType
-                        ( ModuleName "Data.Maybe" )
-                        ( TyName "Maybe" )
-                        ( CtorName "Just" )
-                        [ LiteralInt Nothing 78 ]
-                      ]
-                    ) :|
-                    [ Ctor Nothing SumType
-                      ( ModuleName "Data.Maybe" )
-                      ( TyName "Maybe" )
-                      ( CtorName "Just" )
-                      [ LiteralInt Nothing 79 ]
-                    ]
-                  ) :|
-                  [ Ctor Nothing SumType
-                    ( ModuleName "Data.Maybe" )
-                    ( TyName "Maybe" )
-                    ( CtorName "Just" )
-                    [ LiteralInt Nothing 80 ]
-                  ]
-                ) :|
-                [ Ctor Nothing SumType
-                  ( ModuleName "Data.Maybe" )
-                  ( TyName "Maybe" )
-                  ( CtorName "Just" )
-                  [ LiteralInt Nothing 81 ]
-                ]
-              )
-            ), Standalone
             ( Nothing, Name "$tmp648", AppN Nothing
               ( Ref Nothing
                 ( Imported ( ModuleName "Golden.LongApplyChain.Test" ) ( Name "applySecond$w" ) )
@@ -1481,280 +922,280 @@ UberModule
                                                                                                 ( ModuleName "Data.Maybe" )
                                                                                                 ( TyName "Maybe" )
                                                                                                 ( CtorName "Just" )
-                                                                                                [ LiteralInt Nothing 82 ]
+                                                                                                [ LiteralInt Nothing 42 ]
                                                                                               ]
                                                                                             ) :|
                                                                                             [ Ctor Nothing SumType
                                                                                               ( ModuleName "Data.Maybe" )
                                                                                               ( TyName "Maybe" )
                                                                                               ( CtorName "Just" )
-                                                                                              [ LiteralInt Nothing 83 ]
+                                                                                              [ LiteralInt Nothing 43 ]
                                                                                             ]
                                                                                           ) :|
                                                                                           [ Ctor Nothing SumType
                                                                                             ( ModuleName "Data.Maybe" )
                                                                                             ( TyName "Maybe" )
                                                                                             ( CtorName "Just" )
-                                                                                            [ LiteralInt Nothing 84 ]
+                                                                                            [ LiteralInt Nothing 44 ]
                                                                                           ]
                                                                                         ) :|
                                                                                         [ Ctor Nothing SumType
                                                                                           ( ModuleName "Data.Maybe" )
                                                                                           ( TyName "Maybe" )
                                                                                           ( CtorName "Just" )
-                                                                                          [ LiteralInt Nothing 85 ]
+                                                                                          [ LiteralInt Nothing 45 ]
                                                                                         ]
                                                                                       ) :|
                                                                                       [ Ctor Nothing SumType
                                                                                         ( ModuleName "Data.Maybe" )
                                                                                         ( TyName "Maybe" )
                                                                                         ( CtorName "Just" )
-                                                                                        [ LiteralInt Nothing 86 ]
+                                                                                        [ LiteralInt Nothing 46 ]
                                                                                       ]
                                                                                     ) :|
                                                                                     [ Ctor Nothing SumType
                                                                                       ( ModuleName "Data.Maybe" )
                                                                                       ( TyName "Maybe" )
                                                                                       ( CtorName "Just" )
-                                                                                      [ LiteralInt Nothing 87 ]
+                                                                                      [ LiteralInt Nothing 47 ]
                                                                                     ]
                                                                                   ) :|
                                                                                   [ Ctor Nothing SumType
                                                                                     ( ModuleName "Data.Maybe" )
                                                                                     ( TyName "Maybe" )
                                                                                     ( CtorName "Just" )
-                                                                                    [ LiteralInt Nothing 88 ]
+                                                                                    [ LiteralInt Nothing 48 ]
                                                                                   ]
                                                                                 ) :|
                                                                                 [ Ctor Nothing SumType
                                                                                   ( ModuleName "Data.Maybe" )
                                                                                   ( TyName "Maybe" )
                                                                                   ( CtorName "Just" )
-                                                                                  [ LiteralInt Nothing 89 ]
+                                                                                  [ LiteralInt Nothing 49 ]
                                                                                 ]
                                                                               ) :|
                                                                               [ Ctor Nothing SumType
                                                                                 ( ModuleName "Data.Maybe" )
                                                                                 ( TyName "Maybe" )
                                                                                 ( CtorName "Just" )
-                                                                                [ LiteralInt Nothing 90 ]
+                                                                                [ LiteralInt Nothing 50 ]
                                                                               ]
                                                                             ) :|
                                                                             [ Ctor Nothing SumType
                                                                               ( ModuleName "Data.Maybe" )
                                                                               ( TyName "Maybe" )
                                                                               ( CtorName "Just" )
-                                                                              [ LiteralInt Nothing 91 ]
+                                                                              [ LiteralInt Nothing 51 ]
                                                                             ]
                                                                           ) :|
                                                                           [ Ctor Nothing SumType
                                                                             ( ModuleName "Data.Maybe" )
                                                                             ( TyName "Maybe" )
                                                                             ( CtorName "Just" )
-                                                                            [ LiteralInt Nothing 92 ]
+                                                                            [ LiteralInt Nothing 52 ]
                                                                           ]
                                                                         ) :|
                                                                         [ Ctor Nothing SumType
                                                                           ( ModuleName "Data.Maybe" )
                                                                           ( TyName "Maybe" )
                                                                           ( CtorName "Just" )
-                                                                          [ LiteralInt Nothing 93 ]
+                                                                          [ LiteralInt Nothing 53 ]
                                                                         ]
                                                                       ) :|
                                                                       [ Ctor Nothing SumType
                                                                         ( ModuleName "Data.Maybe" )
                                                                         ( TyName "Maybe" )
                                                                         ( CtorName "Just" )
-                                                                        [ LiteralInt Nothing 94 ]
+                                                                        [ LiteralInt Nothing 54 ]
                                                                       ]
                                                                     ) :|
                                                                     [ Ctor Nothing SumType
                                                                       ( ModuleName "Data.Maybe" )
                                                                       ( TyName "Maybe" )
                                                                       ( CtorName "Just" )
-                                                                      [ LiteralInt Nothing 95 ]
+                                                                      [ LiteralInt Nothing 55 ]
                                                                     ]
                                                                   ) :|
                                                                   [ Ctor Nothing SumType
                                                                     ( ModuleName "Data.Maybe" )
                                                                     ( TyName "Maybe" )
                                                                     ( CtorName "Just" )
-                                                                    [ LiteralInt Nothing 96 ]
+                                                                    [ LiteralInt Nothing 56 ]
                                                                   ]
                                                                 ) :|
                                                                 [ Ctor Nothing SumType
                                                                   ( ModuleName "Data.Maybe" )
                                                                   ( TyName "Maybe" )
                                                                   ( CtorName "Just" )
-                                                                  [ LiteralInt Nothing 97 ]
+                                                                  [ LiteralInt Nothing 57 ]
                                                                 ]
                                                               ) :|
                                                               [ Ctor Nothing SumType
                                                                 ( ModuleName "Data.Maybe" )
                                                                 ( TyName "Maybe" )
                                                                 ( CtorName "Just" )
-                                                                [ LiteralInt Nothing 98 ]
+                                                                [ LiteralInt Nothing 58 ]
                                                               ]
                                                             ) :|
                                                             [ Ctor Nothing SumType
                                                               ( ModuleName "Data.Maybe" )
                                                               ( TyName "Maybe" )
                                                               ( CtorName "Just" )
-                                                              [ LiteralInt Nothing 99 ]
+                                                              [ LiteralInt Nothing 59 ]
                                                             ]
                                                           ) :|
                                                           [ Ctor Nothing SumType
                                                             ( ModuleName "Data.Maybe" )
                                                             ( TyName "Maybe" )
                                                             ( CtorName "Just" )
-                                                            [ LiteralInt Nothing 100 ]
+                                                            [ LiteralInt Nothing 60 ]
                                                           ]
                                                         ) :|
                                                         [ Ctor Nothing SumType
                                                           ( ModuleName "Data.Maybe" )
                                                           ( TyName "Maybe" )
                                                           ( CtorName "Just" )
-                                                          [ LiteralInt Nothing 101 ]
+                                                          [ LiteralInt Nothing 61 ]
                                                         ]
                                                       ) :|
                                                       [ Ctor Nothing SumType
                                                         ( ModuleName "Data.Maybe" )
                                                         ( TyName "Maybe" )
                                                         ( CtorName "Just" )
-                                                        [ LiteralInt Nothing 102 ]
+                                                        [ LiteralInt Nothing 62 ]
                                                       ]
                                                     ) :|
                                                     [ Ctor Nothing SumType
                                                       ( ModuleName "Data.Maybe" )
                                                       ( TyName "Maybe" )
                                                       ( CtorName "Just" )
-                                                      [ LiteralInt Nothing 103 ]
+                                                      [ LiteralInt Nothing 63 ]
                                                     ]
                                                   ) :|
                                                   [ Ctor Nothing SumType
                                                     ( ModuleName "Data.Maybe" )
                                                     ( TyName "Maybe" )
                                                     ( CtorName "Just" )
-                                                    [ LiteralInt Nothing 104 ]
+                                                    [ LiteralInt Nothing 64 ]
                                                   ]
                                                 ) :|
                                                 [ Ctor Nothing SumType
                                                   ( ModuleName "Data.Maybe" )
                                                   ( TyName "Maybe" )
                                                   ( CtorName "Just" )
-                                                  [ LiteralInt Nothing 105 ]
+                                                  [ LiteralInt Nothing 65 ]
                                                 ]
                                               ) :|
                                               [ Ctor Nothing SumType
                                                 ( ModuleName "Data.Maybe" )
                                                 ( TyName "Maybe" )
                                                 ( CtorName "Just" )
-                                                [ LiteralInt Nothing 106 ]
+                                                [ LiteralInt Nothing 66 ]
                                               ]
                                             ) :|
                                             [ Ctor Nothing SumType
                                               ( ModuleName "Data.Maybe" )
                                               ( TyName "Maybe" )
                                               ( CtorName "Just" )
-                                              [ LiteralInt Nothing 107 ]
+                                              [ LiteralInt Nothing 67 ]
                                             ]
                                           ) :|
                                           [ Ctor Nothing SumType
                                             ( ModuleName "Data.Maybe" )
                                             ( TyName "Maybe" )
                                             ( CtorName "Just" )
-                                            [ LiteralInt Nothing 108 ]
+                                            [ LiteralInt Nothing 68 ]
                                           ]
                                         ) :|
                                         [ Ctor Nothing SumType
                                           ( ModuleName "Data.Maybe" )
                                           ( TyName "Maybe" )
                                           ( CtorName "Just" )
-                                          [ LiteralInt Nothing 109 ]
+                                          [ LiteralInt Nothing 69 ]
                                         ]
                                       ) :|
                                       [ Ctor Nothing SumType
                                         ( ModuleName "Data.Maybe" )
                                         ( TyName "Maybe" )
                                         ( CtorName "Just" )
-                                        [ LiteralInt Nothing 110 ]
+                                        [ LiteralInt Nothing 70 ]
                                       ]
                                     ) :|
                                     [ Ctor Nothing SumType
                                       ( ModuleName "Data.Maybe" )
                                       ( TyName "Maybe" )
                                       ( CtorName "Just" )
-                                      [ LiteralInt Nothing 111 ]
+                                      [ LiteralInt Nothing 71 ]
                                     ]
                                   ) :|
                                   [ Ctor Nothing SumType
                                     ( ModuleName "Data.Maybe" )
                                     ( TyName "Maybe" )
                                     ( CtorName "Just" )
-                                    [ LiteralInt Nothing 112 ]
+                                    [ LiteralInt Nothing 72 ]
                                   ]
                                 ) :|
                                 [ Ctor Nothing SumType
                                   ( ModuleName "Data.Maybe" )
                                   ( TyName "Maybe" )
                                   ( CtorName "Just" )
-                                  [ LiteralInt Nothing 113 ]
+                                  [ LiteralInt Nothing 73 ]
                                 ]
                               ) :|
                               [ Ctor Nothing SumType
                                 ( ModuleName "Data.Maybe" )
                                 ( TyName "Maybe" )
                                 ( CtorName "Just" )
-                                [ LiteralInt Nothing 114 ]
+                                [ LiteralInt Nothing 74 ]
                               ]
                             ) :|
                             [ Ctor Nothing SumType
                               ( ModuleName "Data.Maybe" )
                               ( TyName "Maybe" )
                               ( CtorName "Just" )
-                              [ LiteralInt Nothing 115 ]
+                              [ LiteralInt Nothing 75 ]
                             ]
                           ) :|
                           [ Ctor Nothing SumType
                             ( ModuleName "Data.Maybe" )
                             ( TyName "Maybe" )
                             ( CtorName "Just" )
-                            [ LiteralInt Nothing 116 ]
+                            [ LiteralInt Nothing 76 ]
                           ]
                         ) :|
                         [ Ctor Nothing SumType
                           ( ModuleName "Data.Maybe" )
                           ( TyName "Maybe" )
                           ( CtorName "Just" )
-                          [ LiteralInt Nothing 117 ]
+                          [ LiteralInt Nothing 77 ]
                         ]
                       ) :|
                       [ Ctor Nothing SumType
                         ( ModuleName "Data.Maybe" )
                         ( TyName "Maybe" )
                         ( CtorName "Just" )
-                        [ LiteralInt Nothing 118 ]
+                        [ LiteralInt Nothing 78 ]
                       ]
                     ) :|
                     [ Ctor Nothing SumType
                       ( ModuleName "Data.Maybe" )
                       ( TyName "Maybe" )
                       ( CtorName "Just" )
-                      [ LiteralInt Nothing 119 ]
+                      [ LiteralInt Nothing 79 ]
                     ]
                   ) :|
                   [ Ctor Nothing SumType
                     ( ModuleName "Data.Maybe" )
                     ( TyName "Maybe" )
                     ( CtorName "Just" )
-                    [ LiteralInt Nothing 120 ]
+                    [ LiteralInt Nothing 80 ]
                   ]
                 ) :|
                 [ Ctor Nothing SumType
                   ( ModuleName "Data.Maybe" )
                   ( TyName "Maybe" )
                   ( CtorName "Just" )
-                  [ LiteralInt Nothing 121 ]
+                  [ LiteralInt Nothing 81 ]
                 ]
               )
             ), Standalone
@@ -2040,280 +1481,280 @@ UberModule
                                                                                                 ( ModuleName "Data.Maybe" )
                                                                                                 ( TyName "Maybe" )
                                                                                                 ( CtorName "Just" )
-                                                                                                [ LiteralInt Nothing 122 ]
+                                                                                                [ LiteralInt Nothing 82 ]
                                                                                               ]
                                                                                             ) :|
                                                                                             [ Ctor Nothing SumType
                                                                                               ( ModuleName "Data.Maybe" )
                                                                                               ( TyName "Maybe" )
                                                                                               ( CtorName "Just" )
-                                                                                              [ LiteralInt Nothing 123 ]
+                                                                                              [ LiteralInt Nothing 83 ]
                                                                                             ]
                                                                                           ) :|
                                                                                           [ Ctor Nothing SumType
                                                                                             ( ModuleName "Data.Maybe" )
                                                                                             ( TyName "Maybe" )
                                                                                             ( CtorName "Just" )
-                                                                                            [ LiteralInt Nothing 124 ]
+                                                                                            [ LiteralInt Nothing 84 ]
                                                                                           ]
                                                                                         ) :|
                                                                                         [ Ctor Nothing SumType
                                                                                           ( ModuleName "Data.Maybe" )
                                                                                           ( TyName "Maybe" )
                                                                                           ( CtorName "Just" )
-                                                                                          [ LiteralInt Nothing 125 ]
+                                                                                          [ LiteralInt Nothing 85 ]
                                                                                         ]
                                                                                       ) :|
                                                                                       [ Ctor Nothing SumType
                                                                                         ( ModuleName "Data.Maybe" )
                                                                                         ( TyName "Maybe" )
                                                                                         ( CtorName "Just" )
-                                                                                        [ LiteralInt Nothing 126 ]
+                                                                                        [ LiteralInt Nothing 86 ]
                                                                                       ]
                                                                                     ) :|
                                                                                     [ Ctor Nothing SumType
                                                                                       ( ModuleName "Data.Maybe" )
                                                                                       ( TyName "Maybe" )
                                                                                       ( CtorName "Just" )
-                                                                                      [ LiteralInt Nothing 127 ]
+                                                                                      [ LiteralInt Nothing 87 ]
                                                                                     ]
                                                                                   ) :|
                                                                                   [ Ctor Nothing SumType
                                                                                     ( ModuleName "Data.Maybe" )
                                                                                     ( TyName "Maybe" )
                                                                                     ( CtorName "Just" )
-                                                                                    [ LiteralInt Nothing 128 ]
+                                                                                    [ LiteralInt Nothing 88 ]
                                                                                   ]
                                                                                 ) :|
                                                                                 [ Ctor Nothing SumType
                                                                                   ( ModuleName "Data.Maybe" )
                                                                                   ( TyName "Maybe" )
                                                                                   ( CtorName "Just" )
-                                                                                  [ LiteralInt Nothing 129 ]
+                                                                                  [ LiteralInt Nothing 89 ]
                                                                                 ]
                                                                               ) :|
                                                                               [ Ctor Nothing SumType
                                                                                 ( ModuleName "Data.Maybe" )
                                                                                 ( TyName "Maybe" )
                                                                                 ( CtorName "Just" )
-                                                                                [ LiteralInt Nothing 130 ]
+                                                                                [ LiteralInt Nothing 90 ]
                                                                               ]
                                                                             ) :|
                                                                             [ Ctor Nothing SumType
                                                                               ( ModuleName "Data.Maybe" )
                                                                               ( TyName "Maybe" )
                                                                               ( CtorName "Just" )
-                                                                              [ LiteralInt Nothing 131 ]
+                                                                              [ LiteralInt Nothing 91 ]
                                                                             ]
                                                                           ) :|
                                                                           [ Ctor Nothing SumType
                                                                             ( ModuleName "Data.Maybe" )
                                                                             ( TyName "Maybe" )
                                                                             ( CtorName "Just" )
-                                                                            [ LiteralInt Nothing 132 ]
+                                                                            [ LiteralInt Nothing 92 ]
                                                                           ]
                                                                         ) :|
                                                                         [ Ctor Nothing SumType
                                                                           ( ModuleName "Data.Maybe" )
                                                                           ( TyName "Maybe" )
                                                                           ( CtorName "Just" )
-                                                                          [ LiteralInt Nothing 133 ]
+                                                                          [ LiteralInt Nothing 93 ]
                                                                         ]
                                                                       ) :|
                                                                       [ Ctor Nothing SumType
                                                                         ( ModuleName "Data.Maybe" )
                                                                         ( TyName "Maybe" )
                                                                         ( CtorName "Just" )
-                                                                        [ LiteralInt Nothing 134 ]
+                                                                        [ LiteralInt Nothing 94 ]
                                                                       ]
                                                                     ) :|
                                                                     [ Ctor Nothing SumType
                                                                       ( ModuleName "Data.Maybe" )
                                                                       ( TyName "Maybe" )
                                                                       ( CtorName "Just" )
-                                                                      [ LiteralInt Nothing 135 ]
+                                                                      [ LiteralInt Nothing 95 ]
                                                                     ]
                                                                   ) :|
                                                                   [ Ctor Nothing SumType
                                                                     ( ModuleName "Data.Maybe" )
                                                                     ( TyName "Maybe" )
                                                                     ( CtorName "Just" )
-                                                                    [ LiteralInt Nothing 136 ]
+                                                                    [ LiteralInt Nothing 96 ]
                                                                   ]
                                                                 ) :|
                                                                 [ Ctor Nothing SumType
                                                                   ( ModuleName "Data.Maybe" )
                                                                   ( TyName "Maybe" )
                                                                   ( CtorName "Just" )
-                                                                  [ LiteralInt Nothing 137 ]
+                                                                  [ LiteralInt Nothing 97 ]
                                                                 ]
                                                               ) :|
                                                               [ Ctor Nothing SumType
                                                                 ( ModuleName "Data.Maybe" )
                                                                 ( TyName "Maybe" )
                                                                 ( CtorName "Just" )
-                                                                [ LiteralInt Nothing 138 ]
+                                                                [ LiteralInt Nothing 98 ]
                                                               ]
                                                             ) :|
                                                             [ Ctor Nothing SumType
                                                               ( ModuleName "Data.Maybe" )
                                                               ( TyName "Maybe" )
                                                               ( CtorName "Just" )
-                                                              [ LiteralInt Nothing 139 ]
+                                                              [ LiteralInt Nothing 99 ]
                                                             ]
                                                           ) :|
                                                           [ Ctor Nothing SumType
                                                             ( ModuleName "Data.Maybe" )
                                                             ( TyName "Maybe" )
                                                             ( CtorName "Just" )
-                                                            [ LiteralInt Nothing 140 ]
+                                                            [ LiteralInt Nothing 100 ]
                                                           ]
                                                         ) :|
                                                         [ Ctor Nothing SumType
                                                           ( ModuleName "Data.Maybe" )
                                                           ( TyName "Maybe" )
                                                           ( CtorName "Just" )
-                                                          [ LiteralInt Nothing 141 ]
+                                                          [ LiteralInt Nothing 101 ]
                                                         ]
                                                       ) :|
                                                       [ Ctor Nothing SumType
                                                         ( ModuleName "Data.Maybe" )
                                                         ( TyName "Maybe" )
                                                         ( CtorName "Just" )
-                                                        [ LiteralInt Nothing 142 ]
+                                                        [ LiteralInt Nothing 102 ]
                                                       ]
                                                     ) :|
                                                     [ Ctor Nothing SumType
                                                       ( ModuleName "Data.Maybe" )
                                                       ( TyName "Maybe" )
                                                       ( CtorName "Just" )
-                                                      [ LiteralInt Nothing 143 ]
+                                                      [ LiteralInt Nothing 103 ]
                                                     ]
                                                   ) :|
                                                   [ Ctor Nothing SumType
                                                     ( ModuleName "Data.Maybe" )
                                                     ( TyName "Maybe" )
                                                     ( CtorName "Just" )
-                                                    [ LiteralInt Nothing 144 ]
+                                                    [ LiteralInt Nothing 104 ]
                                                   ]
                                                 ) :|
                                                 [ Ctor Nothing SumType
                                                   ( ModuleName "Data.Maybe" )
                                                   ( TyName "Maybe" )
                                                   ( CtorName "Just" )
-                                                  [ LiteralInt Nothing 145 ]
+                                                  [ LiteralInt Nothing 105 ]
                                                 ]
                                               ) :|
                                               [ Ctor Nothing SumType
                                                 ( ModuleName "Data.Maybe" )
                                                 ( TyName "Maybe" )
                                                 ( CtorName "Just" )
-                                                [ LiteralInt Nothing 146 ]
+                                                [ LiteralInt Nothing 106 ]
                                               ]
                                             ) :|
                                             [ Ctor Nothing SumType
                                               ( ModuleName "Data.Maybe" )
                                               ( TyName "Maybe" )
                                               ( CtorName "Just" )
-                                              [ LiteralInt Nothing 147 ]
+                                              [ LiteralInt Nothing 107 ]
                                             ]
                                           ) :|
                                           [ Ctor Nothing SumType
                                             ( ModuleName "Data.Maybe" )
                                             ( TyName "Maybe" )
                                             ( CtorName "Just" )
-                                            [ LiteralInt Nothing 148 ]
+                                            [ LiteralInt Nothing 108 ]
                                           ]
                                         ) :|
                                         [ Ctor Nothing SumType
                                           ( ModuleName "Data.Maybe" )
                                           ( TyName "Maybe" )
                                           ( CtorName "Just" )
-                                          [ LiteralInt Nothing 149 ]
+                                          [ LiteralInt Nothing 109 ]
                                         ]
                                       ) :|
                                       [ Ctor Nothing SumType
                                         ( ModuleName "Data.Maybe" )
                                         ( TyName "Maybe" )
                                         ( CtorName "Just" )
-                                        [ LiteralInt Nothing 150 ]
+                                        [ LiteralInt Nothing 110 ]
                                       ]
                                     ) :|
                                     [ Ctor Nothing SumType
                                       ( ModuleName "Data.Maybe" )
                                       ( TyName "Maybe" )
                                       ( CtorName "Just" )
-                                      [ LiteralInt Nothing 151 ]
+                                      [ LiteralInt Nothing 111 ]
                                     ]
                                   ) :|
                                   [ Ctor Nothing SumType
                                     ( ModuleName "Data.Maybe" )
                                     ( TyName "Maybe" )
                                     ( CtorName "Just" )
-                                    [ LiteralInt Nothing 152 ]
+                                    [ LiteralInt Nothing 112 ]
                                   ]
                                 ) :|
                                 [ Ctor Nothing SumType
                                   ( ModuleName "Data.Maybe" )
                                   ( TyName "Maybe" )
                                   ( CtorName "Just" )
-                                  [ LiteralInt Nothing 153 ]
+                                  [ LiteralInt Nothing 113 ]
                                 ]
                               ) :|
                               [ Ctor Nothing SumType
                                 ( ModuleName "Data.Maybe" )
                                 ( TyName "Maybe" )
                                 ( CtorName "Just" )
-                                [ LiteralInt Nothing 154 ]
+                                [ LiteralInt Nothing 114 ]
                               ]
                             ) :|
                             [ Ctor Nothing SumType
                               ( ModuleName "Data.Maybe" )
                               ( TyName "Maybe" )
                               ( CtorName "Just" )
-                              [ LiteralInt Nothing 155 ]
+                              [ LiteralInt Nothing 115 ]
                             ]
                           ) :|
                           [ Ctor Nothing SumType
                             ( ModuleName "Data.Maybe" )
                             ( TyName "Maybe" )
                             ( CtorName "Just" )
-                            [ LiteralInt Nothing 156 ]
+                            [ LiteralInt Nothing 116 ]
                           ]
                         ) :|
                         [ Ctor Nothing SumType
                           ( ModuleName "Data.Maybe" )
                           ( TyName "Maybe" )
                           ( CtorName "Just" )
-                          [ LiteralInt Nothing 157 ]
+                          [ LiteralInt Nothing 117 ]
                         ]
                       ) :|
                       [ Ctor Nothing SumType
                         ( ModuleName "Data.Maybe" )
                         ( TyName "Maybe" )
                         ( CtorName "Just" )
-                        [ LiteralInt Nothing 158 ]
+                        [ LiteralInt Nothing 118 ]
                       ]
                     ) :|
                     [ Ctor Nothing SumType
                       ( ModuleName "Data.Maybe" )
                       ( TyName "Maybe" )
                       ( CtorName "Just" )
-                      [ LiteralInt Nothing 159 ]
+                      [ LiteralInt Nothing 119 ]
                     ]
                   ) :|
                   [ Ctor Nothing SumType
                     ( ModuleName "Data.Maybe" )
                     ( TyName "Maybe" )
                     ( CtorName "Just" )
-                    [ LiteralInt Nothing 160 ]
+                    [ LiteralInt Nothing 120 ]
                   ]
                 ) :|
                 [ Ctor Nothing SumType
                   ( ModuleName "Data.Maybe" )
                   ( TyName "Maybe" )
                   ( CtorName "Just" )
-                  [ LiteralInt Nothing 161 ]
+                  [ LiteralInt Nothing 121 ]
                 ]
               )
             ), Standalone
@@ -2599,280 +2040,280 @@ UberModule
                                                                                                 ( ModuleName "Data.Maybe" )
                                                                                                 ( TyName "Maybe" )
                                                                                                 ( CtorName "Just" )
-                                                                                                [ LiteralInt Nothing 162 ]
+                                                                                                [ LiteralInt Nothing 122 ]
                                                                                               ]
                                                                                             ) :|
                                                                                             [ Ctor Nothing SumType
                                                                                               ( ModuleName "Data.Maybe" )
                                                                                               ( TyName "Maybe" )
                                                                                               ( CtorName "Just" )
-                                                                                              [ LiteralInt Nothing 163 ]
+                                                                                              [ LiteralInt Nothing 123 ]
                                                                                             ]
                                                                                           ) :|
                                                                                           [ Ctor Nothing SumType
                                                                                             ( ModuleName "Data.Maybe" )
                                                                                             ( TyName "Maybe" )
                                                                                             ( CtorName "Just" )
-                                                                                            [ LiteralInt Nothing 164 ]
+                                                                                            [ LiteralInt Nothing 124 ]
                                                                                           ]
                                                                                         ) :|
                                                                                         [ Ctor Nothing SumType
                                                                                           ( ModuleName "Data.Maybe" )
                                                                                           ( TyName "Maybe" )
                                                                                           ( CtorName "Just" )
-                                                                                          [ LiteralInt Nothing 165 ]
+                                                                                          [ LiteralInt Nothing 125 ]
                                                                                         ]
                                                                                       ) :|
                                                                                       [ Ctor Nothing SumType
                                                                                         ( ModuleName "Data.Maybe" )
                                                                                         ( TyName "Maybe" )
                                                                                         ( CtorName "Just" )
-                                                                                        [ LiteralInt Nothing 166 ]
+                                                                                        [ LiteralInt Nothing 126 ]
                                                                                       ]
                                                                                     ) :|
                                                                                     [ Ctor Nothing SumType
                                                                                       ( ModuleName "Data.Maybe" )
                                                                                       ( TyName "Maybe" )
                                                                                       ( CtorName "Just" )
-                                                                                      [ LiteralInt Nothing 167 ]
+                                                                                      [ LiteralInt Nothing 127 ]
                                                                                     ]
                                                                                   ) :|
                                                                                   [ Ctor Nothing SumType
                                                                                     ( ModuleName "Data.Maybe" )
                                                                                     ( TyName "Maybe" )
                                                                                     ( CtorName "Just" )
-                                                                                    [ LiteralInt Nothing 168 ]
+                                                                                    [ LiteralInt Nothing 128 ]
                                                                                   ]
                                                                                 ) :|
                                                                                 [ Ctor Nothing SumType
                                                                                   ( ModuleName "Data.Maybe" )
                                                                                   ( TyName "Maybe" )
                                                                                   ( CtorName "Just" )
-                                                                                  [ LiteralInt Nothing 169 ]
+                                                                                  [ LiteralInt Nothing 129 ]
                                                                                 ]
                                                                               ) :|
                                                                               [ Ctor Nothing SumType
                                                                                 ( ModuleName "Data.Maybe" )
                                                                                 ( TyName "Maybe" )
                                                                                 ( CtorName "Just" )
-                                                                                [ LiteralInt Nothing 170 ]
+                                                                                [ LiteralInt Nothing 130 ]
                                                                               ]
                                                                             ) :|
                                                                             [ Ctor Nothing SumType
                                                                               ( ModuleName "Data.Maybe" )
                                                                               ( TyName "Maybe" )
                                                                               ( CtorName "Just" )
-                                                                              [ LiteralInt Nothing 171 ]
+                                                                              [ LiteralInt Nothing 131 ]
                                                                             ]
                                                                           ) :|
                                                                           [ Ctor Nothing SumType
                                                                             ( ModuleName "Data.Maybe" )
                                                                             ( TyName "Maybe" )
                                                                             ( CtorName "Just" )
-                                                                            [ LiteralInt Nothing 172 ]
+                                                                            [ LiteralInt Nothing 132 ]
                                                                           ]
                                                                         ) :|
                                                                         [ Ctor Nothing SumType
                                                                           ( ModuleName "Data.Maybe" )
                                                                           ( TyName "Maybe" )
                                                                           ( CtorName "Just" )
-                                                                          [ LiteralInt Nothing 173 ]
+                                                                          [ LiteralInt Nothing 133 ]
                                                                         ]
                                                                       ) :|
                                                                       [ Ctor Nothing SumType
                                                                         ( ModuleName "Data.Maybe" )
                                                                         ( TyName "Maybe" )
                                                                         ( CtorName "Just" )
-                                                                        [ LiteralInt Nothing 174 ]
+                                                                        [ LiteralInt Nothing 134 ]
                                                                       ]
                                                                     ) :|
                                                                     [ Ctor Nothing SumType
                                                                       ( ModuleName "Data.Maybe" )
                                                                       ( TyName "Maybe" )
                                                                       ( CtorName "Just" )
-                                                                      [ LiteralInt Nothing 175 ]
+                                                                      [ LiteralInt Nothing 135 ]
                                                                     ]
                                                                   ) :|
                                                                   [ Ctor Nothing SumType
                                                                     ( ModuleName "Data.Maybe" )
                                                                     ( TyName "Maybe" )
                                                                     ( CtorName "Just" )
-                                                                    [ LiteralInt Nothing 176 ]
+                                                                    [ LiteralInt Nothing 136 ]
                                                                   ]
                                                                 ) :|
                                                                 [ Ctor Nothing SumType
                                                                   ( ModuleName "Data.Maybe" )
                                                                   ( TyName "Maybe" )
                                                                   ( CtorName "Just" )
-                                                                  [ LiteralInt Nothing 177 ]
+                                                                  [ LiteralInt Nothing 137 ]
                                                                 ]
                                                               ) :|
                                                               [ Ctor Nothing SumType
                                                                 ( ModuleName "Data.Maybe" )
                                                                 ( TyName "Maybe" )
                                                                 ( CtorName "Just" )
-                                                                [ LiteralInt Nothing 178 ]
+                                                                [ LiteralInt Nothing 138 ]
                                                               ]
                                                             ) :|
                                                             [ Ctor Nothing SumType
                                                               ( ModuleName "Data.Maybe" )
                                                               ( TyName "Maybe" )
                                                               ( CtorName "Just" )
-                                                              [ LiteralInt Nothing 179 ]
+                                                              [ LiteralInt Nothing 139 ]
                                                             ]
                                                           ) :|
                                                           [ Ctor Nothing SumType
                                                             ( ModuleName "Data.Maybe" )
                                                             ( TyName "Maybe" )
                                                             ( CtorName "Just" )
-                                                            [ LiteralInt Nothing 180 ]
+                                                            [ LiteralInt Nothing 140 ]
                                                           ]
                                                         ) :|
                                                         [ Ctor Nothing SumType
                                                           ( ModuleName "Data.Maybe" )
                                                           ( TyName "Maybe" )
                                                           ( CtorName "Just" )
-                                                          [ LiteralInt Nothing 181 ]
+                                                          [ LiteralInt Nothing 141 ]
                                                         ]
                                                       ) :|
                                                       [ Ctor Nothing SumType
                                                         ( ModuleName "Data.Maybe" )
                                                         ( TyName "Maybe" )
                                                         ( CtorName "Just" )
-                                                        [ LiteralInt Nothing 182 ]
+                                                        [ LiteralInt Nothing 142 ]
                                                       ]
                                                     ) :|
                                                     [ Ctor Nothing SumType
                                                       ( ModuleName "Data.Maybe" )
                                                       ( TyName "Maybe" )
                                                       ( CtorName "Just" )
-                                                      [ LiteralInt Nothing 183 ]
+                                                      [ LiteralInt Nothing 143 ]
                                                     ]
                                                   ) :|
                                                   [ Ctor Nothing SumType
                                                     ( ModuleName "Data.Maybe" )
                                                     ( TyName "Maybe" )
                                                     ( CtorName "Just" )
-                                                    [ LiteralInt Nothing 184 ]
+                                                    [ LiteralInt Nothing 144 ]
                                                   ]
                                                 ) :|
                                                 [ Ctor Nothing SumType
                                                   ( ModuleName "Data.Maybe" )
                                                   ( TyName "Maybe" )
                                                   ( CtorName "Just" )
-                                                  [ LiteralInt Nothing 185 ]
+                                                  [ LiteralInt Nothing 145 ]
                                                 ]
                                               ) :|
                                               [ Ctor Nothing SumType
                                                 ( ModuleName "Data.Maybe" )
                                                 ( TyName "Maybe" )
                                                 ( CtorName "Just" )
-                                                [ LiteralInt Nothing 186 ]
+                                                [ LiteralInt Nothing 146 ]
                                               ]
                                             ) :|
                                             [ Ctor Nothing SumType
                                               ( ModuleName "Data.Maybe" )
                                               ( TyName "Maybe" )
                                               ( CtorName "Just" )
-                                              [ LiteralInt Nothing 187 ]
+                                              [ LiteralInt Nothing 147 ]
                                             ]
                                           ) :|
                                           [ Ctor Nothing SumType
                                             ( ModuleName "Data.Maybe" )
                                             ( TyName "Maybe" )
                                             ( CtorName "Just" )
-                                            [ LiteralInt Nothing 188 ]
+                                            [ LiteralInt Nothing 148 ]
                                           ]
                                         ) :|
                                         [ Ctor Nothing SumType
                                           ( ModuleName "Data.Maybe" )
                                           ( TyName "Maybe" )
                                           ( CtorName "Just" )
-                                          [ LiteralInt Nothing 189 ]
+                                          [ LiteralInt Nothing 149 ]
                                         ]
                                       ) :|
                                       [ Ctor Nothing SumType
                                         ( ModuleName "Data.Maybe" )
                                         ( TyName "Maybe" )
                                         ( CtorName "Just" )
-                                        [ LiteralInt Nothing 190 ]
+                                        [ LiteralInt Nothing 150 ]
                                       ]
                                     ) :|
                                     [ Ctor Nothing SumType
                                       ( ModuleName "Data.Maybe" )
                                       ( TyName "Maybe" )
                                       ( CtorName "Just" )
-                                      [ LiteralInt Nothing 191 ]
+                                      [ LiteralInt Nothing 151 ]
                                     ]
                                   ) :|
                                   [ Ctor Nothing SumType
                                     ( ModuleName "Data.Maybe" )
                                     ( TyName "Maybe" )
                                     ( CtorName "Just" )
-                                    [ LiteralInt Nothing 192 ]
+                                    [ LiteralInt Nothing 152 ]
                                   ]
                                 ) :|
                                 [ Ctor Nothing SumType
                                   ( ModuleName "Data.Maybe" )
                                   ( TyName "Maybe" )
                                   ( CtorName "Just" )
-                                  [ LiteralInt Nothing 193 ]
+                                  [ LiteralInt Nothing 153 ]
                                 ]
                               ) :|
                               [ Ctor Nothing SumType
                                 ( ModuleName "Data.Maybe" )
                                 ( TyName "Maybe" )
                                 ( CtorName "Just" )
-                                [ LiteralInt Nothing 194 ]
+                                [ LiteralInt Nothing 154 ]
                               ]
                             ) :|
                             [ Ctor Nothing SumType
                               ( ModuleName "Data.Maybe" )
                               ( TyName "Maybe" )
                               ( CtorName "Just" )
-                              [ LiteralInt Nothing 195 ]
+                              [ LiteralInt Nothing 155 ]
                             ]
                           ) :|
                           [ Ctor Nothing SumType
                             ( ModuleName "Data.Maybe" )
                             ( TyName "Maybe" )
                             ( CtorName "Just" )
-                            [ LiteralInt Nothing 196 ]
+                            [ LiteralInt Nothing 156 ]
                           ]
                         ) :|
                         [ Ctor Nothing SumType
                           ( ModuleName "Data.Maybe" )
                           ( TyName "Maybe" )
                           ( CtorName "Just" )
-                          [ LiteralInt Nothing 197 ]
+                          [ LiteralInt Nothing 157 ]
                         ]
                       ) :|
                       [ Ctor Nothing SumType
                         ( ModuleName "Data.Maybe" )
                         ( TyName "Maybe" )
                         ( CtorName "Just" )
-                        [ LiteralInt Nothing 198 ]
+                        [ LiteralInt Nothing 158 ]
                       ]
                     ) :|
                     [ Ctor Nothing SumType
                       ( ModuleName "Data.Maybe" )
                       ( TyName "Maybe" )
                       ( CtorName "Just" )
-                      [ LiteralInt Nothing 199 ]
+                      [ LiteralInt Nothing 159 ]
                     ]
                   ) :|
                   [ Ctor Nothing SumType
                     ( ModuleName "Data.Maybe" )
                     ( TyName "Maybe" )
                     ( CtorName "Just" )
-                    [ LiteralInt Nothing 200 ]
+                    [ LiteralInt Nothing 160 ]
                   ]
                 ) :|
                 [ Ctor Nothing SumType
                   ( ModuleName "Data.Maybe" )
                   ( TyName "Maybe" )
                   ( CtorName "Just" )
-                  [ LiteralInt Nothing 201 ]
+                  [ LiteralInt Nothing 161 ]
                 ]
               )
             ), Standalone
@@ -3158,280 +2599,280 @@ UberModule
                                                                                                 ( ModuleName "Data.Maybe" )
                                                                                                 ( TyName "Maybe" )
                                                                                                 ( CtorName "Just" )
-                                                                                                [ LiteralInt Nothing 202 ]
+                                                                                                [ LiteralInt Nothing 162 ]
                                                                                               ]
                                                                                             ) :|
                                                                                             [ Ctor Nothing SumType
                                                                                               ( ModuleName "Data.Maybe" )
                                                                                               ( TyName "Maybe" )
                                                                                               ( CtorName "Just" )
-                                                                                              [ LiteralInt Nothing 203 ]
+                                                                                              [ LiteralInt Nothing 163 ]
                                                                                             ]
                                                                                           ) :|
                                                                                           [ Ctor Nothing SumType
                                                                                             ( ModuleName "Data.Maybe" )
                                                                                             ( TyName "Maybe" )
                                                                                             ( CtorName "Just" )
-                                                                                            [ LiteralInt Nothing 204 ]
+                                                                                            [ LiteralInt Nothing 164 ]
                                                                                           ]
                                                                                         ) :|
                                                                                         [ Ctor Nothing SumType
                                                                                           ( ModuleName "Data.Maybe" )
                                                                                           ( TyName "Maybe" )
                                                                                           ( CtorName "Just" )
-                                                                                          [ LiteralInt Nothing 205 ]
+                                                                                          [ LiteralInt Nothing 165 ]
                                                                                         ]
                                                                                       ) :|
                                                                                       [ Ctor Nothing SumType
                                                                                         ( ModuleName "Data.Maybe" )
                                                                                         ( TyName "Maybe" )
                                                                                         ( CtorName "Just" )
-                                                                                        [ LiteralInt Nothing 206 ]
+                                                                                        [ LiteralInt Nothing 166 ]
                                                                                       ]
                                                                                     ) :|
                                                                                     [ Ctor Nothing SumType
                                                                                       ( ModuleName "Data.Maybe" )
                                                                                       ( TyName "Maybe" )
                                                                                       ( CtorName "Just" )
-                                                                                      [ LiteralInt Nothing 207 ]
+                                                                                      [ LiteralInt Nothing 167 ]
                                                                                     ]
                                                                                   ) :|
                                                                                   [ Ctor Nothing SumType
                                                                                     ( ModuleName "Data.Maybe" )
                                                                                     ( TyName "Maybe" )
                                                                                     ( CtorName "Just" )
-                                                                                    [ LiteralInt Nothing 208 ]
+                                                                                    [ LiteralInt Nothing 168 ]
                                                                                   ]
                                                                                 ) :|
                                                                                 [ Ctor Nothing SumType
                                                                                   ( ModuleName "Data.Maybe" )
                                                                                   ( TyName "Maybe" )
                                                                                   ( CtorName "Just" )
-                                                                                  [ LiteralInt Nothing 209 ]
+                                                                                  [ LiteralInt Nothing 169 ]
                                                                                 ]
                                                                               ) :|
                                                                               [ Ctor Nothing SumType
                                                                                 ( ModuleName "Data.Maybe" )
                                                                                 ( TyName "Maybe" )
                                                                                 ( CtorName "Just" )
-                                                                                [ LiteralInt Nothing 210 ]
+                                                                                [ LiteralInt Nothing 170 ]
                                                                               ]
                                                                             ) :|
                                                                             [ Ctor Nothing SumType
                                                                               ( ModuleName "Data.Maybe" )
                                                                               ( TyName "Maybe" )
                                                                               ( CtorName "Just" )
-                                                                              [ LiteralInt Nothing 211 ]
+                                                                              [ LiteralInt Nothing 171 ]
                                                                             ]
                                                                           ) :|
                                                                           [ Ctor Nothing SumType
                                                                             ( ModuleName "Data.Maybe" )
                                                                             ( TyName "Maybe" )
                                                                             ( CtorName "Just" )
-                                                                            [ LiteralInt Nothing 212 ]
+                                                                            [ LiteralInt Nothing 172 ]
                                                                           ]
                                                                         ) :|
                                                                         [ Ctor Nothing SumType
                                                                           ( ModuleName "Data.Maybe" )
                                                                           ( TyName "Maybe" )
                                                                           ( CtorName "Just" )
-                                                                          [ LiteralInt Nothing 213 ]
+                                                                          [ LiteralInt Nothing 173 ]
                                                                         ]
                                                                       ) :|
                                                                       [ Ctor Nothing SumType
                                                                         ( ModuleName "Data.Maybe" )
                                                                         ( TyName "Maybe" )
                                                                         ( CtorName "Just" )
-                                                                        [ LiteralInt Nothing 214 ]
+                                                                        [ LiteralInt Nothing 174 ]
                                                                       ]
                                                                     ) :|
                                                                     [ Ctor Nothing SumType
                                                                       ( ModuleName "Data.Maybe" )
                                                                       ( TyName "Maybe" )
                                                                       ( CtorName "Just" )
-                                                                      [ LiteralInt Nothing 215 ]
+                                                                      [ LiteralInt Nothing 175 ]
                                                                     ]
                                                                   ) :|
                                                                   [ Ctor Nothing SumType
                                                                     ( ModuleName "Data.Maybe" )
                                                                     ( TyName "Maybe" )
                                                                     ( CtorName "Just" )
-                                                                    [ LiteralInt Nothing 216 ]
+                                                                    [ LiteralInt Nothing 176 ]
                                                                   ]
                                                                 ) :|
                                                                 [ Ctor Nothing SumType
                                                                   ( ModuleName "Data.Maybe" )
                                                                   ( TyName "Maybe" )
                                                                   ( CtorName "Just" )
-                                                                  [ LiteralInt Nothing 217 ]
+                                                                  [ LiteralInt Nothing 177 ]
                                                                 ]
                                                               ) :|
                                                               [ Ctor Nothing SumType
                                                                 ( ModuleName "Data.Maybe" )
                                                                 ( TyName "Maybe" )
                                                                 ( CtorName "Just" )
-                                                                [ LiteralInt Nothing 218 ]
+                                                                [ LiteralInt Nothing 178 ]
                                                               ]
                                                             ) :|
                                                             [ Ctor Nothing SumType
                                                               ( ModuleName "Data.Maybe" )
                                                               ( TyName "Maybe" )
                                                               ( CtorName "Just" )
-                                                              [ LiteralInt Nothing 219 ]
+                                                              [ LiteralInt Nothing 179 ]
                                                             ]
                                                           ) :|
                                                           [ Ctor Nothing SumType
                                                             ( ModuleName "Data.Maybe" )
                                                             ( TyName "Maybe" )
                                                             ( CtorName "Just" )
-                                                            [ LiteralInt Nothing 220 ]
+                                                            [ LiteralInt Nothing 180 ]
                                                           ]
                                                         ) :|
                                                         [ Ctor Nothing SumType
                                                           ( ModuleName "Data.Maybe" )
                                                           ( TyName "Maybe" )
                                                           ( CtorName "Just" )
-                                                          [ LiteralInt Nothing 221 ]
+                                                          [ LiteralInt Nothing 181 ]
                                                         ]
                                                       ) :|
                                                       [ Ctor Nothing SumType
                                                         ( ModuleName "Data.Maybe" )
                                                         ( TyName "Maybe" )
                                                         ( CtorName "Just" )
-                                                        [ LiteralInt Nothing 222 ]
+                                                        [ LiteralInt Nothing 182 ]
                                                       ]
                                                     ) :|
                                                     [ Ctor Nothing SumType
                                                       ( ModuleName "Data.Maybe" )
                                                       ( TyName "Maybe" )
                                                       ( CtorName "Just" )
-                                                      [ LiteralInt Nothing 223 ]
+                                                      [ LiteralInt Nothing 183 ]
                                                     ]
                                                   ) :|
                                                   [ Ctor Nothing SumType
                                                     ( ModuleName "Data.Maybe" )
                                                     ( TyName "Maybe" )
                                                     ( CtorName "Just" )
-                                                    [ LiteralInt Nothing 224 ]
+                                                    [ LiteralInt Nothing 184 ]
                                                   ]
                                                 ) :|
                                                 [ Ctor Nothing SumType
                                                   ( ModuleName "Data.Maybe" )
                                                   ( TyName "Maybe" )
                                                   ( CtorName "Just" )
-                                                  [ LiteralInt Nothing 225 ]
+                                                  [ LiteralInt Nothing 185 ]
                                                 ]
                                               ) :|
                                               [ Ctor Nothing SumType
                                                 ( ModuleName "Data.Maybe" )
                                                 ( TyName "Maybe" )
                                                 ( CtorName "Just" )
-                                                [ LiteralInt Nothing 226 ]
+                                                [ LiteralInt Nothing 186 ]
                                               ]
                                             ) :|
                                             [ Ctor Nothing SumType
                                               ( ModuleName "Data.Maybe" )
                                               ( TyName "Maybe" )
                                               ( CtorName "Just" )
-                                              [ LiteralInt Nothing 227 ]
+                                              [ LiteralInt Nothing 187 ]
                                             ]
                                           ) :|
                                           [ Ctor Nothing SumType
                                             ( ModuleName "Data.Maybe" )
                                             ( TyName "Maybe" )
                                             ( CtorName "Just" )
-                                            [ LiteralInt Nothing 228 ]
+                                            [ LiteralInt Nothing 188 ]
                                           ]
                                         ) :|
                                         [ Ctor Nothing SumType
                                           ( ModuleName "Data.Maybe" )
                                           ( TyName "Maybe" )
                                           ( CtorName "Just" )
-                                          [ LiteralInt Nothing 229 ]
+                                          [ LiteralInt Nothing 189 ]
                                         ]
                                       ) :|
                                       [ Ctor Nothing SumType
                                         ( ModuleName "Data.Maybe" )
                                         ( TyName "Maybe" )
                                         ( CtorName "Just" )
-                                        [ LiteralInt Nothing 230 ]
+                                        [ LiteralInt Nothing 190 ]
                                       ]
                                     ) :|
                                     [ Ctor Nothing SumType
                                       ( ModuleName "Data.Maybe" )
                                       ( TyName "Maybe" )
                                       ( CtorName "Just" )
-                                      [ LiteralInt Nothing 231 ]
+                                      [ LiteralInt Nothing 191 ]
                                     ]
                                   ) :|
                                   [ Ctor Nothing SumType
                                     ( ModuleName "Data.Maybe" )
                                     ( TyName "Maybe" )
                                     ( CtorName "Just" )
-                                    [ LiteralInt Nothing 232 ]
+                                    [ LiteralInt Nothing 192 ]
                                   ]
                                 ) :|
                                 [ Ctor Nothing SumType
                                   ( ModuleName "Data.Maybe" )
                                   ( TyName "Maybe" )
                                   ( CtorName "Just" )
-                                  [ LiteralInt Nothing 233 ]
+                                  [ LiteralInt Nothing 193 ]
                                 ]
                               ) :|
                               [ Ctor Nothing SumType
                                 ( ModuleName "Data.Maybe" )
                                 ( TyName "Maybe" )
                                 ( CtorName "Just" )
-                                [ LiteralInt Nothing 234 ]
+                                [ LiteralInt Nothing 194 ]
                               ]
                             ) :|
                             [ Ctor Nothing SumType
                               ( ModuleName "Data.Maybe" )
                               ( TyName "Maybe" )
                               ( CtorName "Just" )
-                              [ LiteralInt Nothing 235 ]
+                              [ LiteralInt Nothing 195 ]
                             ]
                           ) :|
                           [ Ctor Nothing SumType
                             ( ModuleName "Data.Maybe" )
                             ( TyName "Maybe" )
                             ( CtorName "Just" )
-                            [ LiteralInt Nothing 236 ]
+                            [ LiteralInt Nothing 196 ]
                           ]
                         ) :|
                         [ Ctor Nothing SumType
                           ( ModuleName "Data.Maybe" )
                           ( TyName "Maybe" )
                           ( CtorName "Just" )
-                          [ LiteralInt Nothing 237 ]
+                          [ LiteralInt Nothing 197 ]
                         ]
                       ) :|
                       [ Ctor Nothing SumType
                         ( ModuleName "Data.Maybe" )
                         ( TyName "Maybe" )
                         ( CtorName "Just" )
-                        [ LiteralInt Nothing 238 ]
+                        [ LiteralInt Nothing 198 ]
                       ]
                     ) :|
                     [ Ctor Nothing SumType
                       ( ModuleName "Data.Maybe" )
                       ( TyName "Maybe" )
                       ( CtorName "Just" )
-                      [ LiteralInt Nothing 239 ]
+                      [ LiteralInt Nothing 199 ]
                     ]
                   ) :|
                   [ Ctor Nothing SumType
                     ( ModuleName "Data.Maybe" )
                     ( TyName "Maybe" )
                     ( CtorName "Just" )
-                    [ LiteralInt Nothing 240 ]
+                    [ LiteralInt Nothing 200 ]
                   ]
                 ) :|
                 [ Ctor Nothing SumType
                   ( ModuleName "Data.Maybe" )
                   ( TyName "Maybe" )
                   ( CtorName "Just" )
-                  [ LiteralInt Nothing 241 ]
+                  [ LiteralInt Nothing 201 ]
                 ]
               )
             ), Standalone
@@ -3712,6 +3153,565 @@ UberModule
                                                                                             ( Ref Nothing
                                                                                               ( Local
                                                                                                 ( Name "$tmp651" )
+                                                                                              ) :|
+                                                                                              [ Ctor Nothing SumType
+                                                                                                ( ModuleName "Data.Maybe" )
+                                                                                                ( TyName "Maybe" )
+                                                                                                ( CtorName "Just" )
+                                                                                                [ LiteralInt Nothing 202 ]
+                                                                                              ]
+                                                                                            ) :|
+                                                                                            [ Ctor Nothing SumType
+                                                                                              ( ModuleName "Data.Maybe" )
+                                                                                              ( TyName "Maybe" )
+                                                                                              ( CtorName "Just" )
+                                                                                              [ LiteralInt Nothing 203 ]
+                                                                                            ]
+                                                                                          ) :|
+                                                                                          [ Ctor Nothing SumType
+                                                                                            ( ModuleName "Data.Maybe" )
+                                                                                            ( TyName "Maybe" )
+                                                                                            ( CtorName "Just" )
+                                                                                            [ LiteralInt Nothing 204 ]
+                                                                                          ]
+                                                                                        ) :|
+                                                                                        [ Ctor Nothing SumType
+                                                                                          ( ModuleName "Data.Maybe" )
+                                                                                          ( TyName "Maybe" )
+                                                                                          ( CtorName "Just" )
+                                                                                          [ LiteralInt Nothing 205 ]
+                                                                                        ]
+                                                                                      ) :|
+                                                                                      [ Ctor Nothing SumType
+                                                                                        ( ModuleName "Data.Maybe" )
+                                                                                        ( TyName "Maybe" )
+                                                                                        ( CtorName "Just" )
+                                                                                        [ LiteralInt Nothing 206 ]
+                                                                                      ]
+                                                                                    ) :|
+                                                                                    [ Ctor Nothing SumType
+                                                                                      ( ModuleName "Data.Maybe" )
+                                                                                      ( TyName "Maybe" )
+                                                                                      ( CtorName "Just" )
+                                                                                      [ LiteralInt Nothing 207 ]
+                                                                                    ]
+                                                                                  ) :|
+                                                                                  [ Ctor Nothing SumType
+                                                                                    ( ModuleName "Data.Maybe" )
+                                                                                    ( TyName "Maybe" )
+                                                                                    ( CtorName "Just" )
+                                                                                    [ LiteralInt Nothing 208 ]
+                                                                                  ]
+                                                                                ) :|
+                                                                                [ Ctor Nothing SumType
+                                                                                  ( ModuleName "Data.Maybe" )
+                                                                                  ( TyName "Maybe" )
+                                                                                  ( CtorName "Just" )
+                                                                                  [ LiteralInt Nothing 209 ]
+                                                                                ]
+                                                                              ) :|
+                                                                              [ Ctor Nothing SumType
+                                                                                ( ModuleName "Data.Maybe" )
+                                                                                ( TyName "Maybe" )
+                                                                                ( CtorName "Just" )
+                                                                                [ LiteralInt Nothing 210 ]
+                                                                              ]
+                                                                            ) :|
+                                                                            [ Ctor Nothing SumType
+                                                                              ( ModuleName "Data.Maybe" )
+                                                                              ( TyName "Maybe" )
+                                                                              ( CtorName "Just" )
+                                                                              [ LiteralInt Nothing 211 ]
+                                                                            ]
+                                                                          ) :|
+                                                                          [ Ctor Nothing SumType
+                                                                            ( ModuleName "Data.Maybe" )
+                                                                            ( TyName "Maybe" )
+                                                                            ( CtorName "Just" )
+                                                                            [ LiteralInt Nothing 212 ]
+                                                                          ]
+                                                                        ) :|
+                                                                        [ Ctor Nothing SumType
+                                                                          ( ModuleName "Data.Maybe" )
+                                                                          ( TyName "Maybe" )
+                                                                          ( CtorName "Just" )
+                                                                          [ LiteralInt Nothing 213 ]
+                                                                        ]
+                                                                      ) :|
+                                                                      [ Ctor Nothing SumType
+                                                                        ( ModuleName "Data.Maybe" )
+                                                                        ( TyName "Maybe" )
+                                                                        ( CtorName "Just" )
+                                                                        [ LiteralInt Nothing 214 ]
+                                                                      ]
+                                                                    ) :|
+                                                                    [ Ctor Nothing SumType
+                                                                      ( ModuleName "Data.Maybe" )
+                                                                      ( TyName "Maybe" )
+                                                                      ( CtorName "Just" )
+                                                                      [ LiteralInt Nothing 215 ]
+                                                                    ]
+                                                                  ) :|
+                                                                  [ Ctor Nothing SumType
+                                                                    ( ModuleName "Data.Maybe" )
+                                                                    ( TyName "Maybe" )
+                                                                    ( CtorName "Just" )
+                                                                    [ LiteralInt Nothing 216 ]
+                                                                  ]
+                                                                ) :|
+                                                                [ Ctor Nothing SumType
+                                                                  ( ModuleName "Data.Maybe" )
+                                                                  ( TyName "Maybe" )
+                                                                  ( CtorName "Just" )
+                                                                  [ LiteralInt Nothing 217 ]
+                                                                ]
+                                                              ) :|
+                                                              [ Ctor Nothing SumType
+                                                                ( ModuleName "Data.Maybe" )
+                                                                ( TyName "Maybe" )
+                                                                ( CtorName "Just" )
+                                                                [ LiteralInt Nothing 218 ]
+                                                              ]
+                                                            ) :|
+                                                            [ Ctor Nothing SumType
+                                                              ( ModuleName "Data.Maybe" )
+                                                              ( TyName "Maybe" )
+                                                              ( CtorName "Just" )
+                                                              [ LiteralInt Nothing 219 ]
+                                                            ]
+                                                          ) :|
+                                                          [ Ctor Nothing SumType
+                                                            ( ModuleName "Data.Maybe" )
+                                                            ( TyName "Maybe" )
+                                                            ( CtorName "Just" )
+                                                            [ LiteralInt Nothing 220 ]
+                                                          ]
+                                                        ) :|
+                                                        [ Ctor Nothing SumType
+                                                          ( ModuleName "Data.Maybe" )
+                                                          ( TyName "Maybe" )
+                                                          ( CtorName "Just" )
+                                                          [ LiteralInt Nothing 221 ]
+                                                        ]
+                                                      ) :|
+                                                      [ Ctor Nothing SumType
+                                                        ( ModuleName "Data.Maybe" )
+                                                        ( TyName "Maybe" )
+                                                        ( CtorName "Just" )
+                                                        [ LiteralInt Nothing 222 ]
+                                                      ]
+                                                    ) :|
+                                                    [ Ctor Nothing SumType
+                                                      ( ModuleName "Data.Maybe" )
+                                                      ( TyName "Maybe" )
+                                                      ( CtorName "Just" )
+                                                      [ LiteralInt Nothing 223 ]
+                                                    ]
+                                                  ) :|
+                                                  [ Ctor Nothing SumType
+                                                    ( ModuleName "Data.Maybe" )
+                                                    ( TyName "Maybe" )
+                                                    ( CtorName "Just" )
+                                                    [ LiteralInt Nothing 224 ]
+                                                  ]
+                                                ) :|
+                                                [ Ctor Nothing SumType
+                                                  ( ModuleName "Data.Maybe" )
+                                                  ( TyName "Maybe" )
+                                                  ( CtorName "Just" )
+                                                  [ LiteralInt Nothing 225 ]
+                                                ]
+                                              ) :|
+                                              [ Ctor Nothing SumType
+                                                ( ModuleName "Data.Maybe" )
+                                                ( TyName "Maybe" )
+                                                ( CtorName "Just" )
+                                                [ LiteralInt Nothing 226 ]
+                                              ]
+                                            ) :|
+                                            [ Ctor Nothing SumType
+                                              ( ModuleName "Data.Maybe" )
+                                              ( TyName "Maybe" )
+                                              ( CtorName "Just" )
+                                              [ LiteralInt Nothing 227 ]
+                                            ]
+                                          ) :|
+                                          [ Ctor Nothing SumType
+                                            ( ModuleName "Data.Maybe" )
+                                            ( TyName "Maybe" )
+                                            ( CtorName "Just" )
+                                            [ LiteralInt Nothing 228 ]
+                                          ]
+                                        ) :|
+                                        [ Ctor Nothing SumType
+                                          ( ModuleName "Data.Maybe" )
+                                          ( TyName "Maybe" )
+                                          ( CtorName "Just" )
+                                          [ LiteralInt Nothing 229 ]
+                                        ]
+                                      ) :|
+                                      [ Ctor Nothing SumType
+                                        ( ModuleName "Data.Maybe" )
+                                        ( TyName "Maybe" )
+                                        ( CtorName "Just" )
+                                        [ LiteralInt Nothing 230 ]
+                                      ]
+                                    ) :|
+                                    [ Ctor Nothing SumType
+                                      ( ModuleName "Data.Maybe" )
+                                      ( TyName "Maybe" )
+                                      ( CtorName "Just" )
+                                      [ LiteralInt Nothing 231 ]
+                                    ]
+                                  ) :|
+                                  [ Ctor Nothing SumType
+                                    ( ModuleName "Data.Maybe" )
+                                    ( TyName "Maybe" )
+                                    ( CtorName "Just" )
+                                    [ LiteralInt Nothing 232 ]
+                                  ]
+                                ) :|
+                                [ Ctor Nothing SumType
+                                  ( ModuleName "Data.Maybe" )
+                                  ( TyName "Maybe" )
+                                  ( CtorName "Just" )
+                                  [ LiteralInt Nothing 233 ]
+                                ]
+                              ) :|
+                              [ Ctor Nothing SumType
+                                ( ModuleName "Data.Maybe" )
+                                ( TyName "Maybe" )
+                                ( CtorName "Just" )
+                                [ LiteralInt Nothing 234 ]
+                              ]
+                            ) :|
+                            [ Ctor Nothing SumType
+                              ( ModuleName "Data.Maybe" )
+                              ( TyName "Maybe" )
+                              ( CtorName "Just" )
+                              [ LiteralInt Nothing 235 ]
+                            ]
+                          ) :|
+                          [ Ctor Nothing SumType
+                            ( ModuleName "Data.Maybe" )
+                            ( TyName "Maybe" )
+                            ( CtorName "Just" )
+                            [ LiteralInt Nothing 236 ]
+                          ]
+                        ) :|
+                        [ Ctor Nothing SumType
+                          ( ModuleName "Data.Maybe" )
+                          ( TyName "Maybe" )
+                          ( CtorName "Just" )
+                          [ LiteralInt Nothing 237 ]
+                        ]
+                      ) :|
+                      [ Ctor Nothing SumType
+                        ( ModuleName "Data.Maybe" )
+                        ( TyName "Maybe" )
+                        ( CtorName "Just" )
+                        [ LiteralInt Nothing 238 ]
+                      ]
+                    ) :|
+                    [ Ctor Nothing SumType
+                      ( ModuleName "Data.Maybe" )
+                      ( TyName "Maybe" )
+                      ( CtorName "Just" )
+                      [ LiteralInt Nothing 239 ]
+                    ]
+                  ) :|
+                  [ Ctor Nothing SumType
+                    ( ModuleName "Data.Maybe" )
+                    ( TyName "Maybe" )
+                    ( CtorName "Just" )
+                    [ LiteralInt Nothing 240 ]
+                  ]
+                ) :|
+                [ Ctor Nothing SumType
+                  ( ModuleName "Data.Maybe" )
+                  ( TyName "Maybe" )
+                  ( CtorName "Just" )
+                  [ LiteralInt Nothing 241 ]
+                ]
+              )
+            ), Standalone
+            ( Nothing, Name "$tmp653", AppN Nothing
+              ( Ref Nothing
+                ( Imported ( ModuleName "Golden.LongApplyChain.Test" ) ( Name "applySecond$w" ) )
+              )
+              ( AppN Nothing
+                ( Ref Nothing
+                  ( Imported ( ModuleName "Golden.LongApplyChain.Test" ) ( Name "applySecond$w" ) )
+                )
+                ( AppN Nothing
+                  ( Ref Nothing
+                    ( Imported
+                      ( ModuleName "Golden.LongApplyChain.Test" )
+                      ( Name "applySecond$w" )
+                    )
+                  )
+                  ( AppN Nothing
+                    ( Ref Nothing
+                      ( Imported
+                        ( ModuleName "Golden.LongApplyChain.Test" )
+                        ( Name "applySecond$w" )
+                      )
+                    )
+                    ( AppN Nothing
+                      ( Ref Nothing
+                        ( Imported
+                          ( ModuleName "Golden.LongApplyChain.Test" )
+                          ( Name "applySecond$w" )
+                        )
+                      )
+                      ( AppN Nothing
+                        ( Ref Nothing
+                          ( Imported
+                            ( ModuleName "Golden.LongApplyChain.Test" )
+                            ( Name "applySecond$w" )
+                          )
+                        )
+                        ( AppN Nothing
+                          ( Ref Nothing
+                            ( Imported
+                              ( ModuleName "Golden.LongApplyChain.Test" )
+                              ( Name "applySecond$w" )
+                            )
+                          )
+                          ( AppN Nothing
+                            ( Ref Nothing
+                              ( Imported
+                                ( ModuleName "Golden.LongApplyChain.Test" )
+                                ( Name "applySecond$w" )
+                              )
+                            )
+                            ( AppN Nothing
+                              ( Ref Nothing
+                                ( Imported
+                                  ( ModuleName "Golden.LongApplyChain.Test" )
+                                  ( Name "applySecond$w" )
+                                )
+                              )
+                              ( AppN Nothing
+                                ( Ref Nothing
+                                  ( Imported
+                                    ( ModuleName "Golden.LongApplyChain.Test" )
+                                    ( Name "applySecond$w" )
+                                  )
+                                )
+                                ( AppN Nothing
+                                  ( Ref Nothing
+                                    ( Imported
+                                      ( ModuleName "Golden.LongApplyChain.Test" )
+                                      ( Name "applySecond$w" )
+                                    )
+                                  )
+                                  ( AppN Nothing
+                                    ( Ref Nothing
+                                      ( Imported
+                                        ( ModuleName "Golden.LongApplyChain.Test" )
+                                        ( Name "applySecond$w" )
+                                      )
+                                    )
+                                    ( AppN Nothing
+                                      ( Ref Nothing
+                                        ( Imported
+                                          ( ModuleName "Golden.LongApplyChain.Test" )
+                                          ( Name "applySecond$w" )
+                                        )
+                                      )
+                                      ( AppN Nothing
+                                        ( Ref Nothing
+                                          ( Imported
+                                            ( ModuleName "Golden.LongApplyChain.Test" )
+                                            ( Name "applySecond$w" )
+                                          )
+                                        )
+                                        ( AppN Nothing
+                                          ( Ref Nothing
+                                            ( Imported
+                                              ( ModuleName "Golden.LongApplyChain.Test" )
+                                              ( Name "applySecond$w" )
+                                            )
+                                          )
+                                          ( AppN Nothing
+                                            ( Ref Nothing
+                                              ( Imported
+                                                ( ModuleName "Golden.LongApplyChain.Test" )
+                                                ( Name "applySecond$w" )
+                                              )
+                                            )
+                                            ( AppN Nothing
+                                              ( Ref Nothing
+                                                ( Imported
+                                                  ( ModuleName "Golden.LongApplyChain.Test" )
+                                                  ( Name "applySecond$w" )
+                                                )
+                                              )
+                                              ( AppN Nothing
+                                                ( Ref Nothing
+                                                  ( Imported
+                                                    ( ModuleName "Golden.LongApplyChain.Test" )
+                                                    ( Name "applySecond$w" )
+                                                  )
+                                                )
+                                                ( AppN Nothing
+                                                  ( Ref Nothing
+                                                    ( Imported
+                                                      ( ModuleName "Golden.LongApplyChain.Test" )
+                                                      ( Name "applySecond$w" )
+                                                    )
+                                                  )
+                                                  ( AppN Nothing
+                                                    ( Ref Nothing
+                                                      ( Imported
+                                                        ( ModuleName "Golden.LongApplyChain.Test" )
+                                                        ( Name "applySecond$w" )
+                                                      )
+                                                    )
+                                                    ( AppN Nothing
+                                                      ( Ref Nothing
+                                                        ( Imported
+                                                          ( ModuleName "Golden.LongApplyChain.Test" )
+                                                          ( Name "applySecond$w" )
+                                                        )
+                                                      )
+                                                      ( AppN Nothing
+                                                        ( Ref Nothing
+                                                          ( Imported
+                                                            ( ModuleName "Golden.LongApplyChain.Test" )
+                                                            ( Name "applySecond$w" )
+                                                          )
+                                                        )
+                                                        ( AppN Nothing
+                                                          ( Ref Nothing
+                                                            ( Imported
+                                                              ( ModuleName "Golden.LongApplyChain.Test" )
+                                                              ( Name "applySecond$w" )
+                                                            )
+                                                          )
+                                                          ( AppN Nothing
+                                                            ( Ref Nothing
+                                                              ( Imported
+                                                                ( ModuleName "Golden.LongApplyChain.Test" )
+                                                                ( Name "applySecond$w" )
+                                                              )
+                                                            )
+                                                            ( AppN Nothing
+                                                              ( Ref Nothing
+                                                                ( Imported
+                                                                  ( ModuleName "Golden.LongApplyChain.Test" )
+                                                                  ( Name "applySecond$w" )
+                                                                )
+                                                              )
+                                                              ( AppN Nothing
+                                                                ( Ref Nothing
+                                                                  ( Imported
+                                                                    ( ModuleName "Golden.LongApplyChain.Test" )
+                                                                    ( Name "applySecond$w" )
+                                                                  )
+                                                                )
+                                                                ( AppN Nothing
+                                                                  ( Ref Nothing
+                                                                    ( Imported
+                                                                      ( ModuleName "Golden.LongApplyChain.Test" )
+                                                                      ( Name "applySecond$w" )
+                                                                    )
+                                                                  )
+                                                                  ( AppN Nothing
+                                                                    ( Ref Nothing
+                                                                      ( Imported
+                                                                        ( ModuleName "Golden.LongApplyChain.Test" )
+                                                                        ( Name "applySecond$w" )
+                                                                      )
+                                                                    )
+                                                                    ( AppN Nothing
+                                                                      ( Ref Nothing
+                                                                        ( Imported
+                                                                          ( ModuleName "Golden.LongApplyChain.Test" )
+                                                                          ( Name "applySecond$w" )
+                                                                        )
+                                                                      )
+                                                                      ( AppN Nothing
+                                                                        ( Ref Nothing
+                                                                          ( Imported
+                                                                            ( ModuleName "Golden.LongApplyChain.Test" )
+                                                                            ( Name "applySecond$w" )
+                                                                          )
+                                                                        )
+                                                                        ( AppN Nothing
+                                                                          ( Ref Nothing
+                                                                            ( Imported
+                                                                              ( ModuleName "Golden.LongApplyChain.Test" )
+                                                                              ( Name "applySecond$w" )
+                                                                            )
+                                                                          )
+                                                                          ( AppN Nothing
+                                                                            ( Ref Nothing
+                                                                              ( Imported
+                                                                                ( ModuleName "Golden.LongApplyChain.Test" )
+                                                                                ( Name "applySecond$w" )
+                                                                              )
+                                                                            )
+                                                                            ( AppN Nothing
+                                                                              ( Ref Nothing
+                                                                                ( Imported
+                                                                                  ( ModuleName "Golden.LongApplyChain.Test" )
+                                                                                  ( Name "applySecond$w" )
+                                                                                )
+                                                                              )
+                                                                              ( AppN Nothing
+                                                                                ( Ref Nothing
+                                                                                  ( Imported
+                                                                                    ( ModuleName "Golden.LongApplyChain.Test" )
+                                                                                    ( Name "applySecond$w" )
+                                                                                  )
+                                                                                )
+                                                                                ( AppN Nothing
+                                                                                  ( Ref Nothing
+                                                                                    ( Imported
+                                                                                      ( ModuleName "Golden.LongApplyChain.Test" )
+                                                                                      ( Name "applySecond$w" )
+                                                                                    )
+                                                                                  )
+                                                                                  ( AppN Nothing
+                                                                                    ( Ref Nothing
+                                                                                      ( Imported
+                                                                                        ( ModuleName "Golden.LongApplyChain.Test" )
+                                                                                        ( Name "applySecond$w" )
+                                                                                      )
+                                                                                    )
+                                                                                    ( AppN Nothing
+                                                                                      ( Ref Nothing
+                                                                                        ( Imported
+                                                                                          ( ModuleName "Golden.LongApplyChain.Test" )
+                                                                                          ( Name "applySecond$w" )
+                                                                                        )
+                                                                                      )
+                                                                                      ( AppN Nothing
+                                                                                        ( Ref Nothing
+                                                                                          ( Imported
+                                                                                            ( ModuleName "Golden.LongApplyChain.Test" )
+                                                                                            ( Name "applySecond$w" )
+                                                                                          )
+                                                                                        )
+                                                                                        ( AppN Nothing
+                                                                                          ( Ref Nothing
+                                                                                            ( Imported
+                                                                                              ( ModuleName "Golden.LongApplyChain.Test" )
+                                                                                              ( Name "applySecond$w" )
+                                                                                            )
+                                                                                          )
+                                                                                          ( AppN Nothing
+                                                                                            ( Ref Nothing
+                                                                                              ( Imported
+                                                                                                ( ModuleName "Golden.LongApplyChain.Test" )
+                                                                                                ( Name "applySecond$w" )
+                                                                                              )
+                                                                                            )
+                                                                                            ( Ref Nothing
+                                                                                              ( Local
+                                                                                                ( Name "$tmp652" )
                                                                                               ) :|
                                                                                               [ Ctor Nothing SumType
                                                                                                 ( ModuleName "Data.Maybe" )
@@ -4118,7 +4118,7 @@ UberModule
                                                 )
                                               )
                                               ( Ref Nothing
-                                                ( Local ( Name "$tmp652" ) ) :|
+                                                ( Local ( Name "$tmp653" ) ) :|
                                                 [ Ctor Nothing SumType
                                                   ( ModuleName "Data.Maybe" )
                                                   ( TyName "Maybe" )

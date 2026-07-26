@@ -14,18 +14,6 @@ UberModule
         ( PropName "showIntImpl" )
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Unsafe.Coerce", qnameName = Name "foreign"
-        }, ForeignImport Nothing
-        ( ModuleName "Unsafe.Coerce" ) ".spago/p/unsafe-coerce/7a4c95f14b8118d9fb052e130d6e862fa3f5166a/src/Unsafe/Coerce.purs"
-        [ ( Nothing, Name "unsafeCoerce" ) ]
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Unsafe.Coerce", qnameName = Name "unsafeCoerce"
-        }, ObjectProp Nothing
-        ( Ref Nothing ( Imported ( ModuleName "Unsafe.Coerce" ) ( Name "foreign" ) ) )
-        ( PropName "unsafeCoerce" )
-      ), Standalone
-      ( QName
         { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "foreign"
         }, ForeignImport Nothing
         ( ModuleName "Effect.Console" ) ".spago/p/console/f82835a0b873aafe6bd7b14dd30cc150553d4ab9/src/Effect/Console.purs"
@@ -38,9 +26,14 @@ UberModule
         ( PropName "log" )
       ), Standalone
       ( QName
+        { qnameModuleName = ModuleName "Data.Newtype", qnameName = Name "coerce" }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "x$262" ) :| [] )
+        ( Ref Nothing ( Local ( Name "x$262" ) ) )
+      ), Standalone
+      ( QName
         { qnameModuleName = ModuleName "Golden.ProfunctorDictLens.Test", qnameName = Name "unwrap"
         }, Ref Nothing
-        ( Imported ( ModuleName "Unsafe.Coerce" ) ( Name "unsafeCoerce" ) )
+        ( Imported ( ModuleName "Data.Newtype" ) ( Name "coerce" ) )
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.ProfunctorDictLens.Test", qnameName = Name "Wrapped"
@@ -146,20 +139,7 @@ UberModule
                   ( Ref Nothing
                     ( Imported ( ModuleName "Golden.ProfunctorDictLens.Test" ) ( Name "unwrap" ) )
                   )
-                  ( AppN Nothing
-                    ( Ref Nothing
-                      ( Imported ( ModuleName "Unsafe.Coerce" ) ( Name "unsafeCoerce" ) )
-                    )
-                    ( PrimBinOp Nothing PrimSub
-                      ( AppN Nothing
-                        ( Ref Nothing
-                          ( Imported ( ModuleName "Unsafe.Coerce" ) ( Name "unsafeCoerce" ) )
-                        )
-                        ( LiteralInt Nothing 10 :| [] )
-                      )
-                      ( LiteralInt Nothing 5 ) :| []
-                    ) :| []
-                  ) :| []
+                  ( LiteralInt Nothing 5 :| [] ) :| []
                 ) :| []
               )
             )
