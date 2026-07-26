@@ -16,18 +16,16 @@ Data_HeytingAlgebra_heytingAlgebraBoolean = {
       return Data_HeytingAlgebra_heytingAlgebraBoolean.disj(Data_HeytingAlgebra_heytingAlgebraBoolean._not_(a))(b)
     end
   end,
-  conj = function(b1_S_217)
-    return function(b2_S_218) return b1_S_217 and b2_S_218 end
+  conj = function(b1_S_0)
+    return function(b2_S_0) return b1_S_0 and b2_S_0 end
   end,
-  disj = function(b1_S_215)
-    return function(b2_S_216) return b1_S_215 or b2_S_216 end
+  disj = function(b1_S_1)
+    return function(b2_S_1) return b1_S_1 or b2_S_1 end
   end,
-  _not_ = function(b_S_214) return not(b_S_214) end
+  _not_ = function(b_S_0) return not(b_S_0) end
 }
 local Data_Eq_eqInt = {
-  eq = function(r1_S_210)
-    return function(r2_S_211) return r1_S_210 == r2_S_211 end
-  end
+  eq = function(r1_S_0) return function(r2_S_0) return r1_S_0 == r2_S_0 end end
 }
 local Data_Eq_eqRowCons_S_w = function( dictEqRecord
 , eqRowCons_S_u2
@@ -61,34 +59,34 @@ local Data_Eq_Generic_genericEqConstructor = function(dictGenericEq)
   }
 end
 local Data_Eq_Generic_genericEq_S_w = function(dictGeneric, dictGenericEq, x, y)
-  local _S_cse441 = dictGeneric.from
-  return dictGenericEq.genericEqPrime(_S_cse441(x))(_S_cse441(y))
+  local _S_cse0 = dictGeneric.from
+  return dictGenericEq.genericEqPrime(_S_cse0(x))(_S_cse0(y))
 end
-local Golden_GenericEqTwoTypes_Test_genericEqSum = function(dictGenericEq1_S_5)
+local Golden_GenericEqTwoTypes_Test_genericEqSum = function(dictGenericEq1_S_0)
   return {
-    genericEqPrime = function(v_S_7)
-      return function(v1_S_8)
-        local _S_cse443 = v1_S_8[1]
-        local _S_cse442 = v_S_7[1]
-        if "Data.Generic.Rep∷Sum.Inl" == _S_cse442 then
-          return "Data.Generic.Rep∷Sum.Inl" == _S_cse443
+    genericEqPrime = function(v_S_0)
+      return function(v1_S_0)
+        local _S_cse1 = v1_S_0[1]
+        local _S_cse2 = v_S_0[1]
+        if "Data.Generic.Rep∷Sum.Inl" == _S_cse2 then
+          return "Data.Generic.Rep∷Sum.Inl" == _S_cse1
         else
-          return "Data.Generic.Rep∷Sum.Inr" == _S_cse442 and ("Data.Generic.Rep∷Sum.Inr" == _S_cse443 and dictGenericEq1_S_5.genericEqPrime(v_S_7[2])(v1_S_8[2]))
+          return "Data.Generic.Rep∷Sum.Inr" == _S_cse2 and ("Data.Generic.Rep∷Sum.Inr" == _S_cse1 and dictGenericEq1_S_0.genericEqPrime(v_S_0[2])(v1_S_0[2]))
         end
       end
     end
   }
 end
-local Golden_GenericEqTwoTypes_Test_eqRec = function(dictEqRecord_S_221)
-  return { eq = dictEqRecord_S_221.eqRecord(Type_Proxy_Proxy) }
+local Golden_GenericEqTwoTypes_Test_eqRec = function(dictEqRecord_S_0)
+  return { eq = dictEqRecord_S_0.eqRecord(Type_Proxy_Proxy) }
 end
-local Golden_GenericEqTwoTypes_Test_eqRowCons_S_w = function( eqRowCons_S_p3_S_233
-, eqRowCons_S_p4_S_234 )
+local Golden_GenericEqTwoTypes_Test_eqRowCons_S_w = function( eqRowCons_S_p3_S_0
+, eqRowCons_S_p4_S_0 )
   return Data_Eq_eqRowCons_S_w({
     eqRecord = function()
       return function() return function() return true end end
     end
-  }, nil, eqRowCons_S_p3_S_233, eqRowCons_S_p4_S_234)
+  }, nil, eqRowCons_S_p3_S_0, eqRowCons_S_p4_S_0)
 end
 local Golden_GenericEqTwoTypes_Test_Leaf = {
   "Golden.GenericEqTwoTypes.Test∷Tree.Leaf"

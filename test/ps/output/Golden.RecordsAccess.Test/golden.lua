@@ -4,5 +4,5 @@ return {
   test1 = 1,
   test2 = function(v_S_0) return v_S_0.x end,
   test3 = function(v_S_1) return v_S_1.x end,
-  test4 = function(v_S_3) return v_S_3.x end
+  test4 = function(v_S_2) return v_S_2.x end
 }

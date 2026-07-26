@@ -33,21 +33,21 @@ M.Golden_Uncurry_Test_sumTo = function(m)
   acc, n = 0, m
   while true do if n == 0 then return acc else acc, n = acc + n, n - 1 end end
 end
-local Golden_Uncurry_Test_oddSteps_S_w_S_loop = function(_S_sel0, _S_a1, _S_a2)
+local Golden_Uncurry_Test_oddSteps_S_w_S_loop = function(_S_sel0, _S_a0, _S_a1)
   while true do
     if _S_sel0 == 1 then
-      local acc, n = _S_a1, _S_a2
+      local acc, n = _S_a0, _S_a1
       if n == 0 then
         return acc
       else
-        _S_sel0, _S_a1, _S_a2 = 2, acc + 1, n - 1
+        _S_sel0, _S_a0, _S_a1 = 2, acc + 1, n - 1
       end
     else
-      local acc, n = _S_a1, _S_a2
+      local acc, n = _S_a0, _S_a1
       if n == 0 then
         return acc
       else
-        _S_sel0, _S_a1, _S_a2 = 1, acc + 1, n - 1
+        _S_sel0, _S_a0, _S_a1 = 1, acc + 1, n - 1
       end
     end
   end
@@ -73,9 +73,7 @@ M.Golden_Uncurry_Test_add3 = function(add3_S_p1)
     return function(add3_S_p3) return add3_S_p1 + add3_S_p2 + add3_S_p3 end
   end
 end
-M.Golden_Uncurry_Test_inc = function(add3_S_p3_S_223)
-  return 1 + add3_S_p3_S_223
-end
+M.Golden_Uncurry_Test_inc = function(add3_S_p3_S_0) return 1 + add3_S_p3_S_0 end
 return (function()
   local _ = Effect_Console_logShow_S_w(Data_Show_showInt, 6)()
   local _ = Effect_Console_logShow_S_w(Data_Show_showInt, 15)()
@@ -83,30 +81,30 @@ return (function()
   local _ = Effect_Console_logShow_S_w(Data_Show_showInt, 42)()
   local _ = Effect_Console_logShow_S_w({
     show = Data_Show_foreign.showArrayImpl(Data_Show_showIntImpl)
-  }, Data_Functor_foreign.arrayMap(function(add3_S_p3_S_319)
-    return 3 + add3_S_p3_S_319
+  }, Data_Functor_foreign.arrayMap(function(add3_S_p3_S_1)
+    return 3 + add3_S_p3_S_1
   end)({ [1] = 1, [2] = 2, [3] = 3 }))()
   local _ = Effect_Console_logShow_S_w(Data_Show_showInt, Golden_Uncurry_Test_evenSteps_S_w(0, 10))()
   local _ = Effect_Console_logShow_S_w(Data_Show_showInt, Golden_Uncurry_Test_oddSteps_S_w(0, 7))()
   local _ = Effect_Console_logShow_S_w(Data_Show_showInt, (function()
-    local acc_S_327, n_S_328
-    acc_S_327, n_S_328 = 0, 10
+    local acc_S_0, n_S_0
+    acc_S_0, n_S_0 = 0, 10
     while true do
-      if n_S_328 == 0 then
-        return acc_S_327
+      if n_S_0 == 0 then
+        return acc_S_0
       else
-        acc_S_327, n_S_328 = acc_S_327 + n_S_328, n_S_328 - 1
+        acc_S_0, n_S_0 = acc_S_0 + n_S_0, n_S_0 - 1
       end
     end
   end)())()
   local _ = Effect_Console_logShow_S_w(Data_Show_showInt, (function()
-    local acc_S_332, n_S_333
-    acc_S_332, n_S_333 = 0, 100
+    local acc_S_1, n_S_1
+    acc_S_1, n_S_1 = 0, 100
     while true do
-      if n_S_333 == 0 then
-        return acc_S_332
+      if n_S_1 == 0 then
+        return acc_S_1
       else
-        acc_S_332, n_S_333 = acc_S_332 + n_S_333, n_S_333 - 1
+        acc_S_1, n_S_1 = acc_S_1 + n_S_1, n_S_1 - 1
       end
     end
   end)())()

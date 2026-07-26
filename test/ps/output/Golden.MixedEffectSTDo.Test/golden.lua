@@ -24,9 +24,9 @@ local Effect_Console_log = Effect_Console_foreign.log
 local Golden_MixedEffectSTDo_Test_tally = function(start)
   return Control_Monad_ST_Internal_foreign.run(function()
     local ref = Control_Monad_ST_Internal_foreign.new(start)()
-    local _ = Control_Monad_ST_Internal_foreign.modifyImpl(function(s_S_8)
-      local sPrime_S_9 = s_S_8 * 2
-      return { state = sPrime_S_9, value = sPrime_S_9 }
+    local _ = Control_Monad_ST_Internal_foreign.modifyImpl(function(s_S_0)
+      local sPrime_S_0 = s_S_0 * 2
+      return { state = sPrime_S_0, value = sPrime_S_0 }
     end)(ref)()
     local n = Control_Monad_ST_Internal_foreign.read(ref)()
     return n + 3

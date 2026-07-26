@@ -13,13 +13,13 @@ Data_HeytingAlgebra_heytingAlgebraBoolean = {
       return Data_HeytingAlgebra_heytingAlgebraBoolean.disj(Data_HeytingAlgebra_heytingAlgebraBoolean._not_(a))(b)
     end
   end,
-  conj = function(b1_S_210)
-    return function(b2_S_211) return b1_S_210 and b2_S_211 end
+  conj = function(b1_S_0)
+    return function(b2_S_0) return b1_S_0 and b2_S_0 end
   end,
-  disj = function(b1_S_208)
-    return function(b2_S_209) return b1_S_208 or b2_S_209 end
+  disj = function(b1_S_1)
+    return function(b2_S_1) return b1_S_1 or b2_S_1 end
   end,
-  _not_ = function(b_S_207) return not(b_S_207) end
+  _not_ = function(b_S_0) return not(b_S_0) end
 }
 local Effect_Console_logShow_S_w = function(dictShow, a)
   return Effect_Console_log(dictShow.show(a))
@@ -35,22 +35,22 @@ M.Golden_Primops_Test_sumTo = function(sumTo_S_p1)
   end
 end
 return (function()
-  local _S_cse252 = {
-    show = function(v_S_241)
-      if v_S_241 then return "true" else return "false" end
+  local _S_cse0 = {
+    show = function(v_S_0)
+      if v_S_0 then return "true" else return "false" end
     end
   }
   local _ = Effect_Console_logShow_S_w({
     show = Data_Show_foreign.showIntImpl
   }, Golden_Primops_Test_sumTo_S_w(0, 5))()
-  local _ = Effect_Console_logShow_S_w(_S_cse252, true)()
-  local _ = Effect_Console_logShow_S_w(_S_cse252, true)()
+  local _ = Effect_Console_logShow_S_w(_S_cse0, true)()
+  local _ = Effect_Console_logShow_S_w(_S_cse0, true)()
   local _ = Effect_Console_logShow_S_w({
-    show = function(v_S_113)
-      local _S_cse253 = v_S_113[1]
-      if "Data.Ordering∷Ordering.LT" == _S_cse253 then
+    show = function(v_S_1)
+      local _S_cse1 = v_S_1[1]
+      if "Data.Ordering∷Ordering.LT" == _S_cse1 then
         return "LT"
-      elseif "Data.Ordering∷Ordering.GT" == _S_cse253 then
+      elseif "Data.Ordering∷Ordering.GT" == _S_cse1 then
         return "GT"
       else
         return "EQ"
@@ -58,5 +58,5 @@ return (function()
     end
   }, { "Data.Ordering∷Ordering.LT" })()
   local _ = Effect_Console_log("foobar")()
-  return Effect_Console_logShow_S_w(_S_cse252, Data_HeytingAlgebra_heytingAlgebraBoolean.conj(true)(Data_HeytingAlgebra_heytingAlgebraBoolean._not_(false)))()
+  return Effect_Console_logShow_S_w(_S_cse0, Data_HeytingAlgebra_heytingAlgebraBoolean.conj(true)(Data_HeytingAlgebra_heytingAlgebraBoolean._not_(false)))()
 end)()

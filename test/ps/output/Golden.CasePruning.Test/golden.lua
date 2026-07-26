@@ -2,8 +2,8 @@ local Data_Show_foreign = { showIntImpl = function(n) return tostring(n) end }
 local Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
 }
-local Golden_CasePruning_Test_logShow = function(a_S_2)
-  return Effect_Console_foreign.log(Data_Show_foreign.showIntImpl(a_S_2))
+local Golden_CasePruning_Test_logShow = function(a_S_0)
+  return Effect_Console_foreign.log(Data_Show_foreign.showIntImpl(a_S_0))
 end
 local Golden_CasePruning_Test_A = { "Golden.CasePruning.Test∷T.A" }
 local Golden_CasePruning_Test_B = { "Golden.CasePruning.Test∷T.B" }
@@ -26,18 +26,18 @@ local Golden_CasePruning_Test_literalNegatives = function(v)
 end
 local Golden_CasePruning_Test_ctorRetest = function(v)
   return function(v1)
-    local _S_cse249 = v1[1]
-    local _S_cse248 = v[1]
-    if "Golden.CasePruning.Test∷T.A" == _S_cse248 then
-      if "Golden.CasePruning.Test∷T.A" == _S_cse249 then
+    local _S_cse0 = v1[1]
+    local _S_cse1 = v[1]
+    if "Golden.CasePruning.Test∷T.A" == _S_cse1 then
+      if "Golden.CasePruning.Test∷T.A" == _S_cse0 then
         return 1
-      elseif "Golden.CasePruning.Test∷T.B" == _S_cse249 then
+      elseif "Golden.CasePruning.Test∷T.B" == _S_cse0 then
         return 3
       else
         return 4
       end
-    elseif "Golden.CasePruning.Test∷T.B" == _S_cse248 then
-      if "Golden.CasePruning.Test∷T.B" == _S_cse249 then
+    elseif "Golden.CasePruning.Test∷T.B" == _S_cse1 then
+      if "Golden.CasePruning.Test∷T.B" == _S_cse0 then
         return 2
       else
         return 4

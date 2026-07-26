@@ -9,24 +9,24 @@ local Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
 }
 local Effect_Console_log = Effect_Console_foreign.log
-M.Golden_UncurriedLift_Test_sumST = function(a_S_707, b_S_708)
-  return a_S_707 + b_S_708
+M.Golden_UncurriedLift_Test_sumST = function(a_S_0, b_S_0)
+  return a_S_0 + b_S_0
 end
-M.Golden_UncurriedLift_Test_mulByFn = function(a_S_698, b_S_699)
-  return a_S_698 * b_S_699
+M.Golden_UncurriedLift_Test_mulByFn = function(a_S_1, b_S_1)
+  return a_S_1 * b_S_1
 end
-M.Golden_UncurriedLift_Test_mul2 = function(a_S_701, b_S_702)
-  return a_S_701 * b_S_702
+M.Golden_UncurriedLift_Test_mul2 = function(a_S_2, b_S_2)
+  return a_S_2 * b_S_2
 end
-local Golden_UncurriedLift_Test_logTwice = function(a_S_673, b_S_674)
-  local _ = Effect_Console_log(a_S_673)()
-  return Effect_Console_log(b_S_674)()
+local Golden_UncurriedLift_Test_logTwice = function(a_S_3, b_S_3)
+  local _ = Effect_Console_log(a_S_3)()
+  return Effect_Console_log(b_S_3)()
 end
-M.Golden_UncurriedLift_Test_add3 = function(a_S_694, b_S_695, c_S_696)
-  return a_S_694 + b_S_695 + c_S_696
+M.Golden_UncurriedLift_Test_add3 = function(a_S_4, b_S_4, c_S_0)
+  return a_S_4 + b_S_4 + c_S_0
 end
-M.Golden_UncurriedLift_Test_addOnePlusTwoTo = function(c_S_682)
-  return 3 + c_S_682
+M.Golden_UncurriedLift_Test_addOnePlusTwoTo = function(c_S_1)
+  return 3 + c_S_1
 end
 return (function()
   local _ = Golden_UncurriedLift_Test_logTwice("hello", "world")

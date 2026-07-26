@@ -45,12 +45,12 @@ local Effect_Console_foreign = {
 }
 local Golden_LongEitherBind_Test_compute = { "Data.Either∷Either.Right", 451 }
 return (function()
-  local _S_cse2150 = Golden_LongEitherBind_Test_compute[2]
+  local _S_cse0 = Golden_LongEitherBind_Test_compute[2]
   return Effect_Console_foreign.log((function()
     if "Data.Either∷Either.Left" == Golden_LongEitherBind_Test_compute[1] then
-      return "(Left " .. Data_Show_foreign.showStringImpl(_S_cse2150) .. ")"
+      return "(Left " .. Data_Show_foreign.showStringImpl(_S_cse0) .. ")"
     else
-      return "(Right " .. Data_Show_foreign.showIntImpl(_S_cse2150) .. ")"
+      return "(Right " .. Data_Show_foreign.showIntImpl(_S_cse0) .. ")"
     end
   end)())()
 end)()

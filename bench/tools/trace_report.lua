@@ -1,5 +1,6 @@
 -- Runs a macrobenchmark spec hot under the tracing JIT and reports two
--- signals per source location:
+-- signals per source location of the linked artifact (the spec harness's
+-- own bytecode is excluded -- see the note in measure):
 --
 --   * the set of distinct trace-abort sites (location + reason), collected
 --     via jit.attach("trace"). A set, not a count: how many retries happen
@@ -101,6 +102,13 @@ local function measure(spec_path)
   local artifact_path = here .. "/../_build/" .. spec.artifact .. ".lua"
   local artifact_chunk = assert(loadfile(artifact_path))
   local mod = artifact_chunk()
+  -- The report covers the linked artifact's bytecode only. The spec file's
+  -- own drive/ideal wrappers also run hot, but whether such a wrapper's
+  -- entry compiles is an order race against its inner loop's counter --
+  -- a pure function of per-process address layout, with a probability the
+  -- majority vote cannot pin when it sits near one half -- and it carries
+  -- no information about the emitted code these oracles exist to pin.
+  local artifact_base = spec.artifact .. ".lua"
 
   local aborts = {}
   local function on_trace(what, _tr, func, pc, code, extra)
@@ -137,7 +145,9 @@ local function measure(spec_path)
       reason = msg:find("%%") and string.format(msg, extra) or msg
     end
     local file, line = location(func, pc)
-    aborts[string.format("%s:%d -- %s", file, line, reason)] = true
+    if file == artifact_base then
+      aborts[string.format("%s:%d -- %s", file, line, reason)] = true
+    end
   end
 
   jit.attach(on_trace, "trace")
@@ -156,7 +166,6 @@ local function measure(spec_path)
     end
   end
   bc.walk(artifact_chunk, visit)
-  bc.walk(spec_chunk, visit)
 
   return {
     spec = spec_name,

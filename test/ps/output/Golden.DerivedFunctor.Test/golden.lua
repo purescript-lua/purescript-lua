@@ -29,11 +29,11 @@ local Golden_DerivedFunctor_Test_functorTree
 Golden_DerivedFunctor_Test_functorTree = {
   map = function(f)
     return function(m)
-      local _S_cse250 = Golden_DerivedFunctor_Test_functorTree.map
+      local _S_cse0 = Golden_DerivedFunctor_Test_functorTree.map
       if "Golden.DerivedFunctor.Test∷Tree.Leaf" == m[1] then
         return Golden_DerivedFunctor_Test_Leaf
       else
-        return Golden_DerivedFunctor_Test_Node_S_w(_S_cse250(f)(m[2]), f(m[3]), _S_cse250(f)(m[4]))
+        return Golden_DerivedFunctor_Test_Node_S_w(_S_cse0(f)(m[2]), f(m[3]), _S_cse0(f)(m[4]))
       end
     end
   end
@@ -41,11 +41,11 @@ Golden_DerivedFunctor_Test_functorTree = {
 M.Golden_DerivedFunctor_Test_functorEither = {
   map = function(f)
     return function(m)
-      local _S_cse251 = m[2]
+      local _S_cse1 = m[2]
       if "Golden.DerivedFunctor.Test∷Either.Left" == m[1] then
-        return { "Golden.DerivedFunctor.Test∷Either.Left", _S_cse251 }
+        return { "Golden.DerivedFunctor.Test∷Either.Left", _S_cse1 }
       else
-        return { "Golden.DerivedFunctor.Test∷Either.Right", (f(_S_cse251)) }
+        return { "Golden.DerivedFunctor.Test∷Either.Right", (f(_S_cse1)) }
       end
     end
   end
@@ -66,7 +66,7 @@ return (function()
     "Golden.DerivedFunctor.Test∷Either.Left",
     "no"
   })))()
-  return Effect_Console_log(Data_Show_showIntImpl(Golden_DerivedFunctor_Test_sumTree(Golden_DerivedFunctor_Test_functorTree.map(function( v1_S_2 )
-    return v1_S_2 * 2
+  return Effect_Console_log(Data_Show_showIntImpl(Golden_DerivedFunctor_Test_sumTree(Golden_DerivedFunctor_Test_functorTree.map(function( v1_S_0 )
+    return v1_S_0 * 2
   end)(Golden_DerivedFunctor_Test_Node_S_w(Golden_DerivedFunctor_Test_Node_S_w(Golden_DerivedFunctor_Test_Leaf, 1, Golden_DerivedFunctor_Test_Leaf), 2, Golden_DerivedFunctor_Test_Node_S_w(Golden_DerivedFunctor_Test_Leaf, 3, Golden_DerivedFunctor_Test_Leaf))))))()
 end)()

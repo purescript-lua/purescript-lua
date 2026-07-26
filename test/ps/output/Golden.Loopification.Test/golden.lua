@@ -3,8 +3,8 @@ local Data_Show_foreign = { showIntImpl = function(n) return tostring(n) end }
 local Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
 }
-local Golden_Loopification_Test_logShow = function(a_S_2)
-  return Effect_Console_foreign.log(Data_Show_foreign.showIntImpl(a_S_2))
+local Golden_Loopification_Test_logShow = function(a_S_0)
+  return Effect_Console_foreign.log(Data_Show_foreign.showIntImpl(a_S_0))
 end
 local Golden_Loopification_Test_sumTo_S_w = function(acc, n)
   while true do if n == 0 then return acc else acc, n = acc + n, n - 1 end end
@@ -62,8 +62,8 @@ return (function()
   local _ = Golden_Loopification_Test_logShow(Golden_Loopification_Test_sumTo_S_w(0, 10))()
   local _ = Golden_Loopification_Test_logShow(Golden_Loopification_Test_sumSquares(4))()
   local _ = Golden_Loopification_Test_logShow(Golden_Loopification_Test_mc91(1))()
-  local _ = Golden_Loopification_Test_logShow(Golden_Loopification_Test_sumCPS_S_w(5, function( x_S_223 )
-    return x_S_223
+  local _ = Golden_Loopification_Test_logShow(Golden_Loopification_Test_sumCPS_S_w(5, function( x_S_0 )
+    return x_S_0
   end))()
   return Golden_Loopification_Test_logShow(Golden_Loopification_Test_countDrop_S_w(3, 99))()
 end)()

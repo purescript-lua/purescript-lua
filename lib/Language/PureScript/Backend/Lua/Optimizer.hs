@@ -9,6 +9,7 @@ import Language.PureScript.Backend.Lua.Linker.Foreign (chunkScopeUsesVararg)
 import Language.PureScript.Backend.Lua.Localize (localizeChunk, namesInBlock)
 import Language.PureScript.Backend.Lua.Name qualified as Lua
 import Language.PureScript.Backend.Lua.Promote (promoteChunk)
+import Language.PureScript.Backend.Lua.Renumber (renumberChunk)
 import Language.PureScript.Backend.Lua.Traversal
   ( everywhereExp
   , everywhereInChunkM
@@ -35,11 +36,14 @@ can eliminate module-table reads, and the reads that remain are the
 ones worth counting. Promotion (stage 2) precedes localization
 (stage 1): whatever stays in the module table after promotion — the
 unpromoted tail plus demoted references — is exactly what per-function
-caching still speeds up.
+caching still speeds up. Renumbering runs last, once no pass mints
+names anymore: a fresh name introduced after it would carry supply
+history into the artifact ("Language.PureScript.Backend.Lua.Renumber").
 -}
 optimizeChunk ∷ LuaLimits → Chunk → Chunk
 optimizeChunk limits =
-  localizeChunk limits Fixture.moduleName
+  renumberChunk
+    . localizeChunk limits Fixture.moduleName
     . promoteChunk limits Fixture.moduleName
     . fmap (optimizeStatement limits)
 

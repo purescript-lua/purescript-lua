@@ -1,29 +1,29 @@
 return {
   Zero = { "Golden.PatternMatching.Test1∷N.Zero" },
-  Succ = function(value0_S_7)
-    return { "Golden.PatternMatching.Test1∷N.Succ", value0_S_7 }
+  Succ = function(value0_S_0)
+    return { "Golden.PatternMatching.Test1∷N.Succ", value0_S_0 }
   end,
-  Num = function(value0_S_6)
-    return { "Golden.PatternMatching.Test1∷E.Num", value0_S_6 }
+  Num = function(value0_S_1)
+    return { "Golden.PatternMatching.Test1∷E.Num", value0_S_1 }
   end,
-  Not = function(value0_S_5)
-    return { "Golden.PatternMatching.Test1∷E.Not", value0_S_5 }
+  Not = function(value0_S_2)
+    return { "Golden.PatternMatching.Test1∷E.Not", value0_S_2 }
   end,
-  pat = function(e_S_2)
-    local _S_cse11 = e_S_2[2]
-    local _S_cse10 = e_S_2[1]
-    if "Golden.PatternMatching.Test1∷E.Not" == _S_cse10 then
-      if "Golden.PatternMatching.Test1∷E.Num" == _S_cse11[1] then
-        if "Golden.PatternMatching.Test1∷N.Succ" == _S_cse11[2][1] then
+  pat = function(e_S_0)
+    local _S_cse0 = e_S_0[2]
+    local _S_cse1 = e_S_0[1]
+    if "Golden.PatternMatching.Test1∷E.Not" == _S_cse1 then
+      if "Golden.PatternMatching.Test1∷E.Num" == _S_cse0[1] then
+        if "Golden.PatternMatching.Test1∷N.Succ" == _S_cse0[2][1] then
           return 1
-        elseif "Golden.PatternMatching.Test1∷N.Zero" == _S_cse11[2][1] then
+        elseif "Golden.PatternMatching.Test1∷N.Zero" == _S_cse0[2][1] then
           return 2
         else
           return 6
         end
-      elseif "Golden.PatternMatching.Test1∷E.Not" == _S_cse11[1] then
-        if "Golden.PatternMatching.Test1∷E.Num" == _S_cse11[2][1] then
-          if "Golden.PatternMatching.Test1∷N.Succ" == _S_cse11[2][2][1] then
+      elseif "Golden.PatternMatching.Test1∷E.Not" == _S_cse0[1] then
+        if "Golden.PatternMatching.Test1∷E.Num" == _S_cse0[2][1] then
+          if "Golden.PatternMatching.Test1∷N.Succ" == _S_cse0[2][2][1] then
             return 3
           else
             return 6
@@ -34,8 +34,8 @@ return {
       else
         return 6
       end
-    elseif "Golden.PatternMatching.Test1∷E.Num" == _S_cse10 then
-      if "Golden.PatternMatching.Test1∷N.Succ" == _S_cse11[1] then
+    elseif "Golden.PatternMatching.Test1∷E.Num" == _S_cse1 then
+      if "Golden.PatternMatching.Test1∷N.Succ" == _S_cse0[1] then
         return 4
       else
         return 5
@@ -44,9 +44,9 @@ return {
       return 6
     end
   end,
-  T = function(value0_S_8)
-    return function(value1_S_9) return { value0_S_8, value1_S_9 } end
+  T = function(value0_S_3)
+    return function(value1_S_0) return { value0_S_3, value1_S_0 } end
   end,
   fst = function(v_S_0) return v_S_0[1] end,
-  snd = function(v_S_3) return v_S_3[2] end
+  snd = function(v_S_1) return v_S_1[2] end
 }

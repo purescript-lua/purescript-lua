@@ -4,10 +4,10 @@ local Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
 }
 local Effect_Console_log = Effect_Console_foreign.log
-local Golden_JoinPoints_Test_logShow = function(a_S_2)
-  return Effect_Console_log(Data_Show_showIntImpl(a_S_2))
+local Golden_JoinPoints_Test_logShow = function(a_S_0)
+  return Effect_Console_log(Data_Show_showIntImpl(a_S_0))
 end
-local Golden_JoinPoints_Test_negate = function(a_S_88) return 0 - a_S_88 end
+local Golden_JoinPoints_Test_negate = function(a_S_1) return 0 - a_S_1 end
 local Golden_JoinPoints_Test_sumTriangles = function(m)
   local acc, n
   acc, n = 0, m
