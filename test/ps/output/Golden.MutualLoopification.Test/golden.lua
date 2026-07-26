@@ -4,32 +4,32 @@ local Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
 }
 local Effect_Console_log = Effect_Console_foreign.log
-local Golden_MutualLoopification_Test_logShow = function(a_S_294)
+local Golden_MutualLoopification_Test_logShow = function(a_S_0)
   return Effect_Console_log((function()
-    if a_S_294 then return "true" else return "false" end
+    if a_S_0 then return "true" else return "false" end
   end)())
 end
-local Golden_MutualLoopification_Test_logShow1 = function(a_S_292)
-  return Effect_Console_log(Data_Show_foreign.showIntImpl(a_S_292))
+local Golden_MutualLoopification_Test_logShow1 = function(a_S_1)
+  return Effect_Console_log(Data_Show_foreign.showIntImpl(a_S_1))
 end
 local Golden_MutualLoopification_Test_zigzag_S_w_S_loop = function( _S_sel0
+, _S_a0
 , _S_a1
-, _S_a2
-, _S_a3 )
+, _S_a2 )
   while true do
     if _S_sel0 == 1 then
-      local acc, n = _S_a1, _S_a2
+      local acc, n = _S_a0, _S_a1
       if n == 0 then
         return acc
       else
-        _S_sel0, _S_a1, _S_a2, _S_a3 = 2, acc, n, 1
+        _S_sel0, _S_a0, _S_a1, _S_a2 = 2, acc, n, 1
       end
     else
-      local acc, n, d = _S_a1, _S_a2, _S_a3
+      local acc, n, d = _S_a0, _S_a1, _S_a2
       if n == 0 then
         return acc
       else
-        _S_sel0, _S_a1, _S_a2, _S_a3 = 1, acc + d, n - 1, nil
+        _S_sel0, _S_a0, _S_a1, _S_a2 = 1, acc + d, n - 1, nil
       end
     end
   end
@@ -71,21 +71,21 @@ local Golden_MutualLoopification_Test_ticktock = function(n)
   local tock_S_w_S_loop
   local tock_S_w
   local acc0, k0
-  tock_S_w_S_loop = function(_S_sel4, _S_a5, _S_a6)
+  tock_S_w_S_loop = function(_S_sel1, _S_a3, _S_a4)
     while true do
-      if _S_sel4 == 1 then
-        local acc, k = _S_a5, _S_a6
+      if _S_sel1 == 1 then
+        local acc, k = _S_a3, _S_a4
         if k == 0 then
           return acc
         else
-          _S_sel4, _S_a5, _S_a6 = 2, acc + 3, k - 1
+          _S_sel1, _S_a3, _S_a4 = 2, acc + 3, k - 1
         end
       else
-        local acc0, k0 = _S_a5, _S_a6
+        local acc0, k0 = _S_a3, _S_a4
         if k0 == 0 then
           return acc0
         else
-          _S_sel4, _S_a5, _S_a6 = 1, acc0 + 1, k0 - 1
+          _S_sel1, _S_a3, _S_a4 = 1, acc0 + 1, k0 - 1
         end
       end
     end
@@ -94,25 +94,25 @@ local Golden_MutualLoopification_Test_ticktock = function(n)
   acc0, k0 = 0, n
   return tock_S_w_S_loop(2, acc0, k0)
 end
-local Golden_MutualLoopification_Test_stepSelf_S_w_S_loop = function( _S_sel7
-, _S_a8
-, _S_a9 )
+local Golden_MutualLoopification_Test_stepSelf_S_w_S_loop = function( _S_sel2
+, _S_a5
+, _S_a6 )
   while true do
-    if _S_sel7 == 1 then
-      local acc, n = _S_a8, _S_a9
+    if _S_sel2 == 1 then
+      local acc, n = _S_a5, _S_a6
       if n == 0 then
         return acc
       elseif not(n < 10) and n ~= 10 then
-        _S_sel7, _S_a8, _S_a9 = 1, acc + 10, n - 10
+        _S_sel2, _S_a5, _S_a6 = 1, acc + 10, n - 10
       else
-        _S_sel7, _S_a8, _S_a9 = 2, acc, n
+        _S_sel2, _S_a5, _S_a6 = 2, acc, n
       end
     else
-      local acc, n = _S_a8, _S_a9
+      local acc, n = _S_a5, _S_a6
       if n == 0 then
         return acc
       else
-        _S_sel7, _S_a8, _S_a9 = 1, acc + 1, n - 1
+        _S_sel2, _S_a5, _S_a6 = 1, acc + 1, n - 1
       end
     end
   end
@@ -140,30 +140,30 @@ end
 Golden_MutualLoopification_Test_isEven = function(n)
   return n == 0 or Golden_MutualLoopification_Test_isOdd(n - 1)
 end
-local Golden_MutualLoopification_Test_red_S_w_S_loop = function( _S_sel10
-, _S_a11
-, _S_a12 )
+local Golden_MutualLoopification_Test_red_S_w_S_loop = function( _S_sel3
+, _S_a7
+, _S_a8 )
   while true do
-    if _S_sel10 == 1 then
-      local acc, n = _S_a11, _S_a12
+    if _S_sel3 == 1 then
+      local acc, n = _S_a7, _S_a8
       if n == 0 then
         return acc
       else
-        _S_sel10, _S_a11, _S_a12 = 2, acc + 1, n - 1
+        _S_sel3, _S_a7, _S_a8 = 2, acc + 1, n - 1
       end
-    elseif _S_sel10 == 2 then
-      local acc, n = _S_a11, _S_a12
+    elseif _S_sel3 == 2 then
+      local acc, n = _S_a7, _S_a8
       if n == 0 then
         return acc
       else
-        _S_sel10, _S_a11, _S_a12 = 3, acc + 1, n - 1
+        _S_sel3, _S_a7, _S_a8 = 3, acc + 1, n - 1
       end
     else
-      local acc, n = _S_a11, _S_a12
+      local acc, n = _S_a7, _S_a8
       if n == 0 then
         return acc
       else
-        _S_sel10, _S_a11, _S_a12 = 1, acc + 1, n - 1
+        _S_sel3, _S_a7, _S_a8 = 1, acc + 1, n - 1
       end
     end
   end

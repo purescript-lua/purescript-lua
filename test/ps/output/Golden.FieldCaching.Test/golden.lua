@@ -3,8 +3,8 @@ local Data_Show_foreign = { showIntImpl = function(n) return tostring(n) end }
 local Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
 }
-local Golden_FieldCaching_Test_logShow = function(a_S_2)
-  return Effect_Console_foreign.log(Data_Show_foreign.showIntImpl(a_S_2))
+local Golden_FieldCaching_Test_logShow = function(a_S_0)
+  return Effect_Console_foreign.log(Data_Show_foreign.showIntImpl(a_S_0))
 end
 local Golden_FieldCaching_Test_weigh = function(x) return x * 2 + 1 end
 local Golden_FieldCaching_Test_sumLoop_S_w = function(acc, n)

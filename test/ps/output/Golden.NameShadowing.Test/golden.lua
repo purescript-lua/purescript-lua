@@ -3,13 +3,13 @@ local Golden_NameShadowing_Test_f_S_w = function(v, v1)
 end
 return {
   b = function(x_S_0)
-    return function(x1_S_1)
-      return Golden_NameShadowing_Test_f_S_w(Golden_NameShadowing_Test_f_S_w(x_S_0, x1_S_1), Golden_NameShadowing_Test_f_S_w(42, 1))
+    return function(x1_S_0)
+      return Golden_NameShadowing_Test_f_S_w(Golden_NameShadowing_Test_f_S_w(x_S_0, x1_S_0), Golden_NameShadowing_Test_f_S_w(42, 1))
     end
   end,
-  c = function(x_S_3)
-    return function(x1_S_4)
-      return Golden_NameShadowing_Test_f_S_w(x1_S_4, x_S_3)
+  c = function(x_S_1)
+    return function(x1_S_1)
+      return Golden_NameShadowing_Test_f_S_w(x1_S_1, x_S_1)
     end
   end
 }

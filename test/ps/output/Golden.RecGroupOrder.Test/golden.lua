@@ -27,10 +27,10 @@ M.Golden_RecGroupOrder_Test_store = function(f)
 end
 return (function()
   local Lazy_record_S_0
-  local record_S_1
+  local record_S_0
   Lazy_record_S_0 = PSLUA_runtime_lazy("record")(function()
     return { run = function() return (Lazy_record_S_0(0)).tag end, tag = "ok!" }
   end)
-  record_S_1 = Lazy_record_S_0(0)
-  return Effect_Console_foreign.log(record_S_1.run(Data_Unit_unit))()
+  record_S_0 = Lazy_record_S_0(0)
+  return Effect_Console_foreign.log(record_S_0.run(Data_Unit_unit))()
 end)()

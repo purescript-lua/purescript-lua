@@ -47,23 +47,19 @@ local Data_Identity_applyIdentity = {
   apply = function(v) return function(v1) return v(v1) end end,
   Functor0 = function()
     return {
-      map = function(f_S_541)
-        return function(m_S_542) return f_S_541(m_S_542) end
-      end
+      map = function(f_S_0) return function(m_S_0) return f_S_0(m_S_0) end end
     }
   end
 }
 local Data_Identity_applicativeIdentity = {
-  pure = function(x_S_543) return x_S_543 end,
+  pure = function(x_S_0) return x_S_0 end,
   Apply0 = function() return Data_Identity_applyIdentity end
 }
 local Data_Identity_monadIdentity = {
   Applicative0 = function() return Data_Identity_applicativeIdentity end,
   Bind1 = function()
     return {
-      bind = function(v_S_87)
-        return function(f_S_88) return f_S_88(v_S_87) end
-      end,
+      bind = function(v_S_0) return function(f_S_1) return f_S_1(v_S_0) end end,
       Apply0 = function() return Data_Identity_applyIdentity end
     }
   end
@@ -85,15 +81,15 @@ Control_Monad_Except_Trans_bindExceptT = function(dictMonad)
   return {
     bind = function(v)
       return function(k)
-        return (dictMonad.Bind1()).bind(v)(function(v2_S_546)
-          local _S_cse1413 = v2_S_546[2]
-          if "Data.Either∷Either.Left" == v2_S_546[1] then
+        return (dictMonad.Bind1()).bind(v)(function(v2_S_0)
+          local _S_cse0 = v2_S_0[2]
+          if "Data.Either∷Either.Left" == v2_S_0[1] then
             return (dictMonad.Applicative0()).pure({
               "Data.Either∷Either.Left",
-              _S_cse1413
+              _S_cse0
             })
           else
-            return k(_S_cse1413)
+            return k(_S_cse0)
           end
         end)
       end
@@ -106,13 +102,13 @@ end
 Control_Monad_Except_Trans_applyExceptT = function(dictMonad)
   return {
     apply = (function()
-      local dictMonad_S_550 = Control_Monad_Except_Trans_monadExceptT(dictMonad)
-      local bind_S_551 = (dictMonad_S_550.Bind1()).bind
-      return function(f_S_552)
-        return function(a_S_553)
-          return bind_S_551(f_S_552)(function(fPrime_S_554)
-            return bind_S_551(a_S_553)(function(aPrime_S_555)
-              return (dictMonad_S_550.Applicative0()).pure(fPrime_S_554(aPrime_S_555))
+      local dictMonad_S_0 = Control_Monad_Except_Trans_monadExceptT(dictMonad)
+      local bind_S_0 = (dictMonad_S_0.Bind1()).bind
+      return function(f_S_2)
+        return function(a_S_0)
+          return bind_S_0(f_S_2)(function(fPrime_S_0)
+            return bind_S_0(a_S_0)(function(aPrime_S_0)
+              return (dictMonad_S_0.Applicative0()).pure(fPrime_S_0(aPrime_S_0))
             end)
           end)
         end
@@ -120,16 +116,16 @@ Control_Monad_Except_Trans_applyExceptT = function(dictMonad)
     end)(),
     Functor0 = function()
       return {
-        map = function(f_S_538)
-          return function(v_S_540)
-            return (((dictMonad.Bind1()).Apply0()).Functor0()).map(function( m_S_548 )
-              local _S_cse1414 = m_S_548[2]
-              if "Data.Either∷Either.Left" == m_S_548[1] then
-                return { "Data.Either∷Either.Left", _S_cse1414 }
+        map = function(f_S_3)
+          return function(v_S_1)
+            return (((dictMonad.Bind1()).Apply0()).Functor0()).map(function( m_S_1 )
+              local _S_cse1 = m_S_1[2]
+              if "Data.Either∷Either.Left" == m_S_1[1] then
+                return { "Data.Either∷Either.Left", _S_cse1 }
               else
-                return { "Data.Either∷Either.Right", (f_S_538(_S_cse1414)) }
+                return { "Data.Either∷Either.Right", (f_S_3(_S_cse1)) }
               end
-            end)(v_S_540)
+            end)(v_S_1)
           end
         end
       }
@@ -138,10 +134,10 @@ Control_Monad_Except_Trans_applyExceptT = function(dictMonad)
 end
 Control_Monad_Except_Trans_applicativeExceptT = function(dictMonad)
   return {
-    pure = function(x_S_1207)
+    pure = function(x_S_1)
       return (dictMonad.Applicative0()).pure({
         "Data.Either∷Either.Right",
-        x_S_1207
+        x_S_1
       })
     end,
     Apply0 = function()
@@ -151,10 +147,10 @@ Control_Monad_Except_Trans_applicativeExceptT = function(dictMonad)
 end
 local Golden_LongExceptBind_Test_bind = (Control_Monad_Except_Trans_bindExceptT(Data_Identity_monadIdentity)).bind
 local Golden_LongExceptBind_Test_go = (function()
-  local _S_kont1416_S_w = function(x1_S_1417, x160_S_1418)
+  local _S_kont0_S_w = function(x1_S_0, x160_S_0)
     return Golden_LongExceptBind_Test_bind({
       "Data.Either∷Either.Right",
-      x160_S_1418 + 1
+      x160_S_0 + 1
     })(function(x161)
       return Golden_LongExceptBind_Test_bind({
         "Data.Either∷Either.Right",
@@ -312,7 +308,7 @@ local Golden_LongExceptBind_Test_go = (function()
                                                                                     "Data.Either∷Either.Right",
                                                                                     x199 + 1
                                                                                   })(function( x200 )
-                                                                                    return (Control_Monad_Except_Trans_applicativeExceptT(Data_Identity_monadIdentity)).pure(x1_S_1417 + x200)
+                                                                                    return (Control_Monad_Except_Trans_applicativeExceptT(Data_Identity_monadIdentity)).pure(x1_S_0 + x200)
                                                                                   end)
                                                                                 end)
                                                                               end)
@@ -354,10 +350,10 @@ local Golden_LongExceptBind_Test_go = (function()
       end)
     end)
   end
-  local _S_kont1419_S_w = function(x1_S_1420, x120_S_1421)
+  local _S_kont1_S_w = function(x1_S_1, x120_S_0)
     return Golden_LongExceptBind_Test_bind({
       "Data.Either∷Either.Right",
-      x120_S_1421 + 1
+      x120_S_0 + 1
     })(function(x121)
       return Golden_LongExceptBind_Test_bind({
         "Data.Either∷Either.Right",
@@ -515,7 +511,7 @@ local Golden_LongExceptBind_Test_go = (function()
                                                                                     "Data.Either∷Either.Right",
                                                                                     x159 + 1
                                                                                   })(function( x160 )
-                                                                                    return _S_kont1416_S_w(x1_S_1420, x160)
+                                                                                    return _S_kont0_S_w(x1_S_1, x160)
                                                                                   end)
                                                                                 end)
                                                                               end)
@@ -557,10 +553,10 @@ local Golden_LongExceptBind_Test_go = (function()
       end)
     end)
   end
-  local _S_kont1422_S_w = function(x1_S_1423, x80_S_1424)
+  local _S_kont2_S_w = function(x1_S_2, x80_S_0)
     return Golden_LongExceptBind_Test_bind({
       "Data.Either∷Either.Right",
-      x80_S_1424 + 1
+      x80_S_0 + 1
     })(function(x81)
       return Golden_LongExceptBind_Test_bind({
         "Data.Either∷Either.Right",
@@ -718,7 +714,7 @@ local Golden_LongExceptBind_Test_go = (function()
                                                                                     "Data.Either∷Either.Right",
                                                                                     x119 + 1
                                                                                   })(function( x120 )
-                                                                                    return _S_kont1419_S_w(x1_S_1423, x120)
+                                                                                    return _S_kont1_S_w(x1_S_2, x120)
                                                                                   end)
                                                                                 end)
                                                                               end)
@@ -760,10 +756,10 @@ local Golden_LongExceptBind_Test_go = (function()
       end)
     end)
   end
-  local _S_kont1425_S_w = function(x1_S_1426, x40_S_1427)
+  local _S_kont3_S_w = function(x1_S_3, x40_S_0)
     return Golden_LongExceptBind_Test_bind({
       "Data.Either∷Either.Right",
-      x40_S_1427 + 1
+      x40_S_0 + 1
     })(function(x41)
       return Golden_LongExceptBind_Test_bind({
         "Data.Either∷Either.Right",
@@ -921,7 +917,7 @@ local Golden_LongExceptBind_Test_go = (function()
                                                                                     "Data.Either∷Either.Right",
                                                                                     x79 + 1
                                                                                   })(function( x80 )
-                                                                                    return _S_kont1422_S_w(x1_S_1426, x80)
+                                                                                    return _S_kont2_S_w(x1_S_3, x80)
                                                                                   end)
                                                                                 end)
                                                                               end)
@@ -1123,7 +1119,7 @@ local Golden_LongExceptBind_Test_go = (function()
                                                                                   "Data.Either∷Either.Right",
                                                                                   x39 + 1
                                                                                 })(function( x40 )
-                                                                                  return _S_kont1425_S_w(x1, x40)
+                                                                                  return _S_kont3_S_w(x1, x40)
                                                                                 end)
                                                                               end)
                                                                             end)
@@ -1167,12 +1163,12 @@ local Golden_LongExceptBind_Test_go = (function()
 end)()
 local Golden_LongExceptBind_Test_compute = Golden_LongExceptBind_Test_go
 return (function()
-  local _S_cse1415 = Golden_LongExceptBind_Test_compute[2]
+  local _S_cse2 = Golden_LongExceptBind_Test_compute[2]
   return Effect_Console_foreign.log((function()
     if "Data.Either∷Either.Left" == Golden_LongExceptBind_Test_compute[1] then
-      return "(Left " .. Data_Show_foreign.showStringImpl(_S_cse1415) .. ")"
+      return "(Left " .. Data_Show_foreign.showStringImpl(_S_cse2) .. ")"
     else
-      return "(Right " .. Data_Show_foreign.showIntImpl(_S_cse1415) .. ")"
+      return "(Right " .. Data_Show_foreign.showIntImpl(_S_cse2) .. ")"
     end
   end)())()
 end)()

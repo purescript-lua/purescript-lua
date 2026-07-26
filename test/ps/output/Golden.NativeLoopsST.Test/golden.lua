@@ -44,16 +44,16 @@ local Control_Monad_ST_Internal_run = Control_Monad_ST_Internal_foreign.run
 local Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
 }
-local Golden_NativeLoopsST_Test_logShow = function(a_S_2)
-  return Effect_Console_foreign.log(Data_Show_foreign.showIntImpl(a_S_2))
+local Golden_NativeLoopsST_Test_logShow = function(a_S_0)
+  return Effect_Console_foreign.log(Data_Show_foreign.showIntImpl(a_S_0))
 end
 local Golden_NativeLoopsST_Test_sumTo = function(n)
   return Control_Monad_ST_Internal_run(function()
     local acc = Control_Monad_ST_Internal_new(0)()
     for i = 0, n + 1 - 1 do
-      Control_Monad_ST_Internal_modifyImpl(function(s_S_491)
-        local sPrime_S_492 = s_S_491 + i
-        return { state = sPrime_S_492, value = sPrime_S_492 }
+      Control_Monad_ST_Internal_modifyImpl(function(s_S_0)
+        local sPrime_S_0 = s_S_0 + i
+        return { state = sPrime_S_0, value = sPrime_S_0 }
       end)(acc)()
     end
     return Control_Monad_ST_Internal_read(acc)()
@@ -66,9 +66,9 @@ local Golden_NativeLoopsST_Test_sumArray = function(xs)
       local x = xs[_S_i0]
       Control_Monad_ST_Internal_map_(function()
         return Data_Unit_unit
-      end)(Control_Monad_ST_Internal_modifyImpl(function(s_S_484)
-        local sPrime_S_485 = s_S_484 + x
-        return { state = sPrime_S_485, value = sPrime_S_485 }
+      end)(Control_Monad_ST_Internal_modifyImpl(function(s_S_1)
+        local sPrime_S_1 = s_S_1 + x
+        return { state = sPrime_S_1, value = sPrime_S_1 }
       end)(acc))()
     end
     return Control_Monad_ST_Internal_read(acc)()
@@ -79,17 +79,17 @@ local Golden_NativeLoopsST_Test_countDown = function(start)
     local steps = Control_Monad_ST_Internal_new(0)()
     local value = Control_Monad_ST_Internal_new(start)()
     do
-      local _S_cond1 = Control_Monad_ST_Internal_map_(function(v)
+      local _S_cond0 = Control_Monad_ST_Internal_map_(function(v)
         return not(v < 0) and v ~= 0
       end)(Control_Monad_ST_Internal_read(value))
-      while _S_cond1() do
-        local _ = Control_Monad_ST_Internal_modifyImpl(function(s_S_473)
-          local sPrime_S_474 = s_S_473 - 1
-          return { state = sPrime_S_474, value = sPrime_S_474 }
+      while _S_cond0() do
+        local _ = Control_Monad_ST_Internal_modifyImpl(function(s_S_2)
+          local sPrime_S_2 = s_S_2 - 1
+          return { state = sPrime_S_2, value = sPrime_S_2 }
         end)(value)()
-        Control_Monad_ST_Internal_modifyImpl(function(s_S_478)
-          local sPrime_S_479 = s_S_478 + 1
-          return { state = sPrime_S_479, value = sPrime_S_479 }
+        Control_Monad_ST_Internal_modifyImpl(function(s_S_3)
+          local sPrime_S_3 = s_S_3 + 1
+          return { state = sPrime_S_3, value = sPrime_S_3 }
         end)(steps)()
       end
     end

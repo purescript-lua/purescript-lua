@@ -81,9 +81,9 @@ Effect_applicativeEffect = {
 }
 local Effect_Lazy_functorEffect = PSLUA_runtime_lazy("functorEffect")(function()
   return {
-    map = function(f_S_38)
-      return function(a_S_39)
-        return (Effect_applicativeEffect.Apply0()).apply(Effect_pureE(f_S_38))(a_S_39)
+    map = function(f_S_0)
+      return function(a_S_0)
+        return (Effect_applicativeEffect.Apply0()).apply(Effect_pureE(f_S_0))(a_S_0)
       end
     end
   }
@@ -91,12 +91,12 @@ end)
 Effect_Lazy_applyEffect = PSLUA_runtime_lazy("applyEffect")(function()
   return {
     apply = (function()
-      local bind_S_20 = (Effect_monadEffect.Bind1()).bind
-      return function(f_S_22)
-        return function(a_S_23)
-          return bind_S_20(f_S_22)(function(fPrime_S_24)
-            return bind_S_20(a_S_23)(function(aPrime_S_25)
-              return (Effect_monadEffect.Applicative0()).pure(fPrime_S_24(aPrime_S_25))
+      local bind_S_0 = (Effect_monadEffect.Bind1()).bind
+      return function(f_S_1)
+        return function(a_S_1)
+          return bind_S_0(f_S_1)(function(fPrime_S_0)
+            return bind_S_0(a_S_1)(function(aPrime_S_0)
+              return (Effect_monadEffect.Applicative0()).pure(fPrime_S_0(aPrime_S_0))
             end)
           end)
         end
@@ -109,54 +109,54 @@ local Effect_functorEffect = Effect_Lazy_functorEffect(0)
 local Effect_Ref_modify__S_w = function(f, s)
   return Effect_functorEffect.map(function()
     return Data_Unit_unit
-  end)(Effect_Ref_foreign.modifyImpl(function(s_S_11)
-    local sPrime_S_12 = f(s_S_11)
-    return { state = sPrime_S_12, value = sPrime_S_12 }
+  end)(Effect_Ref_foreign.modifyImpl(function(s_S_0)
+    local sPrime_S_0 = f(s_S_0)
+    return { state = sPrime_S_0, value = sPrime_S_0 }
   end)(s))
 end
-local Golden_NativeLoops_Test_logShow = function(a_S_15)
-  return Effect_Console_log(Data_Show_showIntImpl(a_S_15))
+local Golden_NativeLoops_Test_logShow = function(a_S_2)
+  return Effect_Console_log(Data_Show_showIntImpl(a_S_2))
 end
 return (function()
   local _ = Effect_Console_log("forE:")()
   do
-    local _S_f2 = Golden_NativeLoops_Test_logShow
-    for _S_i3 = 1, 3 do _S_f2(_S_i3)() end
+    local _S_f0 = Golden_NativeLoops_Test_logShow
+    for _S_i0 = 1, 3 do _S_f0(_S_i0)() end
   end
   local _ = Effect_Console_log("foreachE:")()
   local sum_S_0 = Effect_Ref__new(0)()
   do
-    local _S_xs4 = { [1] = 10, [2] = 20, [3] = 30 }
-    for _S_i5 = 1, #(_S_xs4) do
-      local n_S_1 = _S_xs4[_S_i5]
-      Effect_Ref_modify__S_w(function(v_S_2)
-        return v_S_2 + n_S_1
+    local _S_xs0 = { [1] = 10, [2] = 20, [3] = 30 }
+    for _S_i1 = 1, #(_S_xs0) do
+      local n_S_0 = _S_xs0[_S_i1]
+      Effect_Ref_modify__S_w(function(v_S_0)
+        return v_S_0 + n_S_0
       end, sum_S_0)()
     end
   end
-  local total_S_3 = Effect_Ref_read(sum_S_0)()
-  local _ = Effect_Console_log(Data_Show_showIntImpl(total_S_3))()
+  local total_S_0 = Effect_Ref_read(sum_S_0)()
+  local _ = Effect_Console_log(Data_Show_showIntImpl(total_S_0))()
   local _ = Effect_Console_log("whileE:")()
-  local counter_S_4 = Effect_Ref__new(0)()
+  local counter_S_0 = Effect_Ref__new(0)()
   do
-    local _S_cond6 = Effect_functorEffect.map(function(v0_S_5)
-      return v0_S_5 < 3
-    end)(Effect_Ref_read(counter_S_4))
-    while _S_cond6() do
-      local n0_S_6 = Effect_Ref_read(counter_S_4)()
-      local _ = Effect_Console_log(Data_Show_showIntImpl(n0_S_6))()
-      Effect_Ref_modify__S_w(function(v1_S_7)
-        return v1_S_7 + 1
-      end, counter_S_4)()
+    local _S_cond0 = Effect_functorEffect.map(function(v0_S_0)
+      return v0_S_0 < 3
+    end)(Effect_Ref_read(counter_S_0))
+    while _S_cond0() do
+      local n0_S_0 = Effect_Ref_read(counter_S_0)()
+      local _ = Effect_Console_log(Data_Show_showIntImpl(n0_S_0))()
+      Effect_Ref_modify__S_w(function(v1_S_0)
+        return v1_S_0 + 1
+      end, counter_S_0)()
     end
   end
   local _ = Effect_Console_log("nested:")()
-  for i_S_8 = 0, 1 do
+  for i_S_0 = 0, 1 do
     do
-      local _S_xs0 = { [1] = "x", [2] = "y" }
-      for _S_i1 = 1, #(_S_xs0) do
-        local s_S_9 = _S_xs0[_S_i1]
-        Effect_Console_log(Data_Show_showIntImpl(i_S_8) .. s_S_9)()
+      local _S_xs1 = { [1] = "x", [2] = "y" }
+      for _S_i2 = 1, #(_S_xs1) do
+        local s_S_1 = _S_xs1[_S_i2]
+        Effect_Console_log(Data_Show_showIntImpl(i_S_0) .. s_S_1)()
       end
     end
   end

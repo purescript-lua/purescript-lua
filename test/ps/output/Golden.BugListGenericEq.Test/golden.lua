@@ -16,13 +16,13 @@ Data_HeytingAlgebra_heytingAlgebraBoolean = {
       return Data_HeytingAlgebra_heytingAlgebraBoolean.disj(Data_HeytingAlgebra_heytingAlgebraBoolean._not_(a))(b)
     end
   end,
-  conj = function(b1_S_231)
-    return function(b2_S_232) return b1_S_231 and b2_S_232 end
+  conj = function(b1_S_0)
+    return function(b2_S_0) return b1_S_0 and b2_S_0 end
   end,
-  disj = function(b1_S_229)
-    return function(b2_S_230) return b1_S_229 or b2_S_230 end
+  disj = function(b1_S_1)
+    return function(b2_S_1) return b1_S_1 or b2_S_1 end
   end,
-  _not_ = function(b_S_228) return not(b_S_228) end
+  _not_ = function(b_S_0) return not(b_S_0) end
 }
 local Data_Eq_eqRowCons_S_w = function( dictEqRecord
 , eqRowCons_S_u2
@@ -67,27 +67,27 @@ Golden_BugListGenericEq_Test_eqList = function(dictEq)
   return {
     eq = function(x)
       return function(y)
-        local _S_cse268 = { "Data.Generic.Rep∷Sum.Inl", {} }
-        local v_S_13 = (function()
+        local _S_cse0 = { "Data.Generic.Rep∷Sum.Inl", {} }
+        local v_S_0 = (function()
           if "Golden.BugListGenericEq.Test∷List.Nil" == x[1] then
-            return _S_cse268
+            return _S_cse0
           else
             return { "Data.Generic.Rep∷Sum.Inr", x[2] }
           end
         end)()
-        local v1_S_14 = (function()
+        local v1_S_0 = (function()
           if "Golden.BugListGenericEq.Test∷List.Nil" == y[1] then
-            return _S_cse268
+            return _S_cse0
           else
             return { "Data.Generic.Rep∷Sum.Inr", y[2] }
           end
         end)()
-        local _S_cse270 = v1_S_14[1]
-        local _S_cse269 = v_S_13[1]
-        if "Data.Generic.Rep∷Sum.Inl" == _S_cse269 then
-          return "Data.Generic.Rep∷Sum.Inl" == _S_cse270
+        local _S_cse1 = v1_S_0[1]
+        local _S_cse2 = v_S_0[1]
+        if "Data.Generic.Rep∷Sum.Inl" == _S_cse2 then
+          return "Data.Generic.Rep∷Sum.Inl" == _S_cse1
         else
-          return "Data.Generic.Rep∷Sum.Inr" == _S_cse269 and ("Data.Generic.Rep∷Sum.Inr" == _S_cse270 and (Data_Eq_eqRowCons_S_w(Data_Eq_eqRowCons_S_w({
+          return "Data.Generic.Rep∷Sum.Inr" == _S_cse2 and ("Data.Generic.Rep∷Sum.Inr" == _S_cse1 and (Data_Eq_eqRowCons_S_w(Data_Eq_eqRowCons_S_w({
             eqRecord = function()
               return function() return function() return true end end
             end
@@ -95,16 +95,14 @@ Golden_BugListGenericEq_Test_eqList = function(dictEq)
             reflectSymbol = function() return "tail" end
           }, Golden_BugListGenericEq_Test_eqList(dictEq)), nil, {
             reflectSymbol = function() return "head" end
-          }, dictEq)).eqRecord(Type_Proxy_Proxy)(v_S_13[2])(v1_S_14[2]))
+          }, dictEq)).eqRecord(Type_Proxy_Proxy)(v_S_0[2])(v1_S_0[2]))
         end
       end
     end
   }
 end
 local Golden_BugListGenericEq_Test_eq = (Golden_BugListGenericEq_Test_eqList({
-  eq = function(r1_S_235)
-    return function(r2_S_236) return r1_S_235 == r2_S_236 end
-  end
+  eq = function(r1_S_0) return function(r2_S_0) return r1_S_0 == r2_S_0 end end
 })).eq
 local Golden_BugListGenericEq_Test_cons_S_w = function(head, tail)
   return {

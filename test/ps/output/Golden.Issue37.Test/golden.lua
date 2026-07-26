@@ -42,9 +42,9 @@ Effect_applicativeEffect = {
 }
 local Effect_Lazy_functorEffect = PSLUA_runtime_lazy("functorEffect")(function()
   return {
-    map = function(f_S_32)
-      return function(a_S_33)
-        return (Effect_applicativeEffect.Apply0()).apply(Effect_pureE(f_S_32))(a_S_33)
+    map = function(f_S_0)
+      return function(a_S_0)
+        return (Effect_applicativeEffect.Apply0()).apply(Effect_pureE(f_S_0))(a_S_0)
       end
     end
   }
@@ -52,12 +52,12 @@ end)
 Effect_Lazy_applyEffect = PSLUA_runtime_lazy("applyEffect")(function()
   return {
     apply = (function()
-      local bind_S_11 = (Effect_monadEffect.Bind1()).bind
-      return function(f_S_13)
-        return function(a_S_14)
-          return bind_S_11(f_S_13)(function(fPrime_S_15)
-            return bind_S_11(a_S_14)(function(aPrime_S_16)
-              return (Effect_monadEffect.Applicative0()).pure(fPrime_S_15(aPrime_S_16))
+      local bind_S_0 = (Effect_monadEffect.Bind1()).bind
+      return function(f_S_1)
+        return function(a_S_1)
+          return bind_S_0(f_S_1)(function(fPrime_S_0)
+            return bind_S_0(a_S_1)(function(aPrime_S_0)
+              return (Effect_monadEffect.Applicative0()).pure(fPrime_S_0(aPrime_S_0))
             end)
           end)
         end
@@ -68,23 +68,21 @@ Effect_Lazy_applyEffect = PSLUA_runtime_lazy("applyEffect")(function()
 end)
 return {
   baz = (function()
-    local Bind1_S_1 = Effect_monadEffect.Bind1()
-    local pure_S_4 = (Effect_monadEffect.Applicative0()).pure
-    local f_S_6 = Effect_pureE(Data_Unit_unit)
-    return Bind1_S_1.bind(f_S_6)(function()
-      return Bind1_S_1.bind(pure_S_4({
+    local Bind1_S_0 = Effect_monadEffect.Bind1()
+    local pure_S_0 = (Effect_monadEffect.Applicative0()).pure
+    local f_S_2 = Effect_pureE(Data_Unit_unit)
+    return Bind1_S_0.bind(f_S_2)(function()
+      return Bind1_S_0.bind(pure_S_0({
         [1] = (function()
-          local Bind1_S_216 = Effect_monadEffect.Bind1()
-          local fn1_S_218 = f_S_6
-          return Bind1_S_216.bind(fn1_S_218)(function()
-            return Bind1_S_216.bind(fn1_S_218)(function()
-              return Bind1_S_216.bind(fn1_S_218)(function()
-                return fn1_S_218
-              end)
+          local Bind1_S_1 = Effect_monadEffect.Bind1()
+          local fn1_S_0 = f_S_2
+          return Bind1_S_1.bind(fn1_S_0)(function()
+            return Bind1_S_1.bind(fn1_S_0)(function()
+              return Bind1_S_1.bind(fn1_S_0)(function() return fn1_S_0 end)
             end)
           end)
         end)()
-      }))(function() return pure_S_4(Data_Unit_unit) end)
+      }))(function() return pure_S_0(Data_Unit_unit) end)
     end)
   end)()
 }

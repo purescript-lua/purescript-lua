@@ -5,7 +5,7 @@ local Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
 }
 local Effect_Console_log = Effect_Console_foreign.log
-local Data_Newtype_coerce = function(x_S_262) return x_S_262 end
+local Data_Newtype_coerce = function(x_S_0) return x_S_0 end
 local Golden_ProfunctorDictLens_Test_unwrap = Data_Newtype_coerce
 local Golden_ProfunctorDictLens_Test_Wrapped = function(x) return x end
 M.Golden_ProfunctorDictLens_Test__Wrapped = function(dictProfunctor)

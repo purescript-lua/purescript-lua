@@ -14,11 +14,11 @@ local Golden_RecordsUpdate_Test_r = {
 return {
   r = Golden_RecordsUpdate_Test_r,
   test1 = PSLUA_object_update(Golden_RecordsUpdate_Test_r, { x = 2 }),
-  test2 = function(v_S_1) return PSLUA_object_update(v_S_1, { y = false }) end,
-  test3 = function(v_S_2)
-    return PSLUA_object_update(v_S_2, {
-      z = PSLUA_object_update(v_S_2.z, { p = "b" })
+  test2 = function(v_S_0) return PSLUA_object_update(v_S_0, { y = false }) end,
+  test3 = function(v_S_1)
+    return PSLUA_object_update(v_S_1, {
+      z = PSLUA_object_update(v_S_1.z, { p = "b" })
     })
   end,
-  test4 = function(v_S_3) return PSLUA_object_update(v_S_3, { x = 1 }) end
+  test4 = function(v_S_2) return PSLUA_object_update(v_S_2, { x = 1 }) end
 }

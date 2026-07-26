@@ -11,24 +11,20 @@ local Data_Identity_applyIdentity = {
   apply = function(v) return function(v1) return v(v1) end end,
   Functor0 = function()
     return {
-      map = function(f_S_523)
-        return function(m_S_524) return f_S_523(m_S_524) end
-      end
+      map = function(f_S_0) return function(m_S_0) return f_S_0(m_S_0) end end
     }
   end
 }
 local Data_Identity_monadIdentity = {
   Applicative0 = function()
     return {
-      pure = function(x_S_525) return x_S_525 end,
+      pure = function(x_S_0) return x_S_0 end,
       Apply0 = function() return Data_Identity_applyIdentity end
     }
   end,
   Bind1 = function()
     return {
-      bind = function(v_S_78)
-        return function(f_S_79) return f_S_79(v_S_78) end
-      end,
+      bind = function(v_S_0) return function(f_S_1) return f_S_1(v_S_0) end end,
       Apply0 = function() return Data_Identity_applyIdentity end
     }
   end
@@ -65,13 +61,13 @@ end
 Control_Monad_State_Trans_applyStateT = function(dictMonad)
   return {
     apply = (function()
-      local dictMonad_S_526 = Control_Monad_State_Trans_monadStateT(dictMonad)
-      local bind_S_527 = (dictMonad_S_526.Bind1()).bind
-      return function(f_S_528)
-        return function(a_S_529)
-          return bind_S_527(f_S_528)(function(fPrime_S_530)
-            return bind_S_527(a_S_529)(function(aPrime_S_531)
-              return (dictMonad_S_526.Applicative0()).pure(fPrime_S_530(aPrime_S_531))
+      local dictMonad_S_0 = Control_Monad_State_Trans_monadStateT(dictMonad)
+      local bind_S_0 = (dictMonad_S_0.Bind1()).bind
+      return function(f_S_2)
+        return function(a_S_0)
+          return bind_S_0(f_S_2)(function(fPrime_S_0)
+            return bind_S_0(a_S_0)(function(aPrime_S_0)
+              return (dictMonad_S_0.Applicative0()).pure(fPrime_S_0(aPrime_S_0))
             end)
           end)
         end
@@ -79,12 +75,12 @@ Control_Monad_State_Trans_applyStateT = function(dictMonad)
     end)(),
     Functor0 = function()
       return {
-        map = function(f_S_519)
-          return function(v_S_520)
-            return function(s_S_521)
-              return (((dictMonad.Bind1()).Apply0()).Functor0()).map(function( v1_S_522 )
-                return Data_Tuple_Tuple_S_w(f_S_519(v1_S_522[1]), v1_S_522[2])
-              end)(v_S_520(s_S_521))
+        map = function(f_S_3)
+          return function(v_S_1)
+            return function(s_S_0)
+              return (((dictMonad.Bind1()).Apply0()).Functor0()).map(function( v1_S_0 )
+                return Data_Tuple_Tuple_S_w(f_S_3(v1_S_0[1]), v1_S_0[2])
+              end)(v_S_1(s_S_0))
             end
           end
         end
@@ -106,12 +102,12 @@ Control_Monad_State_Trans_applicativeStateT = function(dictMonad)
 end
 local Golden_LongStateBind_Test_bindStateT = Control_Monad_State_Trans_bindStateT(Data_Identity_monadIdentity)
 local Golden_LongStateBind_Test_bind = Golden_LongStateBind_Test_bindStateT.bind
-local Golden_LongStateBind_Test_get = function(x_S_1758)
-  return Data_Tuple_Tuple_S_w(x_S_1758, x_S_1758)
+local Golden_LongStateBind_Test_get = function(x_S_1)
+  return Data_Tuple_Tuple_S_w(x_S_1, x_S_1)
 end
 local Golden_LongStateBind_Test_discard = Golden_LongStateBind_Test_bindStateT.bind
 local Golden_LongStateBind_Test_go = (function()
-  local _S_kont1768_S_w = function(x1_S_1769, x100_S_1770)
+  local _S_kont0_S_w = function(x1_S_0, x100_S_0)
     return Golden_LongStateBind_Test_bind(Golden_LongStateBind_Test_get)(function( x141 )
       return Golden_LongStateBind_Test_discard(function()
         return Data_Tuple_Tuple_S_w(Data_Unit_unit, x141 + 1)
@@ -153,7 +149,7 @@ local Golden_LongStateBind_Test_go = (function()
                                             return Data_Tuple_Tuple_S_w(Data_Unit_unit, x150 + 1)
                                           end)(function()
                                             return Golden_LongStateBind_Test_bind(Golden_LongStateBind_Test_get)(function( final )
-                                              return (Control_Monad_State_Trans_applicativeStateT(Data_Identity_monadIdentity)).pure(x1_S_1769 + x100_S_1770 + final)
+                                              return (Control_Monad_State_Trans_applicativeStateT(Data_Identity_monadIdentity)).pure(x1_S_0 + x100_S_0 + final)
                                             end)
                                           end)
                                         end)
@@ -176,7 +172,7 @@ local Golden_LongStateBind_Test_go = (function()
       end)
     end)
   end
-  local _S_kont1771_S_w = function(x1_S_1772, x100_S_1773)
+  local _S_kont1_S_w = function(x1_S_1, x100_S_1)
     return Golden_LongStateBind_Test_bind(Golden_LongStateBind_Test_get)(function( x121 )
       return Golden_LongStateBind_Test_discard(function()
         return Data_Tuple_Tuple_S_w(Data_Unit_unit, x121 + 1)
@@ -257,7 +253,7 @@ local Golden_LongStateBind_Test_go = (function()
                                                                                   return Golden_LongStateBind_Test_discard(function(  )
                                                                                     return Data_Tuple_Tuple_S_w(Data_Unit_unit, x140 + 1)
                                                                                   end)(function(  )
-                                                                                    return _S_kont1768_S_w(x1_S_1772, x100_S_1773)
+                                                                                    return _S_kont0_S_w(x1_S_1, x100_S_1)
                                                                                   end)
                                                                                 end)
                                                                               end)
@@ -299,7 +295,7 @@ local Golden_LongStateBind_Test_go = (function()
       end)
     end)
   end
-  local _S_kont1774_S_w = function(x1_S_1775, x100_S_1776)
+  local _S_kont2_S_w = function(x1_S_2, x100_S_2)
     return Golden_LongStateBind_Test_bind(Golden_LongStateBind_Test_get)(function( x101 )
       return Golden_LongStateBind_Test_discard(function()
         return Data_Tuple_Tuple_S_w(Data_Unit_unit, x101 + 1)
@@ -380,7 +376,7 @@ local Golden_LongStateBind_Test_go = (function()
                                                                                   return Golden_LongStateBind_Test_discard(function(  )
                                                                                     return Data_Tuple_Tuple_S_w(Data_Unit_unit, x120 + 1)
                                                                                   end)(function(  )
-                                                                                    return _S_kont1771_S_w(x1_S_1775, x100_S_1776)
+                                                                                    return _S_kont1_S_w(x1_S_2, x100_S_2)
                                                                                   end)
                                                                                 end)
                                                                               end)
@@ -422,7 +418,7 @@ local Golden_LongStateBind_Test_go = (function()
       end)
     end)
   end
-  local _S_kont1777 = function(x1_S_1778)
+  local _S_kont3 = function(x1_S_3)
     return Golden_LongStateBind_Test_bind(Golden_LongStateBind_Test_get)(function( x81 )
       return Golden_LongStateBind_Test_discard(function()
         return Data_Tuple_Tuple_S_w(Data_Unit_unit, x81 + 1)
@@ -503,7 +499,7 @@ local Golden_LongStateBind_Test_go = (function()
                                                                                   return Golden_LongStateBind_Test_discard(function(  )
                                                                                     return Data_Tuple_Tuple_S_w(Data_Unit_unit, x100 + 1)
                                                                                   end)(function(  )
-                                                                                    return _S_kont1774_S_w(x1_S_1778, x100)
+                                                                                    return _S_kont2_S_w(x1_S_3, x100)
                                                                                   end)
                                                                                 end)
                                                                               end)
@@ -545,7 +541,7 @@ local Golden_LongStateBind_Test_go = (function()
       end)
     end)
   end
-  local _S_kont1779 = function(x1_S_1780)
+  local _S_kont4 = function(x1_S_4)
     return Golden_LongStateBind_Test_bind(Golden_LongStateBind_Test_get)(function( x61 )
       return Golden_LongStateBind_Test_discard(function()
         return Data_Tuple_Tuple_S_w(Data_Unit_unit, x61 + 1)
@@ -626,7 +622,7 @@ local Golden_LongStateBind_Test_go = (function()
                                                                                   return Golden_LongStateBind_Test_discard(function(  )
                                                                                     return Data_Tuple_Tuple_S_w(Data_Unit_unit, x80 + 1)
                                                                                   end)(function(  )
-                                                                                    return _S_kont1777(x1_S_1780)
+                                                                                    return _S_kont3(x1_S_4)
                                                                                   end)
                                                                                 end)
                                                                               end)
@@ -668,7 +664,7 @@ local Golden_LongStateBind_Test_go = (function()
       end)
     end)
   end
-  local _S_kont1781 = function(x1_S_1782)
+  local _S_kont5 = function(x1_S_5)
     return Golden_LongStateBind_Test_bind(Golden_LongStateBind_Test_get)(function( x41 )
       return Golden_LongStateBind_Test_discard(function()
         return Data_Tuple_Tuple_S_w(Data_Unit_unit, x41 + 1)
@@ -749,7 +745,7 @@ local Golden_LongStateBind_Test_go = (function()
                                                                                   return Golden_LongStateBind_Test_discard(function(  )
                                                                                     return Data_Tuple_Tuple_S_w(Data_Unit_unit, x60 + 1)
                                                                                   end)(function(  )
-                                                                                    return _S_kont1779(x1_S_1782)
+                                                                                    return _S_kont4(x1_S_5)
                                                                                   end)
                                                                                 end)
                                                                               end)
@@ -791,7 +787,7 @@ local Golden_LongStateBind_Test_go = (function()
       end)
     end)
   end
-  local _S_kont1783 = function(x1_S_1784)
+  local _S_kont6 = function(x1_S_6)
     return Golden_LongStateBind_Test_bind(Golden_LongStateBind_Test_get)(function( x21 )
       return Golden_LongStateBind_Test_discard(function()
         return Data_Tuple_Tuple_S_w(Data_Unit_unit, x21 + 1)
@@ -872,7 +868,7 @@ local Golden_LongStateBind_Test_go = (function()
                                                                                   return Golden_LongStateBind_Test_discard(function(  )
                                                                                     return Data_Tuple_Tuple_S_w(Data_Unit_unit, x40 + 1)
                                                                                   end)(function(  )
-                                                                                    return _S_kont1781(x1_S_1784)
+                                                                                    return _S_kont5(x1_S_6)
                                                                                   end)
                                                                                 end)
                                                                               end)
@@ -994,7 +990,7 @@ local Golden_LongStateBind_Test_go = (function()
                                                                                 return Golden_LongStateBind_Test_discard(function(  )
                                                                                   return Data_Tuple_Tuple_S_w(Data_Unit_unit, x20 + 1)
                                                                                 end)(function(  )
-                                                                                  return _S_kont1783(x1)
+                                                                                  return _S_kont6(x1)
                                                                                 end)
                                                                               end)
                                                                             end)
