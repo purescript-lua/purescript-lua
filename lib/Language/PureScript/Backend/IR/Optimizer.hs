@@ -97,9 +97,12 @@ import Language.PureScript.Backend.IR.Uncurry (uncurryWorkerWrapper)
 import Language.PureScript.Backend.IR.Uniquify (uniquifyNames)
 
 optimizedUberModule ∷ DataTypes → UberModule → UberModule
-optimizedUberModule dataTypes uber =
-  runSupply
-    (runSteps (optimizerPipeline dataTypes (collectInlinePolicy uber)) uber)
+optimizedUberModule dataTypes uber = runSupply do
+  let policy = collectInlinePolicy uber
+  settled ← runSteps (settlePhase (optimizerPipeline dataTypes policy)) uber
+  -- See Note [Derived inline directives]
+  let extended = policy <> derivedInlinePolicy policy settled
+  runSteps (lowerPhase (optimizerPipeline dataTypes extended)) settled
 
 {- | 'optimizedUberModule' with every pass's contract checked by the
 linter, failing with the name of the offending pass. Used by the test
@@ -107,12 +110,26 @@ suite always, and by the CLI behind the @--lint-ir@ flag.
 -}
 optimizedUberModuleChecked
   ∷ DataTypes → UberModule → Either PassCheckFailure UberModule
-optimizedUberModuleChecked dataTypes uber =
-  runSupply
-    ( runStepsChecked
-        (optimizerPipeline dataTypes (collectInlinePolicy uber))
-        uber
-    )
+optimizedUberModuleChecked dataTypes uber = runSupply $ runExceptT do
+  let policy = collectInlinePolicy uber
+  settled ←
+    ExceptT
+      (runStepsChecked (settlePhase (optimizerPipeline dataTypes policy)) uber)
+  -- See Note [Derived inline directives]
+  let extended = policy <> derivedInlinePolicy policy settled
+  ExceptT
+    (runStepsChecked (lowerPhase (optimizerPipeline dataTypes extended)) settled)
+
+{- | The optimizer pipeline, split at the directive-derivation point:
+the settle phase brings every binding to the shape
+'derivedInlinePolicy' reads, and the lower phase consumes the extended
+policy. See Note [Derived inline directives] for why the split falls
+exactly there.
+-}
+data OptimizerPhases = OptimizerPhases
+  { settlePhase ∷ [Step]
+  , lowerPhase ∷ [Step]
+  }
 
 {- | The IR optimization pipeline. The first argument is the data-type
 table collected from CoreFn ('collectDataDeclarations'), consulted by
@@ -120,134 +137,139 @@ the exhaustiveness-driven rewrite ('removeUnreachableMatchDefault');
 the second is the inlining policy collected once from the pristine
 module before any pass runs: later rewrites may strip annotations, so
 every directive keys off a name (see Note [Inline annotations and
-inlining heuristics]).
+inlining heuristics]). The result is phase-split so the caller can
+extend the policy with derived directives between the phases
+('OptimizerPhases').
 -}
-optimizerPipeline ∷ DataTypes → InlinePolicy → [Step]
-optimizerPipeline dataTypes policy =
-  [ -- The entry pass (issue #139): establishes the global-uniqueness
-    -- condition (GUC = 'UniqueBinders') that every
-    -- following pass requires and preserves.
-    RunPass uniquifyPass
-  , RunFixpoint "optimize+dce" (optimizePass :| [dcePass])
-  , -- by merging foreign bindings into the main bindings, we can
-    -- unblock even more optimizations, e.g. inline foreign bindings.
-    RunPass mergeForeignsPass
-  , RunFixpoint "optimize+dce-post-merge" (optimizePass :| [dcePass])
-  , -- Split curried bindings into n-ary workers and curried wrappers
-    -- and rewrite the saturated call sites to direct worker calls
-    -- (issue #24) — the early of the pass's two runs (the late one
-    -- closes the pipeline). Runs after the post-merge fixpoint, so
-    -- manifest arities are measured once inlining has settled. See
-    -- Language.PureScript.Backend.IR.Uncurry.
-    RunPass uncurryPass
-  , -- The post-uncurry fixpoint dead-code-eliminates wrappers with no
-    -- remaining references and reduces the n-ary redexes that pasting
-    -- a single-use worker into its one call site produces.
-    RunFixpoint "optimize+dce-post-uncurry" (optimizePass :| [dcePass])
-  , -- Float a Let-bound value down into the single IfThenElse branch that
-    -- uses it (issue #136). Runs after DCE (a dead binding is simply gone,
-    -- never worth sinking) and outside any fixpoint: it preserves every
-    -- free-reference count, so the count-driven inline/DCE decisions stay
-    -- settled. A structural rule could still fire on the moved Let — e.g.
-    -- a sink can leave both branches of an IfThenElse alpha-equivalent
-    -- for removeIfWithEqualBranches — but chasing such second-order
-    -- opportunities is deliberately traded away against re-running the
-    -- whole fixpoint after the pass. Runs before magicDo/flattenDeepBinds
-    -- (which see the final placement of every Let). See
-    -- Language.PureScript.Backend.IR.FloatIn.
-    RunPass floatInPass
-  , -- Magic-do (issue #46) recognises Effect/ST chains by their canonical
-    -- heads (Note [Canonical Effect/ST heads]) and relies on the unique
-    -- naming established by 'uniquifyNames', which it preserves. It runs
-    -- after the optimize fixpoints so dissolution has exposed the
-    -- canonical heads at the use sites; the `local _ =` statements it
-    -- introduces for `discard` are effect runs, which the passes that
-    -- follow leave alone (see 'isEffectRun'). See
-    -- Language.PureScript.Backend.IR.MagicDo.
-    RunPass magicDoPass
-  , -- Budgeted call-site inlining of dictionary methods (issue #180), the
-    -- cure for non-Effect/ST monadic chains that compile to nested closure
-    -- chains. Runs only here, after magicDo has lowered the Effect/ST chains:
-    -- inlining a bind before that would leave magicDo a chain it can no
-    -- longer recognise. The inlined methods' constructor matches then meet
-    -- the case-of-known-constructor folds (#177/#213/#214), collapsing
-    -- Maybe/Either/Writer/State chains into straight-line code. Code growth
-    -- is bounded per paste by 'inlineSizeBudget' and per expression by the
-    -- growth veto (Note [Bounded call-site inlining growth]), which keeps
-    -- a chain whose pastes never collapse from unrolling.
-    --
-    -- Call-pattern specialization (issue #208) rides in the same fixpoint:
-    -- a recursive binding whose recursion passes a known constructor at a
-    -- scrutinized parameter position gets an unboxed specialized copy, and
-    -- the next optimize round's constructor folds collapse the reboxes its
-    -- body carries. Each round mints one specialization layer, so the
-    -- fixpoint provides the bounded iteration a nested accumulator needs;
-    -- the per-binding cap in Language.PureScript.Backend.IR.SpecConstr
-    -- keeps the minting finite.
-    RunFixpoint "specialize+dce" (specializePass :| [dcePass, specConstrPass])
-  , -- CPR worker/wrapper on results (issue #206): split every binding
-    -- whose every return path builds one fixed saturated constructor
-    -- into a worker returning the fields as Lua multiple values plus a
-    -- rebox wrapper, rewriting the let-bound deconstructing sites to
-    -- direct worker calls behind an in-place rebox. Runs after the
-    -- specialize fixpoint — the monadic chains are collapsed and the
-    -- call-pattern specializations are minted, so the constructor-tailed
-    -- candidates and their deconstructing sites are maximal — and before
-    -- shareAccessors/cse/flattenDeepBinds, which must tolerate, but never
-    -- create, the Values/LetValues nodes. See
-    -- Language.PureScript.Backend.IR.Cpr.
-    RunPass cprPass
-  , -- Cancel the reboxes the split planted: floatLetValuesFromLetRhs
-    -- surfaces each one as a let-bound constructor, where the
-    -- known-constructor folds meet the site's eliminating reads and
-    -- the product dissolves; dce then drops the wrappers whose every
-    -- site went to the worker directly. Same members as the fixpoint
-    -- above, so call-pattern specialization keeps firing on shapes the
-    -- cancellation exposes.
-    RunFixpoint
-      "specialize+dce-post-cpr"
-      (specializePass :| [dcePass, specConstrPass])
-  , -- Rebuild sharing for the foreign-accessor reads that dissolution
-    -- and the call-site pastes above duplicated: a read surviving at
-    -- two or more sites is re-bound to its linker name, which stage-2
-    -- promotion then turns into a chunk local (issue #248). Runs after
-    -- the last pass that can multiply reads and before the final
-    -- flattening. See 'shareForeignAccessors'.
-    RunPass shareAccessorsPass
-  , -- Rebuild sharing within one body for the pure repeats the pastes
-    -- above left behind (issue #183): alpha-equivalent effect-free
-    -- subexpressions of a block are hoisted into a shared Let. Runs
-    -- after the last duplicating pass and after share-accessors (so
-    -- accessor reads are already references to top-level names, not
-    -- grabbed per body here), and outside any fixpoint: the Deref tier
-    -- of inlineLocalBindings would paste hoisted projections straight
-    -- back. See Language.PureScript.Backend.IR.CSE.
-    RunPass csePass
-  , -- Flatten the remaining deeply-nested expression trees (issues #104,
-    -- #108): continuation/bind chains of any monad (lambda-lifted
-    -- into $kont helpers) and applicative/flipped-bind application
-    -- spines (A-normalised into $tmp locals). Runs after magicDo (which
-    -- consumes Effect/ST chains, leaving only non-Effect/ST ones) and
-    -- likewise consumes and preserves the unique naming.
-    -- See Language.PureScript.Backend.IR.FlattenDeepBinds.
-    RunPass flattenDeepBindsPass
-  , -- The late uncurry run (issue #200): the same pass again, now that
-    -- the two saturated-site families invisible to the early run exist —
-    -- the effect-run spines magicDo completed (f(a)(b)(run), saturating
-    -- the effect function's manifest chain, thunk parameter included)
-    -- and the saturated-by-construction $kont helpers minted by the
-    -- flattening above. Bindings the early run split are recognised and
-    -- left split (see the Rerun section in
-    -- Language.PureScript.Backend.IR.Uncurry).
-    RunPass uncurryLatePass
-  , -- Drop the wrappers the late run left unreferenced. A single dce
-    -- pass, deliberately not an optimize+dce fixpoint like the early
-    -- run's: optimize's use-once inlining would paste the $kont workers
-    -- (each is called exactly once) back into their call sites round by
-    -- round, re-nesting exactly what flattenDeepBinds just flattened.
-    RunPass dcePass
-  ]
+optimizerPipeline ∷ DataTypes → InlinePolicy → OptimizerPhases
+optimizerPipeline dataTypes policy = OptimizerPhases {settlePhase, lowerPhase}
  where
+  settlePhase =
+    [ -- The entry pass (issue #139): establishes the global-uniqueness
+      -- condition (GUC = 'UniqueBinders') that every
+      -- following pass requires and preserves.
+      RunPass uniquifyPass
+    , RunFixpoint "optimize+dce" (optimizePass :| [dcePass])
+    , -- by merging foreign bindings into the main bindings, we can
+      -- unblock even more optimizations, e.g. inline foreign bindings.
+      RunPass mergeForeignsPass
+    , RunFixpoint "optimize+dce-post-merge" (optimizePass :| [dcePass])
+    ]
+  lowerPhase =
+    [ -- Split curried bindings into n-ary workers and curried wrappers
+      -- and rewrite the saturated call sites to direct worker calls
+      -- (issue #24) — the early of the pass's two runs (the late one
+      -- closes the pipeline). Runs after the post-merge fixpoint, so
+      -- manifest arities are measured once inlining has settled. See
+      -- Language.PureScript.Backend.IR.Uncurry.
+      RunPass uncurryPass
+    , -- The post-uncurry fixpoint dead-code-eliminates wrappers with no
+      -- remaining references and reduces the n-ary redexes that pasting
+      -- a single-use worker into its one call site produces.
+      RunFixpoint "optimize+dce-post-uncurry" (optimizePass :| [dcePass])
+    , -- Float a Let-bound value down into the single IfThenElse branch that
+      -- uses it (issue #136). Runs after DCE (a dead binding is simply gone,
+      -- never worth sinking) and outside any fixpoint: it preserves every
+      -- free-reference count, so the count-driven inline/DCE decisions stay
+      -- settled. A structural rule could still fire on the moved Let — e.g.
+      -- a sink can leave both branches of an IfThenElse alpha-equivalent
+      -- for removeIfWithEqualBranches — but chasing such second-order
+      -- opportunities is deliberately traded away against re-running the
+      -- whole fixpoint after the pass. Runs before magicDo/flattenDeepBinds
+      -- (which see the final placement of every Let). See
+      -- Language.PureScript.Backend.IR.FloatIn.
+      RunPass floatInPass
+    , -- Magic-do (issue #46) recognises Effect/ST chains by their canonical
+      -- heads (Note [Canonical Effect/ST heads]) and relies on the unique
+      -- naming established by 'uniquifyNames', which it preserves. It runs
+      -- after the optimize fixpoints so dissolution has exposed the
+      -- canonical heads at the use sites; the `local _ =` statements it
+      -- introduces for `discard` are effect runs, which the passes that
+      -- follow leave alone (see 'isEffectRun'). See
+      -- Language.PureScript.Backend.IR.MagicDo.
+      RunPass magicDoPass
+    , -- Budgeted call-site inlining of dictionary methods (issue #180), the
+      -- cure for non-Effect/ST monadic chains that compile to nested closure
+      -- chains. Runs only here, after magicDo has lowered the Effect/ST chains:
+      -- inlining a bind before that would leave magicDo a chain it can no
+      -- longer recognise. The inlined methods' constructor matches then meet
+      -- the case-of-known-constructor folds (#177/#213/#214), collapsing
+      -- Maybe/Either/Writer/State chains into straight-line code. Code growth
+      -- is bounded per paste by 'inlineSizeBudget' and per expression by the
+      -- growth veto (Note [Bounded call-site inlining growth]), which keeps
+      -- a chain whose pastes never collapse from unrolling.
+      --
+      -- Call-pattern specialization (issue #208) rides in the same fixpoint:
+      -- a recursive binding whose recursion passes a known constructor at a
+      -- scrutinized parameter position gets an unboxed specialized copy, and
+      -- the next optimize round's constructor folds collapse the reboxes its
+      -- body carries. Each round mints one specialization layer, so the
+      -- fixpoint provides the bounded iteration a nested accumulator needs;
+      -- the per-binding cap in Language.PureScript.Backend.IR.SpecConstr
+      -- keeps the minting finite.
+      RunFixpoint "specialize+dce" (specializePass :| [dcePass, specConstrPass])
+    , -- CPR worker/wrapper on results (issue #206): split every binding
+      -- whose every return path builds one fixed saturated constructor
+      -- into a worker returning the fields as Lua multiple values plus a
+      -- rebox wrapper, rewriting the let-bound deconstructing sites to
+      -- direct worker calls behind an in-place rebox. Runs after the
+      -- specialize fixpoint — the monadic chains are collapsed and the
+      -- call-pattern specializations are minted, so the constructor-tailed
+      -- candidates and their deconstructing sites are maximal — and before
+      -- shareAccessors/cse/flattenDeepBinds, which must tolerate, but never
+      -- create, the Values/LetValues nodes. See
+      -- Language.PureScript.Backend.IR.Cpr.
+      RunPass cprPass
+    , -- Cancel the reboxes the split planted: floatLetValuesFromLetRhs
+      -- surfaces each one as a let-bound constructor, where the
+      -- known-constructor folds meet the site's eliminating reads and
+      -- the product dissolves; dce then drops the wrappers whose every
+      -- site went to the worker directly. Same members as the fixpoint
+      -- above, so call-pattern specialization keeps firing on shapes the
+      -- cancellation exposes.
+      RunFixpoint
+        "specialize+dce-post-cpr"
+        (specializePass :| [dcePass, specConstrPass])
+    , -- Rebuild sharing for the foreign-accessor reads that dissolution
+      -- and the call-site pastes above duplicated: a read surviving at
+      -- two or more sites is re-bound to its linker name, which stage-2
+      -- promotion then turns into a chunk local (issue #248). Runs after
+      -- the last pass that can multiply reads and before the final
+      -- flattening. See 'shareForeignAccessors'.
+      RunPass shareAccessorsPass
+    , -- Rebuild sharing within one body for the pure repeats the pastes
+      -- above left behind (issue #183): alpha-equivalent effect-free
+      -- subexpressions of a block are hoisted into a shared Let. Runs
+      -- after the last duplicating pass and after share-accessors (so
+      -- accessor reads are already references to top-level names, not
+      -- grabbed per body here), and outside any fixpoint: the Deref tier
+      -- of inlineLocalBindings would paste hoisted projections straight
+      -- back. See Language.PureScript.Backend.IR.CSE.
+      RunPass csePass
+    , -- Flatten the remaining deeply-nested expression trees (issues #104,
+      -- #108): continuation/bind chains of any monad (lambda-lifted
+      -- into $kont helpers) and applicative/flipped-bind application
+      -- spines (A-normalised into $tmp locals). Runs after magicDo (which
+      -- consumes Effect/ST chains, leaving only non-Effect/ST ones) and
+      -- likewise consumes and preserves the unique naming.
+      -- See Language.PureScript.Backend.IR.FlattenDeepBinds.
+      RunPass flattenDeepBindsPass
+    , -- The late uncurry run (issue #200): the same pass again, now that
+      -- the two saturated-site families invisible to the early run exist —
+      -- the effect-run spines magicDo completed (f(a)(b)(run), saturating
+      -- the effect function's manifest chain, thunk parameter included)
+      -- and the saturated-by-construction $kont helpers minted by the
+      -- flattening above. Bindings the early run split are recognised and
+      -- left split (see the Rerun section in
+      -- Language.PureScript.Backend.IR.Uncurry).
+      RunPass uncurryLatePass
+    , -- Drop the wrappers the late run left unreferenced. A single dce
+      -- pass, deliberately not an optimize+dce fixpoint like the early
+      -- run's: optimize's use-once inlining would paste the $kont workers
+      -- (each is called exactly once) back into their call sites round by
+      -- round, re-nesting exactly what flattenDeepBinds just flattened.
+      RunPass dcePass
+    ]
   ctorTags ∷ CtorTagSets
   ctorTags = ctorTagSets dataTypes
 
@@ -537,6 +559,87 @@ collectInlinePolicy UberModule {uberModuleBindings, uberModuleForeigns} =
       Let _ _ body → go depth body
       LiteralObject _ props → Just (depth, props)
       _ → Nothing
+
+{- Note [Derived inline directives]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+A specialization binding names a directive-carrying combinator without
+carrying a directive of its own: purs's common-subexpression pass
+floats a repeated dictionary application to a top-level binding like
+@bind = Control.Bind.bind bindStateT@, and a user writes the same shape
+by hand as a top-level partial application. Annotating each such
+binding is busywork the compiler can do itself, because the Arity
+policy composes over application. Let @f@ carry @arity=N@ and let
+@a = f x₁ … xₖ@:
+
+  * k < N: a site applying @N − k@ more arguments to @a@ becomes, once
+    @a@'s right-hand side is pasted there, a site applying at least N
+    arguments to @f@ — exactly a qualifying site of the directive. So
+    @a@ inherits @arity=(N − k)@.
+  * k ≥ N: the right-hand side is itself already a qualifying call of
+    @f@, so every use of @a@ stands for the specialized value and the
+    binding inherits always-inline — the @arity=0@ reading of the same
+    arithmetic.
+
+Pasting a partial application re-evaluates its argument expressions per
+site, exactly as pasting the target at a qualifying non-lambda site
+does ('inlineSaturatedCall'): the explicit directive on the target is
+what licenses the duplication, so no cheapness guard applies to the
+arguments.
+
+The derivation reads the module settled by the post-merge optimize+dce
+fixpoint ('settlePhase'), not the pristine input: a specialization
+referenced once has already dissolved into its use site — deriving for
+it would only pin what the use-once path inlines wholesale — and the
+survivors carry their final shapes. It runs before the uncurry split,
+so a derived arity joins 'uncurryVeto' like an explicit one, and
+before the post-uncurry optimize+dce fixpoint, whose whole-binding
+inlining ('withBinding') performs the always-inline pastes the
+derivation emits; derived arities paste at qualifying call sites in
+the specialize fixpoint exactly like explicit ones.
+
+One left-to-right fold derives transitively and bounds the work: a
+standalone binding references only earlier bindings (the order
+'withBinding' relies on), so a chain of specializations meets each
+target's — possibly itself derived — arity before the alias naming it
+is visited, and every binding is inspected exactly once. Only the
+Arity policy seeds derivation: an @always@ target's bare-Ref alias is
+deliberately kept as its materialization point (issue #171), and a
+@never@ target needs no propagation — its own veto already covers
+every site. An explicit root directive on a specialization is never
+overridden.
+-}
+
+{- | The directives derived from the settled shapes of specialization
+bindings — the extension only, disjoint from the explicit policy it is
+derived against and combined with by the caller.
+See Note [Derived inline directives].
+-}
+derivedInlinePolicy ∷ InlinePolicy → UberModule → InlinePolicy
+derivedInlinePolicy explicit UberModule {uberModuleBindings} =
+  foldl' derive mempty uberModuleBindings
+ where
+  derive ∷ InlinePolicy → Grouping (QName, Exp) → InlinePolicy
+  derive derived = \case
+    Standalone (qname, expr)
+      | not (hasRootDirective qname)
+      , (Ref _ headName, args@(_ : _)) ← unwindApp expr
+      , Just target ← refQName headName
+      , Just arity ←
+          Map.lookup target (policyArity explicit)
+            <|> Map.lookup target (policyArity derived) →
+          derived <> case fromIntegral (length args) of
+            applied
+              | applied >= arity →
+                  mempty {policyAlways = Set.singleton qname}
+              | otherwise →
+                  mempty {policyArity = Map.singleton qname (arity - applied)}
+    _ → derived
+
+  hasRootDirective ∷ QName → Bool
+  hasRootDirective qname =
+    qname `Set.member` policyAlways explicit
+      || qname `Set.member` policyNever explicit
+      || qname `Map.member` policyArity explicit
 
 {- | Names the uncurry pass may not split: rewriting their call sites to
 @$w@ worker calls would hide those sites from the name-keyed policies.

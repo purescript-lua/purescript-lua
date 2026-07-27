@@ -195,9 +195,21 @@ UberModule
         ( LiteralInt Nothing 1 :| [] )
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Golden.DirectiveDerived.Test", qnameName = Name "onePlusTwo"
-        }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "c$298" ) :| [] )
+        { qnameModuleName = ModuleName "Golden.DirectiveDerived.Test", qnameName = Name "apply34"
+        }, AbsN ( Just Never )
+        ( ParamNamed Nothing ( Name "f" ) :| [] )
+        ( AppN Nothing
+          ( AppN Nothing ( Ref Nothing ( Local ( Name "f" ) ) ) ( LiteralInt Nothing 3 :| [] ) )
+          ( LiteralInt Nothing 4 :| [] )
+        )
+      )
+    ], uberModuleForeigns = [], uberModuleExports =
+    [
+      ( Name "combine", Ref Nothing
+        ( Imported ( ModuleName "Golden.DirectiveDerived.Test" ) ( Name "combine" ) )
+      ),
+      ( Name "onePlusTwo", AbsN Nothing
+        ( ParamNamed Nothing ( Name "c$378" ) :| [] )
         ( PrimBinOp Nothing PrimSub
           ( PrimBinOp Nothing PrimSub
             ( PrimBinOp Nothing PrimSub
@@ -240,7 +252,7 @@ UberModule
                                                                                       ( PrimBinOp Nothing PrimSub
                                                                                         ( Ref Nothing
                                                                                           ( Local
-                                                                                            ( Name "c$298" )
+                                                                                            ( Name "c$378" )
                                                                                           )
                                                                                         )
                                                                                         ( LiteralInt Nothing 1 )
@@ -323,23 +335,6 @@ UberModule
           )
           ( LiteralInt Nothing 20 )
         )
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Golden.DirectiveDerived.Test", qnameName = Name "apply34"
-        }, AbsN ( Just Never )
-        ( ParamNamed Nothing ( Name "f" ) :| [] )
-        ( AppN Nothing
-          ( AppN Nothing ( Ref Nothing ( Local ( Name "f" ) ) ) ( LiteralInt Nothing 3 :| [] ) )
-          ( LiteralInt Nothing 4 :| [] )
-        )
-      )
-    ], uberModuleForeigns = [], uberModuleExports =
-    [
-      ( Name "combine", Ref Nothing
-        ( Imported ( ModuleName "Golden.DirectiveDerived.Test" ) ( Name "combine" ) )
-      ),
-      ( Name "onePlusTwo", Ref Nothing
-        ( Imported ( ModuleName "Golden.DirectiveDerived.Test" ) ( Name "onePlusTwo" ) )
       ),
       ( Name "oneOnly", Ref Nothing
         ( Imported ( ModuleName "Golden.DirectiveDerived.Test" ) ( Name "oneOnly" ) )
@@ -356,15 +351,7 @@ UberModule
                 ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
                 ( AppN Nothing
                   ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
-                  ( AppN Nothing
-                    ( Ref Nothing
-                      ( Imported
-                        ( ModuleName "Golden.DirectiveDerived.Test" )
-                        ( Name "onePlusTwo" )
-                      )
-                    )
-                    ( LiteralInt Nothing 100 :| [] ) :| []
-                  ) :| []
+                  ( LiteralInt Nothing ( -140 ) :| [] ) :| []
                 )
               )
               ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
@@ -375,15 +362,7 @@ UberModule
                   ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
                   ( AppN Nothing
                     ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
-                    ( AppN Nothing
-                      ( Ref Nothing
-                        ( Imported
-                          ( ModuleName "Golden.DirectiveDerived.Test" )
-                          ( Name "onePlusTwo" )
-                        )
-                      )
-                      ( LiteralInt Nothing 200 :| [] ) :| []
-                    ) :| []
+                    ( LiteralInt Nothing ( -40 ) :| [] ) :| []
                   )
                 )
                 ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
@@ -393,18 +372,7 @@ UberModule
                   ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
                   ( AppN Nothing
                     ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
-                    ( AppN Nothing
-                      ( AppN Nothing
-                        ( Ref Nothing
-                          ( Imported
-                            ( ModuleName "Golden.DirectiveDerived.Test" )
-                            ( Name "oneOnly" )
-                          )
-                        )
-                        ( LiteralInt Nothing 50 :| [] )
-                      )
-                      ( LiteralInt Nothing 60 :| [] ) :| []
-                    ) :| []
+                    ( LiteralInt Nothing ( -660 ) :| [] ) :| []
                   )
                 )
                 ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )

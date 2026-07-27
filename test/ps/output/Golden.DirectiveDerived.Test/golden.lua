@@ -12,13 +12,10 @@ local Golden_DirectiveDerived_Test_combine = function(a)
   end
 end
 local Golden_DirectiveDerived_Test_oneOnly = Golden_DirectiveDerived_Test_combine(1)
-local Golden_DirectiveDerived_Test_onePlusTwo = function(c_S_0)
-  return c_S_0 - 1 - 1 - 2 - 2 - 1 - 3 - 2 - 4 - 1 - 5 - 2 - 6 - 1 - 7 - 2 - 8 - 1 - 9 - 2 - 10 - 1 - 11 - 2 - 12 - 1 - 13 - 2 - 14 - 1 - 15 - 2 - 16 - 1 - 17 - 2 - 18 - 1 - 19 - 2 - 20
-end
 local Golden_DirectiveDerived_Test_apply34 = function(f) return f(3)(4) end
 return (function()
-  local _ = Effect_Console_log(Data_Show_showIntImpl(Golden_DirectiveDerived_Test_onePlusTwo(100)))()
-  local _ = Effect_Console_log(Data_Show_showIntImpl(Golden_DirectiveDerived_Test_onePlusTwo(200)))()
-  local _ = Effect_Console_log(Data_Show_showIntImpl(Golden_DirectiveDerived_Test_oneOnly(50)(60)))()
+  local _ = Effect_Console_log(Data_Show_showIntImpl(-140))()
+  local _ = Effect_Console_log(Data_Show_showIntImpl(-40))()
+  local _ = Effect_Console_log(Data_Show_showIntImpl(-660))()
   return Effect_Console_log(Data_Show_showIntImpl(Golden_DirectiveDerived_Test_apply34(Golden_DirectiveDerived_Test_oneOnly)))()
 end)()

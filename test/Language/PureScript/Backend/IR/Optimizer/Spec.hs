@@ -3164,7 +3164,7 @@ spec = describe "IR Optimizer" do
         -- bindings built from it.
         combineBody a b c =
           foldr
-            (\v acc → application (application g v) acc)
+            (application . application g)
             c
             (concat (replicate 12 [a, b, c]))
         combineName = QName mainModule (Name "combine")
