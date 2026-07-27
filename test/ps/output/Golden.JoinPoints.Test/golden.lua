@@ -24,19 +24,19 @@ local Golden_JoinPoints_Test_escaping = function(n)
 end
 local Golden_JoinPoints_Test_collatzish = function(n)
   local acc, k
-  if not(n < 100) and n ~= 100 then acc, k = 0, n else acc, k = 1, n + 3 end
+  if n >= 100 and n ~= 100 then acc, k = 0, n else acc, k = 1, n + 3 end
   while true do
-    if not(k < 0) and k ~= 0 then acc, k = acc + 1, k - 2 else return acc end
+    if k >= 0 and k ~= 0 then acc, k = acc + 1, k - 2 else return acc end
   end
 end
 local Golden_JoinPoints_Test_classify = function(n)
   local r
-  if not(n < 0) and n ~= 0 then r = n + 1 else r = 0 - n end
+  if n >= 0 and n ~= 0 then r = n + 1 else r = 0 - n end
   return (r * 10 + r) * 2 - r
 end
 local Golden_JoinPoints_Test_chooseEff = function(n)
   local m
-  if not(n < 0) and n ~= 0 then m = n else m = 0 - n end
+  if n >= 0 and n ~= 0 then m = n else m = 0 - n end
   return Effect_Console_log(Data_Show_showIntImpl(m * 2))
 end
 return (function()

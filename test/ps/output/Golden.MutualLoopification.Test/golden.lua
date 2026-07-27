@@ -102,7 +102,7 @@ local Golden_MutualLoopification_Test_stepSelf_S_w_S_loop = function( _S_sel2
       local acc, n = _S_a5, _S_a6
       if n == 0 then
         return acc
-      elseif not(n < 10) and n ~= 10 then
+      elseif n >= 10 and n ~= 10 then
         _S_sel2, _S_a5, _S_a6 = 1, acc + 10, n - 10
       else
         _S_sel2, _S_a5, _S_a6 = 2, acc, n

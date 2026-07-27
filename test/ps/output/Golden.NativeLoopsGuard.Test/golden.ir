@@ -484,11 +484,9 @@ UberModule
                       ( AbsN Nothing
                         ( ParamNamed Nothing ( Name "v$1" ) :| [] )
                         ( PrimBinOp Nothing PrimAnd
-                          ( PrimNot Nothing
-                            ( PrimBinOp Nothing PrimLt
-                              ( Ref Nothing ( Local ( Name "v$1" ) ) )
-                              ( LiteralInt Nothing 0 )
-                            )
+                          ( PrimBinOp Nothing PrimGe
+                            ( Ref Nothing ( Local ( Name "v$1" ) ) )
+                            ( LiteralInt Nothing 0 )
                           )
                           ( PrimNot Nothing
                             ( Eq Nothing

@@ -80,7 +80,7 @@ local Golden_NativeLoopsST_Test_countDown = function(start)
     local value = Control_Monad_ST_Internal_new(start)()
     do
       local _S_cond0 = Control_Monad_ST_Internal_map_(function(v)
-        return not(v < 0) and v ~= 0
+        return v >= 0 and v ~= 0
       end)(Control_Monad_ST_Internal_read(value))
       while _S_cond0() do
         local _ = Control_Monad_ST_Internal_modifyImpl(function(s_S_2)
