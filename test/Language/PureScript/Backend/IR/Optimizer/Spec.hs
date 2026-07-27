@@ -1,5 +1,6 @@
 module Language.PureScript.Backend.IR.Optimizer.Spec where
 
+import Control.Lens (toListOf)
 import Data.Map qualified as Map
 import Data.Text qualified as Text
 import Hedgehog (PropertyT, annotateShow, diff, evalEither, forAll, (===))
@@ -88,6 +89,7 @@ import Language.PureScript.Backend.IR.Types
   , refLocal
   , reflectCtor
   , setAnn
+  , subexpressions
   , pattern EffectRunArg
   )
 import Language.PureScript.Backend.IR.Uniquify (uniquifyNamesInExpr)
@@ -1670,6 +1672,234 @@ spec = describe "IR Optimizer" do
                 (application (refImported m (Name "pair")) (arrayIndex v 0))
                 (arrayIndex v index)
       unboundLocals (optimizedExpression original) === []
+
+  describe "unpacks let-bound records read only field-wise (#240)" do
+    let m = moduleNameFromString "M"
+        a = PropName "a"
+        b = PropName "b"
+        r = refLocal (Name "r")
+        use = application (refImported m (Name "use"))
+
+        -- An application: re-evaluating it would repeat the work, so it
+        -- is the shape the field-binder must not duplicate.
+        nonTrivial = application (refImported m (Name "g")) (literalInt 1)
+
+        -- The optimized bodies of 'main' after the checked pipeline
+        -- (mirrors the #214/#225 end-to-end tests): 'main' is exported
+        -- twice so it is not itself inlined away.
+        mainMod = moduleNameFromString "Main"
+        collapsedMainBodies body =
+          optimizedUberModuleChecked
+            mempty
+            Linker.UberModule
+              { uberModuleForeigns = []
+              , uberModuleBindings =
+                  [Standalone (QName mainMod (Name "main"), body)]
+              , uberModuleExports =
+                  [ (Name "r1", refImported mainMod (Name "main"))
+                  , (Name "r2", refImported mainMod (Name "main"))
+                  ]
+              }
+            <&> \optimized →
+              [ e
+              | Standalone (QName _ (Name "main"), e) ←
+                  Linker.uberModuleBindings optimized
+              ]
+
+    it "folds scalar field reads through the let to a constant" do
+      let original =
+            let1 (Name "r") (literalObject [(a, literalInt 1), (b, literalInt 2)]) $
+              primBinOp PrimAdd (objectProp r a) (objectProp r b)
+      optimizedExpression original `shouldBe` literalInt 3
+
+    it "binds a field read at several sites once (no duplication)" do
+      -- r's field read twice with a non-trivial value: the field is
+      -- bound to one field-binder read twice, never copied to each site.
+      let original =
+            let1 (Name "r") (literalObject [(a, nonTrivial)]) $
+              application
+                (application (refImported m (Name "pair")) (objectProp r a))
+                (objectProp r a)
+          field = Name "$prop0"
+          expected =
+            let1
+              field
+              nonTrivial
+              ( application
+                  (application (refImported m (Name "pair")) (refLocal field))
+                  (refLocal field)
+              )
+      optimizedExpression original `shouldSatisfy` alphaEq expected
+
+    it "folds an update over an in-place record literal" do
+      -- The shape local inlining leaves behind a used-once record
+      -- binding: the copy folds into one literal, the patched-over
+      -- field's value dropped, never evaluated.
+      let original =
+            use
+              ( objectUpdate
+                  (literalObject [(a, nonTrivial), (b, literalInt 2)])
+                  ((a, literalInt 5) :| [])
+              )
+          expected = use (literalObject [(a, literalInt 5), (b, literalInt 2)])
+      optimizedExpression original `shouldBe` expected
+
+    it "declines an in-place update patching a label the literal lacks" do
+      -- The runtime update only overwrites existing keys, so a foreign
+      -- patch label is ill-typed input: decline rather than reconstruct
+      -- a record with a key the original never had.
+      let original =
+            use
+              ( objectUpdate
+                  (literalObject [(a, literalInt 1)])
+                  ((b, literalInt 2) :| [])
+              )
+      optimizedExpression original `shouldBe` original
+
+    it "reconstructs an update use from the known field set" do
+      -- The update result flows on whole (a direct projection would fold
+      -- by reduceObjectProp alone) and the record is read again, so
+      -- used-once inlining cannot expose the in-place fold: the update
+      -- use is rebuilt as a literal, one allocation instead of an
+      -- allocation plus a runtime copy. Through the checked pipeline —
+      -- the non-trivial field's spent binder awaits DCE — which also
+      -- lints every pass's contract.
+      let original =
+            let1 (Name "r") (literalObject [(a, literalInt 1), (b, nonTrivial)]) $
+              application
+                (application (refImported m (Name "pair")) (objectProp r b))
+                (use (objectUpdate r ((b, literalInt 5) :| [])))
+      mainBodies ← either (fail . show) pure (collapsedMainBodies original)
+      mainBodies
+        `shouldBe` [ application
+                       (application (refImported m (Name "pair")) nonTrivial)
+                       (use (literalObject [(a, literalInt 1), (b, literalInt 5)]))
+                   ]
+
+    it "declines when the binder is read as a whole value" do
+      -- r also flows into a function whole, so dropping the binding
+      -- would dangle the reference; the binding survives untouched.
+      let original =
+            let1 (Name "r") (literalObject [(a, literalInt 1)]) $
+              application
+                (application (refImported m (Name "pair")) (objectProp r a))
+                r
+      optimizedExpression original `shouldBe` original
+
+    it "declines a read at a label the literal lacks" do
+      -- Reads no existing field (ill-typed input): folding it would
+      -- mint a field-binder the literal cannot bind.
+      let original =
+            let1 (Name "r") (literalObject [(a, literalInt 1)]) $
+              application
+                (application (refImported m (Name "pair")) (objectProp r a))
+                (objectProp r b)
+      optimizedExpression original `shouldBe` original
+
+    it "declines an update patching a label the literal lacks" do
+      -- The let-bound twin of the in-place decline; the extra read
+      -- keeps the binding multi-use so nothing else moves the literal.
+      let original =
+            let1 (Name "r") (literalObject [(a, literalInt 1)]) $
+              application
+                (application (refImported m (Name "pair")) (objectProp r a))
+                (use (objectUpdate r ((b, literalInt 2) :| [])))
+      optimizedExpression original `shouldBe` original
+
+    it "unpacks a literal used from a later sibling binding" do
+      -- The defaults pattern: both bindings of the same Let, the second
+      -- updating the first, the body projecting the second. Both tables
+      -- dissolve. Through the checked pipeline — the non-trivial
+      -- field's spent binder awaits DCE.
+      let original =
+            lets
+              ( Standalone (noAnn, Name "r", literalObject [(a, literalInt 1), (b, nonTrivial)])
+                  :| [ Standalone
+                         ( noAnn
+                         , Name "c"
+                         , objectUpdate r ((a, literalInt 2) :| [])
+                         )
+                     ]
+              )
+              (objectProp (refLocal (Name "c")) b)
+      mainBodies ← either (fail . show) pure (collapsedMainBodies original)
+      mainBodies `shouldBe` [nonTrivial]
+
+    it "folds reads of an update-bound record to patch and base" do
+      -- x = y { a = g 1 }: the patched field read twice binds once, the
+      -- unpatched field reads through to the base record, and the
+      -- runtime copy disappears.
+      let y = refLocal (Name "y")
+          x = refLocal (Name "x")
+          original =
+            let1 (Name "x") (objectUpdate y ((a, nonTrivial) :| [])) $
+              primBinOp
+                PrimAdd
+                (objectProp x a)
+                (primBinOp PrimAdd (objectProp x a) (objectProp x b))
+          field = Name "$prop0"
+          expected =
+            let1 field nonTrivial $
+              primBinOp
+                PrimAdd
+                (refLocal field)
+                (primBinOp PrimAdd (refLocal field) (objectProp y b))
+      optimizedExpression original `shouldSatisfy` alphaEq expected
+
+    it "coalesces an update chain onto the base record" do
+      -- x = y { a = 1 } used once as an update base: two runtime copies
+      -- become one, patches merged with the later update winning.
+      let y = refLocal (Name "y")
+          x = refLocal (Name "x")
+          original =
+            let1 (Name "x") (objectUpdate y ((a, literalInt 1) :| [])) $
+              use (objectUpdate x ((b, literalInt 2) :| []))
+          expected =
+            use (objectUpdate y ((a, literalInt 1) :| [(b, literalInt 2)]))
+      optimizedExpression original `shouldBe` expected
+
+    it "declines when the update binder escapes whole" do
+      let y = refLocal (Name "y")
+          x = refLocal (Name "x")
+          original =
+            let1 (Name "x") (objectUpdate y ((a, literalInt 1) :| [])) $
+              application
+                (application (refImported m (Name "pair")) (objectProp x a))
+                x
+      optimizedExpression original `shouldBe` original
+
+    prop "eliminates the allocation without growing the reference multiset" do
+      -- A record literal is never inlined whole (it is an allocation),
+      -- so with it Let-bound and read twice only the unpacking rule can
+      -- drop the table — and it never invents or multiplies a free
+      -- reference. (A countFreeRef check would be vacuous: refs to a
+      -- name its Let still binds are not free.)
+      field ← forAll Gen.scalarExp
+      let original =
+            let1 (Name "r") (literalObject [(a, field), (b, literalInt 2)]) $
+              use (primBinOp PrimAdd (objectProp r a) (objectProp r b))
+          optimized = optimizedExpression original
+      countObjectAllocations optimized === 0
+      Map.isSubmapOfBy (<=) (countFreeRefs optimized) (countFreeRefs original)
+        === True
+
+    prop "folds a whole-flowing update across scalar fields end to end" do
+      -- Through the checked pipeline, so a GUC or scoping violation
+      -- fails here rather than pass silently: the used-once record
+      -- inlines into the update position, the copy folds to a literal,
+      -- and the patched-over field is dropped whatever it was.
+      field ← forAll Gen.scalarExp
+      let original =
+            let1 (Name "r") (literalObject [(a, field)]) $
+              application
+                (refImported mainMod (Name "use"))
+                (objectUpdate r ((a, literalInt 5) :| []))
+      mainBodies ← evalEither (collapsedMainBodies original)
+      mainBodies
+        === [ application
+                (refImported mainMod (Name "use"))
+                (literalObject [(a, literalInt 5)])
+            ]
 
   -- Case-of-case over the IfThenElse decision tree: a boolean-returning
   -- tree consumed in a strict position (an Eq against a literal, or the
@@ -3440,6 +3670,19 @@ wrapInModule e =
 
 let1 ∷ Name → Exp → Exp → Exp
 let1 n e = lets (Standalone (noAnn, n, e) :| [])
+
+{- | Record-table allocations (literals and update copies) anywhere in
+the expression: the quantity scalar replacement is meant to remove.
+-}
+countObjectAllocations ∷ Exp → Int
+countObjectAllocations = go
+ where
+  go e = self e + sum (go <$> toListOf subexpressions e)
+  self ∷ Exp → Int
+  self = \case
+    LiteralObject {} → 1
+    ObjectUpdate {} → 1
+    _ → 0
 
 isRef ∷ Exp → Bool
 isRef = \case

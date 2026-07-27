@@ -10,6 +10,7 @@ import Language.PureScript.Backend.IR.Names
   ( CtorName
   , ModuleName
   , Name (Name)
+  , PropName
   , Qualified (Imported, Local)
   , TyName
   , runModuleName
@@ -226,5 +227,38 @@ hasWholeValueArrayRead name len = go
   go = \case
     ArrayLength _ (Ref _ (Local n)) | n == name → False
     ArrayIndex _ (Ref _ (Local n)) i | n == name, i < len → False
+    Ref _ (Local n) | n == name → True
+    other → any go (toListOf subexpressions other)
+
+{- | The record sibling of 'hasWholeValueRead', for a binder whose
+right-hand side is a record value: whether some @Ref name@ is reached
+other than through a field read or as the base of a record update —
+the two uses field-wise unpacking can fold. Patch expressions of an
+update whose base is the binder are traversed like any other
+subexpression: the binder occurring inside one is its own use.
+
+When the binder's field set is statically known (a manifest literal),
+pass it as @Just labels@: a read at a label outside the set, or an
+update patching one, reaches no existing field — the runtime update
+only overwrites keys the record already has — so either counts as a
+whole-value read, forcing the caller to decline. Such input is
+ill-typed (see Note [IR is assumed well-typed] in
+"Language.PureScript.Backend.IR.Optimizer"); the guard keeps callers
+sound on the non-GUC \/ generated input 'optimizedExpression' also
+runs on. Pass @Nothing@ when the field set is unknown (an update
+right-hand side): any label may exist, so every field read and patch
+is admissible.
+-}
+hasWholeValueObjectRead ∷ Maybe (Set PropName) → Name → Exp → Bool
+hasWholeValueObjectRead knownLabels name = go
+ where
+  labelOk ∷ PropName → Bool
+  labelOk l = maybe True (Set.member l) knownLabels
+
+  go = \case
+    ObjectProp _ (Ref _ (Local n)) l | n == name → not (labelOk l)
+    ObjectUpdate _ (Ref _ (Local n)) patches
+      | n == name →
+          not (all (labelOk . fst) patches) || any (go . snd) patches
     Ref _ (Local n) | n == name → True
     other → any go (toListOf subexpressions other)

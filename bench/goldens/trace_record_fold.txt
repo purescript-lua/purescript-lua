@@ -1,0 +1,15 @@
+spec: record_fold
+runtime: LuaJIT 2.1.1741730670
+workload: n=100000 reps=4 result=15000350000
+aborts (distinct site -- reason):
+  Bench.RecordFold.lua:19 -- NYI: bytecode FNEW
+  Bench.RecordFold.lua:20 -- NYI: bytecode FNEW
+  Bench.RecordFold.lua:28 -- inner loop in root trace
+  Bench.RecordFold.lua:50 -- NYI: bytecode FNEW
+  Bench.RecordFold.lua:51 -- NYI: bytecode FNEW
+bytecode end state (J*=compiled, I*=blacklisted):
+  Bench.RecordFold.lua:17 IFORL
+  Bench.RecordFold.lua:28 JLOOP
+  Bench.RecordFold.lua:49 IFUNCF
+  Bench.RecordFold.lua:50 JFUNCF
+counts: aborts=5 compiled=2 blacklisted=2
