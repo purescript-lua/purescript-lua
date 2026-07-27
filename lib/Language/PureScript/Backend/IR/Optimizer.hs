@@ -1067,6 +1067,7 @@ optimizedExpressionWithPastes ctorTags canon pastes policy env =
         `thenRewrite` reassociateConstants
         `thenRewrite` foldRecordSurgery
         `thenRewrite` reduceObjectProp
+        `thenRewrite` reduceObjectUpdate
         `thenRewrite` reduceArrayRead
         `thenRewrite` sinkProjectionIntoLet
         `thenRewrite` cancelLetValuesOfValues
@@ -1077,6 +1078,8 @@ optimizedExpressionWithPastes ctorTags canon pastes policy env =
         `thenRewrite` reduceKnownCtorRefRead env
         `thenRewrite` propagateKnownCtorThroughLet env
         `thenRewrite` propagateKnownArrayThroughLet
+        `thenRewrite` propagateKnownObjectThroughLet
+        `thenRewrite` propagateObjectUpdateThroughLet
         `thenRewrite` resolveDictionaryProp pastes policy env
         `thenRewrite` inlineAnnotatedProjection policy env
         `thenRewrite` inlineSaturatedCall pastes policy env
@@ -1421,6 +1424,59 @@ reduceObjectProp =
         Just patched → setAnn ann patched
         Nothing → ObjectProp ann obj prop
     _ → Nothing
+
+{- | Folds a record update over a statically-known operand — the
+'reduceObjectProp' sibling for updates, and the shape used-once local
+inlining leaves behind when a record binding's single use is an update
+base (issue #240):
+
+  * over a manifest literal, the copy /is/ the patched literal, so one
+    allocation replaces an allocation plus a runtime copy;
+  * over another update, the two copies coalesce into one with the
+    patch lists merged, the later update winning a contested label.
+
+The runtime update ('Language.PureScript.Backend.Lua.Fixture.objectUpdate')
+copies its operand's keys and only overwrites existing ones, which
+makes both folds exact: a patched-over field's value is dropped, never
+evaluated — the licence 'reduceObjectProp' spells out — and a patch
+label the literal lacks would patch nothing, so the literal arm
+declines rather than reconstruct a record with a key the original
+never had (possible only on ill-typed input, see Note [IR is assumed
+well-typed]). Both arms strictly shrink (two nodes into one), so the
+rule is fixpoint-safe. The result takes the update node's own
+annotation, for the reason spelled out on 'reduceObjectProp'.
+-}
+reduceObjectUpdate ∷ Applicative m ⇒ RewriteRuleM m Ann
+reduceObjectUpdate =
+  pure . \case
+    ObjectUpdate ann (LiteralObject _ props) patches
+      | all ((`elem` map fst props) . fst) patches →
+          Just . LiteralObject ann $
+            [ (label, fromMaybe value (List.lookup label (toList patches)))
+            | (label, value) ← props
+            ]
+    ObjectUpdate ann (ObjectUpdate _ obj earlier) later →
+      Just $ ObjectUpdate ann obj (mergePatches earlier later)
+    _ → Nothing
+
+{- | Merge two patch lists applied in sequence into one: the later list
+wins a contested label in the earlier list's position; its new labels
+append in their own order.
+-}
+mergePatches
+  ∷ NonEmpty (PropName, RawExp ann)
+  → NonEmpty (PropName, RawExp ann)
+  → NonEmpty (PropName, RawExp ann)
+mergePatches earlier later =
+  ( earlier <&> \(label, value) →
+      (label, fromMaybe value (List.lookup label laterList))
+  )
+    `NE.appendList` [ p
+                    | p@(label, _) ← laterList
+                    , label `notElem` toList (fst <$> earlier)
+                    ]
+ where
+  laterList = toList later
 
 {- | Folds array reads over an in-place array literal, the
 'reduceObjectProp' sibling for arrays (issue #225): the length of a
@@ -1934,6 +1990,287 @@ propagateKnownArrayThroughLet = \case
         , Just e ← Map.lookup i freshElements →
             Ref aiAnn (Local e)
       other → over subexpressions go other
+
+{- | The record twin of 'propagateKnownCtorThroughLet' and
+'propagateKnownArrayThroughLet' (issue #240): a 'Standalone' Let
+binding whose right-hand side is a manifest record literal and whose
+binder is used only field-wise — read at a field, or as the base of a
+record update — has its aggregate replaced by scalars, so the table is
+never allocated. Each field an occurrence needs is bound once to a
+fresh field-binder (the field-binder discipline of
+'propagateKnownCtorThroughLet'), in field order, preserving the
+evaluation order of the kept field expressions:
+
+  * a field read becomes its field-binder;
+  * an update use is reconstructed as a single literal over the known
+    field set — patched labels take their patch expressions in place,
+    unpatched labels their field-binders — so neither the record nor
+    its runtime copy is built ('reduceObjectUpdate' spells out why the
+    reconstruction is exact);
+  * the record binding is dropped, its unread fields discarded with
+    the licence 'reduceObjectProp' spells out.
+
+A field value 'isInlinableValue' admits — binder-free and free to
+re-emit — is pasted at its occurrences directly instead of bound, the
+substitution 'inlineLocalBinding' would otherwise perform against the
+binder one step later, minus the spent binding it leaves for DCE.
+
+Unlike its constructor and array siblings, occurrences are folded
+across the trailing sibling groupings as well as the body: Let
+bindings scope sequentially (Note [Sequential scoping of Let
+bindings]), so the record bound by one grouping is typically the
+update base of the next — the defaults pattern
+@let opts = {…}; chosen = opts { … } in …@ — and confining the fold
+to the body would miss it. The field-binders take the record
+binding's position, so they scope over every folded occurrence.
+
+The rule declines when the binder is read as a whole value, read at a
+label the literal lacks, or updated at one — either reaches no
+existing field, so both count as whole-value reads
+('Query.hasWholeValueObjectRead') — and when a preceding sibling
+grouping references the name (impossible under GUC scoping, where
+earlier bindings do not see later binders, but 'optimizedExpression'
+also runs on generated input). Terminates under fixpoint iteration:
+each firing drops the bound literal and every reconstruction replaces
+an update node one-for-one, so the record-node count strictly
+decreases. GUC keeps the fresh field-binders unique and the binder
+resolved by name.
+-}
+propagateKnownObjectThroughLet ∷ RewriteRuleM SupplyM Ann
+propagateKnownObjectThroughLet = \case
+  Let ann groupings body
+    | Just (before, (name, props), after) ←
+        findStandaloneBinding
+          (\case LiteralObject _ props → Just props; _ → Nothing)
+          (toList groupings)
+    , all ((== 0) . countFreeRefGrouping name) before
+    , let targets = body : (groupingExprs =<< after)
+    , sum (countFreeRef (Local name) <$> targets) > 0
+    , let labels = Set.fromList (fst <$> props)
+    , not (any (Query.hasWholeValueObjectRead (Just labels) name) targets) → do
+        let needed = foldMap (neededObjectLabels name labels) targets
+        boundFields ←
+          bindUnlessInlinable
+            "$prop"
+            [(l, e) | (l, e) ← props, l `Set.member` needed]
+        let replacements =
+              Map.fromList
+                [(l, replacement) | (l, replacement, _bind) ← boundFields]
+            foldReads = foldObjectReads name props replacements
+            fieldBinds = [bind | (_l, _rep, Just bind) ← boundFields]
+            after' = fmap (fmap (fmap foldReads)) after
+        pure . Just $ case nonEmpty (before <> fieldBinds <> after') of
+          Nothing → foldReads body
+          Just gs → Let ann gs (foldReads body)
+  _ → pure Nothing
+ where
+  -- The labels whose values the folded occurrences reference: every
+  -- read label, plus — for each update use — the labels its patches do
+  -- not cover (the reconstruction reads those). Unneeded fields bind
+  -- nothing and their expressions are dropped.
+  neededObjectLabels ∷ Name → Set PropName → Exp → Set PropName
+  neededObjectLabels name labels = go
+   where
+    go e = self e <> foldMap go (toListOf subexpressions e)
+    self = \case
+      ObjectProp _ (Ref _ (Local n)) l | n == name → Set.singleton l
+      ObjectUpdate _ (Ref _ (Local n)) ps
+        | n == name →
+            Set.difference labels (Set.fromList (toList (fst <$> ps)))
+      _ → mempty
+
+  foldObjectReads
+    ∷ Name → [(PropName, Exp)] → Map PropName Exp → Exp → Exp
+  foldObjectReads name props replacements = go
+   where
+    go = \case
+      ObjectProp pAnn (Ref _ (Local n)) l
+        | n == name
+        , Just replacement ← Map.lookup l replacements →
+            setAnn pAnn replacement
+      ObjectUpdate uAnn (Ref _ (Local n)) ps
+        | n == name
+        , Just merged ← traverse (mergedField ps) props →
+            LiteralObject uAnn merged
+      other → over subexpressions go other
+
+    -- Total on every occurrence the census admitted: an unpatched
+    -- label is in the needed set by construction, so its replacement
+    -- lookup succeeds.
+    mergedField
+      ∷ NonEmpty (PropName, Exp) → (PropName, Exp) → Maybe (PropName, Exp)
+    mergedField ps (l, _fieldExp) =
+      (l,) <$> case List.lookup l (toList ps) of
+        Just patch → Just (go patch)
+        Nothing → Map.lookup l replacements
+
+{- | The update-bound companion of 'propagateKnownObjectThroughLet': a
+'Standalone' Let binding whose right-hand side is a record update and
+whose binder is used only field-wise. The field set behind an update
+is unknown, so nothing is reconstructed from scratch; instead the
+update's own parts are bound — the base record (only when some
+occurrence still needs it) and each patch expression an occurrence
+reads — and the copy the binding denoted never runs:
+
+  * a read at a patched label becomes that patch's binder;
+  * a read at any other label reads the base record directly — the
+    same reach-through 'reduceObjectProp' performs on an in-place
+    update;
+  * an update use coalesces onto the base with the patch lists
+    merged, the later update winning a contested label
+    ('reduceObjectUpdate' spells out why the merge is exact): two
+    copies become one.
+
+Occurrences are folded across the trailing sibling groupings as well
+as the body, the rule declines on a whole-value use or a
+preceding-sibling reference, and an 'isInlinableValue' base or patch
+expression is pasted directly instead of bound, all for the reasons
+spelled out on 'propagateKnownObjectThroughLet'. The binders keep the
+original evaluation order — base first, then the kept patches in
+patch order; dropped parts are never evaluated, the licence
+'reduceObjectProp' spells out. Terminates under fixpoint iteration:
+each firing drops the bound update node and coalescing replaces
+update nodes one-for-one, so the record-node count strictly
+decreases.
+-}
+propagateObjectUpdateThroughLet ∷ RewriteRuleM SupplyM Ann
+propagateObjectUpdateThroughLet = \case
+  Let ann groupings body
+    | Just (before, (name, (base, patches)), after) ←
+        findStandaloneBinding
+          (\case ObjectUpdate _ base ps → Just (base, ps); _ → Nothing)
+          (toList groupings)
+    , all ((== 0) . countFreeRefGrouping name) before
+    , let targets = body : (groupingExprs =<< after)
+    , sum (countFreeRef (Local name) <$> targets) > 0
+    , not (any (Query.hasWholeValueObjectRead Nothing name) targets) → do
+        let patchedLabels = Set.fromList (toList (fst <$> patches))
+            (needed, Any baseNeeded) =
+              foldMap (neededUpdateParts name patchedLabels) targets
+        (baseRep, baseBinds) ←
+          if not baseNeeded || isInlinableValue base
+            then pure (base, [])
+            else
+              freshName "$rec" <&> \f →
+                (Ref noAnn (Local f), [Standalone (noAnn, f, base)])
+        boundPatches ←
+          bindUnlessInlinable
+            "$prop"
+            [(l, e) | (l, e) ← toList patches, l `Set.member` needed]
+        let replacements =
+              Map.fromList
+                [(l, replacement) | (l, replacement, _bind) ← boundPatches]
+            foldReads = foldUpdateReads name baseRep patches replacements
+            binds = baseBinds <> [bind | (_l, _rep, Just bind) ← boundPatches]
+            after' = fmap (fmap (fmap foldReads)) after
+        pure . Just $ case nonEmpty (before <> binds <> after') of
+          Nothing → foldReads body
+          Just gs → Let ann gs (foldReads body)
+  _ → pure Nothing
+ where
+  -- Which of the update's parts the folded occurrences reference: the
+  -- patch labels that are read directly plus — for each update use —
+  -- the ones its own patches do not override, and whether any
+  -- occurrence still reaches the base record (an unpatched-label read
+  -- or an update use). Unneeded parts bind nothing and their
+  -- expressions are dropped.
+  neededUpdateParts ∷ Name → Set PropName → Exp → (Set PropName, Any)
+  neededUpdateParts name patched = go
+   where
+    go e = self e <> foldMap go (toListOf subexpressions e)
+    self = \case
+      ObjectProp _ (Ref _ (Local n)) l
+        | n == name →
+            if l `Set.member` patched
+              then (Set.singleton l, Any False)
+              else (mempty, Any True)
+      ObjectUpdate _ (Ref _ (Local n)) ps
+        | n == name →
+            ( Set.difference patched (Set.fromList (toList (fst <$> ps)))
+            , Any True
+            )
+      _ → mempty
+
+  foldUpdateReads
+    ∷ Name → Exp → NonEmpty (PropName, Exp) → Map PropName Exp → Exp → Exp
+  foldUpdateReads name baseRep patches replacements = go
+   where
+    go = \case
+      ObjectProp pAnn (Ref _ (Local n)) l
+        | n == name →
+            case Map.lookup l replacements of
+              Just replacement → setAnn pAnn replacement
+              Nothing → ObjectProp pAnn baseRep l
+      ObjectUpdate uAnn (Ref _ (Local n)) ps
+        | n == name
+        , Just merged ← mergedPatches ps →
+            ObjectUpdate uAnn baseRep merged
+      other → over subexpressions go other
+
+    -- Total on every occurrence the census admitted: a patch label
+    -- the use does not override is in the needed set by construction,
+    -- so its replacement lookup succeeds.
+    mergedPatches
+      ∷ NonEmpty (PropName, Exp) → Maybe (NonEmpty (PropName, Exp))
+    mergedPatches ps =
+      (`NE.appendList` newer) <$> traverse earlierValue patches
+     where
+      psList = toList ps
+      earlierValue (l, _patchExp) =
+        (l,) <$> case List.lookup l psList of
+          Just override → Just (go override)
+          Nothing → Map.lookup l replacements
+      newer =
+        [ (l, go p)
+        | (l, p) ← psList
+        , l `notElem` toList (fst <$> patches)
+        ]
+
+{- | The first 'Standalone' binding whose right-hand side the shape
+matcher accepts and that does not reference its own binder — which
+cannot arise under GUC (a Standalone RHS does not see its own binder),
+but 'optimizedExpression' also runs on generated input, and dropping
+such a binding would dangle the copied reference (cf.
+'findCtorBinding') — split out from its siblings.
+-}
+findStandaloneBinding
+  ∷ (Exp → Maybe rhs)
+  → [Grouping (Ann, Name, Exp)]
+  → Maybe
+      ( [Grouping (Ann, Name, Exp)]
+      , (Name, rhs)
+      , [Grouping (Ann, Name, Exp)]
+      )
+findStandaloneBinding match = go []
+ where
+  go _before [] = Nothing
+  go before (grouping : after) = case grouping of
+    Standalone (_bAnn, name, rhs)
+      | Just matched ← match rhs
+      , countFreeRef (Local name) rhs == 0 →
+          Just (reverse before, (name, matched), after)
+    _ → go (grouping : before) after
+
+-- | The right-hand sides of a grouping's bindings.
+groupingExprs ∷ Grouping (ann, Name, RawExp ann) → [RawExp ann]
+groupingExprs g = [e | (_ann, _name, e) ← listGrouping g]
+
+{- | Bind each labelled expression to a fresh binder unless
+'isInlinableValue' admits it — binder-free and free to re-emit, the
+same guard 'inlineLocalBinding' substitutes by — returning per label
+the expression its occurrences fold to (the value itself, or a
+reference to its binder) and the binding to emit, if any.
+-}
+bindUnlessInlinable
+  ∷ Text
+  → [(PropName, Exp)]
+  → SupplyM [(PropName, Exp, Maybe (Grouping (Ann, Name, Exp)))]
+bindUnlessInlinable prefix = traverse \(l, e) →
+  if isInlinableValue e
+    then pure (l, e, Nothing)
+    else
+      freshName prefix <&> \f →
+        (l, Ref noAnn (Local f), Just (Standalone (noAnn, f, e)))
 
 {- | The through-a-reference companion of 'reduceKnownConstructor' — the
 relationship 'resolveDictionaryProp' bears to 'reduceObjectProp'. A
