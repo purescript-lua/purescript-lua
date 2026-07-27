@@ -26,7 +26,7 @@ local Effect_Console_logShow_S_w = function(dictShow, a)
 end
 local Golden_Primops_Test_sumTo_S_w = function(acc, n)
   while true do
-    if not(n < 0) and n ~= 0 then acc, n = acc + n, n - 1 else return acc end
+    if n >= 0 and n ~= 0 then acc, n = acc + n, n - 1 else return acc end
   end
 end
 M.Golden_Primops_Test_sumTo = function(sumTo_S_p1)

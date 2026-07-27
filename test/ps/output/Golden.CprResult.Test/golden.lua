@@ -23,7 +23,7 @@ end
 M.Golden_CprResult_Test_useStep = function(n) return n * 2 + (n + 1) end
 local Golden_CprResult_Test_pair = Data_Tuple_Tuple_S_w(20, 11)
 local Golden_CprResult_Test_branchy_S_r = function(n)
-  if not(n < 0) and n ~= 0 then
+  if n >= 0 and n ~= 0 then
     local b1 = n + 7
     local b2 = b1 + n
     local b3 = b2 - 4

@@ -1234,15 +1234,48 @@ foldPrimBinOp op l r = case (op, l, r) of
   isFinite ∷ Double → Bool
   isFinite d = not (isNaN d || isInfinite d)
 
-{- | Fold logical @not@ over a boolean literal, and eliminate a double
-negation (@not (not e)@ ⟶ @e@, sound since @e@ is a 'Bool'). See
-Note [IR primops].
+{- | Fold logical @not@ over a boolean literal, eliminate a double
+negation (@not (not e)@ ⟶ @e@, sound since @e@ is a 'Bool'), and push
+@not@ through an ordering comparison to its complement
+(@not (a < b)@ ⟶ @a >= b@, issue #238). See Note [IR primops].
+
+The complement flip is exact iff Lua orders the compared domain
+totally, and a literal operand of a NaN-free kind is the witness: an
+Int, Char, or String literal pins both operands' type (Note [IR is
+assumed well-typed]), Int values are integral doubles, and Lua's
+string order is total for any byte content — the flip needs totality
+only, so unlike the constant fold it covers non-ASCII chars. A Float
+literal is no witness: the other operand can be NaN at runtime, where
+every Lua comparison is false — @not (NaN < b)@ is true while Lua's
+@NaN >= b@ is false — and the wrapped form is exactly PureScript's
+@>=@ on Number, which must be true there (@ordNumberImpl@ maps NaN to
+@GT@). Two non-literal operands are likewise unwitnessed and stay
+wrapped.
 -}
 foldPrimNot ∷ Exp → Maybe Exp
 foldPrimNot = \case
   LiteralBool _ b → Just (literalBool (not b))
   PrimNot _ e → Just e
+  PrimBinOp ann op a b
+    | Just flipped ← complementOrdering op
+    , isTotalOrderWitness a || isTotalOrderWitness b →
+        Just (PrimBinOp ann flipped a b)
   _ → Nothing
+ where
+  complementOrdering ∷ PrimOp → Maybe PrimOp
+  complementOrdering = \case
+    PrimLt → Just PrimGe
+    PrimLe → Just PrimGt
+    PrimGt → Just PrimLe
+    PrimGe → Just PrimLt
+    _ → Nothing
+
+  isTotalOrderWitness ∷ Exp → Bool
+  isTotalOrderWitness = \case
+    LiteralInt {} → True
+    LiteralChar {} → True
+    LiteralString {} → True
+    _ → False
 
 {- | Fold an equality of two scalar literals, or 'Nothing' when either
 side is not a scalar literal. Two literals of different kinds also

@@ -131,11 +131,9 @@ UberModule
                 ( ParamNamed Nothing ( Name "acc" ) :| [ ParamNamed Nothing ( Name "k" ) ] )
                 ( IfThenElse Nothing
                   ( PrimBinOp Nothing PrimAnd
-                    ( PrimNot Nothing
-                      ( PrimBinOp Nothing PrimLt
-                        ( Ref Nothing ( Local ( Name "k" ) ) )
-                        ( LiteralInt Nothing 0 )
-                      )
+                    ( PrimBinOp Nothing PrimGe
+                      ( Ref Nothing ( Local ( Name "k" ) ) )
+                      ( LiteralInt Nothing 0 )
                     )
                     ( PrimNot Nothing
                       ( Eq Nothing ( Ref Nothing ( Local ( Name "k" ) ) ) ( LiteralInt Nothing 0 ) )
@@ -159,11 +157,9 @@ UberModule
           )
           ( IfThenElse Nothing
             ( PrimBinOp Nothing PrimAnd
-              ( PrimNot Nothing
-                ( PrimBinOp Nothing PrimLt
-                  ( Ref Nothing ( Local ( Name "n" ) ) )
-                  ( LiteralInt Nothing 100 )
-                )
+              ( PrimBinOp Nothing PrimGe
+                ( Ref Nothing ( Local ( Name "n" ) ) )
+                ( LiteralInt Nothing 100 )
               )
               ( PrimNot Nothing
                 ( Eq Nothing ( Ref Nothing ( Local ( Name "n" ) ) ) ( LiteralInt Nothing 100 ) )
@@ -210,11 +206,9 @@ UberModule
           )
           ( IfThenElse Nothing
             ( PrimBinOp Nothing PrimAnd
-              ( PrimNot Nothing
-                ( PrimBinOp Nothing PrimLt
-                  ( Ref Nothing ( Local ( Name "n" ) ) )
-                  ( LiteralInt Nothing 0 )
-                )
+              ( PrimBinOp Nothing PrimGe
+                ( Ref Nothing ( Local ( Name "n" ) ) )
+                ( LiteralInt Nothing 0 )
               )
               ( PrimNot Nothing
                 ( Eq Nothing ( Ref Nothing ( Local ( Name "n" ) ) ) ( LiteralInt Nothing 0 ) )
@@ -259,11 +253,9 @@ UberModule
           )
           ( IfThenElse Nothing
             ( PrimBinOp Nothing PrimAnd
-              ( PrimNot Nothing
-                ( PrimBinOp Nothing PrimLt
-                  ( Ref Nothing ( Local ( Name "n" ) ) )
-                  ( LiteralInt Nothing 0 )
-                )
+              ( PrimBinOp Nothing PrimGe
+                ( Ref Nothing ( Local ( Name "n" ) ) )
+                ( LiteralInt Nothing 0 )
               )
               ( PrimNot Nothing
                 ( Eq Nothing ( Ref Nothing ( Local ( Name "n" ) ) ) ( LiteralInt Nothing 0 ) )

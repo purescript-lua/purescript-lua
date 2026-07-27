@@ -125,7 +125,7 @@ return (function()
   }, Effect_Console_log)()
   local r_S_0 = Effect_Ref_foreign._new(3)()
   local _ = Golden_NativeLoopsGuard_Test_whileE_S_w(Effect_functorEffect.map(function( v_S_1 )
-    return not(v_S_1 < 0) and v_S_1 ~= 0
+    return v_S_1 >= 0 and v_S_1 ~= 0
   end)(Effect_Ref_read(r_S_0)), function()
     local n_S_0 = Effect_Ref_read(r_S_0)()
     local _ = Effect_Console_log(Data_Show_showIntImpl(n_S_0))()

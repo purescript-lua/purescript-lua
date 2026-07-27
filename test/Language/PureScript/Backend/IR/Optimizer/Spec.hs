@@ -1314,6 +1314,59 @@ spec = describe "IR Optimizer" do
       let original = ifThenElse p r (refLocal (Name "s"))
       optimizedExpression original `shouldBe` original
 
+  -- The complement flip is exact only over a domain Lua orders
+  -- totally; a literal operand of a NaN-free kind witnesses that (see
+  -- 'foldPrimNot').
+  describe "pushes not through a total-order comparison (#238)" do
+    let x = refLocal (Name "x")
+
+    it "flips each ordering to its complement (int literal witness)" do
+      optimizedExpression (primNot (primBinOp PrimLt x (literalInt 3)))
+        `shouldBe` primBinOp PrimGe x (literalInt 3)
+      optimizedExpression (primNot (primBinOp PrimLe x (literalInt 3)))
+        `shouldBe` primBinOp PrimGt x (literalInt 3)
+      optimizedExpression (primNot (primBinOp PrimGt x (literalInt 3)))
+        `shouldBe` primBinOp PrimLe x (literalInt 3)
+      optimizedExpression (primNot (primBinOp PrimGe x (literalInt 3)))
+        `shouldBe` primBinOp PrimLt x (literalInt 3)
+
+    it "accepts the witness on either side" do
+      optimizedExpression (primNot (primBinOp PrimLt (literalInt 0) x))
+        `shouldBe` primBinOp PrimGe (literalInt 0) x
+
+    it "accepts a char or string literal witness" do
+      optimizedExpression (primNot (primBinOp PrimLt x (literalChar 'a')))
+        `shouldBe` primBinOp PrimGe x (literalChar 'a')
+      optimizedExpression (primNot (primBinOp PrimLt x (literalString "a")))
+        `shouldBe` primBinOp PrimGe x (literalString "a")
+
+    it "flips on a non-ASCII char literal (totality, not order)" do
+      -- The constant fold declines non-ASCII chars (bytes vs 'Text'
+      -- order), but the flip needs only totality of Lua's string
+      -- order, which any byte content satisfies.
+      optimizedExpression (primNot (primBinOp PrimLe x (literalChar 'é')))
+        `shouldBe` primBinOp PrimGt x (literalChar 'é')
+
+    it "keeps not over an unwitnessed comparison (possible NaN)" do
+      -- Two variables can be Numbers: not (x < y) is true when either
+      -- operand is NaN, while x >= y is false — and PureScript's >= on
+      -- Number requires the former (compare NaN y is GT).
+      let original = primNot (primBinOp PrimLt x (refLocal (Name "y")))
+      optimizedExpression original `shouldBe` original
+
+    it "keeps not over a float-literal comparison (possible NaN)" do
+      let original = primNot (primBinOp PrimLt x (literalFloat 1.5))
+      optimizedExpression original `shouldBe` original
+
+    it "collapses if (x < 0) then False else r to x >= 0 and r" do
+      -- The residual a > comparison leaves once its Ordering decision
+      -- tree folds: the half-literal collapse builds not (x < 0), and
+      -- the flip finishes it in the same pass.
+      let r = refLocal (Name "r")
+      optimizedExpression
+        (ifThenElse (primBinOp PrimLt x (literalInt 0)) (literalBool False) r)
+        `shouldBe` primBinOp PrimAnd (primBinOp PrimGe x (literalInt 0)) r
+
   -- A pattern match on a Boolean compiles to a three-way if with a
   -- synthesized default: the scrutinee is re-tested behind the first
   -- branch (`false == a`) and the default is unreachable, since
@@ -1645,9 +1698,14 @@ spec = describe "IR Optimizer" do
     it "collapses a GT comparison to a flat boolean expression" do
       -- Two leaves fold to False and one to True, so the collapsed tree
       -- is a half-literal if; the and/or fold then flattens it, leaving
-      -- no decision tree in expression position at all.
+      -- no decision tree in expression position at all. The negated
+      -- n < 0 flips to its complement (#238) — the int literal
+      -- witnesses a total order.
       optimizedExpression (eq gt orderingTree)
-        `shouldBe` primBinOp PrimAnd (primNot isNeg) (primNot isZero)
+        `shouldBe` primBinOp
+          PrimAnd
+          (primBinOp PrimGe n (literalInt 0))
+          (primNot isZero)
 
     it "leaves the comparison alone when a leaf cannot fold" do
       -- A non-literal leaf would survive as a residual comparison, so

@@ -39,7 +39,7 @@ end
 local Golden_Loopification_Test_mc91
 Golden_Loopification_Test_mc91 = function(n)
   while true do
-    if not(n < 100) and n ~= 100 then
+    if n >= 100 and n ~= 100 then
       return n - 10
     else
       n = Golden_Loopification_Test_mc91(n + 11)
@@ -47,7 +47,7 @@ Golden_Loopification_Test_mc91 = function(n)
   end
 end
 local Golden_Loopification_Test_countdown = function(n)
-  while true do if not(n < 0) and n ~= 0 then n = n - 1 else return 0 end end
+  while true do if n >= 0 and n ~= 0 then n = n - 1 else return 0 end end
 end
 local Golden_Loopification_Test_countDrop_S_w = function(n)
   while true do if n == 0 then return 0 else n = n - 1 end end

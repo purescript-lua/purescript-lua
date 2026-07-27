@@ -130,11 +130,9 @@ UberModule
         ( ParamNamed Nothing ( Name "n" ) :| [] )
         ( IfThenElse Nothing
           ( PrimBinOp Nothing PrimAnd
-            ( PrimNot Nothing
-              ( PrimBinOp Nothing PrimLt
-                ( Ref Nothing ( Local ( Name "n" ) ) )
-                ( LiteralInt Nothing 0 )
-              )
+            ( PrimBinOp Nothing PrimGe
+              ( Ref Nothing ( Local ( Name "n" ) ) )
+              ( LiteralInt Nothing 0 )
             )
             ( PrimNot Nothing
               ( Eq Nothing ( Ref Nothing ( Local ( Name "n" ) ) ) ( LiteralInt Nothing 0 ) )
