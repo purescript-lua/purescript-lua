@@ -1,0 +1,371 @@
+UberModule
+  { uberModuleBindings =
+    [ Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Show", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Data.Show" ) ".spago/p/prelude/5718c84fdde6247749cb053e816df696c30fe691/src/Data/Show.purs"
+        [ ( Nothing, Name "showIntImpl" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Effect.Console" ) ".spago/p/console/f82835a0b873aafe6bd7b14dd30cc150553d4ab9/src/Effect/Console.purs"
+        [ ( Nothing, Name "log" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Semiring", qnameName = Name "semiringInt"
+        }, LiteralObject Nothing
+        [
+          ( PropName "add", AbsN Nothing
+            ( ParamNamed Nothing ( Name "x$193" ) :| [] )
+            ( AbsN Nothing
+              ( ParamNamed Nothing ( Name "y$194" ) :| [] )
+              ( PrimBinOp Nothing PrimAdd
+                ( Ref Nothing ( Local ( Name "x$193" ) ) )
+                ( Ref Nothing ( Local ( Name "y$194" ) ) )
+              )
+            )
+          ),
+          ( PropName "zero", LiteralInt Nothing 0 ),
+          ( PropName "mul", AbsN Nothing
+            ( ParamNamed Nothing ( Name "x$191" ) :| [] )
+            ( AbsN Nothing
+              ( ParamNamed Nothing ( Name "y$192" ) :| [] )
+              ( PrimBinOp Nothing PrimMul
+                ( Ref Nothing ( Local ( Name "x$191" ) ) )
+                ( Ref Nothing ( Local ( Name "y$192" ) ) )
+              )
+            )
+          ),
+          ( PropName "one", LiteralInt Nothing 1 )
+        ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Ring", qnameName = Name "sub" }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "dict" ) :| [] )
+        ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) ) ( PropName "sub" ) )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Ring", qnameName = Name "ringInt"
+        }, LiteralObject Nothing
+        [
+          ( PropName "sub", AbsN Nothing
+            ( ParamNamed Nothing ( Name "x$189" ) :| [] )
+            ( AbsN Nothing
+              ( ParamNamed Nothing ( Name "y$190" ) :| [] )
+              ( PrimBinOp Nothing PrimSub
+                ( Ref Nothing ( Local ( Name "x$189" ) ) )
+                ( Ref Nothing ( Local ( Name "y$190" ) ) )
+              )
+            )
+          ),
+          ( PropName "Semiring0", AbsN Nothing
+            ( ParamUnused Nothing :| [] )
+            ( Ref Nothing ( Imported ( ModuleName "Data.Semiring" ) ( Name "semiringInt" ) ) )
+          )
+        ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.ScalarReplacement.Test", qnameName = Name "logShow"
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "a$2" ) :| [] )
+        ( AppN Nothing
+          ( ObjectProp Nothing
+            ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
+            ( PropName "log" )
+          )
+          ( AppN Nothing
+            ( ObjectProp Nothing
+              ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
+              ( PropName "showIntImpl" )
+            )
+            ( Ref Nothing ( Local ( Name "a$2" ) ) :| [] ) :| []
+          )
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.ScalarReplacement.Test", qnameName = Name "wholeValue"
+        }, AbsN ( Just Never )
+        ( ParamNamed Nothing ( Name "n" ) :| [] )
+        ( Let Nothing
+          ( Standalone
+            ( Nothing, Name "r", LiteralObject Nothing
+              [
+                ( PropName "a", Ref Nothing ( Local ( Name "n" ) ) ),
+                ( PropName "b", PrimBinOp Nothing PrimAdd
+                  ( Ref Nothing ( Local ( Name "n" ) ) )
+                  ( LiteralInt Nothing 1 )
+                )
+              ]
+            ) :|
+            [ Standalone
+              ( Nothing, Name "s", IfThenElse Nothing
+                ( PrimBinOp Nothing PrimAnd
+                  ( PrimBinOp Nothing PrimGe
+                    ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "r" ) ) ) ( PropName "a" ) )
+                    ( LiteralInt Nothing 0 )
+                  )
+                  ( PrimNot Nothing
+                    ( Eq Nothing
+                      ( ObjectProp Nothing
+                        ( Ref Nothing ( Local ( Name "r" ) ) )
+                        ( PropName "a" )
+                      )
+                      ( LiteralInt Nothing 0 )
+                    )
+                  )
+                )
+                ( Ref Nothing ( Local ( Name "r" ) ) )
+                ( ObjectUpdate Nothing
+                  ( Ref Nothing ( Local ( Name "r" ) ) )
+                  (
+                    ( PropName "a", PrimBinOp Nothing PrimSub
+                      ( LiteralInt Nothing 0 )
+                      ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "r" ) ) ) ( PropName "a" ) )
+                    ) :| []
+                  )
+                )
+              )
+            ]
+          )
+          ( PrimBinOp Nothing PrimAdd
+            ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "s" ) ) ) ( PropName "a" ) )
+            ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "s" ) ) ) ( PropName "b" ) )
+          )
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.ScalarReplacement.Test", qnameName = Name "fieldwise"
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "n" ) :| [] )
+        ( Let Nothing
+          ( Standalone
+            ( Nothing, Name "r", LiteralObject Nothing
+              [
+                ( PropName "width", PrimBinOp Nothing PrimAdd
+                  ( Ref Nothing ( Local ( Name "n" ) ) )
+                  ( LiteralInt Nothing 1 )
+                ),
+                ( PropName "height", PrimBinOp Nothing PrimMul
+                  ( Ref Nothing ( Local ( Name "n" ) ) )
+                  ( LiteralInt Nothing 2 )
+                )
+              ]
+            ) :| []
+          )
+          ( PrimBinOp Nothing PrimAdd
+            ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "r" ) ) ) ( PropName "width" ) )
+            ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "r" ) ) ) ( PropName "height" ) )
+          )
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.ScalarReplacement.Test", qnameName = Name "defaults"
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "n" ) :| [] )
+        ( Let Nothing
+          ( Standalone
+            ( Nothing, Name "opts", LiteralObject Nothing
+              [
+                ( PropName "verbose", LiteralInt Nothing 1 ),
+                ( PropName "level", Ref Nothing ( Local ( Name "n" ) ) )
+              ]
+            ) :|
+            [ Standalone
+              ( Nothing, Name "chosen", ObjectUpdate Nothing
+                ( Ref Nothing ( Local ( Name "opts" ) ) )
+                ( ( PropName "verbose", LiteralInt Nothing 2 ) :| [] )
+              )
+            ]
+          )
+          ( PrimBinOp Nothing PrimAdd
+            ( PrimBinOp Nothing PrimAdd
+              ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "opts" ) ) ) ( PropName "level" ) )
+              ( ObjectProp Nothing
+                ( Ref Nothing ( Local ( Name "chosen" ) ) )
+                ( PropName "verbose" )
+              )
+            )
+            ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "chosen" ) ) ) ( PropName "level" ) )
+          )
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.ScalarReplacement.Test", qnameName = Name "chained$w"
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "a" ) :| [ ParamNamed Nothing ( Name "b" ) ] )
+        ( Let Nothing
+          ( Standalone
+            ( Nothing, Name "r0", LiteralObject Nothing
+              [
+                ( PropName "x", Ref Nothing ( Local ( Name "a" ) ) ),
+                ( PropName "y", LiteralInt Nothing 0 ),
+                ( PropName "z", LiteralInt Nothing 0 )
+              ]
+            ) :|
+            [ Standalone
+              ( Nothing, Name "r1", ObjectUpdate Nothing
+                ( Ref Nothing ( Local ( Name "r0" ) ) )
+                ( ( PropName "y", Ref Nothing ( Local ( Name "b" ) ) ) :| [] )
+              ), Standalone
+              ( Nothing, Name "r2", ObjectUpdate Nothing
+                ( Ref Nothing ( Local ( Name "r1" ) ) )
+                (
+                  ( PropName "z", PrimBinOp Nothing PrimAdd
+                    ( Ref Nothing ( Local ( Name "a" ) ) )
+                    ( Ref Nothing ( Local ( Name "b" ) ) )
+                  ) :| []
+                )
+              )
+            ]
+          )
+          ( PrimBinOp Nothing PrimAdd
+            ( PrimBinOp Nothing PrimAdd
+              ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "r2" ) ) ) ( PropName "x" ) )
+              ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "r2" ) ) ) ( PropName "y" ) )
+            )
+            ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "r2" ) ) ) ( PropName "z" ) )
+          )
+        )
+      )
+    ], uberModuleForeigns = [], uberModuleExports =
+    [
+      ( Name "fieldwise", Ref Nothing
+        ( Imported ( ModuleName "Golden.ScalarReplacement.Test" ) ( Name "fieldwise" ) )
+      ),
+      ( Name "defaults", Ref Nothing
+        ( Imported ( ModuleName "Golden.ScalarReplacement.Test" ) ( Name "defaults" ) )
+      ),
+      ( Name "chained", AbsN Nothing
+        ( ParamNamed Nothing ( Name "chained$p1$229" ) :| [] )
+        ( AbsN Nothing
+          ( ParamNamed Nothing ( Name "chained$p2$230" ) :| [] )
+          ( AppN Nothing
+            ( Ref Nothing
+              ( Imported ( ModuleName "Golden.ScalarReplacement.Test" ) ( Name "chained$w" ) )
+            )
+            ( Ref Nothing
+              ( Local ( Name "chained$p1$229" ) ) :|
+              [ Ref Nothing ( Local ( Name "chained$p2$230" ) ) ]
+            )
+          )
+        )
+      ),
+      ( Name "wholeValue", Ref Nothing
+        ( Imported ( ModuleName "Golden.ScalarReplacement.Test" ) ( Name "wholeValue" ) )
+      ),
+      ( Name "main", AbsN Nothing
+        ( ParamUnused Nothing :| [] )
+        ( Let Nothing
+          ( Standalone
+            ( Nothing, Name "_", AppN Nothing
+              ( AppN Nothing
+                ( Ref Nothing
+                  ( Imported ( ModuleName "Golden.ScalarReplacement.Test" ) ( Name "logShow" ) )
+                )
+                ( AppN Nothing
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Golden.ScalarReplacement.Test" ) ( Name "fieldwise" ) )
+                  )
+                  ( LiteralInt Nothing 10 :| [] ) :| []
+                )
+              )
+              ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+            ) :|
+            [ Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Golden.ScalarReplacement.Test" ) ( Name "logShow" ) )
+                  )
+                  ( AppN Nothing
+                    ( Ref Nothing
+                      ( Imported
+                        ( ModuleName "Golden.ScalarReplacement.Test" )
+                        ( Name "defaults" )
+                      )
+                    )
+                    ( LiteralInt Nothing 5 :| [] ) :| []
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              ), Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Golden.ScalarReplacement.Test" ) ( Name "logShow" ) )
+                  )
+                  ( AppN Nothing
+                    ( Ref Nothing
+                      ( Imported
+                        ( ModuleName "Golden.ScalarReplacement.Test" )
+                        ( Name "chained$w" )
+                      )
+                    )
+                    ( LiteralInt Nothing 3 :| [ LiteralInt Nothing 4 ] ) :| []
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              ), Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Golden.ScalarReplacement.Test" ) ( Name "logShow" ) )
+                  )
+                  ( AppN Nothing
+                    ( Ref Nothing
+                      ( Imported
+                        ( ModuleName "Golden.ScalarReplacement.Test" )
+                        ( Name "wholeValue" )
+                      )
+                    )
+                    ( LiteralInt Nothing 5 :| [] ) :| []
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              )
+            ]
+          )
+          ( AppN Nothing
+            ( AppN Nothing
+              ( Ref Nothing
+                ( Imported ( ModuleName "Golden.ScalarReplacement.Test" ) ( Name "logShow" ) )
+              )
+              ( AppN Nothing
+                ( Ref Nothing
+                  ( Imported ( ModuleName "Golden.ScalarReplacement.Test" ) ( Name "wholeValue" ) )
+                )
+                ( AppN Nothing
+                  ( AppN Nothing
+                    ( AppN Nothing
+                      ( Ref Nothing ( Imported ( ModuleName "Data.Ring" ) ( Name "sub" ) ) )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Data.Ring" ) ( Name "ringInt" ) ) :| []
+                      )
+                    )
+                    ( ObjectProp Nothing
+                      ( AppN Nothing
+                        ( ObjectProp Nothing
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Data.Ring" ) ( Name "ringInt" ) )
+                          )
+                          ( PropName "Semiring0" )
+                        )
+                        ( Ref Nothing
+                          ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| []
+                        )
+                      )
+                      ( PropName "zero" ) :| []
+                    )
+                  )
+                  ( LiteralInt Nothing 3 :| [] ) :| []
+                ) :| []
+              )
+            )
+            ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+          )
+        )
+      )
+    ]
+  }
