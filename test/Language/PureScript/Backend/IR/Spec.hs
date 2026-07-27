@@ -711,6 +711,76 @@ spec = describe "IR representation" do
                     )
               )
 
+      it "tests the column with fewer distinct patterns first" do
+        {-
+
+        Five clauses over two columns; every clause tests both columns
+        (equal neededness), but column 1 carries four distinct tests
+        ('a'/'b'/'c'/'d') while column 2 carries two ('p'/'q'):
+
+        case 'x', 'y' of
+          'a', 'p' -> 1
+          'b', 'p' -> 2
+          'c', 'p' -> 3
+          'd', 'p' -> 4
+          'a', 'q' -> 5
+
+        Testing column 2 first retires it after one test per branch and
+        the column-1 chain follows once per outcome — 8 tests.  Testing
+        column 1 first re-tests column 2 inside every branch of the
+        four-way chain — 9 tests.
+
+        -}
+        representedCase
+          [cfnCharE 'x', cfnCharE 'y']
+          [ Cfn.CaseAlternative
+              { caseAlternativeBinders =
+                  [cfnLitB (cfnCharL c1), cfnLitB (cfnCharL c2)]
+              , caseAlternativeResult = Right $ cfnInt r
+              }
+          | (c1, c2, r) ←
+              [ ('a', 'p', 1)
+              , ('b', 'p', 2)
+              , ('c', 'p', 3)
+              , ('d', 'p', 4)
+              , ('a', 'q', 5)
+              ]
+          ]
+          >>= ( `shouldBe`
+                  ifThenElse
+                    (literalChar 'p' `eq` literalChar 'y')
+                    ( ifThenElse
+                        (literalChar 'a' `eq` literalChar 'x')
+                        (literalInt 1)
+                        ( ifThenElse
+                            (literalChar 'b' `eq` literalChar 'x')
+                            (literalInt 2)
+                            ( ifThenElse
+                                (literalChar 'c' `eq` literalChar 'x')
+                                (literalInt 3)
+                                ( ifThenElse
+                                    (literalChar 'd' `eq` literalChar 'x')
+                                    (literalInt 4)
+                                    (exception "No patterns matched")
+                                )
+                            )
+                        )
+                    )
+                    ( ifThenElse
+                        (literalChar 'd' `eq` literalChar 'x')
+                        (exception "No patterns matched")
+                        ( ifThenElse
+                            (literalChar 'a' `eq` literalChar 'x')
+                            ( ifThenElse
+                                (literalChar 'q' `eq` literalChar 'y')
+                                (literalInt 5)
+                                (exception "No patterns matched")
+                            )
+                            (exception "No patterns matched")
+                        )
+                    )
+              )
+
   describe "collectDataDeclarations" do
     it "classifies data types regardless of constructor order" do
       let cfnCtor tyName ctorName =

@@ -29,7 +29,7 @@ import Language.PureScript.PSString
   , decodeString
   , decodeStringEscaping
   )
-import Relude.Extra (toFst)
+import Relude.Extra (minimumOn1)
 import Text.Megaparsec qualified as Megaparsec
 import Text.Pretty.Simple (pShow)
 import Text.Show (Show (..))
@@ -544,9 +544,16 @@ the shared binding each use would re-emit (and the codegen re-evaluate) the
 whole expression. String, array, and object scrutinees are bound too.
 
 Column-selection heuristic ('matchChosenByHeuristic'): when a clause has
-several outstanding matches, pick the one shared by the most other clauses
-('countAffectedClauses'). Testing a shared sub-value first lets one test serve
-many clauses, which keeps the tree small.
+several outstanding matches, the column to test next (a column is a focused
+sub-value: scrutinee plus 'stepsToFocus') is chosen by Maranget's pbaN
+composite ("Compiling Pattern Matching to Good Decision Trees", ML'08),
+adapted to this clause-per-row representation. Maximise p, the number of
+consecutive clauses starting from the current one that test the column — a
+test every following clause needs cannot be wasted; break ties by minimal
+b, the number of distinct patterns tested on the column across all
+remaining clauses — a column with fewer distinct tests is retired sooner;
+then by minimal a, the number of sub-tests those patterns expose once
+passed — the cheaper look-ahead; finally leftmost (N).
 
 Match-history pruning ('MatchHistory'): every test emitted on a given
 scrutinee — a constructor tag, a literal equality, an array length — is
@@ -690,29 +697,42 @@ matchChosenByHeuristic thisClause otherClauses =
   case clauseMatches thisClause of
     [] → Nothing
     [match] → Just (match, thisClause {clauseMatches = []})
-    matches →
-      -- select a match that is present in the maximum number of other clauses
-      sortOn
-        (Down . fst)
-        (toFst (countAffectedClauses otherClauses) <$> matches)
-        & uncons
-        & fmap \(match, remainingMatches) →
-          (snd match, thisClause {clauseMatches = snd <$> remainingMatches})
+    matches → do
+      indexed ← nonEmpty (zip [0 ∷ Int ..] matches)
+      let bestIndex = fst $ minimumOn1 (\(i, m) → (score m, i)) indexed
+      (chosen, after) ← uncons (drop bestIndex matches)
+      pure (chosen, thisClause {clauseMatches = take bestIndex matches <> after})
  where
-  countAffectedClauses ∷ [CaseClause] → Match → Int
-  countAffectedClauses clauses Match {matchExp = expr, stepsToFocus = steps} =
-    foldr count 0 clauses
+  -- The pbaN composite, ordered so that the minimal score wins:
+  -- maximal needed prefix (p), fewest distinct patterns tested on the
+  -- column (b), fewest sub-tests those patterns expose once passed (a).
+  -- Pairing the score with the match position resolves ties to the
+  -- leftmost match (N).
+  score ∷ Match → (Down Int, Int, Int)
+  score Match {matchExp = expr, stepsToFocus = steps} =
+    ( Down (length (takeWhile (not . Map.null) rows))
+    , Map.size column
+    , sum column
+    )
    where
-    count ∷ CaseClause → Int → Int
-    count clause counter =
-      maybe counter (\_ → counter + 1) $
-        allClauseMatches clause & find \case
-          Match {matchPat = PatAny} → False
-          Match {matchExp, stepsToFocus}
-            | matchExp == expr, stepsToFocus == steps → True
-          _ → False
+    -- Per clause: the patterns it tests on the column, each mapped to
+    -- the number of sub-tests it exposes (a pattern determines its
+    -- sub-test count, so the maps agree on shared keys).
+    rows ∷ [Map Pattern Int]
+    rows =
+      clauseForests <&> \forest →
+        Map.fromList
+          [ (matchPat, length nestedMatches)
+          | Match {matchExp, stepsToFocus, matchPat, nestedMatches} ← forest
+          , matchPat /= PatAny
+          , matchExp == expr
+          , stepsToFocus == steps
+          ]
+    column = Map.unions rows
 
-    allClauseMatches ∷ CaseClause → [Match]
+  clauseForests ∷ [[Match]]
+  clauseForests = allClauseMatches <$> (thisClause : otherClauses)
+   where
     allClauseMatches CaseClause {clauseMatches} = go [] clauseMatches
      where
       go acc = \case
