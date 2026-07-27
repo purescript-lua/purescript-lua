@@ -1,0 +1,10 @@
+spec: ref_loop
+runtime: LuaJIT 2.1.1741730670
+workload: n=100000 reps=4 result=4999950000
+aborts (distinct site -- reason):
+  Bench.RefLoop.lua:41 -- NYI: bytecode FNEW
+bytecode end state (J*=compiled, I*=blacklisted):
+  Bench.RefLoop.lua:11 JFUNCF
+  Bench.RefLoop.lua:35 JFORI
+  Bench.RefLoop.lua:35 JFORL
+counts: aborts=1 compiled=3 blacklisted=0

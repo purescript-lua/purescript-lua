@@ -43,11 +43,9 @@ combinator before code generation, so ordinary code is unaffected; an
 @inline never@ directive pinning such an alias undissolved leaves the
 foreign call in place — a missed optimization, never a miscompile, since
 the foreign implementation is what stays. @Golden.NativeLoopsAliasPin@
-pins that shape. Threading a resolver in here would close it, but
-recognition is due to move into the IR (issue #239 needs the loop
-visible to the optimizer, which a codegen-time match cannot provide),
-and the alias question disappears once a lift keys off the foreign
-import itself.
+pins that shape. Threading a resolver in here would close it, but the
+shape only arises under an explicit directive, and the question
+disappears if recognition ever moves onto the foreign import itself.
 
 == Evaluation order and sharing
 
@@ -77,14 +75,16 @@ spliced — the enclosing function already holds up to a magic-do chunk's
 is exactly the cost the foreign implementation had.
 -}
 module Language.PureScript.Backend.Lua.NativeLoop
-  ( NativeLoop
+  ( NativeLoop (..)
   , matchLoopRun
   , lowerLoop
+  , dropValue
   ) where
 
 import Data.Map.Strict qualified as Map
 import Language.PureScript.Backend.IR qualified as IR
 import Language.PureScript.Backend.IR.Linker (foreignAccessorQName)
+import Language.PureScript.Backend.Lua.Fixture qualified as Fixture
 import Language.PureScript.Backend.Lua.Name qualified as Name
 import Language.PureScript.Backend.Lua.Types qualified as Lua
 
@@ -259,8 +259,12 @@ lowerLoop compile fresh = \case
     e →
       compile (IR.App IR.noAnn e (IR.EffectRunArg IR.noAnn)) <&> \case
         Right ex → dropValue ex
-        -- A nested recognised loop lowers to statements already.
-        Left chunk → chunk
+        -- A chunk-lowered run: a nested recognised loop (statements, no
+        -- tail return) or an unboxed-cell operation
+        -- ("Language.PureScript.Backend.Lua.RefUnbox") whose tail
+        -- returns the operation's value — the run discards it, so tail
+        -- returns rewrite to evaluation statements.
+        Left chunk → statementize chunk
 
   -- Bind a non-atomic expression to a fresh local so the loop reads it
   -- without re-evaluating; a bare name or scalar literal is used as-is.
@@ -346,7 +350,10 @@ statementizeAnn block = case reverse block of
 {- | Evaluate an expression in statement position, discarding its value:
 a call becomes a call statement, an effect-free atom disappears, and
 anything else is bound to the throwaway @_@ local so its evaluation
-(and any error it raises) is preserved.
+(and any error it raises) is preserved. A field read off the
+module-scope table also disappears: that table is built by codegen as a
+plain table, so the read cannot trigger a metamethod — unlike a general
+field read, which stays bound.
 -}
 dropValue ∷ Lua.Exp → [Lua.Statement]
 dropValue = \case
@@ -360,6 +367,11 @@ dropValue = \case
   Lua.String _ → []
   Lua.Function {} → []
   Lua.Var (Lua.Ann (Lua.VarName _)) → []
+  Lua.Var
+    ( Lua.Ann
+        (Lua.VarField (Lua.Ann (Lua.Var (Lua.Ann (Lua.VarName m)))) _field)
+      )
+      | m == Fixture.moduleName → []
   e → [Lua.local1 discardLocal e]
 
 {- | The throwaway binder for a discarded non-call value; Lua allows the

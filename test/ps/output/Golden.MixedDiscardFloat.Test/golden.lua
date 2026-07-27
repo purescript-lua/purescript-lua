@@ -1,5 +1,6 @@
+local M = {}
 local Data_Unit_foreign = { unit = {} }
-local Data_Unit_unit = Data_Unit_foreign.unit
+M.Data_Unit_unit = Data_Unit_foreign.unit
 local Data_Show_foreign = { showIntImpl = function(n) return tostring(n) end }
 local Control_Monad_ST_Internal_foreign = {
   map_ = function(f)
@@ -20,11 +21,9 @@ local Effect_Console_foreign = {
 }
 local Effect_Console_log = Effect_Console_foreign.log
 local Golden_MixedDiscardFloat_Test_stCount = Control_Monad_ST_Internal_foreign.run(function(  )
-  local r = Control_Monad_ST_Internal_foreign.new(1)()
-  local _ = Control_Monad_ST_Internal_foreign.map_(function()
-    return Data_Unit_unit
-  end)(Control_Monad_ST_Internal_foreign.write(2)(r))()
-  return Control_Monad_ST_Internal_foreign.read(r)()
+  local r = 1
+  r = 2
+  return r
 end)
 return (function()
   local _ = Effect_Console_log("st:")()

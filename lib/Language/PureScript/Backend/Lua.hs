@@ -29,6 +29,7 @@ import Language.PureScript.Backend.Lua.Loopify qualified as Loopify
 import Language.PureScript.Backend.Lua.Name qualified as Lua
 import Language.PureScript.Backend.Lua.Name qualified as Name
 import Language.PureScript.Backend.Lua.NativeLoop qualified as NativeLoop
+import Language.PureScript.Backend.Lua.RefUnbox qualified as RefUnbox
 import Language.PureScript.Backend.Lua.Types (ParamF (..))
 import Language.PureScript.Backend.Lua.Types qualified as Lua
 import Language.PureScript.Backend.Types (AppOrModule (..))
@@ -79,19 +80,19 @@ fromUberModule foreigns needsRuntimeLazy appOrModule uber = (`evalStateT` 0) do
   ((bindings, returnStat), usesObjectUpdate) ← (`runAccumT` NoObjectUpdate) do
     foreignBindings ←
       forM (Linker.uberModuleForeigns uber) \(IR.QName modname name, irExp) → do
-        exp ← asExpression <$> fromIR foreigns Set.empty modname irExp
+        exp ← asExpression <$> fromIR foreigns Set.empty Set.empty modname irExp
         pure $ mkBinding modname (fromName name) exp
 
     bindings ←
       Linker.uberModuleBindings uber & foldMapM \case
         IR.Standalone (IR.QName modname name, irExp) → do
-          exp ← fromIR foreigns Set.empty modname irExp
+          exp ← fromIR foreigns Set.empty Set.empty modname irExp
           pure . DList.singleton $
             mkBinding modname (fromName name) (asExpression exp)
         IR.RecursiveGroup recGroup → do
           recBinds ← forM (toList recGroup) \(IR.QName modname name, irExp) →
             (modname,name,) . asExpression
-              <$> fromIR foreigns Set.empty modname irExp
+              <$> fromIR foreigns Set.empty Set.empty modname irExp
           -- A recursive member references itself (and its siblings)
           -- through the module-scope table, mirroring the Ref case of
           -- 'fromIR'.
@@ -109,11 +110,11 @@ fromUberModule foreigns needsRuntimeLazy appOrModule uber = (`evalStateT` 0) do
                   | (modname, name, exp) ← recBinds
                   ]
               )
-              \group → do
+              \dispatchGroup → do
                 selector ← freshName "$sel"
                 slots ←
-                  replicateM (Loopify.dispatchArity group) (freshName "$a")
-                let leader = NE.head (Loopify.dispatchMembers group)
+                  replicateM (Loopify.dispatchArity dispatchGroup) (freshName "$a")
+                let leader = NE.head (Loopify.dispatchMembers dispatchGroup)
                     -- The leader's Self already carries the qualified
                     -- module-scope field, so the dispatcher derives its
                     -- name from it directly.
@@ -128,7 +129,7 @@ fromUberModule foreigns needsRuntimeLazy appOrModule uber = (`evalStateT` 0) do
                         dispatcherSelf
                         selector
                         slots
-                        group
+                        dispatchGroup
                 pure ((dispatcherName, dispatcherExp), wrappers)
           let wrapperByIndex = concatMap snd dispatched
           pure $
@@ -153,11 +154,11 @@ fromUberModule foreigns needsRuntimeLazy appOrModule uber = (`evalStateT` 0) do
         AsModule modname →
           Lua.table <$> forM (uberModuleExports uber) \(fromName → name, expr) →
             Lua.tableRowNV name . asExpression
-              <$> fromIR foreigns mempty modname expr
+              <$> fromIR foreigns Set.empty mempty modname expr
         AsApplication modname ident → do
           case List.lookup name (uberModuleExports uber) of
             Just expr → do
-              entry ← fromIR foreigns mempty modname expr
+              entry ← fromIR foreigns Set.empty mempty modname expr
               pure $ Lua.functionCall (asExpression entry) []
             _ → Oops.throw $ AppEntryPointNotFound modname ident
          where
@@ -215,11 +216,15 @@ fromIR
   ∷ ∀ e
    . e `CouldBe` Error
   ⇒ Tagged "foreign" (Path Abs Dir)
+  → Set IR.Name
+  {- ^ Cells lowered to mutable locals, in scope for this expression
+  ("Language.PureScript.Backend.Lua.RefUnbox").
+  -}
   → Set Lua.Name
   → ModuleName
   → IR.Exp
   → LuaM e (Either Lua.Chunk Lua.Exp)
-fromIR foreigns topLevelNames modname ir = case ir of
+fromIR foreigns unboxed topLevelNames modname ir = case ir of
   IR.LiteralInt _ann i →
     pure . Right $ Lua.Integer i
   IR.LiteralFloat _ann d →
@@ -338,6 +343,19 @@ fromIR foreigns topLevelNames modname ir = case ir of
   loopRun@IR.AppN {}
     | Just loop ← NativeLoop.matchLoopRun loopRun →
         Left <$> NativeLoop.lowerLoop go freshName loop
+  -- The run of a recognised operation on an unboxed cell (issue #239);
+  -- see Language.PureScript.Backend.Lua.RefUnbox. A read is a plain
+  -- expression (the local itself); a mutating run lowers to a chunk
+  -- ending in a return of the run's value — spliced when it sits in a
+  -- tail, wrapped in a scope call otherwise (the cell then mutates
+  -- through the closure's upvalue, which is the same slot).
+  opRun@IR.AppN {}
+    | Just (cell, use) ← RefUnbox.matchOpRun opRun
+    , Set.member cell unboxed → do
+        (stmts, value) ← RefUnbox.lowerOpRun goExp freshName (fromName cell) use
+        pure case stmts of
+          [] → Right value
+          _ → Left (stmts <> [Lua.return value])
   IR.AppN _ann fn args → do
     e ← goExp fn
     -- See Note [Nullary functions and Prim.undefined]. PS inserts a
@@ -368,86 +386,141 @@ fromIR foreigns topLevelNames modname ir = case ir of
             (Lua.varName Fixture.moduleName)
             (qualifyName modname' (fromName name))
   -- Standalone bindings become a sequence of 'local' statements, which
-  -- matches Note [Sequential scoping of Let bindings]
+  -- matches Note [Sequential scoping of Let bindings]. The bindings are
+  -- processed left to right carrying the set of cells unboxed so far
+  -- (issue #239): a binding may extend it, and everything after —
+  -- including the body — compiles under the extended set.
   IR.Let _ann bindings bodyExp → do
-    body ← go bodyExp
-    recs ←
-      bindings & foldMapM \case
+    (recs, unboxed') ← goBindings unboxed (toList bindings)
+    body ← fromIR foreigns unboxed' topLevelNames modname bodyExp
+    pure . Left . DList.toList $
+      recs <> either DList.fromList (DList.singleton . Lua.return) body
+   where
+    goWith env = fromIR foreigns env topLevelNames modname
+    goExpWith env = asExpression <<$>> goWith env
+
+    goBindings
+      ∷ Set IR.Name
+      → [IR.Grouping (IR.Ann, IR.Name, IR.Exp)]
+      → LuaM e (DList.DList Lua.Statement, Set IR.Name)
+    goBindings env = \case
+      [] → pure (mempty, env)
+      grouping : rest → do
+        (stmts, env') ← goGrouping env grouping rest
+        first (stmts <>) <$> goBindings env' rest
+
+    goGrouping
+      ∷ Set IR.Name
+      → IR.Grouping (IR.Ann, IR.Name, IR.Exp)
+      → [IR.Grouping (IR.Ann, IR.Name, IR.Exp)]
+      → LuaM e (DList.DList Lua.Statement, Set IR.Name)
+    goGrouping env grouping rest = case grouping of
+      -- A cell allocation whose every use in the remaining scope goes
+      -- through the recognised operations unboxes: the binder holds the
+      -- initial value directly, and the uses lower against it (issue
+      -- #239); see Language.PureScript.Backend.Lua.RefUnbox.
+      IR.Standalone (_bindAnn, name, expr)
+        | name /= IR.discardName
+        , Just initial ← RefUnbox.matchNewRun expr
+        , RefUnbox.usedOnlyThroughOps
+            name
+            (concatMap (fmap (\(_, _, e) → e) . IR.listGrouping) rest <> [bodyExp]) → do
+            initExp ← goExpWith env initial
+            pure
+              ( DList.singleton (Lua.local1 (fromName name) initExp)
+              , Set.insert name env
+              )
+        -- A statement whose RHS runs a recognised operation on an
+        -- unboxed cell lowers to the operation's statements, the binder
+        -- receiving the run's value.
+        | Just (cell, use) ← RefUnbox.matchOpRun expr
+        , Set.member cell env → do
+            stmts ←
+              RefUnbox.lowerOpRunBinding
+                (goExpWith env)
+                freshName
+                ( if name == IR.discardName
+                    then Nothing
+                    else Just (fromName name)
+                )
+                (fromName cell)
+                use
+            pure (DList.fromList stmts, env)
         -- A statement whose RHS is a recognised loop run emits the
         -- native loop directly instead of `local x = <scope call>`. The
         -- run yields no values, so the binder reads nil either way:
         -- `local x` declares exactly that, and the discard binder — never
         -- referenced (the 'RefToDiscard' lint pins this) — needs no
         -- declaration at all.
-        IR.Standalone (_ann, name, expr)
-          | Just loop ← NativeLoop.matchLoopRun expr → do
-              loopStmts ← NativeLoop.lowerLoop go freshName loop
-              pure $
-                DList.fromList loopStmts
+        | Just loop ← NativeLoop.matchLoopRun expr → do
+            loopStmts ← NativeLoop.lowerLoop (goWith env) freshName loop
+            pure
+              ( DList.fromList loopStmts
                   <> if name == IR.discardName
                     then mempty
                     else DList.singleton (Lua.local0 (fromName name))
-        IR.Standalone (_ann, name, expr) →
-          DList.singleton . Lua.local1 (fromName name) <$> goExp expr
-        IR.RecursiveGroup grp → do
-          compiled ← forM (toList grp) \(_ann, name, expr) → do
-            luaExp ← goExp expr
-            -- The self-reference mirrors the Ref case below: through the
-            -- module-scope table for a top-level name, plain otherwise.
-            let luaName = fromName name
-                (target, self)
-                  | Set.member (qualifyName modname luaName) topLevelNames =
-                      ( qualifyName modname luaName
-                      , Loopify.SelfField
-                          Fixture.moduleName
-                          (qualifyName modname luaName)
-                      )
-                  | otherwise = (luaName, Loopify.SelfLocal luaName)
-            pure (name, target, self, luaExp)
-          -- The members of every mutual tail-call cycle dispatch through
-          -- a shared local (issue #234), mirroring the top-level case in
-          -- 'fromUberModule'.
-          dispatched ←
-            forM
-              ( Loopify.planGroupDispatch
-                  [(self, luaExp) | (_, _, self, luaExp) ← compiled]
+              , env
               )
-              \group → do
-                selector ← freshName "$sel"
-                slots ←
-                  replicateM (Loopify.dispatchArity group) (freshName "$a")
-                let leader = NE.head (Loopify.dispatchMembers group)
-                    dispatcherName =
-                      Name.makeSafe $
-                        Name.toText (Loopify.selfName (Loopify.dispatchSelf leader))
-                          <> "$loop"
-                    (dispatcherExp, wrappers) =
-                      Loopify.emitDispatchGroup
-                        (Loopify.SelfLocal dispatcherName)
-                        selector
-                        slots
-                        group
-                pure ((dispatcherName, dispatcherExp), wrappers)
-          let wrapperByIndex = concatMap snd dispatched
-              binds =
-                [ Lua.local0 dispatcherName
-                | ((dispatcherName, _), _) ← dispatched
-                ]
-                  <> [Lua.local0 target | (_, target, _, _) ← compiled]
-              assignments =
-                [ Lua.assign (Lua.VarName dispatcherName) dispatcherExp
-                | ((dispatcherName, dispatcherExp), _) ← dispatched
-                ]
-                  <> [ Lua.assign (Lua.VarName target) luaExp'
-                     | (index, (_, target, self, luaExp)) ←
-                         zip [0 ..] compiled
-                     , let luaExp' = case List.lookup index wrapperByIndex of
-                             Just wrapper → wrapper
-                             Nothing → Loopify.loopify self luaExp
-                     ]
-          pure $ DList.fromList binds <> DList.fromList assignments
-    pure . Left . DList.toList $
-      recs <> either DList.fromList (DList.singleton . Lua.return) body
+      IR.Standalone (_bindAnn, name, expr) → do
+        luaExp ← goExpWith env expr
+        pure (DList.singleton (Lua.local1 (fromName name) luaExp), env)
+      IR.RecursiveGroup grp → do
+        compiled ← forM (toList grp) \(_bindAnn, name, expr) → do
+          luaExp ← goExpWith env expr
+          -- The self-reference mirrors the Ref case below: through the
+          -- module-scope table for a top-level name, plain otherwise.
+          let luaName = fromName name
+              (target, self)
+                | Set.member (qualifyName modname luaName) topLevelNames =
+                    ( qualifyName modname luaName
+                    , Loopify.SelfField
+                        Fixture.moduleName
+                        (qualifyName modname luaName)
+                    )
+                | otherwise = (luaName, Loopify.SelfLocal luaName)
+          pure (name, target, self, luaExp)
+        -- The members of every mutual tail-call cycle dispatch through
+        -- a shared local (issue #234), mirroring the top-level case in
+        -- 'fromUberModule'.
+        dispatched ←
+          forM
+            ( Loopify.planGroupDispatch
+                [(self, luaExp) | (_, _, self, luaExp) ← compiled]
+            )
+            \dispatchGroup → do
+              selector ← freshName "$sel"
+              slots ←
+                replicateM (Loopify.dispatchArity dispatchGroup) (freshName "$a")
+              let leader = NE.head (Loopify.dispatchMembers dispatchGroup)
+                  dispatcherName =
+                    Name.makeSafe $
+                      Name.toText (Loopify.selfName (Loopify.dispatchSelf leader))
+                        <> "$loop"
+                  (dispatcherExp, wrappers) =
+                    Loopify.emitDispatchGroup
+                      (Loopify.SelfLocal dispatcherName)
+                      selector
+                      slots
+                      dispatchGroup
+              pure ((dispatcherName, dispatcherExp), wrappers)
+        let wrapperByIndex = concatMap snd dispatched
+            binds =
+              [ Lua.local0 dispatcherName
+              | ((dispatcherName, _), _) ← dispatched
+              ]
+                <> [Lua.local0 target | (_, target, _, _) ← compiled]
+            assignments =
+              [ Lua.assign (Lua.VarName dispatcherName) dispatcherExp
+              | ((dispatcherName, dispatcherExp), _) ← dispatched
+              ]
+                <> [ Lua.assign (Lua.VarName target) luaExp'
+                   | (index, (_, target, self, luaExp)) ←
+                       zip [0 ..] compiled
+                   , let luaExp' = case List.lookup index wrapperByIndex of
+                           Just wrapper → wrapper
+                           Nothing → Loopify.loopify self luaExp
+                   ]
+        pure (DList.fromList binds <> DList.fromList assignments, env)
   -- A multi-value return: only reachable in a multi-value tail position
   -- (Note [Multi-value results] in ...Backend.IR.Types), so it lowers to
   -- the final @return e₁, …, eₙ@ of the enclosing chunk. Each element is
@@ -532,7 +605,7 @@ fromIR foreigns topLevelNames modname ir = case ir of
         scopeBody = stats <> [Lua.ann (Lua.Return [Lua.ann foreignExports])]
  where
   go ∷ IR.Exp → LuaM e (Either Lua.Chunk Lua.Exp)
-  go = fromIR foreigns topLevelNames modname
+  go = fromIR foreigns unboxed topLevelNames modname
 
   goExp ∷ IR.Exp → LuaM e Lua.Exp
   goExp = asExpression <<$>> go
