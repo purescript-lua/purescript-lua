@@ -87,9 +87,9 @@ UberModule
               )
             )
             ( IfThenElse Nothing
-              ( Eq Nothing ( LiteralInt Nothing 2 ) ( Ref Nothing ( Local ( Name "v" ) ) ) )
+              ( Eq Nothing ( LiteralInt Nothing 2 ) ( Ref Nothing ( Local ( Name "v1" ) ) ) )
               ( IfThenElse Nothing
-                ( Eq Nothing ( LiteralInt Nothing 2 ) ( Ref Nothing ( Local ( Name "v1" ) ) ) )
+                ( Eq Nothing ( LiteralInt Nothing 2 ) ( Ref Nothing ( Local ( Name "v" ) ) ) )
                 ( LiteralInt Nothing 2 )
                 ( LiteralInt Nothing 4 )
               )
@@ -139,12 +139,12 @@ UberModule
                 ( IfThenElse Nothing
                   ( Eq Nothing
                     ( LiteralString Nothing "Golden.CasePruning.Test∷T.B" )
-                    ( Ref Nothing ( Local ( Name "$cse248" ) ) )
+                    ( Ref Nothing ( Local ( Name "$cse249" ) ) )
                   )
                   ( IfThenElse Nothing
                     ( Eq Nothing
                       ( LiteralString Nothing "Golden.CasePruning.Test∷T.B" )
-                      ( Ref Nothing ( Local ( Name "$cse249" ) ) )
+                      ( Ref Nothing ( Local ( Name "$cse248" ) ) )
                     )
                     ( LiteralInt Nothing 2 )
                     ( LiteralInt Nothing 4 )
