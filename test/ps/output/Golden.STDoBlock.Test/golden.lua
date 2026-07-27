@@ -1,3 +1,4 @@
+local M = {}
 local Data_Show_foreign = { showIntImpl = function(n) return tostring(n) end }
 local Control_Monad_ST_Internal_foreign = {
   pure_ = function(a) return function() return a end end,
@@ -17,7 +18,7 @@ local Control_Monad_ST_Internal_foreign = {
     end
   end
 }
-local Control_Monad_ST_Internal_modifyImpl = Control_Monad_ST_Internal_foreign.modifyImpl
+M.Control_Monad_ST_Internal_modifyImpl = Control_Monad_ST_Internal_foreign.modifyImpl
 local Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
 }
@@ -27,10 +28,10 @@ local Golden_STDoBlock_Test_sumTwice = function(n)
       local sPrime_S_0 = s_S_0 + n
       return { state = sPrime_S_0, value = sPrime_S_0 }
     end
-    local ref = Control_Monad_ST_Internal_foreign.new(0)()
-    local _ = Control_Monad_ST_Internal_modifyImpl(_S_cse0)(ref)()
-    local _ = Control_Monad_ST_Internal_modifyImpl(_S_cse0)(ref)()
-    local total = Control_Monad_ST_Internal_foreign.read(ref)()
+    local ref = 0
+    do local _S_t0 = _S_cse0(ref) ref = _S_t0.state local _ = _S_t0.value end
+    do local _S_t1 = _S_cse0(ref) ref = _S_t1.state local _ = _S_t1.value end
+    local total = ref
     return total + 1
   end)
 end

@@ -24,7 +24,7 @@ local Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
 }
 local Effect_Console_log = Effect_Console_foreign.log
-local Effect_Ref_foreign = {
+M.Effect_Ref_foreign = {
   _new = function(val) return function() return { value = val } end end,
   read = function(ref) return function() return ref.value end end
 }
@@ -40,8 +40,8 @@ M.Golden_RecordSurgery_Test_replaced = { a = 3 }
 M.Golden_RecordSurgery_Test_inserted = { a = 1, b = 2 }
 M.Golden_RecordSurgery_Test_deleted = { b = 2 }
 return (function()
-  local ref_S_0 = Effect_Ref_foreign._new({ k = 9, n = 1 })()
-  local dyn_S_0 = Effect_Ref_foreign.read(ref_S_0)()
+  local ref_S_0 = { k = 9, n = 1 }
+  local dyn_S_0 = ref_S_0
   local _ = Golden_RecordSurgery_Test_logShow(3)()
   local _ = Golden_RecordSurgery_Test_logShow(3)()
   local _ = Golden_RecordSurgery_Test_logShow(2)()

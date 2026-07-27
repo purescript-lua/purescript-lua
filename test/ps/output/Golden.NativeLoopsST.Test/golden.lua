@@ -1,5 +1,6 @@
+local M = {}
 local Data_Unit_foreign = { unit = {} }
-local Data_Unit_unit = Data_Unit_foreign.unit
+M.Data_Unit_unit = Data_Unit_foreign.unit
 local Data_Show_foreign = { showIntImpl = function(n) return tostring(n) end }
 local Control_Monad_ST_Internal_foreign = {
   map_ = function(f)
@@ -49,34 +50,30 @@ local Golden_NativeLoopsST_Test_logShow = function(a_S_0)
 end
 local Golden_NativeLoopsST_Test_sumTo = function(n)
   return Control_Monad_ST_Internal_run(function()
-    local acc = Control_Monad_ST_Internal_new(0)()
+    local acc = 0
     for i = 0, n + 1 - 1 do
-      Control_Monad_ST_Internal_modifyImpl(function(s_S_0)
-        local sPrime_S_0 = s_S_0 + i
-        return { state = sPrime_S_0, value = sPrime_S_0 }
-      end)(acc)()
+      local s_S_0 = acc
+      local sPrime_S_0 = s_S_0 + i
+      acc = sPrime_S_0
     end
-    return Control_Monad_ST_Internal_read(acc)()
+    return acc
   end)
 end
 local Golden_NativeLoopsST_Test_sumArray = function(xs)
   return Control_Monad_ST_Internal_run(function()
-    local acc = Control_Monad_ST_Internal_new(0)()
+    local acc = 0
     for _S_i0 = 1, #(xs) do
       local x = xs[_S_i0]
-      Control_Monad_ST_Internal_map_(function()
-        return Data_Unit_unit
-      end)(Control_Monad_ST_Internal_modifyImpl(function(s_S_1)
-        local sPrime_S_1 = s_S_1 + x
-        return { state = sPrime_S_1, value = sPrime_S_1 }
-      end)(acc))()
+      local s_S_1 = acc
+      local sPrime_S_1 = s_S_1 + x
+      acc = sPrime_S_1
     end
-    return Control_Monad_ST_Internal_read(acc)()
+    return acc
   end)
 end
 local Golden_NativeLoopsST_Test_countDown = function(start)
   return Control_Monad_ST_Internal_run(function()
-    local steps = Control_Monad_ST_Internal_new(0)()
+    local steps = 0
     local value = Control_Monad_ST_Internal_new(start)()
     do
       local _S_cond0 = Control_Monad_ST_Internal_map_(function(v)
@@ -87,13 +84,12 @@ local Golden_NativeLoopsST_Test_countDown = function(start)
           local sPrime_S_2 = s_S_2 - 1
           return { state = sPrime_S_2, value = sPrime_S_2 }
         end)(value)()
-        Control_Monad_ST_Internal_modifyImpl(function(s_S_3)
-          local sPrime_S_3 = s_S_3 + 1
-          return { state = sPrime_S_3, value = sPrime_S_3 }
-        end)(steps)()
+        local s_S_3 = steps
+        local sPrime_S_3 = s_S_3 + 1
+        steps = sPrime_S_3
       end
     end
-    return Control_Monad_ST_Internal_read(steps)()
+    return steps
   end)
 end
 return (function()

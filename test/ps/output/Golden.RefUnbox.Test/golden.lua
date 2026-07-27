@@ -1,3 +1,4 @@
+local M = {}
 local Data_Show_foreign = { showIntImpl = function(n) return tostring(n) end }
 local Effect_Ref_foreign = {
   _new = function(val) return function() return { value = val } end end,
@@ -6,7 +7,7 @@ local Effect_Ref_foreign = {
     return function(ref) return function() ref.value = val end end
   end
 }
-local Effect_Ref_read = Effect_Ref_foreign.read
+M.Effect_Ref_read = Effect_Ref_foreign.read
 local Control_Monad_ST_Internal_foreign = {
   pure_ = function(a) return function() return a end end,
   bind_ = function(a)
@@ -52,37 +53,42 @@ local Golden_RefUnbox_Test_logShow = function(a_S_0)
   return Effect_Console_foreign.log(Data_Show_foreign.showIntImpl(a_S_0))
 end
 local Golden_RefUnbox_Test_writeBack = Control_Monad_ST_Internal_run(function()
-  local r = Control_Monad_ST_Internal_new(1)()
-  local x = Control_Monad_ST_Internal_foreign.write(7)(r)()
-  local y = Control_Monad_ST_Internal_read(r)()
+  local r = 1
+  r = 7
+  local x = r
+  local y = r
   return x + y
 end)
 local Golden_RefUnbox_Test_sumTo = function(n)
   return Control_Monad_ST_Internal_run(function()
-    local acc = Control_Monad_ST_Internal_new(0)()
+    local acc = 0
     for i = 0, n + 1 - 1 do
-      Control_Monad_ST_Internal_modifyImpl(function(s_S_0)
-        local sPrime_S_0 = s_S_0 + i
-        return { state = sPrime_S_0, value = sPrime_S_0 }
-      end)(acc)()
+      local s_S_0 = acc
+      local sPrime_S_0 = s_S_0 + i
+      acc = sPrime_S_0
     end
-    return Control_Monad_ST_Internal_read(acc)()
+    return acc
   end)
 end
 local Golden_RefUnbox_Test_splitModify = function(n)
   return Control_Monad_ST_Internal_run(function()
-    local r = Control_Monad_ST_Internal_new(n)()
-    local v = Control_Monad_ST_Internal_modifyImpl(function(s)
-      return { state = s * 2, value = s + 100 }
-    end)(r)()
-    local s0 = Control_Monad_ST_Internal_read(r)()
+    local r = n
+    local v
+    do
+      local s = r
+      local _S_v0 = s * 2
+      local _S_v1 = s + 100
+      r = _S_v0
+      v = _S_v1
+    end
+    local s0 = r
     return v + s0
   end)
 end
 local Golden_RefUnbox_Test_nested = Control_Monad_ST_Internal_run(function()
   local inner = Control_Monad_ST_Internal_new(21)()
-  local outer = Control_Monad_ST_Internal_new(inner)()
-  local cell = Control_Monad_ST_Internal_read(outer)()
+  local outer = inner
+  local cell = outer
   local _ = Control_Monad_ST_Internal_modifyImpl(function(s_S_1)
     local sPrime_S_1 = s_S_1 * 2
     return { state = sPrime_S_1, value = sPrime_S_1 }
@@ -94,9 +100,9 @@ return (function()
   local _ = Golden_RefUnbox_Test_logShow(Golden_RefUnbox_Test_splitModify(3))()
   local _ = Golden_RefUnbox_Test_logShow(Golden_RefUnbox_Test_writeBack)()
   local _ = Golden_RefUnbox_Test_logShow(Golden_RefUnbox_Test_nested)()
-  local counter_S_0 = Effect_Ref_foreign._new(10)()
-  local v_S_0 = Effect_Ref_read(counter_S_0)()
-  local _ = Effect_Ref_foreign.write(Data_Semiring_semiringInt.add(v_S_0)(1))(counter_S_0)()
-  local w_S_0 = Effect_Ref_read(counter_S_0)()
+  local counter_S_0 = 10
+  local v_S_0 = counter_S_0
+  counter_S_0 = Data_Semiring_semiringInt.add(v_S_0)(1)
+  local w_S_0 = counter_S_0
   return Golden_RefUnbox_Test_logShow(w_S_0)()
 end)()
