@@ -1,0 +1,356 @@
+UberModule
+  { uberModuleBindings =
+    [ Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Show", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Data.Show" ) ".spago/p/prelude/5718c84fdde6247749cb053e816df696c30fe691/src/Data/Show.purs"
+        [ ( Nothing, Name "showIntImpl" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Show", qnameName = Name "showIntImpl"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
+        ( PropName "showIntImpl" )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Effect.Console" ) ".spago/p/console/f82835a0b873aafe6bd7b14dd30cc150553d4ab9/src/Effect/Console.purs"
+        [ ( Nothing, Name "log" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "log"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
+        ( PropName "log" )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.DistributeIntoIf.Test", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Golden.DistributeIntoIf.Test" ) "src/Golden/DistributeIntoIf/Test.purs"
+        [ ( Nothing, Name "flag" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.DistributeIntoIf.Test", qnameName = Name "flag"
+        }, ObjectProp Nothing
+        ( Ref Nothing
+          ( Imported ( ModuleName "Golden.DistributeIntoIf.Test" ) ( Name "foreign" ) )
+        )
+        ( PropName "flag" )
+      ), RecursiveGroup
+      (
+        ( QName
+          { qnameModuleName = ModuleName "Data.HeytingAlgebra", qnameName = Name "heytingAlgebraBoolean"
+          }, LiteralObject Nothing
+          [
+            ( PropName "ff", LiteralBool Nothing False ),
+            ( PropName "tt", LiteralBool Nothing True ),
+            ( PropName "implies", AbsN Nothing
+              ( ParamNamed Nothing ( Name "a" ) :| [] )
+              ( AbsN Nothing
+                ( ParamNamed Nothing ( Name "b" ) :| [] )
+                ( AppN Nothing
+                  ( AppN Nothing
+                    ( ObjectProp Nothing
+                      ( Ref Nothing
+                        ( Imported
+                          ( ModuleName "Data.HeytingAlgebra" )
+                          ( Name "heytingAlgebraBoolean" )
+                        )
+                      )
+                      ( PropName "disj" )
+                    )
+                    ( AppN Nothing
+                      ( ObjectProp Nothing
+                        ( Ref Nothing
+                          ( Imported
+                            ( ModuleName "Data.HeytingAlgebra" )
+                            ( Name "heytingAlgebraBoolean" )
+                          )
+                        )
+                        ( PropName "not" )
+                      )
+                      ( Ref Nothing ( Local ( Name "a" ) ) :| [] ) :| []
+                    )
+                  )
+                  ( Ref Nothing ( Local ( Name "b" ) ) :| [] )
+                )
+              )
+            ),
+            ( PropName "conj", AbsN Nothing
+              ( ParamNamed Nothing ( Name "b1$201" ) :| [] )
+              ( AbsN Nothing
+                ( ParamNamed Nothing ( Name "b2$202" ) :| [] )
+                ( PrimBinOp Nothing PrimAnd
+                  ( Ref Nothing ( Local ( Name "b1$201" ) ) )
+                  ( Ref Nothing ( Local ( Name "b2$202" ) ) )
+                )
+              )
+            ),
+            ( PropName "disj", AbsN Nothing
+              ( ParamNamed Nothing ( Name "b1$199" ) :| [] )
+              ( AbsN Nothing
+                ( ParamNamed Nothing ( Name "b2$200" ) :| [] )
+                ( PrimBinOp Nothing PrimOr
+                  ( Ref Nothing ( Local ( Name "b1$199" ) ) )
+                  ( Ref Nothing ( Local ( Name "b2$200" ) ) )
+                )
+              )
+            ),
+            ( PropName "not", AbsN Nothing
+              ( ParamNamed Nothing ( Name "b$198" ) :| [] )
+              ( PrimNot Nothing ( Ref Nothing ( Local ( Name "b$198" ) ) ) )
+            )
+          ]
+        ) :| []
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.DistributeIntoIf.Test", qnameName = Name "not"
+        }, ObjectProp Nothing
+        ( Ref Nothing
+          ( Imported ( ModuleName "Data.HeytingAlgebra" ) ( Name "heytingAlgebraBoolean" ) )
+        )
+        ( PropName "not" )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.DistributeIntoIf.Test", qnameName = Name "weigh"
+        }, AbsN ( Just Never )
+        ( ParamNamed Nothing ( Name "x" ) :| [] )
+        ( PrimBinOp Nothing PrimMul
+          ( Ref Nothing ( Local ( Name "x" ) ) )
+          ( LiteralInt Nothing 3 )
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.DistributeIntoIf.Test", qnameName = Name "pickName"
+        }, AbsN ( Just Never )
+        ( ParamNamed Nothing ( Name "b" ) :| [] )
+        ( IfThenElse Nothing
+          ( Ref Nothing ( Local ( Name "b" ) ) )
+          ( LiteralString Nothing "big" )
+          ( LiteralString Nothing "small" )
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.DistributeIntoIf.Test", qnameName = Name "chooseName"
+        }, AbsN ( Just Never )
+        ( ParamNamed Nothing ( Name "b" ) :| [] )
+        ( AbsN Nothing
+          ( ParamNamed Nothing ( Name "l" ) :| [] )
+          ( AbsN Nothing
+            ( ParamNamed Nothing ( Name "r" ) :| [] )
+            ( IfThenElse Nothing
+              ( Ref Nothing ( Local ( Name "b" ) ) )
+              ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "l" ) ) ) ( PropName "name" ) )
+              ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "r" ) ) ) ( PropName "name" ) )
+            )
+          )
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.DistributeIntoIf.Test", qnameName = Name "applyPicked"
+        }, AbsN ( Just Never )
+        ( ParamNamed Nothing ( Name "b" ) :| [] )
+        ( AbsN Nothing
+          ( ParamNamed Nothing ( Name "n" ) :| [] )
+          ( IfThenElse Nothing
+            ( Ref Nothing ( Local ( Name "b" ) ) )
+            ( PrimBinOp Nothing PrimAdd
+              ( Ref Nothing ( Local ( Name "n" ) ) )
+              ( LiteralInt Nothing 1 )
+            )
+            ( PrimBinOp Nothing PrimMul
+              ( Ref Nothing ( Local ( Name "n" ) ) )
+              ( LiteralInt Nothing 2 )
+            )
+          )
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.DistributeIntoIf.Test", qnameName = Name "applyExpensive"
+        }, AbsN ( Just Never )
+        ( ParamNamed Nothing ( Name "b" ) :| [] )
+        ( AbsN Nothing
+          ( ParamNamed Nothing ( Name "n" ) :| [] )
+          ( AppN Nothing
+            ( IfThenElse Nothing
+              ( Ref Nothing ( Local ( Name "b" ) ) )
+              ( AbsN Nothing
+                ( ParamNamed Nothing ( Name "v" ) :| [] )
+                ( PrimBinOp Nothing PrimAdd
+                  ( Ref Nothing ( Local ( Name "v" ) ) )
+                  ( LiteralInt Nothing 1 )
+                )
+              )
+              ( AbsN Nothing
+                ( ParamNamed Nothing ( Name "v0" ) :| [] )
+                ( PrimBinOp Nothing PrimMul
+                  ( Ref Nothing ( Local ( Name "v0" ) ) )
+                  ( LiteralInt Nothing 2 )
+                )
+              )
+            )
+            ( AppN Nothing
+              ( Ref Nothing
+                ( Imported ( ModuleName "Golden.DistributeIntoIf.Test" ) ( Name "weigh" ) )
+              )
+              ( Ref Nothing ( Local ( Name "n" ) ) :| [] ) :| []
+            )
+          )
+        )
+      )
+    ], uberModuleForeigns = [], uberModuleExports =
+    [
+      ( Name "flag", Ref Nothing
+        ( Imported ( ModuleName "Golden.DistributeIntoIf.Test" ) ( Name "flag" ) )
+      ),
+      ( Name "pickName", Ref Nothing
+        ( Imported ( ModuleName "Golden.DistributeIntoIf.Test" ) ( Name "pickName" ) )
+      ),
+      ( Name "chooseName", Ref Nothing
+        ( Imported ( ModuleName "Golden.DistributeIntoIf.Test" ) ( Name "chooseName" ) )
+      ),
+      ( Name "applyPicked", Ref Nothing
+        ( Imported ( ModuleName "Golden.DistributeIntoIf.Test" ) ( Name "applyPicked" ) )
+      ),
+      ( Name "weigh", Ref Nothing
+        ( Imported ( ModuleName "Golden.DistributeIntoIf.Test" ) ( Name "weigh" ) )
+      ),
+      ( Name "applyExpensive", Ref Nothing
+        ( Imported ( ModuleName "Golden.DistributeIntoIf.Test" ) ( Name "applyExpensive" ) )
+      ),
+      ( Name "main", AbsN Nothing
+        ( ParamUnused Nothing :| [] )
+        ( Let Nothing
+          ( Standalone
+            ( Nothing, Name "_", AppN Nothing
+              ( AppN Nothing
+                ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+                ( AppN Nothing
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Golden.DistributeIntoIf.Test" ) ( Name "pickName" ) )
+                  )
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Golden.DistributeIntoIf.Test" ) ( Name "flag" ) ) :| []
+                  ) :| []
+                )
+              )
+              ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+            ) :|
+            [ Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+                  ( AppN Nothing
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Golden.DistributeIntoIf.Test" ) ( Name "pickName" ) )
+                    )
+                    ( AppN Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Golden.DistributeIntoIf.Test" ) ( Name "not" ) )
+                      )
+                      ( Ref Nothing
+                        ( Imported
+                          ( ModuleName "Golden.DistributeIntoIf.Test" )
+                          ( Name "flag" )
+                        ) :| []
+                      ) :| []
+                    ) :| []
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              ), Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+                  ( AppN Nothing
+                    ( AppN Nothing
+                      ( AppN Nothing
+                        ( Ref Nothing
+                          ( Imported
+                            ( ModuleName "Golden.DistributeIntoIf.Test" )
+                            ( Name "chooseName" )
+                          )
+                        )
+                        ( Ref Nothing
+                          ( Imported
+                            ( ModuleName "Golden.DistributeIntoIf.Test" )
+                            ( Name "flag" )
+                          ) :| []
+                        )
+                      )
+                      ( LiteralObject Nothing
+                        [ ( PropName "name", LiteralString Nothing "left" ) ] :| []
+                      )
+                    )
+                    ( LiteralObject Nothing
+                      [ ( PropName "name", LiteralString Nothing "right" ) ] :| []
+                    ) :| []
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              ), Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+                  ( AppN Nothing
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
+                    ( AppN Nothing
+                      ( AppN Nothing
+                        ( Ref Nothing
+                          ( Imported
+                            ( ModuleName "Golden.DistributeIntoIf.Test" )
+                            ( Name "applyPicked" )
+                          )
+                        )
+                        ( Ref Nothing
+                          ( Imported
+                            ( ModuleName "Golden.DistributeIntoIf.Test" )
+                            ( Name "flag" )
+                          ) :| []
+                        )
+                      )
+                      ( LiteralInt Nothing 10 :| [] ) :| []
+                    ) :| []
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              )
+            ]
+          )
+          ( AppN Nothing
+            ( AppN Nothing
+              ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+              ( AppN Nothing
+                ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
+                ( AppN Nothing
+                  ( AppN Nothing
+                    ( Ref Nothing
+                      ( Imported
+                        ( ModuleName "Golden.DistributeIntoIf.Test" )
+                        ( Name "applyExpensive" )
+                      )
+                    )
+                    ( AppN Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Golden.DistributeIntoIf.Test" ) ( Name "not" ) )
+                      )
+                      ( Ref Nothing
+                        ( Imported
+                          ( ModuleName "Golden.DistributeIntoIf.Test" )
+                          ( Name "flag" )
+                        ) :| []
+                      ) :| []
+                    )
+                  )
+                  ( LiteralInt Nothing 10 :| [] ) :| []
+                ) :| []
+              )
+            )
+            ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+          )
+        )
+      )
+    ]
+  }

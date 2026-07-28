@@ -1221,6 +1221,7 @@ optimizedExpressionWithPastes ctorTags canon pastes policy env =
         `thenRewrite` reduceBooleanIf
         `thenRewrite` pushEqIntoIfBranches
         `thenRewrite` pushIfCondIntoBranches
+        `thenRewrite` pushEliminatorIntoIfBranches
         `thenRewrite` inlineLocalBindings
     )
 
@@ -1832,34 +1833,11 @@ reduceKnownConstructor =
   pure . \case
     ReflectCtor ann (Ctor _ SumType modName tyName ctorName _args) →
       Just $ LiteralString ann (ctorId modName tyName ctorName)
-    -- A tag read over a conditional of constructors distributes into the
-    -- branches, where each meets the rule above and folds to its tag string
-    -- (issue #180): an inlined comparison (@compare@\/@>=@) is an if-tree of
-    -- 'Ordering' constructors, and @reflectCtor@ over it would otherwise build
-    -- an 'Ordering' table at runtime only to read the tag back off it. Guarded
-    -- so it fires only when every branch folds, so it never leaves a residual
-    -- read nor grows a conditional whose branches are not constructors.
-    ReflectCtor ann (IfThenElse ifAnn cond t e)
-      | reflectFoldsThrough t
-      , reflectFoldsThrough e →
-          Just $ IfThenElse ifAnn cond (ReflectCtor ann t) (ReflectCtor ann e)
     DataArgumentByIndex ann algTy index (Ctor _ ctorAlgTy _ _ _ args)
       | algTy == ctorAlgTy
       , Just arg ← viaNonEmpty head (List.genericDrop index args) →
           Just (setAnn ann arg)
     _ → Nothing
-
-{- | Whether @ReflectCtor@ over this expression folds away completely: it is a
-saturated sum-type constructor application (folds to its tag string) or a
-conditional whose branches all do. Only then does 'reduceKnownConstructor'
-distribute a tag read into an 'IfThenElse', so the rewrite never leaves a
-residual read behind nor grows a conditional over non-constructor branches.
--}
-reflectFoldsThrough ∷ RawExp ann → Bool
-reflectFoldsThrough = \case
-  IfThenElse _ _ t e → reflectFoldsThrough t && reflectFoldsThrough e
-  Ctor _ SumType _ _ _ _ → True
-  _ → False
 
 {- | Case-of-known-constructor through a let-bound scrutinee (issue #214).
 
@@ -3011,19 +2989,19 @@ removeUnreachableElseBranch e = pure case e of
   _ → Nothing
 
 {- | Case-of-case over a comparison (issue #203), the 'Eq' sibling of
-'reduceKnownConstructor'\'s tag-read distribution: a scalar literal
-compared against an 'IfThenElse' tree distributes into the branches,
-where each leaf comparison meets 'constantFolding' and the boolean-if
-rules collapse the tree to a flat condition. Without the push the tree
-sits in expression position — an IIFE in the generated Lua, allocated
-and called per evaluation — the shape an inlined 'Ord' comparison
-leaves behind once the tag read distributes over its 'Ordering'
-decision tree (issue #180). Guarded by 'eqFoldsThrough', mirroring
-'reflectFoldsThrough': the rule fires only when every leaf folds, so it
-never leaves a residual comparison behind, and the duplicated operand
-is a scalar literal, free to re-emit. Evaluation order is preserved:
-the branch conditions ran before the comparison and still do. Each push
-strictly shrinks the tree under the 'Eq', so the rewrite terminates.
+'pushEliminatorIntoIfBranches': a scalar literal compared against an
+'IfThenElse' tree distributes into the branches, where each leaf
+comparison meets 'constantFolding' and the boolean-if rules collapse
+the tree to a flat condition. Without the push the tree sits in
+expression position — an IIFE in the generated Lua, allocated and
+called per evaluation — the shape an inlined 'Ord' comparison leaves
+behind once the tag read distributes over its 'Ordering' decision tree
+(issue #180). Guarded by 'eqFoldsThrough': the rule fires only when
+every leaf folds, so it never leaves a residual comparison behind, and
+the duplicated operand is a scalar literal, free to re-emit. Evaluation
+order is preserved: the branch conditions ran before the comparison and
+still do. Each push strictly shrinks the tree under the 'Eq', so the
+rewrite terminates.
 -}
 pushEqIntoIfBranches ∷ Applicative m ⇒ RewriteRuleM m Ann
 pushEqIntoIfBranches =
@@ -3095,6 +3073,62 @@ pushIfCondIntoBranches =
   isBoolLiteral = \case
     LiteralBool {} → True
     _ → False
+
+{- | Case-of-case over an eliminator whose scrutinee is an 'IfThenElse'
+(issue #243): a cheap elimination — a field, index, length or tag read,
+or a call — applied to a conditional distributes into both arms:
+
+@
+(if p then a else b).f   ==>  if p then a.f else b.f
+(if p then f else g) x   ==>  if p then f x else g x
+@
+
+The conditional otherwise sits in expression position — an IIFE in the
+generated Lua, allocated and called per evaluation — and the eliminator
+never reaches the arms, where the constructor, projection and beta
+folds fire ('reduceKnownConstructor', 'reduceObjectProp',
+'reduceArrayRead', 'betaReduce'). The canonical producer of the tag-read
+shape is an inlined comparison (@compare@\/@>=@): an if-tree of
+'Ordering' constructors that @reflectCtor@ over it would otherwise
+build at runtime only to read the tag back off (issue #180).
+
+Each arm receives one copy of the eliminator and the arms are never
+duplicated, whatever their size, so no gate on them is needed. The only
+syntactically duplicated expressions are an application's arguments,
+admitted by 'isInlinableValue': pure and bounded to re-emit, and
+binder-free, so the copies cannot break the unique-binders invariant.
+Only the arm that runs evaluates its argument copy, and evaluation
+order is preserved — condition, then arm, then arguments, in both
+forms. The unrestricted transformation (arbitrary consumer contexts
+around the conditional) needs join points to avoid duplicating the
+consumer; this rewrite is deliberately the duplication-free subset.
+Each push moves the eliminator onto strictly smaller conditional trees,
+so the rewrite terminates.
+-}
+pushEliminatorIntoIfBranches ∷ Applicative m ⇒ RewriteRuleM m Ann
+pushEliminatorIntoIfBranches =
+  pure . \case
+    ObjectProp ann (IfThenElse ifAnn c t e) prop →
+      Just $
+        IfThenElse ifAnn c (ObjectProp ann t prop) (ObjectProp ann e prop)
+    ArrayIndex ann (IfThenElse ifAnn c t e) index →
+      Just $
+        IfThenElse ifAnn c (ArrayIndex ann t index) (ArrayIndex ann e index)
+    ArrayLength ann (IfThenElse ifAnn c t e) →
+      Just $ IfThenElse ifAnn c (ArrayLength ann t) (ArrayLength ann e)
+    ReflectCtor ann (IfThenElse ifAnn c t e) →
+      Just $ IfThenElse ifAnn c (ReflectCtor ann t) (ReflectCtor ann e)
+    DataArgumentByIndex ann algTy index (IfThenElse ifAnn c t e) →
+      Just $
+        IfThenElse
+          ifAnn
+          c
+          (DataArgumentByIndex ann algTy index t)
+          (DataArgumentByIndex ann algTy index e)
+    AppN ann (IfThenElse ifAnn c t e) args
+      | all isInlinableValue args →
+          Just $ IfThenElse ifAnn c (AppN ann t args) (AppN ann e args)
+    _ → Nothing
 
 -- Inlining is a tricky business:
 -- https://www.microsoft.com/en-us/research/wp-content/uploads/2002/07/inline.pdf
