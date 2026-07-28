@@ -108,13 +108,13 @@ return (function()
       return "(Tuple " .. Data_Show_showIntImpl(v_S_0[1]) .. " " .. Data_Show_showIntImpl(v_S_0[2]) .. ")"
     end
   }, (function()
-    local go_S_sc1Tuple_S_f1_S_0, go_S_sc1Tuple_S_f2_S_0
-    go_S_sc1Tuple_S_f1_S_0, go_S_sc1Tuple_S_f2_S_0 = 0, 0
+    local go_S_0_S_sc1Tuple_S_f1, go_S_0_S_sc1Tuple_S_f2
+    go_S_0_S_sc1Tuple_S_f1, go_S_0_S_sc1Tuple_S_f2 = 0, 0
     while true do
-      if go_S_sc1Tuple_S_f2_S_0 < 5 then
-        go_S_sc1Tuple_S_f1_S_0, go_S_sc1Tuple_S_f2_S_0 = go_S_sc1Tuple_S_f1_S_0 + go_S_sc1Tuple_S_f2_S_0, go_S_sc1Tuple_S_f2_S_0 + 1
+      if go_S_0_S_sc1Tuple_S_f2 < 5 then
+        go_S_0_S_sc1Tuple_S_f1, go_S_0_S_sc1Tuple_S_f2 = go_S_0_S_sc1Tuple_S_f1 + go_S_0_S_sc1Tuple_S_f2, go_S_0_S_sc1Tuple_S_f2 + 1
       else
-        return { go_S_sc1Tuple_S_f1_S_0, go_S_sc1Tuple_S_f2_S_0 }
+        return { go_S_0_S_sc1Tuple_S_f1, go_S_0_S_sc1Tuple_S_f2 }
       end
     end
   end)())()

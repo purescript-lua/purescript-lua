@@ -8,12 +8,6 @@ UberModule
         [ ( Nothing, Name "concatArray" ) ]
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Data.Semigroup", qnameName = Name "concatArray"
-        }, ObjectProp Nothing
-        ( Ref Nothing ( Imported ( ModuleName "Data.Semigroup" ) ( Name "foreign" ) ) )
-        ( PropName "concatArray" )
-      ), Standalone
-      ( QName
         { qnameModuleName = ModuleName "Data.Show", qnameName = Name "foreign"
         }, ForeignImport Nothing
         ( ModuleName "Data.Show" ) ".spago/p/prelude/5718c84fdde6247749cb053e816df696c30fe691/src/Data/Show.purs"
@@ -32,12 +26,6 @@ UberModule
         [ ( Nothing, Name "arrayMap" ) ]
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Data.Functor", qnameName = Name "arrayMap"
-        }, ObjectProp Nothing
-        ( Ref Nothing ( Imported ( ModuleName "Data.Functor" ) ( Name "foreign" ) ) )
-        ( PropName "arrayMap" )
-      ), Standalone
-      ( QName
         { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "foreign"
         }, ForeignImport Nothing
         ( ModuleName "Effect.Console" ) ".spago/p/console/f82835a0b873aafe6bd7b14dd30cc150553d4ab9/src/Effect/Console.purs"
@@ -50,9 +38,21 @@ UberModule
         ( PropName "log" )
       ), Standalone
       ( QName
+        { qnameModuleName = ModuleName "Golden.CSE.Test", qnameName = Name "append"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Data.Semigroup" ) ( Name "foreign" ) ) )
+        ( PropName "concatArray" )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.CSE.Test", qnameName = Name "map"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Data.Functor" ) ( Name "foreign" ) ) )
+        ( PropName "arrayMap" )
+      ), Standalone
+      ( QName
         { qnameModuleName = ModuleName "Golden.CSE.Test", qnameName = Name "logShow"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "a$230" ) :| [] )
+        ( ParamNamed Nothing ( Name "a$222" ) :| [] )
         ( AppN Nothing
           ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
           ( AppN Nothing
@@ -63,19 +63,19 @@ UberModule
               )
               ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) :| [] )
             )
-            ( Ref Nothing ( Local ( Name "a$230" ) ) :| [] ) :| []
+            ( Ref Nothing ( Local ( Name "a$222" ) ) :| [] ) :| []
           )
         )
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.CSE.Test", qnameName = Name "logShow1"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "a$226" ) :| [] )
+        ( ParamNamed Nothing ( Name "a$218" ) :| [] )
         ( AppN Nothing
           ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
           ( AppN Nothing
             ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
-            ( Ref Nothing ( Local ( Name "a$226" ) ) :| [] ) :| []
+            ( Ref Nothing ( Local ( Name "a$218" ) ) :| [] ) :| []
           )
         )
       ), Standalone
@@ -124,15 +124,15 @@ UberModule
           ( ParamNamed Nothing ( Name "x" ) :| [] )
           ( Let Nothing
             ( Standalone
-              ( Nothing, Name "$cse265", ObjectProp Nothing
+              ( Nothing, Name "$cse260", ObjectProp Nothing
                 ( Ref Nothing ( Local ( Name "r" ) ) )
                 ( PropName "run" )
               ) :| []
             )
             ( AppN Nothing
-              ( Ref Nothing ( Local ( Name "$cse265" ) ) )
+              ( Ref Nothing ( Local ( Name "$cse260" ) ) )
               ( AppN Nothing
-                ( Ref Nothing ( Local ( Name "$cse265" ) ) )
+                ( Ref Nothing ( Local ( Name "$cse260" ) ) )
                 ( Ref Nothing ( Local ( Name "x" ) ) :| [] ) :| []
               )
             )
@@ -145,7 +145,7 @@ UberModule
         ( ParamNamed Nothing ( Name "e" ) :| [] )
         ( Let Nothing
           ( Standalone
-            ( Nothing, Name "$cse266", DataArgumentByIndex Nothing SumType 0
+            ( Nothing, Name "$cse261", DataArgumentByIndex Nothing SumType 0
               ( Ref Nothing ( Local ( Name "e" ) ) )
             ) :| []
           )
@@ -157,14 +157,14 @@ UberModule
             ( IfThenElse Nothing
               ( Eq Nothing
                 ( LiteralString Nothing "Golden.CSE.Test∷E.Num" )
-                ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "$cse266" ) ) ) )
+                ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "$cse261" ) ) ) )
               )
               ( IfThenElse Nothing
                 ( Eq Nothing
                   ( LiteralString Nothing "Golden.CSE.Test∷N.Zero" )
                   ( ReflectCtor Nothing
                     ( DataArgumentByIndex Nothing SumType 0
-                      ( Ref Nothing ( Local ( Name "$cse266" ) ) )
+                      ( Ref Nothing ( Local ( Name "$cse261" ) ) )
                     )
                   )
                 )
@@ -174,7 +174,7 @@ UberModule
                     ( LiteralString Nothing "Golden.CSE.Test∷N.Succ" )
                     ( ReflectCtor Nothing
                       ( DataArgumentByIndex Nothing SumType 0
-                        ( Ref Nothing ( Local ( Name "$cse266" ) ) )
+                        ( Ref Nothing ( Local ( Name "$cse261" ) ) )
                       )
                     )
                   )
@@ -185,7 +185,7 @@ UberModule
               ( IfThenElse Nothing
                 ( Eq Nothing
                   ( LiteralString Nothing "Golden.CSE.Test∷E.Not" )
-                  ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "$cse266" ) ) ) )
+                  ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "$cse261" ) ) ) )
                 )
                 ( LiteralInt Nothing 2 )
                 ( Exception Nothing "No patterns matched" )
@@ -194,13 +194,13 @@ UberModule
             ( IfThenElse Nothing
               ( Eq Nothing
                 ( LiteralString Nothing "Golden.CSE.Test∷N.Zero" )
-                ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "$cse266" ) ) ) )
+                ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "$cse261" ) ) ) )
               )
               ( LiteralInt Nothing 3 )
               ( IfThenElse Nothing
                 ( Eq Nothing
                   ( LiteralString Nothing "Golden.CSE.Test∷N.Succ" )
-                  ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "$cse266" ) ) ) )
+                  ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "$cse261" ) ) ) )
                 )
                 ( LiteralInt Nothing 4 )
                 ( Exception Nothing "No patterns matched" )
@@ -215,21 +215,21 @@ UberModule
         ( ParamNamed Nothing ( Name "f" ) :| [] )
         ( Let Nothing
           ( Standalone
-            ( Nothing, Name "$cse267", LiteralArray Nothing
+            ( Nothing, Name "$cse262", LiteralArray Nothing
               [ LiteralInt Nothing 1, LiteralInt Nothing 2, LiteralInt Nothing 3 ]
             ) :| []
           )
           ( AppN Nothing
             ( AppN Nothing
-              ( Ref Nothing ( Imported ( ModuleName "Data.Semigroup" ) ( Name "concatArray" ) ) )
+              ( Ref Nothing ( Imported ( ModuleName "Golden.CSE.Test" ) ( Name "append" ) ) )
               ( AppN Nothing
                 ( Ref Nothing ( Local ( Name "f" ) ) )
-                ( Ref Nothing ( Local ( Name "$cse267" ) ) :| [] ) :| []
+                ( Ref Nothing ( Local ( Name "$cse262" ) ) :| [] ) :| []
               )
             )
             ( AppN Nothing
               ( Ref Nothing ( Local ( Name "f" ) ) )
-              ( Ref Nothing ( Local ( Name "$cse267" ) ) :| [] ) :| []
+              ( Ref Nothing ( Local ( Name "$cse262" ) ) :| [] ) :| []
             )
           )
         )
@@ -242,7 +242,7 @@ UberModule
           ( ParamNamed Nothing ( Name "xs" ) :| [] )
           ( Let Nothing
             ( Standalone
-              ( Nothing, Name "$cse268", AbsN Nothing
+              ( Nothing, Name "$cse263", AbsN Nothing
                 ( ParamNamed Nothing ( Name "i" ) :| [] )
                 ( PrimBinOp Nothing PrimAdd
                   ( Ref Nothing ( Local ( Name "i" ) ) )
@@ -252,19 +252,19 @@ UberModule
             )
             ( AppN Nothing
               ( AppN Nothing
-                ( Ref Nothing ( Imported ( ModuleName "Data.Semigroup" ) ( Name "concatArray" ) ) )
+                ( Ref Nothing ( Imported ( ModuleName "Golden.CSE.Test" ) ( Name "append" ) ) )
                 ( AppN Nothing
                   ( AppN Nothing
-                    ( Ref Nothing ( Imported ( ModuleName "Data.Functor" ) ( Name "arrayMap" ) ) )
-                    ( Ref Nothing ( Local ( Name "$cse268" ) ) :| [] )
+                    ( Ref Nothing ( Imported ( ModuleName "Golden.CSE.Test" ) ( Name "map" ) ) )
+                    ( Ref Nothing ( Local ( Name "$cse263" ) ) :| [] )
                   )
                   ( Ref Nothing ( Local ( Name "xs" ) ) :| [] ) :| []
                 )
               )
               ( AppN Nothing
                 ( AppN Nothing
-                  ( Ref Nothing ( Imported ( ModuleName "Data.Functor" ) ( Name "arrayMap" ) ) )
-                  ( Ref Nothing ( Local ( Name "$cse268" ) ) :| [] )
+                  ( Ref Nothing ( Imported ( ModuleName "Golden.CSE.Test" ) ( Name "map" ) ) )
+                  ( Ref Nothing ( Local ( Name "$cse263" ) ) :| [] )
                 )
                 ( Ref Nothing ( Local ( Name "xs" ) ) :| [] ) :| []
               )
@@ -294,7 +294,7 @@ UberModule
         ( ParamUnused Nothing :| [] )
         ( Let Nothing
           ( Standalone
-            ( Nothing, Name "$cse270", Ctor Nothing SumType
+            ( Nothing, Name "$cse265", Ctor Nothing SumType
               ( ModuleName "Golden.CSE.Test" )
               ( TyName "E" )
               ( CtorName "Num" )
@@ -303,11 +303,11 @@ UberModule
           )
           ( Let Nothing
             ( Standalone
-              ( Nothing, Name "$cse269", Ctor Nothing SumType
+              ( Nothing, Name "$cse264", Ctor Nothing SumType
                 ( ModuleName "Golden.CSE.Test" )
                 ( TyName "E" )
                 ( CtorName "Not" )
-                [ Ref Nothing ( Local ( Name "$cse270" ) ) ]
+                [ Ref Nothing ( Local ( Name "$cse265" ) ) ]
               ) :| []
             )
             ( Let Nothing
@@ -414,7 +414,7 @@ UberModule
                         )
                         ( AppN Nothing
                           ( Ref Nothing
-                            ( Imported ( ModuleName "Data.Functor" ) ( Name "arrayMap" ) )
+                            ( Imported ( ModuleName "Golden.CSE.Test" ) ( Name "map" ) )
                           )
                           ( AbsN Nothing
                             ( ParamNamed Nothing ( Name "v$2" ) :| [] )
@@ -438,8 +438,8 @@ UberModule
                           ( Imported ( ModuleName "Golden.CSE.Test" ) ( Name "catBoth" ) )
                         )
                         ( AbsN Nothing
-                          ( ParamNamed Nothing ( Name "x$216" ) :| [] )
-                          ( Ref Nothing ( Local ( Name "x$216" ) ) ) :| []
+                          ( ParamNamed Nothing ( Name "x$209" ) :| [] )
+                          ( Ref Nothing ( Local ( Name "x$209" ) ) ) :| []
                         ) :| []
                       )
                     )
@@ -454,7 +454,7 @@ UberModule
                         ( Ref Nothing
                           ( Imported ( ModuleName "Golden.CSE.Test" ) ( Name "classify" ) )
                         )
-                        ( Ref Nothing ( Local ( Name "$cse270" ) ) :| [] ) :| []
+                        ( Ref Nothing ( Local ( Name "$cse265" ) ) :| [] ) :| []
                       )
                     )
                     ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
@@ -494,7 +494,7 @@ UberModule
                         ( Ref Nothing
                           ( Imported ( ModuleName "Golden.CSE.Test" ) ( Name "classify" ) )
                         )
-                        ( Ref Nothing ( Local ( Name "$cse269" ) ) :| [] ) :| []
+                        ( Ref Nothing ( Local ( Name "$cse264" ) ) :| [] ) :| []
                       )
                     )
                     ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
@@ -512,7 +512,7 @@ UberModule
                       ( ModuleName "Golden.CSE.Test" )
                       ( TyName "E" )
                       ( CtorName "Not" )
-                      [ Ref Nothing ( Local ( Name "$cse269" ) ) ] :| []
+                      [ Ref Nothing ( Local ( Name "$cse264" ) ) ] :| []
                     ) :| []
                   )
                 )

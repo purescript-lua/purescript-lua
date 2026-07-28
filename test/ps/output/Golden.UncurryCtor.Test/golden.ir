@@ -14,12 +14,6 @@ UberModule
         [ ( Nothing, Name "arrayMap" ) ]
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Data.Functor", qnameName = Name "arrayMap"
-        }, ObjectProp Nothing
-        ( Ref Nothing ( Imported ( ModuleName "Data.Functor" ) ( Name "foreign" ) ) )
-        ( PropName "arrayMap" )
-      ), Standalone
-      ( QName
         { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "foreign"
         }, ForeignImport Nothing
         ( ModuleName "Effect.Console" ) ".spago/p/console/f82835a0b873aafe6bd7b14dd30cc150553d4ab9/src/Effect/Console.purs"
@@ -61,14 +55,20 @@ UberModule
       ( QName
         { qnameModuleName = ModuleName "Golden.UncurryCtor.Test", qnameName = Name "logShow"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "logShow$p2$326" ) :| [] )
+        ( ParamNamed Nothing ( Name "logShow$p2$319" ) :| [] )
         ( AppN Nothing
           ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow$w" ) ) )
           ( Ref Nothing
             ( Imported ( ModuleName "Data.Show" ) ( Name "showInt" ) ) :|
-            [ Ref Nothing ( Local ( Name "logShow$p2$326" ) ) ]
+            [ Ref Nothing ( Local ( Name "logShow$p2$319" ) ) ]
           )
         )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.UncurryCtor.Test", qnameName = Name "map"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Data.Functor" ) ( Name "foreign" ) ) )
+        ( PropName "arrayMap" )
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.UncurryCtor.Test", qnameName = Name "Origin"
@@ -290,31 +290,31 @@ UberModule
         ( ParamNamed Nothing ( Name "v" ) :| [] )
         ( Let Nothing
           ( Standalone
-            ( Nothing, Name "$cse434", DataArgumentByIndex Nothing SumType 0
+            ( Nothing, Name "$cse430", DataArgumentByIndex Nothing SumType 0
               ( Ref Nothing ( Local ( Name "v" ) ) )
             ) :| []
           )
           ( Let Nothing
             ( Standalone
-              ( Nothing, Name "$cse433", ReflectCtor Nothing
+              ( Nothing, Name "$cse429", ReflectCtor Nothing
                 ( Ref Nothing ( Local ( Name "v" ) ) )
               ) :| []
             )
             ( IfThenElse Nothing
               ( Eq Nothing
                 ( LiteralString Nothing "Golden.UncurryCtor.Test∷Shape.Origin" )
-                ( Ref Nothing ( Local ( Name "$cse433" ) ) )
+                ( Ref Nothing ( Local ( Name "$cse429" ) ) )
               )
               ( LiteralInt Nothing 0 )
               ( IfThenElse Nothing
                 ( Eq Nothing
                   ( LiteralString Nothing "Golden.UncurryCtor.Test∷Shape.Dot" )
-                  ( Ref Nothing ( Local ( Name "$cse433" ) ) )
+                  ( Ref Nothing ( Local ( Name "$cse429" ) ) )
                 )
-                ( Ref Nothing ( Local ( Name "$cse434" ) ) )
+                ( Ref Nothing ( Local ( Name "$cse430" ) ) )
                 ( PrimBinOp Nothing PrimAdd
                   ( PrimBinOp Nothing PrimAdd
-                    ( Ref Nothing ( Local ( Name "$cse434" ) ) )
+                    ( Ref Nothing ( Local ( Name "$cse430" ) ) )
                     ( DataArgumentByIndex Nothing SumType 1 ( Ref Nothing ( Local ( Name "v" ) ) ) )
                   )
                   ( DataArgumentByIndex Nothing SumType 2 ( Ref Nothing ( Local ( Name "v" ) ) ) )
@@ -336,14 +336,14 @@ UberModule
         ( Imported ( ModuleName "Golden.UncurryCtor.Test" ) ( Name "Tri" ) )
       ),
       ( Name "Pair", AbsN Nothing
-        ( ParamNamed Nothing ( Name "Pair$p1$323" ) :| [] )
+        ( ParamNamed Nothing ( Name "Pair$p1$316" ) :| [] )
         ( AbsN Nothing
-          ( ParamNamed Nothing ( Name "Pair$p2$324" ) :| [] )
+          ( ParamNamed Nothing ( Name "Pair$p2$317" ) :| [] )
           ( AppN Nothing
             ( Ref Nothing ( Imported ( ModuleName "Golden.UncurryCtor.Test" ) ( Name "Pair$w" ) ) )
             ( Ref Nothing
-              ( Local ( Name "Pair$p1$323" ) ) :|
-              [ Ref Nothing ( Local ( Name "Pair$p2$324" ) ) ]
+              ( Local ( Name "Pair$p1$316" ) ) :|
+              [ Ref Nothing ( Local ( Name "Pair$p2$317" ) ) ]
             )
           )
         )
@@ -356,14 +356,14 @@ UberModule
         ( Imported ( ModuleName "Golden.UncurryCtor.Test" ) ( Name "Nil" ) )
       ),
       ( Name "Cons", AbsN Nothing
-        ( ParamNamed Nothing ( Name "Cons$p1$321" ) :| [] )
+        ( ParamNamed Nothing ( Name "Cons$p1$314" ) :| [] )
         ( AbsN Nothing
-          ( ParamNamed Nothing ( Name "Cons$p2$322" ) :| [] )
+          ( ParamNamed Nothing ( Name "Cons$p2$315" ) :| [] )
           ( AppN Nothing
             ( Ref Nothing ( Imported ( ModuleName "Golden.UncurryCtor.Test" ) ( Name "Cons$w" ) ) )
             ( Ref Nothing
-              ( Local ( Name "Cons$p1$321" ) ) :|
-              [ Ref Nothing ( Local ( Name "Cons$p2$322" ) ) ]
+              ( Local ( Name "Cons$p1$314" ) ) :|
+              [ Ref Nothing ( Local ( Name "Cons$p2$315" ) ) ]
             )
           )
         )
@@ -560,20 +560,23 @@ UberModule
                             [ AppN Nothing
                               ( AppN Nothing
                                 ( Ref Nothing
-                                  ( Imported ( ModuleName "Data.Functor" ) ( Name "arrayMap" ) )
+                                  ( Imported
+                                    ( ModuleName "Golden.UncurryCtor.Test" )
+                                    ( Name "map" )
+                                  )
                                 )
                                 ( AbsN Nothing
-                                  ( ParamNamed Nothing ( Name "v2$308" ) :| [] )
+                                  ( ParamNamed Nothing ( Name "v2$303" ) :| [] )
                                   ( IfThenElse Nothing
                                     ( Eq Nothing
                                       ( LiteralString Nothing "Data.Maybe∷Maybe.Nothing" )
                                       ( ReflectCtor Nothing
-                                        ( Ref Nothing ( Local ( Name "v2$308" ) ) )
+                                        ( Ref Nothing ( Local ( Name "v2$303" ) ) )
                                       )
                                     )
                                     ( LiteralInt Nothing 0 )
                                     ( DataArgumentByIndex Nothing SumType 0
-                                      ( Ref Nothing ( Local ( Name "v2$308" ) ) )
+                                      ( Ref Nothing ( Local ( Name "v2$303" ) ) )
                                     )
                                   ) :| []
                                 )
@@ -581,15 +584,18 @@ UberModule
                               ( AppN Nothing
                                 ( AppN Nothing
                                   ( Ref Nothing
-                                    ( Imported ( ModuleName "Data.Functor" ) ( Name "arrayMap" ) )
+                                    ( Imported
+                                      ( ModuleName "Golden.UncurryCtor.Test" )
+                                      ( Name "map" )
+                                    )
                                   )
                                   ( AbsN Nothing
-                                    ( ParamNamed Nothing ( Name "value0$309" ) :| [] )
+                                    ( ParamNamed Nothing ( Name "value0$304" ) :| [] )
                                     ( Ctor Nothing SumType
                                       ( ModuleName "Data.Maybe" )
                                       ( TyName "Maybe" )
                                       ( CtorName "Just" )
-                                      [ Ref Nothing ( Local ( Name "value0$309" ) ) ]
+                                      [ Ref Nothing ( Local ( Name "value0$304" ) ) ]
                                     ) :| []
                                   )
                                 )

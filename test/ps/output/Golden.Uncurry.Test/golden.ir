@@ -188,10 +188,10 @@ UberModule
       ( QName
         { qnameModuleName = ModuleName "Golden.Uncurry.Test", qnameName = Name "inc"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "add3$p3$223" ) :| [] )
+        ( ParamNamed Nothing ( Name "add3$p3$217" ) :| [] )
         ( PrimBinOp Nothing PrimAdd
           ( LiteralInt Nothing 1 )
-          ( Ref Nothing ( Local ( Name "add3$p3$223" ) ) )
+          ( Ref Nothing ( Local ( Name "add3$p3$217" ) ) )
         )
       )
     ], uberModuleForeigns = [], uberModuleExports =
@@ -210,26 +210,26 @@ UberModule
         ( Imported ( ModuleName "Golden.Uncurry.Test" ) ( Name "sumTo" ) )
       ),
       ( Name "adderOf", AbsN Nothing
-        ( ParamNamed Nothing ( Name "adderOf$p1$215" ) :| [] )
+        ( ParamNamed Nothing ( Name "adderOf$p1$209" ) :| [] )
         ( AbsN Nothing
-          ( ParamNamed Nothing ( Name "adderOf$p2$216" ) :| [] )
+          ( ParamNamed Nothing ( Name "adderOf$p2$210" ) :| [] )
           ( AbsN Nothing
-            ( ParamNamed Nothing ( Name "y$298" ) :| [] )
+            ( ParamNamed Nothing ( Name "y$294" ) :| [] )
             ( PrimBinOp Nothing PrimAdd
               ( PrimBinOp Nothing PrimAdd
-                ( Ref Nothing ( Local ( Name "adderOf$p1$215" ) ) )
-                ( Ref Nothing ( Local ( Name "adderOf$p2$216" ) ) )
+                ( Ref Nothing ( Local ( Name "adderOf$p1$209" ) ) )
+                ( Ref Nothing ( Local ( Name "adderOf$p2$210" ) ) )
               )
-              ( Ref Nothing ( Local ( Name "y$298" ) ) )
+              ( Ref Nothing ( Local ( Name "y$294" ) ) )
             )
           )
         )
       ),
       ( Name "alwaysFirst", AbsN Nothing
-        ( ParamNamed Nothing ( Name "alwaysFirst$p1$217" ) :| [] )
+        ( ParamNamed Nothing ( Name "alwaysFirst$p1$211" ) :| [] )
         ( AbsN Nothing
           ( ParamUnused Nothing :| [] )
-          ( Ref Nothing ( Local ( Name "alwaysFirst$p1$217" ) ) )
+          ( Ref Nothing ( Local ( Name "alwaysFirst$p1$211" ) ) )
         )
       ),
       ( Name "main", AbsN Nothing
@@ -303,10 +303,10 @@ UberModule
                           ( PropName "arrayMap" )
                         )
                         ( AbsN Nothing
-                          ( ParamNamed Nothing ( Name "add3$p3$319" ) :| [] )
+                          ( ParamNamed Nothing ( Name "add3$p3$315" ) :| [] )
                           ( PrimBinOp Nothing PrimAdd
                             ( LiteralInt Nothing 3 )
-                            ( Ref Nothing ( Local ( Name "add3$p3$319" ) ) )
+                            ( Ref Nothing ( Local ( Name "add3$p3$315" ) ) )
                           ) :| []
                         )
                       )
@@ -356,24 +356,24 @@ UberModule
                     [ Let Nothing
                       ( RecursiveGroup
                         (
-                          ( Nothing, Name "go$w$326", AbsN Nothing
+                          ( Nothing, Name "go$w$322", AbsN Nothing
                             ( ParamNamed Nothing
-                              ( Name "acc$327" ) :|
-                              [ ParamNamed Nothing ( Name "n$328" ) ]
+                              ( Name "acc$323" ) :|
+                              [ ParamNamed Nothing ( Name "n$324" ) ]
                             )
                             ( IfThenElse Nothing
                               ( Eq Nothing
-                                ( Ref Nothing ( Local ( Name "n$328" ) ) )
+                                ( Ref Nothing ( Local ( Name "n$324" ) ) )
                                 ( LiteralInt Nothing 0 )
                               )
-                              ( Ref Nothing ( Local ( Name "acc$327" ) ) )
+                              ( Ref Nothing ( Local ( Name "acc$323" ) ) )
                               ( AppN Nothing
-                                ( Ref Nothing ( Local ( Name "go$w$326" ) ) )
+                                ( Ref Nothing ( Local ( Name "go$w$322" ) ) )
                                 ( PrimBinOp Nothing PrimAdd
-                                  ( Ref Nothing ( Local ( Name "acc$327" ) ) )
-                                  ( Ref Nothing ( Local ( Name "n$328" ) ) ) :|
+                                  ( Ref Nothing ( Local ( Name "acc$323" ) ) )
+                                  ( Ref Nothing ( Local ( Name "n$324" ) ) ) :|
                                   [ PrimBinOp Nothing PrimSub
-                                    ( Ref Nothing ( Local ( Name "n$328" ) ) )
+                                    ( Ref Nothing ( Local ( Name "n$324" ) ) )
                                     ( LiteralInt Nothing 1 )
                                   ]
                                 )
@@ -383,7 +383,7 @@ UberModule
                         ) :| []
                       )
                       ( AppN Nothing
-                        ( Ref Nothing ( Local ( Name "go$w$326" ) ) )
+                        ( Ref Nothing ( Local ( Name "go$w$322" ) ) )
                         ( LiteralInt Nothing 0 :| [ LiteralInt Nothing 10 ] )
                       )
                     ]
@@ -399,24 +399,24 @@ UberModule
                     [ Let Nothing
                       ( RecursiveGroup
                         (
-                          ( Nothing, Name "go$w$331", AbsN Nothing
+                          ( Nothing, Name "go$w$327", AbsN Nothing
                             ( ParamNamed Nothing
-                              ( Name "acc$332" ) :|
-                              [ ParamNamed Nothing ( Name "n$333" ) ]
+                              ( Name "acc$328" ) :|
+                              [ ParamNamed Nothing ( Name "n$329" ) ]
                             )
                             ( IfThenElse Nothing
                               ( Eq Nothing
-                                ( Ref Nothing ( Local ( Name "n$333" ) ) )
+                                ( Ref Nothing ( Local ( Name "n$329" ) ) )
                                 ( LiteralInt Nothing 0 )
                               )
-                              ( Ref Nothing ( Local ( Name "acc$332" ) ) )
+                              ( Ref Nothing ( Local ( Name "acc$328" ) ) )
                               ( AppN Nothing
-                                ( Ref Nothing ( Local ( Name "go$w$331" ) ) )
+                                ( Ref Nothing ( Local ( Name "go$w$327" ) ) )
                                 ( PrimBinOp Nothing PrimAdd
-                                  ( Ref Nothing ( Local ( Name "acc$332" ) ) )
-                                  ( Ref Nothing ( Local ( Name "n$333" ) ) ) :|
+                                  ( Ref Nothing ( Local ( Name "acc$328" ) ) )
+                                  ( Ref Nothing ( Local ( Name "n$329" ) ) ) :|
                                   [ PrimBinOp Nothing PrimSub
-                                    ( Ref Nothing ( Local ( Name "n$333" ) ) )
+                                    ( Ref Nothing ( Local ( Name "n$329" ) ) )
                                     ( LiteralInt Nothing 1 )
                                   ]
                                 )
@@ -426,7 +426,7 @@ UberModule
                         ) :| []
                       )
                       ( AppN Nothing
-                        ( Ref Nothing ( Local ( Name "go$w$331" ) ) )
+                        ( Ref Nothing ( Local ( Name "go$w$327" ) ) )
                         ( LiteralInt Nothing 0 :| [ LiteralInt Nothing 100 ] )
                       )
                     ]

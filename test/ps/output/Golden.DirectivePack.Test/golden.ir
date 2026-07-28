@@ -1,0 +1,984 @@
+UberModule
+  { uberModuleBindings =
+    [ Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Unit", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Data.Unit" ) ".spago/p/prelude/5718c84fdde6247749cb053e816df696c30fe691/src/Data/Unit.purs"
+        [ ( Just Never, Name "unit" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Unit", qnameName = Name "unit"
+        }, ObjectProp ( Just Never )
+        ( Ref Nothing ( Imported ( ModuleName "Data.Unit" ) ( Name "foreign" ) ) )
+        ( PropName "unit" )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Semigroup", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Data.Semigroup" ) ".spago/p/prelude/5718c84fdde6247749cb053e816df696c30fe691/src/Data/Semigroup.purs"
+        [ ( Nothing, Name "concatArray" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Show", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Data.Show" ) ".spago/p/prelude/5718c84fdde6247749cb053e816df696c30fe691/src/Data/Show.purs"
+        [ ( Nothing, Name "showIntImpl" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Show", qnameName = Name "showIntImpl"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
+        ( PropName "showIntImpl" )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.EuclideanRing", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Data.EuclideanRing" ) ".spago/p/prelude/5718c84fdde6247749cb053e816df696c30fe691/src/Data/EuclideanRing.purs"
+        [ ( Nothing, Name "intDegree" ), ( Nothing, Name "intDiv" ), ( Nothing, Name "intMod" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.EuclideanRing", qnameName = Name "intDiv"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Data.EuclideanRing" ) ( Name "foreign" ) ) )
+        ( PropName "intDiv" )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.EuclideanRing", qnameName = Name "intMod"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Data.EuclideanRing" ) ( Name "foreign" ) ) )
+        ( PropName "intMod" )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Show.Generic", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Data.Show.Generic" ) ".spago/p/prelude/5718c84fdde6247749cb053e816df696c30fe691/src/Data/Show/Generic.purs"
+        [ ( Nothing, Name "intercalate" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Effect", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Effect" ) ".spago/p/effect/82bac3dff904fa34534c4f5b9deeb5da359471c8/src/Effect.purs"
+        [ ( Nothing, Name "pureE" ), ( Nothing, Name "bindE" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Effect.Console" ) ".spago/p/console/f82835a0b873aafe6bd7b14dd30cc150553d4ab9/src/Effect/Console.purs"
+        [ ( Nothing, Name "log" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "log"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
+        ( PropName "log" )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Effect.Ref", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Effect.Ref" ) ".spago/p/refs/ee6e959ec21b752622e105a14816e7983b21b9a5/src/Effect/Ref.purs"
+        [ ( Nothing, Name "_new" ), ( Nothing, Name "read" ), ( Nothing, Name "modifyImpl" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Semigroup", qnameName = Name "semigroupString"
+        }, LiteralObject Nothing
+        [
+          ( PropName "append", AbsN Nothing
+            ( ParamNamed Nothing ( Name "s1$299" ) :| [] )
+            ( AbsN Nothing
+              ( ParamNamed Nothing ( Name "s2$300" ) :| [] )
+              ( PrimBinOp Nothing PrimConcat
+                ( Ref Nothing ( Local ( Name "s1$299" ) ) )
+                ( Ref Nothing ( Local ( Name "s2$300" ) ) )
+              )
+            )
+          )
+        ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Show", qnameName = Name "show" }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "dict" ) :| [] )
+        ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) ) ( PropName "show" ) )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Maybe", qnameName = Name "Nothing"
+        }, Ctor Nothing SumType
+        ( ModuleName "Data.Maybe" )
+        ( TyName "Maybe" )
+        ( CtorName "Nothing" ) []
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Show.Generic", qnameName = Name "genericShowConstructor$w"
+        }, AbsN Nothing
+        ( ParamNamed Nothing
+          ( Name "dictGenericShowArgs" ) :|
+          [ ParamNamed Nothing ( Name "dictIsSymbol" ) ]
+        )
+        ( LiteralObject Nothing
+          [
+            ( PropName "genericShow'", AbsN Nothing
+              ( ParamNamed Nothing ( Name "v" ) :| [] )
+              ( Let Nothing
+                ( Standalone
+                  ( Nothing, Name "ctor", AppN Nothing
+                    ( ObjectProp Nothing
+                      ( Ref Nothing ( Local ( Name "dictIsSymbol" ) ) )
+                      ( PropName "reflectSymbol" )
+                    )
+                    ( Ctor Nothing ProductType
+                      ( ModuleName "Type.Proxy" )
+                      ( TyName "Proxy" )
+                      ( CtorName "Proxy" ) [] :| []
+                    )
+                  ) :| []
+                )
+                ( Let Nothing
+                  ( Standalone
+                    ( Nothing, Name "v1", AppN Nothing
+                      ( ObjectProp Nothing
+                        ( Ref Nothing ( Local ( Name "dictGenericShowArgs" ) ) )
+                        ( PropName "genericShowArgs" )
+                      )
+                      ( Ref Nothing ( Local ( Name "v" ) ) :| [] )
+                    ) :| []
+                  )
+                  ( IfThenElse Nothing
+                    ( Eq Nothing
+                      ( LiteralInt Nothing 0 )
+                      ( ArrayLength Nothing ( Ref Nothing ( Local ( Name "v1" ) ) ) )
+                    )
+                    ( Ref Nothing ( Local ( Name "ctor" ) ) )
+                    ( PrimBinOp Nothing PrimConcat
+                      ( LiteralString Nothing "(" )
+                      ( PrimBinOp Nothing PrimConcat
+                        ( AppN Nothing
+                          ( AppN Nothing
+                            ( ObjectProp Nothing
+                              ( Ref Nothing
+                                ( Imported ( ModuleName "Data.Show.Generic" ) ( Name "foreign" ) )
+                              )
+                              ( PropName "intercalate" )
+                            )
+                            ( LiteralString Nothing " " :| [] )
+                          )
+                          ( AppN Nothing
+                            ( AppN Nothing
+                              ( ObjectProp Nothing
+                                ( Ref Nothing
+                                  ( Imported ( ModuleName "Data.Semigroup" ) ( Name "foreign" ) )
+                                )
+                                ( PropName "concatArray" )
+                              )
+                              ( LiteralArray Nothing
+                                [ Ref Nothing ( Local ( Name "ctor" ) ) ] :| []
+                              )
+                            )
+                            ( Ref Nothing ( Local ( Name "v1" ) ) :| [] ) :| []
+                          )
+                        )
+                        ( LiteralString Nothing ")" )
+                      )
+                    )
+                  )
+                )
+              )
+            )
+          ]
+        )
+      ), RecursiveGroup
+      (
+        ( QName
+          { qnameModuleName = ModuleName "Effect", qnameName = Name "monadEffect"
+          }, LiteralObject Nothing
+          [
+            ( PropName "Applicative0", AbsN Nothing
+              ( ParamUnused Nothing :| [] )
+              ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "applicativeEffect" ) ) )
+            ),
+            ( PropName "Bind1", AbsN Nothing
+              ( ParamUnused Nothing :| [] )
+              ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "bindEffect" ) ) )
+            )
+          ]
+        ) :|
+        [
+          ( QName
+            { qnameModuleName = ModuleName "Effect", qnameName = Name "bindEffect"
+            }, LiteralObject Nothing
+            [
+              ( PropName "bind", ObjectProp Nothing
+                ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "foreign" ) ) )
+                ( PropName "bindE" )
+              ),
+              ( PropName "Apply0", AbsN Nothing
+                ( ParamUnused Nothing :| [] )
+                ( AppN Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "Lazy_applyEffect" ) ) )
+                  ( LiteralInt Nothing 0 :| [] )
+                )
+              )
+            ]
+          ),
+          ( QName
+            { qnameModuleName = ModuleName "Effect", qnameName = Name "applicativeEffect"
+            }, LiteralObject Nothing
+            [
+              ( PropName "pure", ObjectProp Nothing
+                ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "foreign" ) ) )
+                ( PropName "pureE" )
+              ),
+              ( PropName "Apply0", AbsN Nothing
+                ( ParamUnused Nothing :| [] )
+                ( AppN Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "Lazy_applyEffect" ) ) )
+                  ( LiteralInt Nothing 0 :| [] )
+                )
+              )
+            ]
+          ),
+          ( QName
+            { qnameModuleName = ModuleName "Effect", qnameName = Name "Lazy_functorEffect"
+            }, AppN Nothing
+            ( AppN Nothing
+              ( Ref Nothing ( Local ( Name "PSLUA_runtime_lazy" ) ) )
+              ( LiteralString Nothing "functorEffect" :| [] )
+            )
+            ( AbsN Nothing
+              ( ParamUnused Nothing :| [] )
+              ( LiteralObject Nothing
+                [
+                  ( PropName "map", AbsN Nothing
+                    ( ParamNamed Nothing ( Name "f$448" ) :| [] )
+                    ( AbsN Nothing
+                      ( ParamNamed Nothing ( Name "a$449" ) :| [] )
+                      ( AppN Nothing
+                        ( AppN Nothing
+                          ( ObjectProp Nothing
+                            ( AppN Nothing
+                              ( ObjectProp Nothing
+                                ( Ref Nothing
+                                  ( Imported ( ModuleName "Effect" ) ( Name "applicativeEffect" ) )
+                                )
+                                ( PropName "Apply0" )
+                              )
+                              ( Ref Nothing
+                                ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| []
+                              )
+                            )
+                            ( PropName "apply" )
+                          )
+                          ( AppN Nothing
+                            ( ObjectProp Nothing
+                              ( Ref Nothing
+                                ( Imported ( ModuleName "Effect" ) ( Name "applicativeEffect" ) )
+                              )
+                              ( PropName "pure" )
+                            )
+                            ( Ref Nothing ( Local ( Name "f$448" ) ) :| [] ) :| []
+                          )
+                        )
+                        ( Ref Nothing ( Local ( Name "a$449" ) ) :| [] )
+                      )
+                    )
+                  )
+                ]
+              ) :| []
+            )
+          ),
+          ( QName
+            { qnameModuleName = ModuleName "Effect", qnameName = Name "Lazy_applyEffect"
+            }, AppN Nothing
+            ( AppN Nothing
+              ( Ref Nothing ( Local ( Name "PSLUA_runtime_lazy" ) ) )
+              ( LiteralString Nothing "applyEffect" :| [] )
+            )
+            ( AbsN Nothing
+              ( ParamUnused Nothing :| [] )
+              ( LiteralObject Nothing
+                [
+                  ( PropName "apply", Let Nothing
+                    ( Standalone
+                      ( Nothing, Name "bind$111", ObjectProp Nothing
+                        ( AppN Nothing
+                          ( ObjectProp Nothing
+                            ( Ref Nothing
+                              ( Imported ( ModuleName "Effect" ) ( Name "monadEffect" ) )
+                            )
+                            ( PropName "Bind1" )
+                          )
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ) :| []
+                          )
+                        )
+                        ( PropName "bind" )
+                      ) :| []
+                    )
+                    ( AbsN Nothing
+                      ( ParamNamed Nothing ( Name "f$113" ) :| [] )
+                      ( AbsN Nothing
+                        ( ParamNamed Nothing ( Name "a$114" ) :| [] )
+                        ( AppN Nothing
+                          ( AppN Nothing
+                            ( Ref Nothing ( Local ( Name "bind$111" ) ) )
+                            ( Ref Nothing ( Local ( Name "f$113" ) ) :| [] )
+                          )
+                          ( AbsN Nothing
+                            ( ParamNamed Nothing ( Name "f'$115" ) :| [] )
+                            ( AppN Nothing
+                              ( AppN Nothing
+                                ( Ref Nothing ( Local ( Name "bind$111" ) ) )
+                                ( Ref Nothing ( Local ( Name "a$114" ) ) :| [] )
+                              )
+                              ( AbsN Nothing
+                                ( ParamNamed Nothing ( Name "a'$116" ) :| [] )
+                                ( AppN Nothing
+                                  ( ObjectProp Nothing
+                                    ( AppN Nothing
+                                      ( ObjectProp Nothing
+                                        ( Ref Nothing
+                                          ( Imported
+                                            ( ModuleName "Effect" )
+                                            ( Name "monadEffect" )
+                                          )
+                                        )
+                                        ( PropName "Applicative0" )
+                                      )
+                                      ( Ref Nothing
+                                        ( Imported
+                                          ( ModuleName "Prim" )
+                                          ( Name "undefined" )
+                                        ) :| []
+                                      )
+                                    )
+                                    ( PropName "pure" )
+                                  )
+                                  ( AppN Nothing
+                                    ( Ref Nothing ( Local ( Name "f'$115" ) ) )
+                                    ( Ref Nothing ( Local ( Name "a'$116" ) ) :| [] ) :| []
+                                  )
+                                ) :| []
+                              )
+                            ) :| []
+                          )
+                        )
+                      )
+                    )
+                  ),
+                  ( PropName "Functor0", AbsN Nothing
+                    ( ParamUnused Nothing :| [] )
+                    ( AppN Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Effect" ) ( Name "Lazy_functorEffect" ) )
+                      )
+                      ( LiteralInt Nothing 0 :| [] )
+                    )
+                  )
+                ]
+              ) :| []
+            )
+          ),
+          ( QName
+            { qnameModuleName = ModuleName "Effect", qnameName = Name "functorEffect"
+            }, AppN Nothing
+            ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "Lazy_functorEffect" ) ) )
+            ( LiteralInt Nothing 0 :| [] )
+          )
+        ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.DirectivePack.Test", qnameName = Name "show"
+        }, Ref Nothing
+        ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.DirectivePack.Test", qnameName = Name "Apple"
+        }, Ctor Nothing SumType
+        ( ModuleName "Golden.DirectivePack.Test" )
+        ( TyName "Fruit" )
+        ( CtorName "Apple" ) []
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.DirectivePack.Test", qnameName = Name "Banana"
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "value0" ) :| [] )
+        ( Ctor Nothing SumType
+          ( ModuleName "Golden.DirectivePack.Test" )
+          ( TyName "Fruit" )
+          ( CtorName "Banana" )
+          [ Ref Nothing ( Local ( Name "value0" ) ) ]
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.DirectivePack.Test", qnameName = Name "genericFruit_"
+        }, LiteralObject Nothing
+        [
+          ( PropName "to", AbsN Nothing
+            ( ParamNamed Nothing ( Name "x" ) :| [] )
+            ( IfThenElse Nothing
+              ( Eq Nothing
+                ( LiteralString Nothing "Data.Generic.Rep∷Sum.Inl" )
+                ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "x" ) ) ) )
+              )
+              ( Ref Nothing
+                ( Imported ( ModuleName "Golden.DirectivePack.Test" ) ( Name "Apple" ) )
+              )
+              ( Ctor Nothing SumType
+                ( ModuleName "Golden.DirectivePack.Test" )
+                ( TyName "Fruit" )
+                ( CtorName "Banana" )
+                [ DataArgumentByIndex Nothing SumType 0 ( Ref Nothing ( Local ( Name "x" ) ) ) ]
+              )
+            )
+          ),
+          ( PropName "from", AbsN Nothing
+            ( ParamNamed Nothing ( Name "x0" ) :| [] )
+            ( IfThenElse Nothing
+              ( Eq Nothing
+                ( LiteralString Nothing "Golden.DirectivePack.Test∷Fruit.Apple" )
+                ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "x0" ) ) ) )
+              )
+              ( Ctor Nothing SumType
+                ( ModuleName "Data.Generic.Rep" )
+                ( TyName "Sum" )
+                ( CtorName "Inl" )
+                [ Ctor Nothing ProductType
+                  ( ModuleName "Data.Generic.Rep" )
+                  ( TyName "NoArguments" )
+                  ( CtorName "NoArguments" ) []
+                ]
+              )
+              ( Ctor Nothing SumType
+                ( ModuleName "Data.Generic.Rep" )
+                ( TyName "Sum" )
+                ( CtorName "Inr" )
+                [ DataArgumentByIndex Nothing SumType 0 ( Ref Nothing ( Local ( Name "x0" ) ) ) ]
+              )
+            )
+          )
+        ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.DirectivePack.Test", qnameName = Name "showFruit"
+        }, LiteralObject Nothing
+        [
+          ( PropName "show", AbsN Nothing
+            ( ParamNamed Nothing ( Name "x$437" ) :| [] )
+            ( Let Nothing
+              ( Standalone
+                ( Nothing, Name "v$7", IfThenElse Nothing
+                  ( Eq Nothing
+                    ( LiteralString Nothing "Golden.DirectivePack.Test∷Fruit.Apple" )
+                    ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "x$437" ) ) ) )
+                  )
+                  ( Ctor Nothing SumType
+                    ( ModuleName "Data.Generic.Rep" )
+                    ( TyName "Sum" )
+                    ( CtorName "Inl" )
+                    [ Ctor Nothing ProductType
+                      ( ModuleName "Data.Generic.Rep" )
+                      ( TyName "NoArguments" )
+                      ( CtorName "NoArguments" ) []
+                    ]
+                  )
+                  ( Ctor Nothing SumType
+                    ( ModuleName "Data.Generic.Rep" )
+                    ( TyName "Sum" )
+                    ( CtorName "Inr" )
+                    [ DataArgumentByIndex Nothing SumType 0
+                      ( Ref Nothing ( Local ( Name "x$437" ) ) )
+                    ]
+                  )
+                ) :| []
+              )
+              ( IfThenElse Nothing
+                ( Eq Nothing
+                  ( LiteralString Nothing "Data.Generic.Rep∷Sum.Inl" )
+                  ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v$7" ) ) ) )
+                )
+                ( AppN Nothing
+                  ( ObjectProp Nothing
+                    ( AppN Nothing
+                      ( Ref Nothing
+                        ( Imported
+                          ( ModuleName "Data.Show.Generic" )
+                          ( Name "genericShowConstructor$w" )
+                        )
+                      )
+                      ( LiteralObject Nothing
+                        [
+                          ( PropName "genericShowArgs", AbsN Nothing
+                            ( ParamUnused Nothing :| [] )
+                            ( LiteralArray Nothing [] )
+                          )
+                        ] :|
+                        [ LiteralObject Nothing
+                          [
+                            ( PropName "reflectSymbol", AbsN Nothing
+                              ( ParamUnused Nothing :| [] )
+                              ( LiteralString Nothing "Apple" )
+                            )
+                          ]
+                        ]
+                      )
+                    )
+                    ( PropName "genericShow'" )
+                  )
+                  ( DataArgumentByIndex Nothing SumType 0
+                    ( Ref Nothing ( Local ( Name "v$7" ) ) ) :| []
+                  )
+                )
+                ( AppN Nothing
+                  ( ObjectProp Nothing
+                    ( AppN Nothing
+                      ( Ref Nothing
+                        ( Imported
+                          ( ModuleName "Data.Show.Generic" )
+                          ( Name "genericShowConstructor$w" )
+                        )
+                      )
+                      ( LiteralObject Nothing
+                        [
+                          ( PropName "genericShowArgs", AbsN Nothing
+                            ( ParamNamed Nothing ( Name "v$12" ) :| [] )
+                            ( LiteralArray Nothing
+                              [ AppN Nothing
+                                ( Ref Nothing
+                                  ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) )
+                                )
+                                ( Ref Nothing ( Local ( Name "v$12" ) ) :| [] )
+                              ]
+                            )
+                          )
+                        ] :|
+                        [ LiteralObject Nothing
+                          [
+                            ( PropName "reflectSymbol", AbsN Nothing
+                              ( ParamUnused Nothing :| [] )
+                              ( LiteralString Nothing "Banana" )
+                            )
+                          ]
+                        ]
+                      )
+                    )
+                    ( PropName "genericShow'" )
+                  )
+                  ( DataArgumentByIndex Nothing SumType 0
+                    ( Ref Nothing ( Local ( Name "v$7" ) ) ) :| []
+                  )
+                )
+              )
+            )
+          )
+        ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.DirectivePack.Test", qnameName = Name "pipeline"
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "x$431" ) :| [] )
+        ( PrimBinOp Nothing PrimAdd
+          ( Ref Nothing ( Local ( Name "x$431" ) ) )
+          ( LiteralInt Nothing 1 )
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.DirectivePack.Test", qnameName = Name "half"
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "n" ) :| [] )
+        ( IfThenElse Nothing
+          ( Eq Nothing
+            ( AppN Nothing
+              ( AppN Nothing
+                ( Ref Nothing ( Imported ( ModuleName "Data.EuclideanRing" ) ( Name "intMod" ) ) )
+                ( Ref Nothing ( Local ( Name "n" ) ) :| [] )
+              )
+              ( LiteralInt Nothing 2 :| [] )
+            )
+            ( LiteralInt Nothing 0 )
+          )
+          ( Ctor Nothing SumType
+            ( ModuleName "Data.Maybe" )
+            ( TyName "Maybe" )
+            ( CtorName "Just" )
+            [ AppN Nothing
+              ( AppN Nothing
+                ( Ref Nothing ( Imported ( ModuleName "Data.EuclideanRing" ) ( Name "intDiv" ) ) )
+                ( Ref Nothing ( Local ( Name "n" ) ) :| [] )
+              )
+              ( LiteralInt Nothing 2 :| [] )
+            ]
+          )
+          ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) )
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.DirectivePack.Test", qnameName = Name "describeFruit"
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "x$338" ) :| [] )
+        ( AppN Nothing
+          ( AppN Nothing
+            ( ObjectProp Nothing
+              ( Ref Nothing
+                ( Imported ( ModuleName "Data.Semigroup" ) ( Name "semigroupString" ) )
+              )
+              ( PropName "append" )
+            )
+            ( LiteralString Nothing "fruit: " :| [] )
+          )
+          ( AppN Nothing
+            ( AppN Nothing
+              ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "show" ) ) )
+              ( Ref Nothing
+                ( Imported ( ModuleName "Golden.DirectivePack.Test" ) ( Name "showFruit" ) ) :| []
+              )
+            )
+            ( Ref Nothing ( Local ( Name "x$338" ) ) :| [] ) :| []
+          )
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.DirectivePack.Test", qnameName = Name "classify"
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "n" ) :| [] )
+        ( IfThenElse Nothing
+          ( PrimBinOp Nothing PrimLt
+            ( Ref Nothing ( Local ( Name "n" ) ) )
+            ( LiteralInt Nothing 0 )
+          )
+          ( LiteralString Nothing "negative" )
+          ( IfThenElse Nothing
+            ( Eq Nothing ( Ref Nothing ( Local ( Name "n" ) ) ) ( LiteralInt Nothing 0 ) )
+            ( LiteralString Nothing "zero" )
+            ( LiteralString Nothing "positive" )
+          )
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.DirectivePack.Test", qnameName = Name "chain"
+        }, Let Nothing
+        ( Standalone
+          ( Nothing, Name "a$365", Let Nothing
+            ( Standalone
+              ( Nothing, Name "a$377", IfThenElse Nothing
+                ( Eq Nothing
+                  ( AppN Nothing
+                    ( AppN Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Data.EuclideanRing" ) ( Name "intMod" ) )
+                      )
+                      ( LiteralInt Nothing 40 :| [] )
+                    )
+                    ( LiteralInt Nothing 2 :| [] )
+                  )
+                  ( LiteralInt Nothing 0 )
+                )
+                ( Ctor Nothing SumType
+                  ( ModuleName "Data.Maybe" )
+                  ( TyName "Maybe" )
+                  ( CtorName "Just" )
+                  [ AppN Nothing
+                    ( AppN Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Data.EuclideanRing" ) ( Name "intDiv" ) )
+                      )
+                      ( LiteralInt Nothing 40 :| [] )
+                    )
+                    ( LiteralInt Nothing 2 :| [] )
+                  ]
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) )
+              ) :| []
+            )
+            ( IfThenElse Nothing
+              ( Eq Nothing
+                ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
+                ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "a$377" ) ) ) )
+              )
+              ( IfThenElse Nothing
+                ( Eq Nothing
+                  ( AppN Nothing
+                    ( AppN Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Data.EuclideanRing" ) ( Name "intMod" ) )
+                      )
+                      ( DataArgumentByIndex Nothing SumType 0
+                        ( Ref Nothing ( Local ( Name "a$377" ) ) ) :| []
+                      )
+                    )
+                    ( LiteralInt Nothing 2 :| [] )
+                  )
+                  ( LiteralInt Nothing 0 )
+                )
+                ( Ctor Nothing SumType
+                  ( ModuleName "Data.Maybe" )
+                  ( TyName "Maybe" )
+                  ( CtorName "Just" )
+                  [ AppN Nothing
+                    ( AppN Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Data.EuclideanRing" ) ( Name "intDiv" ) )
+                      )
+                      ( DataArgumentByIndex Nothing SumType 0
+                        ( Ref Nothing ( Local ( Name "a$377" ) ) ) :| []
+                      )
+                    )
+                    ( LiteralInt Nothing 2 :| [] )
+                  ]
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) )
+              )
+              ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) )
+            )
+          ) :| []
+        )
+        ( IfThenElse Nothing
+          ( Eq Nothing
+            ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
+            ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "a$365" ) ) ) )
+          )
+          ( IfThenElse Nothing
+            ( Eq Nothing
+              ( AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Data.EuclideanRing" ) ( Name "intMod" ) )
+                  )
+                  ( DataArgumentByIndex Nothing SumType 0
+                    ( Ref Nothing ( Local ( Name "a$365" ) ) ) :| []
+                  )
+                )
+                ( LiteralInt Nothing 2 :| [] )
+              )
+              ( LiteralInt Nothing 0 )
+            )
+            ( Ctor Nothing SumType
+              ( ModuleName "Data.Maybe" )
+              ( TyName "Maybe" )
+              ( CtorName "Just" )
+              [ AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Data.EuclideanRing" ) ( Name "intDiv" ) )
+                  )
+                  ( DataArgumentByIndex Nothing SumType 0
+                    ( Ref Nothing ( Local ( Name "a$365" ) ) ) :| []
+                  )
+                )
+                ( LiteralInt Nothing 2 :| [] )
+              ]
+            )
+            ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) )
+          )
+          ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) )
+        )
+      )
+    ], uberModuleForeigns = [], uberModuleExports =
+    [
+      ( Name "Apple", Ref Nothing
+        ( Imported ( ModuleName "Golden.DirectivePack.Test" ) ( Name "Apple" ) )
+      ),
+      ( Name "Banana", Ref Nothing
+        ( Imported ( ModuleName "Golden.DirectivePack.Test" ) ( Name "Banana" ) )
+      ),
+      ( Name "half", Ref Nothing
+        ( Imported ( ModuleName "Golden.DirectivePack.Test" ) ( Name "half" ) )
+      ),
+      ( Name "chain", Ref Nothing
+        ( Imported ( ModuleName "Golden.DirectivePack.Test" ) ( Name "chain" ) )
+      ),
+      ( Name "describeFruit", Ref Nothing
+        ( Imported ( ModuleName "Golden.DirectivePack.Test" ) ( Name "describeFruit" ) )
+      ),
+      ( Name "pipeline", Ref Nothing
+        ( Imported ( ModuleName "Golden.DirectivePack.Test" ) ( Name "pipeline" ) )
+      ),
+      ( Name "classify", Ref Nothing
+        ( Imported ( ModuleName "Golden.DirectivePack.Test" ) ( Name "classify" ) )
+      ),
+      ( Name "main", AbsN Nothing
+        ( ParamUnused Nothing :| [] )
+        ( Let Nothing
+          ( Standalone
+            ( Nothing, Name "_", AppN Nothing
+              ( AppN Nothing
+                ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+                ( IfThenElse Nothing
+                  ( Eq Nothing
+                    ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
+                    ( ReflectCtor Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Golden.DirectivePack.Test" ) ( Name "chain" ) )
+                      )
+                    )
+                  )
+                  ( PrimBinOp Nothing PrimConcat
+                    ( LiteralString Nothing "(Just " )
+                    ( PrimBinOp Nothing PrimConcat
+                      ( AppN Nothing
+                        ( Ref Nothing
+                          ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) )
+                        )
+                        ( DataArgumentByIndex Nothing SumType 0
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Golden.DirectivePack.Test" ) ( Name "chain" ) )
+                          ) :| []
+                        )
+                      )
+                      ( LiteralString Nothing ")" )
+                    )
+                  )
+                  ( LiteralString Nothing "Nothing" ) :| []
+                )
+              )
+              ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+            ) :|
+            [ Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+                  ( PrimBinOp Nothing PrimConcat
+                    ( LiteralString Nothing "fruit: " )
+                    ( AppN Nothing
+                      ( ObjectProp Nothing
+                        ( AppN Nothing
+                          ( Ref Nothing
+                            ( Imported
+                              ( ModuleName "Data.Show.Generic" )
+                              ( Name "genericShowConstructor$w" )
+                            )
+                          )
+                          ( LiteralObject Nothing
+                            [
+                              ( PropName "genericShowArgs", AbsN Nothing
+                                ( ParamNamed Nothing ( Name "v$519" ) :| [] )
+                                ( LiteralArray Nothing
+                                  [ AppN Nothing
+                                    ( Ref Nothing
+                                      ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) )
+                                    )
+                                    ( Ref Nothing ( Local ( Name "v$519" ) ) :| [] )
+                                  ]
+                                )
+                              )
+                            ] :|
+                            [ LiteralObject Nothing
+                              [
+                                ( PropName "reflectSymbol", AbsN Nothing
+                                  ( ParamUnused Nothing :| [] )
+                                  ( LiteralString Nothing "Banana" )
+                                )
+                              ]
+                            ]
+                          )
+                        )
+                        ( PropName "genericShow'" )
+                      )
+                      ( LiteralInt Nothing 3 :| [] )
+                    ) :| []
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              ), Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+                  ( AppN Nothing
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Golden.DirectivePack.Test" ) ( Name "show" ) )
+                    )
+                    ( LiteralInt Nothing 42 :| [] ) :| []
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              ), Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+                  ( LiteralString Nothing "positive" :| [] )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              ), Standalone
+              ( Nothing, Name "r$0", AppN Nothing
+                ( AppN Nothing
+                  ( ObjectProp Nothing
+                    ( Ref Nothing ( Imported ( ModuleName "Effect.Ref" ) ( Name "foreign" ) ) )
+                    ( PropName "_new" )
+                  )
+                  ( LiteralInt Nothing 10 :| [] )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              ), Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( AppN Nothing
+                    ( ObjectProp Nothing
+                      ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "functorEffect" ) ) )
+                      ( PropName "map" )
+                    )
+                    ( AbsN Nothing
+                      ( ParamUnused Nothing :| [] )
+                      ( Ref Nothing ( Imported ( ModuleName "Data.Unit" ) ( Name "unit" ) ) ) :| []
+                    )
+                  )
+                  ( AppN Nothing
+                    ( AppN Nothing
+                      ( ObjectProp Nothing
+                        ( Ref Nothing ( Imported ( ModuleName "Effect.Ref" ) ( Name "foreign" ) ) )
+                        ( PropName "modifyImpl" )
+                      )
+                      ( AbsN Nothing
+                        ( ParamNamed Nothing ( Name "s$499" ) :| [] )
+                        ( Let Nothing
+                          ( Standalone
+                            ( Nothing, Name "s'$500", PrimBinOp Nothing PrimMul
+                              ( Ref Nothing ( Local ( Name "s$499" ) ) )
+                              ( LiteralInt Nothing 3 )
+                            ) :| []
+                          )
+                          ( LiteralObject Nothing
+                            [
+                              ( PropName "state", Ref Nothing ( Local ( Name "s'$500" ) ) ),
+                              ( PropName "value", Ref Nothing ( Local ( Name "s'$500" ) ) )
+                            ]
+                          )
+                        ) :| []
+                      )
+                    )
+                    ( Ref Nothing ( Local ( Name "r$0" ) ) :| [] ) :| []
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              ), Standalone
+              ( Nothing, Name "v0$2", AppN Nothing
+                ( AppN Nothing
+                  ( ObjectProp Nothing
+                    ( Ref Nothing ( Imported ( ModuleName "Effect.Ref" ) ( Name "foreign" ) ) )
+                    ( PropName "read" )
+                  )
+                  ( Ref Nothing ( Local ( Name "r$0" ) ) :| [] )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              )
+            ]
+          )
+          ( AppN Nothing
+            ( AppN Nothing
+              ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+              ( AppN Nothing
+                ( Ref Nothing
+                  ( Imported ( ModuleName "Golden.DirectivePack.Test" ) ( Name "show" ) )
+                )
+                ( Ref Nothing ( Local ( Name "v0$2" ) ) :| [] ) :| []
+              )
+            )
+            ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+          )
+        )
+      ),
+      ( Name "genericFruit_", Ref Nothing
+        ( Imported ( ModuleName "Golden.DirectivePack.Test" ) ( Name "genericFruit_" ) )
+      ),
+      ( Name "showFruit", Ref Nothing
+        ( Imported ( ModuleName "Golden.DirectivePack.Test" ) ( Name "showFruit" ) )
+      )
+    ]
+  }

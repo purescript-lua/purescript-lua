@@ -24,7 +24,6 @@ local Effect_foreign = {
   end,
   untilE = function(f) return function() while not(f()) do  end end end
 }
-local Effect_bindE = Effect_foreign.bindE
 local Effect_pureE = Effect_foreign.pureE
 local Effect_Ref_foreign = {
   _new = function(val) return function() return { value = val } end end,
@@ -46,7 +45,7 @@ local Effect_monadEffect = {
 }
 local Effect_Lazy_applyEffect
 Effect_bindEffect = {
-  bind = Effect_bindE,
+  bind = Effect_foreign.bindE,
   Apply0 = function() return Effect_Lazy_applyEffect(0) end
 }
 Effect_applicativeEffect = {
@@ -57,7 +56,7 @@ local Effect_Lazy_functorEffect = PSLUA_runtime_lazy("functorEffect")(function()
   return {
     map = function(f_S_0)
       return function(a_S_0)
-        return (Effect_applicativeEffect.Apply0()).apply(Effect_pureE(f_S_0))(a_S_0)
+        return (Effect_applicativeEffect.Apply0()).apply(Effect_applicativeEffect.pure(f_S_0))(a_S_0)
       end
     end
   }
@@ -104,7 +103,7 @@ return (function()
     tailRecM = function(f_S_2)
       return function(a_S_2)
         return function()
-          local r_S_0 = Effect_bindE(f_S_2(a_S_2))(Effect_Ref_foreign._new)()
+          local r_S_0 = Effect_bindEffect.bind(f_S_2(a_S_2))(Effect_Ref_foreign._new)()
           local _ = Effect_foreign.untilE(function()
             local v0_S_0 = Effect_Ref_read(r_S_0)()
             if "Control.Monad.Rec.Class∷Step.Loop" == v0_S_0[1] then

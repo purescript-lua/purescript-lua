@@ -13,8 +13,9 @@ https://github.com/purescript-lua/purescript-lua/discussions/categories/ideas
 - [x] FFI with Lua.
 - [x] Dead Code Elimination (DCE).
 - [x] Code inlining, tunable with graduated `@inline` directives
-      (`always`/`never`/`arity=N`, per-field accessors, and a project-wide
-      `--directives` file).
+      (`always`/`never`/`arity=N`, per-field accessors, a project-wide
+      `--directives` file, and a shipped default pack for the prelude/core
+      forks).
 - [x] [Package Set](https://github.com/purescript-lua/purescript-lua-package-sets) for PureScript/Lua libs.
 - [x] All core libs added to the package set.
 - [x] First-class [Spago](https://github.com/purescript/spago) backend: `spago build`, `spago run`, and `spago test` target Lua via `pslua`.
@@ -191,7 +192,7 @@ field of a record the binding is (or returns), and a mode:
 - `default` explicitly resets the target to the built-in heuristics, masking
   any weaker directive.
 
-Directives come from three sources, most specific first:
+Directives come from four sources, most specific first:
 
 1. **Module-header pragmas** — comment lines above `module` in the defining
    module, naming its own bindings: `-- @inline myBinding arity=2`.
@@ -202,12 +203,21 @@ Directives come from three sources, most specific first:
    cover optional dependencies.
 3. **Exported pragmas** — `-- @inline export myBinding always` in the
    defining module travels with the library as its author's recommendation.
+4. **The default directive pack** — the compiler ships directives for the
+   prelude/core forks' ubiquitous tiny combinators (class member accessors
+   like `map` and `bind` at `arity=1`, `bindFlipped`, the function-instance
+   dictionary methods like `semigroupFn.append`, `otherwise`, the generics
+   glue, the ST/Ref `modify` wrappers), so common dictionary-parameterized
+   code specializes away with no annotations in user code.
 
-A local pragma beats the file, and the file beats an exported pragma, per
-target. Foreign bindings accept only whole-binding `always`/`never`/`default`
-(their implementation is opaque to the optimizer). Note that `spago run`
-re-invokes the backend without build-phase flags, so `--directives` (like all
-build flags) applies to `spago build` output, not to the `--run` re-link.
+A local pragma beats the file, the file beats an exported pragma, and every
+explicit source beats the default pack, per target. To opt a pack entry out,
+name it in the directives file with mode `default` (restoring the built-in
+heuristics) or any stronger mode. Foreign bindings accept only whole-binding
+`always`/`never`/`default` (their implementation is opaque to the optimizer).
+Note that `spago run` re-invokes the backend without build-phase flags, so
+`--directives` (like all build flags) applies to `spago build` output, not to
+the `--run` re-link.
 
 Specializations of an `arity=N` target need no directives of their own: a
 top-level binding that applies the target to `k` arguments — a hand-written

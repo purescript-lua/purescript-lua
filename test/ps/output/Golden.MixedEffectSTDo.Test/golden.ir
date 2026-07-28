@@ -73,18 +73,18 @@ UberModule
                           ( PropName "modifyImpl" )
                         )
                         ( AbsN Nothing
-                          ( ParamNamed Nothing ( Name "s$8" ) :| [] )
+                          ( ParamNamed Nothing ( Name "s$446" ) :| [] )
                           ( Let Nothing
                             ( Standalone
-                              ( Nothing, Name "s'$9", PrimBinOp Nothing PrimMul
-                                ( Ref Nothing ( Local ( Name "s$8" ) ) )
+                              ( Nothing, Name "s'$447", PrimBinOp Nothing PrimMul
+                                ( Ref Nothing ( Local ( Name "s$446" ) ) )
                                 ( LiteralInt Nothing 2 )
                               ) :| []
                             )
                             ( LiteralObject Nothing
                               [
-                                ( PropName "state", Ref Nothing ( Local ( Name "s'$9" ) ) ),
-                                ( PropName "value", Ref Nothing ( Local ( Name "s'$9" ) ) )
+                                ( PropName "state", Ref Nothing ( Local ( Name "s'$447" ) ) ),
+                                ( PropName "value", Ref Nothing ( Local ( Name "s'$447" ) ) )
                               ]
                             )
                           ) :| []

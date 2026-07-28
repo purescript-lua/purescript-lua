@@ -48,11 +48,6 @@ UberModule
         ( PropName "foreachE" )
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Effect", qnameName = Name "pureE" }, ObjectProp Nothing
-        ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "foreign" ) ) )
-        ( PropName "pureE" )
-      ), Standalone
-      ( QName
         { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "foreign"
         }, ForeignImport Nothing
         ( ModuleName "Effect.Console" ) ".spago/p/console/f82835a0b873aafe6bd7b14dd30cc150553d4ab9/src/Effect/Console.purs"
@@ -74,6 +69,12 @@ UberModule
         { qnameModuleName = ModuleName "Effect.Ref", qnameName = Name "_new" }, ObjectProp Nothing
         ( Ref Nothing ( Imported ( ModuleName "Effect.Ref" ) ( Name "foreign" ) ) )
         ( PropName "_new" )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Effect.Ref", qnameName = Name "modifyImpl"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Effect.Ref" ) ( Name "foreign" ) ) )
+        ( PropName "modifyImpl" )
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Effect.Ref", qnameName = Name "read" }, ObjectProp Nothing
@@ -117,8 +118,9 @@ UberModule
             { qnameModuleName = ModuleName "Effect", qnameName = Name "applicativeEffect"
             }, LiteralObject Nothing
             [
-              ( PropName "pure", Ref Nothing
-                ( Imported ( ModuleName "Effect" ) ( Name "pureE" ) )
+              ( PropName "pure", ObjectProp Nothing
+                ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "foreign" ) ) )
+                ( PropName "pureE" )
               ),
               ( PropName "Apply0", AbsN Nothing
                 ( ParamUnused Nothing :| [] )
@@ -141,9 +143,9 @@ UberModule
               ( LiteralObject Nothing
                 [
                   ( PropName "map", AbsN Nothing
-                    ( ParamNamed Nothing ( Name "f$38" ) :| [] )
+                    ( ParamNamed Nothing ( Name "f$241" ) :| [] )
                     ( AbsN Nothing
-                      ( ParamNamed Nothing ( Name "a$39" ) :| [] )
+                      ( ParamNamed Nothing ( Name "a$242" ) :| [] )
                       ( AppN Nothing
                         ( AppN Nothing
                           ( ObjectProp Nothing
@@ -161,11 +163,16 @@ UberModule
                             ( PropName "apply" )
                           )
                           ( AppN Nothing
-                            ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "pureE" ) ) )
-                            ( Ref Nothing ( Local ( Name "f$38" ) ) :| [] ) :| []
+                            ( ObjectProp Nothing
+                              ( Ref Nothing
+                                ( Imported ( ModuleName "Effect" ) ( Name "applicativeEffect" ) )
+                              )
+                              ( PropName "pure" )
+                            )
+                            ( Ref Nothing ( Local ( Name "f$241" ) ) :| [] ) :| []
                           )
                         )
-                        ( Ref Nothing ( Local ( Name "a$39" ) ) :| [] )
+                        ( Ref Nothing ( Local ( Name "a$242" ) ) :| [] )
                       )
                     )
                   )
@@ -186,7 +193,7 @@ UberModule
                 [
                   ( PropName "apply", Let Nothing
                     ( Standalone
-                      ( Nothing, Name "bind$20", ObjectProp Nothing
+                      ( Nothing, Name "bind$17", ObjectProp Nothing
                         ( AppN Nothing
                           ( ObjectProp Nothing
                             ( Ref Nothing
@@ -202,23 +209,23 @@ UberModule
                       ) :| []
                     )
                     ( AbsN Nothing
-                      ( ParamNamed Nothing ( Name "f$22" ) :| [] )
+                      ( ParamNamed Nothing ( Name "f$19" ) :| [] )
                       ( AbsN Nothing
-                        ( ParamNamed Nothing ( Name "a$23" ) :| [] )
+                        ( ParamNamed Nothing ( Name "a$20" ) :| [] )
                         ( AppN Nothing
                           ( AppN Nothing
-                            ( Ref Nothing ( Local ( Name "bind$20" ) ) )
-                            ( Ref Nothing ( Local ( Name "f$22" ) ) :| [] )
+                            ( Ref Nothing ( Local ( Name "bind$17" ) ) )
+                            ( Ref Nothing ( Local ( Name "f$19" ) ) :| [] )
                           )
                           ( AbsN Nothing
-                            ( ParamNamed Nothing ( Name "f'$24" ) :| [] )
+                            ( ParamNamed Nothing ( Name "f'$21" ) :| [] )
                             ( AppN Nothing
                               ( AppN Nothing
-                                ( Ref Nothing ( Local ( Name "bind$20" ) ) )
-                                ( Ref Nothing ( Local ( Name "a$23" ) ) :| [] )
+                                ( Ref Nothing ( Local ( Name "bind$17" ) ) )
+                                ( Ref Nothing ( Local ( Name "a$20" ) ) :| [] )
                               )
                               ( AbsN Nothing
-                                ( ParamNamed Nothing ( Name "a'$25" ) :| [] )
+                                ( ParamNamed Nothing ( Name "a'$22" ) :| [] )
                                 ( AppN Nothing
                                   ( ObjectProp Nothing
                                     ( AppN Nothing
@@ -241,8 +248,8 @@ UberModule
                                     ( PropName "pure" )
                                   )
                                   ( AppN Nothing
-                                    ( Ref Nothing ( Local ( Name "f'$24" ) ) )
-                                    ( Ref Nothing ( Local ( Name "a'$25" ) ) :| [] ) :| []
+                                    ( Ref Nothing ( Local ( Name "f'$21" ) ) )
+                                    ( Ref Nothing ( Local ( Name "a'$22" ) ) :| [] ) :| []
                                   )
                                 ) :| []
                               )
@@ -274,56 +281,14 @@ UberModule
         ]
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Effect.Ref", qnameName = Name "modify_$w" }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "f" ) :| [ ParamNamed Nothing ( Name "s" ) ] )
-        ( AppN Nothing
-          ( AppN Nothing
-            ( ObjectProp Nothing
-              ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "functorEffect" ) ) )
-              ( PropName "map" )
-            )
-            ( AbsN Nothing
-              ( ParamUnused Nothing :| [] )
-              ( Ref Nothing ( Imported ( ModuleName "Data.Unit" ) ( Name "unit" ) ) ) :| []
-            )
-          )
-          ( AppN Nothing
-            ( AppN Nothing
-              ( ObjectProp Nothing
-                ( Ref Nothing ( Imported ( ModuleName "Effect.Ref" ) ( Name "foreign" ) ) )
-                ( PropName "modifyImpl" )
-              )
-              ( AbsN Nothing
-                ( ParamNamed Nothing ( Name "s$11" ) :| [] )
-                ( Let Nothing
-                  ( Standalone
-                    ( Nothing, Name "s'$12", AppN Nothing
-                      ( Ref Nothing ( Local ( Name "f" ) ) )
-                      ( Ref Nothing ( Local ( Name "s$11" ) ) :| [] )
-                    ) :| []
-                  )
-                  ( LiteralObject Nothing
-                    [
-                      ( PropName "state", Ref Nothing ( Local ( Name "s'$12" ) ) ),
-                      ( PropName "value", Ref Nothing ( Local ( Name "s'$12" ) ) )
-                    ]
-                  )
-                ) :| []
-              )
-            )
-            ( Ref Nothing ( Local ( Name "s" ) ) :| [] ) :| []
-          )
-        )
-      ), Standalone
-      ( QName
         { qnameModuleName = ModuleName "Golden.NativeLoops.Test", qnameName = Name "logShow"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "a$15" ) :| [] )
+        ( ParamNamed Nothing ( Name "a$12" ) :| [] )
         ( AppN Nothing
           ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
           ( AppN Nothing
             ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
-            ( Ref Nothing ( Local ( Name "a$15" ) ) :| [] ) :| []
+            ( Ref Nothing ( Local ( Name "a$12" ) ) :| [] ) :| []
           )
         )
       )
@@ -381,14 +346,44 @@ UberModule
                   ( AbsN Nothing
                     ( ParamNamed Nothing ( Name "n$1" ) :| [] )
                     ( AppN Nothing
-                      ( Ref Nothing ( Imported ( ModuleName "Effect.Ref" ) ( Name "modify_$w" ) ) )
-                      ( AbsN Nothing
-                        ( ParamNamed Nothing ( Name "v$2" ) :| [] )
-                        ( PrimBinOp Nothing PrimAdd
-                          ( Ref Nothing ( Local ( Name "v$2" ) ) )
-                          ( Ref Nothing ( Local ( Name "n$1" ) ) )
-                        ) :|
-                        [ Ref Nothing ( Local ( Name "sum$0" ) ) ]
+                      ( AppN Nothing
+                        ( ObjectProp Nothing
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Effect" ) ( Name "functorEffect" ) )
+                          )
+                          ( PropName "map" )
+                        )
+                        ( AbsN Nothing
+                          ( ParamUnused Nothing :| [] )
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Data.Unit" ) ( Name "unit" ) )
+                          ) :| []
+                        )
+                      )
+                      ( AppN Nothing
+                        ( AppN Nothing
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Effect.Ref" ) ( Name "modifyImpl" ) )
+                          )
+                          ( AbsN Nothing
+                            ( ParamNamed Nothing ( Name "s$255" ) :| [] )
+                            ( Let Nothing
+                              ( Standalone
+                                ( Nothing, Name "s'$256", PrimBinOp Nothing PrimAdd
+                                  ( Ref Nothing ( Local ( Name "s$255" ) ) )
+                                  ( Ref Nothing ( Local ( Name "n$1" ) ) )
+                                ) :| []
+                              )
+                              ( LiteralObject Nothing
+                                [
+                                  ( PropName "state", Ref Nothing ( Local ( Name "s'$256" ) ) ),
+                                  ( PropName "value", Ref Nothing ( Local ( Name "s'$256" ) ) )
+                                ]
+                              )
+                            ) :| []
+                          )
+                        )
+                        ( Ref Nothing ( Local ( Name "sum$0" ) ) :| [] ) :| []
                       )
                     ) :| []
                   )
@@ -491,16 +486,46 @@ UberModule
                       )
                       ( AppN Nothing
                         ( AppN Nothing
-                          ( Ref Nothing
-                            ( Imported ( ModuleName "Effect.Ref" ) ( Name "modify_$w" ) )
+                          ( AppN Nothing
+                            ( ObjectProp Nothing
+                              ( Ref Nothing
+                                ( Imported ( ModuleName "Effect" ) ( Name "functorEffect" ) )
+                              )
+                              ( PropName "map" )
+                            )
+                            ( AbsN Nothing
+                              ( ParamUnused Nothing :| [] )
+                              ( Ref Nothing
+                                ( Imported ( ModuleName "Data.Unit" ) ( Name "unit" ) )
+                              ) :| []
+                            )
                           )
-                          ( AbsN Nothing
-                            ( ParamNamed Nothing ( Name "v1$7" ) :| [] )
-                            ( PrimBinOp Nothing PrimAdd
-                              ( Ref Nothing ( Local ( Name "v1$7" ) ) )
-                              ( LiteralInt Nothing 1 )
-                            ) :|
-                            [ Ref Nothing ( Local ( Name "counter$4" ) ) ]
+                          ( AppN Nothing
+                            ( AppN Nothing
+                              ( Ref Nothing
+                                ( Imported ( ModuleName "Effect.Ref" ) ( Name "modifyImpl" ) )
+                              )
+                              ( AbsN Nothing
+                                ( ParamNamed Nothing ( Name "s$268" ) :| [] )
+                                ( Let Nothing
+                                  ( Standalone
+                                    ( Nothing, Name "s'$269", PrimBinOp Nothing PrimAdd
+                                      ( Ref Nothing ( Local ( Name "s$268" ) ) )
+                                      ( LiteralInt Nothing 1 )
+                                    ) :| []
+                                  )
+                                  ( LiteralObject Nothing
+                                    [
+                                      ( PropName "state", Ref Nothing
+                                        ( Local ( Name "s'$269" ) )
+                                      ),
+                                      ( PropName "value", Ref Nothing ( Local ( Name "s'$269" ) ) )
+                                    ]
+                                  )
+                                ) :| []
+                              )
+                            )
+                            ( Ref Nothing ( Local ( Name "counter$4" ) ) :| [] ) :| []
                           )
                         )
                         ( Ref Nothing

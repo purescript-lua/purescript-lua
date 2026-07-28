@@ -51,6 +51,9 @@ local Data_Eq_Generic_genericEqArgument = function(dictEq)
     end
   }
 end
+local Data_Eq_Generic_genericEqPrime = function(dict)
+  return dict.genericEqPrime
+end
 local Data_Eq_Generic_genericEqConstructor = function(dictGenericEq)
   return {
     genericEqPrime = function(v)
@@ -58,20 +61,16 @@ local Data_Eq_Generic_genericEqConstructor = function(dictGenericEq)
     end
   }
 end
-local Data_Eq_Generic_genericEq_S_w = function(dictGeneric, dictGenericEq, x, y)
-  local _S_cse0 = dictGeneric.from
-  return dictGenericEq.genericEqPrime(_S_cse0(x))(_S_cse0(y))
-end
 local Golden_GenericEqTwoTypes_Test_genericEqSum = function(dictGenericEq1_S_0)
   return {
     genericEqPrime = function(v_S_0)
       return function(v1_S_0)
-        local _S_cse1 = v1_S_0[1]
-        local _S_cse2 = v_S_0[1]
-        if "Data.Generic.Rep∷Sum.Inl" == _S_cse2 then
-          return "Data.Generic.Rep∷Sum.Inl" == _S_cse1
+        local _S_cse0 = v1_S_0[1]
+        local _S_cse1 = v_S_0[1]
+        if "Data.Generic.Rep∷Sum.Inl" == _S_cse1 then
+          return "Data.Generic.Rep∷Sum.Inl" == _S_cse0
         else
-          return "Data.Generic.Rep∷Sum.Inr" == _S_cse2 and ("Data.Generic.Rep∷Sum.Inr" == _S_cse1 and dictGenericEq1_S_0.genericEqPrime(v_S_0[2])(v1_S_0[2]))
+          return "Data.Generic.Rep∷Sum.Inr" == _S_cse1 and ("Data.Generic.Rep∷Sum.Inr" == _S_cse0 and dictGenericEq1_S_0.genericEqPrime(v_S_0[2])(v1_S_0[2]))
         end
       end
     end
@@ -143,13 +142,14 @@ Golden_GenericEqTwoTypes_Test_eqTree = function(dictEq)
   return {
     eq = function(x)
       return function(y)
-        return Data_Eq_Generic_genericEq_S_w(Golden_GenericEqTwoTypes_Test_genericTree, Golden_GenericEqTwoTypes_Test_genericEqSum(Data_Eq_Generic_genericEqConstructor(Data_Eq_Generic_genericEqArgument(Golden_GenericEqTwoTypes_Test_eqRec(Data_Eq_eqRowCons_S_w(Data_Eq_eqRowCons_S_w(Golden_GenericEqTwoTypes_Test_eqRowCons_S_w({
+        local _S_cse2 = Golden_GenericEqTwoTypes_Test_genericTree.from
+        return Data_Eq_Generic_genericEqPrime(Golden_GenericEqTwoTypes_Test_genericEqSum(Data_Eq_Generic_genericEqConstructor(Data_Eq_Generic_genericEqArgument(Golden_GenericEqTwoTypes_Test_eqRec(Data_Eq_eqRowCons_S_w(Data_Eq_eqRowCons_S_w(Golden_GenericEqTwoTypes_Test_eqRowCons_S_w({
           reflectSymbol = function() return "value" end
         }, dictEq), nil, {
           reflectSymbol = function() return "right" end
         }, Golden_GenericEqTwoTypes_Test_eqTree(dictEq)), nil, {
           reflectSymbol = function() return "left" end
-        }, Golden_GenericEqTwoTypes_Test_eqTree(dictEq)))))), x, y)
+        }, Golden_GenericEqTwoTypes_Test_eqTree(dictEq)))))))(_S_cse2(x))(_S_cse2(y))
       end
     end
   }
@@ -160,11 +160,12 @@ Golden_GenericEqTwoTypes_Test_eqList = function(dictEq)
   return {
     eq = function(x)
       return function(y)
-        return Data_Eq_Generic_genericEq_S_w(Golden_GenericEqTwoTypes_Test_genericList, Golden_GenericEqTwoTypes_Test_genericEqSum(Data_Eq_Generic_genericEqConstructor(Data_Eq_Generic_genericEqArgument(Golden_GenericEqTwoTypes_Test_eqRec(Data_Eq_eqRowCons_S_w(Golden_GenericEqTwoTypes_Test_eqRowCons_S_w({
+        local _S_cse3 = Golden_GenericEqTwoTypes_Test_genericList.from
+        return Data_Eq_Generic_genericEqPrime(Golden_GenericEqTwoTypes_Test_genericEqSum(Data_Eq_Generic_genericEqConstructor(Data_Eq_Generic_genericEqArgument(Golden_GenericEqTwoTypes_Test_eqRec(Data_Eq_eqRowCons_S_w(Golden_GenericEqTwoTypes_Test_eqRowCons_S_w({
           reflectSymbol = function() return "tail" end
         }, Golden_GenericEqTwoTypes_Test_eqList(dictEq)), nil, {
           reflectSymbol = function() return "head" end
-        }, dictEq))))), x, y)
+        }, dictEq))))))(_S_cse3(x))(_S_cse3(y))
       end
     end
   }

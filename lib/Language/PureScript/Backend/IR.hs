@@ -107,9 +107,15 @@ mkModule directives cfnModule contextDataTypes = do
   (localModes, exportModes) ← parseAnnotations cfnModule
   let fileModes =
         Map.findWithDefault mempty (Cfn.moduleName cfnModule) directives
+      packModes =
+        Map.findWithDefault
+          mempty
+          (Cfn.moduleName cfnModule)
+          Inliner.defaultDirectives
   runRepM
     Context
-      { annotations = Inliner.resolveModes localModes fileModes exportModes
+      { annotations =
+          Inliner.resolveModes localModes fileModes exportModes packModes
       , headerTargets = Map.keysSet localModes <> Map.keysSet exportModes
       , contextModule = cfnModule
       , contextDataTypes

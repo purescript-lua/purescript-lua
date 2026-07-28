@@ -19,7 +19,6 @@ local Data_Functor_foreign = {
     end
   end
 }
-local Data_Functor_arrayMap = Data_Functor_foreign.arrayMap
 local Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
 }
@@ -31,6 +30,7 @@ end
 local Golden_UncurryCtor_Test_logShow = function(logShow_S_p2_S_0)
   return Effect_Console_logShow_S_w(Data_Show_showInt, logShow_S_p2_S_0)
 end
+local Golden_UncurryCtor_Test_map = Data_Functor_foreign.arrayMap
 local Golden_UncurryCtor_Test_Origin = {
   "Golden.UncurryCtor.Test∷Shape.Origin"
 }
@@ -87,13 +87,13 @@ return (function()
   local _ = Golden_UncurryCtor_Test_logShow(Golden_UncurryCtor_Test_area(mk_S_0(30)))()
   local _ = Effect_Console_logShow_S_w({
     show = Data_Show_foreign.showArrayImpl(Data_Show_show(Data_Show_showInt))
-  }, Data_Functor_arrayMap(function(v2_S_0)
+  }, Golden_UncurryCtor_Test_map(function(v2_S_0)
     if "Data.Maybe∷Maybe.Nothing" == v2_S_0[1] then
       return 0
     else
       return v2_S_0[2]
     end
-  end)(Data_Functor_arrayMap(function(value0_S_0)
+  end)(Golden_UncurryCtor_Test_map(function(value0_S_0)
     return { "Data.Maybe∷Maybe.Just", value0_S_0 }
   end)({ [1] = 1, [2] = 2, [3] = 3 })))()
   return Golden_UncurryCtor_Test_logShow(Golden_UncurryCtor_Test_total(Golden_UncurryCtor_Test_range))()

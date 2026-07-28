@@ -68,23 +68,23 @@ UberModule
         }, LiteralObject Nothing
         [
           ( PropName "add", AbsN Nothing
-            ( ParamNamed Nothing ( Name "x$434" ) :| [] )
+            ( ParamNamed Nothing ( Name "x$426" ) :| [] )
             ( AbsN Nothing
-              ( ParamNamed Nothing ( Name "y$435" ) :| [] )
+              ( ParamNamed Nothing ( Name "y$427" ) :| [] )
               ( PrimBinOp Nothing PrimAdd
-                ( Ref Nothing ( Local ( Name "x$434" ) ) )
-                ( Ref Nothing ( Local ( Name "y$435" ) ) )
+                ( Ref Nothing ( Local ( Name "x$426" ) ) )
+                ( Ref Nothing ( Local ( Name "y$427" ) ) )
               )
             )
           ),
           ( PropName "zero", LiteralInt Nothing 0 ),
           ( PropName "mul", AbsN Nothing
-            ( ParamNamed Nothing ( Name "x$432" ) :| [] )
+            ( ParamNamed Nothing ( Name "x$424" ) :| [] )
             ( AbsN Nothing
-              ( ParamNamed Nothing ( Name "y$433" ) :| [] )
+              ( ParamNamed Nothing ( Name "y$425" ) :| [] )
               ( PrimBinOp Nothing PrimMul
-                ( Ref Nothing ( Local ( Name "x$432" ) ) )
-                ( Ref Nothing ( Local ( Name "y$433" ) ) )
+                ( Ref Nothing ( Local ( Name "x$424" ) ) )
+                ( Ref Nothing ( Local ( Name "y$425" ) ) )
               )
             )
           ),
@@ -211,18 +211,18 @@ UberModule
                               )
                             )
                             ( AbsN Nothing
-                              ( ParamNamed Nothing ( Name "s$472" ) :| [] )
+                              ( ParamNamed Nothing ( Name "s$464" ) :| [] )
                               ( Let Nothing
                                 ( Standalone
-                                  ( Nothing, Name "s'$473", PrimBinOp Nothing PrimAdd
-                                    ( Ref Nothing ( Local ( Name "s$472" ) ) )
+                                  ( Nothing, Name "s'$465", PrimBinOp Nothing PrimAdd
+                                    ( Ref Nothing ( Local ( Name "s$464" ) ) )
                                     ( Ref Nothing ( Local ( Name "i" ) ) )
                                   ) :| []
                                 )
                                 ( LiteralObject Nothing
                                   [
-                                    ( PropName "state", Ref Nothing ( Local ( Name "s'$473" ) ) ),
-                                    ( PropName "value", Ref Nothing ( Local ( Name "s'$473" ) ) )
+                                    ( PropName "state", Ref Nothing ( Local ( Name "s'$465" ) ) ),
+                                    ( PropName "value", Ref Nothing ( Local ( Name "s'$465" ) ) )
                                   ]
                                 )
                               ) :| []
@@ -363,18 +363,18 @@ UberModule
                         )
                       )
                       ( AbsN Nothing
-                        ( ParamNamed Nothing ( Name "s$459" ) :| [] )
+                        ( ParamNamed Nothing ( Name "s$451" ) :| [] )
                         ( Let Nothing
                           ( Standalone
-                            ( Nothing, Name "s'$460", PrimBinOp Nothing PrimMul
-                              ( Ref Nothing ( Local ( Name "s$459" ) ) )
+                            ( Nothing, Name "s'$452", PrimBinOp Nothing PrimMul
+                              ( Ref Nothing ( Local ( Name "s$451" ) ) )
                               ( LiteralInt Nothing 2 )
                             ) :| []
                           )
                           ( LiteralObject Nothing
                             [
-                              ( PropName "state", Ref Nothing ( Local ( Name "s'$460" ) ) ),
-                              ( PropName "value", Ref Nothing ( Local ( Name "s'$460" ) ) )
+                              ( PropName "state", Ref Nothing ( Local ( Name "s'$452" ) ) ),
+                              ( PropName "value", Ref Nothing ( Local ( Name "s'$452" ) ) )
                             ]
                           )
                         ) :| []

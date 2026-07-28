@@ -6,5 +6,4 @@ local Effect_Console_foreign = {
 M.Golden_LongReaderBind_Test_go = function(r_S_0)
   return r_S_0 + r_S_0 + r_S_0
 end
-local Golden_LongReaderBind_Test_compute = 9
-return Effect_Console_foreign.log(Data_Show_foreign.showIntImpl(Golden_LongReaderBind_Test_compute))()
+return Effect_Console_foreign.log(Data_Show_foreign.showIntImpl(9))()

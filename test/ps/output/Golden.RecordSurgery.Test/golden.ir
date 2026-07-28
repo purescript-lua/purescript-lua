@@ -38,7 +38,7 @@ UberModule
       ( QName
         { qnameModuleName = ModuleName "Golden.RecordSurgery.Test", qnameName = Name "logShow"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "a$224" ) :| [] )
+        ( ParamNamed Nothing ( Name "a$216" ) :| [] )
         ( AppN Nothing
           ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
           ( AppN Nothing
@@ -46,18 +46,18 @@ UberModule
               ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
               ( PropName "showIntImpl" )
             )
-            ( Ref Nothing ( Local ( Name "a$224" ) ) :| [] ) :| []
+            ( Ref Nothing ( Local ( Name "a$216" ) ) :| [] ) :| []
           )
         )
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.RecordSurgery.Test", qnameName = Name "logShow1"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "a$222" ) :| [] )
+        ( ParamNamed Nothing ( Name "a$214" ) :| [] )
         ( AppN Nothing
           ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
           ( IfThenElse Nothing
-            ( Ref Nothing ( Local ( Name "a$222" ) ) )
+            ( Ref Nothing ( Local ( Name "a$214" ) ) )
             ( LiteralString Nothing "true" )
             ( LiteralString Nothing "false" ) :| []
           )
