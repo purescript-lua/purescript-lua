@@ -36,6 +36,16 @@ spec = describe "IR Inliner" do
       pragma ← parsePragma "@inline foo arity=2"
       pragma
         === Pragma LocalScope (Name "foo", Nothing) (ModeAnnotation (Arity 2))
+    test "@inline modify_ arity=1 (underscore in a name)" do
+      pragma ← parsePragma "@inline modify_ arity=1"
+      pragma
+        === Pragma
+          LocalScope
+          (Name "modify_", Nothing)
+          (ModeAnnotation (Arity 1))
+    test "@inline go' never (prime in a name)" do
+      pragma ← parsePragma "@inline go' never"
+      pragma === Pragma LocalScope (Name "go'", Nothing) (ModeAnnotation Never)
     test "rejects arity=0" do
       rejectPragma "@inline foo arity=0"
     test "@inline export foo arity=1" do

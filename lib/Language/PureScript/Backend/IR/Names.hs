@@ -28,8 +28,11 @@ newtype Name = Name {nameToText ∷ Text}
   deriving stock (Generic)
   deriving (Show) via (Quiet Name)
 
+-- | A PureScript identifier may also contain @_@ and @'@.
 nameParser ∷ Megaparsec.Parsec Void Text Name
-nameParser = Name <$> Megaparsec.takeWhile1P (Just "name char") isAlphaNum
+nameParser = Name <$> Megaparsec.takeWhile1P (Just "name char") isNameChar
+ where
+  isNameChar c = isAlphaNum c || c == '_' || c == '\''
 
 {- | The binder for the (unused) result of a discarded action, minted by
 the magic-do transform: @_@ is the conventional Lua throwaway, exempt
