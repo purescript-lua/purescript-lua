@@ -581,10 +581,15 @@ policy composes over application. Let @f@ carry @arity=N@ and let
     arithmetic.
 
 Pasting a partial application re-evaluates its argument expressions per
-site, exactly as pasting the target at a qualifying non-lambda site
-does ('inlineSaturatedCall'): the explicit directive on the target is
-what licenses the duplication, so no cheapness guard applies to the
-arguments.
+site. At a user-marked call site ('inlineSaturatedCall') the explicit
+directive on the target licenses that duplication, but a derived
+directive is compiler-initiated: the derivation fires only when every
+applied argument is a value, work-free to repeat — a reference, a
+literal (a settled dictionary literal is the winning shape: its
+per-site copy meets the constructor folds and vanishes), or a lambda.
+A computed argument — say a dictionary built by applying a
+transformer's instance function — keeps the specialization a shared
+binding instead of re-running the computation per site.
 
 The derivation reads the module settled by the post-merge optimize+dce
 fixpoint ('settlePhase'), not the pristine input: a specialization
@@ -623,6 +628,7 @@ derivedInlinePolicy explicit UberModule {uberModuleBindings} =
     Standalone (qname, expr)
       | not (hasRootDirective qname)
       , (Ref _ headName, args@(_ : _)) ← unwindApp expr
+      , all workFreeToRepeat args
       , Just target ← refQName headName
       , Just arity ←
           Map.lookup target (policyArity explicit)
@@ -634,6 +640,25 @@ derivedInlinePolicy explicit UberModule {uberModuleBindings} =
               | otherwise →
                   mempty {policyArity = Map.singleton qname (arity - applied)}
     _ → derived
+
+  -- Pasting re-evaluates the applied arguments per site; see
+  -- Note [Derived inline directives] for why the derivation requires
+  -- them work-free while a user-marked site does not. Values qualify
+  -- (references, literals, lambdas — a settled dictionary literal
+  -- argument is the winning shape, its per-site copy folds away);
+  -- anything that computes (an application, a case, a let) does not.
+  workFreeToRepeat ∷ Exp → Bool
+  workFreeToRepeat = \case
+    Ref {} → True
+    LiteralInt {} → True
+    LiteralFloat {} → True
+    LiteralString {} → True
+    LiteralChar {} → True
+    LiteralBool {} → True
+    LiteralArray _ elems → all workFreeToRepeat elems
+    LiteralObject _ props → all (workFreeToRepeat . snd) props
+    AbsN {} → True
+    _ → False
 
   hasRootDirective ∷ QName → Bool
   hasRootDirective qname =

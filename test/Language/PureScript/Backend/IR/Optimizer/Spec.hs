@@ -3214,6 +3214,37 @@ spec = describe "IR Optimizer" do
                      )
                    ]
 
+    it "skips a specialization whose argument re-computes at the paste" do
+      -- spec = combine (g 1) 2 — the applied argument is itself an
+      -- application: pasting spec's right-hand side would re-evaluate
+      -- g 1 at every use site, duplicating work the directive on
+      -- combine never licensed. No directive is derived and the
+      -- shared binding survives.
+      let specName = QName mainModule (Name "spec")
+          specRef = refImported mainModule (Name "spec")
+          specDef =
+            application
+              (application combineRef (application g (literalInt 1)))
+              (literalInt 2)
+      optimized ←
+        checked
+          Linker.UberModule
+            { uberModuleForeigns = []
+            , uberModuleBindings =
+                [ Standalone (combineName, setAnn (Just (Arity 2)) combineDef)
+                , Standalone (specName, specDef)
+                ]
+            , uberModuleExports =
+                [ (Name "main1", application specRef (literalInt 7))
+                , (Name "main2", application specRef (literalInt 8))
+                ]
+            }
+      namesOf optimized `shouldBe` ["spec"]
+      Linker.uberModuleExports optimized
+        `shouldBe` [ (Name "main1", application specRef (literalInt 7))
+                   , (Name "main2", application specRef (literalInt 8))
+                   ]
+
     it "gives an under-applied specialization the decremented arity" do
       -- partial = combine 1 — one argument short of the directed
       -- arity: a site applying one more argument reconstructs a
