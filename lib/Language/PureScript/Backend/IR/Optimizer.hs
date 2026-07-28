@@ -1898,15 +1898,17 @@ the fresh field-binders unique and the binder resolved by name.
 
 The RHS's constructor is recognised either as an in-place 'Ctor' node or, via
 the inline environment, through a 'Ref' to a top-level constructor binding
-(issue #180). A user-written @Right x@ compiles to a reference to the
-@Data.Either.Right@ worker, which 'inlineSaturatedCall' leaves in place — its
-'Ctor' RHS is not a lambda, and pasting the worker would only rebuild the same
-@(function … end)(x)@ the reference already denotes, more deeply nested. So
-without the through-a-reference resolution the constructor test the inlined
-@bind@ introduces (@justTag == ReflectCtor v@) never folds, and the collapsed
-monadic chain stays a deeply-nested @if@\/@let@ tree. Resolving the reference
-only to read its arity and tag introduces no 'Ctor' node, so a chain that does
-not fold is not pessimised into pasted constructor thunks.
+(issue #180). A user-written @Right x@ compiles to a call of the
+@Data.Either.Right@ binding — a lambda over a saturated 'Ctor' body
+(Note [Constructor applications are saturated]) that 'inlineSaturatedCall'
+does paste at saturated sites, beta-reducing to an in-place 'Ctor'. This rule
+still cannot lean on that paste: the heuristic paste tiers are disarmed in
+the growth veto's fallback sweeps, where the env-reading folds keep firing
+(Note [Bounded call-site inlining growth]). Resolving the reference only to
+read its arity and tag introduces no 'Ctor' node, so the constructor test the
+inlined @bind@ introduces (@justTag == ReflectCtor v@) folds in every sweep,
+and a chain that does not fold is not pessimised into pasted constructor
+thunks.
 -}
 propagateKnownCtorThroughLet ∷ InlineEnv → RewriteRuleM SupplyM Ann
 propagateKnownCtorThroughLet env = \case
