@@ -68,12 +68,6 @@ UberModule
         [ ( Nothing, Name "unfoldrArrayImpl" ) ]
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Data.Array", qnameName = Name "foreign"
-        }, ForeignImport Nothing
-        ( ModuleName "Data.Array" ) ".spago/p/arrays/4641b4b5ee19c3b472151da585f4676147a7cd74/src/Data/Array.purs"
-        [ ( Nothing, Name "length" ) ]
-      ), Standalone
-      ( QName
         { qnameModuleName = ModuleName "Data.Enum", qnameName = Name "foreign"
         }, ForeignImport Nothing
         ( ModuleName "Data.Enum" ) ".spago/p/enums/e85567b064ace664fca544c390c8db528514109a/src/Data/Enum.purs"
@@ -101,13 +95,7 @@ UberModule
         { qnameModuleName = ModuleName "Data.String.CodeUnits", qnameName = Name "foreign"
         }, ForeignImport Nothing
         ( ModuleName "Data.String.CodeUnits" ) ".spago/p/strings/395c4b6cb74271b5570a1d7632fb6522785792af/src/Data/String/CodeUnits.purs"
-        [ ( Nothing, Name "singleton" ), ( Nothing, Name "length" ), ( Nothing, Name "drop" ) ]
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Data.String.CodeUnits", qnameName = Name "length"
-        }, ObjectProp Nothing
-        ( Ref Nothing ( Imported ( ModuleName "Data.String.CodeUnits" ) ( Name "foreign" ) ) )
-        ( PropName "length" )
+        [ ( Nothing, Name "singleton" ), ( Nothing, Name "drop" ) ]
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Data.String.CodePoints", qnameName = Name "foreign"
@@ -406,31 +394,47 @@ UberModule
           ( ParamNamed Nothing ( Name "s$0" ) :| [] )
           ( Let Nothing
             ( Standalone
-              ( Nothing, Name "cu0$0", AppN Nothing
-                ( Ref Nothing
-                  ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "fromEnum" ) )
-                )
-                ( AppN Nothing
-                  ( AppN Nothing
-                    ( Ref Nothing
-                      ( Imported ( ModuleName "Data.String.Unsafe" ) ( Name "charAt" ) )
-                    )
-                    ( LiteralInt Nothing 0 :| [] )
-                  )
-                  ( Ref Nothing ( Local ( Name "s$0" ) ) :| [] ) :| []
-                )
+              ( Nothing, Name "$cse0", PrimLen Nothing
+                ( Ref Nothing ( Local ( Name "s$0" ) ) )
               ) :| []
             )
-            ( IfThenElse Nothing
-              ( AppN Nothing
-                ( AppN Nothing
+            ( Let Nothing
+              ( Standalone
+                ( Nothing, Name "cu0$0", AppN Nothing
                   ( Ref Nothing
-                    ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "conj" ) )
+                    ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "fromEnum" ) )
                   )
                   ( AppN Nothing
                     ( AppN Nothing
                       ( Ref Nothing
-                        ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "conj" ) )
+                        ( Imported ( ModuleName "Data.String.Unsafe" ) ( Name "charAt" ) )
+                      )
+                      ( LiteralInt Nothing 0 :| [] )
+                    )
+                    ( Ref Nothing ( Local ( Name "s$0" ) ) :| [] ) :| []
+                  )
+                ) :| []
+              )
+              ( IfThenElse Nothing
+                ( AppN Nothing
+                  ( AppN Nothing
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "conj" ) )
+                    )
+                    ( AppN Nothing
+                      ( AppN Nothing
+                        ( Ref Nothing
+                          ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "conj" ) )
+                        )
+                        ( AppN Nothing
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Data.Ord" ) ( Name "lessThanOrEq$w" ) )
+                          )
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Data.Ord" ) ( Name "ordInt" ) ) :|
+                            [ LiteralInt Nothing 55296, Ref Nothing ( Local ( Name "cu0$0" ) ) ]
+                          ) :| []
+                        )
                       )
                       ( AppN Nothing
                         ( Ref Nothing
@@ -438,86 +442,68 @@ UberModule
                         )
                         ( Ref Nothing
                           ( Imported ( ModuleName "Data.Ord" ) ( Name "ordInt" ) ) :|
-                          [ LiteralInt Nothing 55296, Ref Nothing ( Local ( Name "cu0$0" ) ) ]
+                          [ Ref Nothing ( Local ( Name "cu0$0" ) ), LiteralInt Nothing 56319 ]
                         ) :| []
-                      )
-                    )
-                    ( AppN Nothing
-                      ( Ref Nothing
-                        ( Imported ( ModuleName "Data.Ord" ) ( Name "lessThanOrEq$w" ) )
-                      )
-                      ( Ref Nothing
-                        ( Imported ( ModuleName "Data.Ord" ) ( Name "ordInt" ) ) :|
-                        [ Ref Nothing ( Local ( Name "cu0$0" ) ), LiteralInt Nothing 56319 ]
                       ) :| []
+                    )
+                  )
+                  ( Eq Nothing
+                    ( LiteralString Nothing "Data.Ordering∷Ordering.GT" )
+                    ( IfThenElse Nothing
+                      ( PrimBinOp Nothing PrimLt
+                        ( Ref Nothing ( Local ( Name "$cse0" ) ) )
+                        ( LiteralInt Nothing 1 )
+                      )
+                      ( ReflectCtor Nothing
+                        ( Ref Nothing ( Imported ( ModuleName "Data.Ordering" ) ( Name "LT" ) ) )
+                      )
+                      ( IfThenElse Nothing
+                        ( Eq Nothing
+                          ( Ref Nothing ( Local ( Name "$cse0" ) ) )
+                          ( LiteralInt Nothing 1 )
+                        )
+                        ( ReflectCtor Nothing
+                          ( Ref Nothing ( Imported ( ModuleName "Data.Ordering" ) ( Name "EQ" ) ) )
+                        )
+                        ( ReflectCtor Nothing
+                          ( Ref Nothing ( Imported ( ModuleName "Data.Ordering" ) ( Name "GT" ) ) )
+                        )
+                      )
                     ) :| []
                   )
                 )
-                ( Eq Nothing
-                  ( LiteralString Nothing "Data.Ordering∷Ordering.GT" )
-                  ( ReflectCtor Nothing
-                    ( AppN Nothing
-                      ( Let Nothing
-                        ( Standalone
-                          ( Nothing, Name "x$0", AppN Nothing
-                            ( Ref Nothing
-                              ( Imported ( ModuleName "Data.String.CodeUnits" ) ( Name "length" ) )
-                            )
-                            ( Ref Nothing ( Local ( Name "s$0" ) ) :| [] )
-                          ) :| []
-                        )
-                        ( AbsN Nothing
-                          ( ParamNamed Nothing ( Name "y$0" ) :| [] )
-                          ( IfThenElse Nothing
-                            ( PrimBinOp Nothing PrimLt
-                              ( Ref Nothing ( Local ( Name "x$0" ) ) )
-                              ( Ref Nothing ( Local ( Name "y$0" ) ) )
-                            )
-                            ( Ref Nothing
-                              ( Imported ( ModuleName "Data.Ordering" ) ( Name "LT" ) )
-                            )
-                            ( IfThenElse Nothing
-                              ( Eq Nothing
-                                ( Ref Nothing ( Local ( Name "x$0" ) ) )
-                                ( Ref Nothing ( Local ( Name "y$0" ) ) )
-                              )
-                              ( Ref Nothing
-                                ( Imported ( ModuleName "Data.Ordering" ) ( Name "EQ" ) )
-                              )
-                              ( Ref Nothing
-                                ( Imported ( ModuleName "Data.Ordering" ) ( Name "GT" ) )
-                              )
-                            )
-                          )
-                        )
+                ( Let Nothing
+                  ( Standalone
+                    ( Nothing, Name "cu1$0", AppN Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "fromEnum" ) )
                       )
-                      ( LiteralInt Nothing 1 :| [] )
-                    )
-                  ) :| []
-                )
-              )
-              ( Let Nothing
-                ( Standalone
-                  ( Nothing, Name "cu1$0", AppN Nothing
-                    ( Ref Nothing
-                      ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "fromEnum" ) )
-                    )
+                      ( AppN Nothing
+                        ( AppN Nothing
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Data.String.Unsafe" ) ( Name "charAt" ) )
+                          )
+                          ( LiteralInt Nothing 1 :| [] )
+                        )
+                        ( Ref Nothing ( Local ( Name "s$0" ) ) :| [] ) :| []
+                      )
+                    ) :| []
+                  )
+                  ( IfThenElse Nothing
                     ( AppN Nothing
                       ( AppN Nothing
                         ( Ref Nothing
-                          ( Imported ( ModuleName "Data.String.Unsafe" ) ( Name "charAt" ) )
+                          ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "conj" ) )
                         )
-                        ( LiteralInt Nothing 1 :| [] )
-                      )
-                      ( Ref Nothing ( Local ( Name "s$0" ) ) :| [] ) :| []
-                    )
-                  ) :| []
-                )
-                ( IfThenElse Nothing
-                  ( AppN Nothing
-                    ( AppN Nothing
-                      ( Ref Nothing
-                        ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "conj" ) )
+                        ( AppN Nothing
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Data.Ord" ) ( Name "lessThanOrEq$w" ) )
+                          )
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Data.Ord" ) ( Name "ordInt" ) ) :|
+                            [ LiteralInt Nothing 56320, Ref Nothing ( Local ( Name "cu1$0" ) ) ]
+                          ) :| []
+                        )
                       )
                       ( AppN Nothing
                         ( Ref Nothing
@@ -525,40 +511,31 @@ UberModule
                         )
                         ( Ref Nothing
                           ( Imported ( ModuleName "Data.Ord" ) ( Name "ordInt" ) ) :|
-                          [ LiteralInt Nothing 56320, Ref Nothing ( Local ( Name "cu1$0" ) ) ]
+                          [ Ref Nothing ( Local ( Name "cu1$0" ) ), LiteralInt Nothing 57343 ]
                         ) :| []
                       )
                     )
-                    ( AppN Nothing
-                      ( Ref Nothing
-                        ( Imported ( ModuleName "Data.Ord" ) ( Name "lessThanOrEq$w" ) )
-                      )
-                      ( Ref Nothing
-                        ( Imported ( ModuleName "Data.Ord" ) ( Name "ordInt" ) ) :|
-                        [ Ref Nothing ( Local ( Name "cu1$0" ) ), LiteralInt Nothing 57343 ]
-                      ) :| []
-                    )
-                  )
-                  ( PrimBinOp Nothing PrimAdd
                     ( PrimBinOp Nothing PrimAdd
-                      ( PrimBinOp Nothing PrimMul
-                        ( PrimBinOp Nothing PrimSub
-                          ( Ref Nothing ( Local ( Name "cu0$0" ) ) )
-                          ( LiteralInt Nothing 55296 )
+                      ( PrimBinOp Nothing PrimAdd
+                        ( PrimBinOp Nothing PrimMul
+                          ( PrimBinOp Nothing PrimSub
+                            ( Ref Nothing ( Local ( Name "cu0$0" ) ) )
+                            ( LiteralInt Nothing 55296 )
+                          )
+                          ( LiteralInt Nothing 1024 )
                         )
-                        ( LiteralInt Nothing 1024 )
+                        ( PrimBinOp Nothing PrimSub
+                          ( Ref Nothing ( Local ( Name "cu1$0" ) ) )
+                          ( LiteralInt Nothing 56320 )
+                        )
                       )
-                      ( PrimBinOp Nothing PrimSub
-                        ( Ref Nothing ( Local ( Name "cu1$0" ) ) )
-                        ( LiteralInt Nothing 56320 )
-                      )
+                      ( LiteralInt Nothing 65536 )
                     )
-                    ( LiteralInt Nothing 65536 )
+                    ( Ref Nothing ( Local ( Name "cu0$0" ) ) )
                   )
-                  ( Ref Nothing ( Local ( Name "cu0$0" ) ) )
                 )
+                ( Ref Nothing ( Local ( Name "cu0$0" ) ) )
               )
-              ( Ref Nothing ( Local ( Name "cu0$0" ) ) )
             )
           ) :| []
         )
@@ -818,12 +795,7 @@ UberModule
           ( ParamNamed Nothing ( Name "s" ) :| [] )
           ( IfThenElse Nothing
             ( Eq Nothing
-              ( AppN Nothing
-                ( Ref Nothing
-                  ( Imported ( ModuleName "Data.String.CodeUnits" ) ( Name "length" ) )
-                )
-                ( Ref Nothing ( Local ( Name "s" ) ) :| [] )
-              )
+              ( PrimLen Nothing ( Ref Nothing ( Local ( Name "s" ) ) ) )
               ( LiteralInt Nothing 0 )
             )
             ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) )
@@ -985,18 +957,12 @@ UberModule
                   )
                   ( PropName "drop" )
                 )
-                ( AppN Nothing
-                  ( Ref Nothing
-                    ( Imported ( ModuleName "Data.String.CodeUnits" ) ( Name "length" ) )
-                  )
+                ( PrimLen Nothing
                   ( AppN Nothing
                     ( Ref Nothing
                       ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "take$w" ) )
                     )
-                    ( Ref Nothing
-                      ( Local ( Name "n" ) ) :|
-                      [ Ref Nothing ( Local ( Name "s" ) ) ]
-                    ) :| []
+                    ( Ref Nothing ( Local ( Name "n" ) ) :| [ Ref Nothing ( Local ( Name "s" ) ) ] )
                   ) :| []
                 )
               )
@@ -1603,11 +1569,7 @@ UberModule
                   ( Ref Nothing
                     ( Imported ( ModuleName "Golden.StringCodePoints.Test" ) ( Name "logShow1" ) )
                   )
-                  ( AppN Nothing
-                    ( ObjectProp Nothing
-                      ( Ref Nothing ( Imported ( ModuleName "Data.Array" ) ( Name "foreign" ) ) )
-                      ( PropName "length" )
-                    )
+                  ( PrimLen Nothing
                     ( AppN Nothing
                       ( Ref Nothing
                         ( Imported
@@ -1615,7 +1577,7 @@ UberModule
                           ( Name "toCodePointArray" )
                         )
                       )
-                      ( LiteralString Nothing "aéЯ𝐀z" :| [] ) :| []
+                      ( LiteralString Nothing "aéЯ𝐀z" :| [] )
                     ) :| []
                   )
                 )
@@ -1626,12 +1588,7 @@ UberModule
                   ( Ref Nothing
                     ( Imported ( ModuleName "Golden.StringCodePoints.Test" ) ( Name "logShow1" ) )
                   )
-                  ( AppN Nothing
-                    ( Ref Nothing
-                      ( Imported ( ModuleName "Data.String.CodeUnits" ) ( Name "length" ) )
-                    )
-                    ( LiteralString Nothing "aéЯ𝐀z" :| [] ) :| []
-                  )
+                  ( PrimLen Nothing ( LiteralString Nothing "aéЯ𝐀z" ) :| [] )
                 )
                 ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone

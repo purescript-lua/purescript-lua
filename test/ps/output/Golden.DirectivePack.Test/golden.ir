@@ -433,7 +433,7 @@ UberModule
                   ( IfThenElse Nothing
                     ( Eq Nothing
                       ( LiteralInt Nothing 0 )
-                      ( ArrayLength Nothing ( Ref Nothing ( Local ( Name "v1$0" ) ) ) )
+                      ( PrimLen Nothing ( Ref Nothing ( Local ( Name "v1$0" ) ) ) )
                     )
                     ( LiteralString Nothing "Banana" )
                     ( PrimBinOp Nothing PrimConcat

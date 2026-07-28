@@ -1,0 +1,286 @@
+UberModule
+  { uberModuleBindings =
+    [ Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Show", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Data.Show" ) ".spago/p/prelude/5718c84fdde6247749cb053e816df696c30fe691/src/Data/Show.purs"
+        [ ( Nothing, Name "showIntImpl" ), ( Nothing, Name "showArrayImpl" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Show", qnameName = Name "showIntImpl"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
+        ( PropName "showIntImpl" )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Control.Monad.ST.Internal", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Control.Monad.ST.Internal" ) ".spago/p/st/6d41fd264a05b9a089e79322b22b906597ea7c36/src/Control/Monad/ST/Internal.purs"
+        [ ( Nothing, Name "pure_" ), ( Nothing, Name "bind_" ), ( Nothing, Name "run" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Array.ST", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Data.Array.ST" ) ".spago/p/arrays/4641b4b5ee19c3b472151da585f4676147a7cd74/src/Data/Array/ST.purs"
+        [
+          ( Nothing, Name "thawImpl" ),
+          ( Nothing, Name "lengthImpl" ),
+          ( Nothing, Name "pushImpl" )
+        ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Array.ST", qnameName = Name "lengthImpl"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Data.Array.ST" ) ( Name "foreign" ) ) )
+        ( PropName "lengthImpl" )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Effect.Console" ) ".spago/p/console/f82835a0b873aafe6bd7b14dd30cc150553d4ab9/src/Effect/Console.purs"
+        [ ( Nothing, Name "log" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "log"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
+        ( PropName "log" )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.LengthLift.Test", qnameName = Name "widthOf"
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "s$0" ) :| [] )
+        ( PrimLen Nothing ( Ref Nothing ( Local ( Name "s$0" ) ) ) )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.LengthLift.Test", qnameName = Name "lengthsAroundPush"
+        }, AppN Nothing
+        ( ObjectProp Nothing
+          ( Ref Nothing
+            ( Imported ( ModuleName "Control.Monad.ST.Internal" ) ( Name "foreign" ) )
+          )
+          ( PropName "run" )
+        )
+        ( AbsN Nothing
+          ( ParamUnused Nothing :| [] )
+          ( Let Nothing
+            ( Standalone
+              ( Nothing, Name "arr", AppN Nothing
+                ( AbsN Nothing
+                  ( ParamUnused Nothing :| [] )
+                  ( AppN Nothing
+                    ( ObjectProp Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Data.Array.ST" ) ( Name "foreign" ) )
+                      )
+                      ( PropName "thawImpl" )
+                    )
+                    ( LiteralArray Nothing
+                      [ LiteralInt Nothing 1, LiteralInt Nothing 2, LiteralInt Nothing 3 ] :| []
+                    )
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              ) :|
+              [ Standalone
+                ( Nothing, Name "before", AppN Nothing
+                  ( AbsN Nothing
+                    ( ParamUnused Nothing :| [] )
+                    ( AppN Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Data.Array.ST" ) ( Name "lengthImpl" ) )
+                      )
+                      ( Ref Nothing ( Local ( Name "arr" ) ) :| [] )
+                    )
+                  )
+                  ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+                ), Standalone
+                ( Nothing, Name "_", AppN Nothing
+                  ( AbsN Nothing
+                    ( ParamUnused Nothing :| [] )
+                    ( AppN Nothing
+                      ( ObjectProp Nothing
+                        ( Ref Nothing
+                          ( Imported ( ModuleName "Data.Array.ST" ) ( Name "foreign" ) )
+                        )
+                        ( PropName "pushImpl" )
+                      )
+                      ( LiteralInt Nothing 4 :| [ Ref Nothing ( Local ( Name "arr" ) ) ] )
+                    )
+                  )
+                  ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+                ), Standalone
+                ( Nothing, Name "after", AppN Nothing
+                  ( AbsN Nothing
+                    ( ParamUnused Nothing :| [] )
+                    ( AppN Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Data.Array.ST" ) ( Name "lengthImpl" ) )
+                      )
+                      ( Ref Nothing ( Local ( Name "arr" ) ) :| [] )
+                    )
+                  )
+                  ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+                )
+              ]
+            )
+            ( LiteralArray Nothing
+              [ Ref Nothing ( Local ( Name "before" ) ), Ref Nothing ( Local ( Name "after" ) ) ]
+            )
+          ) :| []
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.LengthLift.Test", qnameName = Name "countOf"
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "xs$0" ) :| [] )
+        ( PrimLen Nothing ( Ref Nothing ( Local ( Name "xs$0" ) ) ) )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.LengthLift.Test", qnameName = Name "countBelow"
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "xs" ) :| [] )
+        ( Let Nothing
+          ( RecursiveGroup
+            (
+              ( Nothing, Name "go$w", AbsN Nothing
+                ( ParamNamed Nothing ( Name "acc" ) :| [ ParamNamed Nothing ( Name "i" ) ] )
+                ( IfThenElse Nothing
+                  ( PrimBinOp Nothing PrimLt
+                    ( Ref Nothing ( Local ( Name "i" ) ) )
+                    ( PrimLen Nothing ( Ref Nothing ( Local ( Name "xs" ) ) ) )
+                  )
+                  ( AppN Nothing
+                    ( Ref Nothing ( Local ( Name "go$w" ) ) )
+                    ( PrimBinOp Nothing PrimAdd
+                      ( Ref Nothing ( Local ( Name "acc" ) ) )
+                      ( Ref Nothing ( Local ( Name "i" ) ) ) :|
+                      [ PrimBinOp Nothing PrimAdd
+                        ( Ref Nothing ( Local ( Name "i" ) ) )
+                        ( LiteralInt Nothing 1 )
+                      ]
+                    )
+                  )
+                  ( Ref Nothing ( Local ( Name "acc" ) ) )
+                )
+              ) :| []
+            ) :| []
+          )
+          ( AppN Nothing
+            ( Ref Nothing ( Local ( Name "go$w" ) ) )
+            ( LiteralInt Nothing 0 :| [ LiteralInt Nothing 0 ] )
+          )
+        )
+      )
+    ], uberModuleForeigns = [], uberModuleExports =
+    [
+      ( Name "countOf", Ref Nothing
+        ( Imported ( ModuleName "Golden.LengthLift.Test" ) ( Name "countOf" ) )
+      ),
+      ( Name "widthOf", Ref Nothing
+        ( Imported ( ModuleName "Golden.LengthLift.Test" ) ( Name "widthOf" ) )
+      ),
+      ( Name "countBelow", Ref Nothing
+        ( Imported ( ModuleName "Golden.LengthLift.Test" ) ( Name "countBelow" ) )
+      ),
+      ( Name "lengthsAroundPush", Ref Nothing
+        ( Imported ( ModuleName "Golden.LengthLift.Test" ) ( Name "lengthsAroundPush" ) )
+      ),
+      ( Name "main", AbsN Nothing
+        ( ParamUnused Nothing :| [] )
+        ( Let Nothing
+          ( Standalone
+            ( Nothing, Name "_", AppN Nothing
+              ( AppN Nothing
+                ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+                ( AppN Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
+                  ( LiteralInt Nothing 3 :| [] ) :| []
+                )
+              )
+              ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+            ) :|
+            [ Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+                  ( AppN Nothing
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
+                    ( PrimLen Nothing ( LiteralString Nothing "hello" ) :| [] ) :| []
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              ), Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+                  ( AppN Nothing
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
+                    ( Let Nothing
+                      ( RecursiveGroup
+                        (
+                          ( Nothing, Name "go$w$0", AbsN Nothing
+                            ( ParamNamed Nothing
+                              ( Name "acc$0" ) :|
+                              [ ParamNamed Nothing ( Name "i$0" ) ]
+                            )
+                            ( IfThenElse Nothing
+                              ( PrimBinOp Nothing PrimLt
+                                ( Ref Nothing ( Local ( Name "i$0" ) ) )
+                                ( LiteralInt Nothing 4 )
+                              )
+                              ( AppN Nothing
+                                ( Ref Nothing ( Local ( Name "go$w$0" ) ) )
+                                ( PrimBinOp Nothing PrimAdd
+                                  ( Ref Nothing ( Local ( Name "acc$0" ) ) )
+                                  ( Ref Nothing ( Local ( Name "i$0" ) ) ) :|
+                                  [ PrimBinOp Nothing PrimAdd
+                                    ( Ref Nothing ( Local ( Name "i$0" ) ) )
+                                    ( LiteralInt Nothing 1 )
+                                  ]
+                                )
+                              )
+                              ( Ref Nothing ( Local ( Name "acc$0" ) ) )
+                            )
+                          ) :| []
+                        ) :| []
+                      )
+                      ( AppN Nothing
+                        ( Ref Nothing ( Local ( Name "go$w$0" ) ) )
+                        ( LiteralInt Nothing 0 :| [ LiteralInt Nothing 0 ] )
+                      ) :| []
+                    ) :| []
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              )
+            ]
+          )
+          ( AppN Nothing
+            ( AppN Nothing
+              ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+              ( AppN Nothing
+                ( AppN Nothing
+                  ( ObjectProp Nothing
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
+                    ( PropName "showArrayImpl" )
+                  )
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) :| []
+                  )
+                )
+                ( Ref Nothing
+                  ( Imported
+                    ( ModuleName "Golden.LengthLift.Test" )
+                    ( Name "lengthsAroundPush" )
+                  ) :| []
+                ) :| []
+              )
+            )
+            ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+          )
+        )
+      )
+    ]
+  }

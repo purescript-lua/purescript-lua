@@ -58,7 +58,6 @@ import Language.PureScript.Backend.IR.Types
   , application
   , applicationN
   , arrayIndex
-  , arrayLength
   , countFreeRef
   , countFreeRefUsage
   , countFreeRefs
@@ -85,6 +84,7 @@ import Language.PureScript.Backend.IR.Types
   , paramNamed
   , paramUnused
   , primBinOp
+  , primLen
   , primNot
   , refImported
   , refLocal
@@ -1564,13 +1564,13 @@ spec = describe "IR Optimizer" do
 
     it "folds the length of an in-place literal array" do
       optimizedExpression
-        (arrayLength (literalArray [literalInt 10, literalInt 20]))
+        (primLen (literalArray [literalInt 10, literalInt 20]))
         `shouldBe` literalInt 2
 
     it "folds the length over non-trivial elements, dropping them" do
       -- The elements are never evaluated: the same licence
       -- reduceObjectProp has for a projection's discarded fields.
-      optimizedExpression (arrayLength (literalArray [nonTrivial]))
+      optimizedExpression (primLen (literalArray [nonTrivial]))
         `shouldBe` literalInt 1
 
     it "folds an in-range index into an in-place literal array" do
@@ -1594,7 +1594,7 @@ spec = describe "IR Optimizer" do
       let original =
             let1 (Name "v") (literalArray [literalInt 10, literalInt 20]) $
               ifThenElse
-                (eq (literalInt 2) (arrayLength v))
+                (eq (literalInt 2) (primLen v))
                 ( application
                     (refImported mainMod (Name "use"))
                     (primBinOp PrimAdd (arrayIndex v 0) (arrayIndex v 1))
@@ -1608,7 +1608,7 @@ spec = describe "IR Optimizer" do
       let xs = refLocal (Name "xs")
           original =
             ifThenElse
-              (eq (literalInt 2) (arrayLength xs))
+              (eq (literalInt 2) (primLen xs))
               (primBinOp PrimAdd (arrayIndex xs 0) (arrayIndex xs 1))
               (literalInt (-1))
       optimizedExpression original `shouldBe` original
@@ -1654,7 +1654,7 @@ spec = describe "IR Optimizer" do
       let original =
             let1 (Name "v") (literalArray [element]) $
               ifThenElse
-                (eq (literalInt 1) (arrayLength v))
+                (eq (literalInt 1) (primLen v))
                 (application (refImported mainMod (Name "use")) (arrayIndex v 0))
                 (literalInt (-1))
       mainBodies ← evalEither (collapsedMainBodies original)
@@ -2044,8 +2044,8 @@ spec = describe "IR Optimizer" do
         `shouldBe` ifThenElse c x y
 
     it "pushes a length read over opaque branches" do
-      optimizedExpression (arrayLength (ifThenElse c x y))
-        `shouldBe` ifThenElse c (arrayLength x) (arrayLength y)
+      optimizedExpression (primLen (ifThenElse c x y))
+        `shouldBe` ifThenElse c (primLen x) (primLen y)
 
     it "pushes a field read into the branches and folds known ctors" do
       optimizedExpression

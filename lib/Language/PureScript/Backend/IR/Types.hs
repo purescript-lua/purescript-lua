@@ -98,8 +98,8 @@ paramName (ParamNamed _ann name) = Just name
 
 {- | A binary primitive operation, defined as the Lua operator of the same
 name so that lowering is the identity (see Note [IR primops]). Every
-operator here is binary; the sole unary primop, logical @not@, is its own
-'PrimNot' node.
+operator here is binary; the two unary operators — logical @not@ and
+length @#@ — are the separate 'PrimNot' and 'PrimLen' nodes.
 -}
 data PrimOp
   = -- | @+@
@@ -130,8 +130,8 @@ data PrimOp
 
 {- Note [IR primops]
 ~~~~~~~~~~~~~~~~~~~~~
-'PrimBinOp' and 'PrimNot' are the pure Lua scalar operators lifted into
-the IR (issue #178). Their reason to exist is that hot polymorphic code
+'PrimBinOp', 'PrimNot' and 'PrimLen' are the pure Lua operators lifted
+into the IR (issue #178). Their reason to exist is that hot polymorphic code
 bottoms out in opaque curried foreigns — @intAdd@, @ordIntImpl@,
 @refEq@, @boolConj@ — that the optimizer cannot see through: to the IR a
 foreign body is text. Lifting that text's pure return-tree subset to
@@ -160,6 +160,38 @@ the constant folding in
 target's semantics (Lua 5.1: every number is an IEEE double), not the
 host's. See the folding rules there for the per-operator caveats
 (integer range, division by zero, the modulo sign, concat typing).
+
+'PrimLen' carries one extra obligation, because it reads a value rather
+than computing over scalars: see Note [PrimLen reads immutable values].
+-}
+
+{- Note [PrimLen reads immutable values]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Rules treat a 'PrimLen' as a /stable/ read — one that yields the same
+number for the same operand however often it runs. Two of them say so
+outright: it is a CSE candidate, so two occurrences can become one shared
+binding ("Language.PureScript.Backend.IR.CSE"), and it sits in the
+@Deref@ complexity tier, so a binding of one is pasted at its use sites
+whatever the use count ("Language.PureScript.Backend.IR.Optimizer").
+Neither move preserves meaning if the operand's length can change between
+the occurrences.
+
+Stability holds because every operand the compiler puts under the node is
+immutable:
+
+  * a PureScript @Array@ — immutable by type, and the length test of an
+    array pattern ('Language.PureScript.Backend.IR.mkCase') is the
+    node's original producer;
+  * a PureScript @String@ — likewise immutable, and the operand when the
+    foreign lifter translates @Data.String.CodeUnits.length@.
+
+A mutable operand is the case to keep out. With @arr@ an @STArray@,
+@#arr@ read before a push and again after it are two different numbers,
+so sharing the two reads, or pasting the earlier one forward past the
+push, would change the program. The lift allowlist in
+"Language.PureScript.Backend.Lua.ForeignLift" accordingly omits
+@Data.Array.ST.lengthImpl@, whose body is the same @#xs@; a future
+producer of a 'PrimLen' owes the same check on its operand.
 -}
 
 data RawExp ann
@@ -183,7 +215,11 @@ data RawExp ann
   | -- | See Note [IR primops]
     PrimNot ann (RawExp ann)
   | DataArgumentByIndex ann AlgebraicType Natural (RawExp ann)
-  | ArrayLength ann (RawExp ann)
+  | {- | Lua's unary @#@: the element count of a table, or the byte count
+    of a string. See Note [IR primops] — and, for why the operand is
+    never a mutable array, Note [PrimLen reads immutable values].
+    -}
+    PrimLen ann (RawExp ann)
   | ArrayIndex ann (RawExp ann) Natural
   | ObjectProp ann (RawExp ann) PropName
   | ObjectUpdate ann (RawExp ann) (NonEmpty (PropName, RawExp ann))
@@ -455,7 +491,7 @@ getAnn = \case
   PrimBinOp ann _ _ _ → ann
   PrimNot ann _ → ann
   DataArgumentByIndex ann _ _ _ → ann
-  ArrayLength ann _ → ann
+  PrimLen ann _ → ann
   ArrayIndex ann _ _ → ann
   ObjectProp ann _ _ → ann
   ObjectUpdate ann _ _ → ann
@@ -489,7 +525,7 @@ setAnn ann = \case
   PrimBinOp _ op l r → PrimBinOp ann op l r
   PrimNot _ e → PrimNot ann e
   DataArgumentByIndex _ algTy i e → DataArgumentByIndex ann algTy i e
-  ArrayLength _ e → ArrayLength ann e
+  PrimLen _ e → PrimLen ann e
   ArrayIndex _ e i → ArrayIndex ann e i
   ObjectProp _ e prop → ObjectProp ann e prop
   ObjectUpdate _ e patches → ObjectUpdate ann e patches
@@ -660,8 +696,8 @@ primBinOp = PrimBinOp noAnn
 primNot ∷ Exp → Exp
 primNot = PrimNot noAnn
 
-arrayLength ∷ Exp → Exp
-arrayLength = ArrayLength noAnn
+primLen ∷ Exp → Exp
+primLen = PrimLen noAnn
 
 reflectCtor ∷ Exp → Exp
 reflectCtor = ReflectCtor noAnn
@@ -737,8 +773,8 @@ subexpressions go = \case
     PrimBinOp ann op <$> go a <*> go b
   PrimNot ann a →
     PrimNot ann <$> go a
-  ArrayLength ann a →
-    ArrayLength ann <$> go a
+  PrimLen ann a →
+    PrimLen ann <$> go a
   ArrayIndex ann a idx →
     ArrayIndex ann <$> go a <*> pure idx
   ObjectProp ann a prp →
@@ -1091,7 +1127,7 @@ alphaEq = go 0 Map.empty Map.empty
       annL == annR && go lvl scopeL scopeR aL aR
     (DataArgumentByIndex annL tL iL aL, DataArgumentByIndex annR tR iR aR) →
       annL == annR && tL == tR && iL == iR && go lvl scopeL scopeR aL aR
-    (ArrayLength annL aL, ArrayLength annR aR) →
+    (PrimLen annL aL, PrimLen annR aR) →
       annL == annR && go lvl scopeL scopeR aL aR
     (ArrayIndex annL aL iL, ArrayIndex annR aR iR) →
       annL == annR && iL == iR && go lvl scopeL scopeR aL aR

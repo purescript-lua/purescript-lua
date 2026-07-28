@@ -23,10 +23,12 @@ none existed. The pass therefore only touches forms that are effect-free
     arguments are themselves effect-free values — a partial application
     is a runtime call of the curried wrapper and is left alone;
   * single reads over never-nil bases ('ObjectProp', 'ArrayIndex',
-    'ArrayLength', 'ReflectCtor', 'DataArgumentByIndex' over a 'Ref' or
+    'PrimLen', 'ReflectCtor', 'DataArgumentByIndex' over a 'Ref' or
     a record-read chain) — records and data values are write-once, so a
     read is stable, and a never-nil base makes it non-throwing (see
     'isRefProjection' for why a sum-variant slot is not such a base).
+    Sharing a length read is what obliges 'PrimLen' to keep its operand
+    immutable — see Note [PrimLen reads immutable values].
 
 Never arbitrary applications: a call can do anything. GHC's CSE pass,
 with its similar sharing restrictions, is the precedent. Sharing one
@@ -391,7 +393,7 @@ isRefProjection ∷ RawExp ann → Bool
 isRefProjection = \case
   ObjectProp _ base _ → isNilSafeBase base
   ArrayIndex _ base _ → isNilSafeBase base
-  ArrayLength _ base → isNilSafeBase base
+  PrimLen _ base → isNilSafeBase base
   ReflectCtor _ base → isNilSafeBase base
   DataArgumentByIndex _ _ _ base → isNilSafeBase base
   _ → False

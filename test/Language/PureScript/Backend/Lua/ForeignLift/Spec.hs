@@ -13,6 +13,7 @@ import Language.PureScript.Backend.IR.Types
   , paramNamed
   , paramUnused
   , primBinOp
+  , primLen
   , primNot
   , refLocal
   , pattern EffectRunArg
@@ -98,6 +99,19 @@ spec = describe "Foreign lift (#178)" do
               abstraction (paramNamed (Name "s2")) $
                 primBinOp PrimConcat (refLocal (Name "s1")) (refLocal (Name "s2"))
           )
+
+    it "lifts the length operator to the unary length primop" do
+      -- The body of `Data.Array.length` and of
+      -- `Data.String.CodeUnits.length`: the unary Lua `#`, which lifts to
+      -- the 'PrimLen' node the same operator lowers back to. Liftability
+      -- is not membership — `Data.Array.ST.lengthImpl` has this very body
+      -- and is off the allowlist for the reasons stated there.
+      let xs = Name "xs"
+      liftExport
+        (source "return { length = function(xs) return #xs end }")
+        (Name "length")
+        `shouldBe` Just
+          (abstraction (paramNamed xs) (primLen (refLocal xs)))
 
     it "lifts a multi-parameter function literal to one n-ary AbsN (#227)" do
       -- A Lua function binds every parameter at one call, so the literal
@@ -287,6 +301,16 @@ spec = describe "Foreign lift (#178)" do
             "local k = function(a, b) return a end\n"
               <> "return { f = function(x) return k(x) end }"
       liftExport (source src) (Name "f") `shouldSatisfy` isNothing
+
+    it "declines a length body that is not a bare return" do
+      -- The pure-return-tree restriction bounds the length operator like
+      -- every other node: the `#` read itself lifts, but binding it to a
+      -- `local` first makes the body a statement sequence, so the export
+      -- stays opaque.
+      liftExport
+        (source "return { f = function(xs) local n = #xs return n end }")
+        (Name "f")
+        `shouldSatisfy` isNothing
 
     it "declines a body with a table index" do
       liftExport (source "return { f = function(xs) return xs[1] end }") (Name "f")

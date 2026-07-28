@@ -65,6 +65,10 @@ use:
     value (a branch that falls through to @nil@ does not lift);
   * the binary operators of Note [IR primops] and @==@/@~=@ → 'PrimBinOp'
     / 'Eq' / 'PrimNot';
+  * the unary @#@ → 'PrimLen' (issue #247), which is how the one-line
+    @length@ exports of the array and string forks —
+    @function(xs) return #xs end@ — become the VM's own length opcode
+    instead of a foreign-table read plus a call frame per use;
   * integer, float, and boolean literals;
   * a reference to a parameter in scope, or to a @local@ in the file's
     header (inlined) — this is how @ordIntImpl = (unsafeCoerceImpl)@ and
@@ -113,6 +117,7 @@ import Language.PureScript.Backend.IR.Types
   , paramNamed
   , paramUnused
   , primBinOp
+  , primLen
   , primNot
   , refLocal
   , setAnn
@@ -142,13 +147,28 @@ import Prelude hiding (show)
 {- | The foreign exports lifted into the IR: the arithmetic, comparison,
 boolean, and concatenation core of the prelude (issue #178), both
 halves of the @*.Uncurried@ wrappers — @run@ (issue #198) and @mk@
-(issue #227) — and the identity coercion @Unsafe.Coerce.unsafeCoerce@
+(issue #227) — the identity coercion @Unsafe.Coerce.unsafeCoerce@
 (issue #236), whose lifted @λx. x@ beta-reduces away at every applied
-site. Membership is a hard contract (see the module header): a listed
-export that fails to lift is a compile error. A broader allowlist is
-follow-up work (issue #187).
+site, and the @#@-shaped @length@ exports (issue #247). Membership is a
+hard contract (see the module header): a listed export that fails to
+lift is a compile error. Broadening the list further is follow-up work.
 
-A warning to that follow-up: do /not/ list the Effect\/ST core —
+Two warnings to that follow-up. An export whose body translates is not
+thereby worth lifting: @Data.Array.ST.lengthImpl@ has the same
+@function(xs) return #xs end@ body as @Data.Array.length@ and is
+deliberately absent, because it is an @STFn1@ — a call of it is an effect
+statement, and code generation sheds the surrounding effect thunk only
+when the thunk's body is a /call/ (the marker case in
+"Language.PureScript.Backend.Lua"). A lifted 'PrimLen' body keeps the
+thunk, so @lengthImpl(arr)@ would become
+@(function() return #arr end)()@ — a closure allocation plus a call where
+there was one call. Its operand is also a mutable @STArray@, which the
+sharing and pasting the node is subject to elsewhere assume against
+(Note [PrimLen reads immutable values]); the unshed thunk holds the node
+out of those rules' reach today, and this exclusion does not rely on
+that.
+
+And do /not/ list the Effect\/ST core —
 @Effect.bindE@\/@pureE@, @Control.Monad.ST.Internal.bind_@\/@pure_@ —
 even though its thunk-shaped bodies are technically liftable now that
 nullary calls translate. Those very names are the canonical heads
@@ -186,6 +206,12 @@ allowlist =
       )
     , ("Data.Semigroup", ["concatString"])
     , ("Unsafe.Coerce", ["unsafeCoerce"])
+    , -- The @#@-shaped length exports (issue #247). Both take an
+      -- immutable operand, an array and a string; the identically-bodied
+      -- @Data.Array.ST.lengthImpl@ is absent for the two reasons the
+      -- Haddock above spells out.
+      ("Data.Array", ["length"])
+    , ("Data.String.CodeUnits", ["length"])
     , -- Both halves of the uncurried FFI wrappers: @run@ (issue #198)
       -- and @mk@ (issue #227). @runFn0@/@mkFn0@ are absent by policy,
       -- not liftability: their bodies force a /pure/ @Fn0@ with a
@@ -347,6 +373,7 @@ liftLuaExp env bound = \case
     | Just e ← Map.lookup name env → liftLuaExp (Map.delete name env) bound e
     | otherwise → Nothing
   UnOp LogicalNot (_ann, a) → primNot <$> liftLuaExp env bound a
+  UnOp HashOp (_ann, a) → primLen <$> liftLuaExp env bound a
   BinOp op (_ann, a) (_ann', b) → do
     a' ← liftLuaExp env bound a
     b' ← liftLuaExp env bound b
