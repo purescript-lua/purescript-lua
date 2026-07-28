@@ -38,7 +38,7 @@ UberModule
       ( QName
         { qnameModuleName = ModuleName "Golden.RecordSurgery.Test", qnameName = Name "logShow"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "a$216" ) :| [] )
+        ( ParamNamed Nothing ( Name "a$0" ) :| [] )
         ( AppN Nothing
           ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
           ( AppN Nothing
@@ -46,18 +46,18 @@ UberModule
               ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
               ( PropName "showIntImpl" )
             )
-            ( Ref Nothing ( Local ( Name "a$216" ) ) :| [] ) :| []
+            ( Ref Nothing ( Local ( Name "a$0" ) ) :| [] ) :| []
           )
         )
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.RecordSurgery.Test", qnameName = Name "logShow1"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "a$214" ) :| [] )
+        ( ParamNamed Nothing ( Name "a$0" ) :| [] )
         ( AppN Nothing
           ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
           ( IfThenElse Nothing
-            ( Ref Nothing ( Local ( Name "a$214" ) ) )
+            ( Ref Nothing ( Local ( Name "a$0" ) ) )
             ( LiteralString Nothing "true" )
             ( LiteralString Nothing "false" ) :| []
           )
@@ -113,7 +113,7 @@ UberModule
               ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
             ) :|
             [ Standalone
-              ( Nothing, Name "dyn$1", AppN Nothing
+              ( Nothing, Name "dyn$0", AppN Nothing
                 ( AppN Nothing
                   ( ObjectProp Nothing
                     ( Ref Nothing ( Imported ( ModuleName "Effect.Ref" ) ( Name "foreign" ) ) )
@@ -196,13 +196,13 @@ UberModule
                         )
                         ( PrimBinOp Nothing PrimAdd
                           ( ObjectProp Nothing
-                            ( Ref Nothing ( Local ( Name "dyn$1" ) ) )
+                            ( Ref Nothing ( Local ( Name "dyn$0" ) ) )
                             ( PropName "k" )
                           )
                           ( LiteralInt Nothing 1 ) :| []
                         )
                       )
-                      ( Ref Nothing ( Local ( Name "dyn$1" ) ) :| [] )
+                      ( Ref Nothing ( Local ( Name "dyn$0" ) ) :| [] )
                     )
                     ( PropName "k" ) :| []
                   )
@@ -234,7 +234,7 @@ UberModule
                         )
                         ( LiteralString Nothing "k" :| [] )
                       )
-                      ( Ref Nothing ( Local ( Name "dyn$1" ) ) :| [] ) :| []
+                      ( Ref Nothing ( Local ( Name "dyn$0" ) ) :| [] ) :| []
                     ) :| []
                   )
                 )

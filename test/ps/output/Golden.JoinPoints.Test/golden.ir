@@ -28,22 +28,22 @@ UberModule
       ( QName
         { qnameModuleName = ModuleName "Golden.JoinPoints.Test", qnameName = Name "logShow"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "a$2" ) :| [] )
+        ( ParamNamed Nothing ( Name "a$0" ) :| [] )
         ( AppN Nothing
           ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
           ( AppN Nothing
             ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
-            ( Ref Nothing ( Local ( Name "a$2" ) ) :| [] ) :| []
+            ( Ref Nothing ( Local ( Name "a$0" ) ) :| [] ) :| []
           )
         )
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.JoinPoints.Test", qnameName = Name "negate"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "a$83" ) :| [] )
+        ( ParamNamed Nothing ( Name "a$0" ) :| [] )
         ( PrimBinOp Nothing PrimSub
           ( LiteralInt Nothing 0 )
-          ( Ref Nothing ( Local ( Name "a$83" ) ) )
+          ( Ref Nothing ( Local ( Name "a$0" ) ) )
         )
       ), Standalone
       ( QName

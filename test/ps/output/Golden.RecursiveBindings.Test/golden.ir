@@ -5,24 +5,24 @@ UberModule
         ( RecursiveGroup
           (
             ( Nothing, Name "yes$0", AbsN Nothing
-              ( ParamNamed Nothing ( Name "v$2" ) :| [] )
+              ( ParamNamed Nothing ( Name "v$0" ) :| [] )
               ( IfThenElse Nothing
-                ( Ref Nothing ( Local ( Name "v$2" ) ) )
+                ( Ref Nothing ( Local ( Name "v$0" ) ) )
                 ( AppN Nothing
-                  ( Ref Nothing ( Local ( Name "no$1" ) ) )
+                  ( Ref Nothing ( Local ( Name "no$0" ) ) )
                   ( LiteralBool Nothing False :| [] )
                 )
                 ( AppN Nothing
-                  ( Ref Nothing ( Local ( Name "no$1" ) ) )
+                  ( Ref Nothing ( Local ( Name "no$0" ) ) )
                   ( LiteralBool Nothing True :| [] )
                 )
               )
             ) :|
             [
-              ( Nothing, Name "no$1", AbsN Nothing
-                ( ParamNamed Nothing ( Name "v0$3" ) :| [] )
+              ( Nothing, Name "no$0", AbsN Nothing
+                ( ParamNamed Nothing ( Name "v0$0" ) :| [] )
                 ( IfThenElse Nothing
-                  ( Ref Nothing ( Local ( Name "v0$3" ) ) )
+                  ( Ref Nothing ( Local ( Name "v0$0" ) ) )
                   ( AppN Nothing
                     ( Ref Nothing ( Local ( Name "yes$0" ) ) )
                     ( LiteralBool Nothing False :| [] )
@@ -37,38 +37,38 @@ UberModule
           ) :| []
         )
         ( AppN Nothing
-          ( Ref Nothing ( Local ( Name "no$1" ) ) )
+          ( Ref Nothing ( Local ( Name "no$0" ) ) )
           ( LiteralBool Nothing False :| [] )
         )
       ),
       ( Name "whereRec", Let Nothing
         ( RecursiveGroup
           (
-            ( Nothing, Name "yes$14", AbsN Nothing
-              ( ParamNamed Nothing ( Name "v$16" ) :| [] )
+            ( Nothing, Name "yes$0", AbsN Nothing
+              ( ParamNamed Nothing ( Name "v$0" ) :| [] )
               ( IfThenElse Nothing
-                ( Ref Nothing ( Local ( Name "v$16" ) ) )
+                ( Ref Nothing ( Local ( Name "v$0" ) ) )
                 ( AppN Nothing
-                  ( Ref Nothing ( Local ( Name "no$15" ) ) )
+                  ( Ref Nothing ( Local ( Name "no$0" ) ) )
                   ( LiteralBool Nothing False :| [] )
                 )
                 ( AppN Nothing
-                  ( Ref Nothing ( Local ( Name "no$15" ) ) )
+                  ( Ref Nothing ( Local ( Name "no$0" ) ) )
                   ( LiteralBool Nothing True :| [] )
                 )
               )
             ) :|
             [
-              ( Nothing, Name "no$15", AbsN Nothing
-                ( ParamNamed Nothing ( Name "v0$17" ) :| [] )
+              ( Nothing, Name "no$0", AbsN Nothing
+                ( ParamNamed Nothing ( Name "v0$0" ) :| [] )
                 ( IfThenElse Nothing
-                  ( Ref Nothing ( Local ( Name "v0$17" ) ) )
+                  ( Ref Nothing ( Local ( Name "v0$0" ) ) )
                   ( AppN Nothing
-                    ( Ref Nothing ( Local ( Name "yes$14" ) ) )
+                    ( Ref Nothing ( Local ( Name "yes$0" ) ) )
                     ( LiteralBool Nothing False :| [] )
                   )
                   ( AppN Nothing
-                    ( Ref Nothing ( Local ( Name "yes$14" ) ) )
+                    ( Ref Nothing ( Local ( Name "yes$0" ) ) )
                     ( LiteralBool Nothing True :| [] )
                   )
                 )
@@ -77,53 +77,53 @@ UberModule
           ) :| []
         )
         ( AppN Nothing
-          ( Ref Nothing ( Local ( Name "no$15" ) ) )
+          ( Ref Nothing ( Local ( Name "no$0" ) ) )
           ( LiteralBool Nothing False :| [] )
         )
       ),
       ( Name "letRecMixed", Let Nothing
         ( Standalone
-          ( Nothing, Name "z$4", LiteralInt Nothing 1 ) :|
+          ( Nothing, Name "z$0", LiteralInt Nothing 1 ) :|
           [ RecursiveGroup
             (
-              ( Nothing, Name "b$5", AbsN Nothing
+              ( Nothing, Name "b$0", AbsN Nothing
                 ( ParamUnused Nothing :| [] )
                 ( AppN Nothing
-                  ( Ref Nothing ( Local ( Name "a$6" ) ) )
-                  ( Ref Nothing ( Local ( Name "z$4" ) ) :| [] )
+                  ( Ref Nothing ( Local ( Name "a$0" ) ) )
+                  ( Ref Nothing ( Local ( Name "z$0" ) ) :| [] )
                 )
               ) :|
               [
-                ( Nothing, Name "a$6", AbsN Nothing
+                ( Nothing, Name "a$0", AbsN Nothing
                   ( ParamUnused Nothing :| [] )
                   ( AppN Nothing
-                    ( Ref Nothing ( Local ( Name "b$5" ) ) )
-                    ( Ref Nothing ( Local ( Name "z$4" ) ) :| [] )
+                    ( Ref Nothing ( Local ( Name "b$0" ) ) )
+                    ( Ref Nothing ( Local ( Name "z$0" ) ) :| [] )
                   )
                 )
               ]
             ), Standalone
-            ( Nothing, Name "f$7$w", AbsN Nothing
-              ( ParamNamed Nothing ( Name "f$7$u1" ) :| [ ParamNamed Nothing ( Name "k$13" ) ] )
+            ( Nothing, Name "f$0$w", AbsN Nothing
+              ( ParamNamed Nothing ( Name "f$0$u1" ) :| [ ParamNamed Nothing ( Name "k$0" ) ] )
               ( AppN Nothing
-                ( Ref Nothing ( Local ( Name "a$6" ) ) )
-                ( Ref Nothing ( Local ( Name "k$13" ) ) :| [] )
+                ( Ref Nothing ( Local ( Name "a$0" ) ) )
+                ( Ref Nothing ( Local ( Name "k$0" ) ) :| [] )
               )
             ), Standalone
-            ( Nothing, Name "y$8", AppN Nothing
-              ( Ref Nothing ( Local ( Name "f$7$w" ) ) )
-              ( Ref Nothing ( Local ( Name "z$4" ) ) :| [ Ref Nothing ( Local ( Name "z$4" ) ) ] )
+            ( Nothing, Name "y$0", AppN Nothing
+              ( Ref Nothing ( Local ( Name "f$0$w" ) ) )
+              ( Ref Nothing ( Local ( Name "z$0" ) ) :| [ Ref Nothing ( Local ( Name "z$0" ) ) ] )
             )
           ]
         )
         ( AppN Nothing
-          ( Ref Nothing ( Local ( Name "f$7$w" ) ) )
+          ( Ref Nothing ( Local ( Name "f$0$w" ) ) )
           ( AppN Nothing
-            ( Ref Nothing ( Local ( Name "f$7$w" ) ) )
-            ( Ref Nothing ( Local ( Name "y$8" ) ) :| [ Ref Nothing ( Local ( Name "y$8" ) ) ] ) :|
+            ( Ref Nothing ( Local ( Name "f$0$w" ) ) )
+            ( Ref Nothing ( Local ( Name "y$0" ) ) :| [ Ref Nothing ( Local ( Name "y$0" ) ) ] ) :|
             [ AppN Nothing
-              ( Ref Nothing ( Local ( Name "f$7$w" ) ) )
-              ( Ref Nothing ( Local ( Name "y$8" ) ) :| [ LiteralInt Nothing 0 ] )
+              ( Ref Nothing ( Local ( Name "f$0$w" ) ) )
+              ( Ref Nothing ( Local ( Name "y$0" ) ) :| [ LiteralInt Nothing 0 ] )
             ]
           )
         )

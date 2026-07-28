@@ -29,35 +29,35 @@ UberModule
         ( CtorName "Zero" ) []
       ),
       ( Name "Succ", AbsN Nothing
-        ( ParamNamed Nothing ( Name "value0$5" ) :| [] )
+        ( ParamNamed Nothing ( Name "value0$0" ) :| [] )
         ( Ctor Nothing SumType
           ( ModuleName "Golden.PatternMatching.Test2" )
           ( TyName "N" )
           ( CtorName "Succ" )
-          [ Ref Nothing ( Local ( Name "value0$5" ) ) ]
+          [ Ref Nothing ( Local ( Name "value0$0" ) ) ]
         )
       ),
       ( Name "Add", AbsN Nothing
-        ( ParamNamed Nothing ( Name "value0$3" ) :| [] )
+        ( ParamNamed Nothing ( Name "value0$0" ) :| [] )
         ( AbsN Nothing
-          ( ParamNamed Nothing ( Name "value1$4" ) :| [] )
+          ( ParamNamed Nothing ( Name "value1$0" ) :| [] )
           ( Ctor Nothing SumType
             ( ModuleName "Golden.PatternMatching.Test2" )
             ( TyName "N" )
             ( CtorName "Add" )
-            [ Ref Nothing ( Local ( Name "value0$3" ) ), Ref Nothing ( Local ( Name "value1$4" ) ) ]
+            [ Ref Nothing ( Local ( Name "value0$0" ) ), Ref Nothing ( Local ( Name "value1$0" ) ) ]
           )
         )
       ),
       ( Name "Mul", AbsN Nothing
-        ( ParamNamed Nothing ( Name "value0$1" ) :| [] )
+        ( ParamNamed Nothing ( Name "value0$0" ) :| [] )
         ( AbsN Nothing
-          ( ParamNamed Nothing ( Name "value1$2" ) :| [] )
+          ( ParamNamed Nothing ( Name "value1$0" ) :| [] )
           ( Ctor Nothing SumType
             ( ModuleName "Golden.PatternMatching.Test2" )
             ( TyName "N" )
             ( CtorName "Mul" )
-            [ Ref Nothing ( Local ( Name "value0$1" ) ), Ref Nothing ( Local ( Name "value1$2" ) ) ]
+            [ Ref Nothing ( Local ( Name "value0$0" ) ), Ref Nothing ( Local ( Name "value1$0" ) ) ]
           )
         )
       ),
@@ -65,13 +65,13 @@ UberModule
         ( ParamNamed Nothing ( Name "e$0" ) :| [] )
         ( Let Nothing
           ( Standalone
-            ( Nothing, Name "$cse7", DataArgumentByIndex Nothing SumType 0
+            ( Nothing, Name "$cse0", DataArgumentByIndex Nothing SumType 0
               ( Ref Nothing ( Local ( Name "e$0" ) ) )
             ) :| []
           )
           ( Let Nothing
             ( Standalone
-              ( Nothing, Name "$cse6", DataArgumentByIndex Nothing SumType 1
+              ( Nothing, Name "$cse1", DataArgumentByIndex Nothing SumType 1
                 ( Ref Nothing ( Local ( Name "e$0" ) ) )
               ) :| []
             )
@@ -83,18 +83,18 @@ UberModule
               ( IfThenElse Nothing
                 ( Eq Nothing
                   ( LiteralString Nothing "Golden.PatternMatching.Test2∷N.Zero" )
-                  ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "$cse6" ) ) ) )
+                  ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "$cse1" ) ) ) )
                 )
                 ( IfThenElse Nothing
                   ( Eq Nothing
                     ( LiteralString Nothing "Golden.PatternMatching.Test2∷N.Add" )
-                    ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "$cse7" ) ) ) )
+                    ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "$cse0" ) ) ) )
                   )
                   ( LiteralInt Nothing 1 )
                   ( IfThenElse Nothing
                     ( Eq Nothing
                       ( LiteralString Nothing "Golden.PatternMatching.Test2∷N.Mul" )
-                      ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "$cse7" ) ) ) )
+                      ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "$cse0" ) ) ) )
                     )
                     ( LiteralInt Nothing 2 )
                     ( LiteralInt Nothing 5 )
@@ -103,13 +103,13 @@ UberModule
                 ( IfThenElse Nothing
                   ( Eq Nothing
                     ( LiteralString Nothing "Golden.PatternMatching.Test2∷N.Mul" )
-                    ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "$cse6" ) ) ) )
+                    ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "$cse1" ) ) ) )
                   )
                   ( LiteralInt Nothing 3 )
                   ( IfThenElse Nothing
                     ( Eq Nothing
                       ( LiteralString Nothing "Golden.PatternMatching.Test2∷N.Add" )
-                      ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "$cse6" ) ) ) )
+                      ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "$cse1" ) ) ) )
                     )
                     ( LiteralInt Nothing 4 )
                     ( LiteralInt Nothing 6 )

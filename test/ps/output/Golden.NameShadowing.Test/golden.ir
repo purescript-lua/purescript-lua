@@ -13,14 +13,14 @@ UberModule
         )
       ),
       ( Name "c", AbsN Nothing
-        ( ParamNamed Nothing ( Name "x$3" ) :| [] )
+        ( ParamNamed Nothing ( Name "x$0" ) :| [] )
         ( AbsN Nothing
-          ( ParamNamed Nothing ( Name "x1$4" ) :| [] )
+          ( ParamNamed Nothing ( Name "x1$0" ) :| [] )
           ( IfThenElse Nothing
-            ( Eq Nothing ( LiteralInt Nothing 1 ) ( Ref Nothing ( Local ( Name "x1$4" ) ) ) )
+            ( Eq Nothing ( LiteralInt Nothing 1 ) ( Ref Nothing ( Local ( Name "x1$0" ) ) ) )
             ( LiteralInt Nothing 1 )
             ( IfThenElse Nothing
-              ( Eq Nothing ( LiteralInt Nothing 1 ) ( Ref Nothing ( Local ( Name "x$3" ) ) ) )
+              ( Eq Nothing ( LiteralInt Nothing 1 ) ( Ref Nothing ( Local ( Name "x$0" ) ) ) )
               ( LiteralInt Nothing 2 )
               ( LiteralInt Nothing 3 )
             )

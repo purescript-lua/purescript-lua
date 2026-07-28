@@ -5,12 +5,12 @@ UberModule
       ( Name "b", LiteralChar Nothing 'b' ),
       ( Name "c", LiteralInt Nothing 42 ),
       ( Name "J", AbsN Nothing
-        ( ParamNamed Nothing ( Name "value0$16" ) :| [] )
+        ( ParamNamed Nothing ( Name "value0$0" ) :| [] )
         ( Ctor Nothing SumType
           ( ModuleName "Golden.CaseStatements.Test" )
           ( TyName "M" )
           ( CtorName "J" )
-          [ Ref Nothing ( Local ( Name "value0$16" ) ) ]
+          [ Ref Nothing ( Local ( Name "value0$0" ) ) ]
         )
       ),
       ( Name "N", Ctor Nothing SumType
@@ -19,19 +19,19 @@ UberModule
         ( CtorName "N" ) []
       ),
       ( Name "d", AbsN Nothing
-        ( ParamNamed Nothing ( Name "m$10" ) :| [] )
+        ( ParamNamed Nothing ( Name "m$0" ) :| [] )
         ( AbsN Nothing
-          ( ParamNamed Nothing ( Name "n$11" ) :| [] )
+          ( ParamNamed Nothing ( Name "n$0" ) :| [] )
           ( AbsN Nothing
-            ( ParamNamed Nothing ( Name "x$12" ) :| [] )
+            ( ParamNamed Nothing ( Name "x$0" ) :| [] )
             ( Let Nothing
               ( Standalone
-                ( Nothing, Name "v$13", AbsN Nothing
+                ( Nothing, Name "v$0", AbsN Nothing
                   ( ParamUnused Nothing :| [] )
                   ( IfThenElse Nothing
                     ( Eq Nothing
                       ( LiteralChar Nothing 'y' )
-                      ( Ref Nothing ( Local ( Name "x$12" ) ) )
+                      ( Ref Nothing ( Local ( Name "x$0" ) ) )
                     )
                     ( LiteralInt Nothing 0 )
                     ( LiteralInt Nothing 1 )
@@ -39,35 +39,32 @@ UberModule
                 ) :| []
               )
               ( IfThenElse Nothing
-                ( Eq Nothing
-                  ( LiteralChar Nothing 'x' )
-                  ( Ref Nothing ( Local ( Name "x$12" ) ) )
-                )
+                ( Eq Nothing ( LiteralChar Nothing 'x' ) ( Ref Nothing ( Local ( Name "x$0" ) ) ) )
                 ( IfThenElse Nothing
                   ( Eq Nothing
                     ( LiteralString Nothing "Golden.CaseStatements.Test∷M.J" )
-                    ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "m$10" ) ) ) )
+                    ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "m$0" ) ) ) )
                   )
                   ( IfThenElse Nothing
                     ( Eq Nothing
                       ( LiteralString Nothing "Golden.CaseStatements.Test∷M.N" )
-                      ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "n$11" ) ) ) )
+                      ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "n$0" ) ) ) )
                     )
                     ( DataArgumentByIndex Nothing SumType 0
-                      ( Ref Nothing ( Local ( Name "m$10" ) ) )
+                      ( Ref Nothing ( Local ( Name "m$0" ) ) )
                     )
                     ( AppN Nothing
-                      ( Ref Nothing ( Local ( Name "v$13" ) ) )
+                      ( Ref Nothing ( Local ( Name "v$0" ) ) )
                       ( LiteralBool Nothing True :| [] )
                     )
                   )
                   ( AppN Nothing
-                    ( Ref Nothing ( Local ( Name "v$13" ) ) )
+                    ( Ref Nothing ( Local ( Name "v$0" ) ) )
                     ( LiteralBool Nothing True :| [] )
                   )
                 )
                 ( AppN Nothing
-                  ( Ref Nothing ( Local ( Name "v$13" ) ) )
+                  ( Ref Nothing ( Local ( Name "v$0" ) ) )
                   ( LiteralBool Nothing True :| [] )
                 )
               )

@@ -70,24 +70,24 @@ UberModule
         ( Imported ( ModuleName "Golden.FloatIn.Test" ) ( Name "expensive" ) )
       ),
       ( Name "pick", AbsN Nothing
-        ( ParamNamed Nothing ( Name "pick$p1$206" ) :| [] )
+        ( ParamNamed Nothing ( Name "pick$p1$0" ) :| [] )
         ( AbsN Nothing
-          ( ParamNamed Nothing ( Name "pick$p2$207" ) :| [] )
+          ( ParamNamed Nothing ( Name "pick$p2$0" ) :| [] )
           ( IfThenElse Nothing
-            ( Ref Nothing ( Local ( Name "pick$p1$206" ) ) )
+            ( Ref Nothing ( Local ( Name "pick$p1$0" ) ) )
             ( Let Nothing
               ( Standalone
-                ( Nothing, Name "shared$227", PrimBinOp Nothing PrimAdd
+                ( Nothing, Name "shared$0", PrimBinOp Nothing PrimAdd
                   ( PrimBinOp Nothing PrimMul
-                    ( Ref Nothing ( Local ( Name "pick$p2$207" ) ) )
-                    ( Ref Nothing ( Local ( Name "pick$p2$207" ) ) )
+                    ( Ref Nothing ( Local ( Name "pick$p2$0" ) ) )
+                    ( Ref Nothing ( Local ( Name "pick$p2$0" ) ) )
                   )
                   ( LiteralInt Nothing 1 )
                 ) :| []
               )
               ( PrimBinOp Nothing PrimAdd
-                ( Ref Nothing ( Local ( Name "shared$227" ) ) )
-                ( Ref Nothing ( Local ( Name "shared$227" ) ) )
+                ( Ref Nothing ( Local ( Name "shared$0" ) ) )
+                ( Ref Nothing ( Local ( Name "shared$0" ) ) )
               )
             )
             ( LiteralInt Nothing 0 )
@@ -95,35 +95,35 @@ UberModule
         )
       ),
       ( Name "pickShared", AbsN Nothing
-        ( ParamNamed Nothing ( Name "pickShared$p1$208" ) :| [] )
+        ( ParamNamed Nothing ( Name "pickShared$p1$0" ) :| [] )
         ( AbsN Nothing
-          ( ParamNamed Nothing ( Name "pickShared$p2$209" ) :| [] )
+          ( ParamNamed Nothing ( Name "pickShared$p2$0" ) :| [] )
           ( IfThenElse Nothing
-            ( Ref Nothing ( Local ( Name "pickShared$p1$208" ) ) )
+            ( Ref Nothing ( Local ( Name "pickShared$p1$0" ) ) )
             ( Let Nothing
               ( Standalone
-                ( Nothing, Name "shared$237", AppN Nothing
+                ( Nothing, Name "shared$0", AppN Nothing
                   ( Ref Nothing ( Imported ( ModuleName "Golden.FloatIn.Test" ) ( Name "tick" ) ) )
-                  ( Ref Nothing ( Local ( Name "pickShared$p2$209" ) ) :| [] )
+                  ( Ref Nothing ( Local ( Name "pickShared$p2$0" ) ) :| [] )
                 ) :| []
               )
               ( Let Nothing
                 ( Standalone
-                  ( Nothing, Name "f$238", AbsN Nothing
+                  ( Nothing, Name "f$0", AbsN Nothing
                     ( ParamUnused Nothing :| [] )
                     ( PrimBinOp Nothing PrimAdd
-                      ( Ref Nothing ( Local ( Name "shared$237" ) ) )
-                      ( Ref Nothing ( Local ( Name "shared$237" ) ) )
+                      ( Ref Nothing ( Local ( Name "shared$0" ) ) )
+                      ( Ref Nothing ( Local ( Name "shared$0" ) ) )
                     )
                   ) :| []
                 )
                 ( PrimBinOp Nothing PrimAdd
                   ( AppN Nothing
-                    ( Ref Nothing ( Local ( Name "f$238" ) ) )
+                    ( Ref Nothing ( Local ( Name "f$0" ) ) )
                     ( Ref Nothing ( Imported ( ModuleName "Data.Unit" ) ( Name "unit" ) ) :| [] )
                   )
                   ( AppN Nothing
-                    ( Ref Nothing ( Local ( Name "f$238" ) ) )
+                    ( Ref Nothing ( Local ( Name "f$0" ) ) )
                     ( Ref Nothing ( Imported ( ModuleName "Data.Unit" ) ( Name "unit" ) ) :| [] )
                   )
                 )
@@ -165,7 +165,7 @@ UberModule
                     ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
                     ( Let Nothing
                       ( Standalone
-                        ( Nothing, Name "shared$284", AppN Nothing
+                        ( Nothing, Name "shared$0", AppN Nothing
                           ( Ref Nothing
                             ( Imported ( ModuleName "Golden.FloatIn.Test" ) ( Name "tick" ) )
                           )
@@ -174,23 +174,23 @@ UberModule
                       )
                       ( Let Nothing
                         ( Standalone
-                          ( Nothing, Name "f$285", AbsN Nothing
+                          ( Nothing, Name "f$0", AbsN Nothing
                             ( ParamUnused Nothing :| [] )
                             ( PrimBinOp Nothing PrimAdd
-                              ( Ref Nothing ( Local ( Name "shared$284" ) ) )
-                              ( Ref Nothing ( Local ( Name "shared$284" ) ) )
+                              ( Ref Nothing ( Local ( Name "shared$0" ) ) )
+                              ( Ref Nothing ( Local ( Name "shared$0" ) ) )
                             )
                           ) :| []
                         )
                         ( PrimBinOp Nothing PrimAdd
                           ( AppN Nothing
-                            ( Ref Nothing ( Local ( Name "f$285" ) ) )
+                            ( Ref Nothing ( Local ( Name "f$0" ) ) )
                             ( Ref Nothing
                               ( Imported ( ModuleName "Data.Unit" ) ( Name "unit" ) ) :| []
                             )
                           )
                           ( AppN Nothing
-                            ( Ref Nothing ( Local ( Name "f$285" ) ) )
+                            ( Ref Nothing ( Local ( Name "f$0" ) ) )
                             ( Ref Nothing
                               ( Imported ( ModuleName "Data.Unit" ) ( Name "unit" ) ) :| []
                             )

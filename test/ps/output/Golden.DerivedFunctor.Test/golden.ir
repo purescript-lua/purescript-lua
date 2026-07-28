@@ -100,7 +100,7 @@ UberModule
                 ( ParamNamed Nothing ( Name "m" ) :| [] )
                 ( Let Nothing
                   ( Standalone
-                    ( Nothing, Name "$cse269", ObjectProp Nothing
+                    ( Nothing, Name "$cse0", ObjectProp Nothing
                       ( Ref Nothing
                         ( Imported
                           ( ModuleName "Golden.DerivedFunctor.Test" )
@@ -124,7 +124,7 @@ UberModule
                       ( CtorName "Node" )
                       [ AppN Nothing
                         ( AppN Nothing
-                          ( Ref Nothing ( Local ( Name "$cse269" ) ) )
+                          ( Ref Nothing ( Local ( Name "$cse0" ) ) )
                           ( Ref Nothing ( Local ( Name "f" ) ) :| [] )
                         )
                         ( DataArgumentByIndex Nothing SumType 0
@@ -135,7 +135,7 @@ UberModule
                           ( Ref Nothing ( Local ( Name "m" ) ) ) :| []
                         ), AppN Nothing
                         ( AppN Nothing
-                          ( Ref Nothing ( Local ( Name "$cse269" ) ) )
+                          ( Ref Nothing ( Local ( Name "$cse0" ) ) )
                           ( Ref Nothing ( Local ( Name "f" ) ) :| [] )
                         )
                         ( DataArgumentByIndex Nothing SumType 2
@@ -160,7 +160,7 @@ UberModule
               ( ParamNamed Nothing ( Name "m" ) :| [] )
               ( Let Nothing
                 ( Standalone
-                  ( Nothing, Name "$cse270", DataArgumentByIndex Nothing SumType 0
+                  ( Nothing, Name "$cse0", DataArgumentByIndex Nothing SumType 0
                     ( Ref Nothing ( Local ( Name "m" ) ) )
                   ) :| []
                 )
@@ -173,7 +173,7 @@ UberModule
                     ( ModuleName "Golden.DerivedFunctor.Test" )
                     ( TyName "Either" )
                     ( CtorName "Left" )
-                    [ Ref Nothing ( Local ( Name "$cse270" ) ) ]
+                    [ Ref Nothing ( Local ( Name "$cse0" ) ) ]
                   )
                   ( Ctor Nothing SumType
                     ( ModuleName "Golden.DerivedFunctor.Test" )
@@ -181,7 +181,7 @@ UberModule
                     ( CtorName "Right" )
                     [ AppN Nothing
                       ( Ref Nothing ( Local ( Name "f" ) ) )
-                      ( Ref Nothing ( Local ( Name "$cse270" ) ) :| [] )
+                      ( Ref Nothing ( Local ( Name "$cse0" ) ) :| [] )
                     ]
                   )
                 )
@@ -202,36 +202,36 @@ UberModule
         ( Imported ( ModuleName "Golden.DerivedFunctor.Test" ) ( Name "Leaf" ) )
       ),
       ( Name "Node", AbsN Nothing
-        ( ParamNamed Nothing ( Name "Node$p1$211" ) :| [] )
+        ( ParamNamed Nothing ( Name "Node$p1$0" ) :| [] )
         ( AbsN Nothing
-          ( ParamNamed Nothing ( Name "Node$p2$212" ) :| [] )
+          ( ParamNamed Nothing ( Name "Node$p2$0" ) :| [] )
           ( AbsN Nothing
-            ( ParamNamed Nothing ( Name "Node$p3$213" ) :| [] )
+            ( ParamNamed Nothing ( Name "Node$p3$0" ) :| [] )
             ( Ctor Nothing SumType
               ( ModuleName "Golden.DerivedFunctor.Test" )
               ( TyName "Tree" )
               ( CtorName "Node" )
               [ Ref Nothing
-                ( Local ( Name "Node$p1$211" ) ), Ref Nothing
-                ( Local ( Name "Node$p2$212" ) ), Ref Nothing
-                ( Local ( Name "Node$p3$213" ) )
+                ( Local ( Name "Node$p1$0" ) ), Ref Nothing
+                ( Local ( Name "Node$p2$0" ) ), Ref Nothing
+                ( Local ( Name "Node$p3$0" ) )
               ]
             )
           )
         )
       ),
       ( Name "fromRight", AbsN Nothing
-        ( ParamNamed Nothing ( Name "fromRight$p1$209" ) :| [] )
+        ( ParamNamed Nothing ( Name "fromRight$p1$0" ) :| [] )
         ( AbsN Nothing
-          ( ParamNamed Nothing ( Name "fromRight$p2$210" ) :| [] )
+          ( ParamNamed Nothing ( Name "fromRight$p2$0" ) :| [] )
           ( IfThenElse Nothing
             ( Eq Nothing
               ( LiteralString Nothing "Golden.DerivedFunctor.Test∷Either.Left" )
-              ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "fromRight$p2$210" ) ) ) )
+              ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "fromRight$p2$0" ) ) ) )
             )
-            ( Ref Nothing ( Local ( Name "fromRight$p1$209" ) ) )
+            ( Ref Nothing ( Local ( Name "fromRight$p1$0" ) ) )
             ( DataArgumentByIndex Nothing SumType 0
-              ( Ref Nothing ( Local ( Name "fromRight$p2$210" ) ) )
+              ( Ref Nothing ( Local ( Name "fromRight$p2$0" ) ) )
             )
           )
         )
@@ -287,9 +287,9 @@ UberModule
                         ( PropName "map" )
                       )
                       ( AbsN Nothing
-                        ( ParamNamed Nothing ( Name "v1$2" ) :| [] )
+                        ( ParamNamed Nothing ( Name "v1$0" ) :| [] )
                         ( PrimBinOp Nothing PrimMul
-                          ( Ref Nothing ( Local ( Name "v1$2" ) ) )
+                          ( Ref Nothing ( Local ( Name "v1$0" ) ) )
                           ( LiteralInt Nothing 2 )
                         ) :| []
                       )

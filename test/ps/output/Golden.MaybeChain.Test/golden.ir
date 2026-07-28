@@ -45,9 +45,9 @@ UberModule
                   ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
                   ( Let Nothing
                     ( Standalone
-                      ( Nothing, Name "v2$331", Let Nothing
+                      ( Nothing, Name "v2$0", Let Nothing
                         ( Standalone
-                          ( Nothing, Name "v2$327", IfThenElse Nothing
+                          ( Nothing, Name "v2$1", IfThenElse Nothing
                             ( Eq Nothing
                               ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
                               ( ReflectCtor Nothing
@@ -74,7 +74,7 @@ UberModule
                         ( IfThenElse Nothing
                           ( Eq Nothing
                             ( LiteralString Nothing "Data.Maybe∷Maybe.Nothing" )
-                            ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v2$327" ) ) ) )
+                            ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v2$1" ) ) ) )
                           )
                           ( Ref Nothing
                             ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) )
@@ -84,7 +84,7 @@ UberModule
                             ( TyName "Maybe" )
                             ( CtorName "Just" )
                             [ DataArgumentByIndex Nothing SumType 0
-                              ( Ref Nothing ( Local ( Name "v2$327" ) ) )
+                              ( Ref Nothing ( Local ( Name "v2$1" ) ) )
                             ]
                           )
                         )
@@ -93,11 +93,11 @@ UberModule
                     ( IfThenElse Nothing
                       ( Eq Nothing
                         ( LiteralString Nothing "Data.Maybe∷Maybe.Nothing" )
-                        ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v2$331" ) ) ) )
+                        ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v2$0" ) ) ) )
                       )
                       ( LiteralInt Nothing 0 )
                       ( DataArgumentByIndex Nothing SumType 0
-                        ( Ref Nothing ( Local ( Name "v2$331" ) ) )
+                        ( Ref Nothing ( Local ( Name "v2$0" ) ) )
                       )
                     ) :| []
                   ) :| []

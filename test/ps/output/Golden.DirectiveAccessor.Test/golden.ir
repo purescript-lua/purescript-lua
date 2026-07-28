@@ -196,7 +196,7 @@ UberModule
         ( ParamUnused Nothing :| [] )
         ( Let Nothing
           ( Standalone
-            ( Nothing, Name "$cse347", ObjectProp Nothing
+            ( Nothing, Name "$cse0", ObjectProp Nothing
               ( Ref Nothing
                 ( Imported ( ModuleName "Golden.DirectiveAccessor.Test" ) ( Name "ops" ) )
               )
@@ -212,7 +212,7 @@ UberModule
                     ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
                     ( AppN Nothing
                       ( AppN Nothing
-                        ( Ref Nothing ( Local ( Name "$cse347" ) ) )
+                        ( Ref Nothing ( Local ( Name "$cse0" ) ) )
                         ( LiteralInt Nothing 6 :| [] )
                       )
                       ( LiteralInt Nothing 7 :| [] ) :| []
@@ -231,7 +231,7 @@ UberModule
                       )
                       ( AppN Nothing
                         ( AppN Nothing
-                          ( Ref Nothing ( Local ( Name "$cse347" ) ) )
+                          ( Ref Nothing ( Local ( Name "$cse0" ) ) )
                           ( LiteralInt Nothing 2 :| [] )
                         )
                         ( LiteralInt Nothing 3 :| [] ) :| []

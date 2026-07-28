@@ -143,9 +143,9 @@ UberModule
               ( LiteralObject Nothing
                 [
                   ( PropName "map", AbsN Nothing
-                    ( ParamNamed Nothing ( Name "f$241" ) :| [] )
+                    ( ParamNamed Nothing ( Name "f$0" ) :| [] )
                     ( AbsN Nothing
-                      ( ParamNamed Nothing ( Name "a$242" ) :| [] )
+                      ( ParamNamed Nothing ( Name "a$0" ) :| [] )
                       ( AppN Nothing
                         ( AppN Nothing
                           ( ObjectProp Nothing
@@ -169,10 +169,10 @@ UberModule
                               )
                               ( PropName "pure" )
                             )
-                            ( Ref Nothing ( Local ( Name "f$241" ) ) :| [] ) :| []
+                            ( Ref Nothing ( Local ( Name "f$0" ) ) :| [] ) :| []
                           )
                         )
-                        ( Ref Nothing ( Local ( Name "a$242" ) ) :| [] )
+                        ( Ref Nothing ( Local ( Name "a$0" ) ) :| [] )
                       )
                     )
                   )
@@ -193,7 +193,7 @@ UberModule
                 [
                   ( PropName "apply", Let Nothing
                     ( Standalone
-                      ( Nothing, Name "bind$17", ObjectProp Nothing
+                      ( Nothing, Name "bind$0", ObjectProp Nothing
                         ( AppN Nothing
                           ( ObjectProp Nothing
                             ( Ref Nothing
@@ -209,23 +209,23 @@ UberModule
                       ) :| []
                     )
                     ( AbsN Nothing
-                      ( ParamNamed Nothing ( Name "f$19" ) :| [] )
+                      ( ParamNamed Nothing ( Name "f$0" ) :| [] )
                       ( AbsN Nothing
-                        ( ParamNamed Nothing ( Name "a$20" ) :| [] )
+                        ( ParamNamed Nothing ( Name "a$0" ) :| [] )
                         ( AppN Nothing
                           ( AppN Nothing
-                            ( Ref Nothing ( Local ( Name "bind$17" ) ) )
-                            ( Ref Nothing ( Local ( Name "f$19" ) ) :| [] )
+                            ( Ref Nothing ( Local ( Name "bind$0" ) ) )
+                            ( Ref Nothing ( Local ( Name "f$0" ) ) :| [] )
                           )
                           ( AbsN Nothing
-                            ( ParamNamed Nothing ( Name "f'$21" ) :| [] )
+                            ( ParamNamed Nothing ( Name "f'$0" ) :| [] )
                             ( AppN Nothing
                               ( AppN Nothing
-                                ( Ref Nothing ( Local ( Name "bind$17" ) ) )
-                                ( Ref Nothing ( Local ( Name "a$20" ) ) :| [] )
+                                ( Ref Nothing ( Local ( Name "bind$0" ) ) )
+                                ( Ref Nothing ( Local ( Name "a$0" ) ) :| [] )
                               )
                               ( AbsN Nothing
-                                ( ParamNamed Nothing ( Name "a'$22" ) :| [] )
+                                ( ParamNamed Nothing ( Name "a'$0" ) :| [] )
                                 ( AppN Nothing
                                   ( ObjectProp Nothing
                                     ( AppN Nothing
@@ -248,8 +248,8 @@ UberModule
                                     ( PropName "pure" )
                                   )
                                   ( AppN Nothing
-                                    ( Ref Nothing ( Local ( Name "f'$21" ) ) )
-                                    ( Ref Nothing ( Local ( Name "a'$22" ) ) :| [] ) :| []
+                                    ( Ref Nothing ( Local ( Name "f'$0" ) ) )
+                                    ( Ref Nothing ( Local ( Name "a'$0" ) ) :| [] ) :| []
                                   )
                                 ) :| []
                               )
@@ -283,12 +283,12 @@ UberModule
       ( QName
         { qnameModuleName = ModuleName "Golden.NativeLoops.Test", qnameName = Name "logShow"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "a$12" ) :| [] )
+        ( ParamNamed Nothing ( Name "a$0" ) :| [] )
         ( AppN Nothing
           ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
           ( AppN Nothing
             ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
-            ( Ref Nothing ( Local ( Name "a$12" ) ) :| [] ) :| []
+            ( Ref Nothing ( Local ( Name "a$0" ) ) :| [] ) :| []
           )
         )
       )
@@ -344,7 +344,7 @@ UberModule
                     )
                   )
                   ( AbsN Nothing
-                    ( ParamNamed Nothing ( Name "n$1" ) :| [] )
+                    ( ParamNamed Nothing ( Name "n$0" ) :| [] )
                     ( AppN Nothing
                       ( AppN Nothing
                         ( ObjectProp Nothing
@@ -366,18 +366,18 @@ UberModule
                             ( Imported ( ModuleName "Effect.Ref" ) ( Name "modifyImpl" ) )
                           )
                           ( AbsN Nothing
-                            ( ParamNamed Nothing ( Name "s$255" ) :| [] )
+                            ( ParamNamed Nothing ( Name "s$0" ) :| [] )
                             ( Let Nothing
                               ( Standalone
-                                ( Nothing, Name "s'$256", PrimBinOp Nothing PrimAdd
-                                  ( Ref Nothing ( Local ( Name "s$255" ) ) )
-                                  ( Ref Nothing ( Local ( Name "n$1" ) ) )
+                                ( Nothing, Name "s'$0", PrimBinOp Nothing PrimAdd
+                                  ( Ref Nothing ( Local ( Name "s$0" ) ) )
+                                  ( Ref Nothing ( Local ( Name "n$0" ) ) )
                                 ) :| []
                               )
                               ( LiteralObject Nothing
                                 [
-                                  ( PropName "state", Ref Nothing ( Local ( Name "s'$256" ) ) ),
-                                  ( PropName "value", Ref Nothing ( Local ( Name "s'$256" ) ) )
+                                  ( PropName "state", Ref Nothing ( Local ( Name "s'$0" ) ) ),
+                                  ( PropName "value", Ref Nothing ( Local ( Name "s'$0" ) ) )
                                 ]
                               )
                             ) :| []
@@ -390,7 +390,7 @@ UberModule
                 )
                 ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
-              ( Nothing, Name "total$3", AppN Nothing
+              ( Nothing, Name "total$0", AppN Nothing
                 ( AppN Nothing
                   ( Ref Nothing ( Imported ( ModuleName "Effect.Ref" ) ( Name "read" ) ) )
                   ( Ref Nothing ( Local ( Name "sum$0" ) ) :| [] )
@@ -402,7 +402,7 @@ UberModule
                   ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
                   ( AppN Nothing
                     ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
-                    ( Ref Nothing ( Local ( Name "total$3" ) ) :| [] ) :| []
+                    ( Ref Nothing ( Local ( Name "total$0" ) ) :| [] ) :| []
                   )
                 )
                 ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
@@ -414,7 +414,7 @@ UberModule
                 )
                 ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
-              ( Nothing, Name "counter$4", AppN Nothing
+              ( Nothing, Name "counter$0", AppN Nothing
                 ( AppN Nothing
                   ( Ref Nothing ( Imported ( ModuleName "Effect.Ref" ) ( Name "_new" ) ) )
                   ( LiteralInt Nothing 0 :| [] )
@@ -437,16 +437,16 @@ UberModule
                           ( PropName "map" )
                         )
                         ( AbsN Nothing
-                          ( ParamNamed Nothing ( Name "v0$5" ) :| [] )
+                          ( ParamNamed Nothing ( Name "v0$0" ) :| [] )
                           ( PrimBinOp Nothing PrimLt
-                            ( Ref Nothing ( Local ( Name "v0$5" ) ) )
+                            ( Ref Nothing ( Local ( Name "v0$0" ) ) )
                             ( LiteralInt Nothing 3 )
                           ) :| []
                         )
                       )
                       ( AppN Nothing
                         ( Ref Nothing ( Imported ( ModuleName "Effect.Ref" ) ( Name "read" ) ) )
-                        ( Ref Nothing ( Local ( Name "counter$4" ) ) :| [] ) :| []
+                        ( Ref Nothing ( Local ( Name "counter$0" ) ) :| [] ) :| []
                       ) :| []
                     )
                   )
@@ -454,12 +454,12 @@ UberModule
                     ( ParamUnused Nothing :| [] )
                     ( Let Nothing
                       ( Standalone
-                        ( Nothing, Name "n0$6", AppN Nothing
+                        ( Nothing, Name "n0$0", AppN Nothing
                           ( AppN Nothing
                             ( Ref Nothing
                               ( Imported ( ModuleName "Effect.Ref" ) ( Name "read" ) )
                             )
-                            ( Ref Nothing ( Local ( Name "counter$4" ) ) :| [] )
+                            ( Ref Nothing ( Local ( Name "counter$0" ) ) :| [] )
                           )
                           ( Ref Nothing
                             ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
@@ -475,7 +475,7 @@ UberModule
                                 ( Ref Nothing
                                   ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) )
                                 )
-                                ( Ref Nothing ( Local ( Name "n0$6" ) ) :| [] ) :| []
+                                ( Ref Nothing ( Local ( Name "n0$0" ) ) :| [] ) :| []
                               )
                             )
                             ( Ref Nothing
@@ -506,26 +506,24 @@ UberModule
                                 ( Imported ( ModuleName "Effect.Ref" ) ( Name "modifyImpl" ) )
                               )
                               ( AbsN Nothing
-                                ( ParamNamed Nothing ( Name "s$268" ) :| [] )
+                                ( ParamNamed Nothing ( Name "s$1" ) :| [] )
                                 ( Let Nothing
                                   ( Standalone
-                                    ( Nothing, Name "s'$269", PrimBinOp Nothing PrimAdd
-                                      ( Ref Nothing ( Local ( Name "s$268" ) ) )
+                                    ( Nothing, Name "s'$1", PrimBinOp Nothing PrimAdd
+                                      ( Ref Nothing ( Local ( Name "s$1" ) ) )
                                       ( LiteralInt Nothing 1 )
                                     ) :| []
                                   )
                                   ( LiteralObject Nothing
                                     [
-                                      ( PropName "state", Ref Nothing
-                                        ( Local ( Name "s'$269" ) )
-                                      ),
-                                      ( PropName "value", Ref Nothing ( Local ( Name "s'$269" ) ) )
+                                      ( PropName "state", Ref Nothing ( Local ( Name "s'$1" ) ) ),
+                                      ( PropName "value", Ref Nothing ( Local ( Name "s'$1" ) ) )
                                     ]
                                   )
                                 ) :| []
                               )
                             )
-                            ( Ref Nothing ( Local ( Name "counter$4" ) ) :| [] ) :| []
+                            ( Ref Nothing ( Local ( Name "counter$0" ) ) :| [] ) :| []
                           )
                         )
                         ( Ref Nothing
@@ -556,7 +554,7 @@ UberModule
                 ( LiteralInt Nothing 2 :| [] )
               )
               ( AbsN Nothing
-                ( ParamNamed Nothing ( Name "i$8" ) :| [] )
+                ( ParamNamed Nothing ( Name "i$0" ) :| [] )
                 ( AppN Nothing
                   ( AppN Nothing
                     ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "foreachE" ) ) )
@@ -565,7 +563,7 @@ UberModule
                     )
                   )
                   ( AbsN Nothing
-                    ( ParamNamed Nothing ( Name "s$9" ) :| [] )
+                    ( ParamNamed Nothing ( Name "s$2" ) :| [] )
                     ( AppN Nothing
                       ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
                       ( PrimBinOp Nothing PrimConcat
@@ -573,9 +571,9 @@ UberModule
                           ( Ref Nothing
                             ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) )
                           )
-                          ( Ref Nothing ( Local ( Name "i$8" ) ) :| [] )
+                          ( Ref Nothing ( Local ( Name "i$0" ) ) :| [] )
                         )
-                        ( Ref Nothing ( Local ( Name "s$9" ) ) ) :| []
+                        ( Ref Nothing ( Local ( Name "s$2" ) ) ) :| []
                       )
                     ) :| []
                   )

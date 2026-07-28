@@ -102,9 +102,9 @@ UberModule
               ( LiteralObject Nothing
                 [
                   ( PropName "map", AbsN Nothing
-                    ( ParamNamed Nothing ( Name "f$498" ) :| [] )
+                    ( ParamNamed Nothing ( Name "f$0" ) :| [] )
                     ( AbsN Nothing
-                      ( ParamNamed Nothing ( Name "a$499" ) :| [] )
+                      ( ParamNamed Nothing ( Name "a$0" ) :| [] )
                       ( AppN Nothing
                         ( AppN Nothing
                           ( ObjectProp Nothing
@@ -128,10 +128,10 @@ UberModule
                               )
                               ( PropName "pure" )
                             )
-                            ( Ref Nothing ( Local ( Name "f$498" ) ) :| [] ) :| []
+                            ( Ref Nothing ( Local ( Name "f$0" ) ) :| [] ) :| []
                           )
                         )
-                        ( Ref Nothing ( Local ( Name "a$499" ) ) :| [] )
+                        ( Ref Nothing ( Local ( Name "a$0" ) ) :| [] )
                       )
                     )
                   )
@@ -152,7 +152,7 @@ UberModule
                 [
                   ( PropName "apply", Let Nothing
                     ( Standalone
-                      ( Nothing, Name "bind$218", ObjectProp Nothing
+                      ( Nothing, Name "bind$0", ObjectProp Nothing
                         ( AppN Nothing
                           ( ObjectProp Nothing
                             ( Ref Nothing
@@ -168,23 +168,23 @@ UberModule
                       ) :| []
                     )
                     ( AbsN Nothing
-                      ( ParamNamed Nothing ( Name "f$220" ) :| [] )
+                      ( ParamNamed Nothing ( Name "f$0" ) :| [] )
                       ( AbsN Nothing
-                        ( ParamNamed Nothing ( Name "a$221" ) :| [] )
+                        ( ParamNamed Nothing ( Name "a$0" ) :| [] )
                         ( AppN Nothing
                           ( AppN Nothing
-                            ( Ref Nothing ( Local ( Name "bind$218" ) ) )
-                            ( Ref Nothing ( Local ( Name "f$220" ) ) :| [] )
+                            ( Ref Nothing ( Local ( Name "bind$0" ) ) )
+                            ( Ref Nothing ( Local ( Name "f$0" ) ) :| [] )
                           )
                           ( AbsN Nothing
-                            ( ParamNamed Nothing ( Name "f'$222" ) :| [] )
+                            ( ParamNamed Nothing ( Name "f'$0" ) :| [] )
                             ( AppN Nothing
                               ( AppN Nothing
-                                ( Ref Nothing ( Local ( Name "bind$218" ) ) )
-                                ( Ref Nothing ( Local ( Name "a$221" ) ) :| [] )
+                                ( Ref Nothing ( Local ( Name "bind$0" ) ) )
+                                ( Ref Nothing ( Local ( Name "a$0" ) ) :| [] )
                               )
                               ( AbsN Nothing
-                                ( ParamNamed Nothing ( Name "a'$223" ) :| [] )
+                                ( ParamNamed Nothing ( Name "a'$0" ) :| [] )
                                 ( AppN Nothing
                                   ( ObjectProp Nothing
                                     ( AppN Nothing
@@ -207,8 +207,8 @@ UberModule
                                     ( PropName "pure" )
                                   )
                                   ( AppN Nothing
-                                    ( Ref Nothing ( Local ( Name "f'$222" ) ) )
-                                    ( Ref Nothing ( Local ( Name "a'$223" ) ) :| [] ) :| []
+                                    ( Ref Nothing ( Local ( Name "f'$0" ) ) )
+                                    ( Ref Nothing ( Local ( Name "a'$0" ) ) :| [] ) :| []
                                   )
                                 ) :| []
                               )
@@ -273,24 +273,24 @@ UberModule
                     ( PropName "tailRecM" )
                   )
                   ( AbsN Nothing
-                    ( ParamNamed Nothing ( Name "o$475" ) :| [] )
+                    ( ParamNamed Nothing ( Name "o$0" ) :| [] )
                     ( Let Nothing
                       ( Standalone
-                        ( Nothing, Name "$cse607", ObjectProp Nothing
-                          ( Ref Nothing ( Local ( Name "o$475" ) ) )
+                        ( Nothing, Name "$cse0", ObjectProp Nothing
+                          ( Ref Nothing ( Local ( Name "o$0" ) ) )
                           ( PropName "a" )
                         ) :| []
                       )
                       ( Let Nothing
                         ( Standalone
-                          ( Nothing, Name "$cse606", ObjectProp Nothing
-                            ( Ref Nothing ( Local ( Name "o$475" ) ) )
+                          ( Nothing, Name "$cse1", ObjectProp Nothing
+                            ( Ref Nothing ( Local ( Name "o$0" ) ) )
                             ( PropName "b" )
                           ) :| []
                         )
                         ( IfThenElse Nothing
                           ( PrimBinOp Nothing PrimLt
-                            ( Ref Nothing ( Local ( Name "$cse606" ) ) )
+                            ( Ref Nothing ( Local ( Name "$cse1" ) ) )
                             ( Ref Nothing ( Local ( Name "n" ) ) )
                           )
                           ( AppN Nothing
@@ -302,11 +302,11 @@ UberModule
                               [ LiteralObject Nothing
                                 [
                                   ( PropName "a", PrimBinOp Nothing PrimAdd
-                                    ( Ref Nothing ( Local ( Name "$cse607" ) ) )
-                                    ( Ref Nothing ( Local ( Name "$cse606" ) ) )
+                                    ( Ref Nothing ( Local ( Name "$cse0" ) ) )
+                                    ( Ref Nothing ( Local ( Name "$cse1" ) ) )
                                   ),
                                   ( PropName "b", PrimBinOp Nothing PrimAdd
-                                    ( Ref Nothing ( Local ( Name "$cse606" ) ) )
+                                    ( Ref Nothing ( Local ( Name "$cse1" ) ) )
                                     ( LiteralInt Nothing 1 )
                                   )
                                 ]
@@ -319,7 +319,7 @@ UberModule
                               ( ModuleName "Control.Monad.Rec.Class" )
                               ( TyName "Step" )
                               ( CtorName "Done" )
-                              [ Ref Nothing ( Local ( Name "$cse607" ) ) ] :| []
+                              [ Ref Nothing ( Local ( Name "$cse0" ) ) ] :| []
                             )
                           )
                         )
@@ -357,14 +357,14 @@ UberModule
                     ( LiteralObject Nothing
                       [
                         ( PropName "tailRecM", AbsN Nothing
-                          ( ParamNamed Nothing ( Name "f$11" ) :| [] )
+                          ( ParamNamed Nothing ( Name "f$0" ) :| [] )
                           ( AbsN Nothing
-                            ( ParamNamed Nothing ( Name "a$12" ) :| [] )
+                            ( ParamNamed Nothing ( Name "a$0" ) :| [] )
                             ( AbsN Nothing
                               ( ParamUnused Nothing :| [] )
                               ( Let Nothing
                                 ( Standalone
-                                  ( Nothing, Name "r$16", AppN Nothing
+                                  ( Nothing, Name "r$1", AppN Nothing
                                     ( AppN Nothing
                                       ( AppN Nothing
                                         ( ObjectProp Nothing
@@ -377,8 +377,8 @@ UberModule
                                           ( PropName "bind" )
                                         )
                                         ( AppN Nothing
-                                          ( Ref Nothing ( Local ( Name "f$11" ) ) )
-                                          ( Ref Nothing ( Local ( Name "a$12" ) ) :| [] ) :| []
+                                          ( Ref Nothing ( Local ( Name "f$0" ) ) )
+                                          ( Ref Nothing ( Local ( Name "a$0" ) ) :| [] ) :| []
                                         )
                                       )
                                       ( ObjectProp Nothing
@@ -411,7 +411,7 @@ UberModule
                                           ( ParamUnused Nothing :| [] )
                                           ( Let Nothing
                                             ( Standalone
-                                              ( Nothing, Name "v0$17", AppN Nothing
+                                              ( Nothing, Name "v0$0", AppN Nothing
                                                 ( AppN Nothing
                                                   ( Ref Nothing
                                                     ( Imported
@@ -419,7 +419,7 @@ UberModule
                                                       ( Name "read" )
                                                     )
                                                   )
-                                                  ( Ref Nothing ( Local ( Name "r$16" ) ) :| [] )
+                                                  ( Ref Nothing ( Local ( Name "r$1" ) ) :| [] )
                                                 )
                                                 ( Ref Nothing
                                                   ( Imported
@@ -433,7 +433,7 @@ UberModule
                                               ( Eq Nothing
                                                 ( LiteralString Nothing "Control.Monad.Rec.Class∷Step.Loop" )
                                                 ( ReflectCtor Nothing
-                                                  ( Ref Nothing ( Local ( Name "v0$17" ) ) )
+                                                  ( Ref Nothing ( Local ( Name "v0$0" ) ) )
                                                 )
                                               )
                                               ( AppN Nothing
@@ -441,12 +441,12 @@ UberModule
                                                   ( ParamUnused Nothing :| [] )
                                                   ( Let Nothing
                                                     ( Standalone
-                                                      ( Nothing, Name "e$19", AppN Nothing
+                                                      ( Nothing, Name "e$0", AppN Nothing
                                                         ( AppN Nothing
-                                                          ( Ref Nothing ( Local ( Name "f$11" ) ) )
+                                                          ( Ref Nothing ( Local ( Name "f$0" ) ) )
                                                           ( DataArgumentByIndex Nothing SumType 0
                                                             ( Ref Nothing
-                                                              ( Local ( Name "v0$17" ) )
+                                                              ( Local ( Name "v0$0" ) )
                                                             ) :| []
                                                           )
                                                         )
@@ -471,11 +471,11 @@ UberModule
                                                                 ( PropName "write" )
                                                               )
                                                               ( Ref Nothing
-                                                                ( Local ( Name "e$19" ) ) :| []
+                                                                ( Local ( Name "e$0" ) ) :| []
                                                               )
                                                             )
                                                             ( Ref Nothing
-                                                              ( Local ( Name "r$16" ) ) :| []
+                                                              ( Local ( Name "r$1" ) ) :| []
                                                             )
                                                           )
                                                           ( Ref Nothing
@@ -551,16 +551,16 @@ UberModule
                                         ( AbsN Nothing
                                           ( ParamUnused Nothing :| [] )
                                           ( AbsN Nothing
-                                            ( ParamNamed Nothing ( Name "v$20" ) :| [] )
+                                            ( ParamNamed Nothing ( Name "v$0" ) :| [] )
                                             ( IfThenElse Nothing
                                               ( Eq Nothing
                                                 ( LiteralString Nothing "Control.Monad.Rec.Class∷Step.Done" )
                                                 ( ReflectCtor Nothing
-                                                  ( Ref Nothing ( Local ( Name "v$20" ) ) )
+                                                  ( Ref Nothing ( Local ( Name "v$0" ) ) )
                                                 )
                                               )
                                               ( DataArgumentByIndex Nothing SumType 0
-                                                ( Ref Nothing ( Local ( Name "v$20" ) ) )
+                                                ( Ref Nothing ( Local ( Name "v$0" ) ) )
                                               )
                                               ( Exception Nothing "No patterns matched" )
                                             )
@@ -572,7 +572,7 @@ UberModule
                                       ( Ref Nothing
                                         ( Imported ( ModuleName "Effect.Ref" ) ( Name "read" ) )
                                       )
-                                      ( Ref Nothing ( Local ( Name "r$16" ) ) :| [] ) :| []
+                                      ( Ref Nothing ( Local ( Name "r$1" ) ) :| [] ) :| []
                                     )
                                   )
                                   ( Ref Nothing

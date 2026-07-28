@@ -59,28 +59,28 @@ UberModule
               )
             ),
             ( PropName "conj", AbsN Nothing
-              ( ParamNamed Nothing ( Name "b1$205" ) :| [] )
+              ( ParamNamed Nothing ( Name "b1$0" ) :| [] )
               ( AbsN Nothing
-                ( ParamNamed Nothing ( Name "b2$206" ) :| [] )
+                ( ParamNamed Nothing ( Name "b2$0" ) :| [] )
                 ( PrimBinOp Nothing PrimAnd
-                  ( Ref Nothing ( Local ( Name "b1$205" ) ) )
-                  ( Ref Nothing ( Local ( Name "b2$206" ) ) )
+                  ( Ref Nothing ( Local ( Name "b1$0" ) ) )
+                  ( Ref Nothing ( Local ( Name "b2$0" ) ) )
                 )
               )
             ),
             ( PropName "disj", AbsN Nothing
-              ( ParamNamed Nothing ( Name "b1$203" ) :| [] )
+              ( ParamNamed Nothing ( Name "b1$1" ) :| [] )
               ( AbsN Nothing
-                ( ParamNamed Nothing ( Name "b2$204" ) :| [] )
+                ( ParamNamed Nothing ( Name "b2$1" ) :| [] )
                 ( PrimBinOp Nothing PrimOr
-                  ( Ref Nothing ( Local ( Name "b1$203" ) ) )
-                  ( Ref Nothing ( Local ( Name "b2$204" ) ) )
+                  ( Ref Nothing ( Local ( Name "b1$1" ) ) )
+                  ( Ref Nothing ( Local ( Name "b2$1" ) ) )
                 )
               )
             ),
             ( PropName "not", AbsN Nothing
-              ( ParamNamed Nothing ( Name "b$202" ) :| [] )
-              ( PrimNot Nothing ( Ref Nothing ( Local ( Name "b$202" ) ) ) )
+              ( ParamNamed Nothing ( Name "b$0" ) :| [] )
+              ( PrimNot Nothing ( Ref Nothing ( Local ( Name "b$0" ) ) ) )
             )
           ]
         ) :| []

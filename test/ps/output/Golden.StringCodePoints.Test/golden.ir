@@ -174,28 +174,28 @@ UberModule
               )
             ),
             ( PropName "conj", AbsN Nothing
-              ( ParamNamed Nothing ( Name "b1$1492" ) :| [] )
+              ( ParamNamed Nothing ( Name "b1$0" ) :| [] )
               ( AbsN Nothing
-                ( ParamNamed Nothing ( Name "b2$1493" ) :| [] )
+                ( ParamNamed Nothing ( Name "b2$0" ) :| [] )
                 ( PrimBinOp Nothing PrimAnd
-                  ( Ref Nothing ( Local ( Name "b1$1492" ) ) )
-                  ( Ref Nothing ( Local ( Name "b2$1493" ) ) )
+                  ( Ref Nothing ( Local ( Name "b1$0" ) ) )
+                  ( Ref Nothing ( Local ( Name "b2$0" ) ) )
                 )
               )
             ),
             ( PropName "disj", AbsN Nothing
-              ( ParamNamed Nothing ( Name "b1$1490" ) :| [] )
+              ( ParamNamed Nothing ( Name "b1$1" ) :| [] )
               ( AbsN Nothing
-                ( ParamNamed Nothing ( Name "b2$1491" ) :| [] )
+                ( ParamNamed Nothing ( Name "b2$1" ) :| [] )
                 ( PrimBinOp Nothing PrimOr
-                  ( Ref Nothing ( Local ( Name "b1$1490" ) ) )
-                  ( Ref Nothing ( Local ( Name "b2$1491" ) ) )
+                  ( Ref Nothing ( Local ( Name "b1$1" ) ) )
+                  ( Ref Nothing ( Local ( Name "b2$1" ) ) )
                 )
               )
             ),
             ( PropName "not", AbsN Nothing
-              ( ParamNamed Nothing ( Name "b$1489" ) :| [] )
-              ( PrimNot Nothing ( Ref Nothing ( Local ( Name "b$1489" ) ) ) )
+              ( ParamNamed Nothing ( Name "b$0" ) :| [] )
+              ( PrimNot Nothing ( Ref Nothing ( Local ( Name "b$0" ) ) ) )
             )
           ]
         ) :| []
@@ -204,12 +204,12 @@ UberModule
         { qnameModuleName = ModuleName "Data.Eq", qnameName = Name "eqInt" }, LiteralObject Nothing
         [
           ( PropName "eq", AbsN Nothing
-            ( ParamNamed Nothing ( Name "r1$1485" ) :| [] )
+            ( ParamNamed Nothing ( Name "r1$0" ) :| [] )
             ( AbsN Nothing
-              ( ParamNamed Nothing ( Name "r2$1486" ) :| [] )
+              ( ParamNamed Nothing ( Name "r2$0" ) :| [] )
               ( Eq Nothing
-                ( Ref Nothing ( Local ( Name "r1$1485" ) ) )
-                ( Ref Nothing ( Local ( Name "r2$1486" ) ) )
+                ( Ref Nothing ( Local ( Name "r1$0" ) ) )
+                ( Ref Nothing ( Local ( Name "r2$0" ) ) )
               )
             )
           )
@@ -241,19 +241,19 @@ UberModule
         }, LiteralObject Nothing
         [
           ( PropName "compare", AbsN Nothing
-            ( ParamNamed Nothing ( Name "x$1469" ) :| [] )
+            ( ParamNamed Nothing ( Name "x$0" ) :| [] )
             ( AbsN Nothing
-              ( ParamNamed Nothing ( Name "y$1470" ) :| [] )
+              ( ParamNamed Nothing ( Name "y$0" ) :| [] )
               ( IfThenElse Nothing
                 ( PrimBinOp Nothing PrimLt
-                  ( Ref Nothing ( Local ( Name "x$1469" ) ) )
-                  ( Ref Nothing ( Local ( Name "y$1470" ) ) )
+                  ( Ref Nothing ( Local ( Name "x$0" ) ) )
+                  ( Ref Nothing ( Local ( Name "y$0" ) ) )
                 )
                 ( Ref Nothing ( Imported ( ModuleName "Data.Ordering" ) ( Name "LT" ) ) )
                 ( IfThenElse Nothing
                   ( Eq Nothing
-                    ( Ref Nothing ( Local ( Name "x$1469" ) ) )
-                    ( Ref Nothing ( Local ( Name "y$1470" ) ) )
+                    ( Ref Nothing ( Local ( Name "x$0" ) ) )
+                    ( Ref Nothing ( Local ( Name "y$0" ) ) )
                   )
                   ( Ref Nothing ( Imported ( ModuleName "Data.Ordering" ) ( Name "EQ" ) ) )
                   ( Ref Nothing ( Imported ( ModuleName "Data.Ordering" ) ( Name "GT" ) ) )
@@ -367,19 +367,19 @@ UberModule
       ( QName
         { qnameModuleName = ModuleName "Data.String.CodePoints", qnameName = Name "add$w"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "x$1752" ) :| [ ParamNamed Nothing ( Name "y$1753" ) ] )
+        ( ParamNamed Nothing ( Name "x$0" ) :| [ ParamNamed Nothing ( Name "y$0" ) ] )
         ( PrimBinOp Nothing PrimAdd
-          ( Ref Nothing ( Local ( Name "x$1752" ) ) )
-          ( Ref Nothing ( Local ( Name "y$1753" ) ) )
+          ( Ref Nothing ( Local ( Name "x$0" ) ) )
+          ( Ref Nothing ( Local ( Name "y$0" ) ) )
         )
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Data.String.CodePoints", qnameName = Name "sub$w"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "x$1749" ) :| [ ParamNamed Nothing ( Name "y$1750" ) ] )
+        ( ParamNamed Nothing ( Name "x$0" ) :| [ ParamNamed Nothing ( Name "y$0" ) ] )
         ( PrimBinOp Nothing PrimSub
-          ( Ref Nothing ( Local ( Name "x$1749" ) ) )
-          ( Ref Nothing ( Local ( Name "y$1750" ) ) )
+          ( Ref Nothing ( Local ( Name "x$0" ) ) )
+          ( Ref Nothing ( Local ( Name "y$0" ) ) )
         )
       ), Standalone
       ( QName
@@ -403,10 +403,10 @@ UberModule
           ( PropName "_unsafeCodePointAt0" )
         )
         ( AbsN Nothing
-          ( ParamNamed Nothing ( Name "s$24" ) :| [] )
+          ( ParamNamed Nothing ( Name "s$0" ) :| [] )
           ( Let Nothing
             ( Standalone
-              ( Nothing, Name "cu0$25", AppN Nothing
+              ( Nothing, Name "cu0$0", AppN Nothing
                 ( Ref Nothing
                   ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "fromEnum" ) )
                 )
@@ -417,7 +417,7 @@ UberModule
                     )
                     ( LiteralInt Nothing 0 :| [] )
                   )
-                  ( Ref Nothing ( Local ( Name "s$24" ) ) :| [] ) :| []
+                  ( Ref Nothing ( Local ( Name "s$0" ) ) :| [] ) :| []
                 )
               ) :| []
             )
@@ -438,7 +438,7 @@ UberModule
                         )
                         ( Ref Nothing
                           ( Imported ( ModuleName "Data.Ord" ) ( Name "ordInt" ) ) :|
-                          [ LiteralInt Nothing 55296, Ref Nothing ( Local ( Name "cu0$25" ) ) ]
+                          [ LiteralInt Nothing 55296, Ref Nothing ( Local ( Name "cu0$0" ) ) ]
                         ) :| []
                       )
                     )
@@ -448,7 +448,7 @@ UberModule
                       )
                       ( Ref Nothing
                         ( Imported ( ModuleName "Data.Ord" ) ( Name "ordInt" ) ) :|
-                        [ Ref Nothing ( Local ( Name "cu0$25" ) ), LiteralInt Nothing 56319 ]
+                        [ Ref Nothing ( Local ( Name "cu0$0" ) ), LiteralInt Nothing 56319 ]
                       ) :| []
                     ) :| []
                   )
@@ -459,27 +459,27 @@ UberModule
                     ( AppN Nothing
                       ( Let Nothing
                         ( Standalone
-                          ( Nothing, Name "x$1723", AppN Nothing
+                          ( Nothing, Name "x$0", AppN Nothing
                             ( Ref Nothing
                               ( Imported ( ModuleName "Data.String.CodeUnits" ) ( Name "length" ) )
                             )
-                            ( Ref Nothing ( Local ( Name "s$24" ) ) :| [] )
+                            ( Ref Nothing ( Local ( Name "s$0" ) ) :| [] )
                           ) :| []
                         )
                         ( AbsN Nothing
-                          ( ParamNamed Nothing ( Name "y$1724" ) :| [] )
+                          ( ParamNamed Nothing ( Name "y$0" ) :| [] )
                           ( IfThenElse Nothing
                             ( PrimBinOp Nothing PrimLt
-                              ( Ref Nothing ( Local ( Name "x$1723" ) ) )
-                              ( Ref Nothing ( Local ( Name "y$1724" ) ) )
+                              ( Ref Nothing ( Local ( Name "x$0" ) ) )
+                              ( Ref Nothing ( Local ( Name "y$0" ) ) )
                             )
                             ( Ref Nothing
                               ( Imported ( ModuleName "Data.Ordering" ) ( Name "LT" ) )
                             )
                             ( IfThenElse Nothing
                               ( Eq Nothing
-                                ( Ref Nothing ( Local ( Name "x$1723" ) ) )
-                                ( Ref Nothing ( Local ( Name "y$1724" ) ) )
+                                ( Ref Nothing ( Local ( Name "x$0" ) ) )
+                                ( Ref Nothing ( Local ( Name "y$0" ) ) )
                               )
                               ( Ref Nothing
                                 ( Imported ( ModuleName "Data.Ordering" ) ( Name "EQ" ) )
@@ -498,7 +498,7 @@ UberModule
               )
               ( Let Nothing
                 ( Standalone
-                  ( Nothing, Name "cu1$27", AppN Nothing
+                  ( Nothing, Name "cu1$0", AppN Nothing
                     ( Ref Nothing
                       ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "fromEnum" ) )
                     )
@@ -509,7 +509,7 @@ UberModule
                         )
                         ( LiteralInt Nothing 1 :| [] )
                       )
-                      ( Ref Nothing ( Local ( Name "s$24" ) ) :| [] ) :| []
+                      ( Ref Nothing ( Local ( Name "s$0" ) ) :| [] ) :| []
                     )
                   ) :| []
                 )
@@ -525,7 +525,7 @@ UberModule
                         )
                         ( Ref Nothing
                           ( Imported ( ModuleName "Data.Ord" ) ( Name "ordInt" ) ) :|
-                          [ LiteralInt Nothing 56320, Ref Nothing ( Local ( Name "cu1$27" ) ) ]
+                          [ LiteralInt Nothing 56320, Ref Nothing ( Local ( Name "cu1$0" ) ) ]
                         ) :| []
                       )
                     )
@@ -535,7 +535,7 @@ UberModule
                       )
                       ( Ref Nothing
                         ( Imported ( ModuleName "Data.Ord" ) ( Name "ordInt" ) ) :|
-                        [ Ref Nothing ( Local ( Name "cu1$27" ) ), LiteralInt Nothing 57343 ]
+                        [ Ref Nothing ( Local ( Name "cu1$0" ) ), LiteralInt Nothing 57343 ]
                       ) :| []
                     )
                   )
@@ -543,22 +543,22 @@ UberModule
                     ( PrimBinOp Nothing PrimAdd
                       ( PrimBinOp Nothing PrimMul
                         ( PrimBinOp Nothing PrimSub
-                          ( Ref Nothing ( Local ( Name "cu0$25" ) ) )
+                          ( Ref Nothing ( Local ( Name "cu0$0" ) ) )
                           ( LiteralInt Nothing 55296 )
                         )
                         ( LiteralInt Nothing 1024 )
                       )
                       ( PrimBinOp Nothing PrimSub
-                        ( Ref Nothing ( Local ( Name "cu1$27" ) ) )
+                        ( Ref Nothing ( Local ( Name "cu1$0" ) ) )
                         ( LiteralInt Nothing 56320 )
                       )
                     )
                     ( LiteralInt Nothing 65536 )
                   )
-                  ( Ref Nothing ( Local ( Name "cu0$25" ) ) )
+                  ( Ref Nothing ( Local ( Name "cu0$0" ) ) )
                 )
               )
-              ( Ref Nothing ( Local ( Name "cu0$25" ) ) )
+              ( Ref Nothing ( Local ( Name "cu0$0" ) ) )
             )
           ) :| []
         )
@@ -566,7 +566,7 @@ UberModule
       ( QName
         { qnameModuleName = ModuleName "Data.String.CodePoints", qnameName = Name "fromCharCode"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "x$1680" ) :| [] )
+        ( ParamNamed Nothing ( Name "x$0" ) :| [] )
         ( AppN Nothing
           ( ObjectProp Nothing
             ( Ref Nothing ( Imported ( ModuleName "Data.String.CodeUnits" ) ( Name "foreign" ) ) )
@@ -574,7 +574,7 @@ UberModule
           )
           ( Let Nothing
             ( Standalone
-              ( Nothing, Name "v$60", IfThenElse Nothing
+              ( Nothing, Name "v$0", IfThenElse Nothing
                 ( AppN Nothing
                   ( AppN Nothing
                     ( ObjectProp Nothing
@@ -593,7 +593,7 @@ UberModule
                       ( Ref Nothing
                         ( Imported ( ModuleName "Data.Ord" ) ( Name "ordInt" ) ) :|
                         [ Ref Nothing
-                          ( Local ( Name "x$1680" ) ), AppN Nothing
+                          ( Local ( Name "x$0" ) ), AppN Nothing
                           ( Ref Nothing
                             ( Imported ( ModuleName "Data.Enum" ) ( Name "toCharCode" ) )
                           )
@@ -611,7 +611,7 @@ UberModule
                     ( Ref Nothing
                       ( Imported ( ModuleName "Data.Ord" ) ( Name "ordInt" ) ) :|
                       [ Ref Nothing
-                        ( Local ( Name "x$1680" ) ), AppN Nothing
+                        ( Local ( Name "x$0" ) ), AppN Nothing
                         ( Ref Nothing
                           ( Imported ( ModuleName "Data.Enum" ) ( Name "toCharCode" ) )
                         )
@@ -631,7 +631,7 @@ UberModule
                       ( Ref Nothing ( Imported ( ModuleName "Data.Enum" ) ( Name "foreign" ) ) )
                       ( PropName "fromCharCode" )
                     )
-                    ( Ref Nothing ( Local ( Name "x$1680" ) ) :| [] )
+                    ( Ref Nothing ( Local ( Name "x$0" ) ) :| [] )
                   ]
                 )
                 ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) )
@@ -640,16 +640,16 @@ UberModule
             ( IfThenElse Nothing
               ( Eq Nothing
                 ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
-                ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v$60" ) ) ) )
+                ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v$0" ) ) ) )
               )
-              ( DataArgumentByIndex Nothing SumType 0 ( Ref Nothing ( Local ( Name "v$60" ) ) ) )
+              ( DataArgumentByIndex Nothing SumType 0 ( Ref Nothing ( Local ( Name "v$0" ) ) ) )
               ( IfThenElse Nothing
                 ( AppN Nothing
                   ( Ref Nothing ( Imported ( ModuleName "Data.Ord" ) ( Name "lessThan$w" ) ) )
                   ( Ref Nothing
                     ( Imported ( ModuleName "Data.Ord" ) ( Name "ordInt" ) ) :|
                     [ Ref Nothing
-                      ( Local ( Name "x$1680" ) ), AppN Nothing
+                      ( Local ( Name "x$0" ) ), AppN Nothing
                       ( Ref Nothing ( Imported ( ModuleName "Data.Enum" ) ( Name "toCharCode" ) ) )
                       ( Ref Nothing
                         ( Imported ( ModuleName "Data.Bounded" ) ( Name "bottomChar" ) ) :| []
@@ -797,12 +797,12 @@ UberModule
             ( LiteralObject Nothing
               [
                 ( PropName "eq", AbsN Nothing
-                  ( ParamNamed Nothing ( Name "x$17" ) :| [] )
+                  ( ParamNamed Nothing ( Name "x$0" ) :| [] )
                   ( AbsN Nothing
-                    ( ParamNamed Nothing ( Name "y$18" ) :| [] )
+                    ( ParamNamed Nothing ( Name "y$0" ) :| [] )
                     ( Eq Nothing
-                      ( Ref Nothing ( Local ( Name "x$17" ) ) )
-                      ( Ref Nothing ( Local ( Name "y$18" ) ) )
+                      ( Ref Nothing ( Local ( Name "x$0" ) ) )
+                      ( Ref Nothing ( Local ( Name "y$0" ) ) )
                     )
                   )
                 )
@@ -883,7 +883,7 @@ UberModule
               ( LiteralString Nothing "" )
               ( Let Nothing
                 ( Standalone
-                  ( Nothing, Name "v2$14", AppN Nothing
+                  ( Nothing, Name "v2$0", AppN Nothing
                     ( Ref Nothing
                       ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "uncons" ) )
                     )
@@ -893,7 +893,7 @@ UberModule
                 ( IfThenElse Nothing
                   ( Eq Nothing
                     ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
-                    ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v2$14" ) ) ) )
+                    ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v2$0" ) ) ) )
                   )
                   ( PrimBinOp Nothing PrimConcat
                     ( AppN Nothing
@@ -902,7 +902,7 @@ UberModule
                       )
                       ( ObjectProp Nothing
                         ( DataArgumentByIndex Nothing SumType 0
-                          ( Ref Nothing ( Local ( Name "v2$14" ) ) )
+                          ( Ref Nothing ( Local ( Name "v2$0" ) ) )
                         )
                         ( PropName "head" ) :| []
                       )
@@ -919,7 +919,7 @@ UberModule
                         ( LiteralInt Nothing 1 ) :|
                         [ ObjectProp Nothing
                           ( DataArgumentByIndex Nothing SumType 0
-                            ( Ref Nothing ( Local ( Name "v2$14" ) ) )
+                            ( Ref Nothing ( Local ( Name "v2$0" ) ) )
                           )
                           ( PropName "tail" )
                         ]
@@ -1014,7 +1014,7 @@ UberModule
             ( PropName "_toCodePointArray" )
           )
           ( AbsN Nothing
-            ( ParamNamed Nothing ( Name "s$7" ) :| [] )
+            ( ParamNamed Nothing ( Name "s$0" ) :| [] )
             ( AppN Nothing
               ( AppN Nothing
                 ( AppN Nothing
@@ -1028,10 +1028,10 @@ UberModule
                           ( PropName "unfoldrArrayImpl" )
                         )
                         ( AbsN Nothing
-                          ( ParamNamed Nothing ( Name "v2$1518" ) :| [] )
+                          ( ParamNamed Nothing ( Name "v2$0" ) :| [] )
                           ( Eq Nothing
                             ( LiteralString Nothing "Data.Maybe∷Maybe.Nothing" )
-                            ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v2$1518" ) ) ) )
+                            ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v2$0" ) ) ) )
                           ) :| []
                         )
                       )
@@ -1042,14 +1042,14 @@ UberModule
                         ( AbsN Nothing
                           ( ParamUnused Nothing :| [] )
                           ( AbsN Nothing
-                            ( ParamNamed Nothing ( Name "v$1608" ) :| [] )
+                            ( ParamNamed Nothing ( Name "v$0" ) :| [] )
                             ( IfThenElse Nothing
                               ( Eq Nothing
                                 ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
-                                ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v$1608" ) ) ) )
+                                ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v$0" ) ) ) )
                               )
                               ( DataArgumentByIndex Nothing SumType 0
-                                ( Ref Nothing ( Local ( Name "v$1608" ) ) )
+                                ( Ref Nothing ( Local ( Name "v$0" ) ) )
                               )
                               ( Exception Nothing "No patterns matched" )
                             )
@@ -1058,34 +1058,34 @@ UberModule
                       )
                     )
                     ( AbsN Nothing
-                      ( ParamNamed Nothing ( Name "v$1516" ) :| [] )
+                      ( ParamNamed Nothing ( Name "v$1" ) :| [] )
                       ( DataArgumentByIndex Nothing ProductType 0
-                        ( Ref Nothing ( Local ( Name "v$1516" ) ) )
+                        ( Ref Nothing ( Local ( Name "v$1" ) ) )
                       ) :| []
                     )
                   )
                   ( AbsN Nothing
-                    ( ParamNamed Nothing ( Name "v$1517" ) :| [] )
+                    ( ParamNamed Nothing ( Name "v$2" ) :| [] )
                     ( DataArgumentByIndex Nothing ProductType 1
-                      ( Ref Nothing ( Local ( Name "v$1517" ) ) )
+                      ( Ref Nothing ( Local ( Name "v$2" ) ) )
                     ) :| []
                   )
                 )
                 ( AbsN Nothing
-                  ( ParamNamed Nothing ( Name "s$8" ) :| [] )
+                  ( ParamNamed Nothing ( Name "s$1" ) :| [] )
                   ( Let Nothing
                     ( Standalone
-                      ( Nothing, Name "v1$1611", AppN Nothing
+                      ( Nothing, Name "v1$0", AppN Nothing
                         ( Ref Nothing
                           ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "uncons" ) )
                         )
-                        ( Ref Nothing ( Local ( Name "s$8" ) ) :| [] )
+                        ( Ref Nothing ( Local ( Name "s$1" ) ) :| [] )
                       ) :| []
                     )
                     ( IfThenElse Nothing
                       ( Eq Nothing
                         ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
-                        ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v1$1611" ) ) ) )
+                        ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v1$0" ) ) ) )
                       )
                       ( Ctor Nothing SumType
                         ( ModuleName "Data.Maybe" )
@@ -1097,11 +1097,11 @@ UberModule
                           ( CtorName "Tuple" )
                           [ ObjectProp Nothing
                             ( DataArgumentByIndex Nothing SumType 0
-                              ( Ref Nothing ( Local ( Name "v1$1611" ) ) )
+                              ( Ref Nothing ( Local ( Name "v1$0" ) ) )
                             )
                             ( PropName "head" ), ObjectProp Nothing
                             ( DataArgumentByIndex Nothing SumType 0
-                              ( Ref Nothing ( Local ( Name "v1$1611" ) ) )
+                              ( Ref Nothing ( Local ( Name "v1$0" ) ) )
                             )
                             ( PropName "tail" )
                           ]
@@ -1112,7 +1112,7 @@ UberModule
                   ) :| []
                 )
               )
-              ( Ref Nothing ( Local ( Name "s$7" ) ) :| [] )
+              ( Ref Nothing ( Local ( Name "s$0" ) ) :| [] )
             ) :| []
           )
         )
@@ -1370,7 +1370,7 @@ UberModule
               ( LiteralObject Nothing
                 [
                   ( PropName "succ", AbsN Nothing
-                    ( ParamNamed Nothing ( Name "a$1588" ) :| [] )
+                    ( ParamNamed Nothing ( Name "a$0" ) :| [] )
                     ( AppN Nothing
                       ( ObjectProp Nothing
                         ( Ref Nothing
@@ -1392,14 +1392,14 @@ UberModule
                             )
                             ( PropName "fromEnum" )
                           )
-                          ( Ref Nothing ( Local ( Name "a$1588" ) ) :| [] )
+                          ( Ref Nothing ( Local ( Name "a$0" ) ) :| [] )
                         )
                         ( LiteralInt Nothing 1 ) :| []
                       )
                     )
                   ),
                   ( PropName "pred", AbsN Nothing
-                    ( ParamNamed Nothing ( Name "a$1596" ) :| [] )
+                    ( ParamNamed Nothing ( Name "a$1" ) :| [] )
                     ( AppN Nothing
                       ( ObjectProp Nothing
                         ( Ref Nothing
@@ -1421,7 +1421,7 @@ UberModule
                             )
                             ( PropName "fromEnum" )
                           )
-                          ( Ref Nothing ( Local ( Name "a$1596" ) ) :| [] )
+                          ( Ref Nothing ( Local ( Name "a$1" ) ) :| [] )
                         )
                         ( LiteralInt Nothing 1 ) :| []
                       )
@@ -1465,7 +1465,7 @@ UberModule
       ( QName
         { qnameModuleName = ModuleName "Golden.StringCodePoints.Test", qnameName = Name "logShow"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "logShow$p2$1556" ) :| [] )
+        ( ParamNamed Nothing ( Name "logShow$p2$0" ) :| [] )
         ( AppN Nothing
           ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
           ( AppN Nothing
@@ -1473,32 +1473,32 @@ UberModule
               ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showArrayImpl" ) ) )
               ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) :| [] )
             )
-            ( Ref Nothing ( Local ( Name "logShow$p2$1556" ) ) :| [] ) :| []
+            ( Ref Nothing ( Local ( Name "logShow$p2$0" ) ) :| [] ) :| []
           )
         )
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.StringCodePoints.Test", qnameName = Name "logShow1"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "logShow$p2$1551" ) :| [] )
+        ( ParamNamed Nothing ( Name "logShow$p2$0" ) :| [] )
         ( AppN Nothing
           ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
           ( AppN Nothing
             ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
-            ( Ref Nothing ( Local ( Name "logShow$p2$1551" ) ) :| [] ) :| []
+            ( Ref Nothing ( Local ( Name "logShow$p2$0" ) ) :| [] ) :| []
           )
         )
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.StringCodePoints.Test", qnameName = Name "logShow2"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "logShow$p2$1546" ) :| [] )
+        ( ParamNamed Nothing ( Name "logShow$p2$0" ) :| [] )
         ( AppN Nothing
           ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
           ( IfThenElse Nothing
             ( Eq Nothing
               ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
-              ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "logShow$p2$1546" ) ) ) )
+              ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "logShow$p2$0" ) ) ) )
             )
             ( PrimBinOp Nothing PrimConcat
               ( LiteralString Nothing "(Just " )
@@ -1506,7 +1506,7 @@ UberModule
                 ( AppN Nothing
                   ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
                   ( DataArgumentByIndex Nothing SumType 0
-                    ( Ref Nothing ( Local ( Name "logShow$p2$1546" ) ) ) :| []
+                    ( Ref Nothing ( Local ( Name "logShow$p2$0" ) ) ) :| []
                   )
                 )
                 ( LiteralString Nothing ")" )
@@ -1519,21 +1519,21 @@ UberModule
       ( QName
         { qnameModuleName = ModuleName "Golden.StringCodePoints.Test", qnameName = Name "cp"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "x$1535" ) :| [] )
+        ( ParamNamed Nothing ( Name "x$0" ) :| [] )
         ( AppN Nothing
           ( AppN Nothing
             ( Ref Nothing ( Imported ( ModuleName "Partial.Unsafe" ) ( Name "_unsafePartial" ) ) )
             ( AbsN Nothing
               ( ParamUnused Nothing :| [] )
               ( AbsN Nothing
-                ( ParamNamed Nothing ( Name "v$1531" ) :| [] )
+                ( ParamNamed Nothing ( Name "v$0" ) :| [] )
                 ( IfThenElse Nothing
                   ( Eq Nothing
                     ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
-                    ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v$1531" ) ) ) )
+                    ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v$0" ) ) ) )
                   )
                   ( DataArgumentByIndex Nothing SumType 0
-                    ( Ref Nothing ( Local ( Name "v$1531" ) ) )
+                    ( Ref Nothing ( Local ( Name "v$0" ) ) )
                   )
                   ( Exception Nothing "No patterns matched" )
                 )
@@ -1547,14 +1547,14 @@ UberModule
               )
               ( PropName "toEnum" )
             )
-            ( Ref Nothing ( Local ( Name "x$1535" ) ) :| [] ) :| []
+            ( Ref Nothing ( Local ( Name "x$0" ) ) :| [] ) :| []
           )
         )
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.StringCodePoints.Test", qnameName = Name "codes"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "x$1529" ) :| [] )
+        ( ParamNamed Nothing ( Name "x$0" ) :| [] )
         ( AppN Nothing
           ( AppN Nothing
             ( ObjectProp Nothing
@@ -1569,7 +1569,7 @@ UberModule
             ( Ref Nothing
               ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "toCodePointArray" ) )
             )
-            ( Ref Nothing ( Local ( Name "x$1529" ) ) :| [] ) :| []
+            ( Ref Nothing ( Local ( Name "x$0" ) ) :| [] ) :| []
           )
         )
       )
@@ -1680,7 +1680,7 @@ UberModule
                   )
                   ( Let Nothing
                     ( Standalone
-                      ( Nothing, Name "v1$2051", AppN Nothing
+                      ( Nothing, Name "v1$0", AppN Nothing
                         ( Ref Nothing
                           ( Imported
                             ( ModuleName "Data.String.CodePoints" )
@@ -1693,7 +1693,7 @@ UberModule
                     ( IfThenElse Nothing
                       ( Eq Nothing
                         ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
-                        ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v1$2051" ) ) ) )
+                        ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v1$0" ) ) ) )
                       )
                       ( Ctor Nothing SumType
                         ( ModuleName "Data.Maybe" )
@@ -1707,7 +1707,7 @@ UberModule
                             )
                           )
                           ( DataArgumentByIndex Nothing SumType 0
-                            ( Ref Nothing ( Local ( Name "v1$2051" ) ) ) :| []
+                            ( Ref Nothing ( Local ( Name "v1$0" ) ) ) :| []
                           )
                         ]
                       )
@@ -1724,7 +1724,7 @@ UberModule
                   )
                   ( Let Nothing
                     ( Standalone
-                      ( Nothing, Name "v1$2055", AppN Nothing
+                      ( Nothing, Name "v1$1", AppN Nothing
                         ( Ref Nothing
                           ( Imported
                             ( ModuleName "Data.String.CodePoints" )
@@ -1737,7 +1737,7 @@ UberModule
                     ( IfThenElse Nothing
                       ( Eq Nothing
                         ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
-                        ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v1$2055" ) ) ) )
+                        ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v1$1" ) ) ) )
                       )
                       ( Ctor Nothing SumType
                         ( ModuleName "Data.Maybe" )
@@ -1751,7 +1751,7 @@ UberModule
                             )
                           )
                           ( DataArgumentByIndex Nothing SumType 0
-                            ( Ref Nothing ( Local ( Name "v1$2055" ) ) ) :| []
+                            ( Ref Nothing ( Local ( Name "v1$1" ) ) ) :| []
                           )
                         ]
                       )
@@ -1768,7 +1768,7 @@ UberModule
                   )
                   ( Let Nothing
                     ( Standalone
-                      ( Nothing, Name "v1$2059", AppN Nothing
+                      ( Nothing, Name "v1$2", AppN Nothing
                         ( Ref Nothing
                           ( Imported
                             ( ModuleName "Data.String.CodePoints" )
@@ -1781,7 +1781,7 @@ UberModule
                     ( IfThenElse Nothing
                       ( Eq Nothing
                         ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
-                        ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v1$2059" ) ) ) )
+                        ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v1$2" ) ) ) )
                       )
                       ( Ctor Nothing SumType
                         ( ModuleName "Data.Maybe" )
@@ -1795,7 +1795,7 @@ UberModule
                             )
                           )
                           ( DataArgumentByIndex Nothing SumType 0
-                            ( Ref Nothing ( Local ( Name "v1$2059" ) ) ) :| []
+                            ( Ref Nothing ( Local ( Name "v1$2" ) ) ) :| []
                           )
                         ]
                       )
@@ -1812,7 +1812,7 @@ UberModule
                   )
                   ( Let Nothing
                     ( Standalone
-                      ( Nothing, Name "v1$2063", AppN Nothing
+                      ( Nothing, Name "v1$3", AppN Nothing
                         ( Ref Nothing
                           ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "uncons" ) )
                         )
@@ -1822,7 +1822,7 @@ UberModule
                     ( IfThenElse Nothing
                       ( Eq Nothing
                         ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
-                        ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v1$2063" ) ) ) )
+                        ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v1$3" ) ) ) )
                       )
                       ( Ctor Nothing SumType
                         ( ModuleName "Data.Maybe" )
@@ -1837,7 +1837,7 @@ UberModule
                           )
                           ( ObjectProp Nothing
                             ( DataArgumentByIndex Nothing SumType 0
-                              ( Ref Nothing ( Local ( Name "v1$2063" ) ) )
+                              ( Ref Nothing ( Local ( Name "v1$3" ) ) )
                             )
                             ( PropName "head" ) :| []
                           )
@@ -1855,11 +1855,11 @@ UberModule
                   ( LiteralObject Nothing
                     [
                       ( PropName "show", AbsN Nothing
-                        ( ParamNamed Nothing ( Name "v$2070" ) :| [] )
+                        ( ParamNamed Nothing ( Name "v$0" ) :| [] )
                         ( IfThenElse Nothing
                           ( Eq Nothing
                             ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
-                            ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v$2070" ) ) ) )
+                            ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v$0" ) ) ) )
                           )
                           ( PrimBinOp Nothing PrimConcat
                             ( LiteralString Nothing "(Just " )
@@ -1877,7 +1877,7 @@ UberModule
                                   )
                                 )
                                 ( DataArgumentByIndex Nothing SumType 0
-                                  ( Ref Nothing ( Local ( Name "v$2070" ) ) ) :| []
+                                  ( Ref Nothing ( Local ( Name "v$0" ) ) ) :| []
                                 )
                               )
                               ( LiteralString Nothing ")" )
@@ -1889,7 +1889,7 @@ UberModule
                     ] :|
                     [ Let Nothing
                       ( Standalone
-                        ( Nothing, Name "v1$2081", AppN Nothing
+                        ( Nothing, Name "v1$4", AppN Nothing
                           ( Ref Nothing
                             ( Imported ( ModuleName "Data.String.CodePoints" ) ( Name "uncons" ) )
                           )
@@ -1899,7 +1899,7 @@ UberModule
                       ( IfThenElse Nothing
                         ( Eq Nothing
                           ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
-                          ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v1$2081" ) ) ) )
+                          ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v1$4" ) ) ) )
                         )
                         ( Ctor Nothing SumType
                           ( ModuleName "Data.Maybe" )
@@ -1914,7 +1914,7 @@ UberModule
                             )
                             ( ObjectProp Nothing
                               ( DataArgumentByIndex Nothing SumType 0
-                                ( Ref Nothing ( Local ( Name "v1$2081" ) ) )
+                                ( Ref Nothing ( Local ( Name "v1$4" ) ) )
                               )
                               ( PropName "tail" ) :| []
                             )
@@ -1933,9 +1933,9 @@ UberModule
                   ( LiteralObject Nothing
                     [
                       ( PropName "show", AbsN Nothing
-                        ( ParamNamed Nothing ( Name "v$1225" ) :| [] )
+                        ( ParamNamed Nothing ( Name "v$1" ) :| [] )
                         ( IfThenElse Nothing
-                          ( Ref Nothing ( Local ( Name "v$1225" ) ) )
+                          ( Ref Nothing ( Local ( Name "v$1" ) ) )
                           ( LiteralString Nothing "true" )
                           ( LiteralString Nothing "false" )
                         )

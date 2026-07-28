@@ -63,12 +63,12 @@ UberModule
       ( QName
         { qnameModuleName = ModuleName "Golden.Uncurry.Test", qnameName = Name "logShow"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "logShow$p2$214" ) :| [] )
+        ( ParamNamed Nothing ( Name "logShow$p2$0" ) :| [] )
         ( AppN Nothing
           ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
           ( AppN Nothing
             ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
-            ( Ref Nothing ( Local ( Name "logShow$p2$214" ) ) :| [] ) :| []
+            ( Ref Nothing ( Local ( Name "logShow$p2$0" ) ) :| [] ) :| []
           )
         )
       ), Standalone
@@ -198,13 +198,13 @@ UberModule
         }, AbsN Nothing
         ( ParamNamed Nothing ( Name "x" ) :| [ ParamNamed Nothing ( Name "y" ) ] )
         ( AbsN Nothing
-          ( ParamNamed Nothing ( Name "y$237" ) :| [] )
+          ( ParamNamed Nothing ( Name "y$0" ) :| [] )
           ( PrimBinOp Nothing PrimAdd
             ( PrimBinOp Nothing PrimAdd
               ( Ref Nothing ( Local ( Name "x" ) ) )
               ( Ref Nothing ( Local ( Name "y" ) ) )
             )
-            ( Ref Nothing ( Local ( Name "y$237" ) ) )
+            ( Ref Nothing ( Local ( Name "y$0" ) ) )
           )
         )
       ), Standalone
@@ -244,10 +244,10 @@ UberModule
       ( QName
         { qnameModuleName = ModuleName "Golden.Uncurry.Test", qnameName = Name "inc"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "add3$p3$217" ) :| [] )
+        ( ParamNamed Nothing ( Name "add3$p3$0" ) :| [] )
         ( PrimBinOp Nothing PrimAdd
           ( LiteralInt Nothing 1 )
-          ( Ref Nothing ( Local ( Name "add3$p3$217" ) ) )
+          ( Ref Nothing ( Local ( Name "add3$p3$0" ) ) )
         )
       )
     ], uberModuleForeigns = [], uberModuleExports =
@@ -266,26 +266,26 @@ UberModule
         ( Imported ( ModuleName "Golden.Uncurry.Test" ) ( Name "sumTo" ) )
       ),
       ( Name "adderOf", AbsN Nothing
-        ( ParamNamed Nothing ( Name "adderOf$p1$209" ) :| [] )
+        ( ParamNamed Nothing ( Name "adderOf$p1$0" ) :| [] )
         ( AbsN Nothing
-          ( ParamNamed Nothing ( Name "adderOf$p2$210" ) :| [] )
+          ( ParamNamed Nothing ( Name "adderOf$p2$0" ) :| [] )
           ( AbsN Nothing
-            ( ParamNamed Nothing ( Name "y$265" ) :| [] )
+            ( ParamNamed Nothing ( Name "y$0" ) :| [] )
             ( PrimBinOp Nothing PrimAdd
               ( PrimBinOp Nothing PrimAdd
-                ( Ref Nothing ( Local ( Name "adderOf$p1$209" ) ) )
-                ( Ref Nothing ( Local ( Name "adderOf$p2$210" ) ) )
+                ( Ref Nothing ( Local ( Name "adderOf$p1$0" ) ) )
+                ( Ref Nothing ( Local ( Name "adderOf$p2$0" ) ) )
               )
-              ( Ref Nothing ( Local ( Name "y$265" ) ) )
+              ( Ref Nothing ( Local ( Name "y$0" ) ) )
             )
           )
         )
       ),
       ( Name "alwaysFirst", AbsN Nothing
-        ( ParamNamed Nothing ( Name "alwaysFirst$p1$211" ) :| [] )
+        ( ParamNamed Nothing ( Name "alwaysFirst$p1$0" ) :| [] )
         ( AbsN Nothing
           ( ParamUnused Nothing :| [] )
-          ( Ref Nothing ( Local ( Name "alwaysFirst$p1$211" ) ) )
+          ( Ref Nothing ( Local ( Name "alwaysFirst$p1$0" ) ) )
         )
       ),
       ( Name "main", AbsN Nothing

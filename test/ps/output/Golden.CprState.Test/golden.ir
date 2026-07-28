@@ -44,12 +44,12 @@ UberModule
             ( LiteralObject Nothing
               [
                 ( PropName "map", AbsN Nothing
-                  ( ParamNamed Nothing ( Name "f$511" ) :| [] )
+                  ( ParamNamed Nothing ( Name "f$0" ) :| [] )
                   ( AbsN Nothing
-                    ( ParamNamed Nothing ( Name "m$512" ) :| [] )
+                    ( ParamNamed Nothing ( Name "m$0" ) :| [] )
                     ( AppN Nothing
-                      ( Ref Nothing ( Local ( Name "f$511" ) ) )
-                      ( Ref Nothing ( Local ( Name "m$512" ) ) :| [] )
+                      ( Ref Nothing ( Local ( Name "f$0" ) ) )
+                      ( Ref Nothing ( Local ( Name "m$0" ) ) :| [] )
                     )
                   )
                 )
@@ -67,8 +67,8 @@ UberModule
             ( LiteralObject Nothing
               [
                 ( PropName "pure", AbsN Nothing
-                  ( ParamNamed Nothing ( Name "x$513" ) :| [] )
-                  ( Ref Nothing ( Local ( Name "x$513" ) ) )
+                  ( ParamNamed Nothing ( Name "x$0" ) :| [] )
+                  ( Ref Nothing ( Local ( Name "x$0" ) ) )
                 ),
                 ( PropName "Apply0", AbsN Nothing
                   ( ParamUnused Nothing :| [] )
@@ -84,12 +84,12 @@ UberModule
             ( LiteralObject Nothing
               [
                 ( PropName "bind", AbsN Nothing
-                  ( ParamNamed Nothing ( Name "v$75" ) :| [] )
+                  ( ParamNamed Nothing ( Name "v$0" ) :| [] )
                   ( AbsN Nothing
-                    ( ParamNamed Nothing ( Name "f$76" ) :| [] )
+                    ( ParamNamed Nothing ( Name "f$0" ) :| [] )
                     ( AppN Nothing
-                      ( Ref Nothing ( Local ( Name "f$76" ) ) )
-                      ( Ref Nothing ( Local ( Name "v$75" ) ) :| [] )
+                      ( Ref Nothing ( Local ( Name "f$0" ) ) )
+                      ( Ref Nothing ( Local ( Name "v$0" ) ) :| [] )
                     )
                   )
                 ),
@@ -205,7 +205,7 @@ UberModule
               [
                 ( PropName "apply", Let Nothing
                   ( Standalone
-                    ( Nothing, Name "dictMonad$514", AppN Nothing
+                    ( Nothing, Name "dictMonad$0", AppN Nothing
                       ( Ref Nothing
                         ( Imported
                           ( ModuleName "Control.Monad.State.Trans" )
@@ -217,10 +217,10 @@ UberModule
                   )
                   ( Let Nothing
                     ( Standalone
-                      ( Nothing, Name "bind$515", ObjectProp Nothing
+                      ( Nothing, Name "bind$0", ObjectProp Nothing
                         ( AppN Nothing
                           ( ObjectProp Nothing
-                            ( Ref Nothing ( Local ( Name "dictMonad$514" ) ) )
+                            ( Ref Nothing ( Local ( Name "dictMonad$0" ) ) )
                             ( PropName "Bind1" )
                           )
                           ( Ref Nothing
@@ -231,28 +231,28 @@ UberModule
                       ) :| []
                     )
                     ( AbsN Nothing
-                      ( ParamNamed Nothing ( Name "f$516" ) :| [] )
+                      ( ParamNamed Nothing ( Name "f$0" ) :| [] )
                       ( AbsN Nothing
-                        ( ParamNamed Nothing ( Name "a$517" ) :| [] )
+                        ( ParamNamed Nothing ( Name "a$0" ) :| [] )
                         ( AppN Nothing
                           ( AppN Nothing
-                            ( Ref Nothing ( Local ( Name "bind$515" ) ) )
-                            ( Ref Nothing ( Local ( Name "f$516" ) ) :| [] )
+                            ( Ref Nothing ( Local ( Name "bind$0" ) ) )
+                            ( Ref Nothing ( Local ( Name "f$0" ) ) :| [] )
                           )
                           ( AbsN Nothing
-                            ( ParamNamed Nothing ( Name "f'$518" ) :| [] )
+                            ( ParamNamed Nothing ( Name "f'$0" ) :| [] )
                             ( AppN Nothing
                               ( AppN Nothing
-                                ( Ref Nothing ( Local ( Name "bind$515" ) ) )
-                                ( Ref Nothing ( Local ( Name "a$517" ) ) :| [] )
+                                ( Ref Nothing ( Local ( Name "bind$0" ) ) )
+                                ( Ref Nothing ( Local ( Name "a$0" ) ) :| [] )
                               )
                               ( AbsN Nothing
-                                ( ParamNamed Nothing ( Name "a'$519" ) :| [] )
+                                ( ParamNamed Nothing ( Name "a'$0" ) :| [] )
                                 ( AppN Nothing
                                   ( ObjectProp Nothing
                                     ( AppN Nothing
                                       ( ObjectProp Nothing
-                                        ( Ref Nothing ( Local ( Name "dictMonad$514" ) ) )
+                                        ( Ref Nothing ( Local ( Name "dictMonad$0" ) ) )
                                         ( PropName "Applicative0" )
                                       )
                                       ( Ref Nothing
@@ -265,8 +265,8 @@ UberModule
                                     ( PropName "pure" )
                                   )
                                   ( AppN Nothing
-                                    ( Ref Nothing ( Local ( Name "f'$518" ) ) )
-                                    ( Ref Nothing ( Local ( Name "a'$519" ) ) :| [] ) :| []
+                                    ( Ref Nothing ( Local ( Name "f'$0" ) ) )
+                                    ( Ref Nothing ( Local ( Name "a'$0" ) ) :| [] ) :| []
                                   )
                                 ) :| []
                               )
@@ -282,11 +282,11 @@ UberModule
                   ( LiteralObject Nothing
                     [
                       ( PropName "map", AbsN Nothing
-                        ( ParamNamed Nothing ( Name "f$507" ) :| [] )
+                        ( ParamNamed Nothing ( Name "f$1" ) :| [] )
                         ( AbsN Nothing
-                          ( ParamNamed Nothing ( Name "v$508" ) :| [] )
+                          ( ParamNamed Nothing ( Name "v$0" ) :| [] )
                           ( AbsN Nothing
-                            ( ParamNamed Nothing ( Name "s$509" ) :| [] )
+                            ( ParamNamed Nothing ( Name "s$0" ) :| [] )
                             ( AppN Nothing
                               ( AppN Nothing
                                 ( ObjectProp Nothing
@@ -324,24 +324,24 @@ UberModule
                                   ( PropName "map" )
                                 )
                                 ( AbsN Nothing
-                                  ( ParamNamed Nothing ( Name "v1$510" ) :| [] )
+                                  ( ParamNamed Nothing ( Name "v1$0" ) :| [] )
                                   ( Ctor Nothing ProductType
                                     ( ModuleName "Data.Tuple" )
                                     ( TyName "Tuple" )
                                     ( CtorName "Tuple" )
                                     [ AppN Nothing
-                                      ( Ref Nothing ( Local ( Name "f$507" ) ) )
+                                      ( Ref Nothing ( Local ( Name "f$1" ) ) )
                                       ( DataArgumentByIndex Nothing ProductType 0
-                                        ( Ref Nothing ( Local ( Name "v1$510" ) ) ) :| []
+                                        ( Ref Nothing ( Local ( Name "v1$0" ) ) ) :| []
                                       ), DataArgumentByIndex Nothing ProductType 1
-                                      ( Ref Nothing ( Local ( Name "v1$510" ) ) )
+                                      ( Ref Nothing ( Local ( Name "v1$0" ) ) )
                                     ]
                                   ) :| []
                                 )
                               )
                               ( AppN Nothing
-                                ( Ref Nothing ( Local ( Name "v$508" ) ) )
-                                ( Ref Nothing ( Local ( Name "s$509" ) ) :| [] ) :| []
+                                ( Ref Nothing ( Local ( Name "v$0" ) ) )
+                                ( Ref Nothing ( Local ( Name "s$0" ) ) :| [] ) :| []
                               )
                             )
                           )
@@ -413,12 +413,12 @@ UberModule
       ( QName
         { qnameModuleName = ModuleName "Golden.CprState.Test", qnameName = Name "get"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "x$701" ) :| [] )
+        ( ParamNamed Nothing ( Name "x$0" ) :| [] )
         ( Ctor Nothing ProductType
           ( ModuleName "Data.Tuple" )
           ( TyName "Tuple" )
           ( CtorName "Tuple" )
-          [ Ref Nothing ( Local ( Name "x$701" ) ), Ref Nothing ( Local ( Name "x$701" ) ) ]
+          [ Ref Nothing ( Local ( Name "x$0" ) ), Ref Nothing ( Local ( Name "x$0" ) ) ]
         )
       ), Standalone
       ( QName
