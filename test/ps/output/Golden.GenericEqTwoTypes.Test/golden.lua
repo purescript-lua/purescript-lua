@@ -2,10 +2,7 @@ local M = {}
 local Record_Unsafe_foreign = {
   unsafeGet = function(l) return function(r) return r[l] end end
 }
-local Effect_Console_foreign = {
-  log = function(s) return function() print(s) end end
-}
-local Effect_Console_log = Effect_Console_foreign.log
+local Effect_Console_log = function(s) return function() print(s) end end
 local Type_Proxy_Proxy = {}
 local Data_HeytingAlgebra_heytingAlgebraBoolean
 Data_HeytingAlgebra_heytingAlgebraBoolean = {

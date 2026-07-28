@@ -2,12 +2,6 @@ UberModule
   { uberModuleBindings =
     [ Standalone
       ( QName
-        { qnameModuleName = ModuleName "Data.Semigroup", qnameName = Name "foreign"
-        }, ForeignImport Nothing
-        ( ModuleName "Data.Semigroup" ) ".spago/p/prelude/5718c84fdde6247749cb053e816df696c30fe691/src/Data/Semigroup.purs"
-        [ ( Nothing, Name "concatArray" ) ]
-      ), Standalone
-      ( QName
         { qnameModuleName = ModuleName "Data.Show", qnameName = Name "foreign"
         }, ForeignImport Nothing
         ( ModuleName "Data.Show" ) ".spago/p/prelude/5718c84fdde6247749cb053e816df696c30fe691/src/Data/Show.purs"
@@ -20,33 +14,30 @@ UberModule
         ( PropName "showIntImpl" )
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Data.Functor", qnameName = Name "foreign"
-        }, ForeignImport Nothing
-        ( ModuleName "Data.Functor" ) ".spago/p/prelude/5718c84fdde6247749cb053e816df696c30fe691/src/Data/Functor.purs"
-        [ ( Nothing, Name "arrayMap" ) ]
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "foreign"
-        }, ForeignImport Nothing
-        ( ModuleName "Effect.Console" ) ".spago/p/console/f82835a0b873aafe6bd7b14dd30cc150553d4ab9/src/Effect/Console.purs"
-        [ ( Nothing, Name "log" ) ]
-      ), Standalone
-      ( QName
         { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "log"
         }, ObjectProp Nothing
-        ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
+        ( ForeignImport Nothing
+          ( ModuleName "Effect.Console" ) ".spago/p/console/f82835a0b873aafe6bd7b14dd30cc150553d4ab9/src/Effect/Console.purs"
+          [ ( Nothing, Name "log" ) ]
+        )
         ( PropName "log" )
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.CSE.Test", qnameName = Name "append"
         }, ObjectProp Nothing
-        ( Ref Nothing ( Imported ( ModuleName "Data.Semigroup" ) ( Name "foreign" ) ) )
+        ( ForeignImport Nothing
+          ( ModuleName "Data.Semigroup" ) ".spago/p/prelude/5718c84fdde6247749cb053e816df696c30fe691/src/Data/Semigroup.purs"
+          [ ( Nothing, Name "concatArray" ) ]
+        )
         ( PropName "concatArray" )
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.CSE.Test", qnameName = Name "map"
         }, ObjectProp Nothing
-        ( Ref Nothing ( Imported ( ModuleName "Data.Functor" ) ( Name "foreign" ) ) )
+        ( ForeignImport Nothing
+          ( ModuleName "Data.Functor" ) ".spago/p/prelude/5718c84fdde6247749cb053e816df696c30fe691/src/Data/Functor.purs"
+          [ ( Nothing, Name "arrayMap" ) ]
+        )
         ( PropName "arrayMap" )
       ), Standalone
       ( QName

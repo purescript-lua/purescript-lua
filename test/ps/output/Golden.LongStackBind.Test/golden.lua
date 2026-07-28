@@ -1,5 +1,4 @@
-local Data_Unit_foreign = { unit = {} }
-local Data_Unit_unit = Data_Unit_foreign.unit
+local Data_Unit_unit = {}
 local Data_Show_foreign = {
   showIntImpl = function(n) return tostring(n) end,
   showStringImpl = function(s)
@@ -41,9 +40,6 @@ local Data_Show_foreign = {
     out[#(out) + 1] = "\""
     return table.concat(out)
   end
-}
-local Effect_Console_foreign = {
-  log = function(s) return function() print(s) end end
 }
 local Control_Monad_ap = function(dictMonad)
   local bind = (dictMonad.Bind1()).bind
@@ -1603,11 +1599,12 @@ local Golden_LongStackBind_Test_compute = (function()
 end)()
 return (function()
   local _S_cse2 = Golden_LongStackBind_Test_compute[2]
-  return Effect_Console_foreign.log((function()
+  local s = (function()
     if "Data.Either∷Either.Left" == Golden_LongStackBind_Test_compute[1] then
       return "(Left " .. Data_Show_foreign.showStringImpl(_S_cse2) .. ")"
     else
       return "(Right " .. Data_Show_foreign.showIntImpl(_S_cse2) .. ")"
     end
-  end)())()
+  end)()
+  print(s)
 end)()

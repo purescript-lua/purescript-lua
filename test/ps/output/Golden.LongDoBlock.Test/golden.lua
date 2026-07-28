@@ -1,7 +1,4 @@
-local Effect_Console_foreign = {
-  log = function(s) return function() print(s) end end
-}
-local Effect_Console_log = Effect_Console_foreign.log
+local Effect_Console_log = function(s) return function() print(s) end end
 return (function()
   local _ = Effect_Console_log("1")()
   local _ = Effect_Console_log("2")()

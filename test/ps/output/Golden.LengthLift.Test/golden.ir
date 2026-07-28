@@ -14,12 +14,6 @@ UberModule
         ( PropName "showIntImpl" )
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Control.Monad.ST.Internal", qnameName = Name "foreign"
-        }, ForeignImport Nothing
-        ( ModuleName "Control.Monad.ST.Internal" ) ".spago/p/st/6d41fd264a05b9a089e79322b22b906597ea7c36/src/Control/Monad/ST/Internal.purs"
-        [ ( Nothing, Name "pure_" ), ( Nothing, Name "bind_" ), ( Nothing, Name "run" ) ]
-      ), Standalone
-      ( QName
         { qnameModuleName = ModuleName "Data.Array.ST", qnameName = Name "foreign"
         }, ForeignImport Nothing
         ( ModuleName "Data.Array.ST" ) ".spago/p/arrays/4641b4b5ee19c3b472151da585f4676147a7cd74/src/Data/Array/ST.purs"
@@ -36,15 +30,12 @@ UberModule
         ( PropName "lengthImpl" )
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "foreign"
-        }, ForeignImport Nothing
-        ( ModuleName "Effect.Console" ) ".spago/p/console/f82835a0b873aafe6bd7b14dd30cc150553d4ab9/src/Effect/Console.purs"
-        [ ( Nothing, Name "log" ) ]
-      ), Standalone
-      ( QName
         { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "log"
         }, ObjectProp Nothing
-        ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
+        ( ForeignImport Nothing
+          ( ModuleName "Effect.Console" ) ".spago/p/console/f82835a0b873aafe6bd7b14dd30cc150553d4ab9/src/Effect/Console.purs"
+          [ ( Nothing, Name "log" ) ]
+        )
         ( PropName "log" )
       ), Standalone
       ( QName
@@ -57,8 +48,9 @@ UberModule
         { qnameModuleName = ModuleName "Golden.LengthLift.Test", qnameName = Name "lengthsAroundPush"
         }, AppN Nothing
         ( ObjectProp Nothing
-          ( Ref Nothing
-            ( Imported ( ModuleName "Control.Monad.ST.Internal" ) ( Name "foreign" ) )
+          ( ForeignImport Nothing
+            ( ModuleName "Control.Monad.ST.Internal" ) ".spago/p/st/6d41fd264a05b9a089e79322b22b906597ea7c36/src/Control/Monad/ST/Internal.purs"
+            [ ( Nothing, Name "pure_" ), ( Nothing, Name "bind_" ), ( Nothing, Name "run" ) ]
           )
           ( PropName "run" )
         )

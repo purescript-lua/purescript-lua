@@ -16,8 +16,7 @@ local function PSLUA_runtime_lazy(name)
     end
   end
 end
-local Data_Unit_foreign = { unit = {} }
-local Data_Unit_unit = Data_Unit_foreign.unit
+local Data_Unit_unit = {}
 local Data_Show_foreign = { showIntImpl = function(n) return tostring(n) end }
 local Data_Foldable_foreign = {
   foldrArray = function(f)
@@ -48,10 +47,7 @@ local Effect_foreign = {
   end
 }
 local Effect_pureE = Effect_foreign.pureE
-local Effect_Console_foreign = {
-  log = function(s) return function() print(s) end end
-}
-local Effect_Console_log = Effect_Console_foreign.log
+local Effect_Console_log = function(s) return function() print(s) end end
 local Data_Foldable_foldableArray
 Data_Foldable_foldableArray = {
   foldr = Data_Foldable_foreign.foldrArray,

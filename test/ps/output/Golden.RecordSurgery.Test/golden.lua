@@ -20,10 +20,7 @@ local Record_Unsafe_foreign = {
   end
 }
 local Data_Show_foreign = { showIntImpl = function(n) return tostring(n) end }
-local Effect_Console_foreign = {
-  log = function(s) return function() print(s) end end
-}
-local Effect_Console_log = Effect_Console_foreign.log
+local Effect_Console_log = function(s) return function() print(s) end end
 M.Effect_Ref_foreign = {
   _new = function(val) return function() return { value = val } end end,
   read = function(ref) return function() return ref.value end end

@@ -1,5 +1,4 @@
 local M = {}
-local Data_Show_foreign = { showIntImpl = function(n) return tostring(n) end }
 local Control_Monad_ST_Internal_foreign = {
   pure_ = function(a) return function() return a end end,
   bind_ = function(a)
@@ -19,9 +18,6 @@ local Control_Monad_ST_Internal_foreign = {
   end
 }
 M.Control_Monad_ST_Internal_modifyImpl = Control_Monad_ST_Internal_foreign.modifyImpl
-local Effect_Console_foreign = {
-  log = function(s) return function() print(s) end end
-}
 local Golden_STDoBlock_Test_sumTwice = function(n)
   return Control_Monad_ST_Internal_foreign.run(function()
     local _S_cse0 = function(s_S_0)
@@ -35,4 +31,6 @@ local Golden_STDoBlock_Test_sumTwice = function(n)
     return total + 1
   end)
 end
-return Effect_Console_foreign.log(Data_Show_foreign.showIntImpl(Golden_STDoBlock_Test_sumTwice(5)))()
+return (function(s) return function() print(s) end end)((function(n)
+  return tostring(n)
+end)(Golden_STDoBlock_Test_sumTwice(5)))()

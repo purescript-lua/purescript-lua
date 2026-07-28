@@ -1,17 +1,4 @@
 local M = {}
-local Data_Semigroup_foreign = {
-  concatArray = function(xs)
-    return function(ys)
-      if #(xs) == 0 then return ys end
-      if #(ys) == 0 then return xs end
-      local result = {}
-      for index, value in ipairs(xs) do result[index] = value end
-      local offset = #(result)
-      for index, value in ipairs(ys) do result[index + offset] = value end
-      return result
-    end
-  end
-}
 local Data_Show_foreign = {
   showIntImpl = function(n) return tostring(n) end,
   showArrayImpl = function(f)
@@ -24,22 +11,26 @@ local Data_Show_foreign = {
   end
 }
 local Data_Show_showIntImpl = Data_Show_foreign.showIntImpl
-local Data_Functor_foreign = {
-  arrayMap = function(f)
-    return function(arr)
-      local l = #(arr)
-      local result = {}
-      for i = 1, l do result[i] = f(arr[i]) end
-      return result
-    end
+local Effect_Console_log = function(s) return function() print(s) end end
+local Golden_CSE_Test_append = function(xs)
+  return function(ys)
+    if #(xs) == 0 then return ys end
+    if #(ys) == 0 then return xs end
+    local result = {}
+    for index, value in ipairs(xs) do result[index] = value end
+    local offset = #(result)
+    for index, value in ipairs(ys) do result[index + offset] = value end
+    return result
   end
-}
-local Effect_Console_foreign = {
-  log = function(s) return function() print(s) end end
-}
-local Effect_Console_log = Effect_Console_foreign.log
-local Golden_CSE_Test_append = Data_Semigroup_foreign.concatArray
-local Golden_CSE_Test_map = Data_Functor_foreign.arrayMap
+end
+local Golden_CSE_Test_map = function(f)
+  return function(arr)
+    local l = #(arr)
+    local result = {}
+    for i = 1, l do result[i] = f(arr[i]) end
+    return result
+  end
+end
 local Golden_CSE_Test_logShow = function(a_S_0)
   return Effect_Console_log(Data_Show_foreign.showArrayImpl(Data_Show_showIntImpl)(a_S_0))
 end

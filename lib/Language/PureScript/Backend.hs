@@ -9,7 +9,8 @@ import Language.PureScript.Backend.IR.Inliner qualified as Inliner
 import Language.PureScript.Backend.IR.Linker qualified as Linker
 import Language.PureScript.Backend.IR.Linter qualified as Linter
 import Language.PureScript.Backend.IR.Optimizer
-  ( optimizedUberModule
+  ( ProgramFacts (..)
+  , optimizedUberModule
   , optimizedUberModuleChecked
   )
 import Language.PureScript.Backend.IR.Pass
@@ -59,10 +60,14 @@ compileModules outputDir foreignDir lintIR limits directives appOrModule = do
   -- the whole pipeline can see through them (issue #178). DCE later prunes the
   -- foreign source rows thus lifted away.
   liftedModule ← ForeignLift.liftForeigns foreignDir linkedModule
+  -- See Note [Inlining a single-use foreign import]
+  factsHeaderFreeForeigns ←
+    liftIO (ForeignLift.headerFreeForeigns foreignDir liftedModule)
+  let facts = ProgramFacts {factsDataTypes = dataDecls, factsHeaderFreeForeigns}
   uberModule ←
     if untag lintIR
-      then Oops.hoistEither (optimizedUberModuleChecked dataDecls liftedModule)
-      else pure (optimizedUberModule dataDecls liftedModule)
+      then Oops.hoistEither (optimizedUberModuleChecked facts liftedModule)
+      else pure (optimizedUberModule facts liftedModule)
   -- A dangling imported reference compiles to a read of a never-assigned
   -- module-table field — a nil call at runtime — so refuse to emit code for
   -- it (issue #297). Unconditional, unlike the per-pass linting behind

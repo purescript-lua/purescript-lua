@@ -81,6 +81,7 @@ string/char literals — leaves the export opaque (correct for e.g.
 module Language.PureScript.Backend.Lua.ForeignLift
   ( liftForeigns
   , liftExport
+  , headerFreeForeigns
   , allowlist
   , Error (..)
   ) where
@@ -316,6 +317,36 @@ liftForeigns
           | (qname, ObjectProp {}) ← uberModuleForeigns
           , qname `Set.member` allowlist
           ]
+
+{- | The foreign modules of a linked module whose FFI source is /header-free/:
+its Lua chunk is a bare @return { … }@ with no statements before it (see
+Note [Foreign module source format] in
+"Language.PureScript.Backend.Lua.Linker.Foreign"). Such an import lowers to a
+plain table constructor rather than a scope call wrapping header statements,
+which is what lets the optimizer move it — see
+Note [Inlining a single-use foreign import] in
+"Language.PureScript.Backend.IR.Optimizer", the one consumer.
+
+A source that cannot be resolved or parsed is reported as not header-free
+rather than as an error: the scan runs before dead-code elimination, so it
+sees FFI files belonging to imports the pipeline later drops and never
+compiles. The imports that do survive are parsed again when they are lowered
+('Language.PureScript.Backend.Lua.fromIR'), which is where a broken file the
+build actually needs is reported.
+-}
+headerFreeForeigns
+  ∷ Tagged "foreign" (Path Abs Dir) → UberModule → IO (Set ModuleName)
+headerFreeForeigns foreignDir UberModule {uberModuleForeigns} =
+  foldMap headerFree
+    <$> sequence
+      [ (modname,) <$> Foreign.parseForeignSource (untag foreignDir) path
+      | (_qname, ForeignImport _ann modname path _names) ← uberModuleForeigns
+      ]
+ where
+  headerFree ∷ (ModuleName, Either Foreign.Error Source) → Set ModuleName
+  headerFree = \case
+    (modname, Right Source {header = []}) → Set.singleton modname
+    _ → Set.empty
 
 -- | Lift a single accessor, given the already-parsed sources.
 liftAccessor ∷ Map ModuleName Source → QName → Maybe Exp

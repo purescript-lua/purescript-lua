@@ -2,12 +2,6 @@ UberModule
   { uberModuleBindings =
     [ Standalone
       ( QName
-        { qnameModuleName = ModuleName "Data.Show", qnameName = Name "foreign"
-        }, ForeignImport Nothing
-        ( ModuleName "Data.Show" ) ".spago/p/prelude/5718c84fdde6247749cb053e816df696c30fe691/src/Data/Show.purs"
-        [ ( Nothing, Name "showIntImpl" ) ]
-      ), Standalone
-      ( QName
         { qnameModuleName = ModuleName "Control.Monad.ST.Internal", qnameName = Name "foreign"
         }, ForeignImport Nothing
         ( ModuleName "Control.Monad.ST.Internal" ) ".spago/p/st/6d41fd264a05b9a089e79322b22b906597ea7c36/src/Control/Monad/ST/Internal.purs"
@@ -25,12 +19,6 @@ UberModule
         }, ObjectProp Nothing
         ( Ref Nothing ( Imported ( ModuleName "Control.Monad.ST.Internal" ) ( Name "foreign" ) ) )
         ( PropName "modifyImpl" )
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "foreign"
-        }, ForeignImport Nothing
-        ( ModuleName "Effect.Console" ) ".spago/p/console/f82835a0b873aafe6bd7b14dd30cc150553d4ab9/src/Effect/Console.purs"
-        [ ( Nothing, Name "log" ) ]
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.STDoBlock.Test", qnameName = Name "sumTwice"
@@ -149,12 +137,18 @@ UberModule
       ),
       ( Name "main", AppN Nothing
         ( ObjectProp Nothing
-          ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
+          ( ForeignImport Nothing
+            ( ModuleName "Effect.Console" ) ".spago/p/console/f82835a0b873aafe6bd7b14dd30cc150553d4ab9/src/Effect/Console.purs"
+            [ ( Nothing, Name "log" ) ]
+          )
           ( PropName "log" )
         )
         ( AppN Nothing
           ( ObjectProp Nothing
-            ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
+            ( ForeignImport Nothing
+              ( ModuleName "Data.Show" ) ".spago/p/prelude/5718c84fdde6247749cb053e816df696c30fe691/src/Data/Show.purs"
+              [ ( Nothing, Name "showIntImpl" ) ]
+            )
             ( PropName "showIntImpl" )
           )
           ( AppN Nothing

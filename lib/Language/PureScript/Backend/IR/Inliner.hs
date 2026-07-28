@@ -103,14 +103,17 @@ foreign bodies are the exception:
 @always@ itself, because they exist to beta-reduce at saturated call sites.
 
 The 'ForeignImport' expression itself — the table of a foreign module's
-exports — is the one shape the optimizer refuses to inline even when it is
+exports — is the one shape the inliner refuses to paste even when it is
 referenced exactly once. Its export values are opaque to the IR, and some of
 them are Lua table constructors with identity (e.g. @unit = {}@ in the
 prelude), so pasting the import into its use site — possibly under a lambda —
 would re-evaluate the foreign source per call and allocate fresh tables where
 every site is supposed to share one. The table stays hoisted as a single
-binding and the always-inlined 'ObjectProp' wrappers turn into field reads
-off it.
+binding and the 'ObjectProp' wrappers turn into field reads off it. One late
+pass admits the cases where the re-evaluation provably cannot happen:
+'Language.PureScript.Backend.IR.Optimizer.inlineSingleUseForeignImports'
+dissolves an import that a header-free FFI source produced and that a single
+once-evaluated site reads (see Note [Inlining a single-use foreign import]).
 -}
 
 --------------------------------------------------------------------------------

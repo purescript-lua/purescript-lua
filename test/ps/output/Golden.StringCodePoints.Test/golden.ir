@@ -50,15 +50,12 @@ UberModule
         [ ( Nothing, Name "intDegree" ), ( Nothing, Name "intDiv" ), ( Nothing, Name "intMod" ) ]
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Partial.Unsafe", qnameName = Name "foreign"
-        }, ForeignImport Nothing
-        ( ModuleName "Partial.Unsafe" ) ".spago/p/partial/2f5c69b1de8f88f1fbc9b98281c9436088ae0789/src/Partial/Unsafe.purs"
-        [ ( Nothing, Name "_unsafePartial" ) ]
-      ), Standalone
-      ( QName
         { qnameModuleName = ModuleName "Partial.Unsafe", qnameName = Name "_unsafePartial"
         }, ObjectProp Nothing
-        ( Ref Nothing ( Imported ( ModuleName "Partial.Unsafe" ) ( Name "foreign" ) ) )
+        ( ForeignImport Nothing
+          ( ModuleName "Partial.Unsafe" ) ".spago/p/partial/2f5c69b1de8f88f1fbc9b98281c9436088ae0789/src/Partial/Unsafe.purs"
+          [ ( Nothing, Name "_unsafePartial" ) ]
+        )
         ( PropName "_unsafePartial" )
       ), Standalone
       ( QName
@@ -80,15 +77,12 @@ UberModule
         ( PropName "toCharCode" )
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Data.String.Unsafe", qnameName = Name "foreign"
-        }, ForeignImport Nothing
-        ( ModuleName "Data.String.Unsafe" ) ".spago/p/strings/395c4b6cb74271b5570a1d7632fb6522785792af/src/Data/String/Unsafe.purs"
-        [ ( Nothing, Name "charAt" ) ]
-      ), Standalone
-      ( QName
         { qnameModuleName = ModuleName "Data.String.Unsafe", qnameName = Name "charAt"
         }, ObjectProp Nothing
-        ( Ref Nothing ( Imported ( ModuleName "Data.String.Unsafe" ) ( Name "foreign" ) ) )
+        ( ForeignImport Nothing
+          ( ModuleName "Data.String.Unsafe" ) ".spago/p/strings/395c4b6cb74271b5570a1d7632fb6522785792af/src/Data/String/Unsafe.purs"
+          [ ( Nothing, Name "charAt" ) ]
+        )
         ( PropName "charAt" )
       ), Standalone
       ( QName
@@ -111,15 +105,12 @@ UberModule
         ]
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "foreign"
-        }, ForeignImport Nothing
-        ( ModuleName "Effect.Console" ) ".spago/p/console/f82835a0b873aafe6bd7b14dd30cc150553d4ab9/src/Effect/Console.purs"
-        [ ( Nothing, Name "log" ) ]
-      ), Standalone
-      ( QName
         { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "log"
         }, ObjectProp Nothing
-        ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
+        ( ForeignImport Nothing
+          ( ModuleName "Effect.Console" ) ".spago/p/console/f82835a0b873aafe6bd7b14dd30cc150553d4ab9/src/Effect/Console.purs"
+          [ ( Nothing, Name "log" ) ]
+        )
         ( PropName "log" )
       ), RecursiveGroup
       (

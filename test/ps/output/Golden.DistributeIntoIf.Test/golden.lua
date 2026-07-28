@@ -1,11 +1,6 @@
-local Data_Show_foreign = { showIntImpl = function(n) return tostring(n) end }
-local Data_Show_showIntImpl = Data_Show_foreign.showIntImpl
-local Effect_Console_foreign = {
-  log = function(s) return function() print(s) end end
-}
-local Effect_Console_log = Effect_Console_foreign.log
-local Golden_DistributeIntoIf_Test_foreign = { flag = true }
-local Golden_DistributeIntoIf_Test_flag = Golden_DistributeIntoIf_Test_foreign.flag
+local Data_Show_showIntImpl = function(n) return tostring(n) end
+local Effect_Console_log = function(s) return function() print(s) end end
+local Golden_DistributeIntoIf_Test_flag = true
 local Data_HeytingAlgebra_heytingAlgebraBoolean
 Data_HeytingAlgebra_heytingAlgebraBoolean = {
   ff = false,

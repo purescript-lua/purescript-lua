@@ -1,6 +1,5 @@
 local M = {}
-local Data_Unit_foreign = { unit = {} }
-M.Data_Unit_unit = Data_Unit_foreign.unit
+M.Data_Unit_unit = {}
 local Data_Show_foreign = { showIntImpl = function(n) return tostring(n) end }
 local Control_Monad_ST_Internal_foreign = {
   map_ = function(f)

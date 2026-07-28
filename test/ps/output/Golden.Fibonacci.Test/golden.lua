@@ -1,7 +1,3 @@
-local Data_Show_foreign = { showIntImpl = function(n) return tostring(n) end }
-local Effect_Console_foreign = {
-  log = function(s) return function() print(s) end end
-}
 local Golden_Fibonacci_Test_fib
 Golden_Fibonacci_Test_fib = function(v)
   if 0 == v then
@@ -12,4 +8,6 @@ Golden_Fibonacci_Test_fib = function(v)
     return Golden_Fibonacci_Test_fib(v - 1) + Golden_Fibonacci_Test_fib(v - 2)
   end
 end
-return Effect_Console_foreign.log(Data_Show_foreign.showIntImpl(Golden_Fibonacci_Test_fib(32)))()
+return (function(s) return function() print(s) end end)((function(n)
+  return tostring(n)
+end)(Golden_Fibonacci_Test_fib(32)))()

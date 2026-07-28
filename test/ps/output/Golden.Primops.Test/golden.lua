@@ -1,9 +1,6 @@
 local M = {}
 local Data_Show_foreign = { showIntImpl = function(n) return tostring(n) end }
-local Effect_Console_foreign = {
-  log = function(s) return function() print(s) end end
-}
-local Effect_Console_log = Effect_Console_foreign.log
+local Effect_Console_log = function(s) return function() print(s) end end
 local Data_HeytingAlgebra_heytingAlgebraBoolean
 Data_HeytingAlgebra_heytingAlgebraBoolean = {
   ff = false,

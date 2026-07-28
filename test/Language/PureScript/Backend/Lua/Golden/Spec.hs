@@ -16,7 +16,10 @@ import Language.PureScript.Backend.IR.Linker (LinkMode (..))
 import Language.PureScript.Backend.IR.Linker qualified as IR
 import Language.PureScript.Backend.IR.Linker qualified as Linker
 import Language.PureScript.Backend.IR.Linter qualified as Linter
-import Language.PureScript.Backend.IR.Optimizer (optimizedUberModuleChecked)
+import Language.PureScript.Backend.IR.Optimizer
+  ( ProgramFacts (..)
+  , optimizedUberModuleChecked
+  )
 import Language.PureScript.Backend.IR.Pass
   ( PassCheckFailure (ResultDanglingImports)
   )
@@ -319,16 +322,23 @@ compileCorefn outputDir uberModuleName = do
   -- as Backend.compileModules does, so the .ir goldens reflect the same
   -- pipeline. Foreign paths recorded in the CoreFn are relative to test/ps
   -- (the spago build dir), so resolve them from there, mirroring compileIr.
-  liftedModule ← liftIO $ withCurrentDir [reldir|test/ps|] do
-    foreignPath ← Tagged <$> makeAbsolute [reldir|foreign|]
-    ForeignLift.liftForeigns foreignPath uberModule
-      & handleForeignLiftError
-      & Oops.runOops
+  (liftedModule, factsHeaderFreeForeigns) ←
+    liftIO $ withCurrentDir [reldir|test/ps|] do
+      foreignPath ← Tagged <$> makeAbsolute [reldir|foreign|]
+      lifted ←
+        ForeignLift.liftForeigns foreignPath uberModule
+          & handleForeignLiftError
+          & Oops.runOops
+      -- See Note [Inlining a single-use foreign import]
+      (lifted,) <$> ForeignLift.headerFreeForeigns foreignPath lifted
   -- The checked runner lints every pass boundary (including every fixpoint
   -- iteration), so each golden module doubles as a scope-invariant test of
   -- the whole pipeline.
   optimized ←
-    either (fail . show) pure (optimizedUberModuleChecked dataDecls liftedModule)
+    either (fail . show) pure $
+      optimizedUberModuleChecked
+        ProgramFacts {factsDataTypes = dataDecls, factsHeaderFreeForeigns}
+        liftedModule
   -- Golden modules are closed (real linker output), so the optimized result
   -- must resolve every imported reference — a dangling one compiles to a nil
   -- call at runtime (issue #297). Unit fixtures cannot carry this check;

@@ -2,44 +2,31 @@ UberModule
   { uberModuleBindings =
     [ Standalone
       ( QName
-        { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "foreign"
-        }, ForeignImport Nothing
-        ( ModuleName "Effect.Console" ) ".spago/p/console/f82835a0b873aafe6bd7b14dd30cc150553d4ab9/src/Effect/Console.purs"
-        [ ( Nothing, Name "log" ) ]
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Golden.ForeignSharing.Token", qnameName = Name "foreign"
-        }, ForeignImport Nothing
-        ( ModuleName "Golden.ForeignSharing.Token" ) "src/Golden/ForeignSharing/Token.purs"
-        [ ( Nothing, Name "token" ) ]
-      ), Standalone
-      ( QName
         { qnameModuleName = ModuleName "Golden.ForeignSharing.Token", qnameName = Name "token"
         }, ObjectProp Nothing
-        ( Ref Nothing
-          ( Imported ( ModuleName "Golden.ForeignSharing.Token" ) ( Name "foreign" ) )
+        ( ForeignImport Nothing
+          ( ModuleName "Golden.ForeignSharing.Token" ) "src/Golden/ForeignSharing/Token.purs"
+          [ ( Nothing, Name "token" ) ]
         )
         ( PropName "token" )
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Golden.ForeignSharing.Test", qnameName = Name "foreign"
-        }, ForeignImport Nothing
-        ( ModuleName "Golden.ForeignSharing.Test" ) "src/Golden/ForeignSharing/Test.purs"
-        [ ( Nothing, Name "same" ) ]
       )
     ], uberModuleForeigns = [], uberModuleExports =
     [
       ( Name "main", AppN Nothing
         ( ObjectProp Nothing
-          ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
+          ( ForeignImport Nothing
+            ( ModuleName "Effect.Console" ) ".spago/p/console/f82835a0b873aafe6bd7b14dd30cc150553d4ab9/src/Effect/Console.purs"
+            [ ( Nothing, Name "log" ) ]
+          )
           ( PropName "log" )
         )
         ( IfThenElse Nothing
           ( AppN Nothing
             ( AppN Nothing
               ( ObjectProp Nothing
-                ( Ref Nothing
-                  ( Imported ( ModuleName "Golden.ForeignSharing.Test" ) ( Name "foreign" ) )
+                ( ForeignImport Nothing
+                  ( ModuleName "Golden.ForeignSharing.Test" ) "src/Golden/ForeignSharing/Test.purs"
+                  [ ( Nothing, Name "same" ) ]
                 )
                 ( PropName "same" )
               )
