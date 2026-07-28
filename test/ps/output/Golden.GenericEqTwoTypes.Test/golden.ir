@@ -66,28 +66,28 @@ UberModule
               )
             ),
             ( PropName "conj", AbsN Nothing
-              ( ParamNamed Nothing ( Name "b1$210" ) :| [] )
+              ( ParamNamed Nothing ( Name "b1$0" ) :| [] )
               ( AbsN Nothing
-                ( ParamNamed Nothing ( Name "b2$211" ) :| [] )
+                ( ParamNamed Nothing ( Name "b2$0" ) :| [] )
                 ( PrimBinOp Nothing PrimAnd
-                  ( Ref Nothing ( Local ( Name "b1$210" ) ) )
-                  ( Ref Nothing ( Local ( Name "b2$211" ) ) )
+                  ( Ref Nothing ( Local ( Name "b1$0" ) ) )
+                  ( Ref Nothing ( Local ( Name "b2$0" ) ) )
                 )
               )
             ),
             ( PropName "disj", AbsN Nothing
-              ( ParamNamed Nothing ( Name "b1$208" ) :| [] )
+              ( ParamNamed Nothing ( Name "b1$1" ) :| [] )
               ( AbsN Nothing
-                ( ParamNamed Nothing ( Name "b2$209" ) :| [] )
+                ( ParamNamed Nothing ( Name "b2$1" ) :| [] )
                 ( PrimBinOp Nothing PrimOr
-                  ( Ref Nothing ( Local ( Name "b1$208" ) ) )
-                  ( Ref Nothing ( Local ( Name "b2$209" ) ) )
+                  ( Ref Nothing ( Local ( Name "b1$1" ) ) )
+                  ( Ref Nothing ( Local ( Name "b2$1" ) ) )
                 )
               )
             ),
             ( PropName "not", AbsN Nothing
-              ( ParamNamed Nothing ( Name "b$207" ) :| [] )
-              ( PrimNot Nothing ( Ref Nothing ( Local ( Name "b$207" ) ) ) )
+              ( ParamNamed Nothing ( Name "b$0" ) :| [] )
+              ( PrimNot Nothing ( Ref Nothing ( Local ( Name "b$0" ) ) ) )
             )
           ]
         ) :| []
@@ -96,12 +96,12 @@ UberModule
         { qnameModuleName = ModuleName "Data.Eq", qnameName = Name "eqInt" }, LiteralObject Nothing
         [
           ( PropName "eq", AbsN Nothing
-            ( ParamNamed Nothing ( Name "r1$203" ) :| [] )
+            ( ParamNamed Nothing ( Name "r1$0" ) :| [] )
             ( AbsN Nothing
-              ( ParamNamed Nothing ( Name "r2$204" ) :| [] )
+              ( ParamNamed Nothing ( Name "r2$0" ) :| [] )
               ( Eq Nothing
-                ( Ref Nothing ( Local ( Name "r1$203" ) ) )
-                ( Ref Nothing ( Local ( Name "r2$204" ) ) )
+                ( Ref Nothing ( Local ( Name "r1$0" ) ) )
+                ( Ref Nothing ( Local ( Name "r2$0" ) ) )
               )
             )
           )
@@ -265,56 +265,56 @@ UberModule
       ( QName
         { qnameModuleName = ModuleName "Golden.GenericEqTwoTypes.Test", qnameName = Name "genericEqSum"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "dictGenericEq1$5" ) :| [] )
+        ( ParamNamed Nothing ( Name "dictGenericEq1$0" ) :| [] )
         ( LiteralObject Nothing
           [
             ( PropName "genericEq'", AbsN Nothing
-              ( ParamNamed Nothing ( Name "v$7" ) :| [] )
+              ( ParamNamed Nothing ( Name "v$0" ) :| [] )
               ( AbsN Nothing
-                ( ParamNamed Nothing ( Name "v1$8" ) :| [] )
+                ( ParamNamed Nothing ( Name "v1$0" ) :| [] )
                 ( Let Nothing
                   ( Standalone
-                    ( Nothing, Name "$cse1357", ReflectCtor Nothing
-                      ( Ref Nothing ( Local ( Name "v1$8" ) ) )
+                    ( Nothing, Name "$cse0", ReflectCtor Nothing
+                      ( Ref Nothing ( Local ( Name "v1$0" ) ) )
                     ) :| []
                   )
                   ( Let Nothing
                     ( Standalone
-                      ( Nothing, Name "$cse1356", ReflectCtor Nothing
-                        ( Ref Nothing ( Local ( Name "v$7" ) ) )
+                      ( Nothing, Name "$cse1", ReflectCtor Nothing
+                        ( Ref Nothing ( Local ( Name "v$0" ) ) )
                       ) :| []
                     )
                     ( IfThenElse Nothing
                       ( Eq Nothing
                         ( LiteralString Nothing "Data.Generic.Rep∷Sum.Inl" )
-                        ( Ref Nothing ( Local ( Name "$cse1356" ) ) )
+                        ( Ref Nothing ( Local ( Name "$cse1" ) ) )
                       )
                       ( Eq Nothing
                         ( LiteralString Nothing "Data.Generic.Rep∷Sum.Inl" )
-                        ( Ref Nothing ( Local ( Name "$cse1357" ) ) )
+                        ( Ref Nothing ( Local ( Name "$cse0" ) ) )
                       )
                       ( PrimBinOp Nothing PrimAnd
                         ( Eq Nothing
                           ( LiteralString Nothing "Data.Generic.Rep∷Sum.Inr" )
-                          ( Ref Nothing ( Local ( Name "$cse1356" ) ) )
+                          ( Ref Nothing ( Local ( Name "$cse1" ) ) )
                         )
                         ( PrimBinOp Nothing PrimAnd
                           ( Eq Nothing
                             ( LiteralString Nothing "Data.Generic.Rep∷Sum.Inr" )
-                            ( Ref Nothing ( Local ( Name "$cse1357" ) ) )
+                            ( Ref Nothing ( Local ( Name "$cse0" ) ) )
                           )
                           ( AppN Nothing
                             ( AppN Nothing
                               ( ObjectProp Nothing
-                                ( Ref Nothing ( Local ( Name "dictGenericEq1$5" ) ) )
+                                ( Ref Nothing ( Local ( Name "dictGenericEq1$0" ) ) )
                                 ( PropName "genericEq'" )
                               )
                               ( DataArgumentByIndex Nothing SumType 0
-                                ( Ref Nothing ( Local ( Name "v$7" ) ) ) :| []
+                                ( Ref Nothing ( Local ( Name "v$0" ) ) ) :| []
                               )
                             )
                             ( DataArgumentByIndex Nothing SumType 0
-                              ( Ref Nothing ( Local ( Name "v1$8" ) ) ) :| []
+                              ( Ref Nothing ( Local ( Name "v1$0" ) ) ) :| []
                             )
                           )
                         )
@@ -330,12 +330,12 @@ UberModule
       ( QName
         { qnameModuleName = ModuleName "Golden.GenericEqTwoTypes.Test", qnameName = Name "eqRec"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "dictEqRecord$214" ) :| [] )
+        ( ParamNamed Nothing ( Name "dictEqRecord$0" ) :| [] )
         ( LiteralObject Nothing
           [
             ( PropName "eq", AppN Nothing
               ( ObjectProp Nothing
-                ( Ref Nothing ( Local ( Name "dictEqRecord$214" ) ) )
+                ( Ref Nothing ( Local ( Name "dictEqRecord$0" ) ) )
                 ( PropName "eqRecord" )
               )
               ( Ref Nothing ( Imported ( ModuleName "Type.Proxy" ) ( Name "Proxy" ) ) :| [] )
@@ -347,8 +347,8 @@ UberModule
         { qnameModuleName = ModuleName "Golden.GenericEqTwoTypes.Test", qnameName = Name "eqRowCons$w"
         }, AbsN Nothing
         ( ParamNamed Nothing
-          ( Name "eqRowCons$p3$226" ) :|
-          [ ParamNamed Nothing ( Name "eqRowCons$p4$227" ) ]
+          ( Name "eqRowCons$p3$0" ) :|
+          [ ParamNamed Nothing ( Name "eqRowCons$p4$0" ) ]
         )
         ( AppN Nothing
           ( Ref Nothing ( Imported ( ModuleName "Data.Eq" ) ( Name "eqRowCons$w" ) ) )
@@ -364,8 +364,8 @@ UberModule
             ] :|
             [ Ref Nothing
               ( Imported ( ModuleName "Prim" ) ( Name "undefined" ) ), Ref Nothing
-              ( Local ( Name "eqRowCons$p3$226" ) ), Ref Nothing
-              ( Local ( Name "eqRowCons$p4$227" ) )
+              ( Local ( Name "eqRowCons$p3$0" ) ), Ref Nothing
+              ( Local ( Name "eqRowCons$p4$0" ) )
             ]
           )
         )
@@ -513,7 +513,7 @@ UberModule
                   ( ParamNamed Nothing ( Name "y" ) :| [] )
                   ( Let Nothing
                     ( Standalone
-                      ( Nothing, Name "$cse1358", ObjectProp Nothing
+                      ( Nothing, Name "$cse0", ObjectProp Nothing
                         ( Ref Nothing
                           ( Imported
                             ( ModuleName "Golden.GenericEqTwoTypes.Test" )
@@ -628,12 +628,12 @@ UberModule
                           )
                         )
                         ( AppN Nothing
-                          ( Ref Nothing ( Local ( Name "$cse1358" ) ) )
+                          ( Ref Nothing ( Local ( Name "$cse0" ) ) )
                           ( Ref Nothing ( Local ( Name "x" ) ) :| [] ) :| []
                         )
                       )
                       ( AppN Nothing
-                        ( Ref Nothing ( Local ( Name "$cse1358" ) ) )
+                        ( Ref Nothing ( Local ( Name "$cse0" ) ) )
                         ( Ref Nothing ( Local ( Name "y" ) ) :| [] ) :| []
                       )
                     )
@@ -668,7 +668,7 @@ UberModule
                   ( ParamNamed Nothing ( Name "y" ) :| [] )
                   ( Let Nothing
                     ( Standalone
-                      ( Nothing, Name "$cse1359", ObjectProp Nothing
+                      ( Nothing, Name "$cse0", ObjectProp Nothing
                         ( Ref Nothing
                           ( Imported
                             ( ModuleName "Golden.GenericEqTwoTypes.Test" )
@@ -761,12 +761,12 @@ UberModule
                           )
                         )
                         ( AppN Nothing
-                          ( Ref Nothing ( Local ( Name "$cse1359" ) ) )
+                          ( Ref Nothing ( Local ( Name "$cse0" ) ) )
                           ( Ref Nothing ( Local ( Name "x" ) ) :| [] ) :| []
                         )
                       )
                       ( AppN Nothing
-                        ( Ref Nothing ( Local ( Name "$cse1359" ) ) )
+                        ( Ref Nothing ( Local ( Name "$cse0" ) ) )
                         ( Ref Nothing ( Local ( Name "y" ) ) :| [] ) :| []
                       )
                     )
@@ -797,17 +797,17 @@ UberModule
         ( Imported ( ModuleName "Golden.GenericEqTwoTypes.Test" ) ( Name "Cons" ) )
       ),
       ( Name "cons", AbsN Nothing
-        ( ParamNamed Nothing ( Name "cons$p1$219" ) :| [] )
+        ( ParamNamed Nothing ( Name "cons$p1$0" ) :| [] )
         ( AbsN Nothing
-          ( ParamNamed Nothing ( Name "cons$p2$220" ) :| [] )
+          ( ParamNamed Nothing ( Name "cons$p2$0" ) :| [] )
           ( Ctor Nothing SumType
             ( ModuleName "Golden.GenericEqTwoTypes.Test" )
             ( TyName "List" )
             ( CtorName "Cons" )
             [ LiteralObject Nothing
               [
-                ( PropName "head", Ref Nothing ( Local ( Name "cons$p1$219" ) ) ),
-                ( PropName "tail", Ref Nothing ( Local ( Name "cons$p2$220" ) ) )
+                ( PropName "head", Ref Nothing ( Local ( Name "cons$p1$0" ) ) ),
+                ( PropName "tail", Ref Nothing ( Local ( Name "cons$p2$0" ) ) )
               ]
             ]
           )
@@ -820,20 +820,20 @@ UberModule
         ( Imported ( ModuleName "Golden.GenericEqTwoTypes.Test" ) ( Name "Node" ) )
       ),
       ( Name "node", AbsN Nothing
-        ( ParamNamed Nothing ( Name "node$p1$221" ) :| [] )
+        ( ParamNamed Nothing ( Name "node$p1$0" ) :| [] )
         ( AbsN Nothing
-          ( ParamNamed Nothing ( Name "node$p2$222" ) :| [] )
+          ( ParamNamed Nothing ( Name "node$p2$0" ) :| [] )
           ( AbsN Nothing
-            ( ParamNamed Nothing ( Name "node$p3$223" ) :| [] )
+            ( ParamNamed Nothing ( Name "node$p3$0" ) :| [] )
             ( Ctor Nothing SumType
               ( ModuleName "Golden.GenericEqTwoTypes.Test" )
               ( TyName "Tree" )
               ( CtorName "Node" )
               [ LiteralObject Nothing
                 [
-                  ( PropName "left", Ref Nothing ( Local ( Name "node$p1$221" ) ) ),
-                  ( PropName "value", Ref Nothing ( Local ( Name "node$p2$222" ) ) ),
-                  ( PropName "right", Ref Nothing ( Local ( Name "node$p3$223" ) ) )
+                  ( PropName "left", Ref Nothing ( Local ( Name "node$p1$0" ) ) ),
+                  ( PropName "value", Ref Nothing ( Local ( Name "node$p2$0" ) ) ),
+                  ( PropName "right", Ref Nothing ( Local ( Name "node$p3$0" ) ) )
                 ]
               ]
             )
@@ -844,7 +844,7 @@ UberModule
         ( ParamUnused Nothing :| [] )
         ( Let Nothing
           ( Standalone
-            ( Nothing, Name "$cse1363", Ctor Nothing SumType
+            ( Nothing, Name "$cse0", Ctor Nothing SumType
               ( ModuleName "Golden.GenericEqTwoTypes.Test" )
               ( TyName "List" )
               ( CtorName "Cons" )
@@ -860,7 +860,7 @@ UberModule
           )
           ( Let Nothing
             ( Standalone
-              ( Nothing, Name "$cse1362", Ctor Nothing SumType
+              ( Nothing, Name "$cse1", Ctor Nothing SumType
                 ( ModuleName "Golden.GenericEqTwoTypes.Test" )
                 ( TyName "Tree" )
                 ( CtorName "Node" )
@@ -879,21 +879,21 @@ UberModule
             )
             ( Let Nothing
               ( Standalone
-                ( Nothing, Name "$cse1361", Ctor Nothing SumType
+                ( Nothing, Name "$cse2", Ctor Nothing SumType
                   ( ModuleName "Golden.GenericEqTwoTypes.Test" )
                   ( TyName "List" )
                   ( CtorName "Cons" )
                   [ LiteralObject Nothing
                     [
                       ( PropName "head", LiteralInt Nothing 1 ),
-                      ( PropName "tail", Ref Nothing ( Local ( Name "$cse1363" ) ) )
+                      ( PropName "tail", Ref Nothing ( Local ( Name "$cse0" ) ) )
                     ]
                   ]
                 ) :| []
               )
               ( Let Nothing
                 ( Standalone
-                  ( Nothing, Name "$cse1360", Ctor Nothing SumType
+                  ( Nothing, Name "$cse3", Ctor Nothing SumType
                     ( ModuleName "Golden.GenericEqTwoTypes.Test" )
                     ( TyName "Tree" )
                     ( CtorName "Node" )
@@ -906,7 +906,7 @@ UberModule
                           )
                         ),
                         ( PropName "value", LiteralInt Nothing 1 ),
-                        ( PropName "right", Ref Nothing ( Local ( Name "$cse1362" ) ) )
+                        ( PropName "right", Ref Nothing ( Local ( Name "$cse1" ) ) )
                       ]
                     ]
                   ) :| []
@@ -925,9 +925,9 @@ UberModule
                                   ( Name "eq1" )
                                 )
                               )
-                              ( Ref Nothing ( Local ( Name "$cse1361" ) ) :| [] )
+                              ( Ref Nothing ( Local ( Name "$cse2" ) ) :| [] )
                             )
-                            ( Ref Nothing ( Local ( Name "$cse1361" ) ) :| [] )
+                            ( Ref Nothing ( Local ( Name "$cse2" ) ) :| [] )
                           )
                           ( LiteralString Nothing "true" )
                           ( LiteralString Nothing "false" ) :| []
@@ -969,7 +969,7 @@ UberModule
                                   ] :| []
                                 )
                               )
-                              ( Ref Nothing ( Local ( Name "$cse1363" ) ) :| [] )
+                              ( Ref Nothing ( Local ( Name "$cse0" ) ) :| [] )
                             )
                             ( LiteralString Nothing "true" )
                             ( LiteralString Nothing "false" ) :| []
@@ -993,9 +993,9 @@ UberModule
                                     ( Name "eq" )
                                   )
                                 )
-                                ( Ref Nothing ( Local ( Name "$cse1360" ) ) :| [] )
+                                ( Ref Nothing ( Local ( Name "$cse3" ) ) :| [] )
                               )
-                              ( Ref Nothing ( Local ( Name "$cse1360" ) ) :| [] )
+                              ( Ref Nothing ( Local ( Name "$cse3" ) ) :| [] )
                             )
                             ( LiteralString Nothing "true" )
                             ( LiteralString Nothing "false" ) :| []
@@ -1042,7 +1042,7 @@ UberModule
                               ] :| []
                             )
                           )
-                          ( Ref Nothing ( Local ( Name "$cse1362" ) ) :| [] )
+                          ( Ref Nothing ( Local ( Name "$cse1" ) ) :| [] )
                         )
                         ( LiteralString Nothing "true" )
                         ( LiteralString Nothing "false" ) :| []

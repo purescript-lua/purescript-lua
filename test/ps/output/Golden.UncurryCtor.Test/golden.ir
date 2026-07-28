@@ -63,12 +63,12 @@ UberModule
       ( QName
         { qnameModuleName = ModuleName "Golden.UncurryCtor.Test", qnameName = Name "logShow"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "logShow$p2$319" ) :| [] )
+        ( ParamNamed Nothing ( Name "logShow$p2$0" ) :| [] )
         ( AppN Nothing
           ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
           ( AppN Nothing
             ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
-            ( Ref Nothing ( Local ( Name "logShow$p2$319" ) ) :| [] ) :| []
+            ( Ref Nothing ( Local ( Name "logShow$p2$0" ) ) :| [] ) :| []
           )
         )
       ), Standalone
@@ -254,31 +254,31 @@ UberModule
         ( ParamNamed Nothing ( Name "v" ) :| [] )
         ( Let Nothing
           ( Standalone
-            ( Nothing, Name "$cse585", DataArgumentByIndex Nothing SumType 0
+            ( Nothing, Name "$cse0", DataArgumentByIndex Nothing SumType 0
               ( Ref Nothing ( Local ( Name "v" ) ) )
             ) :| []
           )
           ( Let Nothing
             ( Standalone
-              ( Nothing, Name "$cse584", ReflectCtor Nothing
+              ( Nothing, Name "$cse1", ReflectCtor Nothing
                 ( Ref Nothing ( Local ( Name "v" ) ) )
               ) :| []
             )
             ( IfThenElse Nothing
               ( Eq Nothing
                 ( LiteralString Nothing "Golden.UncurryCtor.Test∷Shape.Origin" )
-                ( Ref Nothing ( Local ( Name "$cse584" ) ) )
+                ( Ref Nothing ( Local ( Name "$cse1" ) ) )
               )
               ( LiteralInt Nothing 0 )
               ( IfThenElse Nothing
                 ( Eq Nothing
                   ( LiteralString Nothing "Golden.UncurryCtor.Test∷Shape.Dot" )
-                  ( Ref Nothing ( Local ( Name "$cse584" ) ) )
+                  ( Ref Nothing ( Local ( Name "$cse1" ) ) )
                 )
-                ( Ref Nothing ( Local ( Name "$cse585" ) ) )
+                ( Ref Nothing ( Local ( Name "$cse0" ) ) )
                 ( PrimBinOp Nothing PrimAdd
                   ( PrimBinOp Nothing PrimAdd
-                    ( Ref Nothing ( Local ( Name "$cse585" ) ) )
+                    ( Ref Nothing ( Local ( Name "$cse0" ) ) )
                     ( DataArgumentByIndex Nothing SumType 1 ( Ref Nothing ( Local ( Name "v" ) ) ) )
                   )
                   ( DataArgumentByIndex Nothing SumType 2 ( Ref Nothing ( Local ( Name "v" ) ) ) )
@@ -300,38 +300,38 @@ UberModule
         ( Imported ( ModuleName "Golden.UncurryCtor.Test" ) ( Name "Tri" ) )
       ),
       ( Name "Pair", AbsN Nothing
-        ( ParamNamed Nothing ( Name "Pair$p1$316" ) :| [] )
+        ( ParamNamed Nothing ( Name "Pair$p1$0" ) :| [] )
         ( AbsN Nothing
-          ( ParamNamed Nothing ( Name "Pair$p2$317" ) :| [] )
+          ( ParamNamed Nothing ( Name "Pair$p2$0" ) :| [] )
           ( Ctor Nothing ProductType
             ( ModuleName "Golden.UncurryCtor.Test" )
             ( TyName "Pair" )
             ( CtorName "Pair" )
             [ Ref Nothing
-              ( Local ( Name "Pair$p1$316" ) ), Ref Nothing
-              ( Local ( Name "Pair$p2$317" ) )
+              ( Local ( Name "Pair$p1$0" ) ), Ref Nothing
+              ( Local ( Name "Pair$p2$0" ) )
             ]
           )
         )
       ),
       ( Name "Boxed", AbsN Nothing
-        ( ParamNamed Nothing ( Name "x$1" ) :| [] )
-        ( Ref Nothing ( Local ( Name "x$1" ) ) )
+        ( ParamNamed Nothing ( Name "x$0" ) :| [] )
+        ( Ref Nothing ( Local ( Name "x$0" ) ) )
       ),
       ( Name "Nil", Ref Nothing
         ( Imported ( ModuleName "Golden.UncurryCtor.Test" ) ( Name "Nil" ) )
       ),
       ( Name "Cons", AbsN Nothing
-        ( ParamNamed Nothing ( Name "Cons$p1$314" ) :| [] )
+        ( ParamNamed Nothing ( Name "Cons$p1$0" ) :| [] )
         ( AbsN Nothing
-          ( ParamNamed Nothing ( Name "Cons$p2$315" ) :| [] )
+          ( ParamNamed Nothing ( Name "Cons$p2$0" ) :| [] )
           ( Ctor Nothing SumType
             ( ModuleName "Golden.UncurryCtor.Test" )
             ( TyName "IntList" )
             ( CtorName "Cons" )
             [ Ref Nothing
-              ( Local ( Name "Cons$p1$314" ) ), Ref Nothing
-              ( Local ( Name "Cons$p2$315" ) )
+              ( Local ( Name "Cons$p1$0" ) ), Ref Nothing
+              ( Local ( Name "Cons$p2$0" ) )
             ]
           )
         )
@@ -534,17 +534,17 @@ UberModule
                                   )
                                 )
                                 ( AbsN Nothing
-                                  ( ParamNamed Nothing ( Name "v2$303" ) :| [] )
+                                  ( ParamNamed Nothing ( Name "v2$0" ) :| [] )
                                   ( IfThenElse Nothing
                                     ( Eq Nothing
                                       ( LiteralString Nothing "Data.Maybe∷Maybe.Nothing" )
                                       ( ReflectCtor Nothing
-                                        ( Ref Nothing ( Local ( Name "v2$303" ) ) )
+                                        ( Ref Nothing ( Local ( Name "v2$0" ) ) )
                                       )
                                     )
                                     ( LiteralInt Nothing 0 )
                                     ( DataArgumentByIndex Nothing SumType 0
-                                      ( Ref Nothing ( Local ( Name "v2$303" ) ) )
+                                      ( Ref Nothing ( Local ( Name "v2$0" ) ) )
                                     )
                                   ) :| []
                                 )
@@ -558,12 +558,12 @@ UberModule
                                     )
                                   )
                                   ( AbsN Nothing
-                                    ( ParamNamed Nothing ( Name "value0$304" ) :| [] )
+                                    ( ParamNamed Nothing ( Name "value0$0" ) :| [] )
                                     ( Ctor Nothing SumType
                                       ( ModuleName "Data.Maybe" )
                                       ( TyName "Maybe" )
                                       ( CtorName "Just" )
-                                      [ Ref Nothing ( Local ( Name "value0$304" ) ) ]
+                                      [ Ref Nothing ( Local ( Name "value0$0" ) ) ]
                                     ) :| []
                                   )
                                 )

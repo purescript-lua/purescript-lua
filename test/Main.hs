@@ -11,6 +11,7 @@ import Language.PureScript.Backend.IR.Linter.Spec qualified as IRLinter
 import Language.PureScript.Backend.IR.MagicDo.Spec qualified as MagicDo
 import Language.PureScript.Backend.IR.Optimizer.Spec qualified as IROptimizer
 import Language.PureScript.Backend.IR.Pass.Spec qualified as IRPass
+import Language.PureScript.Backend.IR.Renumber.Spec qualified as IRRenumber
 import Language.PureScript.Backend.IR.Spec qualified as IR
 import Language.PureScript.Backend.IR.Types.Spec qualified as Types
 import Language.PureScript.Backend.IR.Uncurry.Spec qualified as IRUncurry
@@ -48,6 +49,7 @@ main = hspec do
   IRCpr.spec
   IRUncurry.spec
   IRUniquify.spec
+  IRRenumber.spec
   LuaOptimizer.spec
   LuaLocalize.spec
   LuaPromote.spec

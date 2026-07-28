@@ -16,13 +16,13 @@ UberModule
       ( QName
         { qnameModuleName = ModuleName "Golden.LongReaderBind.Test", qnameName = Name "go"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "r$995" ) :| [] )
+        ( ParamNamed Nothing ( Name "r$0" ) :| [] )
         ( PrimBinOp Nothing PrimAdd
           ( PrimBinOp Nothing PrimAdd
-            ( Ref Nothing ( Local ( Name "r$995" ) ) )
-            ( Ref Nothing ( Local ( Name "r$995" ) ) )
+            ( Ref Nothing ( Local ( Name "r$0" ) ) )
+            ( Ref Nothing ( Local ( Name "r$0" ) ) )
           )
-          ( Ref Nothing ( Local ( Name "r$995" ) ) )
+          ( Ref Nothing ( Local ( Name "r$0" ) ) )
         )
       )
     ], uberModuleForeigns = [], uberModuleExports =

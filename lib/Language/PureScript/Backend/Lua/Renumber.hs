@@ -5,25 +5,31 @@ monotone supply: suffix-minted as @base$N@ (uniquification, inline-paste
 freshening, deep-bind flattening) or prefix-minted as @$tagN@ (CSE's
 @$cse@, codegen's @$sel@\/@$a@ dispatch locals, the native-loop @$xs@\/@$f@
 atomizers, …), with 'Language.PureScript.Backend.Lua.Name.makeSafe'
-mangling @$@ to @_S_@ on the way into the Lua AST. The index a name carries
-is pipeline history, not artifact structure: any upstream change that
-shifts how much supply earlier code consumes renames every later binder,
-churning emitted modules that are semantically identical.
+mangling @$@ to @_S_@ on the way into the Lua AST.
 
 'renumberChunk' erases that history immediately before printing: every
 supply-drawn index occurring in a local binder is renumbered in
 first-occurrence order, and the binder's references follow
 scope-consistently. Emitted names become a function of the chunk's own
 structure — byte-stable under any upstream change that only perturbs
-supply consumption. See Note [Supply-drawn digit runs] for the domain
-and the safety argument.
+supply consumption. See Note [Supply-drawn digit runs] in
+"Language.PureScript.Backend.Renumber" for which digit runs qualify.
+
+PureScript identifiers cannot contain @$@, so compiler-minted names are
+the only source of the renumbered shapes; a hand-written FFI local that
+happens to spell one is renumbered too, which alpha-renames it
+consistently and is semantically inert. Binders are renamed together
+with exactly their in-scope references, so the rewrite is an
+alpha-renaming; a reference the environment does not bind is a global —
+an FFI file's stdlib or host-API read — and stays untouched, with
+allocation skipping any index whose direct @prefix_S_index@ spelling
+occurs free in the chunk, so a renamed binder cannot capture such a
+global either.
 -}
 module Language.PureScript.Backend.Lua.Renumber (renumberChunk) where
 
-import Data.Char qualified as Char
 import Data.Map qualified as Map
 import Data.Set qualified as Set
-import Data.Text qualified as Text
 import Language.PureScript.Backend.Lua.Name (Name)
 import Language.PureScript.Backend.Lua.Name qualified as Name
 import Language.PureScript.Backend.Lua.Types
@@ -38,42 +44,12 @@ import Language.PureScript.Backend.Lua.Types
   , TableRowF (..)
   , VarF (..)
   )
-
-{- Note [Supply-drawn digit runs]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-A maximal digit run inside a (mangled) name is /supply-drawn/ — an index
-that leaks pipeline history — in exactly two shapes, mirroring the two
-minting grammars:
-
-  * it forms a whole @_S_@-delimited segment: @x_S_223@, and the same
-    run embedded deeper in a derived name, @b_S_5_S_loop@ (the dispatcher
-    a recursive group's leader @b$5@ lends its name to);
-
-  * it terminates the tag of a prefix-minted name — one starting with
-    @_S_@ — as in @$cse1413@ → @_S_cse1413@ or @$a1@ → @_S_a1@.
-
-Digit runs anywhere else are spelling, not supply: @add3@ keeps its @3@,
-and SpecConstr's positional @…_S_sc1Tuple@ keeps its @1@. PureScript
-identifiers cannot contain @$@, so compiler-minted names are the only
-source of these shapes; a hand-written FFI local that happens to spell
-one is renumbered too, which alpha-renames it consistently and is
-semantically inert.
-
-Renumbering assigns each distinct (piece-prefix, run) pair a fresh index
-per prefix, counted up from 0 in first-occurrence order. Keying by the
-run's original spelling keeps a derived name in step with the binder it
-embeds: @b_S_5@ and @b_S_5_S_loop@ renumber to @b_S_0@ and
-@b_S_0_S_loop@. The mapping is injective (same prefix → distinct
-indices; different prefixes → images differ outside their digit runs),
-and an image can never collide with a name the pass leaves alone,
-because every image contains a supply-drawn run and untouched names by
-definition contain none. Binders are renamed together with exactly their
-in-scope references, so the rewrite is an alpha-renaming; a reference
-the environment does not bind is a global — an FFI file's stdlib or
-host-API read — and stays untouched, with allocation skipping any index
-whose direct @prefix_S_index@ spelling occurs free in the chunk, so a
-renamed binder cannot capture such a global either.
--}
+import Language.PureScript.Backend.Renumber
+  ( Allocation
+  , Delimiter (Delimiter)
+  , noAllocation
+  , renumberedText
+  )
 
 --------------------------------------------------------------------------------
 -- Renumbering pass ------------------------------------------------------------
@@ -81,14 +57,7 @@ renamed binder cannot capture such a global either.
 -- | Original binder name → renumbered name, for the binders in scope.
 type Env = Map Name Name
 
-data Supply = Supply
-  { assigned ∷ Map (Text, Text) Natural
-  -- ^ (piece-prefix, original digit run) → allocated index.
-  , counters ∷ Map Text Natural
-  -- ^ Next index to allocate, per piece-prefix.
-  }
-
-type M = State Supply
+type M = State Allocation
 
 {- | Renumber every supply-drawn digit run occurring in a local binder —
 'Local', 'LocalFunction', 'ForNum', 'ForIn' and function parameters — in
@@ -99,7 +68,7 @@ image of the pass is a fixpoint.
 -}
 renumberChunk ∷ Chunk → Chunk
 renumberChunk chunk =
-  evaluatingState (Supply mempty mempty) (goStatements Map.empty chunk)
+  evaluatingState noAllocation (goStatements Map.empty chunk)
  where
   free = freeVarNames chunk
 
@@ -207,11 +176,12 @@ renumberChunk chunk =
       VarField e n → (`VarField` n) <$> goExpA env e
 
   bindName ∷ Env → Name → M (Env, Name)
-  bindName env n = case renumberedText (Name.toText n) of
-    Nothing → pure (env, n)
-    Just mintText → do
-      n' ← Name.unsafeName <$> mintText
-      pure (Map.insert n n' env, n')
+  bindName env n =
+    case renumberedText (Delimiter "_S_") (`Set.member` free) (Name.toText n) of
+      Nothing → pure (env, n)
+      Just mintText → do
+        n' ← Name.unsafeName <$> mintText
+        pure (Map.insert n n' env, n')
 
   bindNames ∷ Env → NonEmpty Name → M (Env, NonEmpty Name)
   bindNames env (n :| ns) = do
@@ -238,51 +208,6 @@ renumberChunk chunk =
         other → pure (env, other)
       (envFinal, rest') ← bindParams env' rest
       pure (envFinal, (c, param') : rest')
-
-  -- 'Just' only when the text contains a supply-drawn run (see Note
-  -- [Supply-drawn digit runs]); the action allocates the new indices.
-  renumberedText ∷ Text → Maybe (M Text)
-  renumberedText whole
-    | any supplyDrawn piecesInContext =
-        Just $
-          Text.concat <$> forM piecesInContext \piece@(run, prefix, _next) →
-            if supplyDrawn piece then allocate prefix run else pure run
-    | otherwise = Nothing
-   where
-    -- Maximal runs of digits alternating with runs of non-digits.
-    pieces = Text.groupBy (\a b → Char.isDigit a == Char.isDigit b) whole
-    piecesInContext =
-      [ (p, Text.concat (take i pieces), pieces !!? (i + 1))
-      | (i, p) ← zip [0 ..] pieces
-      ]
-    supplyDrawn (p, prefix, next)
-      | not (Text.all Char.isDigit p) = False
-      | otherwise =
-          atSegmentEnd
-            && ( "_S_" `Text.isSuffixOf` prefix -- whole segment: base$N
-                   || ( "_S_" `Text.isPrefixOf` whole -- prefix-minted: $tagN
-                          && not ("_S_" `Text.isInfixOf` Text.drop 3 prefix)
-                      )
-               )
-     where
-      atSegmentEnd = maybe True ("_S_" `Text.isPrefixOf`) next
-
-  allocate ∷ Text → Text → M Text
-  allocate prefix run = do
-    Supply {assigned, counters} ← get
-    show <$> case Map.lookup (prefix, run) assigned of
-      Just i → pure i
-      Nothing → do
-        let nextClear c
-              | (prefix <> show c) `Set.member` free = nextClear (c + 1)
-              | otherwise = c
-            i = nextClear (Map.findWithDefault 0 prefix counters)
-        put
-          Supply
-            { assigned = Map.insert (prefix, run) i assigned
-            , counters = Map.insert prefix (i + 1) counters
-            }
-        pure i
 
 --------------------------------------------------------------------------------
 -- Free variables --------------------------------------------------------------

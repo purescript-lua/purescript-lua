@@ -63,7 +63,7 @@ UberModule
               )
             ) :|
             [
-              ( Nothing, Name "record$1", AppN Nothing
+              ( Nothing, Name "record$0", AppN Nothing
                 ( Ref Nothing ( Local ( Name "Lazy_record$0" ) ) )
                 ( LiteralInt Nothing 0 :| [] )
               )
@@ -76,7 +76,7 @@ UberModule
             ( PropName "log" )
           )
           ( AppN Nothing
-            ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "record$1" ) ) ) ( PropName "run" ) )
+            ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "record$0" ) ) ) ( PropName "run" ) )
             ( Ref Nothing ( Imported ( ModuleName "Data.Unit" ) ( Name "unit" ) ) :| [] ) :| []
           )
         )

@@ -64,7 +64,7 @@ UberModule
             ( PropName "foldMap", AbsN Nothing
               ( ParamNamed Nothing ( Name "dictMonoid" ) :| [] )
               ( AbsN Nothing
-                ( ParamNamed Nothing ( Name "f$914" ) :| [] )
+                ( ParamNamed Nothing ( Name "f$0" ) :| [] )
                 ( AppN Nothing
                   ( AppN Nothing
                     ( ObjectProp Nothing
@@ -74,9 +74,9 @@ UberModule
                       ( PropName "foldr" )
                     )
                     ( AbsN Nothing
-                      ( ParamNamed Nothing ( Name "x$915" ) :| [] )
+                      ( ParamNamed Nothing ( Name "x$0" ) :| [] )
                       ( AbsN Nothing
-                        ( ParamNamed Nothing ( Name "acc$916" ) :| [] )
+                        ( ParamNamed Nothing ( Name "acc$0" ) :| [] )
                         ( AppN Nothing
                           ( AppN Nothing
                             ( ObjectProp Nothing
@@ -92,11 +92,11 @@ UberModule
                               ( PropName "append" )
                             )
                             ( AppN Nothing
-                              ( Ref Nothing ( Local ( Name "f$914" ) ) )
-                              ( Ref Nothing ( Local ( Name "x$915" ) ) :| [] ) :| []
+                              ( Ref Nothing ( Local ( Name "f$0" ) ) )
+                              ( Ref Nothing ( Local ( Name "x$0" ) ) :| [] ) :| []
                             )
                           )
-                          ( Ref Nothing ( Local ( Name "acc$916" ) ) :| [] )
+                          ( Ref Nothing ( Local ( Name "acc$0" ) ) :| [] )
                         )
                       ) :| []
                     )
@@ -172,9 +172,9 @@ UberModule
               ( LiteralObject Nothing
                 [
                   ( PropName "map", AbsN Nothing
-                    ( ParamNamed Nothing ( Name "f$929" ) :| [] )
+                    ( ParamNamed Nothing ( Name "f$0" ) :| [] )
                     ( AbsN Nothing
-                      ( ParamNamed Nothing ( Name "a$930" ) :| [] )
+                      ( ParamNamed Nothing ( Name "a$0" ) :| [] )
                       ( AppN Nothing
                         ( AppN Nothing
                           ( ObjectProp Nothing
@@ -198,10 +198,10 @@ UberModule
                               )
                               ( PropName "pure" )
                             )
-                            ( Ref Nothing ( Local ( Name "f$929" ) ) :| [] ) :| []
+                            ( Ref Nothing ( Local ( Name "f$0" ) ) :| [] ) :| []
                           )
                         )
-                        ( Ref Nothing ( Local ( Name "a$930" ) ) :| [] )
+                        ( Ref Nothing ( Local ( Name "a$0" ) ) :| [] )
                       )
                     )
                   )
@@ -222,7 +222,7 @@ UberModule
                 [
                   ( PropName "apply", Let Nothing
                     ( Standalone
-                      ( Nothing, Name "bind$689", ObjectProp Nothing
+                      ( Nothing, Name "bind$0", ObjectProp Nothing
                         ( AppN Nothing
                           ( ObjectProp Nothing
                             ( Ref Nothing
@@ -238,23 +238,23 @@ UberModule
                       ) :| []
                     )
                     ( AbsN Nothing
-                      ( ParamNamed Nothing ( Name "f$691" ) :| [] )
+                      ( ParamNamed Nothing ( Name "f$0" ) :| [] )
                       ( AbsN Nothing
-                        ( ParamNamed Nothing ( Name "a$692" ) :| [] )
+                        ( ParamNamed Nothing ( Name "a$0" ) :| [] )
                         ( AppN Nothing
                           ( AppN Nothing
-                            ( Ref Nothing ( Local ( Name "bind$689" ) ) )
-                            ( Ref Nothing ( Local ( Name "f$691" ) ) :| [] )
+                            ( Ref Nothing ( Local ( Name "bind$0" ) ) )
+                            ( Ref Nothing ( Local ( Name "f$0" ) ) :| [] )
                           )
                           ( AbsN Nothing
-                            ( ParamNamed Nothing ( Name "f'$693" ) :| [] )
+                            ( ParamNamed Nothing ( Name "f'$0" ) :| [] )
                             ( AppN Nothing
                               ( AppN Nothing
-                                ( Ref Nothing ( Local ( Name "bind$689" ) ) )
-                                ( Ref Nothing ( Local ( Name "a$692" ) ) :| [] )
+                                ( Ref Nothing ( Local ( Name "bind$0" ) ) )
+                                ( Ref Nothing ( Local ( Name "a$0" ) ) :| [] )
                               )
                               ( AbsN Nothing
-                                ( ParamNamed Nothing ( Name "a'$694" ) :| [] )
+                                ( ParamNamed Nothing ( Name "a'$0" ) :| [] )
                                 ( AppN Nothing
                                   ( ObjectProp Nothing
                                     ( AppN Nothing
@@ -277,8 +277,8 @@ UberModule
                                     ( PropName "pure" )
                                   )
                                   ( AppN Nothing
-                                    ( Ref Nothing ( Local ( Name "f'$693" ) ) )
-                                    ( Ref Nothing ( Local ( Name "a'$694" ) ) :| [] ) :| []
+                                    ( Ref Nothing ( Local ( Name "f'$0" ) ) )
+                                    ( Ref Nothing ( Local ( Name "a'$0" ) ) :| [] ) :| []
                                   )
                                 ) :| []
                               )
@@ -334,7 +334,7 @@ UberModule
                         ( AppN Nothing
                           ( Let Nothing
                             ( Standalone
-                              ( Nothing, Name "dictApply$945", AppN Nothing
+                              ( Nothing, Name "dictApply$0", AppN Nothing
                                 ( ObjectProp Nothing
                                   ( Ref Nothing
                                     ( Imported
@@ -350,13 +350,13 @@ UberModule
                               ) :| []
                             )
                             ( AbsN Nothing
-                              ( ParamNamed Nothing ( Name "a$946" ) :| [] )
+                              ( ParamNamed Nothing ( Name "a$0" ) :| [] )
                               ( AbsN Nothing
-                                ( ParamNamed Nothing ( Name "b$947" ) :| [] )
+                                ( ParamNamed Nothing ( Name "b$0" ) :| [] )
                                 ( AppN Nothing
                                   ( AppN Nothing
                                     ( ObjectProp Nothing
-                                      ( Ref Nothing ( Local ( Name "dictApply$945" ) ) )
+                                      ( Ref Nothing ( Local ( Name "dictApply$0" ) ) )
                                       ( PropName "apply" )
                                     )
                                     ( AppN Nothing
@@ -364,7 +364,7 @@ UberModule
                                         ( ObjectProp Nothing
                                           ( AppN Nothing
                                             ( ObjectProp Nothing
-                                              ( Ref Nothing ( Local ( Name "dictApply$945" ) ) )
+                                              ( Ref Nothing ( Local ( Name "dictApply$0" ) ) )
                                               ( PropName "Functor0" )
                                             )
                                             ( Ref Nothing
@@ -379,15 +379,15 @@ UberModule
                                         ( AbsN Nothing
                                           ( ParamUnused Nothing :| [] )
                                           ( AbsN Nothing
-                                            ( ParamNamed Nothing ( Name "x$948" ) :| [] )
-                                            ( Ref Nothing ( Local ( Name "x$948" ) ) )
+                                            ( ParamNamed Nothing ( Name "x$0" ) :| [] )
+                                            ( Ref Nothing ( Local ( Name "x$0" ) ) )
                                           ) :| []
                                         )
                                       )
-                                      ( Ref Nothing ( Local ( Name "a$946" ) ) :| [] ) :| []
+                                      ( Ref Nothing ( Local ( Name "a$0" ) ) :| [] ) :| []
                                     )
                                   )
-                                  ( Ref Nothing ( Local ( Name "b$947" ) ) :| [] )
+                                  ( Ref Nothing ( Local ( Name "b$0" ) ) :| [] )
                                 )
                               )
                             )
@@ -431,12 +431,12 @@ UberModule
                           ( PropName "foldl" )
                         )
                         ( AbsN Nothing
-                          ( ParamNamed Nothing ( Name "c$911" ) :| [] )
+                          ( ParamNamed Nothing ( Name "c$0" ) :| [] )
                           ( AbsN Nothing
                             ( ParamUnused Nothing :| [] )
                             ( PrimBinOp Nothing PrimAdd
                               ( LiteralInt Nothing 1 )
-                              ( Ref Nothing ( Local ( Name "c$911" ) ) )
+                              ( Ref Nothing ( Local ( Name "c$0" ) ) )
                             )
                           ) :| []
                         )

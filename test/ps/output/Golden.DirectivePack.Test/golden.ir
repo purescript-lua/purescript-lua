@@ -84,12 +84,12 @@ UberModule
         }, LiteralObject Nothing
         [
           ( PropName "append", AbsN Nothing
-            ( ParamNamed Nothing ( Name "s1$299" ) :| [] )
+            ( ParamNamed Nothing ( Name "s1$0" ) :| [] )
             ( AbsN Nothing
-              ( ParamNamed Nothing ( Name "s2$300" ) :| [] )
+              ( ParamNamed Nothing ( Name "s2$0" ) :| [] )
               ( PrimBinOp Nothing PrimConcat
-                ( Ref Nothing ( Local ( Name "s1$299" ) ) )
-                ( Ref Nothing ( Local ( Name "s2$300" ) ) )
+                ( Ref Nothing ( Local ( Name "s1$0" ) ) )
+                ( Ref Nothing ( Local ( Name "s2$0" ) ) )
               )
             )
           )
@@ -169,9 +169,9 @@ UberModule
               ( LiteralObject Nothing
                 [
                   ( PropName "map", AbsN Nothing
-                    ( ParamNamed Nothing ( Name "f$512" ) :| [] )
+                    ( ParamNamed Nothing ( Name "f$0" ) :| [] )
                     ( AbsN Nothing
-                      ( ParamNamed Nothing ( Name "a$513" ) :| [] )
+                      ( ParamNamed Nothing ( Name "a$0" ) :| [] )
                       ( AppN Nothing
                         ( AppN Nothing
                           ( ObjectProp Nothing
@@ -195,10 +195,10 @@ UberModule
                               )
                               ( PropName "pure" )
                             )
-                            ( Ref Nothing ( Local ( Name "f$512" ) ) :| [] ) :| []
+                            ( Ref Nothing ( Local ( Name "f$0" ) ) :| [] ) :| []
                           )
                         )
-                        ( Ref Nothing ( Local ( Name "a$513" ) ) :| [] )
+                        ( Ref Nothing ( Local ( Name "a$0" ) ) :| [] )
                       )
                     )
                   )
@@ -219,7 +219,7 @@ UberModule
                 [
                   ( PropName "apply", Let Nothing
                     ( Standalone
-                      ( Nothing, Name "bind$111", ObjectProp Nothing
+                      ( Nothing, Name "bind$0", ObjectProp Nothing
                         ( AppN Nothing
                           ( ObjectProp Nothing
                             ( Ref Nothing
@@ -235,23 +235,23 @@ UberModule
                       ) :| []
                     )
                     ( AbsN Nothing
-                      ( ParamNamed Nothing ( Name "f$113" ) :| [] )
+                      ( ParamNamed Nothing ( Name "f$0" ) :| [] )
                       ( AbsN Nothing
-                        ( ParamNamed Nothing ( Name "a$114" ) :| [] )
+                        ( ParamNamed Nothing ( Name "a$0" ) :| [] )
                         ( AppN Nothing
                           ( AppN Nothing
-                            ( Ref Nothing ( Local ( Name "bind$111" ) ) )
-                            ( Ref Nothing ( Local ( Name "f$113" ) ) :| [] )
+                            ( Ref Nothing ( Local ( Name "bind$0" ) ) )
+                            ( Ref Nothing ( Local ( Name "f$0" ) ) :| [] )
                           )
                           ( AbsN Nothing
-                            ( ParamNamed Nothing ( Name "f'$115" ) :| [] )
+                            ( ParamNamed Nothing ( Name "f'$0" ) :| [] )
                             ( AppN Nothing
                               ( AppN Nothing
-                                ( Ref Nothing ( Local ( Name "bind$111" ) ) )
-                                ( Ref Nothing ( Local ( Name "a$114" ) ) :| [] )
+                                ( Ref Nothing ( Local ( Name "bind$0" ) ) )
+                                ( Ref Nothing ( Local ( Name "a$0" ) ) :| [] )
                               )
                               ( AbsN Nothing
-                                ( ParamNamed Nothing ( Name "a'$116" ) :| [] )
+                                ( ParamNamed Nothing ( Name "a'$0" ) :| [] )
                                 ( AppN Nothing
                                   ( ObjectProp Nothing
                                     ( AppN Nothing
@@ -274,8 +274,8 @@ UberModule
                                     ( PropName "pure" )
                                   )
                                   ( AppN Nothing
-                                    ( Ref Nothing ( Local ( Name "f'$115" ) ) )
-                                    ( Ref Nothing ( Local ( Name "a'$116" ) ) :| [] ) :| []
+                                    ( Ref Nothing ( Local ( Name "f'$0" ) ) )
+                                    ( Ref Nothing ( Local ( Name "a'$0" ) ) :| [] ) :| []
                                   )
                                 ) :| []
                               )
@@ -383,13 +383,13 @@ UberModule
         }, LiteralObject Nothing
         [
           ( PropName "show", AbsN Nothing
-            ( ParamNamed Nothing ( Name "x$501" ) :| [] )
+            ( ParamNamed Nothing ( Name "x$0" ) :| [] )
             ( Let Nothing
               ( Standalone
-                ( Nothing, Name "v$7", IfThenElse Nothing
+                ( Nothing, Name "v$0", IfThenElse Nothing
                   ( Eq Nothing
                     ( LiteralString Nothing "Golden.DirectivePack.Test∷Fruit.Apple" )
-                    ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "x$501" ) ) ) )
+                    ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "x$0" ) ) ) )
                   )
                   ( Ctor Nothing SumType
                     ( ModuleName "Data.Generic.Rep" )
@@ -406,7 +406,7 @@ UberModule
                     ( TyName "Sum" )
                     ( CtorName "Inr" )
                     [ DataArgumentByIndex Nothing SumType 0
-                      ( Ref Nothing ( Local ( Name "x$501" ) ) )
+                      ( Ref Nothing ( Local ( Name "x$0" ) ) )
                     ]
                   )
                 ) :| []
@@ -414,18 +414,18 @@ UberModule
               ( IfThenElse Nothing
                 ( Eq Nothing
                   ( LiteralString Nothing "Data.Generic.Rep∷Sum.Inl" )
-                  ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v$7" ) ) ) )
+                  ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v$0" ) ) ) )
                 )
                 ( LiteralString Nothing "Apple" )
                 ( Let Nothing
                   ( Standalone
-                    ( Nothing, Name "v1$490", LiteralArray Nothing
+                    ( Nothing, Name "v1$0", LiteralArray Nothing
                       [ AppN Nothing
                         ( Ref Nothing
                           ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) )
                         )
                         ( DataArgumentByIndex Nothing SumType 0
-                          ( Ref Nothing ( Local ( Name "v$7" ) ) ) :| []
+                          ( Ref Nothing ( Local ( Name "v$0" ) ) ) :| []
                         )
                       ]
                     ) :| []
@@ -433,7 +433,7 @@ UberModule
                   ( IfThenElse Nothing
                     ( Eq Nothing
                       ( LiteralInt Nothing 0 )
-                      ( ArrayLength Nothing ( Ref Nothing ( Local ( Name "v1$490" ) ) ) )
+                      ( ArrayLength Nothing ( Ref Nothing ( Local ( Name "v1$0" ) ) ) )
                     )
                     ( LiteralString Nothing "Banana" )
                     ( PrimBinOp Nothing PrimConcat
@@ -459,7 +459,7 @@ UberModule
                               )
                               ( LiteralArray Nothing [ LiteralString Nothing "Banana" ] :| [] )
                             )
-                            ( Ref Nothing ( Local ( Name "v1$490" ) ) :| [] ) :| []
+                            ( Ref Nothing ( Local ( Name "v1$0" ) ) :| [] ) :| []
                           )
                         )
                         ( LiteralString Nothing ")" )
@@ -475,9 +475,9 @@ UberModule
       ( QName
         { qnameModuleName = ModuleName "Golden.DirectivePack.Test", qnameName = Name "pipeline"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "x$471" ) :| [] )
+        ( ParamNamed Nothing ( Name "x$0" ) :| [] )
         ( PrimBinOp Nothing PrimAdd
-          ( Ref Nothing ( Local ( Name "x$471" ) ) )
+          ( Ref Nothing ( Local ( Name "x$0" ) ) )
           ( LiteralInt Nothing 1 )
         )
       ), Standalone
@@ -514,7 +514,7 @@ UberModule
       ( QName
         { qnameModuleName = ModuleName "Golden.DirectivePack.Test", qnameName = Name "describeFruit"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "x$338" ) :| [] )
+        ( ParamNamed Nothing ( Name "x$0" ) :| [] )
         ( AppN Nothing
           ( AppN Nothing
             ( ObjectProp Nothing
@@ -532,7 +532,7 @@ UberModule
                 ( Imported ( ModuleName "Golden.DirectivePack.Test" ) ( Name "showFruit" ) ) :| []
               )
             )
-            ( Ref Nothing ( Local ( Name "x$338" ) ) :| [] ) :| []
+            ( Ref Nothing ( Local ( Name "x$0" ) ) :| [] ) :| []
           )
         )
       ), Standalone
@@ -557,9 +557,9 @@ UberModule
         { qnameModuleName = ModuleName "Golden.DirectivePack.Test", qnameName = Name "chain"
         }, Let Nothing
         ( Standalone
-          ( Nothing, Name "a$365", Let Nothing
+          ( Nothing, Name "a$0", Let Nothing
             ( Standalone
-              ( Nothing, Name "a$377", IfThenElse Nothing
+              ( Nothing, Name "a$1", IfThenElse Nothing
                 ( Eq Nothing
                   ( AppN Nothing
                     ( AppN Nothing
@@ -592,7 +592,7 @@ UberModule
             ( IfThenElse Nothing
               ( Eq Nothing
                 ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
-                ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "a$377" ) ) ) )
+                ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "a$1" ) ) ) )
               )
               ( IfThenElse Nothing
                 ( Eq Nothing
@@ -602,7 +602,7 @@ UberModule
                         ( Imported ( ModuleName "Data.EuclideanRing" ) ( Name "intMod" ) )
                       )
                       ( DataArgumentByIndex Nothing SumType 0
-                        ( Ref Nothing ( Local ( Name "a$377" ) ) ) :| []
+                        ( Ref Nothing ( Local ( Name "a$1" ) ) ) :| []
                       )
                     )
                     ( LiteralInt Nothing 2 :| [] )
@@ -619,7 +619,7 @@ UberModule
                         ( Imported ( ModuleName "Data.EuclideanRing" ) ( Name "intDiv" ) )
                       )
                       ( DataArgumentByIndex Nothing SumType 0
-                        ( Ref Nothing ( Local ( Name "a$377" ) ) ) :| []
+                        ( Ref Nothing ( Local ( Name "a$1" ) ) ) :| []
                       )
                     )
                     ( LiteralInt Nothing 2 :| [] )
@@ -634,7 +634,7 @@ UberModule
         ( IfThenElse Nothing
           ( Eq Nothing
             ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
-            ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "a$365" ) ) ) )
+            ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "a$0" ) ) ) )
           )
           ( IfThenElse Nothing
             ( Eq Nothing
@@ -644,7 +644,7 @@ UberModule
                     ( Imported ( ModuleName "Data.EuclideanRing" ) ( Name "intMod" ) )
                   )
                   ( DataArgumentByIndex Nothing SumType 0
-                    ( Ref Nothing ( Local ( Name "a$365" ) ) ) :| []
+                    ( Ref Nothing ( Local ( Name "a$0" ) ) ) :| []
                   )
                 )
                 ( LiteralInt Nothing 2 :| [] )
@@ -661,7 +661,7 @@ UberModule
                     ( Imported ( ModuleName "Data.EuclideanRing" ) ( Name "intDiv" ) )
                   )
                   ( DataArgumentByIndex Nothing SumType 0
-                    ( Ref Nothing ( Local ( Name "a$365" ) ) ) :| []
+                    ( Ref Nothing ( Local ( Name "a$0" ) ) ) :| []
                   )
                 )
                 ( LiteralInt Nothing 2 :| [] )
@@ -806,18 +806,18 @@ UberModule
                         ( PropName "modifyImpl" )
                       )
                       ( AbsN Nothing
-                        ( ParamNamed Nothing ( Name "s$601" ) :| [] )
+                        ( ParamNamed Nothing ( Name "s$0" ) :| [] )
                         ( Let Nothing
                           ( Standalone
-                            ( Nothing, Name "s'$602", PrimBinOp Nothing PrimMul
-                              ( Ref Nothing ( Local ( Name "s$601" ) ) )
+                            ( Nothing, Name "s'$0", PrimBinOp Nothing PrimMul
+                              ( Ref Nothing ( Local ( Name "s$0" ) ) )
                               ( LiteralInt Nothing 3 )
                             ) :| []
                           )
                           ( LiteralObject Nothing
                             [
-                              ( PropName "state", Ref Nothing ( Local ( Name "s'$602" ) ) ),
-                              ( PropName "value", Ref Nothing ( Local ( Name "s'$602" ) ) )
+                              ( PropName "state", Ref Nothing ( Local ( Name "s'$0" ) ) ),
+                              ( PropName "value", Ref Nothing ( Local ( Name "s'$0" ) ) )
                             ]
                           )
                         ) :| []
@@ -828,7 +828,7 @@ UberModule
                 )
                 ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
-              ( Nothing, Name "v0$2", AppN Nothing
+              ( Nothing, Name "v0$0", AppN Nothing
                 ( AppN Nothing
                   ( ObjectProp Nothing
                     ( Ref Nothing ( Imported ( ModuleName "Effect.Ref" ) ( Name "foreign" ) ) )
@@ -847,7 +847,7 @@ UberModule
                 ( Ref Nothing
                   ( Imported ( ModuleName "Golden.DirectivePack.Test" ) ( Name "show" ) )
                 )
-                ( Ref Nothing ( Local ( Name "v0$2" ) ) :| [] ) :| []
+                ( Ref Nothing ( Local ( Name "v0$0" ) ) :| [] ) :| []
               )
             )
             ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )

@@ -20,6 +20,7 @@ import Language.PureScript.Backend.IR.Optimizer (optimizedUberModuleChecked)
 import Language.PureScript.Backend.IR.Pass
   ( PassCheckFailure (ResultDanglingImports)
   )
+import Language.PureScript.Backend.IR.Renumber (renumberUberModule)
 import Language.PureScript.Backend.Lua qualified as Lua
 import Language.PureScript.Backend.Lua.ForeignLift qualified as ForeignLift
 import Language.PureScript.Backend.Lua.Limits (LuaLimits, lua51Limits)
@@ -118,6 +119,11 @@ spec = do
         it irTestName do
           acceptableGolden irGolden (Just irActual) do
             uberModule ← compileCorefn (Tagged (Rel psOutputPath)) moduleName
+            -- The indices the pipeline mints into binder names record how
+            -- much supply ran out before each was minted, so an unrelated
+            -- pass consuming one more name renumbers every name after it.
+            -- Renumbering makes each site's names a function of its own
+            -- structure, leaving this golden to move only when the IR does.
             pure . toStrict $
               pShowOpt
                 defaultOutputOptionsNoColor
@@ -125,7 +131,7 @@ spec = do
                   , outputOptionsPageWidth = 100
                   , outputOptionsCompact = True
                   }
-                uberModule
+                (renumberUberModule uberModule)
         -- lua golden
         let evalGolden =
               modulePath </> $(mkRelDir "eval") </> $(mkRelFile "golden.txt")

@@ -112,17 +112,17 @@ UberModule
         ( Imported ( ModuleName "Golden.ScalarReplacement.Test" ) ( Name "defaults" ) )
       ),
       ( Name "chained", AbsN Nothing
-        ( ParamNamed Nothing ( Name "chained$p1$227" ) :| [] )
+        ( ParamNamed Nothing ( Name "chained$p1$0" ) :| [] )
         ( AbsN Nothing
-          ( ParamNamed Nothing ( Name "chained$p2$228" ) :| [] )
+          ( ParamNamed Nothing ( Name "chained$p2$0" ) :| [] )
           ( PrimBinOp Nothing PrimAdd
             ( PrimBinOp Nothing PrimAdd
-              ( Ref Nothing ( Local ( Name "chained$p1$227" ) ) )
-              ( Ref Nothing ( Local ( Name "chained$p2$228" ) ) )
+              ( Ref Nothing ( Local ( Name "chained$p1$0" ) ) )
+              ( Ref Nothing ( Local ( Name "chained$p2$0" ) ) )
             )
             ( PrimBinOp Nothing PrimAdd
-              ( Ref Nothing ( Local ( Name "chained$p1$227" ) ) )
-              ( Ref Nothing ( Local ( Name "chained$p2$228" ) ) )
+              ( Ref Nothing ( Local ( Name "chained$p1$0" ) ) )
+              ( Ref Nothing ( Local ( Name "chained$p2$0" ) ) )
             )
           )
         )

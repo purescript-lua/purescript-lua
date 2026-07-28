@@ -25,28 +25,28 @@ UberModule
         ( ( PropName "x", LiteralInt Nothing 2 ) :| [] )
       ),
       ( Name "test2", AbsN Nothing
-        ( ParamNamed Nothing ( Name "v$1" ) :| [] )
+        ( ParamNamed Nothing ( Name "v$0" ) :| [] )
         ( ObjectUpdate Nothing
-          ( Ref Nothing ( Local ( Name "v$1" ) ) )
+          ( Ref Nothing ( Local ( Name "v$0" ) ) )
           ( ( PropName "y", LiteralBool Nothing False ) :| [] )
         )
       ),
       ( Name "test3", AbsN Nothing
-        ( ParamNamed Nothing ( Name "v$2" ) :| [] )
+        ( ParamNamed Nothing ( Name "v$0" ) :| [] )
         ( ObjectUpdate Nothing
-          ( Ref Nothing ( Local ( Name "v$2" ) ) )
+          ( Ref Nothing ( Local ( Name "v$0" ) ) )
           (
             ( PropName "z", ObjectUpdate Nothing
-              ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "v$2" ) ) ) ( PropName "z" ) )
+              ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "v$0" ) ) ) ( PropName "z" ) )
               ( ( PropName "p", LiteralChar Nothing 'b' ) :| [] )
             ) :| []
           )
         )
       ),
       ( Name "test4", AbsN Nothing
-        ( ParamNamed Nothing ( Name "v$3" ) :| [] )
+        ( ParamNamed Nothing ( Name "v$0" ) :| [] )
         ( ObjectUpdate Nothing
-          ( Ref Nothing ( Local ( Name "v$3" ) ) )
+          ( Ref Nothing ( Local ( Name "v$0" ) ) )
           ( ( PropName "x", LiteralInt Nothing 1 ) :| [] )
         )
       )
