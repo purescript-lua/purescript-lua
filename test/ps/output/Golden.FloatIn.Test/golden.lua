@@ -11,27 +11,14 @@ local Golden_FloatIn_Test_foreign = {
   tick = function(n) print("tick") return n + n end
 }
 local Golden_FloatIn_Test_tick = Golden_FloatIn_Test_foreign.tick
-local Golden_FloatIn_Test_pickShared_S_w = function(useIt, n)
-  if useIt then
-    local shared = Golden_FloatIn_Test_tick(n)
-    local f = function() return shared + shared end
-    return f(Data_Unit_unit) + f(Data_Unit_unit)
-  else
-    return 0
-  end
-end
 M.Golden_FloatIn_Test_expensive = function(x) return x * x + 1 end
-local Golden_FloatIn_Test_pick_S_w = function(useIt, n)
-  if useIt then
-    local shared = n * n + 1
-    return shared + shared
-  else
-    return 0
-  end
-end
 return (function()
-  local _ = Effect_Console_log(Data_Show_showIntImpl(Golden_FloatIn_Test_pick_S_w(true, 3)))()
-  local _ = Effect_Console_log(Data_Show_showIntImpl(Golden_FloatIn_Test_pick_S_w(false, 3)))()
-  local _ = Effect_Console_log(Data_Show_showIntImpl(Golden_FloatIn_Test_pickShared_S_w(true, 3)))()
-  return Effect_Console_log(Data_Show_showIntImpl(Golden_FloatIn_Test_pickShared_S_w(false, 3)))()
+  local _ = Effect_Console_log(Data_Show_showIntImpl(20))()
+  local _ = Effect_Console_log(Data_Show_showIntImpl(0))()
+  local _ = Effect_Console_log(Data_Show_showIntImpl((function()
+    local shared_S_0 = Golden_FloatIn_Test_tick(3)
+    local f_S_0 = function() return shared_S_0 + shared_S_0 end
+    return f_S_0(Data_Unit_unit) + f_S_0(Data_Unit_unit)
+  end)()))()
+  return Effect_Console_log(Data_Show_showIntImpl(0))()
 end)()

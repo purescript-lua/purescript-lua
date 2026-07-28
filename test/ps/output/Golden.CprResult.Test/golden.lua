@@ -5,9 +5,6 @@ local Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
 }
 local Effect_Console_log = Effect_Console_foreign.log
-local Data_Tuple_Tuple_S_w = function(value0, value1)
-  return { value0, value1 }
-end
 local Golden_CprResult_Test_sub_S_w = function(x_S_0, y_S_0)
   return x_S_0 - y_S_0
 end
@@ -17,11 +14,9 @@ end
 local Golden_CprResult_Test_logShow1 = function(a_S_1)
   return Effect_Console_log("(Tuple " .. Data_Show_showIntImpl(a_S_1[1]) .. " " .. Data_Show_showIntImpl(a_S_1[2]) .. ")")
 end
-M.Golden_CprResult_Test_step = function(s)
-  return Data_Tuple_Tuple_S_w(s * 2, s + 1)
-end
+M.Golden_CprResult_Test_step = function(s) return { s * 2, s + 1 } end
 M.Golden_CprResult_Test_useStep = function(n) return n * 2 + (n + 1) end
-local Golden_CprResult_Test_pair = Data_Tuple_Tuple_S_w(20, 11)
+local Golden_CprResult_Test_pair = { 20, 11 }
 local Golden_CprResult_Test_branchy_S_r = function(n)
   if n >= 0 and n ~= 0 then
     local b1 = n + 7

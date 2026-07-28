@@ -91,6 +91,7 @@ import Language.PureScript.Backend.IR.Types
   , reflectCtor
   , setAnn
   , subexpressions
+  , values
   , pattern EffectRunArg
   )
 import Language.PureScript.Backend.IR.Uniquify (uniquifyNamesInExpr)
@@ -2459,13 +2460,27 @@ spec = describe "IR Optimizer" do
     it "drops the wrapper once every site calls the worker directly" do
       -- Two saturated sites and no other use: the split sends both to
       -- f$w, the wrapper loses its last reference, and the post-uncurry
-      -- fixpoint removes it. The worker (used twice) stays a shared
+      -- fixpoint removes it. The worker's body is grown past
+      -- 'inlineSizeBudget' so the call-site inliner cannot dissolve the
+      -- worker calls, and the worker (used twice) stays a shared
       -- binding.
+      let bulkyDef =
+            abstraction (paramNamed (Name "a")) $
+              abstraction (paramNamed (Name "b")) $
+                foldl'
+                  (primBinOp PrimAdd)
+                  ( application
+                      (application g (refLocal (Name "a")))
+                      (refLocal (Name "b"))
+                  )
+                  ( concat . replicate 16 $
+                      [refLocal (Name "a"), refLocal (Name "b")]
+                  )
       optimized ←
         checked
           Linker.UberModule
             { uberModuleForeigns = []
-            , uberModuleBindings = [Standalone (fName, fDef)]
+            , uberModuleBindings = [Standalone (fName, bulkyDef)]
             , uberModuleExports =
                 [(Name "main1", saturated 1 2), (Name "main2", saturated 3 4)]
             }
@@ -2686,41 +2701,12 @@ spec = describe "IR Optimizer" do
                      )
                    ]
 
-    it "keeps a worker whose body applies a function" do
-      -- callAdd = λx. λy. g (x + y): an application may hide arbitrary
-      -- work, so the call sites keep sharing the worker.
-      let g = refImported extern (Name "g")
-          callAddRef = refImported mainModule (Name "callAdd")
-          callAddDef =
-            abstraction (paramNamed x) $
-              abstraction (paramNamed y) $
-                application
-                  g
-                  (primBinOp PrimAdd (refLocal x) (refLocal y))
-          saturated a = application (application callAddRef a)
-      optimized ←
-        checked $
-          uberWith (Name "callAdd") callAddDef [saturated n1 n2, saturated n2 n1]
-      topLevelNames optimized `shouldBe` [QName mainModule (Name "callAdd$w")]
-
-    it "keeps a worker whose body branches" do
-      -- pickOr = λx. λy. if x then y else 0: an IfThenElse pasted into
-      -- expression position lowers to a per-call IIFE (issue #203) —
-      -- worse than the shared worker call it would replace.
-      let pickOrRef = refImported mainModule (Name "pickOr")
-          pickOrDef =
-            abstraction (paramNamed x) $
-              abstraction (paramNamed y) $
-                ifThenElse (refLocal x) (refLocal y) (literalInt 0)
-          saturated a = application (application pickOrRef a)
-      optimized ←
-        checked $
-          uberWith (Name "pickOr") pickOrDef [saturated n1 n2, saturated n2 n1]
-      topLevelNames optimized `shouldBe` [QName mainModule (Name "pickOr$w")]
-
-    it "keeps a worker whose primop tree exceeds the small budget" do
-      -- Same shape as add3, but grown past 'smallInlineBudget': pasting
-      -- it at every site trades one call for unbounded code growth.
+    it "keeps a mid-sized worker out of a small host (growth veto)" do
+      -- Same shape as add3, but grown well past what its sites can
+      -- absorb: the paste is within 'inlineSizeBudget', but each site's
+      -- host expression is tiny, so the sweep exceeds the host's growth
+      -- allowance and the veto discards it
+      -- (Note [Bounded call-site inlining growth]).
       let wideRef = refImported mainModule (Name "wide")
           wideDef =
             abstraction (paramNamed x) $
@@ -2734,6 +2720,130 @@ spec = describe "IR Optimizer" do
         checked $
           uberWith (Name "wide") wideDef [saturated n1 n2, saturated n2 n1]
       topLevelNames optimized `shouldBe` [QName mainModule (Name "wide$w")]
+
+  describe "dissolves budgeted n-ary workers into saturated call sites (#245)" do
+    let mainModule = moduleNameFromString "Main"
+        extern = moduleNameFromString "Extern"
+        n1 = refImported extern (Name "n1")
+        n2 = refImported extern (Name "n2")
+        n3 = refImported extern (Name "n3")
+        x = Name "x"
+        y = Name "y"
+        checked = either (fail . show) pure . optimizedUberModuleChecked mempty
+        uberWith name def sites =
+          Linker.UberModule
+            { uberModuleForeigns = []
+            , uberModuleBindings = [Standalone (QName mainModule name, def)]
+            , uberModuleExports =
+                [(Name ("main" <> show i), site) | (i, site) ← zip [1 ∷ Int ..] sites]
+            }
+        topLevelNames uber =
+          fst <$> (listGrouping =<< Linker.uberModuleBindings uber)
+
+    it "folds a worker whose body applies a function" do
+      -- callAdd = λx. λy. g (x + y): the body is not free to re-evaluate
+      -- (the application may hide arbitrary work), but pasting a literal
+      -- lambda duplicates no work and the body is far under
+      -- 'inlineSizeBudget', so both saturated sites paste and reduce.
+      let g = refImported extern (Name "g")
+          callAddRef = refImported mainModule (Name "callAdd")
+          callAddDef =
+            abstraction (paramNamed x) $
+              abstraction (paramNamed y) $
+                application
+                  g
+                  (primBinOp PrimAdd (refLocal x) (refLocal y))
+          saturated a = application (application callAddRef a)
+      optimized ←
+        checked $
+          uberWith (Name "callAdd") callAddDef [saturated n1 n2, saturated n2 n1]
+      Linker.uberModuleBindings optimized `shouldBe` []
+      Linker.uberModuleExports optimized
+        `shouldBe` [ (Name "main1", application g (primBinOp PrimAdd n1 n2))
+                   , (Name "main2", application g (primBinOp PrimAdd n2 n1))
+                   ]
+
+    it "folds a worker whose body branches" do
+      -- pickOr = λx. λy. if x then y else 0: the site collapses to the
+      -- conditional itself — no worse a shape than the unary path pastes
+      -- at a saturated curried spine.
+      let pickOrRef = refImported mainModule (Name "pickOr")
+          pickOrDef =
+            abstraction (paramNamed x) $
+              abstraction (paramNamed y) $
+                ifThenElse (refLocal x) (refLocal y) (literalInt 0)
+          saturated a = application (application pickOrRef a)
+      optimized ←
+        checked $
+          uberWith (Name "pickOr") pickOrDef [saturated n1 n2, saturated n2 n1]
+      Linker.uberModuleBindings optimized `shouldBe` []
+      Linker.uberModuleExports optimized
+        `shouldBe` [ (Name "main1", ifThenElse n1 n2 (literalInt 0))
+                   , (Name "main2", ifThenElse n2 n1 (literalInt 0))
+                   ]
+
+    it "keeps an under- or over-applied n-ary site (guard pin)" do
+      -- The rule pastes at exact arity only: the uncurry run mints
+      -- saturated worker calls by construction, so a mismatched argument
+      -- count marks a shape the pipeline did not produce.
+      let z = Name "z"
+          pick3Ref = refImported mainModule (Name "pick3")
+          pick3Def =
+            abstractionN
+              (paramNamed x :| [paramNamed y, paramNamed z])
+              ( primBinOp
+                  PrimAdd
+                  (primBinOp PrimAdd (refLocal x) (refLocal y))
+                  (refLocal z)
+              )
+          under = applicationN pick3Ref (n1 :| [n2])
+          over = applicationN pick3Ref (n1 :| [n2, n3, n1])
+      optimized ← checked $ uberWith (Name "pick3") pick3Def [under, over]
+      topLevelNames optimized `shouldBe` [QName mainModule (Name "pick3")]
+      Linker.uberModuleExports optimized
+        `shouldBe` [(Name "main1", under), (Name "main2", over)]
+
+    it "keeps a worker past the inline budget even in a large host" do
+      -- The worker body exceeds 'inlineSizeBudget', and each host is big
+      -- enough that the growth veto alone would admit the paste
+      -- (allowance is linear in host size) — the per-paste budget is
+      -- what keeps the worker shared.
+      let vs = [refImported extern (Name ("v" <> show i)) | i ← [1 ∷ Int .. 34]]
+          bigRef = refImported mainModule (Name "big")
+          bigDef =
+            abstractionN
+              (paramNamed x :| [paramNamed y])
+              (foldl' (primBinOp PrimAdd) (refLocal x) (vs <> [refLocal y]))
+          host prefix site =
+            foldl'
+              (primBinOp PrimAdd)
+              site
+              [refImported extern (Name (prefix <> show i)) | i ← [1 ∷ Int .. 160]]
+      optimized ←
+        checked $
+          uberWith
+            (Name "big")
+            bigDef
+            [ host "h" (applicationN bigRef (n1 :| [n2]))
+            , host "k" (applicationN bigRef (n2 :| [n1]))
+            ]
+      topLevelNames optimized `shouldBe` [QName mainModule (Name "big")]
+
+    it "keeps a multi-value worker" do
+      -- A worker minted by the result split returns its fields as Lua
+      -- multiple values; pasting its 'Values' tail into expression
+      -- position would truncate it in a single-value slot (see
+      -- 'containsMultiValue').
+      let pairRef = refImported mainModule (Name "pair$w")
+          pairDef =
+            abstractionN
+              (paramNamed x :| [paramNamed y])
+              (values (refLocal x :| [refLocal y]))
+          site a b = applicationN pairRef (a :| [b])
+      optimized ←
+        checked $
+          uberWith (Name "pair$w") pairDef [site n1 n2, site n2 n1]
+      topLevelNames optimized `shouldBe` [QName mainModule (Name "pair$w")]
 
   describe "bounds call-site growth on non-collapsing chains (#221)" do
     let mainModule = moduleNameFromString "Main"

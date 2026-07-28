@@ -5,18 +5,17 @@ aborts (distinct site -- reason):
   Bench.CtorBuild.lua:29 -- NYI: bytecode FNEW
   Bench.CtorBuild.lua:30 -- NYI: bytecode FNEW
   Bench.CtorBuild.lua:38 -- inner loop in root trace
-  Bench.CtorBuild.lua:70 -- NYI: bytecode FNEW
-  Bench.CtorBuild.lua:71 -- NYI: bytecode FNEW
-  Bench.CtorBuild.lua:73 -- NYI: bytecode UCLO
+  Bench.CtorBuild.lua:67 -- NYI: bytecode FNEW
+  Bench.CtorBuild.lua:68 -- NYI: bytecode FNEW
+  Bench.CtorBuild.lua:70 -- NYI: bytecode UCLO
   Bench.CtorBuild.lua:8 -- NYI: bytecode FNEW
 bytecode end state (J*=compiled, I*=blacklisted):
   Bench.CtorBuild.lua:27 IFORL
   Bench.CtorBuild.lua:3 JFUNCF
   Bench.CtorBuild.lua:38 JLOOP
-  Bench.CtorBuild.lua:57 JFUNCF
   Bench.CtorBuild.lua:6 JFORI
   Bench.CtorBuild.lua:6 JFORL
-  Bench.CtorBuild.lua:69 IFUNCF
-  Bench.CtorBuild.lua:70 JFUNCF
-  Bench.CtorBuild.lua:71 JFUNCF
-counts: aborts=7 compiled=7 blacklisted=2
+  Bench.CtorBuild.lua:66 IFUNCF
+  Bench.CtorBuild.lua:67 JFUNCF
+  Bench.CtorBuild.lua:68 JFUNCF
+counts: aborts=7 compiled=6 blacklisted=2

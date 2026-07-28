@@ -99,12 +99,6 @@ local Golden_GenericEqTwoTypes_Test_Nil = {
 M.Golden_GenericEqTwoTypes_Test_Cons = function(value0)
   return { "Golden.GenericEqTwoTypes.Test∷List.Cons", value0 }
 end
-local Golden_GenericEqTwoTypes_Test_node_S_w = function(left, value, right)
-  return {
-    "Golden.GenericEqTwoTypes.Test∷Tree.Node",
-    { left = left, value = value, right = right }
-  }
-end
 local Golden_GenericEqTwoTypes_Test_genericTree = {
   to = function(x)
     if "Data.Generic.Rep∷Sum.Inl" == x[1] then
@@ -171,36 +165,60 @@ Golden_GenericEqTwoTypes_Test_eqList = function(dictEq)
   }
 end
 local Golden_GenericEqTwoTypes_Test_eq1 = (Golden_GenericEqTwoTypes_Test_eqList(Data_Eq_eqInt)).eq
-local Golden_GenericEqTwoTypes_Test_cons_S_w = function(head, tail)
-  return {
-    "Golden.GenericEqTwoTypes.Test∷List.Cons",
-    { head = head, tail = tail }
-  }
-end
 return (function()
+  local _S_cse4 = {
+    "Golden.GenericEqTwoTypes.Test∷List.Cons",
+    { head = 2, tail = Golden_GenericEqTwoTypes_Test_Nil }
+  }
+  local _S_cse5 = {
+    "Golden.GenericEqTwoTypes.Test∷Tree.Node",
+    {
+      left = Golden_GenericEqTwoTypes_Test_Leaf,
+      value = 2,
+      right = Golden_GenericEqTwoTypes_Test_Leaf
+    }
+  }
+  local _S_cse6 = {
+    "Golden.GenericEqTwoTypes.Test∷List.Cons",
+    { head = 1, tail = _S_cse4 }
+  }
+  local _S_cse7 = {
+    "Golden.GenericEqTwoTypes.Test∷Tree.Node",
+    { left = Golden_GenericEqTwoTypes_Test_Leaf, value = 1, right = _S_cse5 }
+  }
   local _ = Effect_Console_log((function()
-    if Golden_GenericEqTwoTypes_Test_eq1(Golden_GenericEqTwoTypes_Test_cons_S_w(1, Golden_GenericEqTwoTypes_Test_cons_S_w(2, Golden_GenericEqTwoTypes_Test_Nil)))(Golden_GenericEqTwoTypes_Test_cons_S_w(1, Golden_GenericEqTwoTypes_Test_cons_S_w(2, Golden_GenericEqTwoTypes_Test_Nil))) then
+    if Golden_GenericEqTwoTypes_Test_eq1(_S_cse6)(_S_cse6) then
       return "true"
     else
       return "false"
     end
   end)())()
   local _ = Effect_Console_log((function()
-    if Golden_GenericEqTwoTypes_Test_eq1(Golden_GenericEqTwoTypes_Test_cons_S_w(1, Golden_GenericEqTwoTypes_Test_Nil))(Golden_GenericEqTwoTypes_Test_cons_S_w(2, Golden_GenericEqTwoTypes_Test_Nil)) then
+    if Golden_GenericEqTwoTypes_Test_eq1({
+      "Golden.GenericEqTwoTypes.Test∷List.Cons",
+      { head = 1, tail = Golden_GenericEqTwoTypes_Test_Nil }
+    })(_S_cse4) then
       return "true"
     else
       return "false"
     end
   end)())()
   local _ = Effect_Console_log((function()
-    if Golden_GenericEqTwoTypes_Test_eq(Golden_GenericEqTwoTypes_Test_node_S_w(Golden_GenericEqTwoTypes_Test_Leaf, 1, Golden_GenericEqTwoTypes_Test_node_S_w(Golden_GenericEqTwoTypes_Test_Leaf, 2, Golden_GenericEqTwoTypes_Test_Leaf)))(Golden_GenericEqTwoTypes_Test_node_S_w(Golden_GenericEqTwoTypes_Test_Leaf, 1, Golden_GenericEqTwoTypes_Test_node_S_w(Golden_GenericEqTwoTypes_Test_Leaf, 2, Golden_GenericEqTwoTypes_Test_Leaf))) then
+    if Golden_GenericEqTwoTypes_Test_eq(_S_cse7)(_S_cse7) then
       return "true"
     else
       return "false"
     end
   end)())()
   return Effect_Console_log((function()
-    if Golden_GenericEqTwoTypes_Test_eq(Golden_GenericEqTwoTypes_Test_node_S_w(Golden_GenericEqTwoTypes_Test_Leaf, 1, Golden_GenericEqTwoTypes_Test_Leaf))(Golden_GenericEqTwoTypes_Test_node_S_w(Golden_GenericEqTwoTypes_Test_Leaf, 2, Golden_GenericEqTwoTypes_Test_Leaf)) then
+    if Golden_GenericEqTwoTypes_Test_eq({
+      "Golden.GenericEqTwoTypes.Test∷Tree.Node",
+      {
+        left = Golden_GenericEqTwoTypes_Test_Leaf,
+        value = 1,
+        right = Golden_GenericEqTwoTypes_Test_Leaf
+      }
+    })(_S_cse5) then
       return "true"
     else
       return "false"

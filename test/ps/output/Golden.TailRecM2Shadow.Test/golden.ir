@@ -276,21 +276,21 @@ UberModule
                     ( ParamNamed Nothing ( Name "o$475" ) :| [] )
                     ( Let Nothing
                       ( Standalone
-                        ( Nothing, Name "$cse562", ObjectProp Nothing
+                        ( Nothing, Name "$cse607", ObjectProp Nothing
                           ( Ref Nothing ( Local ( Name "o$475" ) ) )
                           ( PropName "a" )
                         ) :| []
                       )
                       ( Let Nothing
                         ( Standalone
-                          ( Nothing, Name "$cse561", ObjectProp Nothing
+                          ( Nothing, Name "$cse606", ObjectProp Nothing
                             ( Ref Nothing ( Local ( Name "o$475" ) ) )
                             ( PropName "b" )
                           ) :| []
                         )
                         ( IfThenElse Nothing
                           ( PrimBinOp Nothing PrimLt
-                            ( Ref Nothing ( Local ( Name "$cse561" ) ) )
+                            ( Ref Nothing ( Local ( Name "$cse606" ) ) )
                             ( Ref Nothing ( Local ( Name "n" ) ) )
                           )
                           ( AppN Nothing
@@ -302,11 +302,11 @@ UberModule
                               [ LiteralObject Nothing
                                 [
                                   ( PropName "a", PrimBinOp Nothing PrimAdd
-                                    ( Ref Nothing ( Local ( Name "$cse562" ) ) )
-                                    ( Ref Nothing ( Local ( Name "$cse561" ) ) )
+                                    ( Ref Nothing ( Local ( Name "$cse607" ) ) )
+                                    ( Ref Nothing ( Local ( Name "$cse606" ) ) )
                                   ),
                                   ( PropName "b", PrimBinOp Nothing PrimAdd
-                                    ( Ref Nothing ( Local ( Name "$cse561" ) ) )
+                                    ( Ref Nothing ( Local ( Name "$cse606" ) ) )
                                     ( LiteralInt Nothing 1 )
                                   )
                                 ]
@@ -319,7 +319,7 @@ UberModule
                               ( ModuleName "Control.Monad.Rec.Class" )
                               ( TyName "Step" )
                               ( CtorName "Done" )
-                              [ Ref Nothing ( Local ( Name "$cse562" ) ) ] :| []
+                              [ Ref Nothing ( Local ( Name "$cse607" ) ) ] :| []
                             )
                           )
                         )

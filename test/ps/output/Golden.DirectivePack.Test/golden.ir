@@ -106,85 +106,6 @@ UberModule
         ( ModuleName "Data.Maybe" )
         ( TyName "Maybe" )
         ( CtorName "Nothing" ) []
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Data.Show.Generic", qnameName = Name "genericShowConstructor$w"
-        }, AbsN Nothing
-        ( ParamNamed Nothing
-          ( Name "dictGenericShowArgs" ) :|
-          [ ParamNamed Nothing ( Name "dictIsSymbol" ) ]
-        )
-        ( LiteralObject Nothing
-          [
-            ( PropName "genericShow'", AbsN Nothing
-              ( ParamNamed Nothing ( Name "v" ) :| [] )
-              ( Let Nothing
-                ( Standalone
-                  ( Nothing, Name "ctor", AppN Nothing
-                    ( ObjectProp Nothing
-                      ( Ref Nothing ( Local ( Name "dictIsSymbol" ) ) )
-                      ( PropName "reflectSymbol" )
-                    )
-                    ( Ctor Nothing ProductType
-                      ( ModuleName "Type.Proxy" )
-                      ( TyName "Proxy" )
-                      ( CtorName "Proxy" ) [] :| []
-                    )
-                  ) :| []
-                )
-                ( Let Nothing
-                  ( Standalone
-                    ( Nothing, Name "v1", AppN Nothing
-                      ( ObjectProp Nothing
-                        ( Ref Nothing ( Local ( Name "dictGenericShowArgs" ) ) )
-                        ( PropName "genericShowArgs" )
-                      )
-                      ( Ref Nothing ( Local ( Name "v" ) ) :| [] )
-                    ) :| []
-                  )
-                  ( IfThenElse Nothing
-                    ( Eq Nothing
-                      ( LiteralInt Nothing 0 )
-                      ( ArrayLength Nothing ( Ref Nothing ( Local ( Name "v1" ) ) ) )
-                    )
-                    ( Ref Nothing ( Local ( Name "ctor" ) ) )
-                    ( PrimBinOp Nothing PrimConcat
-                      ( LiteralString Nothing "(" )
-                      ( PrimBinOp Nothing PrimConcat
-                        ( AppN Nothing
-                          ( AppN Nothing
-                            ( ObjectProp Nothing
-                              ( Ref Nothing
-                                ( Imported ( ModuleName "Data.Show.Generic" ) ( Name "foreign" ) )
-                              )
-                              ( PropName "intercalate" )
-                            )
-                            ( LiteralString Nothing " " :| [] )
-                          )
-                          ( AppN Nothing
-                            ( AppN Nothing
-                              ( ObjectProp Nothing
-                                ( Ref Nothing
-                                  ( Imported ( ModuleName "Data.Semigroup" ) ( Name "foreign" ) )
-                                )
-                                ( PropName "concatArray" )
-                              )
-                              ( LiteralArray Nothing
-                                [ Ref Nothing ( Local ( Name "ctor" ) ) ] :| []
-                              )
-                            )
-                            ( Ref Nothing ( Local ( Name "v1" ) ) :| [] ) :| []
-                          )
-                        )
-                        ( LiteralString Nothing ")" )
-                      )
-                    )
-                  )
-                )
-              )
-            )
-          ]
-        )
       ), RecursiveGroup
       (
         ( QName
@@ -248,9 +169,9 @@ UberModule
               ( LiteralObject Nothing
                 [
                   ( PropName "map", AbsN Nothing
-                    ( ParamNamed Nothing ( Name "f$448" ) :| [] )
+                    ( ParamNamed Nothing ( Name "f$512" ) :| [] )
                     ( AbsN Nothing
-                      ( ParamNamed Nothing ( Name "a$449" ) :| [] )
+                      ( ParamNamed Nothing ( Name "a$513" ) :| [] )
                       ( AppN Nothing
                         ( AppN Nothing
                           ( ObjectProp Nothing
@@ -274,10 +195,10 @@ UberModule
                               )
                               ( PropName "pure" )
                             )
-                            ( Ref Nothing ( Local ( Name "f$448" ) ) :| [] ) :| []
+                            ( Ref Nothing ( Local ( Name "f$512" ) ) :| [] ) :| []
                           )
                         )
-                        ( Ref Nothing ( Local ( Name "a$449" ) ) :| [] )
+                        ( Ref Nothing ( Local ( Name "a$513" ) ) :| [] )
                       )
                     )
                   )
@@ -462,13 +383,13 @@ UberModule
         }, LiteralObject Nothing
         [
           ( PropName "show", AbsN Nothing
-            ( ParamNamed Nothing ( Name "x$437" ) :| [] )
+            ( ParamNamed Nothing ( Name "x$501" ) :| [] )
             ( Let Nothing
               ( Standalone
                 ( Nothing, Name "v$7", IfThenElse Nothing
                   ( Eq Nothing
                     ( LiteralString Nothing "Golden.DirectivePack.Test∷Fruit.Apple" )
-                    ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "x$437" ) ) ) )
+                    ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "x$501" ) ) ) )
                   )
                   ( Ctor Nothing SumType
                     ( ModuleName "Data.Generic.Rep" )
@@ -485,7 +406,7 @@ UberModule
                     ( TyName "Sum" )
                     ( CtorName "Inr" )
                     [ DataArgumentByIndex Nothing SumType 0
-                      ( Ref Nothing ( Local ( Name "x$437" ) ) )
+                      ( Ref Nothing ( Local ( Name "x$501" ) ) )
                     ]
                   )
                 ) :| []
@@ -495,75 +416,55 @@ UberModule
                   ( LiteralString Nothing "Data.Generic.Rep∷Sum.Inl" )
                   ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v$7" ) ) ) )
                 )
-                ( AppN Nothing
-                  ( ObjectProp Nothing
-                    ( AppN Nothing
-                      ( Ref Nothing
-                        ( Imported
-                          ( ModuleName "Data.Show.Generic" )
-                          ( Name "genericShowConstructor$w" )
+                ( LiteralString Nothing "Apple" )
+                ( Let Nothing
+                  ( Standalone
+                    ( Nothing, Name "v1$490", LiteralArray Nothing
+                      [ AppN Nothing
+                        ( Ref Nothing
+                          ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) )
                         )
-                      )
-                      ( LiteralObject Nothing
-                        [
-                          ( PropName "genericShowArgs", AbsN Nothing
-                            ( ParamUnused Nothing :| [] )
-                            ( LiteralArray Nothing [] )
-                          )
-                        ] :|
-                        [ LiteralObject Nothing
-                          [
-                            ( PropName "reflectSymbol", AbsN Nothing
-                              ( ParamUnused Nothing :| [] )
-                              ( LiteralString Nothing "Apple" )
-                            )
-                          ]
-                        ]
-                      )
+                        ( DataArgumentByIndex Nothing SumType 0
+                          ( Ref Nothing ( Local ( Name "v$7" ) ) ) :| []
+                        )
+                      ]
+                    ) :| []
+                  )
+                  ( IfThenElse Nothing
+                    ( Eq Nothing
+                      ( LiteralInt Nothing 0 )
+                      ( ArrayLength Nothing ( Ref Nothing ( Local ( Name "v1$490" ) ) ) )
                     )
-                    ( PropName "genericShow'" )
-                  )
-                  ( DataArgumentByIndex Nothing SumType 0
-                    ( Ref Nothing ( Local ( Name "v$7" ) ) ) :| []
-                  )
-                )
-                ( AppN Nothing
-                  ( ObjectProp Nothing
-                    ( AppN Nothing
-                      ( Ref Nothing
-                        ( Imported
-                          ( ModuleName "Data.Show.Generic" )
-                          ( Name "genericShowConstructor$w" )
-                        )
-                      )
-                      ( LiteralObject Nothing
-                        [
-                          ( PropName "genericShowArgs", AbsN Nothing
-                            ( ParamNamed Nothing ( Name "v$12" ) :| [] )
-                            ( LiteralArray Nothing
-                              [ AppN Nothing
+                    ( LiteralString Nothing "Banana" )
+                    ( PrimBinOp Nothing PrimConcat
+                      ( LiteralString Nothing "(" )
+                      ( PrimBinOp Nothing PrimConcat
+                        ( AppN Nothing
+                          ( AppN Nothing
+                            ( ObjectProp Nothing
+                              ( Ref Nothing
+                                ( Imported ( ModuleName "Data.Show.Generic" ) ( Name "foreign" ) )
+                              )
+                              ( PropName "intercalate" )
+                            )
+                            ( LiteralString Nothing " " :| [] )
+                          )
+                          ( AppN Nothing
+                            ( AppN Nothing
+                              ( ObjectProp Nothing
                                 ( Ref Nothing
-                                  ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) )
+                                  ( Imported ( ModuleName "Data.Semigroup" ) ( Name "foreign" ) )
                                 )
-                                ( Ref Nothing ( Local ( Name "v$12" ) ) :| [] )
-                              ]
+                                ( PropName "concatArray" )
+                              )
+                              ( LiteralArray Nothing [ LiteralString Nothing "Banana" ] :| [] )
                             )
+                            ( Ref Nothing ( Local ( Name "v1$490" ) ) :| [] ) :| []
                           )
-                        ] :|
-                        [ LiteralObject Nothing
-                          [
-                            ( PropName "reflectSymbol", AbsN Nothing
-                              ( ParamUnused Nothing :| [] )
-                              ( LiteralString Nothing "Banana" )
-                            )
-                          ]
-                        ]
+                        )
+                        ( LiteralString Nothing ")" )
                       )
                     )
-                    ( PropName "genericShow'" )
-                  )
-                  ( DataArgumentByIndex Nothing SumType 0
-                    ( Ref Nothing ( Local ( Name "v$7" ) ) ) :| []
                   )
                 )
               )
@@ -574,9 +475,9 @@ UberModule
       ( QName
         { qnameModuleName = ModuleName "Golden.DirectivePack.Test", qnameName = Name "pipeline"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "x$431" ) :| [] )
+        ( ParamNamed Nothing ( Name "x$471" ) :| [] )
         ( PrimBinOp Nothing PrimAdd
-          ( Ref Nothing ( Local ( Name "x$431" ) ) )
+          ( Ref Nothing ( Local ( Name "x$471" ) ) )
           ( LiteralInt Nothing 1 )
         )
       ), Standalone
@@ -835,44 +736,18 @@ UberModule
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
                   ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
-                  ( PrimBinOp Nothing PrimConcat
-                    ( LiteralString Nothing "fruit: " )
-                    ( AppN Nothing
-                      ( ObjectProp Nothing
-                        ( AppN Nothing
-                          ( Ref Nothing
-                            ( Imported
-                              ( ModuleName "Data.Show.Generic" )
-                              ( Name "genericShowConstructor$w" )
-                            )
-                          )
-                          ( LiteralObject Nothing
-                            [
-                              ( PropName "genericShowArgs", AbsN Nothing
-                                ( ParamNamed Nothing ( Name "v$519" ) :| [] )
-                                ( LiteralArray Nothing
-                                  [ AppN Nothing
-                                    ( Ref Nothing
-                                      ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) )
-                                    )
-                                    ( Ref Nothing ( Local ( Name "v$519" ) ) :| [] )
-                                  ]
-                                )
-                              )
-                            ] :|
-                            [ LiteralObject Nothing
-                              [
-                                ( PropName "reflectSymbol", AbsN Nothing
-                                  ( ParamUnused Nothing :| [] )
-                                  ( LiteralString Nothing "Banana" )
-                                )
-                              ]
-                            ]
-                          )
-                        )
-                        ( PropName "genericShow'" )
+                  ( AppN Nothing
+                    ( Ref Nothing
+                      ( Imported
+                        ( ModuleName "Golden.DirectivePack.Test" )
+                        ( Name "describeFruit" )
                       )
-                      ( LiteralInt Nothing 3 :| [] )
+                    )
+                    ( Ctor Nothing SumType
+                      ( ModuleName "Golden.DirectivePack.Test" )
+                      ( TyName "Fruit" )
+                      ( CtorName "Banana" )
+                      [ LiteralInt Nothing 3 ] :| []
                     ) :| []
                   )
                 )
@@ -885,7 +760,12 @@ UberModule
                     ( Ref Nothing
                       ( Imported ( ModuleName "Golden.DirectivePack.Test" ) ( Name "show" ) )
                     )
-                    ( LiteralInt Nothing 42 :| [] ) :| []
+                    ( AppN Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Golden.DirectivePack.Test" ) ( Name "pipeline" ) )
+                      )
+                      ( LiteralInt Nothing 41 :| [] ) :| []
+                    ) :| []
                   )
                 )
                 ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
@@ -926,18 +806,18 @@ UberModule
                         ( PropName "modifyImpl" )
                       )
                       ( AbsN Nothing
-                        ( ParamNamed Nothing ( Name "s$499" ) :| [] )
+                        ( ParamNamed Nothing ( Name "s$601" ) :| [] )
                         ( Let Nothing
                           ( Standalone
-                            ( Nothing, Name "s'$500", PrimBinOp Nothing PrimMul
-                              ( Ref Nothing ( Local ( Name "s$499" ) ) )
+                            ( Nothing, Name "s'$602", PrimBinOp Nothing PrimMul
+                              ( Ref Nothing ( Local ( Name "s$601" ) ) )
                               ( LiteralInt Nothing 3 )
                             ) :| []
                           )
                           ( LiteralObject Nothing
                             [
-                              ( PropName "state", Ref Nothing ( Local ( Name "s'$500" ) ) ),
-                              ( PropName "value", Ref Nothing ( Local ( Name "s'$500" ) ) )
+                              ( PropName "state", Ref Nothing ( Local ( Name "s'$602" ) ) ),
+                              ( PropName "value", Ref Nothing ( Local ( Name "s'$602" ) ) )
                             ]
                           )
                         ) :| []

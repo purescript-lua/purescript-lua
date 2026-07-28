@@ -41,6 +41,12 @@ UberModule
         }, ForeignImport Nothing
         ( ModuleName "Effect.Console" ) ".spago/p/console/f82835a0b873aafe6bd7b14dd30cc150553d4ab9/src/Effect/Console.purs"
         [ ( Nothing, Name "log" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "log"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
+        ( PropName "log" )
       ), RecursiveGroup
       (
         ( QName
@@ -296,24 +302,6 @@ UberModule
             )
           )
         ]
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "logShow$w"
-        }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "dictShow" ) :| [ ParamNamed Nothing ( Name "a" ) ] )
-        ( AppN Nothing
-          ( ObjectProp Nothing
-            ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
-            ( PropName "log" )
-          )
-          ( AppN Nothing
-            ( ObjectProp Nothing
-              ( Ref Nothing ( Local ( Name "dictShow" ) ) )
-              ( PropName "show" )
-            )
-            ( Ref Nothing ( Local ( Name "a" ) ) :| [] ) :| []
-          )
-        )
       )
     ], uberModuleForeigns = [], uberModuleExports =
     [
@@ -342,7 +330,7 @@ UberModule
                         ( PropName "foldr" )
                       )
                       ( AbsN Nothing
-                        ( ParamNamed Nothing ( Name "x$954" ) :| [] )
+                        ( ParamUnused Nothing :| [] )
                         ( AppN Nothing
                           ( Let Nothing
                             ( Standalone
@@ -406,17 +394,9 @@ UberModule
                           )
                           ( AppN Nothing
                             ( Ref Nothing
-                              ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow$w" ) )
+                              ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) )
                             )
-                            ( LiteralObject Nothing
-                              [
-                                ( PropName "show", AbsN Nothing
-                                  ( ParamUnused Nothing :| [] )
-                                  ( LiteralString Nothing "unit" )
-                                )
-                              ] :|
-                              [ Ref Nothing ( Local ( Name "x$954" ) ) ]
-                            ) :| []
+                            ( LiteralString Nothing "unit" :| [] ) :| []
                           )
                         ) :| []
                       )
@@ -435,15 +415,13 @@ UberModule
             )
             ( AppN Nothing
               ( AppN Nothing
-                ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow$w" ) ) )
-                ( LiteralObject Nothing
-                  [
-                    ( PropName "show", ObjectProp Nothing
-                      ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
-                      ( PropName "showIntImpl" )
-                    )
-                  ] :|
-                  [ AppN Nothing
+                ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+                ( AppN Nothing
+                  ( ObjectProp Nothing
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
+                    ( PropName "showIntImpl" )
+                  )
+                  ( AppN Nothing
                     ( AppN Nothing
                       ( AppN Nothing
                         ( ObjectProp Nothing
@@ -465,8 +443,8 @@ UberModule
                       )
                       ( LiteralInt Nothing 0 :| [] )
                     )
-                    ( Ref Nothing ( Local ( Name "arr$0" ) ) :| [] )
-                  ]
+                    ( Ref Nothing ( Local ( Name "arr$0" ) ) :| [] ) :| []
+                  ) :| []
                 )
               )
               ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )

@@ -26,16 +26,6 @@ UberModule
         [ ( Nothing, Name "log" ) ]
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Data.Tuple", qnameName = Name "Tuple$w" }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "value0" ) :| [ ParamNamed Nothing ( Name "value1" ) ] )
-        ( Ctor Nothing ProductType
-          ( ModuleName "Data.Tuple" )
-          ( TyName "Tuple" )
-          ( CtorName "Tuple" )
-          [ Ref Nothing ( Local ( Name "value0" ) ), Ref Nothing ( Local ( Name "value1" ) ) ]
-        )
-      ), Standalone
-      ( QName
         { qnameModuleName = ModuleName "Data.Identity", qnameName = Name "applyIdentity"
         }, LiteralObject Nothing
         [
@@ -335,19 +325,17 @@ UberModule
                                 )
                                 ( AbsN Nothing
                                   ( ParamNamed Nothing ( Name "v1$510" ) :| [] )
-                                  ( AppN Nothing
-                                    ( Ref Nothing
-                                      ( Imported ( ModuleName "Data.Tuple" ) ( Name "Tuple$w" ) )
-                                    )
-                                    ( AppN Nothing
+                                  ( Ctor Nothing ProductType
+                                    ( ModuleName "Data.Tuple" )
+                                    ( TyName "Tuple" )
+                                    ( CtorName "Tuple" )
+                                    [ AppN Nothing
                                       ( Ref Nothing ( Local ( Name "f$507" ) ) )
                                       ( DataArgumentByIndex Nothing ProductType 0
                                         ( Ref Nothing ( Local ( Name "v1$510" ) ) ) :| []
-                                      ) :|
-                                      [ DataArgumentByIndex Nothing ProductType 1
-                                        ( Ref Nothing ( Local ( Name "v1$510" ) ) )
-                                      ]
-                                    )
+                                      ), DataArgumentByIndex Nothing ProductType 1
+                                      ( Ref Nothing ( Local ( Name "v1$510" ) ) )
+                                    ]
                                   ) :| []
                                 )
                               )
@@ -388,12 +376,14 @@ UberModule
                         )
                         ( PropName "pure" )
                       )
-                      ( AppN Nothing
-                        ( Ref Nothing ( Imported ( ModuleName "Data.Tuple" ) ( Name "Tuple$w" ) ) )
-                        ( Ref Nothing
-                          ( Local ( Name "a" ) ) :|
-                          [ Ref Nothing ( Local ( Name "s" ) ) ]
-                        ) :| []
+                      ( Ctor Nothing ProductType
+                        ( ModuleName "Data.Tuple" )
+                        ( TyName "Tuple" )
+                        ( CtorName "Tuple" )
+                        [ Ref Nothing
+                          ( Local ( Name "a" ) ), Ref Nothing
+                          ( Local ( Name "s" ) )
+                        ] :| []
                       )
                     )
                   )
@@ -423,10 +413,12 @@ UberModule
       ( QName
         { qnameModuleName = ModuleName "Golden.CprState.Test", qnameName = Name "get"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "x$679" ) :| [] )
-        ( AppN Nothing
-          ( Ref Nothing ( Imported ( ModuleName "Data.Tuple" ) ( Name "Tuple$w" ) ) )
-          ( Ref Nothing ( Local ( Name "x$679" ) ) :| [ Ref Nothing ( Local ( Name "x$679" ) ) ] )
+        ( ParamNamed Nothing ( Name "x$701" ) :| [] )
+        ( Ctor Nothing ProductType
+          ( ModuleName "Data.Tuple" )
+          ( TyName "Tuple" )
+          ( CtorName "Tuple" )
+          [ Ref Nothing ( Local ( Name "x$701" ) ), Ref Nothing ( Local ( Name "x$701" ) ) ]
         )
       ), Standalone
       ( QName
@@ -453,15 +445,18 @@ UberModule
               )
               ( AbsN Nothing
                 ( ParamUnused Nothing :| [] )
-                ( AppN Nothing
-                  ( Ref Nothing ( Imported ( ModuleName "Data.Tuple" ) ( Name "Tuple$w" ) ) )
-                  ( Ref Nothing
-                    ( Imported ( ModuleName "Data.Unit" ) ( Name "unit" ) ) :|
-                    [ PrimBinOp Nothing PrimAdd
-                      ( Ref Nothing ( Local ( Name "x1" ) ) )
-                      ( LiteralInt Nothing 1 )
-                    ]
-                  )
+                ( Ctor Nothing ProductType
+                  ( ModuleName "Data.Tuple" )
+                  ( TyName "Tuple" )
+                  ( CtorName "Tuple" )
+                  [ Ref Nothing
+                    ( Imported
+                      ( ModuleName "Data.Unit" )
+                      ( Name "unit" )
+                    ), PrimBinOp Nothing PrimAdd
+                    ( Ref Nothing ( Local ( Name "x1" ) ) )
+                    ( LiteralInt Nothing 1 )
+                  ]
                 ) :| []
               )
             )
@@ -491,17 +486,18 @@ UberModule
                       )
                       ( AbsN Nothing
                         ( ParamUnused Nothing :| [] )
-                        ( AppN Nothing
-                          ( Ref Nothing
-                            ( Imported ( ModuleName "Data.Tuple" ) ( Name "Tuple$w" ) )
-                          )
-                          ( Ref Nothing
-                            ( Imported ( ModuleName "Data.Unit" ) ( Name "unit" ) ) :|
-                            [ PrimBinOp Nothing PrimAdd
-                              ( Ref Nothing ( Local ( Name "x2" ) ) )
-                              ( LiteralInt Nothing 1 )
-                            ]
-                          )
+                        ( Ctor Nothing ProductType
+                          ( ModuleName "Data.Tuple" )
+                          ( TyName "Tuple" )
+                          ( CtorName "Tuple" )
+                          [ Ref Nothing
+                            ( Imported
+                              ( ModuleName "Data.Unit" )
+                              ( Name "unit" )
+                            ), PrimBinOp Nothing PrimAdd
+                            ( Ref Nothing ( Local ( Name "x2" ) ) )
+                            ( LiteralInt Nothing 1 )
+                          ]
                         ) :| []
                       )
                     )
@@ -537,17 +533,18 @@ UberModule
                               )
                               ( AbsN Nothing
                                 ( ParamUnused Nothing :| [] )
-                                ( AppN Nothing
-                                  ( Ref Nothing
-                                    ( Imported ( ModuleName "Data.Tuple" ) ( Name "Tuple$w" ) )
-                                  )
-                                  ( Ref Nothing
-                                    ( Imported ( ModuleName "Data.Unit" ) ( Name "unit" ) ) :|
-                                    [ PrimBinOp Nothing PrimAdd
-                                      ( Ref Nothing ( Local ( Name "x3" ) ) )
-                                      ( LiteralInt Nothing 1 )
-                                    ]
-                                  )
+                                ( Ctor Nothing ProductType
+                                  ( ModuleName "Data.Tuple" )
+                                  ( TyName "Tuple" )
+                                  ( CtorName "Tuple" )
+                                  [ Ref Nothing
+                                    ( Imported
+                                      ( ModuleName "Data.Unit" )
+                                      ( Name "unit" )
+                                    ), PrimBinOp Nothing PrimAdd
+                                    ( Ref Nothing ( Local ( Name "x3" ) ) )
+                                    ( LiteralInt Nothing 1 )
+                                  ]
                                 ) :| []
                               )
                             )
@@ -586,23 +583,18 @@ UberModule
                                       )
                                       ( AbsN Nothing
                                         ( ParamUnused Nothing :| [] )
-                                        ( AppN Nothing
-                                          ( Ref Nothing
-                                            ( Imported
-                                              ( ModuleName "Data.Tuple" )
-                                              ( Name "Tuple$w" )
-                                            )
-                                          )
-                                          ( Ref Nothing
+                                        ( Ctor Nothing ProductType
+                                          ( ModuleName "Data.Tuple" )
+                                          ( TyName "Tuple" )
+                                          ( CtorName "Tuple" )
+                                          [ Ref Nothing
                                             ( Imported
                                               ( ModuleName "Data.Unit" )
                                               ( Name "unit" )
-                                            ) :|
-                                            [ PrimBinOp Nothing PrimAdd
-                                              ( Ref Nothing ( Local ( Name "x4" ) ) )
-                                              ( LiteralInt Nothing 1 )
-                                            ]
-                                          )
+                                            ), PrimBinOp Nothing PrimAdd
+                                            ( Ref Nothing ( Local ( Name "x4" ) ) )
+                                            ( LiteralInt Nothing 1 )
+                                          ]
                                         ) :| []
                                       )
                                     )
@@ -641,23 +633,18 @@ UberModule
                                               )
                                               ( AbsN Nothing
                                                 ( ParamUnused Nothing :| [] )
-                                                ( AppN Nothing
-                                                  ( Ref Nothing
-                                                    ( Imported
-                                                      ( ModuleName "Data.Tuple" )
-                                                      ( Name "Tuple$w" )
-                                                    )
-                                                  )
-                                                  ( Ref Nothing
+                                                ( Ctor Nothing ProductType
+                                                  ( ModuleName "Data.Tuple" )
+                                                  ( TyName "Tuple" )
+                                                  ( CtorName "Tuple" )
+                                                  [ Ref Nothing
                                                     ( Imported
                                                       ( ModuleName "Data.Unit" )
                                                       ( Name "unit" )
-                                                    ) :|
-                                                    [ PrimBinOp Nothing PrimAdd
-                                                      ( Ref Nothing ( Local ( Name "x5" ) ) )
-                                                      ( LiteralInt Nothing 1 )
-                                                    ]
-                                                  )
+                                                    ), PrimBinOp Nothing PrimAdd
+                                                    ( Ref Nothing ( Local ( Name "x5" ) ) )
+                                                    ( LiteralInt Nothing 1 )
+                                                  ]
                                                 ) :| []
                                               )
                                             )
@@ -696,25 +683,18 @@ UberModule
                                                       )
                                                       ( AbsN Nothing
                                                         ( ParamUnused Nothing :| [] )
-                                                        ( AppN Nothing
-                                                          ( Ref Nothing
-                                                            ( Imported
-                                                              ( ModuleName "Data.Tuple" )
-                                                              ( Name "Tuple$w" )
-                                                            )
-                                                          )
-                                                          ( Ref Nothing
+                                                        ( Ctor Nothing ProductType
+                                                          ( ModuleName "Data.Tuple" )
+                                                          ( TyName "Tuple" )
+                                                          ( CtorName "Tuple" )
+                                                          [ Ref Nothing
                                                             ( Imported
                                                               ( ModuleName "Data.Unit" )
                                                               ( Name "unit" )
-                                                            ) :|
-                                                            [ PrimBinOp Nothing PrimAdd
-                                                              ( Ref Nothing
-                                                                ( Local ( Name "x6" ) )
-                                                              )
-                                                              ( LiteralInt Nothing 1 )
-                                                            ]
-                                                          )
+                                                            ), PrimBinOp Nothing PrimAdd
+                                                            ( Ref Nothing ( Local ( Name "x6" ) ) )
+                                                            ( LiteralInt Nothing 1 )
+                                                          ]
                                                         ) :| []
                                                       )
                                                     )
@@ -755,25 +735,20 @@ UberModule
                                                               )
                                                               ( AbsN Nothing
                                                                 ( ParamUnused Nothing :| [] )
-                                                                ( AppN Nothing
-                                                                  ( Ref Nothing
-                                                                    ( Imported
-                                                                      ( ModuleName "Data.Tuple" )
-                                                                      ( Name "Tuple$w" )
-                                                                    )
-                                                                  )
-                                                                  ( Ref Nothing
+                                                                ( Ctor Nothing ProductType
+                                                                  ( ModuleName "Data.Tuple" )
+                                                                  ( TyName "Tuple" )
+                                                                  ( CtorName "Tuple" )
+                                                                  [ Ref Nothing
                                                                     ( Imported
                                                                       ( ModuleName "Data.Unit" )
                                                                       ( Name "unit" )
-                                                                    ) :|
-                                                                    [ PrimBinOp Nothing PrimAdd
-                                                                      ( Ref Nothing
-                                                                        ( Local ( Name "x7" ) )
-                                                                      )
-                                                                      ( LiteralInt Nothing 1 )
-                                                                    ]
-                                                                  )
+                                                                    ), PrimBinOp Nothing PrimAdd
+                                                                    ( Ref Nothing
+                                                                      ( Local ( Name "x7" ) )
+                                                                    )
+                                                                    ( LiteralInt Nothing 1 )
+                                                                  ]
                                                                 ) :| []
                                                               )
                                                             )
@@ -814,27 +789,22 @@ UberModule
                                                                       )
                                                                       ( AbsN Nothing
                                                                         ( ParamUnused Nothing :| [] )
-                                                                        ( AppN Nothing
-                                                                          ( Ref Nothing
-                                                                            ( Imported
-                                                                              ( ModuleName "Data.Tuple" )
-                                                                              ( Name "Tuple$w" )
-                                                                            )
-                                                                          )
-                                                                          ( Ref Nothing
+                                                                        ( Ctor Nothing ProductType
+                                                                          ( ModuleName "Data.Tuple" )
+                                                                          ( TyName "Tuple" )
+                                                                          ( CtorName "Tuple" )
+                                                                          [ Ref Nothing
                                                                             ( Imported
                                                                               ( ModuleName "Data.Unit" )
                                                                               ( Name "unit" )
-                                                                            ) :|
-                                                                            [ PrimBinOp Nothing PrimAdd
-                                                                              ( Ref Nothing
-                                                                                ( Local
-                                                                                  ( Name "x8" )
-                                                                                )
+                                                                            ), PrimBinOp Nothing PrimAdd
+                                                                            ( Ref Nothing
+                                                                              ( Local
+                                                                                ( Name "x8" )
                                                                               )
-                                                                              ( LiteralInt Nothing 1 )
-                                                                            ]
-                                                                          )
+                                                                            )
+                                                                            ( LiteralInt Nothing 1 )
+                                                                          ]
                                                                         ) :| []
                                                                       )
                                                                     )
@@ -875,27 +845,22 @@ UberModule
                                                                               )
                                                                               ( AbsN Nothing
                                                                                 ( ParamUnused Nothing :| [] )
-                                                                                ( AppN Nothing
-                                                                                  ( Ref Nothing
-                                                                                    ( Imported
-                                                                                      ( ModuleName "Data.Tuple" )
-                                                                                      ( Name "Tuple$w" )
-                                                                                    )
-                                                                                  )
-                                                                                  ( Ref Nothing
+                                                                                ( Ctor Nothing ProductType
+                                                                                  ( ModuleName "Data.Tuple" )
+                                                                                  ( TyName "Tuple" )
+                                                                                  ( CtorName "Tuple" )
+                                                                                  [ Ref Nothing
                                                                                     ( Imported
                                                                                       ( ModuleName "Data.Unit" )
                                                                                       ( Name "unit" )
-                                                                                    ) :|
-                                                                                    [ PrimBinOp Nothing PrimAdd
-                                                                                      ( Ref Nothing
-                                                                                        ( Local
-                                                                                          ( Name "x9" )
-                                                                                        )
+                                                                                    ), PrimBinOp Nothing PrimAdd
+                                                                                    ( Ref Nothing
+                                                                                      ( Local
+                                                                                        ( Name "x9" )
                                                                                       )
-                                                                                      ( LiteralInt Nothing 1 )
-                                                                                    ]
-                                                                                  )
+                                                                                    )
+                                                                                    ( LiteralInt Nothing 1 )
+                                                                                  ]
                                                                                 ) :| []
                                                                               )
                                                                             )
@@ -936,27 +901,22 @@ UberModule
                                                                                       )
                                                                                       ( AbsN Nothing
                                                                                         ( ParamUnused Nothing :| [] )
-                                                                                        ( AppN Nothing
-                                                                                          ( Ref Nothing
-                                                                                            ( Imported
-                                                                                              ( ModuleName "Data.Tuple" )
-                                                                                              ( Name "Tuple$w" )
-                                                                                            )
-                                                                                          )
-                                                                                          ( Ref Nothing
+                                                                                        ( Ctor Nothing ProductType
+                                                                                          ( ModuleName "Data.Tuple" )
+                                                                                          ( TyName "Tuple" )
+                                                                                          ( CtorName "Tuple" )
+                                                                                          [ Ref Nothing
                                                                                             ( Imported
                                                                                               ( ModuleName "Data.Unit" )
                                                                                               ( Name "unit" )
-                                                                                            ) :|
-                                                                                            [ PrimBinOp Nothing PrimAdd
-                                                                                              ( Ref Nothing
-                                                                                                ( Local
-                                                                                                  ( Name "x10" )
-                                                                                                )
+                                                                                            ), PrimBinOp Nothing PrimAdd
+                                                                                            ( Ref Nothing
+                                                                                              ( Local
+                                                                                                ( Name "x10" )
                                                                                               )
-                                                                                              ( LiteralInt Nothing 1 )
-                                                                                            ]
-                                                                                          )
+                                                                                            )
+                                                                                            ( LiteralInt Nothing 1 )
+                                                                                          ]
                                                                                         ) :| []
                                                                                       )
                                                                                     )

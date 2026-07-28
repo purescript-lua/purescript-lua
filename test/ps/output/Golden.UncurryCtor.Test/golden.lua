@@ -9,6 +9,7 @@ local Data_Show_foreign = {
     end
   end
 }
+local Data_Show_showIntImpl = Data_Show_foreign.showIntImpl
 local Data_Functor_foreign = {
   arrayMap = function(f)
     return function(arr)
@@ -22,13 +23,14 @@ local Data_Functor_foreign = {
 local Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
 }
-local Data_Show_showInt = { show = Data_Show_foreign.showIntImpl }
+local Effect_Console_log = Effect_Console_foreign.log
+local Data_Show_showInt = { show = Data_Show_showIntImpl }
 local Data_Show_show = function(dict) return dict.show end
 local Effect_Console_logShow_S_w = function(dictShow, a)
-  return Effect_Console_foreign.log(dictShow.show(a))
+  return Effect_Console_log(dictShow.show(a))
 end
 local Golden_UncurryCtor_Test_logShow = function(logShow_S_p2_S_0)
-  return Effect_Console_logShow_S_w(Data_Show_showInt, logShow_S_p2_S_0)
+  return Effect_Console_log(Data_Show_showIntImpl(logShow_S_p2_S_0))
 end
 local Golden_UncurryCtor_Test_map = Data_Functor_foreign.arrayMap
 local Golden_UncurryCtor_Test_Origin = {
@@ -43,7 +45,12 @@ end
 local Golden_UncurryCtor_Test_Tri = function(Tri_S_p1)
   return function(Tri_S_p2)
     return function(Tri_S_p3)
-      return Golden_UncurryCtor_Test_Tri_S_w(Tri_S_p1, Tri_S_p2, Tri_S_p3)
+      return {
+        "Golden.UncurryCtor.Test∷Shape.Tri",
+        Tri_S_p1,
+        Tri_S_p2,
+        Tri_S_p3
+      }
     end
   end
 end
@@ -51,9 +58,6 @@ local Golden_UncurryCtor_Test_Pair_S_w = function(value0, value1)
   return { value0, value1 }
 end
 local Golden_UncurryCtor_Test_Nil = { "Golden.UncurryCtor.Test∷IntList.Nil" }
-local Golden_UncurryCtor_Test_Cons_S_w = function(value0, value1)
-  return { "Golden.UncurryCtor.Test∷IntList.Cons", value0, value1 }
-end
 local Golden_UncurryCtor_Test_unbox = function(v) return v end
 local Golden_UncurryCtor_Test_total
 Golden_UncurryCtor_Test_total = function(v)
@@ -63,7 +67,47 @@ Golden_UncurryCtor_Test_total = function(v)
     return v[2] + Golden_UncurryCtor_Test_total(v[3])
   end
 end
-local Golden_UncurryCtor_Test_range = Golden_UncurryCtor_Test_Cons_S_w(1, Golden_UncurryCtor_Test_Cons_S_w(2, Golden_UncurryCtor_Test_Cons_S_w(3, Golden_UncurryCtor_Test_Cons_S_w(4, Golden_UncurryCtor_Test_Cons_S_w(5, Golden_UncurryCtor_Test_Cons_S_w(6, Golden_UncurryCtor_Test_Cons_S_w(7, Golden_UncurryCtor_Test_Cons_S_w(8, Golden_UncurryCtor_Test_Cons_S_w(9, Golden_UncurryCtor_Test_Cons_S_w(10, Golden_UncurryCtor_Test_Nil))))))))))
+local Golden_UncurryCtor_Test_range = {
+  "Golden.UncurryCtor.Test∷IntList.Cons",
+  1,
+  {
+    "Golden.UncurryCtor.Test∷IntList.Cons",
+    2,
+    {
+      "Golden.UncurryCtor.Test∷IntList.Cons",
+      3,
+      {
+        "Golden.UncurryCtor.Test∷IntList.Cons",
+        4,
+        {
+          "Golden.UncurryCtor.Test∷IntList.Cons",
+          5,
+          {
+            "Golden.UncurryCtor.Test∷IntList.Cons",
+            6,
+            {
+              "Golden.UncurryCtor.Test∷IntList.Cons",
+              7,
+              {
+                "Golden.UncurryCtor.Test∷IntList.Cons",
+                8,
+                {
+                  "Golden.UncurryCtor.Test∷IntList.Cons",
+                  9,
+                  {
+                    "Golden.UncurryCtor.Test∷IntList.Cons",
+                    10,
+                    Golden_UncurryCtor_Test_Nil
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
 local Golden_UncurryCtor_Test_pairSum = function(v) return v[1] + v[2] end
 local Golden_UncurryCtor_Test_area = function(v)
   local _S_cse0 = v[2]

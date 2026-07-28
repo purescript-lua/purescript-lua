@@ -225,8 +225,9 @@ user-written curried function has, so the uncurrying worker/wrapper split
 ("Language.PureScript.Backend.IR.Uncurry") turns an arity-≥2 constructor
 into an n-ary worker @λ(p₁,…,pₙ). Ctor [p₁,…,pₙ]@ plus a curried wrapper,
 and 'inlineSaturatedCall' pastes an arity-1 constructor at its saturated
-sites, beta-reducing to an in-place 'Ctor'. A partial application stays a
-call of the curried wrapper. Every rewrite that builds a 'Ctor' preserves
+curried sites and an n-ary constructor worker at its saturated calls,
+beta-reducing to an in-place 'Ctor'. A partial application stays a call of
+the curried wrapper. Every rewrite that builds a 'Ctor' preserves
 saturation; the case-of-known-constructor folds (see 'reduceKnownConstructor'
 and 'resolveKnownCtorApp' in the optimizer) rely on it.
 -}

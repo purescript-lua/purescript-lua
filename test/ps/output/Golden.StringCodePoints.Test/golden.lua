@@ -257,6 +257,7 @@ end)()
 local Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
 }
+local Effect_Console_log = Effect_Console_foreign.log
 local Data_HeytingAlgebra_heytingAlgebraBoolean
 Data_HeytingAlgebra_heytingAlgebraBoolean = {
   ff = false,
@@ -277,7 +278,6 @@ Data_HeytingAlgebra_heytingAlgebraBoolean = {
 local Data_Eq_eqInt = {
   eq = function(r1_S_0) return function(r2_S_0) return r1_S_0 == r2_S_0 end end
 }
-local Data_Show_showInt = { show = Data_Show_showIntImpl }
 local Data_Ordering_LT = { "Data.Ordering∷Ordering.LT" }
 local Data_Ordering_GT = { "Data.Ordering∷Ordering.GT" }
 local Data_Ordering_EQ = { "Data.Ordering∷Ordering.EQ" }
@@ -363,10 +363,18 @@ local Data_String_CodePoints_fromCharCode = function(x_S_4)
   end)())
 end
 local Data_String_CodePoints_singletonFallback = function(v)
-  if Data_Ord_lessThanOrEq_S_w(Data_Ord_ordInt, v, 65535) then
-    return Data_String_CodePoints_fromCharCode(v)
-  else
+  if "Data.Ordering∷Ordering.GT" == (function()
+    if v < 65535 then
+      return Data_Ordering_LT[1]
+    elseif v == 65535 then
+      return Data_Ordering_EQ[1]
+    else
+      return Data_Ordering_GT[1]
+    end
+  end)() then
     return Data_String_CodePoints_fromCharCode(Data_String_CodePoints_add_S_w(Data_EuclideanRing_foreign.intDiv(Data_String_CodePoints_sub_S_w(v, 65536))(1024), 55296)) .. Data_String_CodePoints_fromCharCode(Data_String_CodePoints_add_S_w(Data_EuclideanRing_foreign.intMod(Data_String_CodePoints_sub_S_w(v, 65536))(1024), 56320))
+  else
+    return Data_String_CodePoints_fromCharCode(v)
   end
 end
 local Data_String_CodePoints_singleton = Data_String_CodePoints_foreign._singleton(Data_String_CodePoints_singletonFallback)
@@ -404,7 +412,15 @@ local Data_String_CodePoints_uncons = function(s)
 end
 local Data_String_CodePoints_takeFallback_S_w
 Data_String_CodePoints_takeFallback_S_w = function(v, v1)
-  if Data_Ord_lessThan_S_w(Data_Ord_ordInt, v, 1) then
+  if "Data.Ordering∷Ordering.LT" == (function()
+    if v < 1 then
+      return Data_Ordering_LT[1]
+    elseif v == 1 then
+      return Data_Ordering_EQ[1]
+    else
+      return Data_Ordering_GT[1]
+    end
+  end)() then
     return ""
   else
     local v2_S_0 = Data_String_CodePoints_uncons(v1)
@@ -468,7 +484,15 @@ local Data_String_CodePoints_codePointAtFallback = function( codePointAtFallback
   end
 end
 local Data_String_CodePoints_codePointAt_S_w = function(v, v1)
-  if Data_Ord_lessThan_S_w(Data_Ord_ordInt, v, 0) then
+  if "Data.Ordering∷Ordering.LT" == (function()
+    if v < 0 then
+      return Data_Ordering_LT[1]
+    elseif v == 0 then
+      return Data_Ordering_EQ[1]
+    else
+      return Data_Ordering_GT[1]
+    end
+  end)() then
     return Data_Maybe_Nothing
   elseif 0 == v then
     if "" == v1 then
@@ -515,34 +539,29 @@ Data_String_CodePoints_Lazy_enumCodePoint = PSLUA_runtime_lazy("enumCodePoint")(
   }
 end)
 local Effect_Console_logShow_S_w = function(dictShow, a)
-  return Effect_Console_foreign.log(dictShow.show(a))
+  return Effect_Console_log(dictShow.show(a))
 end
 local Golden_StringCodePoints_Test_fromEnum = Data_String_CodePoints_boundedEnumCodePoint.fromEnum
-local Golden_StringCodePoints_Test_showArray = {
-  show = Data_Show_showArrayImpl(Data_Show_showIntImpl)
-}
 local Golden_StringCodePoints_Test_logShow = function(logShow_S_p2_S_0)
-  return Effect_Console_logShow_S_w(Golden_StringCodePoints_Test_showArray, logShow_S_p2_S_0)
+  return Effect_Console_log(Data_Show_showArrayImpl(Data_Show_showIntImpl)(logShow_S_p2_S_0))
 end
 local Golden_StringCodePoints_Test_logShow1 = function(logShow_S_p2_S_1)
-  return Effect_Console_logShow_S_w(Data_Show_showInt, logShow_S_p2_S_1)
+  return Effect_Console_log(Data_Show_showIntImpl(logShow_S_p2_S_1))
 end
 local Golden_StringCodePoints_Test_logShow2 = function(logShow_S_p2_S_2)
-  return Effect_Console_logShow_S_w({
-    show = function(v_S_4)
-      if "Data.Maybe∷Maybe.Just" == v_S_4[1] then
-        return "(Just " .. Data_Show_showIntImpl(v_S_4[2]) .. ")"
-      else
-        return "Nothing"
-      end
+  return Effect_Console_log((function()
+    if "Data.Maybe∷Maybe.Just" == logShow_S_p2_S_2[1] then
+      return "(Just " .. Data_Show_showIntImpl(logShow_S_p2_S_2[2]) .. ")"
+    else
+      return "Nothing"
     end
-  }, logShow_S_p2_S_2)
+  end)())
 end
 local Golden_StringCodePoints_Test_cp = function(x_S_6)
   return Partial_Unsafe__unsafePartial(function()
-    return function(v_S_5)
-      if "Data.Maybe∷Maybe.Just" == v_S_5[1] then
-        return v_S_5[2]
+    return function(v_S_4)
+      if "Data.Maybe∷Maybe.Just" == v_S_4[1] then
+        return v_S_4[2]
       else
         return error("No patterns matched")
       end
@@ -603,9 +622,9 @@ return (function()
     end
   end)())()
   local _ = Effect_Console_logShow_S_w({
-    show = function(v_S_6)
-      if "Data.Maybe∷Maybe.Just" == v_S_6[1] then
-        return "(Just " .. Data_Show_showArrayImpl(Data_Show_showIntImpl)(v_S_6[2]) .. ")"
+    show = function(v_S_5)
+      if "Data.Maybe∷Maybe.Just" == v_S_5[1] then
+        return "(Just " .. Data_Show_showArrayImpl(Data_Show_showIntImpl)(v_S_5[2]) .. ")"
       else
         return "Nothing"
       end
@@ -622,8 +641,8 @@ return (function()
     end
   end)())()
   local _ = Effect_Console_logShow_S_w({
-    show = function(v_S_7)
-      if v_S_7 then return "true" else return "false" end
+    show = function(v_S_6)
+      if v_S_6 then return "true" else return "false" end
     end
   }, Data_String_CodePoints_foreign._fromCodePointArray(Data_String_CodePoints_singletonFallback)(Data_String_CodePoints_toCodePointArray("aéЯ𝐀z")) == "aéЯ𝐀z")()
   return Golden_StringCodePoints_Test_logShow(Golden_StringCodePoints_Test_codes(Data_String_CodePoints_singleton(Golden_StringCodePoints_Test_cp(119808))))()

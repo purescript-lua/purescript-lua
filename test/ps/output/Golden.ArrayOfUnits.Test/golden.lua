@@ -51,6 +51,7 @@ local Effect_pureE = Effect_foreign.pureE
 local Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
 }
+local Effect_Console_log = Effect_Console_foreign.log
 local Data_Foldable_foldableArray
 Data_Foldable_foldableArray = {
   foldr = Data_Foldable_foreign.foldrArray,
@@ -106,29 +107,22 @@ Effect_Lazy_applyEffect = PSLUA_runtime_lazy("applyEffect")(function()
     Functor0 = function() return Effect_Lazy_functorEffect(0) end
   }
 end)
-local Effect_Console_logShow_S_w = function(dictShow, a)
-  return Effect_Console_foreign.log(dictShow.show(a))
-end
 return (function()
   local arr_S_0 = {
     [1] = Data_Unit_unit,
     [2] = Data_Unit_unit,
     [3] = Data_Unit_unit
   }
-  local _ = Data_Foldable_foldableArray.foldr(function(x_S_1)
+  local _ = Data_Foldable_foldableArray.foldr(function()
     local dictApply_S_0 = Effect_applicativeEffect.Apply0()
-    local a_S_2 = Effect_Console_logShow_S_w({
-      show = function() return "unit" end
-    }, x_S_1)
+    local a_S_2 = Effect_Console_log("unit")
     return function(b_S_0)
       return dictApply_S_0.apply((dictApply_S_0.Functor0()).map(function()
-        return function(x_S_2) return x_S_2 end
+        return function(x_S_1) return x_S_1 end
       end)(a_S_2))(b_S_0)
     end
   end)(Effect_pureE(Data_Unit_unit))(arr_S_0)()
-  return Effect_Console_logShow_S_w({
-    show = Data_Show_foreign.showIntImpl
-  }, Data_Foldable_foldableArray.foldl(function(c_S_0)
+  return Effect_Console_log(Data_Show_foreign.showIntImpl(Data_Foldable_foldableArray.foldl(function( c_S_0 )
     return function() return 1 + c_S_0 end
-  end)(0)(arr_S_0))()
+  end)(0)(arr_S_0)))()
 end)()

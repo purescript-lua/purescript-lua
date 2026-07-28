@@ -31,34 +31,6 @@ UberModule
         ( ModuleName "Data.Maybe" )
         ( TyName "Maybe" )
         ( CtorName "Nothing" ) []
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Data.Maybe", qnameName = Name "Just" }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "value0" ) :| [] )
-        ( Ctor Nothing SumType
-          ( ModuleName "Data.Maybe" )
-          ( TyName "Maybe" )
-          ( CtorName "Just" )
-          [ Ref Nothing ( Local ( Name "value0" ) ) ]
-        )
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Data.Maybe", qnameName = Name "maybe$w" }, AbsN Nothing
-        ( ParamNamed Nothing
-          ( Name "v" ) :|
-          [ ParamNamed Nothing ( Name "v1" ), ParamNamed Nothing ( Name "v2" ) ]
-        )
-        ( IfThenElse Nothing
-          ( Eq Nothing
-            ( LiteralString Nothing "Data.Maybe∷Maybe.Nothing" )
-            ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v2" ) ) ) )
-          )
-          ( Ref Nothing ( Local ( Name "v" ) ) )
-          ( AppN Nothing
-            ( Ref Nothing ( Local ( Name "v1" ) ) )
-            ( DataArgumentByIndex Nothing SumType 0 ( Ref Nothing ( Local ( Name "v2" ) ) ) :| [] )
-          )
-        )
       )
     ], uberModuleForeigns = [], uberModuleExports =
     [
@@ -66,95 +38,83 @@ UberModule
         ( ParamUnused Nothing :| [] )
         ( Let Nothing
           ( Standalone
-            ( Nothing, Name "$cse332", AbsN Nothing
-              ( ParamNamed Nothing ( Name "x$314" ) :| [] )
-              ( Ref Nothing ( Local ( Name "x$314" ) ) )
-            ) :| []
-          )
-          ( Let Nothing
-            ( Standalone
-              ( Nothing, Name "_", AppN Nothing
-                ( AppN Nothing
-                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
-                  ( AppN Nothing
-                    ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
-                    ( AppN Nothing
-                      ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "maybe$w" ) ) )
-                      ( LiteralInt Nothing 0 :|
-                        [ Ref Nothing
-                          ( Local ( Name "$cse332" ) ), AppN Nothing
-                          ( Ref Nothing
-                            ( Imported ( ModuleName "Data.Maybe" ) ( Name "maybe$w" ) )
-                          )
-                          ( Ref Nothing
-                            ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) :|
-                            [ Ref Nothing
-                              ( Imported
-                                ( ModuleName "Data.Maybe" )
-                                ( Name "Just" )
-                              ), IfThenElse Nothing
-                              ( Eq Nothing
-                                ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
-                                ( ReflectCtor Nothing
-                                  ( Ref Nothing
-                                    ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) )
-                                  )
-                                )
-                              )
-                              ( Ctor Nothing SumType
-                                ( ModuleName "Data.Maybe" )
-                                ( TyName "Maybe" )
-                                ( CtorName "Just" )
-                                [ DataArgumentByIndex Nothing SumType 0
-                                  ( Ref Nothing
-                                    ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) )
-                                  )
-                                ]
-                              )
-                              ( Ref Nothing
-                                ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) )
-                              )
-                            ]
-                          )
-                        ]
-                      ) :| []
-                    ) :| []
-                  )
-                )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
-              ) :| []
-            )
-            ( AppN Nothing
+            ( Nothing, Name "_", AppN Nothing
               ( AppN Nothing
                 ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
                 ( AppN Nothing
                   ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
-                  ( AppN Nothing
-                    ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "maybe$w" ) ) )
-                    ( LiteralInt Nothing 0 :|
-                      [ Ref Nothing
-                        ( Local ( Name "$cse332" ) ), AppN Nothing
-                        ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "maybe$w" ) ) )
-                        ( Ref Nothing
-                          ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) :|
-                          [ Ref Nothing
-                            ( Imported
+                  ( Let Nothing
+                    ( Standalone
+                      ( Nothing, Name "v2$331", Let Nothing
+                        ( Standalone
+                          ( Nothing, Name "v2$327", IfThenElse Nothing
+                            ( Eq Nothing
+                              ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
+                              ( ReflectCtor Nothing
+                                ( Ref Nothing
+                                  ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) )
+                                )
+                              )
+                            )
+                            ( Ctor Nothing SumType
                               ( ModuleName "Data.Maybe" )
-                              ( Name "Just" )
-                            ), Ctor Nothing SumType
+                              ( TyName "Maybe" )
+                              ( CtorName "Just" )
+                              [ DataArgumentByIndex Nothing SumType 0
+                                ( Ref Nothing
+                                  ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) )
+                                )
+                              ]
+                            )
+                            ( Ref Nothing
+                              ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) )
+                            )
+                          ) :| []
+                        )
+                        ( IfThenElse Nothing
+                          ( Eq Nothing
+                            ( LiteralString Nothing "Data.Maybe∷Maybe.Nothing" )
+                            ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v2$327" ) ) ) )
+                          )
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) )
+                          )
+                          ( Ctor Nothing SumType
                             ( ModuleName "Data.Maybe" )
                             ( TyName "Maybe" )
                             ( CtorName "Just" )
-                            [ LiteralInt Nothing 42 ]
-                          ]
+                            [ DataArgumentByIndex Nothing SumType 0
+                              ( Ref Nothing ( Local ( Name "v2$327" ) ) )
+                            ]
+                          )
                         )
-                      ]
+                      ) :| []
+                    )
+                    ( IfThenElse Nothing
+                      ( Eq Nothing
+                        ( LiteralString Nothing "Data.Maybe∷Maybe.Nothing" )
+                        ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v2$331" ) ) ) )
+                      )
+                      ( LiteralInt Nothing 0 )
+                      ( DataArgumentByIndex Nothing SumType 0
+                        ( Ref Nothing ( Local ( Name "v2$331" ) ) )
+                      )
                     ) :| []
                   ) :| []
                 )
               )
               ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+            ) :| []
+          )
+          ( AppN Nothing
+            ( AppN Nothing
+              ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+              ( AppN Nothing
+                ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
+                ( LiteralInt Nothing 42 :| [] ) :| []
+              )
             )
+            ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
           )
         )
       )
