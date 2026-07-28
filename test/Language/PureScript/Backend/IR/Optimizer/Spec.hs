@@ -3149,6 +3149,181 @@ spec = describe "IR Optimizer" do
                      )
                    ]
 
+  describe "derives directives for specializations (issue #241)" do
+    let mainModule = moduleNameFromString "Main"
+        extern = moduleNameFromString "Extern"
+        g = refImported extern (Name "g")
+        checked = either (fail . show) pure . optimizedUberModuleChecked mempty
+        namesOf uber =
+          [ name
+          | Standalone (QName _ (Name name), _) ←
+              Linker.uberModuleBindings uber
+          ]
+        -- g a (g b (g c (g a …))) — an opaque chain nothing folds, far
+        -- over 'inlineSizeBudget', so only a directive can paste the
+        -- bindings built from it.
+        combineBody a b c =
+          foldr
+            (application . application g)
+            c
+            (concat (replicate 12 [a, b, c]))
+        combineName = QName mainModule (Name "combine")
+        combineRef = refImported mainModule (Name "combine")
+        combineDef =
+          abstraction (paramNamed (Name "a")) $
+            abstraction (paramNamed (Name "b")) $
+              abstraction (paramNamed (Name "c")) $
+                combineBody
+                  (refLocal (Name "a"))
+                  (refLocal (Name "b"))
+                  (refLocal (Name "c"))
+
+    it "marks a specialization saturated at the directed arity always" do
+      -- spec = combine 1 2 — applied to exactly the directed arity, so
+      -- every use of spec stands for a qualifying call of combine: the
+      -- derived always-inline directive pastes it at both sites with no
+      -- annotation of its own, and the folds collapse them.
+      let specName = QName mainModule (Name "spec")
+          specRef = refImported mainModule (Name "spec")
+          specDef =
+            application
+              (application combineRef (literalInt 1))
+              (literalInt 2)
+      optimized ←
+        checked
+          Linker.UberModule
+            { uberModuleForeigns = []
+            , uberModuleBindings =
+                [ Standalone (combineName, setAnn (Just (Arity 2)) combineDef)
+                , Standalone (specName, specDef)
+                ]
+            , uberModuleExports =
+                [ (Name "main1", application specRef (literalInt 7))
+                , (Name "main2", application specRef (literalInt 8))
+                ]
+            }
+      namesOf optimized `shouldBe` []
+      Linker.uberModuleExports optimized
+        `shouldBe` [
+                     ( Name "main1"
+                     , combineBody (literalInt 1) (literalInt 2) (literalInt 7)
+                     )
+                   ,
+                     ( Name "main2"
+                     , combineBody (literalInt 1) (literalInt 2) (literalInt 8)
+                     )
+                   ]
+
+    it "gives an under-applied specialization the decremented arity" do
+      -- partial = combine 1 — one argument short of the directed
+      -- arity: a site applying one more argument reconstructs a
+      -- qualifying combine call and pastes, while a bare use keeps the
+      -- shared binding pinned.
+      let partialName = QName mainModule (Name "partial")
+          partialRef = refImported mainModule (Name "partial")
+          partialDef = application combineRef (literalInt 1)
+      optimized ←
+        checked
+          Linker.UberModule
+            { uberModuleForeigns = []
+            , uberModuleBindings =
+                [ Standalone (combineName, setAnn (Just (Arity 2)) combineDef)
+                , Standalone (partialName, partialDef)
+                ]
+            , uberModuleExports =
+                [
+                  ( Name "main1"
+                  , application
+                      (application partialRef (literalInt 5))
+                      (literalInt 6)
+                  )
+                , (Name "main2", partialRef)
+                ]
+            }
+      namesOf optimized `shouldBe` ["combine", "partial"]
+      Linker.uberModuleExports optimized
+        `shouldBe` [
+                     ( Name "main1"
+                     , combineBody (literalInt 1) (literalInt 5) (literalInt 6)
+                     )
+                   , (Name "main2", partialRef)
+                   ]
+
+    it "derives transitively through a chain of specializations" do
+      -- outer = combine 1 inherits arity=2; inner = outer 2 inherits
+      -- arity=1 from the derived entry, not an explicit one — the
+      -- chain resolves in one pass because a binding may only
+      -- reference earlier bindings.
+      let outerName = QName mainModule (Name "outer")
+          outerRef = refImported mainModule (Name "outer")
+          innerName = QName mainModule (Name "inner")
+          innerRef = refImported mainModule (Name "inner")
+      optimized ←
+        checked
+          Linker.UberModule
+            { uberModuleForeigns = []
+            , uberModuleBindings =
+                [ Standalone (combineName, setAnn (Just (Arity 3)) combineDef)
+                , Standalone
+                    (outerName, application combineRef (literalInt 1))
+                , Standalone (innerName, application outerRef (literalInt 2))
+                ]
+            , uberModuleExports =
+                [
+                  ( Name "main1"
+                  , application
+                      (application outerRef (literalInt 7))
+                      (literalInt 8)
+                  )
+                , (Name "main2", application innerRef (literalInt 9))
+                , -- The second inner site keeps the binding multi-use,
+                  -- so the settle phase cannot dissolve it before the
+                  -- derivation reads its shape.
+                  (Name "main3", application innerRef (literalInt 10))
+                ]
+            }
+      namesOf optimized `shouldBe` []
+      Linker.uberModuleExports optimized
+        `shouldBe` [
+                     ( Name "main1"
+                     , combineBody (literalInt 1) (literalInt 7) (literalInt 8)
+                     )
+                   ,
+                     ( Name "main2"
+                     , combineBody (literalInt 1) (literalInt 2) (literalInt 9)
+                     )
+                   ,
+                     ( Name "main3"
+                     , combineBody (literalInt 1) (literalInt 2) (literalInt 10)
+                     )
+                   ]
+
+    it "never overrides an explicit directive on a specialization" do
+      -- The explicit never on the specialization wins over the arity
+      -- the shape would otherwise derive: no site pastes.
+      let partialName = QName mainModule (Name "partial")
+          partialRef = refImported mainModule (Name "partial")
+          partialDef =
+            setAnn (Just Never) (application combineRef (literalInt 1))
+          site x y =
+            application
+              (application partialRef (literalInt x))
+              (literalInt y)
+      optimized ←
+        checked
+          Linker.UberModule
+            { uberModuleForeigns = []
+            , uberModuleBindings =
+                [ Standalone (combineName, setAnn (Just (Arity 2)) combineDef)
+                , Standalone (partialName, partialDef)
+                ]
+            , uberModuleExports =
+                [(Name "main1", site 5 6), (Name "main2", site 7 8)]
+            }
+      namesOf optimized `shouldBe` ["combine", "partial"]
+      Linker.uberModuleExports optimized
+        `shouldBe` [(Name "main1", site 5 6), (Name "main2", site 7 8)]
+
   describe "keeps foreign module tables hoisted (issue #175)" do
     -- A foreign module's value table must stay a single shared binding:
     -- its export values (some of which are Lua table constructors with

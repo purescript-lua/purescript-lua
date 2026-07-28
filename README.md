@@ -208,3 +208,11 @@ target. Foreign bindings accept only whole-binding `always`/`never`/`default`
 (their implementation is opaque to the optimizer). Note that `spago run`
 re-invokes the backend without build-phase flags, so `--directives` (like all
 build flags) applies to `spago build` output, not to the `--run` re-link.
+
+Specializations of an `arity=N` target need no directives of their own: a
+top-level binding that applies the target to `k` arguments — a hand-written
+partial application, or the binding the PureScript compiler's CSE floats for
+a repeated dictionary application — inherits `arity=(N-k)` while
+under-applied and `always` once saturated, transitively through chains of
+such bindings. An explicit directive on the specialization overrides the
+derived one.

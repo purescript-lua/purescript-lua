@@ -1,0 +1,405 @@
+UberModule
+  { uberModuleBindings =
+    [ Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Show", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Data.Show" ) ".spago/p/prelude/5718c84fdde6247749cb053e816df696c30fe691/src/Data/Show.purs"
+        [ ( Nothing, Name "showIntImpl" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Show", qnameName = Name "showIntImpl"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
+        ( PropName "showIntImpl" )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Effect.Console" ) ".spago/p/console/f82835a0b873aafe6bd7b14dd30cc150553d4ab9/src/Effect/Console.purs"
+        [ ( Nothing, Name "log" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "log"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
+        ( PropName "log" )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.DirectiveDerived.Test", qnameName = Name "combine"
+        }, AbsN
+        ( Just ( Arity 2 ) )
+        ( ParamNamed Nothing ( Name "a" ) :| [] )
+        ( AbsN Nothing
+          ( ParamNamed Nothing ( Name "b" ) :| [] )
+          ( AbsN Nothing
+            ( ParamNamed Nothing ( Name "c" ) :| [] )
+            ( PrimBinOp Nothing PrimSub
+              ( PrimBinOp Nothing PrimSub
+                ( PrimBinOp Nothing PrimSub
+                  ( PrimBinOp Nothing PrimSub
+                    ( PrimBinOp Nothing PrimSub
+                      ( PrimBinOp Nothing PrimSub
+                        ( PrimBinOp Nothing PrimSub
+                          ( PrimBinOp Nothing PrimSub
+                            ( PrimBinOp Nothing PrimSub
+                              ( PrimBinOp Nothing PrimSub
+                                ( PrimBinOp Nothing PrimSub
+                                  ( PrimBinOp Nothing PrimSub
+                                    ( PrimBinOp Nothing PrimSub
+                                      ( PrimBinOp Nothing PrimSub
+                                        ( PrimBinOp Nothing PrimSub
+                                          ( PrimBinOp Nothing PrimSub
+                                            ( PrimBinOp Nothing PrimSub
+                                              ( PrimBinOp Nothing PrimSub
+                                                ( PrimBinOp Nothing PrimSub
+                                                  ( PrimBinOp Nothing PrimSub
+                                                    ( PrimBinOp Nothing PrimSub
+                                                      ( PrimBinOp Nothing PrimSub
+                                                        ( PrimBinOp Nothing PrimSub
+                                                          ( PrimBinOp Nothing PrimSub
+                                                            ( PrimBinOp Nothing PrimSub
+                                                              ( PrimBinOp Nothing PrimSub
+                                                                ( PrimBinOp Nothing PrimSub
+                                                                  ( PrimBinOp Nothing PrimSub
+                                                                    ( PrimBinOp Nothing PrimSub
+                                                                      ( PrimBinOp Nothing PrimSub
+                                                                        ( PrimBinOp Nothing PrimSub
+                                                                          ( PrimBinOp Nothing PrimSub
+                                                                            ( PrimBinOp Nothing PrimSub
+                                                                              ( PrimBinOp Nothing PrimSub
+                                                                                ( PrimBinOp Nothing PrimSub
+                                                                                  ( PrimBinOp Nothing PrimSub
+                                                                                    ( PrimBinOp Nothing PrimSub
+                                                                                      ( PrimBinOp Nothing PrimSub
+                                                                                        ( PrimBinOp Nothing PrimSub
+                                                                                          ( PrimBinOp Nothing PrimSub
+                                                                                            ( Ref Nothing
+                                                                                              ( Local
+                                                                                                ( Name "c" )
+                                                                                              )
+                                                                                            )
+                                                                                            ( Ref Nothing
+                                                                                              ( Local
+                                                                                                ( Name "a" )
+                                                                                              )
+                                                                                            )
+                                                                                          )
+                                                                                          ( LiteralInt Nothing 1 )
+                                                                                        )
+                                                                                        ( Ref Nothing
+                                                                                          ( Local
+                                                                                            ( Name "b" )
+                                                                                          )
+                                                                                        )
+                                                                                      )
+                                                                                      ( LiteralInt Nothing 2 )
+                                                                                    )
+                                                                                    ( Ref Nothing
+                                                                                      ( Local
+                                                                                        ( Name "a" )
+                                                                                      )
+                                                                                    )
+                                                                                  )
+                                                                                  ( LiteralInt Nothing 3 )
+                                                                                )
+                                                                                ( Ref Nothing
+                                                                                  ( Local
+                                                                                    ( Name "b" )
+                                                                                  )
+                                                                                )
+                                                                              )
+                                                                              ( LiteralInt Nothing 4 )
+                                                                            )
+                                                                            ( Ref Nothing
+                                                                              ( Local ( Name "a" ) )
+                                                                            )
+                                                                          )
+                                                                          ( LiteralInt Nothing 5 )
+                                                                        )
+                                                                        ( Ref Nothing
+                                                                          ( Local ( Name "b" ) )
+                                                                        )
+                                                                      )
+                                                                      ( LiteralInt Nothing 6 )
+                                                                    )
+                                                                    ( Ref Nothing
+                                                                      ( Local ( Name "a" ) )
+                                                                    )
+                                                                  )
+                                                                  ( LiteralInt Nothing 7 )
+                                                                )
+                                                                ( Ref Nothing
+                                                                  ( Local ( Name "b" ) )
+                                                                )
+                                                              )
+                                                              ( LiteralInt Nothing 8 )
+                                                            )
+                                                            ( Ref Nothing ( Local ( Name "a" ) ) )
+                                                          )
+                                                          ( LiteralInt Nothing 9 )
+                                                        )
+                                                        ( Ref Nothing ( Local ( Name "b" ) ) )
+                                                      )
+                                                      ( LiteralInt Nothing 10 )
+                                                    )
+                                                    ( Ref Nothing ( Local ( Name "a" ) ) )
+                                                  )
+                                                  ( LiteralInt Nothing 11 )
+                                                )
+                                                ( Ref Nothing ( Local ( Name "b" ) ) )
+                                              )
+                                              ( LiteralInt Nothing 12 )
+                                            )
+                                            ( Ref Nothing ( Local ( Name "a" ) ) )
+                                          )
+                                          ( LiteralInt Nothing 13 )
+                                        )
+                                        ( Ref Nothing ( Local ( Name "b" ) ) )
+                                      )
+                                      ( LiteralInt Nothing 14 )
+                                    )
+                                    ( Ref Nothing ( Local ( Name "a" ) ) )
+                                  )
+                                  ( LiteralInt Nothing 15 )
+                                )
+                                ( Ref Nothing ( Local ( Name "b" ) ) )
+                              )
+                              ( LiteralInt Nothing 16 )
+                            )
+                            ( Ref Nothing ( Local ( Name "a" ) ) )
+                          )
+                          ( LiteralInt Nothing 17 )
+                        )
+                        ( Ref Nothing ( Local ( Name "b" ) ) )
+                      )
+                      ( LiteralInt Nothing 18 )
+                    )
+                    ( Ref Nothing ( Local ( Name "a" ) ) )
+                  )
+                  ( LiteralInt Nothing 19 )
+                )
+                ( Ref Nothing ( Local ( Name "b" ) ) )
+              )
+              ( LiteralInt Nothing 20 )
+            )
+          )
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.DirectiveDerived.Test", qnameName = Name "oneOnly"
+        }, AppN Nothing
+        ( Ref Nothing
+          ( Imported ( ModuleName "Golden.DirectiveDerived.Test" ) ( Name "combine" ) )
+        )
+        ( LiteralInt Nothing 1 :| [] )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.DirectiveDerived.Test", qnameName = Name "apply34"
+        }, AbsN ( Just Never )
+        ( ParamNamed Nothing ( Name "f" ) :| [] )
+        ( AppN Nothing
+          ( AppN Nothing ( Ref Nothing ( Local ( Name "f" ) ) ) ( LiteralInt Nothing 3 :| [] ) )
+          ( LiteralInt Nothing 4 :| [] )
+        )
+      )
+    ], uberModuleForeigns = [], uberModuleExports =
+    [
+      ( Name "combine", Ref Nothing
+        ( Imported ( ModuleName "Golden.DirectiveDerived.Test" ) ( Name "combine" ) )
+      ),
+      ( Name "onePlusTwo", AbsN Nothing
+        ( ParamNamed Nothing ( Name "c$378" ) :| [] )
+        ( PrimBinOp Nothing PrimSub
+          ( PrimBinOp Nothing PrimSub
+            ( PrimBinOp Nothing PrimSub
+              ( PrimBinOp Nothing PrimSub
+                ( PrimBinOp Nothing PrimSub
+                  ( PrimBinOp Nothing PrimSub
+                    ( PrimBinOp Nothing PrimSub
+                      ( PrimBinOp Nothing PrimSub
+                        ( PrimBinOp Nothing PrimSub
+                          ( PrimBinOp Nothing PrimSub
+                            ( PrimBinOp Nothing PrimSub
+                              ( PrimBinOp Nothing PrimSub
+                                ( PrimBinOp Nothing PrimSub
+                                  ( PrimBinOp Nothing PrimSub
+                                    ( PrimBinOp Nothing PrimSub
+                                      ( PrimBinOp Nothing PrimSub
+                                        ( PrimBinOp Nothing PrimSub
+                                          ( PrimBinOp Nothing PrimSub
+                                            ( PrimBinOp Nothing PrimSub
+                                              ( PrimBinOp Nothing PrimSub
+                                                ( PrimBinOp Nothing PrimSub
+                                                  ( PrimBinOp Nothing PrimSub
+                                                    ( PrimBinOp Nothing PrimSub
+                                                      ( PrimBinOp Nothing PrimSub
+                                                        ( PrimBinOp Nothing PrimSub
+                                                          ( PrimBinOp Nothing PrimSub
+                                                            ( PrimBinOp Nothing PrimSub
+                                                              ( PrimBinOp Nothing PrimSub
+                                                                ( PrimBinOp Nothing PrimSub
+                                                                  ( PrimBinOp Nothing PrimSub
+                                                                    ( PrimBinOp Nothing PrimSub
+                                                                      ( PrimBinOp Nothing PrimSub
+                                                                        ( PrimBinOp Nothing PrimSub
+                                                                          ( PrimBinOp Nothing PrimSub
+                                                                            ( PrimBinOp Nothing PrimSub
+                                                                              ( PrimBinOp Nothing PrimSub
+                                                                                ( PrimBinOp Nothing PrimSub
+                                                                                  ( PrimBinOp Nothing PrimSub
+                                                                                    ( PrimBinOp Nothing PrimSub
+                                                                                      ( PrimBinOp Nothing PrimSub
+                                                                                        ( Ref Nothing
+                                                                                          ( Local
+                                                                                            ( Name "c$378" )
+                                                                                          )
+                                                                                        )
+                                                                                        ( LiteralInt Nothing 1 )
+                                                                                      )
+                                                                                      ( LiteralInt Nothing 1 )
+                                                                                    )
+                                                                                    ( LiteralInt Nothing 2 )
+                                                                                  )
+                                                                                  ( LiteralInt Nothing 2 )
+                                                                                )
+                                                                                ( LiteralInt Nothing 1 )
+                                                                              )
+                                                                              ( LiteralInt Nothing 3 )
+                                                                            )
+                                                                            ( LiteralInt Nothing 2 )
+                                                                          )
+                                                                          ( LiteralInt Nothing 4 )
+                                                                        )
+                                                                        ( LiteralInt Nothing 1 )
+                                                                      )
+                                                                      ( LiteralInt Nothing 5 )
+                                                                    )
+                                                                    ( LiteralInt Nothing 2 )
+                                                                  )
+                                                                  ( LiteralInt Nothing 6 )
+                                                                )
+                                                                ( LiteralInt Nothing 1 )
+                                                              )
+                                                              ( LiteralInt Nothing 7 )
+                                                            )
+                                                            ( LiteralInt Nothing 2 )
+                                                          )
+                                                          ( LiteralInt Nothing 8 )
+                                                        )
+                                                        ( LiteralInt Nothing 1 )
+                                                      )
+                                                      ( LiteralInt Nothing 9 )
+                                                    )
+                                                    ( LiteralInt Nothing 2 )
+                                                  )
+                                                  ( LiteralInt Nothing 10 )
+                                                )
+                                                ( LiteralInt Nothing 1 )
+                                              )
+                                              ( LiteralInt Nothing 11 )
+                                            )
+                                            ( LiteralInt Nothing 2 )
+                                          )
+                                          ( LiteralInt Nothing 12 )
+                                        )
+                                        ( LiteralInt Nothing 1 )
+                                      )
+                                      ( LiteralInt Nothing 13 )
+                                    )
+                                    ( LiteralInt Nothing 2 )
+                                  )
+                                  ( LiteralInt Nothing 14 )
+                                )
+                                ( LiteralInt Nothing 1 )
+                              )
+                              ( LiteralInt Nothing 15 )
+                            )
+                            ( LiteralInt Nothing 2 )
+                          )
+                          ( LiteralInt Nothing 16 )
+                        )
+                        ( LiteralInt Nothing 1 )
+                      )
+                      ( LiteralInt Nothing 17 )
+                    )
+                    ( LiteralInt Nothing 2 )
+                  )
+                  ( LiteralInt Nothing 18 )
+                )
+                ( LiteralInt Nothing 1 )
+              )
+              ( LiteralInt Nothing 19 )
+            )
+            ( LiteralInt Nothing 2 )
+          )
+          ( LiteralInt Nothing 20 )
+        )
+      ),
+      ( Name "oneOnly", Ref Nothing
+        ( Imported ( ModuleName "Golden.DirectiveDerived.Test" ) ( Name "oneOnly" ) )
+      ),
+      ( Name "apply34", Ref Nothing
+        ( Imported ( ModuleName "Golden.DirectiveDerived.Test" ) ( Name "apply34" ) )
+      ),
+      ( Name "main", AbsN Nothing
+        ( ParamUnused Nothing :| [] )
+        ( Let Nothing
+          ( Standalone
+            ( Nothing, Name "_", AppN Nothing
+              ( AppN Nothing
+                ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+                ( AppN Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
+                  ( LiteralInt Nothing ( -140 ) :| [] ) :| []
+                )
+              )
+              ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+            ) :|
+            [ Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+                  ( AppN Nothing
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
+                    ( LiteralInt Nothing ( -40 ) :| [] ) :| []
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              ), Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+                  ( AppN Nothing
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
+                    ( LiteralInt Nothing ( -660 ) :| [] ) :| []
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              )
+            ]
+          )
+          ( AppN Nothing
+            ( AppN Nothing
+              ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+              ( AppN Nothing
+                ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
+                ( AppN Nothing
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Golden.DirectiveDerived.Test" ) ( Name "apply34" ) )
+                  )
+                  ( Ref Nothing
+                    ( Imported
+                      ( ModuleName "Golden.DirectiveDerived.Test" )
+                      ( Name "oneOnly" )
+                    ) :| []
+                  ) :| []
+                ) :| []
+              )
+            )
+            ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+          )
+        )
+      )
+    ]
+  }
