@@ -2,10 +2,10 @@ spec: state_step
 runtime: LuaJIT 2.1.1741730670
 workload: n=100000 reps=4 result=99998
 aborts (distinct site -- reason):
-  Bench.StateStep.lua:9 -- NYI: bytecode FNEW
+  Bench.StateStep.lua:6 -- NYI: bytecode FNEW
 bytecode end state (J*=compiled, I*=blacklisted):
-  Bench.StateStep.lua:13 IFUNCF
-  Bench.StateStep.lua:35 ILOOP
-  Bench.StateStep.lua:4 IFUNCF
-  Bench.StateStep.lua:5 JFUNCF
+  Bench.StateStep.lua:1 IFUNCF
+  Bench.StateStep.lua:2 JFUNCF
+  Bench.StateStep.lua:30 ILOOP
+  Bench.StateStep.lua:8 IFUNCF
 counts: aborts=1 compiled=1 blacklisted=3
