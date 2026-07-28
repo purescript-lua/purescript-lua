@@ -23,19 +23,20 @@ M.Golden_UncurryEffect_Test_runBoth = function(runBoth_S_p1)
     return Golden_UncurryEffect_Test_runBoth_S_w(runBoth_S_p1, runBoth_S_p2)
   end
 end
-local Golden_UncurryEffect_Test_countdown
 local Golden_UncurryEffect_Test_countdown_S_w = function(n)
-  local _ = (function()
-    local _ = Effect_Console_log("tick")()
-    return Effect_Console_log(Data_Show_showIntImpl(n))()
-  end)()
-  if n >= 1 and n ~= 1 then
-    return Golden_UncurryEffect_Test_countdown(n - 1)()
-  else
-    return Effect_Console_log("done")()
+  while true do
+    local _ = (function()
+      local _ = Effect_Console_log("tick")()
+      return Effect_Console_log(Data_Show_showIntImpl(n))()
+    end)()
+    if n >= 1 and n ~= 1 then
+      n = n - 1
+    else
+      return Effect_Console_log("done")()
+    end
   end
 end
-Golden_UncurryEffect_Test_countdown = function(countdown_S_p1)
+local Golden_UncurryEffect_Test_countdown = function(countdown_S_p1)
   return function(countdown_S_p2)
     return Golden_UncurryEffect_Test_countdown_S_w(countdown_S_p1, countdown_S_p2)
   end

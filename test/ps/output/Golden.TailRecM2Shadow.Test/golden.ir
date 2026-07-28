@@ -429,14 +429,14 @@ UberModule
                                                 )
                                               ) :| []
                                             )
-                                            ( AppN Nothing
-                                              ( IfThenElse Nothing
-                                                ( Eq Nothing
-                                                  ( LiteralString Nothing "Control.Monad.Rec.Class∷Step.Loop" )
-                                                  ( ReflectCtor Nothing
-                                                    ( Ref Nothing ( Local ( Name "v0$17" ) ) )
-                                                  )
+                                            ( IfThenElse Nothing
+                                              ( Eq Nothing
+                                                ( LiteralString Nothing "Control.Monad.Rec.Class∷Step.Loop" )
+                                                ( ReflectCtor Nothing
+                                                  ( Ref Nothing ( Local ( Name "v0$17" ) ) )
                                                 )
+                                              )
+                                              ( AppN Nothing
                                                 ( AbsN Nothing
                                                   ( ParamUnused Nothing :| [] )
                                                   ( Let Nothing
@@ -489,6 +489,14 @@ UberModule
                                                     ) ( LiteralBool Nothing False )
                                                   )
                                                 )
+                                                ( Ref Nothing
+                                                  ( Imported
+                                                    ( ModuleName "Prim" )
+                                                    ( Name "$magicDoRun" )
+                                                  ) :| []
+                                                )
+                                              )
+                                              ( AppN Nothing
                                                 ( AppN Nothing
                                                   ( Ref Nothing
                                                     ( Imported
@@ -498,12 +506,12 @@ UberModule
                                                   )
                                                   ( LiteralBool Nothing True :| [] )
                                                 )
-                                              )
-                                              ( Ref Nothing
-                                                ( Imported
-                                                  ( ModuleName "Prim" )
-                                                  ( Name "$magicDoRun" )
-                                                ) :| []
+                                                ( Ref Nothing
+                                                  ( Imported
+                                                    ( ModuleName "Prim" )
+                                                    ( Name "$magicDoRun" )
+                                                  ) :| []
+                                                )
                                               )
                                             )
                                           ) :| []

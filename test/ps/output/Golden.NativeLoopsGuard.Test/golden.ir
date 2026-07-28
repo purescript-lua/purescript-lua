@@ -288,10 +288,13 @@ UberModule
                 ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ) :| []
             )
-            ( AppN Nothing
-              ( IfThenElse Nothing
-                ( Ref Nothing ( Local ( Name "b" ) ) )
+            ( IfThenElse Nothing
+              ( Ref Nothing ( Local ( Name "b" ) ) )
+              ( AppN Nothing
                 ( Ref Nothing ( Local ( Name "act" ) ) )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              )
+              ( AppN Nothing
                 ( AppN Nothing
                   ( ObjectProp Nothing
                     ( Ref Nothing
@@ -301,8 +304,8 @@ UberModule
                   )
                   ( Ref Nothing ( Imported ( ModuleName "Data.Unit" ) ( Name "unit" ) ) :| [] )
                 )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               )
-              ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
             )
           )
         )

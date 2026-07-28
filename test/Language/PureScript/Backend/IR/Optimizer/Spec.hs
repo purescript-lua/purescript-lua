@@ -34,6 +34,7 @@ import Language.PureScript.Backend.IR.Optimizer
   , optimizedExpressionWithTypes
   , optimizedUberModule
   , optimizedUberModuleChecked
+  , pushEliminatorIntoIfBranches
   , pushIfCondIntoBranches
   , reduceKnownCtorRefRead
   , shareForeignAccessors
@@ -2005,6 +2006,105 @@ spec = describe "IR Optimizer" do
               (work (Name "f"))
               (work (Name "g"))
       runIdentity (pushIfCondIntoBranches original) `shouldBe` Nothing
+
+  -- An accessor or application whose scrutinee is a conditional keeps
+  -- the decision tree in expression position — an IIFE in the generated
+  -- Lua — and hides the read or call from the folds that fire once it
+  -- reaches the branch bodies.
+  describe "distributes an eliminator into if branches (#243)" do
+    let m = moduleNameFromString "M"
+        c = refLocal (Name "c")
+        x = refLocal (Name "x")
+        y = refLocal (Name "y")
+        field = PropName "f"
+        maybeMod = moduleNameFromString "Data.Maybe"
+        justCtor v = ctor SumType maybeMod (TyName "Maybe") (CtorName "Just") [v]
+        justTag = ctorId maybeMod (TyName "Maybe") (CtorName "Just")
+
+    it "pushes a projection into the branches and folds known records" do
+      let original =
+            objectProp
+              ( ifThenElse
+                  c
+                  (literalObject [(field, literalInt 1)])
+                  (literalObject [(field, literalInt 2)])
+              )
+              field
+      optimizedExpression original
+        `shouldBe` ifThenElse c (literalInt 1) (literalInt 2)
+
+    it "pushes a projection over opaque branches" do
+      optimizedExpression (objectProp (ifThenElse c x y) field)
+        `shouldBe` ifThenElse c (objectProp x field) (objectProp y field)
+
+    it "pushes an array read into the branches and folds known arrays" do
+      optimizedExpression
+        (arrayIndex (ifThenElse c (literalArray [x]) (literalArray [y])) 0)
+        `shouldBe` ifThenElse c x y
+
+    it "pushes a length read over opaque branches" do
+      optimizedExpression (arrayLength (ifThenElse c x y))
+        `shouldBe` ifThenElse c (arrayLength x) (arrayLength y)
+
+    it "pushes a field read into the branches and folds known ctors" do
+      optimizedExpression
+        ( dataArgumentByIndex
+            SumType
+            0
+            (ifThenElse c (justCtor x) (justCtor y))
+        )
+        `shouldBe` ifThenElse c x y
+
+    it "pushes a tag read over branches where only one arm folds" do
+      -- One arm is a constructor, the other opaque: the fold-gated
+      -- distribution of 'reduceKnownConstructor' declines this shape,
+      -- the general rule distributes it, and the constructor arm still
+      -- folds to its tag string.
+      optimizedExpression (reflectCtor (ifThenElse c (justCtor x) y))
+        `shouldBe` ifThenElse c (literalString justTag) (reflectCtor y)
+
+    it "pushes an application with a trivial argument into the branches" do
+      let f = refLocal (Name "f")
+          g = refLocal (Name "g")
+      optimizedExpression (application (ifThenElse c f g) x)
+        `shouldBe` ifThenElse c (application f x) (application g x)
+
+    it "exposes a beta redex when the branches are lambdas" do
+      -- The payoff cascade: the pushed call meets the branch lambdas
+      -- and beta-reduces, removing the IIFE and both closures.
+      let addOne =
+            abstraction
+              (paramNamed (Name "a"))
+              (primBinOp PrimAdd (refLocal (Name "a")) (literalInt 1))
+          double =
+            abstraction
+              (paramNamed (Name "b"))
+              (primBinOp PrimMul (refLocal (Name "b")) (literalInt 2))
+      optimizedExpression (application (ifThenElse c addOne double) x)
+        `shouldBe` ifThenElse
+          c
+          (primBinOp PrimAdd x (literalInt 1))
+          (primBinOp PrimMul x (literalInt 2))
+
+    it "declines an application whose argument duplicates real work" do
+      -- The argument is a call: pasting it into both branches would
+      -- duplicate the expression (and grow code), so the push declines.
+      let f = refLocal (Name "f")
+          g = refLocal (Name "g")
+          original =
+            application
+              (ifThenElse c f g)
+              (application (refImported m (Name "h")) x)
+      optimizedExpression original `shouldBe` original
+
+    it "declines a non-trivial argument directly (guard pin)" do
+      let f = refLocal (Name "f")
+          g = refLocal (Name "g")
+          original =
+            application
+              (ifThenElse c f g)
+              (application (refImported m (Name "h")) x)
+      runIdentity (pushEliminatorIntoIfBranches original) `shouldBe` Nothing
 
   describe "inlines expressions" do
     test "inlines literals" do
