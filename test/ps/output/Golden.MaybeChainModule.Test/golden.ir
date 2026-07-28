@@ -35,59 +35,35 @@ UberModule
             ( DataArgumentByIndex Nothing SumType 0 ( Ref Nothing ( Local ( Name "v2" ) ) ) :| [] )
           )
         )
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Golden.MaybeChainModule.Test", qnameName = Name "identity"
-        }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "x$290" ) :| [] )
-        ( Ref Nothing ( Local ( Name "x$290" ) ) )
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Golden.MaybeChainModule.Test", qnameName = Name "map$w"
-        }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "v$287" ) :| [ ParamNamed Nothing ( Name "v1$288" ) ] )
-        ( IfThenElse Nothing
-          ( Eq Nothing
-            ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
-            ( ReflectCtor Nothing ( Ref Nothing ( Local ( Name "v1$288" ) ) ) )
-          )
-          ( Ctor Nothing SumType
-            ( ModuleName "Data.Maybe" )
-            ( TyName "Maybe" )
-            ( CtorName "Just" )
-            [ AppN Nothing
-              ( Ref Nothing ( Local ( Name "v$287" ) ) )
-              ( DataArgumentByIndex Nothing SumType 0
-                ( Ref Nothing ( Local ( Name "v1$288" ) ) ) :| []
-              )
-            ]
-          )
-          ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) )
-        )
       )
     ], uberModuleForeigns = [], uberModuleExports =
     [
       ( Name "chainedNothing", AppN Nothing
         ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "maybe$w" ) ) )
         ( LiteralInt Nothing 0 :|
-          [ Ref Nothing
-            ( Imported
-              ( ModuleName "Golden.MaybeChainModule.Test" )
-              ( Name "identity" )
-            ), AppN Nothing
+          [ AbsN Nothing
+            ( ParamNamed Nothing ( Name "x$297" ) :| [] )
+            ( Ref Nothing ( Local ( Name "x$297" ) ) ), AppN Nothing
             ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "maybe$w" ) ) )
             ( Ref Nothing
               ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) :|
               [ Ref Nothing
-                ( Imported ( ModuleName "Data.Maybe" ) ( Name "Just" ) ), AppN Nothing
-                ( Ref Nothing
-                  ( Imported ( ModuleName "Golden.MaybeChainModule.Test" ) ( Name "map$w" ) )
+                ( Imported ( ModuleName "Data.Maybe" ) ( Name "Just" ) ), IfThenElse Nothing
+                ( Eq Nothing
+                  ( LiteralString Nothing "Data.Maybe∷Maybe.Just" )
+                  ( ReflectCtor Nothing
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) )
+                  )
                 )
-                ( AbsN Nothing
-                  ( ParamNamed Nothing ( Name "x$1" ) :| [] )
-                  ( Ref Nothing ( Local ( Name "x$1" ) ) ) :|
-                  [ Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) ]
+                ( Ctor Nothing SumType
+                  ( ModuleName "Data.Maybe" )
+                  ( TyName "Maybe" )
+                  ( CtorName "Just" )
+                  [ DataArgumentByIndex Nothing SumType 0
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) )
+                  ]
                 )
+                ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) )
               ]
             )
           ]
@@ -96,29 +72,18 @@ UberModule
       ( Name "chainedJust", AppN Nothing
         ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "maybe$w" ) ) )
         ( LiteralInt Nothing 0 :|
-          [ Ref Nothing
-            ( Imported
-              ( ModuleName "Golden.MaybeChainModule.Test" )
-              ( Name "identity" )
-            ), AppN Nothing
+          [ AbsN Nothing
+            ( ParamNamed Nothing ( Name "x$301" ) :| [] )
+            ( Ref Nothing ( Local ( Name "x$301" ) ) ), AppN Nothing
             ( Ref Nothing ( Imported ( ModuleName "Data.Maybe" ) ( Name "maybe$w" ) ) )
             ( Ref Nothing
               ( Imported ( ModuleName "Data.Maybe" ) ( Name "Nothing" ) ) :|
               [ Ref Nothing
-                ( Imported ( ModuleName "Data.Maybe" ) ( Name "Just" ) ), AppN Nothing
-                ( Ref Nothing
-                  ( Imported ( ModuleName "Golden.MaybeChainModule.Test" ) ( Name "map$w" ) )
-                )
-                ( AbsN Nothing
-                  ( ParamNamed Nothing ( Name "x$0" ) :| [] )
-                  ( Ref Nothing ( Local ( Name "x$0" ) ) ) :|
-                  [ Ctor Nothing SumType
-                    ( ModuleName "Data.Maybe" )
-                    ( TyName "Maybe" )
-                    ( CtorName "Just" )
-                    [ LiteralInt Nothing 42 ]
-                  ]
-                )
+                ( Imported ( ModuleName "Data.Maybe" ) ( Name "Just" ) ), Ctor Nothing SumType
+                ( ModuleName "Data.Maybe" )
+                ( TyName "Maybe" )
+                ( CtorName "Just" )
+                [ LiteralInt Nothing 42 ]
               ]
             )
           ]

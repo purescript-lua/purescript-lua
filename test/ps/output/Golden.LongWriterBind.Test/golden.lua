@@ -20,12 +20,24 @@ local Effect_Console_foreign = {
 local Data_Tuple_Tuple_S_w = function(value0, value1)
   return { value0, value1 }
 end
+local Data_Identity_applyIdentity = {
+  apply = function(v) return function(v1) return v(v1) end end,
+  Functor0 = function()
+    return {
+      map = function(f_S_0) return function(m_S_0) return f_S_0(m_S_0) end end
+    }
+  end
+}
+local Data_Identity_applicativeIdentity = {
+  pure = function(x_S_0) return x_S_0 end,
+  Apply0 = function() return Data_Identity_applyIdentity end
+}
 local Golden_LongWriterBind_Test_discard_S_w = function(v_S_0, k_S_0)
-  local m_S_0 = k_S_0(v_S_0[1])
-  return Data_Tuple_Tuple_S_w(m_S_0[1], Data_Semigroup_foreign.concatArray(v_S_0[2])(m_S_0[2]))
+  local m_S_1 = k_S_0(v_S_0[1])
+  return Data_Tuple_Tuple_S_w(m_S_1[1], Data_Semigroup_foreign.concatArray(v_S_0[2])(m_S_1[2]))
 end
-local Golden_LongWriterBind_Test_tell = function(x_S_0)
-  return Data_Tuple_Tuple_S_w(Data_Unit_unit, x_S_0)
+local Golden_LongWriterBind_Test_tell = function(x_S_1)
+  return Data_Tuple_Tuple_S_w(Data_Unit_unit, x_S_1)
 end
 local Golden_LongWriterBind_Test_go = (function()
   local _S_kont0 = Golden_LongWriterBind_Test_discard_S_w(Golden_LongWriterBind_Test_tell({
@@ -148,7 +160,7 @@ local Golden_LongWriterBind_Test_go = (function()
                                                                                 return Golden_LongWriterBind_Test_discard_S_w(Golden_LongWriterBind_Test_tell({
                                                                                   [1] = 200
                                                                                 }), function(  )
-                                                                                  return Data_Tuple_Tuple_S_w(42, {})
+                                                                                  return Data_Identity_applicativeIdentity.pure(Data_Tuple_Tuple_S_w(42, {}))
                                                                                 end)
                                                                               end)
                                                                             end)

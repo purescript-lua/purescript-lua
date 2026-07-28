@@ -2,6 +2,7 @@ module Language.PureScript.Backend.IR.Inliner.Spec where
 
 import Data.Map qualified as Map
 import Hedgehog (MonadTest, failure, footnote, (===))
+import Hedgehog qualified
 import Language.PureScript.Backend.IR.Inliner
   ( Accessor (AppliedField, Field)
   , Annotation (Always, Arity, Never)
@@ -130,24 +131,49 @@ spec = describe "IR Inliner" do
         (one (target, ModeAnnotation Never))
         (one (target, ModeAnnotation Always))
         mempty
+        mempty
         === one (target, Just Never)
     test "the directives file beats an exported directive" do
       Inliner.resolveModes
         mempty
         (one (target, ModeAnnotation Never))
         (one (target, ModeAnnotation Always))
+        mempty
         === one (target, Just Never)
     test "an exported directive beats the built-in heuristics" do
       Inliner.resolveModes
         mempty
         mempty
         (one (target, ModeAnnotation (Arity 3)))
+        mempty
         === one (target, Just (Arity 3))
+    test "an exported directive beats the default pack" do
+      Inliner.resolveModes
+        mempty
+        mempty
+        (one (target, ModeAnnotation Never))
+        (one (target, ModeAnnotation Always))
+        === one (target, Just Never)
+    test "the default pack beats the built-in heuristics" do
+      Inliner.resolveModes
+        mempty
+        mempty
+        mempty
+        (one (target, ModeAnnotation (Arity 2)))
+        === one (target, Just (Arity 2))
     test "an explicit default masks lower tiers" do
       Inliner.resolveModes
         (one (target, ModeDefault))
         (one (target, ModeAnnotation Never))
         mempty
+        mempty
+        === one (target, Nothing)
+    test "an explicit default in the file masks the pack" do
+      Inliner.resolveModes
+        mempty
+        (one (target, ModeDefault))
+        mempty
+        (one (target, ModeAnnotation Always))
         === one (target, Nothing)
     test "disjoint targets union across sources" do
       let other = (Name "bar", Nothing) ∷ Inliner.Target
@@ -155,7 +181,19 @@ spec = describe "IR Inliner" do
         (one (target, ModeAnnotation Always))
         mempty
         (one (other, ModeAnnotation Never))
+        mempty
         === Map.fromList [(target, Just Always), (other, Just Never)]
+
+  describe "default directive pack" do
+    test "parses and is non-empty" do
+      Hedgehog.assert (not (Map.null Inliner.defaultDirectives))
+    test "covers the flipped-bind cascade" do
+      let entryFor modname name =
+            Map.lookup (moduleNameFromString modname) Inliner.defaultDirectives
+              >>= Map.lookup (Name name, Nothing)
+      entryFor "Control.Bind" "bindFlipped" === Just (ModeAnnotation (Arity 1))
+      entryFor "Data.Function" "flip" === Just (ModeAnnotation (Arity 1))
+      entryFor "Control.Bind" "bind" === Just (ModeAnnotation (Arity 1))
 
 --------------------------------------------------------------------------------
 -- Helpers ---------------------------------------------------------------------

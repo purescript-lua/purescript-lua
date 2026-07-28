@@ -84,7 +84,7 @@ local Effect_Lazy_functorEffect = PSLUA_runtime_lazy("functorEffect")(function()
   return {
     map = function(f_S_1)
       return function(a_S_0)
-        return (Effect_applicativeEffect.Apply0()).apply(Effect_pureE(f_S_1))(a_S_0)
+        return (Effect_applicativeEffect.Apply0()).apply(Effect_applicativeEffect.pure(f_S_1))(a_S_0)
       end
     end
   }

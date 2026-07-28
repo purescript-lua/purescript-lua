@@ -42,22 +42,69 @@ UberModule
         )
       ), Standalone
       ( QName
+        { qnameModuleName = ModuleName "Data.Identity", qnameName = Name "applyIdentity"
+        }, LiteralObject Nothing
+        [
+          ( PropName "apply", AbsN Nothing
+            ( ParamNamed Nothing ( Name "v" ) :| [] )
+            ( AbsN Nothing
+              ( ParamNamed Nothing ( Name "v1" ) :| [] )
+              ( AppN Nothing
+                ( Ref Nothing ( Local ( Name "v" ) ) )
+                ( Ref Nothing ( Local ( Name "v1" ) ) :| [] )
+              )
+            )
+          ),
+          ( PropName "Functor0", AbsN Nothing
+            ( ParamUnused Nothing :| [] )
+            ( LiteralObject Nothing
+              [
+                ( PropName "map", AbsN Nothing
+                  ( ParamNamed Nothing ( Name "f$493" ) :| [] )
+                  ( AbsN Nothing
+                    ( ParamNamed Nothing ( Name "m$494" ) :| [] )
+                    ( AppN Nothing
+                      ( Ref Nothing ( Local ( Name "f$493" ) ) )
+                      ( Ref Nothing ( Local ( Name "m$494" ) ) :| [] )
+                    )
+                  )
+                )
+              ]
+            )
+          )
+        ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Data.Identity", qnameName = Name "applicativeIdentity"
+        }, LiteralObject Nothing
+        [
+          ( PropName "pure", AbsN Nothing
+            ( ParamNamed Nothing ( Name "x$495" ) :| [] )
+            ( Ref Nothing ( Local ( Name "x$495" ) ) )
+          ),
+          ( PropName "Apply0", AbsN Nothing
+            ( ParamUnused Nothing :| [] )
+            ( Ref Nothing ( Imported ( ModuleName "Data.Identity" ) ( Name "applyIdentity" ) ) )
+          )
+        ]
+      ), Standalone
+      ( QName
         { qnameModuleName = ModuleName "Golden.LongWriterBind.Test", qnameName = Name "discard$w"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "v$528" ) :| [ ParamNamed Nothing ( Name "k$529" ) ] )
+        ( ParamNamed Nothing ( Name "v$514" ) :| [ ParamNamed Nothing ( Name "k$515" ) ] )
         ( Let Nothing
           ( Standalone
-            ( Nothing, Name "m$554", AppN Nothing
-              ( Ref Nothing ( Local ( Name "k$529" ) ) )
+            ( Nothing, Name "m$548", AppN Nothing
+              ( Ref Nothing ( Local ( Name "k$515" ) ) )
               ( DataArgumentByIndex Nothing ProductType 0
-                ( Ref Nothing ( Local ( Name "v$528" ) ) ) :| []
+                ( Ref Nothing ( Local ( Name "v$514" ) ) ) :| []
               )
             ) :| []
           )
           ( AppN Nothing
             ( Ref Nothing ( Imported ( ModuleName "Data.Tuple" ) ( Name "Tuple$w" ) ) )
             ( DataArgumentByIndex Nothing ProductType 0
-              ( Ref Nothing ( Local ( Name "m$554" ) ) ) :|
+              ( Ref Nothing ( Local ( Name "m$548" ) ) ) :|
               [ AppN Nothing
                 ( AppN Nothing
                   ( ObjectProp Nothing
@@ -65,11 +112,11 @@ UberModule
                     ( PropName "concatArray" )
                   )
                   ( DataArgumentByIndex Nothing ProductType 1
-                    ( Ref Nothing ( Local ( Name "v$528" ) ) ) :| []
+                    ( Ref Nothing ( Local ( Name "v$514" ) ) ) :| []
                   )
                 )
                 ( DataArgumentByIndex Nothing ProductType 1
-                  ( Ref Nothing ( Local ( Name "m$554" ) ) ) :| []
+                  ( Ref Nothing ( Local ( Name "m$548" ) ) ) :| []
                 )
               ]
             )
@@ -79,12 +126,12 @@ UberModule
       ( QName
         { qnameModuleName = ModuleName "Golden.LongWriterBind.Test", qnameName = Name "tell"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "x$1165" ) :| [] )
+        ( ParamNamed Nothing ( Name "x$539" ) :| [] )
         ( AppN Nothing
           ( Ref Nothing ( Imported ( ModuleName "Data.Tuple" ) ( Name "Tuple$w" ) ) )
           ( Ref Nothing
             ( Imported ( ModuleName "Data.Unit" ) ( Name "unit" ) ) :|
-            [ Ref Nothing ( Local ( Name "x$1165" ) ) ]
+            [ Ref Nothing ( Local ( Name "x$539" ) ) ]
           )
         )
       ), Standalone
@@ -92,7 +139,7 @@ UberModule
         { qnameModuleName = ModuleName "Golden.LongWriterBind.Test", qnameName = Name "go"
         }, Let Nothing
         ( Standalone
-          ( Nothing, Name "$kont6569", AppN Nothing
+          ( Nothing, Name "$kont7760", AppN Nothing
             ( Ref Nothing
               ( Imported ( ModuleName "Golden.LongWriterBind.Test" ) ( Name "discard$w" ) )
             )
@@ -828,14 +875,25 @@ UberModule
                                                                                                                                                                                                                                                         [ AbsN Nothing
                                                                                                                                                                                                                                                           ( ParamUnused Nothing :| [] )
                                                                                                                                                                                                                                                           ( AppN Nothing
-                                                                                                                                                                                                                                                            ( Ref Nothing
-                                                                                                                                                                                                                                                              ( Imported
-                                                                                                                                                                                                                                                                ( ModuleName "Data.Tuple" )
-                                                                                                                                                                                                                                                                ( Name "Tuple$w" )
+                                                                                                                                                                                                                                                            ( ObjectProp Nothing
+                                                                                                                                                                                                                                                              ( Ref Nothing
+                                                                                                                                                                                                                                                                ( Imported
+                                                                                                                                                                                                                                                                  ( ModuleName "Data.Identity" )
+                                                                                                                                                                                                                                                                  ( Name "applicativeIdentity" )
+                                                                                                                                                                                                                                                                )
                                                                                                                                                                                                                                                               )
+                                                                                                                                                                                                                                                              ( PropName "pure" )
                                                                                                                                                                                                                                                             )
-                                                                                                                                                                                                                                                            ( LiteralInt Nothing 42 :|
-                                                                                                                                                                                                                                                              [ LiteralArray Nothing [] ]
+                                                                                                                                                                                                                                                            ( AppN Nothing
+                                                                                                                                                                                                                                                              ( Ref Nothing
+                                                                                                                                                                                                                                                                ( Imported
+                                                                                                                                                                                                                                                                  ( ModuleName "Data.Tuple" )
+                                                                                                                                                                                                                                                                  ( Name "Tuple$w" )
+                                                                                                                                                                                                                                                                )
+                                                                                                                                                                                                                                                              )
+                                                                                                                                                                                                                                                              ( LiteralInt Nothing 42 :|
+                                                                                                                                                                                                                                                                [ LiteralArray Nothing [] ]
+                                                                                                                                                                                                                                                              ) :| []
                                                                                                                                                                                                                                                             )
                                                                                                                                                                                                                                                           )
                                                                                                                                                                                                                                                         ]
@@ -959,7 +1017,7 @@ UberModule
             )
           ) :|
           [ Standalone
-            ( Nothing, Name "$kont6570", AppN Nothing
+            ( Nothing, Name "$kont7761", AppN Nothing
               ( Ref Nothing
                 ( Imported ( ModuleName "Golden.LongWriterBind.Test" ) ( Name "discard$w" ) )
               )
@@ -1701,7 +1759,7 @@ UberModule
                                                                                                                                                                                                                                                             ( ParamUnused Nothing :| [] )
                                                                                                                                                                                                                                                             ( Ref Nothing
                                                                                                                                                                                                                                                               ( Local
-                                                                                                                                                                                                                                                                ( Name "$kont6569" )
+                                                                                                                                                                                                                                                                ( Name "$kont7760" )
                                                                                                                                                                                                                                                               )
                                                                                                                                                                                                                                                             )
                                                                                                                                                                                                                                                           ]
@@ -1824,7 +1882,7 @@ UberModule
                 ]
               )
             ), Standalone
-            ( Nothing, Name "$kont6571", AppN Nothing
+            ( Nothing, Name "$kont7762", AppN Nothing
               ( Ref Nothing
                 ( Imported ( ModuleName "Golden.LongWriterBind.Test" ) ( Name "discard$w" ) )
               )
@@ -2564,7 +2622,7 @@ UberModule
                                                                                                                                                                                                                                                             ( ParamUnused Nothing :| [] )
                                                                                                                                                                                                                                                             ( Ref Nothing
                                                                                                                                                                                                                                                               ( Local
-                                                                                                                                                                                                                                                                ( Name "$kont6570" )
+                                                                                                                                                                                                                                                                ( Name "$kont7761" )
                                                                                                                                                                                                                                                               )
                                                                                                                                                                                                                                                             )
                                                                                                                                                                                                                                                           ]
@@ -2687,7 +2745,7 @@ UberModule
                 ]
               )
             ), Standalone
-            ( Nothing, Name "$kont6572", AppN Nothing
+            ( Nothing, Name "$kont7763", AppN Nothing
               ( Ref Nothing
                 ( Imported ( ModuleName "Golden.LongWriterBind.Test" ) ( Name "discard$w" ) )
               )
@@ -3427,7 +3485,7 @@ UberModule
                                                                                                                                                                                                                                                             ( ParamUnused Nothing :| [] )
                                                                                                                                                                                                                                                             ( Ref Nothing
                                                                                                                                                                                                                                                               ( Local
-                                                                                                                                                                                                                                                                ( Name "$kont6571" )
+                                                                                                                                                                                                                                                                ( Name "$kont7762" )
                                                                                                                                                                                                                                                               )
                                                                                                                                                                                                                                                             )
                                                                                                                                                                                                                                                           ]
@@ -4289,7 +4347,7 @@ UberModule
                                                                                                                                                                                                                                                         ( ParamUnused Nothing :| [] )
                                                                                                                                                                                                                                                         ( Ref Nothing
                                                                                                                                                                                                                                                           ( Local
-                                                                                                                                                                                                                                                            ( Name "$kont6572" )
+                                                                                                                                                                                                                                                            ( Name "$kont7763" )
                                                                                                                                                                                                                                                           )
                                                                                                                                                                                                                                                         )
                                                                                                                                                                                                                                                       ]

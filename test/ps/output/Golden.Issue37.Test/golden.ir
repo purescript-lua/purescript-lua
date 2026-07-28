@@ -85,9 +85,9 @@ UberModule
               ( LiteralObject Nothing
                 [
                   ( PropName "map", AbsN Nothing
-                    ( ParamNamed Nothing ( Name "f$32" ) :| [] )
+                    ( ParamNamed Nothing ( Name "f$218" ) :| [] )
                     ( AbsN Nothing
-                      ( ParamNamed Nothing ( Name "a$33" ) :| [] )
+                      ( ParamNamed Nothing ( Name "a$219" ) :| [] )
                       ( AppN Nothing
                         ( AppN Nothing
                           ( ObjectProp Nothing
@@ -105,11 +105,16 @@ UberModule
                             ( PropName "apply" )
                           )
                           ( AppN Nothing
-                            ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "pureE" ) ) )
-                            ( Ref Nothing ( Local ( Name "f$32" ) ) :| [] ) :| []
+                            ( ObjectProp Nothing
+                              ( Ref Nothing
+                                ( Imported ( ModuleName "Effect" ) ( Name "applicativeEffect" ) )
+                              )
+                              ( PropName "pure" )
+                            )
+                            ( Ref Nothing ( Local ( Name "f$218" ) ) :| [] ) :| []
                           )
                         )
-                        ( Ref Nothing ( Local ( Name "a$33" ) ) :| [] )
+                        ( Ref Nothing ( Local ( Name "a$219" ) ) :| [] )
                       )
                     )
                   )
@@ -260,7 +265,7 @@ UberModule
                         [ AppN Nothing
                           ( Let Nothing
                             ( Standalone
-                              ( Nothing, Name "Bind1$216", AppN Nothing
+                              ( Nothing, Name "Bind1$211", AppN Nothing
                                 ( ObjectProp Nothing
                                   ( Ref Nothing
                                     ( Imported ( ModuleName "Effect" ) ( Name "monadEffect" ) )
@@ -273,38 +278,38 @@ UberModule
                               ) :| []
                             )
                             ( AbsN Nothing
-                              ( ParamNamed Nothing ( Name "fn1$218" ) :| [] )
+                              ( ParamNamed Nothing ( Name "fn1$213" ) :| [] )
                               ( AppN Nothing
                                 ( AppN Nothing
                                   ( ObjectProp Nothing
-                                    ( Ref Nothing ( Local ( Name "Bind1$216" ) ) )
+                                    ( Ref Nothing ( Local ( Name "Bind1$211" ) ) )
                                     ( PropName "bind" )
                                   )
-                                  ( Ref Nothing ( Local ( Name "fn1$218" ) ) :| [] )
+                                  ( Ref Nothing ( Local ( Name "fn1$213" ) ) :| [] )
                                 )
                                 ( AbsN Nothing
                                   ( ParamUnused Nothing :| [] )
                                   ( AppN Nothing
                                     ( AppN Nothing
                                       ( ObjectProp Nothing
-                                        ( Ref Nothing ( Local ( Name "Bind1$216" ) ) )
+                                        ( Ref Nothing ( Local ( Name "Bind1$211" ) ) )
                                         ( PropName "bind" )
                                       )
-                                      ( Ref Nothing ( Local ( Name "fn1$218" ) ) :| [] )
+                                      ( Ref Nothing ( Local ( Name "fn1$213" ) ) :| [] )
                                     )
                                     ( AbsN Nothing
                                       ( ParamUnused Nothing :| [] )
                                       ( AppN Nothing
                                         ( AppN Nothing
                                           ( ObjectProp Nothing
-                                            ( Ref Nothing ( Local ( Name "Bind1$216" ) ) )
+                                            ( Ref Nothing ( Local ( Name "Bind1$211" ) ) )
                                             ( PropName "bind" )
                                           )
-                                          ( Ref Nothing ( Local ( Name "fn1$218" ) ) :| [] )
+                                          ( Ref Nothing ( Local ( Name "fn1$213" ) ) :| [] )
                                         )
                                         ( AbsN Nothing
                                           ( ParamUnused Nothing :| [] )
-                                          ( Ref Nothing ( Local ( Name "fn1$218" ) ) ) :| []
+                                          ( Ref Nothing ( Local ( Name "fn1$213" ) ) ) :| []
                                         )
                                       ) :| []
                                     )

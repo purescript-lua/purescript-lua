@@ -16,27 +16,21 @@ UberModule
       ( QName
         { qnameModuleName = ModuleName "Golden.LongReaderBind.Test", qnameName = Name "go"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "r$571" ) :| [] )
+        ( ParamNamed Nothing ( Name "r$995" ) :| [] )
         ( PrimBinOp Nothing PrimAdd
           ( PrimBinOp Nothing PrimAdd
-            ( Ref Nothing ( Local ( Name "r$571" ) ) )
-            ( Ref Nothing ( Local ( Name "r$571" ) ) )
+            ( Ref Nothing ( Local ( Name "r$995" ) ) )
+            ( Ref Nothing ( Local ( Name "r$995" ) ) )
           )
-          ( Ref Nothing ( Local ( Name "r$571" ) ) )
+          ( Ref Nothing ( Local ( Name "r$995" ) ) )
         )
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Golden.LongReaderBind.Test", qnameName = Name "compute"
-        }, LiteralInt Nothing 9
       )
     ], uberModuleForeigns = [], uberModuleExports =
     [
       ( Name "go", Ref Nothing
         ( Imported ( ModuleName "Golden.LongReaderBind.Test" ) ( Name "go" ) )
       ),
-      ( Name "compute", Ref Nothing
-        ( Imported ( ModuleName "Golden.LongReaderBind.Test" ) ( Name "compute" ) )
-      ),
+      ( Name "compute", LiteralInt Nothing 9 ),
       ( Name "main", AppN Nothing
         ( ObjectProp Nothing
           ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
@@ -47,9 +41,7 @@ UberModule
             ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
             ( PropName "showIntImpl" )
           )
-          ( Ref Nothing
-            ( Imported ( ModuleName "Golden.LongReaderBind.Test" ) ( Name "compute" ) ) :| []
-          ) :| []
+          ( LiteralInt Nothing 9 :| [] ) :| []
         )
       )
     ]

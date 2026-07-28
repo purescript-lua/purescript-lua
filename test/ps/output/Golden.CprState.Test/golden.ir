@@ -54,12 +54,12 @@ UberModule
             ( LiteralObject Nothing
               [
                 ( PropName "map", AbsN Nothing
-                  ( ParamNamed Nothing ( Name "f$523" ) :| [] )
+                  ( ParamNamed Nothing ( Name "f$511" ) :| [] )
                   ( AbsN Nothing
-                    ( ParamNamed Nothing ( Name "m$524" ) :| [] )
+                    ( ParamNamed Nothing ( Name "m$512" ) :| [] )
                     ( AppN Nothing
-                      ( Ref Nothing ( Local ( Name "f$523" ) ) )
-                      ( Ref Nothing ( Local ( Name "m$524" ) ) :| [] )
+                      ( Ref Nothing ( Local ( Name "f$511" ) ) )
+                      ( Ref Nothing ( Local ( Name "m$512" ) ) :| [] )
                     )
                   )
                 )
@@ -77,8 +77,8 @@ UberModule
             ( LiteralObject Nothing
               [
                 ( PropName "pure", AbsN Nothing
-                  ( ParamNamed Nothing ( Name "x$525" ) :| [] )
-                  ( Ref Nothing ( Local ( Name "x$525" ) ) )
+                  ( ParamNamed Nothing ( Name "x$513" ) :| [] )
+                  ( Ref Nothing ( Local ( Name "x$513" ) ) )
                 ),
                 ( PropName "Apply0", AbsN Nothing
                   ( ParamUnused Nothing :| [] )
@@ -94,12 +94,12 @@ UberModule
             ( LiteralObject Nothing
               [
                 ( PropName "bind", AbsN Nothing
-                  ( ParamNamed Nothing ( Name "v$78" ) :| [] )
+                  ( ParamNamed Nothing ( Name "v$75" ) :| [] )
                   ( AbsN Nothing
-                    ( ParamNamed Nothing ( Name "f$79" ) :| [] )
+                    ( ParamNamed Nothing ( Name "f$76" ) :| [] )
                     ( AppN Nothing
-                      ( Ref Nothing ( Local ( Name "f$79" ) ) )
-                      ( Ref Nothing ( Local ( Name "v$78" ) ) :| [] )
+                      ( Ref Nothing ( Local ( Name "f$76" ) ) )
+                      ( Ref Nothing ( Local ( Name "v$75" ) ) :| [] )
                     )
                   )
                 ),
@@ -215,7 +215,7 @@ UberModule
               [
                 ( PropName "apply", Let Nothing
                   ( Standalone
-                    ( Nothing, Name "dictMonad$526", AppN Nothing
+                    ( Nothing, Name "dictMonad$514", AppN Nothing
                       ( Ref Nothing
                         ( Imported
                           ( ModuleName "Control.Monad.State.Trans" )
@@ -227,10 +227,10 @@ UberModule
                   )
                   ( Let Nothing
                     ( Standalone
-                      ( Nothing, Name "bind$527", ObjectProp Nothing
+                      ( Nothing, Name "bind$515", ObjectProp Nothing
                         ( AppN Nothing
                           ( ObjectProp Nothing
-                            ( Ref Nothing ( Local ( Name "dictMonad$526" ) ) )
+                            ( Ref Nothing ( Local ( Name "dictMonad$514" ) ) )
                             ( PropName "Bind1" )
                           )
                           ( Ref Nothing
@@ -241,28 +241,28 @@ UberModule
                       ) :| []
                     )
                     ( AbsN Nothing
-                      ( ParamNamed Nothing ( Name "f$528" ) :| [] )
+                      ( ParamNamed Nothing ( Name "f$516" ) :| [] )
                       ( AbsN Nothing
-                        ( ParamNamed Nothing ( Name "a$529" ) :| [] )
+                        ( ParamNamed Nothing ( Name "a$517" ) :| [] )
                         ( AppN Nothing
                           ( AppN Nothing
-                            ( Ref Nothing ( Local ( Name "bind$527" ) ) )
-                            ( Ref Nothing ( Local ( Name "f$528" ) ) :| [] )
+                            ( Ref Nothing ( Local ( Name "bind$515" ) ) )
+                            ( Ref Nothing ( Local ( Name "f$516" ) ) :| [] )
                           )
                           ( AbsN Nothing
-                            ( ParamNamed Nothing ( Name "f'$530" ) :| [] )
+                            ( ParamNamed Nothing ( Name "f'$518" ) :| [] )
                             ( AppN Nothing
                               ( AppN Nothing
-                                ( Ref Nothing ( Local ( Name "bind$527" ) ) )
-                                ( Ref Nothing ( Local ( Name "a$529" ) ) :| [] )
+                                ( Ref Nothing ( Local ( Name "bind$515" ) ) )
+                                ( Ref Nothing ( Local ( Name "a$517" ) ) :| [] )
                               )
                               ( AbsN Nothing
-                                ( ParamNamed Nothing ( Name "a'$531" ) :| [] )
+                                ( ParamNamed Nothing ( Name "a'$519" ) :| [] )
                                 ( AppN Nothing
                                   ( ObjectProp Nothing
                                     ( AppN Nothing
                                       ( ObjectProp Nothing
-                                        ( Ref Nothing ( Local ( Name "dictMonad$526" ) ) )
+                                        ( Ref Nothing ( Local ( Name "dictMonad$514" ) ) )
                                         ( PropName "Applicative0" )
                                       )
                                       ( Ref Nothing
@@ -275,8 +275,8 @@ UberModule
                                     ( PropName "pure" )
                                   )
                                   ( AppN Nothing
-                                    ( Ref Nothing ( Local ( Name "f'$530" ) ) )
-                                    ( Ref Nothing ( Local ( Name "a'$531" ) ) :| [] ) :| []
+                                    ( Ref Nothing ( Local ( Name "f'$518" ) ) )
+                                    ( Ref Nothing ( Local ( Name "a'$519" ) ) :| [] ) :| []
                                   )
                                 ) :| []
                               )
@@ -292,11 +292,11 @@ UberModule
                   ( LiteralObject Nothing
                     [
                       ( PropName "map", AbsN Nothing
-                        ( ParamNamed Nothing ( Name "f$519" ) :| [] )
+                        ( ParamNamed Nothing ( Name "f$507" ) :| [] )
                         ( AbsN Nothing
-                          ( ParamNamed Nothing ( Name "v$520" ) :| [] )
+                          ( ParamNamed Nothing ( Name "v$508" ) :| [] )
                           ( AbsN Nothing
-                            ( ParamNamed Nothing ( Name "s$521" ) :| [] )
+                            ( ParamNamed Nothing ( Name "s$509" ) :| [] )
                             ( AppN Nothing
                               ( AppN Nothing
                                 ( ObjectProp Nothing
@@ -334,26 +334,26 @@ UberModule
                                   ( PropName "map" )
                                 )
                                 ( AbsN Nothing
-                                  ( ParamNamed Nothing ( Name "v1$522" ) :| [] )
+                                  ( ParamNamed Nothing ( Name "v1$510" ) :| [] )
                                   ( AppN Nothing
                                     ( Ref Nothing
                                       ( Imported ( ModuleName "Data.Tuple" ) ( Name "Tuple$w" ) )
                                     )
                                     ( AppN Nothing
-                                      ( Ref Nothing ( Local ( Name "f$519" ) ) )
+                                      ( Ref Nothing ( Local ( Name "f$507" ) ) )
                                       ( DataArgumentByIndex Nothing ProductType 0
-                                        ( Ref Nothing ( Local ( Name "v1$522" ) ) ) :| []
+                                        ( Ref Nothing ( Local ( Name "v1$510" ) ) ) :| []
                                       ) :|
                                       [ DataArgumentByIndex Nothing ProductType 1
-                                        ( Ref Nothing ( Local ( Name "v1$522" ) ) )
+                                        ( Ref Nothing ( Local ( Name "v1$510" ) ) )
                                       ]
                                     )
                                   ) :| []
                                 )
                               )
                               ( AppN Nothing
-                                ( Ref Nothing ( Local ( Name "v$520" ) ) )
-                                ( Ref Nothing ( Local ( Name "s$521" ) ) :| [] ) :| []
+                                ( Ref Nothing ( Local ( Name "v$508" ) ) )
+                                ( Ref Nothing ( Local ( Name "s$509" ) ) :| [] ) :| []
                               )
                             )
                           )
@@ -421,38 +421,36 @@ UberModule
         ( Ref Nothing ( Imported ( ModuleName "Data.Identity" ) ( Name "monadIdentity" ) ) :| [] )
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Golden.CprState.Test", qnameName = Name "bind"
-        }, ObjectProp Nothing
-        ( Ref Nothing ( Imported ( ModuleName "Golden.CprState.Test" ) ( Name "bindStateT" ) ) )
-        ( PropName "bind" )
-      ), Standalone
-      ( QName
         { qnameModuleName = ModuleName "Golden.CprState.Test", qnameName = Name "get"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "x$638" ) :| [] )
+        ( ParamNamed Nothing ( Name "x$679" ) :| [] )
         ( AppN Nothing
           ( Ref Nothing ( Imported ( ModuleName "Data.Tuple" ) ( Name "Tuple$w" ) ) )
-          ( Ref Nothing ( Local ( Name "x$638" ) ) :| [ Ref Nothing ( Local ( Name "x$638" ) ) ] )
+          ( Ref Nothing ( Local ( Name "x$679" ) ) :| [ Ref Nothing ( Local ( Name "x$679" ) ) ] )
         )
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Golden.CprState.Test", qnameName = Name "discard"
-        }, ObjectProp Nothing
-        ( Ref Nothing ( Imported ( ModuleName "Golden.CprState.Test" ) ( Name "bindStateT" ) ) )
-        ( PropName "bind" )
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.CprState.Test", qnameName = Name "go"
         }, AppN Nothing
         ( AppN Nothing
-          ( Ref Nothing ( Imported ( ModuleName "Golden.CprState.Test" ) ( Name "bind" ) ) )
+          ( ObjectProp Nothing
+            ( Ref Nothing
+              ( Imported ( ModuleName "Golden.CprState.Test" ) ( Name "bindStateT" ) )
+            )
+            ( PropName "bind" )
+          )
           ( Ref Nothing ( Imported ( ModuleName "Golden.CprState.Test" ) ( Name "get" ) ) :| [] )
         )
         ( AbsN Nothing
           ( ParamNamed Nothing ( Name "x1" ) :| [] )
           ( AppN Nothing
             ( AppN Nothing
-              ( Ref Nothing ( Imported ( ModuleName "Golden.CprState.Test" ) ( Name "discard" ) ) )
+              ( ObjectProp Nothing
+                ( Ref Nothing
+                  ( Imported ( ModuleName "Golden.CprState.Test" ) ( Name "bindStateT" ) )
+                )
+                ( PropName "bind" )
+              )
               ( AbsN Nothing
                 ( ParamUnused Nothing :| [] )
                 ( AppN Nothing
@@ -471,8 +469,11 @@ UberModule
               ( ParamUnused Nothing :| [] )
               ( AppN Nothing
                 ( AppN Nothing
-                  ( Ref Nothing
-                    ( Imported ( ModuleName "Golden.CprState.Test" ) ( Name "bind" ) )
+                  ( ObjectProp Nothing
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Golden.CprState.Test" ) ( Name "bindStateT" ) )
+                    )
+                    ( PropName "bind" )
                   )
                   ( Ref Nothing
                     ( Imported ( ModuleName "Golden.CprState.Test" ) ( Name "get" ) ) :| []
@@ -482,8 +483,11 @@ UberModule
                   ( ParamNamed Nothing ( Name "x2" ) :| [] )
                   ( AppN Nothing
                     ( AppN Nothing
-                      ( Ref Nothing
-                        ( Imported ( ModuleName "Golden.CprState.Test" ) ( Name "discard" ) )
+                      ( ObjectProp Nothing
+                        ( Ref Nothing
+                          ( Imported ( ModuleName "Golden.CprState.Test" ) ( Name "bindStateT" ) )
+                        )
+                        ( PropName "bind" )
                       )
                       ( AbsN Nothing
                         ( ParamUnused Nothing :| [] )
@@ -505,8 +509,14 @@ UberModule
                       ( ParamUnused Nothing :| [] )
                       ( AppN Nothing
                         ( AppN Nothing
-                          ( Ref Nothing
-                            ( Imported ( ModuleName "Golden.CprState.Test" ) ( Name "bind" ) )
+                          ( ObjectProp Nothing
+                            ( Ref Nothing
+                              ( Imported
+                                ( ModuleName "Golden.CprState.Test" )
+                                ( Name "bindStateT" )
+                              )
+                            )
+                            ( PropName "bind" )
                           )
                           ( Ref Nothing
                             ( Imported ( ModuleName "Golden.CprState.Test" ) ( Name "get" ) ) :| []
@@ -516,11 +526,14 @@ UberModule
                           ( ParamNamed Nothing ( Name "x3" ) :| [] )
                           ( AppN Nothing
                             ( AppN Nothing
-                              ( Ref Nothing
-                                ( Imported
-                                  ( ModuleName "Golden.CprState.Test" )
-                                  ( Name "discard" )
+                              ( ObjectProp Nothing
+                                ( Ref Nothing
+                                  ( Imported
+                                    ( ModuleName "Golden.CprState.Test" )
+                                    ( Name "bindStateT" )
+                                  )
                                 )
+                                ( PropName "bind" )
                               )
                               ( AbsN Nothing
                                 ( ParamUnused Nothing :| [] )
@@ -542,11 +555,14 @@ UberModule
                               ( ParamUnused Nothing :| [] )
                               ( AppN Nothing
                                 ( AppN Nothing
-                                  ( Ref Nothing
-                                    ( Imported
-                                      ( ModuleName "Golden.CprState.Test" )
-                                      ( Name "bind" )
+                                  ( ObjectProp Nothing
+                                    ( Ref Nothing
+                                      ( Imported
+                                        ( ModuleName "Golden.CprState.Test" )
+                                        ( Name "bindStateT" )
+                                      )
                                     )
+                                    ( PropName "bind" )
                                   )
                                   ( Ref Nothing
                                     ( Imported
@@ -559,11 +575,14 @@ UberModule
                                   ( ParamNamed Nothing ( Name "x4" ) :| [] )
                                   ( AppN Nothing
                                     ( AppN Nothing
-                                      ( Ref Nothing
-                                        ( Imported
-                                          ( ModuleName "Golden.CprState.Test" )
-                                          ( Name "discard" )
+                                      ( ObjectProp Nothing
+                                        ( Ref Nothing
+                                          ( Imported
+                                            ( ModuleName "Golden.CprState.Test" )
+                                            ( Name "bindStateT" )
+                                          )
                                         )
+                                        ( PropName "bind" )
                                       )
                                       ( AbsN Nothing
                                         ( ParamUnused Nothing :| [] )
@@ -591,11 +610,14 @@ UberModule
                                       ( ParamUnused Nothing :| [] )
                                       ( AppN Nothing
                                         ( AppN Nothing
-                                          ( Ref Nothing
-                                            ( Imported
-                                              ( ModuleName "Golden.CprState.Test" )
-                                              ( Name "bind" )
+                                          ( ObjectProp Nothing
+                                            ( Ref Nothing
+                                              ( Imported
+                                                ( ModuleName "Golden.CprState.Test" )
+                                                ( Name "bindStateT" )
+                                              )
                                             )
+                                            ( PropName "bind" )
                                           )
                                           ( Ref Nothing
                                             ( Imported
@@ -608,11 +630,14 @@ UberModule
                                           ( ParamNamed Nothing ( Name "x5" ) :| [] )
                                           ( AppN Nothing
                                             ( AppN Nothing
-                                              ( Ref Nothing
-                                                ( Imported
-                                                  ( ModuleName "Golden.CprState.Test" )
-                                                  ( Name "discard" )
+                                              ( ObjectProp Nothing
+                                                ( Ref Nothing
+                                                  ( Imported
+                                                    ( ModuleName "Golden.CprState.Test" )
+                                                    ( Name "bindStateT" )
+                                                  )
                                                 )
+                                                ( PropName "bind" )
                                               )
                                               ( AbsN Nothing
                                                 ( ParamUnused Nothing :| [] )
@@ -640,11 +665,14 @@ UberModule
                                               ( ParamUnused Nothing :| [] )
                                               ( AppN Nothing
                                                 ( AppN Nothing
-                                                  ( Ref Nothing
-                                                    ( Imported
-                                                      ( ModuleName "Golden.CprState.Test" )
-                                                      ( Name "bind" )
+                                                  ( ObjectProp Nothing
+                                                    ( Ref Nothing
+                                                      ( Imported
+                                                        ( ModuleName "Golden.CprState.Test" )
+                                                        ( Name "bindStateT" )
+                                                      )
                                                     )
+                                                    ( PropName "bind" )
                                                   )
                                                   ( Ref Nothing
                                                     ( Imported
@@ -657,11 +685,14 @@ UberModule
                                                   ( ParamNamed Nothing ( Name "x6" ) :| [] )
                                                   ( AppN Nothing
                                                     ( AppN Nothing
-                                                      ( Ref Nothing
-                                                        ( Imported
-                                                          ( ModuleName "Golden.CprState.Test" )
-                                                          ( Name "discard" )
+                                                      ( ObjectProp Nothing
+                                                        ( Ref Nothing
+                                                          ( Imported
+                                                            ( ModuleName "Golden.CprState.Test" )
+                                                            ( Name "bindStateT" )
+                                                          )
                                                         )
+                                                        ( PropName "bind" )
                                                       )
                                                       ( AbsN Nothing
                                                         ( ParamUnused Nothing :| [] )
@@ -691,11 +722,14 @@ UberModule
                                                       ( ParamUnused Nothing :| [] )
                                                       ( AppN Nothing
                                                         ( AppN Nothing
-                                                          ( Ref Nothing
-                                                            ( Imported
-                                                              ( ModuleName "Golden.CprState.Test" )
-                                                              ( Name "bind" )
+                                                          ( ObjectProp Nothing
+                                                            ( Ref Nothing
+                                                              ( Imported
+                                                                ( ModuleName "Golden.CprState.Test" )
+                                                                ( Name "bindStateT" )
+                                                              )
                                                             )
+                                                            ( PropName "bind" )
                                                           )
                                                           ( Ref Nothing
                                                             ( Imported
@@ -710,11 +744,14 @@ UberModule
                                                           )
                                                           ( AppN Nothing
                                                             ( AppN Nothing
-                                                              ( Ref Nothing
-                                                                ( Imported
-                                                                  ( ModuleName "Golden.CprState.Test" )
-                                                                  ( Name "discard" )
+                                                              ( ObjectProp Nothing
+                                                                ( Ref Nothing
+                                                                  ( Imported
+                                                                    ( ModuleName "Golden.CprState.Test" )
+                                                                    ( Name "bindStateT" )
+                                                                  )
                                                                 )
+                                                                ( PropName "bind" )
                                                               )
                                                               ( AbsN Nothing
                                                                 ( ParamUnused Nothing :| [] )
@@ -744,11 +781,14 @@ UberModule
                                                               ( ParamUnused Nothing :| [] )
                                                               ( AppN Nothing
                                                                 ( AppN Nothing
-                                                                  ( Ref Nothing
-                                                                    ( Imported
-                                                                      ( ModuleName "Golden.CprState.Test" )
-                                                                      ( Name "bind" )
+                                                                  ( ObjectProp Nothing
+                                                                    ( Ref Nothing
+                                                                      ( Imported
+                                                                        ( ModuleName "Golden.CprState.Test" )
+                                                                        ( Name "bindStateT" )
+                                                                      )
                                                                     )
+                                                                    ( PropName "bind" )
                                                                   )
                                                                   ( Ref Nothing
                                                                     ( Imported
@@ -763,11 +803,14 @@ UberModule
                                                                   )
                                                                   ( AppN Nothing
                                                                     ( AppN Nothing
-                                                                      ( Ref Nothing
-                                                                        ( Imported
-                                                                          ( ModuleName "Golden.CprState.Test" )
-                                                                          ( Name "discard" )
+                                                                      ( ObjectProp Nothing
+                                                                        ( Ref Nothing
+                                                                          ( Imported
+                                                                            ( ModuleName "Golden.CprState.Test" )
+                                                                            ( Name "bindStateT" )
+                                                                          )
                                                                         )
+                                                                        ( PropName "bind" )
                                                                       )
                                                                       ( AbsN Nothing
                                                                         ( ParamUnused Nothing :| [] )
@@ -799,11 +842,14 @@ UberModule
                                                                       ( ParamUnused Nothing :| [] )
                                                                       ( AppN Nothing
                                                                         ( AppN Nothing
-                                                                          ( Ref Nothing
-                                                                            ( Imported
-                                                                              ( ModuleName "Golden.CprState.Test" )
-                                                                              ( Name "bind" )
+                                                                          ( ObjectProp Nothing
+                                                                            ( Ref Nothing
+                                                                              ( Imported
+                                                                                ( ModuleName "Golden.CprState.Test" )
+                                                                                ( Name "bindStateT" )
+                                                                              )
                                                                             )
+                                                                            ( PropName "bind" )
                                                                           )
                                                                           ( Ref Nothing
                                                                             ( Imported
@@ -818,11 +864,14 @@ UberModule
                                                                           )
                                                                           ( AppN Nothing
                                                                             ( AppN Nothing
-                                                                              ( Ref Nothing
-                                                                                ( Imported
-                                                                                  ( ModuleName "Golden.CprState.Test" )
-                                                                                  ( Name "discard" )
+                                                                              ( ObjectProp Nothing
+                                                                                ( Ref Nothing
+                                                                                  ( Imported
+                                                                                    ( ModuleName "Golden.CprState.Test" )
+                                                                                    ( Name "bindStateT" )
+                                                                                  )
                                                                                 )
+                                                                                ( PropName "bind" )
                                                                               )
                                                                               ( AbsN Nothing
                                                                                 ( ParamUnused Nothing :| [] )
@@ -854,11 +903,14 @@ UberModule
                                                                               ( ParamUnused Nothing :| [] )
                                                                               ( AppN Nothing
                                                                                 ( AppN Nothing
-                                                                                  ( Ref Nothing
-                                                                                    ( Imported
-                                                                                      ( ModuleName "Golden.CprState.Test" )
-                                                                                      ( Name "bind" )
+                                                                                  ( ObjectProp Nothing
+                                                                                    ( Ref Nothing
+                                                                                      ( Imported
+                                                                                        ( ModuleName "Golden.CprState.Test" )
+                                                                                        ( Name "bindStateT" )
+                                                                                      )
                                                                                     )
+                                                                                    ( PropName "bind" )
                                                                                   )
                                                                                   ( Ref Nothing
                                                                                     ( Imported
@@ -873,11 +925,14 @@ UberModule
                                                                                   )
                                                                                   ( AppN Nothing
                                                                                     ( AppN Nothing
-                                                                                      ( Ref Nothing
-                                                                                        ( Imported
-                                                                                          ( ModuleName "Golden.CprState.Test" )
-                                                                                          ( Name "discard" )
+                                                                                      ( ObjectProp Nothing
+                                                                                        ( Ref Nothing
+                                                                                          ( Imported
+                                                                                            ( ModuleName "Golden.CprState.Test" )
+                                                                                            ( Name "bindStateT" )
+                                                                                          )
                                                                                         )
+                                                                                        ( PropName "bind" )
                                                                                       )
                                                                                       ( AbsN Nothing
                                                                                         ( ParamUnused Nothing :| [] )
@@ -909,11 +964,14 @@ UberModule
                                                                                       ( ParamUnused Nothing :| [] )
                                                                                       ( AppN Nothing
                                                                                         ( AppN Nothing
-                                                                                          ( Ref Nothing
-                                                                                            ( Imported
-                                                                                              ( ModuleName "Golden.CprState.Test" )
-                                                                                              ( Name "bind" )
+                                                                                          ( ObjectProp Nothing
+                                                                                            ( Ref Nothing
+                                                                                              ( Imported
+                                                                                                ( ModuleName "Golden.CprState.Test" )
+                                                                                                ( Name "bindStateT" )
+                                                                                              )
                                                                                             )
+                                                                                            ( PropName "bind" )
                                                                                           )
                                                                                           ( Ref Nothing
                                                                                             ( Imported

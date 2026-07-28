@@ -34,34 +34,34 @@ UberModule
       ( QName
         { qnameModuleName = ModuleName "Golden.UncurriedLift.Test", qnameName = Name "sumST"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "a$707" ) :| [ ParamNamed Nothing ( Name "b$708" ) ] )
+        ( ParamNamed Nothing ( Name "a$699" ) :| [ ParamNamed Nothing ( Name "b$700" ) ] )
         ( PrimBinOp Nothing PrimAdd
-          ( Ref Nothing ( Local ( Name "a$707" ) ) )
-          ( Ref Nothing ( Local ( Name "b$708" ) ) )
+          ( Ref Nothing ( Local ( Name "a$699" ) ) )
+          ( Ref Nothing ( Local ( Name "b$700" ) ) )
         )
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.UncurriedLift.Test", qnameName = Name "mulByFn"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "a$698" ) :| [ ParamNamed Nothing ( Name "b$699" ) ] )
+        ( ParamNamed Nothing ( Name "a$690" ) :| [ ParamNamed Nothing ( Name "b$691" ) ] )
         ( PrimBinOp Nothing PrimMul
-          ( Ref Nothing ( Local ( Name "a$698" ) ) )
-          ( Ref Nothing ( Local ( Name "b$699" ) ) )
+          ( Ref Nothing ( Local ( Name "a$690" ) ) )
+          ( Ref Nothing ( Local ( Name "b$691" ) ) )
         )
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.UncurriedLift.Test", qnameName = Name "mul2"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "a$701" ) :| [ ParamNamed Nothing ( Name "b$702" ) ] )
+        ( ParamNamed Nothing ( Name "a$693" ) :| [ ParamNamed Nothing ( Name "b$694" ) ] )
         ( PrimBinOp Nothing PrimMul
-          ( Ref Nothing ( Local ( Name "a$701" ) ) )
-          ( Ref Nothing ( Local ( Name "b$702" ) ) )
+          ( Ref Nothing ( Local ( Name "a$693" ) ) )
+          ( Ref Nothing ( Local ( Name "b$694" ) ) )
         )
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.UncurriedLift.Test", qnameName = Name "logTwice"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "a$673" ) :| [ ParamNamed Nothing ( Name "b$674" ) ] )
+        ( ParamNamed Nothing ( Name "a$665" ) :| [ ParamNamed Nothing ( Name "b$666" ) ] )
         ( AppN Nothing
           ( AbsN Nothing
             ( ParamUnused Nothing :| [] )
@@ -70,7 +70,7 @@ UberModule
                 ( Nothing, Name "_", AppN Nothing
                   ( AppN Nothing
                     ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
-                    ( Ref Nothing ( Local ( Name "a$673" ) ) :| [] )
+                    ( Ref Nothing ( Local ( Name "a$665" ) ) :| [] )
                   )
                   ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
                 ) :| []
@@ -78,7 +78,7 @@ UberModule
               ( AppN Nothing
                 ( AppN Nothing
                   ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
-                  ( Ref Nothing ( Local ( Name "b$674" ) ) :| [] )
+                  ( Ref Nothing ( Local ( Name "b$666" ) ) :| [] )
                 )
                 ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               )
@@ -91,24 +91,24 @@ UberModule
         { qnameModuleName = ModuleName "Golden.UncurriedLift.Test", qnameName = Name "add3"
         }, AbsN Nothing
         ( ParamNamed Nothing
-          ( Name "a$694" ) :|
-          [ ParamNamed Nothing ( Name "b$695" ), ParamNamed Nothing ( Name "c$696" ) ]
+          ( Name "a$686" ) :|
+          [ ParamNamed Nothing ( Name "b$687" ), ParamNamed Nothing ( Name "c$688" ) ]
         )
         ( PrimBinOp Nothing PrimAdd
           ( PrimBinOp Nothing PrimAdd
-            ( Ref Nothing ( Local ( Name "a$694" ) ) )
-            ( Ref Nothing ( Local ( Name "b$695" ) ) )
+            ( Ref Nothing ( Local ( Name "a$686" ) ) )
+            ( Ref Nothing ( Local ( Name "b$687" ) ) )
           )
-          ( Ref Nothing ( Local ( Name "c$696" ) ) )
+          ( Ref Nothing ( Local ( Name "c$688" ) ) )
         )
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.UncurriedLift.Test", qnameName = Name "addOnePlusTwoTo"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "c$682" ) :| [] )
+        ( ParamNamed Nothing ( Name "c$674" ) :| [] )
         ( PrimBinOp Nothing PrimAdd
           ( LiteralInt Nothing 3 )
-          ( Ref Nothing ( Local ( Name "c$682" ) ) )
+          ( Ref Nothing ( Local ( Name "c$674" ) ) )
         )
       )
     ], uberModuleForeigns = [], uberModuleExports =

@@ -2,12 +2,5 @@ spec: bind_chain
 runtime: LuaJIT 2.1.1741730670
 workload: n=1000000 reps=4 result=3000000
 aborts (distinct site -- reason):
-  Bench.BindChain.lua:17 -- NYI: bytecode FNEW
-  Bench.BindChain.lua:18 -- NYI: bytecode FNEW
-  Bench.BindChain.lua:22 -- NYI: bytecode UCLO
 bytecode end state (J*=compiled, I*=blacklisted):
-  Bench.BindChain.lua:1 JFUNCF
-  Bench.BindChain.lua:13 IFUNCF
-  Bench.BindChain.lua:17 JFUNCF
-  Bench.BindChain.lua:9 IFUNCF
-counts: aborts=3 compiled=2 blacklisted=2
+counts: aborts=0 compiled=0 blacklisted=0

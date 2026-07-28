@@ -59,28 +59,28 @@ UberModule
               )
             ),
             ( PropName "conj", AbsN Nothing
-              ( ParamNamed Nothing ( Name "b1$210" ) :| [] )
+              ( ParamNamed Nothing ( Name "b1$205" ) :| [] )
               ( AbsN Nothing
-                ( ParamNamed Nothing ( Name "b2$211" ) :| [] )
+                ( ParamNamed Nothing ( Name "b2$206" ) :| [] )
                 ( PrimBinOp Nothing PrimAnd
-                  ( Ref Nothing ( Local ( Name "b1$210" ) ) )
-                  ( Ref Nothing ( Local ( Name "b2$211" ) ) )
+                  ( Ref Nothing ( Local ( Name "b1$205" ) ) )
+                  ( Ref Nothing ( Local ( Name "b2$206" ) ) )
                 )
               )
             ),
             ( PropName "disj", AbsN Nothing
-              ( ParamNamed Nothing ( Name "b1$208" ) :| [] )
+              ( ParamNamed Nothing ( Name "b1$203" ) :| [] )
               ( AbsN Nothing
-                ( ParamNamed Nothing ( Name "b2$209" ) :| [] )
+                ( ParamNamed Nothing ( Name "b2$204" ) :| [] )
                 ( PrimBinOp Nothing PrimOr
-                  ( Ref Nothing ( Local ( Name "b1$208" ) ) )
-                  ( Ref Nothing ( Local ( Name "b2$209" ) ) )
+                  ( Ref Nothing ( Local ( Name "b1$203" ) ) )
+                  ( Ref Nothing ( Local ( Name "b2$204" ) ) )
                 )
               )
             ),
             ( PropName "not", AbsN Nothing
-              ( ParamNamed Nothing ( Name "b$207" ) :| [] )
-              ( PrimNot Nothing ( Ref Nothing ( Local ( Name "b$207" ) ) ) )
+              ( ParamNamed Nothing ( Name "b$202" ) :| [] )
+              ( PrimNot Nothing ( Ref Nothing ( Local ( Name "b$202" ) ) ) )
             )
           ]
         ) :| []
@@ -158,12 +158,12 @@ UberModule
         ( ParamUnused Nothing :| [] )
         ( Let Nothing
           ( Standalone
-            ( Nothing, Name "$cse252", LiteralObject Nothing
+            ( Nothing, Name "$cse247", LiteralObject Nothing
               [
                 ( PropName "show", AbsN Nothing
-                  ( ParamNamed Nothing ( Name "v$241" ) :| [] )
+                  ( ParamNamed Nothing ( Name "v$235" ) :| [] )
                   ( IfThenElse Nothing
-                    ( Ref Nothing ( Local ( Name "v$241" ) ) )
+                    ( Ref Nothing ( Local ( Name "v$235" ) ) )
                     ( LiteralString Nothing "true" )
                     ( LiteralString Nothing "false" )
                   )
@@ -199,7 +199,7 @@ UberModule
                     ( Ref Nothing
                       ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow$w" ) )
                     )
-                    ( Ref Nothing ( Local ( Name "$cse252" ) ) :| [ LiteralBool Nothing True ] )
+                    ( Ref Nothing ( Local ( Name "$cse247" ) ) :| [ LiteralBool Nothing True ] )
                   )
                   ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
                 ), Standalone
@@ -208,7 +208,7 @@ UberModule
                     ( Ref Nothing
                       ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow$w" ) )
                     )
-                    ( Ref Nothing ( Local ( Name "$cse252" ) ) :| [ LiteralBool Nothing True ] )
+                    ( Ref Nothing ( Local ( Name "$cse247" ) ) :| [ LiteralBool Nothing True ] )
                   )
                   ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
                 ), Standalone
@@ -220,23 +220,23 @@ UberModule
                     ( LiteralObject Nothing
                       [
                         ( PropName "show", AbsN Nothing
-                          ( ParamNamed Nothing ( Name "v$113" ) :| [] )
+                          ( ParamNamed Nothing ( Name "v$108" ) :| [] )
                           ( Let Nothing
                             ( Standalone
-                              ( Nothing, Name "$cse253", ReflectCtor Nothing
-                                ( Ref Nothing ( Local ( Name "v$113" ) ) )
+                              ( Nothing, Name "$cse248", ReflectCtor Nothing
+                                ( Ref Nothing ( Local ( Name "v$108" ) ) )
                               ) :| []
                             )
                             ( IfThenElse Nothing
                               ( Eq Nothing
                                 ( LiteralString Nothing "Data.Ordering∷Ordering.LT" )
-                                ( Ref Nothing ( Local ( Name "$cse253" ) ) )
+                                ( Ref Nothing ( Local ( Name "$cse248" ) ) )
                               )
                               ( LiteralString Nothing "LT" )
                               ( IfThenElse Nothing
                                 ( Eq Nothing
                                   ( LiteralString Nothing "Data.Ordering∷Ordering.GT" )
-                                  ( Ref Nothing ( Local ( Name "$cse253" ) ) )
+                                  ( Ref Nothing ( Local ( Name "$cse248" ) ) )
                                 )
                                 ( LiteralString Nothing "GT" )
                                 ( LiteralString Nothing "EQ" )
@@ -267,7 +267,7 @@ UberModule
               ( AppN Nothing
                 ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow$w" ) ) )
                 ( Ref Nothing
-                  ( Local ( Name "$cse252" ) ) :|
+                  ( Local ( Name "$cse247" ) ) :|
                   [ AppN Nothing
                     ( AppN Nothing
                       ( ObjectProp Nothing

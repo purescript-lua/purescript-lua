@@ -29,22 +29,26 @@ An inlining directive names a target and a mode:
 The bare target names a whole binding. @.label@ names one field of a
 dictionary-record binding, @...label@ one field of the record a binding
 returns when applied (@f(x).label@) — a policy for one method instead of
-the whole record. Directives come from three explicit sources, layered by
+the whole record. Directives come from four explicit sources, layered by
 specificity (most specific wins, per target):
 
   1. a local module-header pragma (no @export@) in the defining module;
   2. the project-wide @--directives@ file;
   3. an @\@inline export@ module-header pragma — a default the library
-     author ships with the module, overridable by the consumer's file.
+     author ships with the module, overridable by the consumer's file;
+  4. the default directive pack the compiler ships for the prelude/core
+     forks ('defaultDirectives') — generic defaults that any explicit
+     source, including a library author's @export@ pragma, overrides.
 
 'resolveModes' performs exactly this layering; a winning @default@ still
 masks the lower tiers and resolves to no annotation — the built-in
 heuristics. Module-header pragmas name own-module bindings only and are
-validated strictly (a target matching nothing is an error); file entries
-are fully qualified and best-effort (a shared file may cover modules
-absent from the build). In a whole-program optimizer @export@ needs no
-transitivity machinery: the resolved annotation rides the binding into
-the uber-module, so it is simply the weakest explicit tier.
+validated strictly (a target matching nothing is an error); file and
+pack entries are fully qualified and best-effort (a shared file may
+cover modules absent from the build). In a whole-program optimizer
+@export@ needs no transitivity machinery: the resolved annotation rides
+the binding into the uber-module, so it is simply the weakest
+author-written tier.
 
 The resolved winner travels to the optimizer's decision through several
 stages:
@@ -157,11 +161,12 @@ data Pragma = Pragma
 -- | The parsed contents of a @--directives@ file, grouped by module.
 type Directives = Map ModuleName (Map Target Mode)
 
-{- | Resolve the three explicit directive sources for a module's targets into
+{- | Resolve the four explicit directive sources for a module's targets into
 the annotations to attach, layered by precedence: a local module-header
 directive beats the project directives file, which beats an @export@-scoped
-header directive. A winning 'ModeDefault' still occupies its key — masking
-the lower tiers — and attaches 'Nothing' (the built-in heuristics).
+header directive, which beats the shipped default pack. A winning
+'ModeDefault' still occupies its key — masking the lower tiers — and
+attaches 'Nothing' (the built-in heuristics).
 -}
 resolveModes
   ∷ Map Target Mode
@@ -169,10 +174,12 @@ resolveModes
   → Map Target Mode
   -- ^ the @--directives@ file slice for this module
   → Map Target Mode
-  -- ^ module-header pragmas, export scope (lowest explicit tier)
+  -- ^ module-header pragmas, export scope (lowest author-written tier)
+  → Map Target Mode
+  -- ^ the default pack slice for this module (lowest explicit tier)
   → Map Target (Maybe Annotation)
-resolveModes localModes fileModes exportModes =
-  Map.unions [localModes, fileModes, exportModes] <&> \case
+resolveModes localModes fileModes exportModes packModes =
+  Map.unions [localModes, fileModes, exportModes, packModes] <&> \case
     ModeDefault → Nothing
     ModeAnnotation ann → Just ann
 
@@ -285,3 +292,87 @@ symbol = void . ML.symbol sc
 
 sc ∷ Parser ()
 sc = ML.space (MC.hspace1 @_ @Text) empty empty
+
+--------------------------------------------------------------------------------
+-- Default directive pack ------------------------------------------------------
+
+{- | The directive pack the compiler ships for the prelude/core forks: the
+tiny, ubiquitous dictionary-parameterized combinators whose inlining starts
+the specialization cascade but which the built-in size heuristics leave
+shared. The lowest explicit tier ('resolveModes'): a consumer's
+@--directives@ file or a library author's module-header pragma overrides
+any entry, and an explicit @default@ mode masks one back to the built-in
+heuristics. Entries are best-effort like file entries — modules absent
+from the build are simply never consulted.
+
+A syntax error in the pack is a compiler bug, hence the unsafe parse
+(the test suite forces the parse).
+-}
+defaultDirectives ∷ Directives
+defaultDirectives =
+  case Megaparsec.parse
+    (directivesFileParser <* Megaparsec.eof)
+    "<default directive pack>"
+    defaultDirectivesSource of
+    Left errorBundle →
+      error . toText $ Megaparsec.errorBundlePretty errorBundle
+    Right directives → directives
+
+defaultDirectivesSource ∷ Text
+defaultDirectivesSource =
+  unlines
+    [ "-- Class member accessors: applying one to a dictionary resolves"
+    , "-- to the instance method and starts the inlining cascade."
+    , "Control.Applicative.pure arity=1"
+    , "Control.Apply.apply arity=1"
+    , "Control.Bind.bind arity=1"
+    , "Control.Category.identity arity=1"
+    , "Control.Semigroupoid.compose arity=1"
+    , "Control.Semigroupoid.composeFlipped arity=1"
+    , "Data.Functor.map arity=1"
+    , "Data.Generic.Rep.from arity=1"
+    , "Data.Generic.Rep.to arity=1"
+    , "Data.Monoid.mempty arity=1"
+    , "Data.Semigroup.append arity=1"
+    , ""
+    , "-- Dictionary-parameterized combinators too small to earn a"
+    , "-- shared binding once their dictionary is known."
+    , "Control.Applicative.liftA1 arity=1"
+    , "Control.Applicative.unless arity=1"
+    , "Control.Applicative.when arity=1"
+    , "Control.Apply.applyFirst arity=1"
+    , "Control.Apply.applySecond arity=1"
+    , "Control.Bind.bindFlipped arity=1"
+    , "Control.Bind.composeKleisli arity=1"
+    , "Control.Bind.composeKleisliFlipped arity=1"
+    , "Control.Bind.join arity=1"
+    , "Data.Functor.flap arity=1"
+    , "Data.Functor.mapFlipped arity=1"
+    , "Data.Functor.void arity=1"
+    , "Data.Functor.voidLeft arity=1"
+    , "Data.Functor.voidRight arity=1"
+    , ""
+    , "-- Generic-representation glue: dissolving it lets the derived"
+    , "-- Show/Eq/Ord instances collapse through the Rep constructors."
+    , "Data.Eq.Generic.genericEq arity=2"
+    , "Data.Ord.Generic.genericCompare arity=2"
+    , "Data.Show.Generic.genericShow arity=2"
+    , ""
+    , "-- Identities and plain tiny functions."
+    , "Data.Boolean.otherwise always"
+    , "Data.Function.apply arity=2"
+    , "Data.Function.applyFlipped arity=2"
+    , "Data.Function.const arity=1"
+    , "Data.Function.flip arity=1"
+    , ""
+    , "-- Function-instance dictionary methods."
+    , "Control.Category.categoryFn.identity always"
+    , "Control.Semigroupoid.semigroupoidFn.compose arity=2"
+    , "Data.Functor.functorFn.map arity=2"
+    , "Data.Semigroup.semigroupFn.append arity=2"
+    , ""
+    , "-- ST/Ref glue around the foreign modify implementation."
+    , "Control.Monad.ST.Internal.modify arity=1"
+    , "Effect.Ref.modify arity=1"
+    , "Effect.Ref.modify_ arity=1"
+    ]

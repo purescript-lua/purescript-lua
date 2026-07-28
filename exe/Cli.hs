@@ -113,7 +113,9 @@ options = do
               , green $ indent 2 "Example: Data.Lens.over arity=2"
               , "A local module-header pragma overrides the file;"
                   <> softbreak
-                  <> "the file overrides @inline export pragmas."
+                  <> "the file overrides @inline export pragmas,"
+                  <> softbreak
+                  <> "which override the shipped default directive pack."
               ]
         ]
 

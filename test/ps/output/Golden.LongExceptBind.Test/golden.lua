@@ -1161,11 +1161,10 @@ local Golden_LongExceptBind_Test_go = (function()
     end)
   end)
 end)()
-local Golden_LongExceptBind_Test_compute = Golden_LongExceptBind_Test_go
 return (function()
-  local _S_cse2 = Golden_LongExceptBind_Test_compute[2]
+  local _S_cse2 = Golden_LongExceptBind_Test_go[2]
   return Effect_Console_foreign.log((function()
-    if "Data.Either∷Either.Left" == Golden_LongExceptBind_Test_compute[1] then
+    if "Data.Either∷Either.Left" == Golden_LongExceptBind_Test_go[1] then
       return "(Left " .. Data_Show_foreign.showStringImpl(_S_cse2) .. ")"
     else
       return "(Right " .. Data_Show_foreign.showIntImpl(_S_cse2) .. ")"

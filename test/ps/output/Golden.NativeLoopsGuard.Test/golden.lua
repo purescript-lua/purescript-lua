@@ -69,7 +69,7 @@ local Effect_Lazy_functorEffect = PSLUA_runtime_lazy("functorEffect")(function()
   return {
     map = function(f_S_0)
       return function(a_S_0)
-        return (Effect_applicativeEffect.Apply0()).apply(Effect_pureE(f_S_0))(a_S_0)
+        return (Effect_applicativeEffect.Apply0()).apply(Effect_applicativeEffect.pure(f_S_0))(a_S_0)
       end
     end
   }
@@ -92,16 +92,17 @@ Effect_Lazy_applyEffect = PSLUA_runtime_lazy("applyEffect")(function()
   }
 end)
 local Effect_functorEffect = Effect_Lazy_functorEffect(0)
-local Golden_NativeLoopsGuard_Test_when_S_w = function(v_S_0, v1_S_0)
-  if v_S_0 then return v1_S_0 else return Effect_pureE(Data_Unit_unit) end
-end
 local Golden_NativeLoopsGuard_Test_logShow = function(a_S_2)
   return Effect_Console_log(Data_Show_showIntImpl(a_S_2))
 end
 local Golden_NativeLoopsGuard_Test_whileE_S_w = function(cond, act)
   return function()
     local b = cond()
-    return Golden_NativeLoopsGuard_Test_when_S_w(b, act)()
+    if b then
+      return act()
+    else
+      return Effect_applicativeEffect.pure(Data_Unit_unit)()
+    end
   end
 end
 local Golden_NativeLoopsGuard_Test_foreachE_S_w = function(xs, f)
@@ -115,7 +116,11 @@ local Golden_NativeLoopsGuard_Test_foreachE_S_w = function(xs, f)
   end
 end
 local Golden_NativeLoopsGuard_Test_forE_S_w = function(lo, hi, f)
-  return Golden_NativeLoopsGuard_Test_when_S_w(lo < hi, f(lo))
+  if lo < hi then
+    return f(lo)
+  else
+    return Effect_applicativeEffect.pure(Data_Unit_unit)
+  end
 end
 return (function()
   local _ = Golden_NativeLoopsGuard_Test_forE_S_w(1, 5, Golden_NativeLoopsGuard_Test_logShow)()
@@ -124,8 +129,8 @@ return (function()
     [2] = "y"
   }, Effect_Console_log)()
   local r_S_0 = Effect_Ref_foreign._new(3)()
-  local _ = Golden_NativeLoopsGuard_Test_whileE_S_w(Effect_functorEffect.map(function( v_S_1 )
-    return v_S_1 >= 0 and v_S_1 ~= 0
+  local _ = Golden_NativeLoopsGuard_Test_whileE_S_w(Effect_functorEffect.map(function( v_S_0 )
+    return v_S_0 >= 0 and v_S_0 ~= 0
   end)(Effect_Ref_read(r_S_0)), function()
     local n_S_0 = Effect_Ref_read(r_S_0)()
     local _ = Effect_Console_log(Data_Show_showIntImpl(n_S_0))()

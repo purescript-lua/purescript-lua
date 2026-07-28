@@ -12,7 +12,6 @@ local Data_Semigroup_foreign = {
     end
   end
 }
-local Data_Semigroup_concatArray = Data_Semigroup_foreign.concatArray
 local Data_Show_foreign = {
   showIntImpl = function(n) return tostring(n) end,
   showArrayImpl = function(f)
@@ -35,11 +34,12 @@ local Data_Functor_foreign = {
     end
   end
 }
-local Data_Functor_arrayMap = Data_Functor_foreign.arrayMap
 local Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
 }
 local Effect_Console_log = Effect_Console_foreign.log
+local Golden_CSE_Test_append = Data_Semigroup_foreign.concatArray
+local Golden_CSE_Test_map = Data_Functor_foreign.arrayMap
 local Golden_CSE_Test_logShow = function(a_S_0)
   return Effect_Console_log(Data_Show_foreign.showArrayImpl(Data_Show_showIntImpl)(a_S_0))
 end
@@ -85,12 +85,12 @@ local Golden_CSE_Test_classify = function(e)
 end
 local Golden_CSE_Test_catBoth = function(f)
   local _S_cse2 = { [1] = 1, [2] = 2, [3] = 3 }
-  return Data_Semigroup_concatArray(f(_S_cse2))(f(_S_cse2))
+  return Golden_CSE_Test_append(f(_S_cse2))(f(_S_cse2))
 end
 local Golden_CSE_Test_addToAll = function(n)
   return function(xs)
     local _S_cse3 = function(i) return i + n end
-    return Data_Semigroup_concatArray(Data_Functor_arrayMap(_S_cse3)(xs))(Data_Functor_arrayMap(_S_cse3)(xs))
+    return Golden_CSE_Test_append(Golden_CSE_Test_map(_S_cse3)(xs))(Golden_CSE_Test_map(_S_cse3)(xs))
   end
 end
 return (function()
@@ -107,7 +107,7 @@ return (function()
   local _ = Golden_CSE_Test_logShow1(Golden_CSE_Test_runTwice({
     run = function(i0_S_0) return i0_S_0 - 1 end
   })(10))()
-  local _ = Golden_CSE_Test_logShow(Golden_CSE_Test_catBoth(Data_Functor_arrayMap(function( v_S_0 )
+  local _ = Golden_CSE_Test_logShow(Golden_CSE_Test_catBoth(Golden_CSE_Test_map(function( v_S_0 )
     return v_S_0 * 3
   end)))()
   local _ = Golden_CSE_Test_logShow(Golden_CSE_Test_catBoth(function(x_S_0)
