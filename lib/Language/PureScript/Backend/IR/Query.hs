@@ -225,7 +225,7 @@ hasWholeValueArrayRead ∷ Name → Natural → Exp → Bool
 hasWholeValueArrayRead name len = go
  where
   go = \case
-    ArrayLength _ (Ref _ (Local n)) | n == name → False
+    PrimLen _ (Ref _ (Local n)) | n == name → False
     ArrayIndex _ (Ref _ (Local n)) i | n == name, i < len → False
     Ref _ (Local n) | n == name → True
     other → any go (toListOf subexpressions other)

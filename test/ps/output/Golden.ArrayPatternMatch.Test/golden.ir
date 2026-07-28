@@ -32,7 +32,7 @@ UberModule
         ( IfThenElse Nothing
           ( Eq Nothing
             ( LiteralInt Nothing 3 )
-            ( ArrayLength Nothing ( Ref Nothing ( Local ( Name "v" ) ) ) )
+            ( PrimLen Nothing ( Ref Nothing ( Local ( Name "v" ) ) ) )
           )
           ( ArrayIndex Nothing ( Ref Nothing ( Local ( Name "v" ) ) ) 2 )
           ( LiteralInt Nothing ( -1 ) )
@@ -45,7 +45,7 @@ UberModule
         ( IfThenElse Nothing
           ( Eq Nothing
             ( LiteralInt Nothing 2 )
-            ( ArrayLength Nothing ( Ref Nothing ( Local ( Name "v" ) ) ) )
+            ( PrimLen Nothing ( Ref Nothing ( Local ( Name "v" ) ) ) )
           )
           ( PrimBinOp Nothing PrimAdd
             ( ArrayIndex Nothing ( Ref Nothing ( Local ( Name "v" ) ) ) 0 )

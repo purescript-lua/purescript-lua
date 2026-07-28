@@ -1114,7 +1114,9 @@ instance Monoid Complexity where
 {- | Bottom-up cost classification. 'Trivial': a reference or a
 scalar/empty literal.
 'Deref': a chain of cheap reads (projection, index, length, tag) over a
-Trivial base. 'KnownSize': an abstraction or a non-empty literal — a
+Trivial base — pasted at any use count, which for the length read is what
+obliges 'PrimLen' to keep its operand immutable (see Note [PrimLen reads
+immutable values]). 'KnownSize': an abstraction or a non-empty literal — a
 bounded allocation. Everything that computes is 'NonTrivial', and
 unlisted constructors deliberately land there, so a new node kind is
 conservative by default. A string literal above 128 characters counts
@@ -1139,7 +1141,7 @@ complexityOf = \case
     | otherwise → KnownSize <> foldMap (complexityOf . snd) props
   ObjectProp _ann base _prop → Deref <> complexityOf base
   ArrayIndex _ann base _idx → Deref <> complexityOf base
-  ArrayLength _ann base → Deref <> complexityOf base
+  PrimLen _ann base → Deref <> complexityOf base
   ReflectCtor _ann base → Deref <> complexityOf base
   DataArgumentByIndex _ann _algTy _idx base → Deref <> complexityOf base
   AbsN _ann _params body → KnownSize <> complexityOf body
@@ -1642,7 +1644,7 @@ spelled out on 'reduceObjectProp'.
 reduceArrayRead ∷ Applicative m ⇒ RewriteRuleM m Ann
 reduceArrayRead =
   pure . \case
-    ArrayLength ann (LiteralArray _ elements) →
+    PrimLen ann (LiteralArray _ elements) →
       Just $ LiteralInt ann (fromIntegral (length elements))
     ArrayIndex ann (LiteralArray _ elements) index →
       setAnn ann <$> elements !!? fromIntegral index
@@ -2009,9 +2011,9 @@ scrutinee is never in place for 'reduceArrayRead' to fold: the match on
 @case [10, 20] of [a, b] → …@ lands on
 
 > let v = [10, 20] in
->   if 2 == arrayLength v then … v[0] … v[1] … else fallthrough
+>   if 2 == primLen v then … v[0] … v[1] … else fallthrough
 
-and nothing folds: the rules see @ArrayLength (Ref v)@ and
+and nothing folds: the rules see @PrimLen (Ref v)@ and
 @ArrayIndex (Ref v) i@, never the literal.
 
 This propagates the literal through a 'Standalone' Let binding into the
@@ -2106,7 +2108,7 @@ propagateKnownArrayThroughLet = \case
   foldArrayReads name len freshElements = go
    where
     go = \case
-      ArrayLength alAnn (Ref _ (Local n))
+      PrimLen alAnn (Ref _ (Local n))
         | n == name → LiteralInt alAnn (fromIntegral len)
       ArrayIndex aiAnn (Ref _ (Local n)) i
         | n == name
@@ -3104,8 +3106,8 @@ pushEliminatorIntoIfBranches =
     ArrayIndex ann (IfThenElse ifAnn c t e) index →
       Just $
         IfThenElse ifAnn c (ArrayIndex ann t index) (ArrayIndex ann e index)
-    ArrayLength ann (IfThenElse ifAnn c t e) →
-      Just $ IfThenElse ifAnn c (ArrayLength ann t) (ArrayLength ann e)
+    PrimLen ann (IfThenElse ifAnn c t e) →
+      Just $ IfThenElse ifAnn c (PrimLen ann t) (PrimLen ann e)
     ReflectCtor ann (IfThenElse ifAnn c t e) →
       Just $ IfThenElse ifAnn c (ReflectCtor ann t) (ReflectCtor ann e)
     DataArgumentByIndex ann algTy index (IfThenElse ifAnn c t e) →

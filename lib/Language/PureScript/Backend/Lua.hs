@@ -260,6 +260,8 @@ fromIR foreigns unboxed topLevelNames modname ir = case ir of
     Right <$> liftA2 (Lua.binOp (luaBinaryOp op)) (goExp l) (goExp r)
   IR.PrimNot _ann e →
     Right . Lua.logicalNot <$> goExp e
+  IR.PrimLen _ann e →
+    Right . Lua.hash <$> goExp e
   IR.Ctor _ann algebraicTy ctorModName ctorTyName ctorName ctorArgs →
     -- A constructor value is a positional table built directly from the
     -- compiled field arguments (the node is saturated by construction — see
@@ -287,8 +289,6 @@ fromIR foreigns unboxed topLevelNames modname ir = case ir of
     fieldRows = fmap Lua.tableRowV . parenLastMultiValued
     ctorId = IR.ctorId ctorModName ctorTyName ctorName
     ctorRow = Lua.tableRowV (Lua.String ctorId)
-  IR.ArrayLength _ann e →
-    Right . Lua.hash <$> goExp e
   IR.ArrayIndex _ann expr index →
     -- IR array indices are 0-based (like the source language), but Lua
     -- tables are 1-based, so shift by one. This mirrors the arrays FFI

@@ -672,7 +672,7 @@ mkCaseClauses = mkClauses Map.empty
               PatAny →
                 nextMatch history clause'
               PatArrayLength (intCast → len) →
-                testFocus (literalInt len `eq` arrayLength expr)
+                testFocus (literalInt len `eq` primLen expr)
               PatInteger i →
                 testFocus (literalInt i `eq` expr)
               PatFloating d →

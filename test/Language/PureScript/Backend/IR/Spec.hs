@@ -335,13 +335,13 @@ spec = describe "IR representation" do
         let x = refLocal (Name "x")
             expectedResult =
               ifThenElse
-                (literalInt 3 `eq` arrayLength x)
+                (literalInt 3 `eq` primLen x)
                 ( ifThenElse
                     (literalChar 'a' `eq` arrayIndex x 0)
                     ( ifThenElse
                         (literalChar 'b' `eq` arrayIndex x 1)
                         ( ifThenElse
-                            (literalInt 2 `eq` arrayLength (arrayIndex x 2))
+                            (literalInt 2 `eq` primLen (arrayIndex x 2))
                             ( ifThenElse
                                 (literalChar 'c' `eq` arrayIndex (arrayIndex x 2) 0)
                                 ( ifThenElse
