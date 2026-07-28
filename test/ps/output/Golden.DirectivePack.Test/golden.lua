@@ -89,22 +89,6 @@ local Data_Semigroup_semigroupString = {
 }
 local Data_Show_show = function(dict) return dict.show end
 local Data_Maybe_Nothing = { "Data.Maybe∷Maybe.Nothing" }
-local Data_Show_Generic_genericShowConstructor_S_w = function( dictGenericShowArgs
-, dictIsSymbol )
-  return {
-    genericShowPrime = function(v)
-      local ctor = dictIsSymbol.reflectSymbol({})
-      local v1 = dictGenericShowArgs.genericShowArgs(v)
-      if 0 == #(v1) then
-        return ctor
-      else
-        return "(" .. Data_Show_Generic_foreign.intercalate(" ")(Data_Semigroup_foreign.concatArray({
-          [1] = ctor
-        })(v1)) .. ")"
-      end
-    end
-  }
-end
 local Effect_bindEffect
 local Effect_applicativeEffect
 local Effect_monadEffect = {
@@ -180,23 +164,20 @@ local Golden_DirectivePack_Test_showFruit = {
       end
     end)()
     if "Data.Generic.Rep∷Sum.Inl" == v_S_0[1] then
-      return (Data_Show_Generic_genericShowConstructor_S_w({
-        genericShowArgs = function() return {} end
-      }, {
-        reflectSymbol = function() return "Apple" end
-      })).genericShowPrime(v_S_0[2])
+      return "Apple"
     else
-      return (Data_Show_Generic_genericShowConstructor_S_w({
-        genericShowArgs = function(v_S_1)
-          return { [1] = Data_Show_showIntImpl(v_S_1) }
-        end
-      }, {
-        reflectSymbol = function() return "Banana" end
-      })).genericShowPrime(v_S_0[2])
+      local v1_S_0 = { [1] = Data_Show_showIntImpl(v_S_0[2]) }
+      if 0 == #(v1_S_0) then
+        return "Banana"
+      else
+        return "(" .. Data_Show_Generic_foreign.intercalate(" ")(Data_Semigroup_foreign.concatArray({
+          [1] = "Banana"
+        })(v1_S_0)) .. ")"
+      end
     end
   end
 }
-M.Golden_DirectivePack_Test_pipeline = function(x_S_1) return x_S_1 + 1 end
+local Golden_DirectivePack_Test_pipeline = function(x_S_1) return x_S_1 + 1 end
 M.Golden_DirectivePack_Test_half = function(n)
   if Data_EuclideanRing_intMod(n)(2) == 0 then
     return { "Data.Maybe∷Maybe.Just", (Data_EuclideanRing_intDiv(n)(2)) }
@@ -204,7 +185,7 @@ M.Golden_DirectivePack_Test_half = function(n)
     return Data_Maybe_Nothing
   end
 end
-M.Golden_DirectivePack_Test_describeFruit = function(x_S_2)
+local Golden_DirectivePack_Test_describeFruit = function(x_S_2)
   return Data_Semigroup_semigroupString.append("fruit: ")(Data_Show_show(Golden_DirectivePack_Test_showFruit)(x_S_2))
 end
 M.Golden_DirectivePack_Test_classify = function(n)
@@ -259,12 +240,11 @@ return (function()
       return "Nothing"
     end
   end)())()
-  local _ = Effect_Console_log("fruit: " .. (Data_Show_Generic_genericShowConstructor_S_w({
-    genericShowArgs = function(v_S_2)
-      return { [1] = Data_Show_showIntImpl(v_S_2) }
-    end
-  }, { reflectSymbol = function() return "Banana" end })).genericShowPrime(3))()
-  local _ = Effect_Console_log(Golden_DirectivePack_Test_show(42))()
+  local _ = Effect_Console_log(Golden_DirectivePack_Test_describeFruit({
+    "Golden.DirectivePack.Test∷Fruit.Banana",
+    3
+  }))()
+  local _ = Effect_Console_log(Golden_DirectivePack_Test_show(Golden_DirectivePack_Test_pipeline(41)))()
   local _ = Effect_Console_log("positive")()
   local r_S_0 = Effect_Ref_foreign._new(10)()
   local _ = Effect_functorEffect.map(function()

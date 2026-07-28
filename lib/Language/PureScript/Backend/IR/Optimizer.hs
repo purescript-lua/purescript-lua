@@ -818,25 +818,31 @@ optimizeModule ctorTags inlining policy UberModule {..} = runWriterT do
   optimizeExp ∷ Exp → WriterT WasRewritten SupplyM Exp
   optimizeExp e = case inlining of
     SkipCallSites → keepSweep HeuristicPastes
-    InlineCallSites → do
-      -- The armed sweep is speculative: kept only while the pastes'
-      -- growth stays within the expression's allowance; a sweep that
-      -- grew without collapse is discarded — result and change flag
-      -- both — and the fallback sweep decides instead.
-      -- See Note [Bounded call-site inlining growth].
+    InlineCallSites → speculativeSweep HeuristicPastes
+   where
+    -- An armed sweep is speculative: kept only while the pastes' growth
+    -- stays within the expression's allowance; a sweep that grew
+    -- without collapse is discarded — result and change flag both — and
+    -- redone one rung down: first with the n-ary worker tier disarmed,
+    -- then with every heuristic tier disarmed.
+    -- See Note [Bounded call-site inlining growth].
+    speculativeSweep ∷ CallSitePastes → WriterT WasRewritten SupplyM Exp
+    speculativeSweep pastes = do
       (e', rewritten) ←
         lift $
           optimizedExpressionWithPastes
             ctorTags
             canonEnv
-            HeuristicPastes
+            pastes
             policy
             inlineEnv
             e
       if expSize e' <= inlineGrowthBudget (expSize e)
         then e' <$ tell rewritten
-        else keepSweep DirectedPastesOnly
-   where
+        else case pastes of
+          HeuristicPastes → speculativeSweep CurriedPastesOnly
+          _ → keepSweep DirectedPastesOnly
+
     keepSweep ∷ CallSitePastes → WriterT WasRewritten SupplyM Exp
     keepSweep pastes = do
       (e', rewritten) ←
@@ -994,10 +1000,9 @@ match), the payload the cascade is built to collapse.
 inlineSizeBudget ∷ Natural
 inlineSizeBudget = 64
 
-{- | The largest expression the Deref and KnownSize inlining tiers and
-the cheap-worker unfolding ('isCheapWorkerBody') paste (Note
-[Complexity and Capture gate inlining]), sized in IR nodes like
-'inlineSizeBudget' but far below it: these admissions duplicate at
+{- | The largest expression the Deref and KnownSize inlining tiers
+paste (Note [Complexity and Capture gate inlining]), sized in IR nodes
+like 'inlineSizeBudget' but far below it: these admissions duplicate at
 every use site, so growth scales with the use count.
 -}
 smallInlineBudget ∷ Natural
@@ -1021,11 +1026,17 @@ So the sweep is speculative, measured, and reverted at expression
 granularity ('optimizeExp'): run the rewrite with every paste tier
 armed, compare 'expSize' before and after, and when the result grew
 past 'inlineGrowthBudget' — growth without collapse — discard it,
-result and change flag both, and redo the sweep with the heuristic
-paste tiers disarmed ('DirectedPastesOnly'). Explicit @inline@
-directives keep firing in the fallback sweep: a directive is the user
-overriding the heuristics, so the growth bound never vetoes it. The
-env-reading folds ('reduceKnownCtorRefRead',
+result and change flag both, and redo the sweep one rung down. The
+first fallback rung ('CurriedPastesOnly') disarms only the n-ary worker
+tier, the most speculative pastes (an uncurried worker's body often has
+nothing at the site to fold into): without this rung, worker pastes
+that alone overrun the allowance would drag the collapsing pastes at
+curried spines — the dictionary-method cascade — down with them in the
+all-or-nothing revert. Only when the curried tiers still overrun does
+the sweep fall to 'DirectedPastesOnly', every heuristic tier disarmed.
+Explicit @inline@ directives keep firing in the fallback sweeps: a
+directive is the user overriding the heuristics, so the growth bound
+never vetoes it. The env-reading folds ('reduceKnownCtorRefRead',
 'propagateKnownCtorThroughLet') also keep firing: they only shrink, and
 disarming them would make the fallback sweep strictly worse than the
 sweep it replaces.
@@ -1034,10 +1045,9 @@ The allowance is linear with a floor: @before + max smallInlineBudget
 (before `div` 4)@. A paste that collapses leaves little residue — the
 Maybe match folds to the continuation's body — so the floor only needs
 to admit that residue in a small host, and 'smallInlineBudget' already
-prices what is free to leave at a site. A paste surviving whole is
-bigger than that by construction ('isCheapWorkerBody' would have
-admitted anything smaller), so even a single non-folding paste into a
-small expression is refused — which is the point, not a casualty.
+prices what is free to leave at a site. A paste surviving whole past
+that floor is refused even alone in a small host — which is the point,
+not a casualty.
 
 The proportional term is calibrated from both sides of the corpus. It
 must reject the chains where every paste survives — the transformer
@@ -1069,12 +1079,17 @@ enforces exactly this contract). The cost is one extra sweep per vetoed
 expression per 'optimizeExp' call.
 -}
 
-{- | Which call-site paste tiers a rewrite sweep may use: all of them,
-or only those an explicit @inline@ directive commands. The fallback
-sweep of the growth veto runs with 'DirectedPastesOnly'.
+{- | Which call-site paste tiers a rewrite sweep may use: all of them;
+the heuristic tiers at curried spines only, with the n-ary worker tier
+disarmed; or only those an explicit @inline@ directive commands. The
+growth veto falls back one rung at a time.
 See Note [Bounded call-site inlining growth].
 -}
-data CallSitePastes = HeuristicPastes | DirectedPastesOnly
+data CallSitePastes
+  = HeuristicPastes
+  | CurriedPastesOnly
+  | DirectedPastesOnly
+  deriving stock (Eq)
 
 {- | Per-expression growth allowance for one call-site inlining sweep:
 the largest 'expSize' the sweep may leave behind, given the size it
@@ -2451,13 +2466,13 @@ resolveDictionaryProp pastes policy env = \case
     , Just method ← List.lookup prop props
     , countFreeRef dictName method == 0
     , case pastes of
-        HeuristicPastes →
+        DirectedPastesOnly →
+          fieldPolicy policy dictName prop == Just Always
+        _ →
           maybe
             (expSize method <= inlineSizeBudget)
             (== Always)
-            (fieldPolicy policy dictName prop)
-        DirectedPastesOnly →
-          fieldPolicy policy dictName prop == Just Always →
+            (fieldPolicy policy dictName prop) →
         Just . setAnn ann <$> freshenBinders method
   _ → pure Nothing
 
@@ -2547,12 +2562,13 @@ Pasting a lambda (a value) duplicates no work, and 'betaReduce' let-binds any
 non-trivial argument rather than copy it into each use, so the reduction is
 behaviour-preserving (issue #167). Growth is bounded per paste by
 'inlineSizeBudget' and per expression by the growth veto in 'optimizeExp'
-(Note [Bounded call-site inlining growth]); in a 'DirectedPastesOnly' sweep
-both heuristic tiers below are disarmed and only the directed-arity gate
-pastes. The rule declines a self-referential RHS, which cannot arise for a
-Standalone binding under GUC but must not be unfolded on the non-GUC input
-the rewrite also runs on (Note [Eta reduction is unsound] is the reason the
-environment holds no recursive-group members either).
+(Note [Bounded call-site inlining growth]); a 'CurriedPastesOnly' sweep
+disarms the n-ary worker tier below, and a 'DirectedPastesOnly' sweep every
+heuristic tier, leaving only the directed-arity gate. The rule declines a
+self-referential RHS, which cannot arise for a Standalone binding under GUC
+but must not be unfolded on the non-GUC input the rewrite also runs on
+(Note [Eta reduction is unsound] is the reason the environment holds no
+recursive-group members either).
 
 A binding under an @inline arity=N@ directive takes a different gate: the
 site qualifies by argument count alone — at least N arguments applied — and
@@ -2564,16 +2580,17 @@ directive pins the binding as a shared reference at partial sites.
 
 An n-ary call — the direct worker call the uncurry split mints — is not
 a unary spine, so 'unwindApp' leaves it whole and the paths above never
-see it. Most workers are meant to stay shared bindings, but a small
-worker whose body is cheap to duplicate ('isCheapWorkerBody' under
-'smallInlineBudget' — the residue of a floated dictionary application
-like @add = Data.Semiring.add semiringInt@, resolved through the lifted
-foreign, or a tiny helper purs shares because its operator occurs more
-than once) makes the call itself the whole cost: pasting folds each
-site to the inline expression (issues #281, #211). The n-ary 'AbsN'
-root is pasted under the original 'AppN' node — never rebuilt as a
-unary spine, which would leave an under-applied redex ('pasteableRoot')
-— so the exact-arity 'betaReduce' consumes it in the same pass.
+see it. It takes the same heuristic gate as the unary tier: a manifest
+'AbsN' within 'inlineSizeBudget', minus a multi-value body — the mark
+of a result-split worker, whose 'Values' tail pasted into expression
+position would truncate in a single-value slot ('containsMultiValue').
+The match requires the argument count to equal the manifest parameter
+count: workers are saturated by construction, so a mismatched count
+marks a shape the pipeline did not produce, left alone rather than
+guessed at. The n-ary 'AbsN' root is pasted under the original 'AppN'
+node — never rebuilt as a unary spine, which would leave an
+under-applied redex ('pasteableRoot') — so the exact-arity 'betaReduce'
+consumes it in the same pass.
 -}
 inlineSaturatedCall
   ∷ CallSitePastes → InlinePolicy → InlineEnv → RewriteRuleM SupplyM Ann
@@ -2582,10 +2599,11 @@ inlineSaturatedCall pastes policy env expr = case expr of
     | HeuristicPastes ← pastes
     , _ : _ : _ ← toList args
     , Nothing ← directedArity fname
-    , Just rhs@(AbsN _ params body) ← Map.lookup fname env
+    , Just rhs@(AbsN _ params _) ← Map.lookup fname env
     , length args == length params
-    , expSize rhs < smallInlineBudget
-    , isCheapWorkerBody body
+    , expSize rhs <= inlineSizeBudget
+    , -- A multi-value body is never pasted (see 'containsMultiValue').
+      not (containsMultiValue rhs)
     , countFreeRef fname rhs == 0 →
         (\rhs' → Just (AppN ann rhs' args)) <$> freshenBinders rhs
   (unwindApp → (Ref _ fname, args))
@@ -2605,7 +2623,7 @@ inlineSaturatedCall pastes policy env expr = case expr of
                   <$> freshenBinders rhs
           Just _underApplied → pure Nothing
           Nothing
-            | HeuristicPastes ← pastes
+            | pastes /= DirectedPastesOnly
             , AbsN _ params _ ← rhs
             , length args >= length params
             , countFreeRef fname rhs == 0
@@ -2616,36 +2634,6 @@ inlineSaturatedCall pastes policy env expr = case expr of
  where
   directedArity ∷ Qualified Name → Maybe Natural
   directedArity fname = refQName fname >>= (`Map.lookup` policyArity policy)
-
-{- | Whether a worker body is cheap enough to duplicate at every
-saturated call site: a tree of arithmetic, comparison, equality and
-negation nodes over leaves 'complexityOf' classifies at most 'Deref' —
-references (in practice the worker's parameters), scalar-sized
-literals, and cheap-read chains over them, all free to re-evaluate —
-possibly under nested abstractions. Such a body pastes to an inline
-operator expression that duplicates no work and allocates nothing
-beyond what the worker call already performed (an inner lambda pasted
-at the site is exactly the closure the worker's own body allocated per
-call), so 'inlineSaturatedCall' unfolds it at every saturated n-ary
-call site regardless of use count (issues #281, #211), with code
-growth bounded by 'smallInlineBudget' at the call site.
-
-'IfThenElse' is deliberately not admitted: a decision tree pasted into
-expression position lowers to a per-call IIFE — the allocation the
-case-of-case rules of issue #203 exist to remove — worse than the
-shared worker call it would replace. An application may hide arbitrary
-work and the allocating shapes (constructors, non-empty literals,
-'Let') price above 'Deref', so all of them decline through the
-'complexityOf' fallback, conservative for unlisted node kinds by
-construction.
--}
-isCheapWorkerBody ∷ RawExp ann → Bool
-isCheapWorkerBody = \case
-  PrimBinOp _ _ a b → isCheapWorkerBody a && isCheapWorkerBody b
-  Eq _ a b → isCheapWorkerBody a && isCheapWorkerBody b
-  PrimNot _ e → isCheapWorkerBody e
-  AbsN _ _params body → isCheapWorkerBody body
-  leaf → complexityOf leaf <= Deref
 
 -- | Re-apply the arguments 'unwindApp' peeled, as a unary spine.
 rebuildSpine ∷ [Exp] → Exp → Exp

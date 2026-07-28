@@ -26,40 +26,30 @@ UberModule
         ( PropName "log" )
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Data.Tuple", qnameName = Name "Tuple$w" }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "value0" ) :| [ ParamNamed Nothing ( Name "value1" ) ] )
-        ( Ctor Nothing ProductType
-          ( ModuleName "Data.Tuple" )
-          ( TyName "Tuple" )
-          ( CtorName "Tuple" )
-          [ Ref Nothing ( Local ( Name "value0" ) ), Ref Nothing ( Local ( Name "value1" ) ) ]
-        )
-      ), Standalone
-      ( QName
         { qnameModuleName = ModuleName "Golden.CprResult.Test", qnameName = Name "sub$w"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "x$523" ) :| [ ParamNamed Nothing ( Name "y$524" ) ] )
+        ( ParamNamed Nothing ( Name "x$535" ) :| [ ParamNamed Nothing ( Name "y$536" ) ] )
         ( PrimBinOp Nothing PrimSub
-          ( Ref Nothing ( Local ( Name "x$523" ) ) )
-          ( Ref Nothing ( Local ( Name "y$524" ) ) )
+          ( Ref Nothing ( Local ( Name "x$535" ) ) )
+          ( Ref Nothing ( Local ( Name "y$536" ) ) )
         )
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.CprResult.Test", qnameName = Name "logShow"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "a$520" ) :| [] )
+        ( ParamNamed Nothing ( Name "a$532" ) :| [] )
         ( AppN Nothing
           ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
           ( AppN Nothing
             ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
-            ( Ref Nothing ( Local ( Name "a$520" ) ) :| [] ) :| []
+            ( Ref Nothing ( Local ( Name "a$532" ) ) :| [] ) :| []
           )
         )
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.CprResult.Test", qnameName = Name "logShow1"
         }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "a$517" ) :| [] )
+        ( ParamNamed Nothing ( Name "a$529" ) :| [] )
         ( AppN Nothing
           ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
           ( PrimBinOp Nothing PrimConcat
@@ -68,7 +58,7 @@ UberModule
               ( AppN Nothing
                 ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
                 ( DataArgumentByIndex Nothing ProductType 0
-                  ( Ref Nothing ( Local ( Name "a$517" ) ) ) :| []
+                  ( Ref Nothing ( Local ( Name "a$529" ) ) ) :| []
                 )
               )
               ( PrimBinOp Nothing PrimConcat
@@ -77,7 +67,7 @@ UberModule
                   ( AppN Nothing
                     ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
                     ( DataArgumentByIndex Nothing ProductType 1
-                      ( Ref Nothing ( Local ( Name "a$517" ) ) ) :| []
+                      ( Ref Nothing ( Local ( Name "a$529" ) ) ) :| []
                     )
                   )
                   ( LiteralString Nothing ")" )
@@ -91,16 +81,16 @@ UberModule
         { qnameModuleName = ModuleName "Golden.CprResult.Test", qnameName = Name "step"
         }, AbsN Nothing
         ( ParamNamed Nothing ( Name "s" ) :| [] )
-        ( AppN Nothing
-          ( Ref Nothing ( Imported ( ModuleName "Data.Tuple" ) ( Name "Tuple$w" ) ) )
-          ( PrimBinOp Nothing PrimMul
+        ( Ctor Nothing ProductType
+          ( ModuleName "Data.Tuple" )
+          ( TyName "Tuple" )
+          ( CtorName "Tuple" )
+          [ PrimBinOp Nothing PrimMul
             ( Ref Nothing ( Local ( Name "s" ) ) )
-            ( LiteralInt Nothing 2 ) :|
-            [ PrimBinOp Nothing PrimAdd
-              ( Ref Nothing ( Local ( Name "s" ) ) )
-              ( LiteralInt Nothing 1 )
-            ]
-          )
+            ( LiteralInt Nothing 2 ), PrimBinOp Nothing PrimAdd
+            ( Ref Nothing ( Local ( Name "s" ) ) )
+            ( LiteralInt Nothing 1 )
+          ]
         )
       ), Standalone
       ( QName
@@ -120,9 +110,11 @@ UberModule
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.CprResult.Test", qnameName = Name "pair"
-        }, AppN Nothing
-        ( Ref Nothing ( Imported ( ModuleName "Data.Tuple" ) ( Name "Tuple$w" ) ) )
-        ( LiteralInt Nothing 20 :| [ LiteralInt Nothing 11 ] )
+        }, Ctor Nothing ProductType
+        ( ModuleName "Data.Tuple" )
+        ( TyName "Tuple" )
+        ( CtorName "Tuple" )
+        [ LiteralInt Nothing 20, LiteralInt Nothing 11 ]
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.CprResult.Test", qnameName = Name "branchy$r"
@@ -295,7 +287,7 @@ UberModule
         }, AbsN Nothing
         ( ParamNamed Nothing ( Name "n" ) :| [] )
         ( LetValues Nothing
-          ( ParamNamed Nothing ( Name "$v594" ) :| [ ParamNamed Nothing ( Name "$v595" ) ] )
+          ( ParamNamed Nothing ( Name "$v628" ) :| [ ParamNamed Nothing ( Name "$v629" ) ] )
           ( AppN Nothing
             ( Ref Nothing
               ( Imported ( ModuleName "Golden.CprResult.Test" ) ( Name "branchy$r" ) )
@@ -303,8 +295,8 @@ UberModule
             ( Ref Nothing ( Local ( Name "n" ) ) :| [] )
           )
           ( PrimBinOp Nothing PrimSub
-            ( Ref Nothing ( Local ( Name "$v594" ) ) )
-            ( Ref Nothing ( Local ( Name "$v595" ) ) )
+            ( Ref Nothing ( Local ( Name "$v628" ) ) )
+            ( Ref Nothing ( Local ( Name "$v629" ) ) )
           )
         )
       ), Standalone
@@ -451,14 +443,14 @@ UberModule
         }, AbsN Nothing
         ( ParamNamed Nothing ( Name "n" ) :| [] )
         ( LetValues Nothing
-          ( ParamNamed Nothing ( Name "$v596" ) :| [ ParamNamed Nothing ( Name "$v597" ) ] )
+          ( ParamNamed Nothing ( Name "$v630" ) :| [ ParamNamed Nothing ( Name "$v631" ) ] )
           ( AppN Nothing
             ( Ref Nothing ( Imported ( ModuleName "Golden.CprResult.Test" ) ( Name "big$r" ) ) )
             ( Ref Nothing ( Local ( Name "n" ) ) :| [] )
           )
           ( PrimBinOp Nothing PrimAdd
-            ( Ref Nothing ( Local ( Name "$v596" ) ) )
-            ( Ref Nothing ( Local ( Name "$v597" ) ) )
+            ( Ref Nothing ( Local ( Name "$v630" ) ) )
+            ( Ref Nothing ( Local ( Name "$v631" ) ) )
           )
         )
       )
@@ -520,8 +512,8 @@ UberModule
                   )
                   ( LetValues Nothing
                     ( ParamNamed Nothing
-                      ( Name "$v598" ) :|
-                      [ ParamNamed Nothing ( Name "$v599" ) ]
+                      ( Name "$v632" ) :|
+                      [ ParamNamed Nothing ( Name "$v633" ) ]
                     )
                     ( AppN Nothing
                       ( Ref Nothing
@@ -534,8 +526,8 @@ UberModule
                         ( Imported ( ModuleName "Golden.CprResult.Test" ) ( Name "sub$w" ) )
                       )
                       ( Ref Nothing
-                        ( Local ( Name "$v598" ) ) :|
-                        [ Ref Nothing ( Local ( Name "$v599" ) ) ]
+                        ( Local ( Name "$v632" ) ) :|
+                        [ Ref Nothing ( Local ( Name "$v633" ) ) ]
                       )
                     ) :| []
                   )
@@ -549,8 +541,8 @@ UberModule
                   )
                   ( LetValues Nothing
                     ( ParamNamed Nothing
-                      ( Name "$v600" ) :|
-                      [ ParamNamed Nothing ( Name "$v601" ) ]
+                      ( Name "$v634" ) :|
+                      [ ParamNamed Nothing ( Name "$v635" ) ]
                     )
                     ( AppN Nothing
                       ( Ref Nothing
@@ -563,8 +555,8 @@ UberModule
                         ( Imported ( ModuleName "Golden.CprResult.Test" ) ( Name "sub$w" ) )
                       )
                       ( Ref Nothing
-                        ( Local ( Name "$v600" ) ) :|
-                        [ Ref Nothing ( Local ( Name "$v601" ) ) ]
+                        ( Local ( Name "$v634" ) ) :|
+                        [ Ref Nothing ( Local ( Name "$v635" ) ) ]
                       )
                     ) :| []
                   )
@@ -590,7 +582,7 @@ UberModule
                 ( Imported ( ModuleName "Golden.CprResult.Test" ) ( Name "logShow" ) )
               )
               ( LetValues Nothing
-                ( ParamNamed Nothing ( Name "$v602" ) :| [ ParamNamed Nothing ( Name "$v603" ) ] )
+                ( ParamNamed Nothing ( Name "$v636" ) :| [ ParamNamed Nothing ( Name "$v637" ) ] )
                 ( AppN Nothing
                   ( Ref Nothing
                     ( Imported ( ModuleName "Golden.CprResult.Test" ) ( Name "big$r" ) )
@@ -598,8 +590,8 @@ UberModule
                   ( LiteralInt Nothing 3 :| [] )
                 )
                 ( PrimBinOp Nothing PrimAdd
-                  ( Ref Nothing ( Local ( Name "$v602" ) ) )
-                  ( Ref Nothing ( Local ( Name "$v603" ) ) )
+                  ( Ref Nothing ( Local ( Name "$v636" ) ) )
+                  ( Ref Nothing ( Local ( Name "$v637" ) ) )
                 ) :| []
               )
             )

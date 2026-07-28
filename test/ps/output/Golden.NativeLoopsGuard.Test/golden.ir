@@ -389,16 +389,21 @@ UberModule
           ( ParamNamed Nothing ( Name "forE$p2$1444" ) :| [] )
           ( AbsN Nothing
             ( ParamNamed Nothing ( Name "forE$p3$1445" ) :| [] )
-            ( AppN Nothing
-              ( Ref Nothing
-                ( Imported ( ModuleName "Golden.NativeLoopsGuard.Test" ) ( Name "forE$w" ) )
+            ( IfThenElse Nothing
+              ( PrimBinOp Nothing PrimLt
+                ( Ref Nothing ( Local ( Name "forE$p1$1443" ) ) )
+                ( Ref Nothing ( Local ( Name "forE$p2$1444" ) ) )
               )
-              ( Ref Nothing
-                ( Local ( Name "forE$p1$1443" ) ) :|
-                [ Ref Nothing
-                  ( Local ( Name "forE$p2$1444" ) ), Ref Nothing
-                  ( Local ( Name "forE$p3$1445" ) )
-                ]
+              ( AppN Nothing
+                ( Ref Nothing ( Local ( Name "forE$p3$1445" ) ) )
+                ( Ref Nothing ( Local ( Name "forE$p1$1443" ) ) :| [] )
+              )
+              ( AppN Nothing
+                ( ObjectProp Nothing
+                  ( Ref Nothing ( Imported ( ModuleName "Effect" ) ( Name "applicativeEffect" ) ) )
+                  ( PropName "pure" )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Data.Unit" ) ( Name "unit" ) ) :| [] )
               )
             )
           )
@@ -423,13 +428,34 @@ UberModule
         ( ParamNamed Nothing ( Name "whileE$p1$1448" ) :| [] )
         ( AbsN Nothing
           ( ParamNamed Nothing ( Name "whileE$p2$1449" ) :| [] )
-          ( AppN Nothing
-            ( Ref Nothing
-              ( Imported ( ModuleName "Golden.NativeLoopsGuard.Test" ) ( Name "whileE$w" ) )
-            )
-            ( Ref Nothing
-              ( Local ( Name "whileE$p1$1448" ) ) :|
-              [ Ref Nothing ( Local ( Name "whileE$p2$1449" ) ) ]
+          ( AbsN Nothing
+            ( ParamUnused Nothing :| [] )
+            ( Let Nothing
+              ( Standalone
+                ( Nothing, Name "b$1491", AppN Nothing
+                  ( Ref Nothing ( Local ( Name "whileE$p1$1448" ) ) )
+                  ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+                ) :| []
+              )
+              ( IfThenElse Nothing
+                ( Ref Nothing ( Local ( Name "b$1491" ) ) )
+                ( AppN Nothing
+                  ( Ref Nothing ( Local ( Name "whileE$p2$1449" ) ) )
+                  ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+                )
+                ( AppN Nothing
+                  ( AppN Nothing
+                    ( ObjectProp Nothing
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Effect" ) ( Name "applicativeEffect" ) )
+                      )
+                      ( PropName "pure" )
+                    )
+                    ( Ref Nothing ( Imported ( ModuleName "Data.Unit" ) ( Name "unit" ) ) :| [] )
+                  )
+                  ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+                )
+              )
             )
           )
         )
@@ -566,21 +592,21 @@ UberModule
                                   ( PropName "modifyImpl" )
                                 )
                                 ( AbsN Nothing
-                                  ( ParamNamed Nothing ( Name "s$1484" ) :| [] )
+                                  ( ParamNamed Nothing ( Name "s$1538" ) :| [] )
                                   ( Let Nothing
                                     ( Standalone
-                                      ( Nothing, Name "s'$1485", PrimBinOp Nothing PrimSub
-                                        ( Ref Nothing ( Local ( Name "s$1484" ) ) )
+                                      ( Nothing, Name "s'$1539", PrimBinOp Nothing PrimSub
+                                        ( Ref Nothing ( Local ( Name "s$1538" ) ) )
                                         ( LiteralInt Nothing 1 )
                                       ) :| []
                                     )
                                     ( LiteralObject Nothing
                                       [
                                         ( PropName "state", Ref Nothing
-                                          ( Local ( Name "s'$1485" ) )
+                                          ( Local ( Name "s'$1539" ) )
                                         ),
                                         ( PropName "value", Ref Nothing
-                                          ( Local ( Name "s'$1485" ) )
+                                          ( Local ( Name "s'$1539" ) )
                                         )
                                       ]
                                     )

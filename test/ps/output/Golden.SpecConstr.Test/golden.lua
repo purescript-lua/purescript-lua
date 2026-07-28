@@ -4,13 +4,7 @@ local Data_Show_showIntImpl = Data_Show_foreign.showIntImpl
 local Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
 }
-local Data_Show_showInt = { show = Data_Show_showIntImpl }
-local Data_Tuple_Tuple_S_w = function(value0, value1)
-  return { value0, value1 }
-end
-local Effect_Console_logShow_S_w = function(dictShow, a)
-  return Effect_Console_foreign.log(dictShow.show(a))
-end
+local Effect_Console_log = Effect_Console_foreign.log
 M.Golden_SpecConstr_Test_sumCount = function(n)
   local go_S_sc1Tuple_S_f1, go_S_sc1Tuple_S_f2
   go_S_sc1Tuple_S_f1, go_S_sc1Tuple_S_f2 = 0, 0
@@ -94,7 +88,7 @@ Golden_SpecConstr_Test_blind_S_w = function(n)
   if n == 0 then
     return 0
   else
-    return Golden_SpecConstr_Test_blind_S_w(n - 1, Data_Tuple_Tuple_S_w(n, n))
+    return Golden_SpecConstr_Test_blind_S_w(n - 1, { n, n })
   end
 end
 M.Golden_SpecConstr_Test_blind = function(blind_S_p1)
@@ -103,25 +97,27 @@ M.Golden_SpecConstr_Test_blind = function(blind_S_p1)
   end
 end
 return (function()
-  local _ = Effect_Console_logShow_S_w({
-    show = function(v_S_0)
-      return "(Tuple " .. Data_Show_showIntImpl(v_S_0[1]) .. " " .. Data_Show_showIntImpl(v_S_0[2]) .. ")"
-    end
-  }, (function()
-    local go_S_0_S_sc1Tuple_S_f1, go_S_0_S_sc1Tuple_S_f2
-    go_S_0_S_sc1Tuple_S_f1, go_S_0_S_sc1Tuple_S_f2 = 0, 0
-    while true do
-      if go_S_0_S_sc1Tuple_S_f2 < 5 then
-        go_S_0_S_sc1Tuple_S_f1, go_S_0_S_sc1Tuple_S_f2 = go_S_0_S_sc1Tuple_S_f1 + go_S_0_S_sc1Tuple_S_f2, go_S_0_S_sc1Tuple_S_f2 + 1
-      else
-        return { go_S_0_S_sc1Tuple_S_f1, go_S_0_S_sc1Tuple_S_f2 }
+  local _ = Effect_Console_log((function()
+    local v_S_0 = (function()
+      local go_S_0_S_sc1Tuple_S_f1, go_S_0_S_sc1Tuple_S_f2
+      go_S_0_S_sc1Tuple_S_f1, go_S_0_S_sc1Tuple_S_f2 = 0, 0
+      while true do
+        if go_S_0_S_sc1Tuple_S_f2 < 5 then
+          go_S_0_S_sc1Tuple_S_f1, go_S_0_S_sc1Tuple_S_f2 = go_S_0_S_sc1Tuple_S_f1 + go_S_0_S_sc1Tuple_S_f2, go_S_0_S_sc1Tuple_S_f2 + 1
+        else
+          return { go_S_0_S_sc1Tuple_S_f1, go_S_0_S_sc1Tuple_S_f2 }
+        end
       end
-    end
+    end)()
+    return "(Tuple " .. Data_Show_showIntImpl(v_S_0[1]) .. " " .. Data_Show_showIntImpl(v_S_0[2]) .. ")"
   end)())()
-  local _ = Effect_Console_logShow_S_w(Data_Show_showInt, Golden_SpecConstr_Test_stepDown_S_sc1Just(3))()
-  local _ = Effect_Console_logShow_S_w(Data_Show_showInt, Golden_SpecConstr_Test_stepDown({
+  local _ = Effect_Console_log(Data_Show_showIntImpl(Golden_SpecConstr_Test_stepDown_S_sc1Just(3)))()
+  local _ = Effect_Console_log(Data_Show_showIntImpl(Golden_SpecConstr_Test_stepDown({
     "Data.Maybe∷Maybe.Nothing"
-  }))()
-  local _ = Effect_Console_logShow_S_w(Data_Show_showInt, Golden_SpecConstr_Test_ping_S_sc1Tuple(4, 10))()
-  return Effect_Console_logShow_S_w(Data_Show_showInt, Golden_SpecConstr_Test_blind_S_w(3, Data_Tuple_Tuple_S_w(1, 1)))()
+  })))()
+  local _ = Effect_Console_log(Data_Show_showIntImpl(Golden_SpecConstr_Test_ping_S_sc1Tuple(4, 10)))()
+  return Effect_Console_log(Data_Show_showIntImpl(Golden_SpecConstr_Test_blind_S_w(3, {
+    1,
+    1
+  })))()
 end)()

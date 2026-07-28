@@ -274,34 +274,34 @@ UberModule
                 ( ParamNamed Nothing ( Name "v1$8" ) :| [] )
                 ( Let Nothing
                   ( Standalone
-                    ( Nothing, Name "$cse584", ReflectCtor Nothing
+                    ( Nothing, Name "$cse1357", ReflectCtor Nothing
                       ( Ref Nothing ( Local ( Name "v1$8" ) ) )
                     ) :| []
                   )
                   ( Let Nothing
                     ( Standalone
-                      ( Nothing, Name "$cse583", ReflectCtor Nothing
+                      ( Nothing, Name "$cse1356", ReflectCtor Nothing
                         ( Ref Nothing ( Local ( Name "v$7" ) ) )
                       ) :| []
                     )
                     ( IfThenElse Nothing
                       ( Eq Nothing
                         ( LiteralString Nothing "Data.Generic.Rep∷Sum.Inl" )
-                        ( Ref Nothing ( Local ( Name "$cse583" ) ) )
+                        ( Ref Nothing ( Local ( Name "$cse1356" ) ) )
                       )
                       ( Eq Nothing
                         ( LiteralString Nothing "Data.Generic.Rep∷Sum.Inl" )
-                        ( Ref Nothing ( Local ( Name "$cse584" ) ) )
+                        ( Ref Nothing ( Local ( Name "$cse1357" ) ) )
                       )
                       ( PrimBinOp Nothing PrimAnd
                         ( Eq Nothing
                           ( LiteralString Nothing "Data.Generic.Rep∷Sum.Inr" )
-                          ( Ref Nothing ( Local ( Name "$cse583" ) ) )
+                          ( Ref Nothing ( Local ( Name "$cse1356" ) ) )
                         )
                         ( PrimBinOp Nothing PrimAnd
                           ( Eq Nothing
                             ( LiteralString Nothing "Data.Generic.Rep∷Sum.Inr" )
-                            ( Ref Nothing ( Local ( Name "$cse584" ) ) )
+                            ( Ref Nothing ( Local ( Name "$cse1357" ) ) )
                           )
                           ( AppN Nothing
                             ( AppN Nothing
@@ -404,26 +404,6 @@ UberModule
           ( TyName "List" )
           ( CtorName "Cons" )
           [ Ref Nothing ( Local ( Name "value0" ) ) ]
-        )
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Golden.GenericEqTwoTypes.Test", qnameName = Name "node$w"
-        }, AbsN Nothing
-        ( ParamNamed Nothing
-          ( Name "left" ) :|
-          [ ParamNamed Nothing ( Name "value" ), ParamNamed Nothing ( Name "right" ) ]
-        )
-        ( Ctor Nothing SumType
-          ( ModuleName "Golden.GenericEqTwoTypes.Test" )
-          ( TyName "Tree" )
-          ( CtorName "Node" )
-          [ LiteralObject Nothing
-            [
-              ( PropName "left", Ref Nothing ( Local ( Name "left" ) ) ),
-              ( PropName "value", Ref Nothing ( Local ( Name "value" ) ) ),
-              ( PropName "right", Ref Nothing ( Local ( Name "right" ) ) )
-            ]
-          ]
         )
       ), Standalone
       ( QName
@@ -533,7 +513,7 @@ UberModule
                   ( ParamNamed Nothing ( Name "y" ) :| [] )
                   ( Let Nothing
                     ( Standalone
-                      ( Nothing, Name "$cse585", ObjectProp Nothing
+                      ( Nothing, Name "$cse1358", ObjectProp Nothing
                         ( Ref Nothing
                           ( Imported
                             ( ModuleName "Golden.GenericEqTwoTypes.Test" )
@@ -648,12 +628,12 @@ UberModule
                           )
                         )
                         ( AppN Nothing
-                          ( Ref Nothing ( Local ( Name "$cse585" ) ) )
+                          ( Ref Nothing ( Local ( Name "$cse1358" ) ) )
                           ( Ref Nothing ( Local ( Name "x" ) ) :| [] ) :| []
                         )
                       )
                       ( AppN Nothing
-                        ( Ref Nothing ( Local ( Name "$cse585" ) ) )
+                        ( Ref Nothing ( Local ( Name "$cse1358" ) ) )
                         ( Ref Nothing ( Local ( Name "y" ) ) :| [] ) :| []
                       )
                     )
@@ -688,7 +668,7 @@ UberModule
                   ( ParamNamed Nothing ( Name "y" ) :| [] )
                   ( Let Nothing
                     ( Standalone
-                      ( Nothing, Name "$cse586", ObjectProp Nothing
+                      ( Nothing, Name "$cse1359", ObjectProp Nothing
                         ( Ref Nothing
                           ( Imported
                             ( ModuleName "Golden.GenericEqTwoTypes.Test" )
@@ -781,12 +761,12 @@ UberModule
                           )
                         )
                         ( AppN Nothing
-                          ( Ref Nothing ( Local ( Name "$cse586" ) ) )
+                          ( Ref Nothing ( Local ( Name "$cse1359" ) ) )
                           ( Ref Nothing ( Local ( Name "x" ) ) :| [] ) :| []
                         )
                       )
                       ( AppN Nothing
-                        ( Ref Nothing ( Local ( Name "$cse586" ) ) )
+                        ( Ref Nothing ( Local ( Name "$cse1359" ) ) )
                         ( Ref Nothing ( Local ( Name "y" ) ) :| [] ) :| []
                       )
                     )
@@ -807,22 +787,6 @@ UberModule
           ( Ref Nothing ( Imported ( ModuleName "Data.Eq" ) ( Name "eqInt" ) ) :| [] )
         )
         ( PropName "eq" )
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Golden.GenericEqTwoTypes.Test", qnameName = Name "cons$w"
-        }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "head" ) :| [ ParamNamed Nothing ( Name "tail" ) ] )
-        ( Ctor Nothing SumType
-          ( ModuleName "Golden.GenericEqTwoTypes.Test" )
-          ( TyName "List" )
-          ( CtorName "Cons" )
-          [ LiteralObject Nothing
-            [
-              ( PropName "head", Ref Nothing ( Local ( Name "head" ) ) ),
-              ( PropName "tail", Ref Nothing ( Local ( Name "tail" ) ) )
-            ]
-          ]
-        )
       )
     ], uberModuleForeigns = [], uberModuleExports =
     [
@@ -836,14 +800,16 @@ UberModule
         ( ParamNamed Nothing ( Name "cons$p1$219" ) :| [] )
         ( AbsN Nothing
           ( ParamNamed Nothing ( Name "cons$p2$220" ) :| [] )
-          ( AppN Nothing
-            ( Ref Nothing
-              ( Imported ( ModuleName "Golden.GenericEqTwoTypes.Test" ) ( Name "cons$w" ) )
-            )
-            ( Ref Nothing
-              ( Local ( Name "cons$p1$219" ) ) :|
-              [ Ref Nothing ( Local ( Name "cons$p2$220" ) ) ]
-            )
+          ( Ctor Nothing SumType
+            ( ModuleName "Golden.GenericEqTwoTypes.Test" )
+            ( TyName "List" )
+            ( CtorName "Cons" )
+            [ LiteralObject Nothing
+              [
+                ( PropName "head", Ref Nothing ( Local ( Name "cons$p1$219" ) ) ),
+                ( PropName "tail", Ref Nothing ( Local ( Name "cons$p2$220" ) ) )
+              ]
+            ]
           )
         )
       ),
@@ -859,17 +825,17 @@ UberModule
           ( ParamNamed Nothing ( Name "node$p2$222" ) :| [] )
           ( AbsN Nothing
             ( ParamNamed Nothing ( Name "node$p3$223" ) :| [] )
-            ( AppN Nothing
-              ( Ref Nothing
-                ( Imported ( ModuleName "Golden.GenericEqTwoTypes.Test" ) ( Name "node$w" ) )
-              )
-              ( Ref Nothing
-                ( Local ( Name "node$p1$221" ) ) :|
-                [ Ref Nothing
-                  ( Local ( Name "node$p2$222" ) ), Ref Nothing
-                  ( Local ( Name "node$p3$223" ) )
+            ( Ctor Nothing SumType
+              ( ModuleName "Golden.GenericEqTwoTypes.Test" )
+              ( TyName "Tree" )
+              ( CtorName "Node" )
+              [ LiteralObject Nothing
+                [
+                  ( PropName "left", Ref Nothing ( Local ( Name "node$p1$221" ) ) ),
+                  ( PropName "value", Ref Nothing ( Local ( Name "node$p2$222" ) ) ),
+                  ( PropName "right", Ref Nothing ( Local ( Name "node$p3$223" ) ) )
                 ]
-              )
+              ]
             )
           )
         )
@@ -878,262 +844,215 @@ UberModule
         ( ParamUnused Nothing :| [] )
         ( Let Nothing
           ( Standalone
-            ( Nothing, Name "_", AppN Nothing
-              ( AppN Nothing
-                ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
-                ( IfThenElse Nothing
-                  ( AppN Nothing
-                    ( AppN Nothing
-                      ( Ref Nothing
-                        ( Imported ( ModuleName "Golden.GenericEqTwoTypes.Test" ) ( Name "eq1" ) )
-                      )
-                      ( AppN Nothing
-                        ( Ref Nothing
-                          ( Imported
-                            ( ModuleName "Golden.GenericEqTwoTypes.Test" )
-                            ( Name "cons$w" )
-                          )
-                        )
-                        ( LiteralInt Nothing 1 :|
-                          [ AppN Nothing
-                            ( Ref Nothing
-                              ( Imported
-                                ( ModuleName "Golden.GenericEqTwoTypes.Test" )
-                                ( Name "cons$w" )
-                              )
-                            )
-                            ( LiteralInt Nothing 2 :|
-                              [ Ref Nothing
-                                ( Imported
-                                  ( ModuleName "Golden.GenericEqTwoTypes.Test" )
-                                  ( Name "Nil" )
-                                )
-                              ]
-                            )
-                          ]
-                        ) :| []
-                      )
-                    )
-                    ( AppN Nothing
-                      ( Ref Nothing
-                        ( Imported
-                          ( ModuleName "Golden.GenericEqTwoTypes.Test" )
-                          ( Name "cons$w" )
-                        )
-                      )
-                      ( LiteralInt Nothing 1 :|
-                        [ AppN Nothing
-                          ( Ref Nothing
-                            ( Imported
-                              ( ModuleName "Golden.GenericEqTwoTypes.Test" )
-                              ( Name "cons$w" )
-                            )
-                          )
-                          ( LiteralInt Nothing 2 :|
-                            [ Ref Nothing
-                              ( Imported
-                                ( ModuleName "Golden.GenericEqTwoTypes.Test" )
-                                ( Name "Nil" )
-                              )
-                            ]
-                          )
-                        ]
-                      ) :| []
-                    )
+            ( Nothing, Name "$cse1363", Ctor Nothing SumType
+              ( ModuleName "Golden.GenericEqTwoTypes.Test" )
+              ( TyName "List" )
+              ( CtorName "Cons" )
+              [ LiteralObject Nothing
+                [
+                  ( PropName "head", LiteralInt Nothing 2 ),
+                  ( PropName "tail", Ref Nothing
+                    ( Imported ( ModuleName "Golden.GenericEqTwoTypes.Test" ) ( Name "Nil" ) )
                   )
-                  ( LiteralString Nothing "true" )
-                  ( LiteralString Nothing "false" ) :| []
-                )
+                ]
+              ]
+            ) :| []
+          )
+          ( Let Nothing
+            ( Standalone
+              ( Nothing, Name "$cse1362", Ctor Nothing SumType
+                ( ModuleName "Golden.GenericEqTwoTypes.Test" )
+                ( TyName "Tree" )
+                ( CtorName "Node" )
+                [ LiteralObject Nothing
+                  [
+                    ( PropName "left", Ref Nothing
+                      ( Imported ( ModuleName "Golden.GenericEqTwoTypes.Test" ) ( Name "Leaf" ) )
+                    ),
+                    ( PropName "value", LiteralInt Nothing 2 ),
+                    ( PropName "right", Ref Nothing
+                      ( Imported ( ModuleName "Golden.GenericEqTwoTypes.Test" ) ( Name "Leaf" ) )
+                    )
+                  ]
+                ]
+              ) :| []
+            )
+            ( Let Nothing
+              ( Standalone
+                ( Nothing, Name "$cse1361", Ctor Nothing SumType
+                  ( ModuleName "Golden.GenericEqTwoTypes.Test" )
+                  ( TyName "List" )
+                  ( CtorName "Cons" )
+                  [ LiteralObject Nothing
+                    [
+                      ( PropName "head", LiteralInt Nothing 1 ),
+                      ( PropName "tail", Ref Nothing ( Local ( Name "$cse1363" ) ) )
+                    ]
+                  ]
+                ) :| []
               )
-              ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
-            ) :|
-            [ Standalone
-              ( Nothing, Name "_", AppN Nothing
-                ( AppN Nothing
-                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
-                  ( IfThenElse Nothing
-                    ( AppN Nothing
-                      ( AppN Nothing
-                        ( Ref Nothing
-                          ( Imported ( ModuleName "Golden.GenericEqTwoTypes.Test" ) ( Name "eq1" ) )
-                        )
-                        ( AppN Nothing
-                          ( Ref Nothing
-                            ( Imported
-                              ( ModuleName "Golden.GenericEqTwoTypes.Test" )
-                              ( Name "cons$w" )
-                            )
-                          )
-                          ( LiteralInt Nothing 1 :|
-                            [ Ref Nothing
-                              ( Imported
-                                ( ModuleName "Golden.GenericEqTwoTypes.Test" )
-                                ( Name "Nil" )
-                              )
-                            ]
-                          ) :| []
-                        )
-                      )
-                      ( AppN Nothing
-                        ( Ref Nothing
+              ( Let Nothing
+                ( Standalone
+                  ( Nothing, Name "$cse1360", Ctor Nothing SumType
+                    ( ModuleName "Golden.GenericEqTwoTypes.Test" )
+                    ( TyName "Tree" )
+                    ( CtorName "Node" )
+                    [ LiteralObject Nothing
+                      [
+                        ( PropName "left", Ref Nothing
                           ( Imported
                             ( ModuleName "Golden.GenericEqTwoTypes.Test" )
-                            ( Name "cons$w" )
+                            ( Name "Leaf" )
                           )
-                        )
-                        ( LiteralInt Nothing 2 :|
-                          [ Ref Nothing
-                            ( Imported
-                              ( ModuleName "Golden.GenericEqTwoTypes.Test" )
-                              ( Name "Nil" )
-                            )
-                          ]
-                        ) :| []
-                      )
-                    )
-                    ( LiteralString Nothing "true" )
-                    ( LiteralString Nothing "false" ) :| []
-                  )
+                        ),
+                        ( PropName "value", LiteralInt Nothing 1 ),
+                        ( PropName "right", Ref Nothing ( Local ( Name "$cse1362" ) ) )
+                      ]
+                    ]
+                  ) :| []
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
-              ), Standalone
-              ( Nothing, Name "_", AppN Nothing
-                ( AppN Nothing
-                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
-                  ( IfThenElse Nothing
-                    ( AppN Nothing
+                ( Let Nothing
+                  ( Standalone
+                    ( Nothing, Name "_", AppN Nothing
                       ( AppN Nothing
-                        ( Ref Nothing
-                          ( Imported ( ModuleName "Golden.GenericEqTwoTypes.Test" ) ( Name "eq" ) )
-                        )
-                        ( AppN Nothing
-                          ( Ref Nothing
-                            ( Imported
-                              ( ModuleName "Golden.GenericEqTwoTypes.Test" )
-                              ( Name "node$w" )
-                            )
-                          )
-                          ( Ref Nothing
-                            ( Imported
-                              ( ModuleName "Golden.GenericEqTwoTypes.Test" )
-                              ( Name "Leaf" )
-                            ) :|
-                            [ LiteralInt Nothing 1, AppN Nothing
+                        ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+                        ( IfThenElse Nothing
+                          ( AppN Nothing
+                            ( AppN Nothing
                               ( Ref Nothing
                                 ( Imported
                                   ( ModuleName "Golden.GenericEqTwoTypes.Test" )
-                                  ( Name "node$w" )
+                                  ( Name "eq1" )
                                 )
                               )
-                              ( Ref Nothing
-                                ( Imported
-                                  ( ModuleName "Golden.GenericEqTwoTypes.Test" )
-                                  ( Name "Leaf" )
-                                ) :|
-                                [ LiteralInt Nothing 2, Ref Nothing
+                              ( Ref Nothing ( Local ( Name "$cse1361" ) ) :| [] )
+                            )
+                            ( Ref Nothing ( Local ( Name "$cse1361" ) ) :| [] )
+                          )
+                          ( LiteralString Nothing "true" )
+                          ( LiteralString Nothing "false" ) :| []
+                        )
+                      )
+                      ( Ref Nothing
+                        ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                      )
+                    ) :|
+                    [ Standalone
+                      ( Nothing, Name "_", AppN Nothing
+                        ( AppN Nothing
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) )
+                          )
+                          ( IfThenElse Nothing
+                            ( AppN Nothing
+                              ( AppN Nothing
+                                ( Ref Nothing
                                   ( Imported
                                     ( ModuleName "Golden.GenericEqTwoTypes.Test" )
-                                    ( Name "Leaf" )
+                                    ( Name "eq1" )
+                                  )
+                                )
+                                ( Ctor Nothing SumType
+                                  ( ModuleName "Golden.GenericEqTwoTypes.Test" )
+                                  ( TyName "List" )
+                                  ( CtorName "Cons" )
+                                  [ LiteralObject Nothing
+                                    [
+                                      ( PropName "head", LiteralInt Nothing 1 ),
+                                      ( PropName "tail", Ref Nothing
+                                        ( Imported
+                                          ( ModuleName "Golden.GenericEqTwoTypes.Test" )
+                                          ( Name "Nil" )
+                                        )
+                                      )
+                                    ]
+                                  ] :| []
+                                )
+                              )
+                              ( Ref Nothing ( Local ( Name "$cse1363" ) ) :| [] )
+                            )
+                            ( LiteralString Nothing "true" )
+                            ( LiteralString Nothing "false" ) :| []
+                          )
+                        )
+                        ( Ref Nothing
+                          ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                        )
+                      ), Standalone
+                      ( Nothing, Name "_", AppN Nothing
+                        ( AppN Nothing
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) )
+                          )
+                          ( IfThenElse Nothing
+                            ( AppN Nothing
+                              ( AppN Nothing
+                                ( Ref Nothing
+                                  ( Imported
+                                    ( ModuleName "Golden.GenericEqTwoTypes.Test" )
+                                    ( Name "eq" )
+                                  )
+                                )
+                                ( Ref Nothing ( Local ( Name "$cse1360" ) ) :| [] )
+                              )
+                              ( Ref Nothing ( Local ( Name "$cse1360" ) ) :| [] )
+                            )
+                            ( LiteralString Nothing "true" )
+                            ( LiteralString Nothing "false" ) :| []
+                          )
+                        )
+                        ( Ref Nothing
+                          ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| []
+                        )
+                      )
+                    ]
+                  )
+                  ( AppN Nothing
+                    ( AppN Nothing
+                      ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+                      ( IfThenElse Nothing
+                        ( AppN Nothing
+                          ( AppN Nothing
+                            ( Ref Nothing
+                              ( Imported
+                                ( ModuleName "Golden.GenericEqTwoTypes.Test" )
+                                ( Name "eq" )
+                              )
+                            )
+                            ( Ctor Nothing SumType
+                              ( ModuleName "Golden.GenericEqTwoTypes.Test" )
+                              ( TyName "Tree" )
+                              ( CtorName "Node" )
+                              [ LiteralObject Nothing
+                                [
+                                  ( PropName "left", Ref Nothing
+                                    ( Imported
+                                      ( ModuleName "Golden.GenericEqTwoTypes.Test" )
+                                      ( Name "Leaf" )
+                                    )
+                                  ),
+                                  ( PropName "value", LiteralInt Nothing 1 ),
+                                  ( PropName "right", Ref Nothing
+                                    ( Imported
+                                      ( ModuleName "Golden.GenericEqTwoTypes.Test" )
+                                      ( Name "Leaf" )
+                                    )
                                   )
                                 ]
-                              )
-                            ]
-                          ) :| []
-                        )
-                      )
-                      ( AppN Nothing
-                        ( Ref Nothing
-                          ( Imported
-                            ( ModuleName "Golden.GenericEqTwoTypes.Test" )
-                            ( Name "node$w" )
+                              ] :| []
+                            )
                           )
+                          ( Ref Nothing ( Local ( Name "$cse1362" ) ) :| [] )
                         )
-                        ( Ref Nothing
-                          ( Imported
-                            ( ModuleName "Golden.GenericEqTwoTypes.Test" )
-                            ( Name "Leaf" )
-                          ) :|
-                          [ LiteralInt Nothing 1, AppN Nothing
-                            ( Ref Nothing
-                              ( Imported
-                                ( ModuleName "Golden.GenericEqTwoTypes.Test" )
-                                ( Name "node$w" )
-                              )
-                            )
-                            ( Ref Nothing
-                              ( Imported
-                                ( ModuleName "Golden.GenericEqTwoTypes.Test" )
-                                ( Name "Leaf" )
-                              ) :|
-                              [ LiteralInt Nothing 2, Ref Nothing
-                                ( Imported
-                                  ( ModuleName "Golden.GenericEqTwoTypes.Test" )
-                                  ( Name "Leaf" )
-                                )
-                              ]
-                            )
-                          ]
-                        ) :| []
+                        ( LiteralString Nothing "true" )
+                        ( LiteralString Nothing "false" ) :| []
                       )
                     )
-                    ( LiteralString Nothing "true" )
-                    ( LiteralString Nothing "false" ) :| []
+                    ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
                   )
                 )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
-              )
-            ]
-          )
-          ( AppN Nothing
-            ( AppN Nothing
-              ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
-              ( IfThenElse Nothing
-                ( AppN Nothing
-                  ( AppN Nothing
-                    ( Ref Nothing
-                      ( Imported ( ModuleName "Golden.GenericEqTwoTypes.Test" ) ( Name "eq" ) )
-                    )
-                    ( AppN Nothing
-                      ( Ref Nothing
-                        ( Imported
-                          ( ModuleName "Golden.GenericEqTwoTypes.Test" )
-                          ( Name "node$w" )
-                        )
-                      )
-                      ( Ref Nothing
-                        ( Imported
-                          ( ModuleName "Golden.GenericEqTwoTypes.Test" )
-                          ( Name "Leaf" )
-                        ) :|
-                        [ LiteralInt Nothing 1, Ref Nothing
-                          ( Imported
-                            ( ModuleName "Golden.GenericEqTwoTypes.Test" )
-                            ( Name "Leaf" )
-                          )
-                        ]
-                      ) :| []
-                    )
-                  )
-                  ( AppN Nothing
-                    ( Ref Nothing
-                      ( Imported ( ModuleName "Golden.GenericEqTwoTypes.Test" ) ( Name "node$w" ) )
-                    )
-                    ( Ref Nothing
-                      ( Imported
-                        ( ModuleName "Golden.GenericEqTwoTypes.Test" )
-                        ( Name "Leaf" )
-                      ) :|
-                      [ LiteralInt Nothing 2, Ref Nothing
-                        ( Imported ( ModuleName "Golden.GenericEqTwoTypes.Test" ) ( Name "Leaf" ) )
-                      ]
-                    ) :| []
-                  )
-                )
-                ( LiteralString Nothing "true" )
-                ( LiteralString Nothing "false" ) :| []
               )
             )
-            ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
           )
         )
       ),

@@ -26,6 +26,12 @@ UberModule
         [ ( Nothing, Name "log" ) ]
       ), Standalone
       ( QName
+        { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "log"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
+        ( PropName "log" )
+      ), Standalone
+      ( QName
         { qnameModuleName = ModuleName "Data.Show", qnameName = Name "showInt"
         }, LiteralObject Nothing
         [
@@ -35,20 +41,34 @@ UberModule
         ]
       ), Standalone
       ( QName
+        { qnameModuleName = ModuleName "Data.Show", qnameName = Name "show" }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "dict" ) :| [] )
+        ( ObjectProp Nothing ( Ref Nothing ( Local ( Name "dict" ) ) ) ( PropName "show" ) )
+      ), Standalone
+      ( QName
         { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "logShow$w"
         }, AbsN Nothing
         ( ParamNamed Nothing ( Name "dictShow" ) :| [ ParamNamed Nothing ( Name "a" ) ] )
         ( AppN Nothing
-          ( ObjectProp Nothing
-            ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
-            ( PropName "log" )
-          )
+          ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
           ( AppN Nothing
             ( ObjectProp Nothing
               ( Ref Nothing ( Local ( Name "dictShow" ) ) )
               ( PropName "show" )
             )
             ( Ref Nothing ( Local ( Name "a" ) ) :| [] ) :| []
+          )
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.Uncurry.Test", qnameName = Name "logShow"
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "logShow$p2$214" ) :| [] )
+        ( AppN Nothing
+          ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+          ( AppN Nothing
+            ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
+            ( Ref Nothing ( Local ( Name "logShow$p2$214" ) ) :| [] ) :| []
           )
         )
       ), Standalone
@@ -168,6 +188,42 @@ UberModule
         ]
       ), Standalone
       ( QName
+        { qnameModuleName = ModuleName "Golden.Uncurry.Test", qnameName = Name "alwaysFirst$w"
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "x" ) :| [ ParamUnused Nothing ] )
+        ( Ref Nothing ( Local ( Name "x" ) ) )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.Uncurry.Test", qnameName = Name "adderOf$w"
+        }, AbsN Nothing
+        ( ParamNamed Nothing ( Name "x" ) :| [ ParamNamed Nothing ( Name "y" ) ] )
+        ( AbsN Nothing
+          ( ParamNamed Nothing ( Name "y$237" ) :| [] )
+          ( PrimBinOp Nothing PrimAdd
+            ( PrimBinOp Nothing PrimAdd
+              ( Ref Nothing ( Local ( Name "x" ) ) )
+              ( Ref Nothing ( Local ( Name "y" ) ) )
+            )
+            ( Ref Nothing ( Local ( Name "y$237" ) ) )
+          )
+        )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.Uncurry.Test", qnameName = Name "add3$w"
+        }, AbsN Nothing
+        ( ParamNamed Nothing
+          ( Name "x" ) :|
+          [ ParamNamed Nothing ( Name "y" ), ParamNamed Nothing ( Name "z" ) ]
+        )
+        ( PrimBinOp Nothing PrimAdd
+          ( PrimBinOp Nothing PrimAdd
+            ( Ref Nothing ( Local ( Name "x" ) ) )
+            ( Ref Nothing ( Local ( Name "y" ) ) )
+          )
+          ( Ref Nothing ( Local ( Name "z" ) ) )
+        )
+      ), Standalone
+      ( QName
         { qnameModuleName = ModuleName "Golden.Uncurry.Test", qnameName = Name "add3"
         }, AbsN Nothing
         ( ParamNamed Nothing ( Name "add3$p1" ) :| [] )
@@ -214,13 +270,13 @@ UberModule
         ( AbsN Nothing
           ( ParamNamed Nothing ( Name "adderOf$p2$210" ) :| [] )
           ( AbsN Nothing
-            ( ParamNamed Nothing ( Name "y$294" ) :| [] )
+            ( ParamNamed Nothing ( Name "y$265" ) :| [] )
             ( PrimBinOp Nothing PrimAdd
               ( PrimBinOp Nothing PrimAdd
                 ( Ref Nothing ( Local ( Name "adderOf$p1$209" ) ) )
                 ( Ref Nothing ( Local ( Name "adderOf$p2$210" ) ) )
               )
-              ( Ref Nothing ( Local ( Name "y$294" ) ) )
+              ( Ref Nothing ( Local ( Name "y$265" ) ) )
             )
           )
         )
@@ -238,10 +294,14 @@ UberModule
           ( Standalone
             ( Nothing, Name "_", AppN Nothing
               ( AppN Nothing
-                ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow$w" ) ) )
                 ( Ref Nothing
-                  ( Imported ( ModuleName "Data.Show" ) ( Name "showInt" ) ) :|
-                  [ LiteralInt Nothing 6 ]
+                  ( Imported ( ModuleName "Golden.Uncurry.Test" ) ( Name "logShow" ) )
+                )
+                ( AppN Nothing
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Golden.Uncurry.Test" ) ( Name "add3$w" ) )
+                  )
+                  ( LiteralInt Nothing 1 :| [ LiteralInt Nothing 2, LiteralInt Nothing 3 ] ) :| []
                 )
               )
               ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
@@ -249,30 +309,44 @@ UberModule
             [ Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
-                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow$w" ) ) )
                   ( Ref Nothing
-                    ( Imported ( ModuleName "Data.Show" ) ( Name "showInt" ) ) :|
-                    [ LiteralInt Nothing 15 ]
+                    ( Imported ( ModuleName "Golden.Uncurry.Test" ) ( Name "logShow" ) )
+                  )
+                  ( AppN Nothing
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Golden.Uncurry.Test" ) ( Name "add3$w" ) )
+                    )
+                    ( LiteralInt Nothing 4 :| [ LiteralInt Nothing 5, LiteralInt Nothing 6 ] ) :| []
                   )
                 )
                 ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
-                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow$w" ) ) )
                   ( Ref Nothing
-                    ( Imported ( ModuleName "Data.Show" ) ( Name "showInt" ) ) :|
-                    [ LiteralInt Nothing 13 ]
+                    ( Imported ( ModuleName "Golden.Uncurry.Test" ) ( Name "logShow" ) )
+                  )
+                  ( AppN Nothing
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Golden.Uncurry.Test" ) ( Name "add3$w" ) )
+                    )
+                    ( LiteralInt Nothing 10 :|
+                      [ LiteralInt Nothing 1, LiteralInt Nothing 2 ]
+                    ) :| []
                   )
                 )
                 ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
-                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow$w" ) ) )
                   ( Ref Nothing
-                    ( Imported ( ModuleName "Data.Show" ) ( Name "showInt" ) ) :|
-                    [ LiteralInt Nothing 42 ]
+                    ( Imported ( ModuleName "Golden.Uncurry.Test" ) ( Name "logShow" ) )
+                  )
+                  ( AppN Nothing
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Golden.Uncurry.Test" ) ( Name "inc" ) )
+                    )
+                    ( LiteralInt Nothing 41 :| [] ) :| []
                   )
                 )
                 ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
@@ -289,8 +363,11 @@ UberModule
                           )
                           ( PropName "showArrayImpl" )
                         )
-                        ( Ref Nothing
-                          ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) :| []
+                        ( AppN Nothing
+                          ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "show" ) ) )
+                          ( Ref Nothing
+                            ( Imported ( ModuleName "Data.Show" ) ( Name "showInt" ) ) :| []
+                          ) :| []
                         )
                       )
                     ] :|
@@ -302,12 +379,14 @@ UberModule
                           )
                           ( PropName "arrayMap" )
                         )
-                        ( AbsN Nothing
-                          ( ParamNamed Nothing ( Name "add3$p3$315" ) :| [] )
-                          ( PrimBinOp Nothing PrimAdd
-                            ( LiteralInt Nothing 3 )
-                            ( Ref Nothing ( Local ( Name "add3$p3$315" ) ) )
-                          ) :| []
+                        ( AppN Nothing
+                          ( AppN Nothing
+                            ( Ref Nothing
+                              ( Imported ( ModuleName "Golden.Uncurry.Test" ) ( Name "add3" ) )
+                            )
+                            ( LiteralInt Nothing 1 :| [] )
+                          )
+                          ( LiteralInt Nothing 2 :| [] ) :| []
                         )
                       )
                       ( LiteralArray Nothing
@@ -320,146 +399,104 @@ UberModule
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
-                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow$w" ) ) )
                   ( Ref Nothing
-                    ( Imported ( ModuleName "Data.Show" ) ( Name "showInt" ) ) :|
-                    [ AppN Nothing
+                    ( Imported ( ModuleName "Golden.Uncurry.Test" ) ( Name "logShow" ) )
+                  )
+                  ( AppN Nothing
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Golden.Uncurry.Test" ) ( Name "evenSteps$w" ) )
+                    )
+                    ( LiteralInt Nothing 0 :| [ LiteralInt Nothing 10 ] ) :| []
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              ), Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Golden.Uncurry.Test" ) ( Name "logShow" ) )
+                  )
+                  ( AppN Nothing
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Golden.Uncurry.Test" ) ( Name "oddSteps$w" ) )
+                    )
+                    ( LiteralInt Nothing 0 :| [ LiteralInt Nothing 7 ] ) :| []
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              ), Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Golden.Uncurry.Test" ) ( Name "logShow" ) )
+                  )
+                  ( AppN Nothing
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Golden.Uncurry.Test" ) ( Name "sumTo" ) )
+                    )
+                    ( LiteralInt Nothing 10 :| [] ) :| []
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              ), Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Golden.Uncurry.Test" ) ( Name "logShow" ) )
+                  )
+                  ( AppN Nothing
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Golden.Uncurry.Test" ) ( Name "sumTo" ) )
+                    )
+                    ( LiteralInt Nothing 100 :| [] ) :| []
+                  )
+                )
+                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+              ), Standalone
+              ( Nothing, Name "_", AppN Nothing
+                ( AppN Nothing
+                  ( Ref Nothing
+                    ( Imported ( ModuleName "Golden.Uncurry.Test" ) ( Name "logShow" ) )
+                  )
+                  ( AppN Nothing
+                    ( AppN Nothing
                       ( Ref Nothing
-                        ( Imported ( ModuleName "Golden.Uncurry.Test" ) ( Name "evenSteps$w" ) )
+                        ( Imported ( ModuleName "Golden.Uncurry.Test" ) ( Name "adderOf$w" ) )
                       )
-                      ( LiteralInt Nothing 0 :| [ LiteralInt Nothing 10 ] )
-                    ]
+                      ( LiteralInt Nothing 1 :| [ LiteralInt Nothing 2 ] )
+                    )
+                    ( LiteralInt Nothing 3 :| [] ) :| []
                   )
                 )
                 ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
-                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow$w" ) ) )
                   ( Ref Nothing
-                    ( Imported ( ModuleName "Data.Show" ) ( Name "showInt" ) ) :|
-                    [ AppN Nothing
+                    ( Imported ( ModuleName "Golden.Uncurry.Test" ) ( Name "logShow" ) )
+                  )
+                  ( AppN Nothing
+                    ( AppN Nothing
                       ( Ref Nothing
-                        ( Imported ( ModuleName "Golden.Uncurry.Test" ) ( Name "oddSteps$w" ) )
+                        ( Imported ( ModuleName "Golden.Uncurry.Test" ) ( Name "adderOf$w" ) )
                       )
-                      ( LiteralInt Nothing 0 :| [ LiteralInt Nothing 7 ] )
-                    ]
+                      ( LiteralInt Nothing 2 :| [ LiteralInt Nothing 3 ] )
+                    )
+                    ( LiteralInt Nothing 4 :| [] ) :| []
                   )
                 )
                 ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
               ), Standalone
               ( Nothing, Name "_", AppN Nothing
                 ( AppN Nothing
-                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow$w" ) ) )
                   ( Ref Nothing
-                    ( Imported ( ModuleName "Data.Show" ) ( Name "showInt" ) ) :|
-                    [ Let Nothing
-                      ( RecursiveGroup
-                        (
-                          ( Nothing, Name "go$w$322", AbsN Nothing
-                            ( ParamNamed Nothing
-                              ( Name "acc$323" ) :|
-                              [ ParamNamed Nothing ( Name "n$324" ) ]
-                            )
-                            ( IfThenElse Nothing
-                              ( Eq Nothing
-                                ( Ref Nothing ( Local ( Name "n$324" ) ) )
-                                ( LiteralInt Nothing 0 )
-                              )
-                              ( Ref Nothing ( Local ( Name "acc$323" ) ) )
-                              ( AppN Nothing
-                                ( Ref Nothing ( Local ( Name "go$w$322" ) ) )
-                                ( PrimBinOp Nothing PrimAdd
-                                  ( Ref Nothing ( Local ( Name "acc$323" ) ) )
-                                  ( Ref Nothing ( Local ( Name "n$324" ) ) ) :|
-                                  [ PrimBinOp Nothing PrimSub
-                                    ( Ref Nothing ( Local ( Name "n$324" ) ) )
-                                    ( LiteralInt Nothing 1 )
-                                  ]
-                                )
-                              )
-                            )
-                          ) :| []
-                        ) :| []
-                      )
-                      ( AppN Nothing
-                        ( Ref Nothing ( Local ( Name "go$w$322" ) ) )
-                        ( LiteralInt Nothing 0 :| [ LiteralInt Nothing 10 ] )
-                      )
-                    ]
+                    ( Imported ( ModuleName "Golden.Uncurry.Test" ) ( Name "logShow" ) )
                   )
-                )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
-              ), Standalone
-              ( Nothing, Name "_", AppN Nothing
-                ( AppN Nothing
-                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow$w" ) ) )
-                  ( Ref Nothing
-                    ( Imported ( ModuleName "Data.Show" ) ( Name "showInt" ) ) :|
-                    [ Let Nothing
-                      ( RecursiveGroup
-                        (
-                          ( Nothing, Name "go$w$327", AbsN Nothing
-                            ( ParamNamed Nothing
-                              ( Name "acc$328" ) :|
-                              [ ParamNamed Nothing ( Name "n$329" ) ]
-                            )
-                            ( IfThenElse Nothing
-                              ( Eq Nothing
-                                ( Ref Nothing ( Local ( Name "n$329" ) ) )
-                                ( LiteralInt Nothing 0 )
-                              )
-                              ( Ref Nothing ( Local ( Name "acc$328" ) ) )
-                              ( AppN Nothing
-                                ( Ref Nothing ( Local ( Name "go$w$327" ) ) )
-                                ( PrimBinOp Nothing PrimAdd
-                                  ( Ref Nothing ( Local ( Name "acc$328" ) ) )
-                                  ( Ref Nothing ( Local ( Name "n$329" ) ) ) :|
-                                  [ PrimBinOp Nothing PrimSub
-                                    ( Ref Nothing ( Local ( Name "n$329" ) ) )
-                                    ( LiteralInt Nothing 1 )
-                                  ]
-                                )
-                              )
-                            )
-                          ) :| []
-                        ) :| []
-                      )
-                      ( AppN Nothing
-                        ( Ref Nothing ( Local ( Name "go$w$327" ) ) )
-                        ( LiteralInt Nothing 0 :| [ LiteralInt Nothing 100 ] )
-                      )
-                    ]
-                  )
-                )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
-              ), Standalone
-              ( Nothing, Name "_", AppN Nothing
-                ( AppN Nothing
-                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow$w" ) ) )
-                  ( Ref Nothing
-                    ( Imported ( ModuleName "Data.Show" ) ( Name "showInt" ) ) :|
-                    [ LiteralInt Nothing 6 ]
-                  )
-                )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
-              ), Standalone
-              ( Nothing, Name "_", AppN Nothing
-                ( AppN Nothing
-                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow$w" ) ) )
-                  ( Ref Nothing
-                    ( Imported ( ModuleName "Data.Show" ) ( Name "showInt" ) ) :|
-                    [ LiteralInt Nothing 9 ]
-                  )
-                )
-                ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
-              ), Standalone
-              ( Nothing, Name "_", AppN Nothing
-                ( AppN Nothing
-                  ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow$w" ) ) )
-                  ( Ref Nothing
-                    ( Imported ( ModuleName "Data.Show" ) ( Name "showInt" ) ) :|
-                    [ LiteralInt Nothing 7 ]
+                  ( AppN Nothing
+                    ( Ref Nothing
+                      ( Imported ( ModuleName "Golden.Uncurry.Test" ) ( Name "alwaysFirst$w" ) )
+                    )
+                    ( LiteralInt Nothing 7 :| [ LiteralInt Nothing 8 ] ) :| []
                   )
                 )
                 ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
@@ -468,10 +505,12 @@ UberModule
           )
           ( AppN Nothing
             ( AppN Nothing
-              ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow$w" ) ) )
-              ( Ref Nothing
-                ( Imported ( ModuleName "Data.Show" ) ( Name "showInt" ) ) :|
-                [ LiteralInt Nothing 9 ]
+              ( Ref Nothing ( Imported ( ModuleName "Golden.Uncurry.Test" ) ( Name "logShow" ) ) )
+              ( AppN Nothing
+                ( Ref Nothing
+                  ( Imported ( ModuleName "Golden.Uncurry.Test" ) ( Name "alwaysFirst$w" ) )
+                )
+                ( LiteralInt Nothing 9 :| [ LiteralInt Nothing 10 ] ) :| []
               )
             )
             ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )

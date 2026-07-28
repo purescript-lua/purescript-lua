@@ -106,31 +106,31 @@ UberModule
           ( ParamNamed Nothing ( Name "v1" ) :| [] )
           ( Let Nothing
             ( Standalone
-              ( Nothing, Name "$cse244", ReflectCtor Nothing
+              ( Nothing, Name "$cse283", ReflectCtor Nothing
                 ( Ref Nothing ( Local ( Name "v1" ) ) )
               ) :| []
             )
             ( Let Nothing
               ( Standalone
-                ( Nothing, Name "$cse243", ReflectCtor Nothing
+                ( Nothing, Name "$cse282", ReflectCtor Nothing
                   ( Ref Nothing ( Local ( Name "v" ) ) )
                 ) :| []
               )
               ( IfThenElse Nothing
                 ( Eq Nothing
                   ( LiteralString Nothing "Golden.CasePruning.Test∷T.A" )
-                  ( Ref Nothing ( Local ( Name "$cse243" ) ) )
+                  ( Ref Nothing ( Local ( Name "$cse282" ) ) )
                 )
                 ( IfThenElse Nothing
                   ( Eq Nothing
                     ( LiteralString Nothing "Golden.CasePruning.Test∷T.A" )
-                    ( Ref Nothing ( Local ( Name "$cse244" ) ) )
+                    ( Ref Nothing ( Local ( Name "$cse283" ) ) )
                   )
                   ( LiteralInt Nothing 1 )
                   ( IfThenElse Nothing
                     ( Eq Nothing
                       ( LiteralString Nothing "Golden.CasePruning.Test∷T.B" )
-                      ( Ref Nothing ( Local ( Name "$cse244" ) ) )
+                      ( Ref Nothing ( Local ( Name "$cse283" ) ) )
                     )
                     ( LiteralInt Nothing 3 )
                     ( LiteralInt Nothing 4 )
@@ -139,12 +139,12 @@ UberModule
                 ( IfThenElse Nothing
                   ( Eq Nothing
                     ( LiteralString Nothing "Golden.CasePruning.Test∷T.B" )
-                    ( Ref Nothing ( Local ( Name "$cse244" ) ) )
+                    ( Ref Nothing ( Local ( Name "$cse283" ) ) )
                   )
                   ( IfThenElse Nothing
                     ( Eq Nothing
                       ( LiteralString Nothing "Golden.CasePruning.Test∷T.B" )
-                      ( Ref Nothing ( Local ( Name "$cse243" ) ) )
+                      ( Ref Nothing ( Local ( Name "$cse282" ) ) )
                     )
                     ( LiteralInt Nothing 2 )
                     ( LiteralInt Nothing 4 )

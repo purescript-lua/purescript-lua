@@ -8,6 +8,12 @@ UberModule
         [ ( Nothing, Name "showIntImpl" ), ( Nothing, Name "showArrayImpl" ) ]
       ), Standalone
       ( QName
+        { qnameModuleName = ModuleName "Data.Show", qnameName = Name "showIntImpl"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
+        ( PropName "showIntImpl" )
+      ), Standalone
+      ( QName
         { qnameModuleName = ModuleName "Data.Functor", qnameName = Name "foreign"
         }, ForeignImport Nothing
         ( ModuleName "Data.Functor" ) ".spago/p/prelude/5718c84fdde6247749cb053e816df696c30fe691/src/Data/Functor.purs"
@@ -20,12 +26,17 @@ UberModule
         [ ( Nothing, Name "log" ) ]
       ), Standalone
       ( QName
+        { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "log"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
+        ( PropName "log" )
+      ), Standalone
+      ( QName
         { qnameModuleName = ModuleName "Data.Show", qnameName = Name "showInt"
         }, LiteralObject Nothing
         [
-          ( PropName "show", ObjectProp Nothing
-            ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
-            ( PropName "showIntImpl" )
+          ( PropName "show", Ref Nothing
+            ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) )
           )
         ]
       ), Standalone
@@ -39,10 +50,7 @@ UberModule
         }, AbsN Nothing
         ( ParamNamed Nothing ( Name "dictShow" ) :| [ ParamNamed Nothing ( Name "a" ) ] )
         ( AppN Nothing
-          ( ObjectProp Nothing
-            ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
-            ( PropName "log" )
-          )
+          ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
           ( AppN Nothing
             ( ObjectProp Nothing
               ( Ref Nothing ( Local ( Name "dictShow" ) ) )
@@ -57,10 +65,10 @@ UberModule
         }, AbsN Nothing
         ( ParamNamed Nothing ( Name "logShow$p2$319" ) :| [] )
         ( AppN Nothing
-          ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "logShow$w" ) ) )
-          ( Ref Nothing
-            ( Imported ( ModuleName "Data.Show" ) ( Name "showInt" ) ) :|
-            [ Ref Nothing ( Local ( Name "logShow$p2$319" ) ) ]
+          ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+          ( AppN Nothing
+            ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "showIntImpl" ) ) )
+            ( Ref Nothing ( Local ( Name "logShow$p2$319" ) ) :| [] ) :| []
           )
         )
       ), Standalone
@@ -114,14 +122,15 @@ UberModule
           ( ParamNamed Nothing ( Name "Tri$p2" ) :| [] )
           ( AbsN Nothing
             ( ParamNamed Nothing ( Name "Tri$p3" ) :| [] )
-            ( AppN Nothing
-              ( Ref Nothing
-                ( Imported ( ModuleName "Golden.UncurryCtor.Test" ) ( Name "Tri$w" ) )
-              )
-              ( Ref Nothing
-                ( Local ( Name "Tri$p1" ) ) :|
-                [ Ref Nothing ( Local ( Name "Tri$p2" ) ), Ref Nothing ( Local ( Name "Tri$p3" ) ) ]
-              )
+            ( Ctor Nothing SumType
+              ( ModuleName "Golden.UncurryCtor.Test" )
+              ( TyName "Shape" )
+              ( CtorName "Tri" )
+              [ Ref Nothing
+                ( Local ( Name "Tri$p1" ) ), Ref Nothing
+                ( Local ( Name "Tri$p2" ) ), Ref Nothing
+                ( Local ( Name "Tri$p3" ) )
+              ]
             )
           )
         )
@@ -143,17 +152,6 @@ UberModule
         ( ModuleName "Golden.UncurryCtor.Test" )
         ( TyName "IntList" )
         ( CtorName "Nil" ) []
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Golden.UncurryCtor.Test", qnameName = Name "Cons$w"
-        }, AbsN Nothing
-        ( ParamNamed Nothing ( Name "value0" ) :| [ ParamNamed Nothing ( Name "value1" ) ] )
-        ( Ctor Nothing SumType
-          ( ModuleName "Golden.UncurryCtor.Test" )
-          ( TyName "IntList" )
-          ( CtorName "Cons" )
-          [ Ref Nothing ( Local ( Name "value0" ) ), Ref Nothing ( Local ( Name "value1" ) ) ]
-        )
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.UncurryCtor.Test", qnameName = Name "unbox"
@@ -188,92 +186,58 @@ UberModule
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.UncurryCtor.Test", qnameName = Name "range"
-        }, AppN Nothing
-        ( Ref Nothing ( Imported ( ModuleName "Golden.UncurryCtor.Test" ) ( Name "Cons$w" ) ) )
-        ( LiteralInt Nothing 1 :|
-          [ AppN Nothing
-            ( Ref Nothing ( Imported ( ModuleName "Golden.UncurryCtor.Test" ) ( Name "Cons$w" ) ) )
-            ( LiteralInt Nothing 2 :|
-              [ AppN Nothing
-                ( Ref Nothing
-                  ( Imported ( ModuleName "Golden.UncurryCtor.Test" ) ( Name "Cons$w" ) )
-                )
-                ( LiteralInt Nothing 3 :|
-                  [ AppN Nothing
-                    ( Ref Nothing
-                      ( Imported ( ModuleName "Golden.UncurryCtor.Test" ) ( Name "Cons$w" ) )
-                    )
-                    ( LiteralInt Nothing 4 :|
-                      [ AppN Nothing
-                        ( Ref Nothing
-                          ( Imported ( ModuleName "Golden.UncurryCtor.Test" ) ( Name "Cons$w" ) )
-                        )
-                        ( LiteralInt Nothing 5 :|
-                          [ AppN Nothing
-                            ( Ref Nothing
-                              ( Imported
-                                ( ModuleName "Golden.UncurryCtor.Test" )
-                                ( Name "Cons$w" )
-                              )
-                            )
-                            ( LiteralInt Nothing 6 :|
-                              [ AppN Nothing
-                                ( Ref Nothing
-                                  ( Imported
-                                    ( ModuleName "Golden.UncurryCtor.Test" )
-                                    ( Name "Cons$w" )
-                                  )
-                                )
-                                ( LiteralInt Nothing 7 :|
-                                  [ AppN Nothing
-                                    ( Ref Nothing
-                                      ( Imported
-                                        ( ModuleName "Golden.UncurryCtor.Test" )
-                                        ( Name "Cons$w" )
-                                      )
-                                    )
-                                    ( LiteralInt Nothing 8 :|
-                                      [ AppN Nothing
-                                        ( Ref Nothing
-                                          ( Imported
-                                            ( ModuleName "Golden.UncurryCtor.Test" )
-                                            ( Name "Cons$w" )
-                                          )
-                                        )
-                                        ( LiteralInt Nothing 9 :|
-                                          [ AppN Nothing
-                                            ( Ref Nothing
-                                              ( Imported
-                                                ( ModuleName "Golden.UncurryCtor.Test" )
-                                                ( Name "Cons$w" )
-                                              )
-                                            )
-                                            ( LiteralInt Nothing 10 :|
-                                              [ Ref Nothing
-                                                ( Imported
-                                                  ( ModuleName "Golden.UncurryCtor.Test" )
-                                                  ( Name "Nil" )
-                                                )
-                                              ]
-                                            )
-                                          ]
-                                        )
-                                      ]
-                                    )
-                                  ]
-                                )
-                              ]
-                            )
+        }, Ctor Nothing SumType
+        ( ModuleName "Golden.UncurryCtor.Test" )
+        ( TyName "IntList" )
+        ( CtorName "Cons" )
+        [ LiteralInt Nothing 1, Ctor Nothing SumType
+          ( ModuleName "Golden.UncurryCtor.Test" )
+          ( TyName "IntList" )
+          ( CtorName "Cons" )
+          [ LiteralInt Nothing 2, Ctor Nothing SumType
+            ( ModuleName "Golden.UncurryCtor.Test" )
+            ( TyName "IntList" )
+            ( CtorName "Cons" )
+            [ LiteralInt Nothing 3, Ctor Nothing SumType
+              ( ModuleName "Golden.UncurryCtor.Test" )
+              ( TyName "IntList" )
+              ( CtorName "Cons" )
+              [ LiteralInt Nothing 4, Ctor Nothing SumType
+                ( ModuleName "Golden.UncurryCtor.Test" )
+                ( TyName "IntList" )
+                ( CtorName "Cons" )
+                [ LiteralInt Nothing 5, Ctor Nothing SumType
+                  ( ModuleName "Golden.UncurryCtor.Test" )
+                  ( TyName "IntList" )
+                  ( CtorName "Cons" )
+                  [ LiteralInt Nothing 6, Ctor Nothing SumType
+                    ( ModuleName "Golden.UncurryCtor.Test" )
+                    ( TyName "IntList" )
+                    ( CtorName "Cons" )
+                    [ LiteralInt Nothing 7, Ctor Nothing SumType
+                      ( ModuleName "Golden.UncurryCtor.Test" )
+                      ( TyName "IntList" )
+                      ( CtorName "Cons" )
+                      [ LiteralInt Nothing 8, Ctor Nothing SumType
+                        ( ModuleName "Golden.UncurryCtor.Test" )
+                        ( TyName "IntList" )
+                        ( CtorName "Cons" )
+                        [ LiteralInt Nothing 9, Ctor Nothing SumType
+                          ( ModuleName "Golden.UncurryCtor.Test" )
+                          ( TyName "IntList" )
+                          ( CtorName "Cons" )
+                          [ LiteralInt Nothing 10, Ref Nothing
+                            ( Imported ( ModuleName "Golden.UncurryCtor.Test" ) ( Name "Nil" ) )
                           ]
-                        )
+                        ]
                       ]
-                    )
+                    ]
                   ]
-                )
+                ]
               ]
-            )
+            ]
           ]
-        )
+        ]
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.UncurryCtor.Test", qnameName = Name "pairSum"
@@ -290,31 +254,31 @@ UberModule
         ( ParamNamed Nothing ( Name "v" ) :| [] )
         ( Let Nothing
           ( Standalone
-            ( Nothing, Name "$cse430", DataArgumentByIndex Nothing SumType 0
+            ( Nothing, Name "$cse585", DataArgumentByIndex Nothing SumType 0
               ( Ref Nothing ( Local ( Name "v" ) ) )
             ) :| []
           )
           ( Let Nothing
             ( Standalone
-              ( Nothing, Name "$cse429", ReflectCtor Nothing
+              ( Nothing, Name "$cse584", ReflectCtor Nothing
                 ( Ref Nothing ( Local ( Name "v" ) ) )
               ) :| []
             )
             ( IfThenElse Nothing
               ( Eq Nothing
                 ( LiteralString Nothing "Golden.UncurryCtor.Test∷Shape.Origin" )
-                ( Ref Nothing ( Local ( Name "$cse429" ) ) )
+                ( Ref Nothing ( Local ( Name "$cse584" ) ) )
               )
               ( LiteralInt Nothing 0 )
               ( IfThenElse Nothing
                 ( Eq Nothing
                   ( LiteralString Nothing "Golden.UncurryCtor.Test∷Shape.Dot" )
-                  ( Ref Nothing ( Local ( Name "$cse429" ) ) )
+                  ( Ref Nothing ( Local ( Name "$cse584" ) ) )
                 )
-                ( Ref Nothing ( Local ( Name "$cse430" ) ) )
+                ( Ref Nothing ( Local ( Name "$cse585" ) ) )
                 ( PrimBinOp Nothing PrimAdd
                   ( PrimBinOp Nothing PrimAdd
-                    ( Ref Nothing ( Local ( Name "$cse430" ) ) )
+                    ( Ref Nothing ( Local ( Name "$cse585" ) ) )
                     ( DataArgumentByIndex Nothing SumType 1 ( Ref Nothing ( Local ( Name "v" ) ) ) )
                   )
                   ( DataArgumentByIndex Nothing SumType 2 ( Ref Nothing ( Local ( Name "v" ) ) ) )
@@ -339,12 +303,14 @@ UberModule
         ( ParamNamed Nothing ( Name "Pair$p1$316" ) :| [] )
         ( AbsN Nothing
           ( ParamNamed Nothing ( Name "Pair$p2$317" ) :| [] )
-          ( AppN Nothing
-            ( Ref Nothing ( Imported ( ModuleName "Golden.UncurryCtor.Test" ) ( Name "Pair$w" ) ) )
-            ( Ref Nothing
-              ( Local ( Name "Pair$p1$316" ) ) :|
-              [ Ref Nothing ( Local ( Name "Pair$p2$317" ) ) ]
-            )
+          ( Ctor Nothing ProductType
+            ( ModuleName "Golden.UncurryCtor.Test" )
+            ( TyName "Pair" )
+            ( CtorName "Pair" )
+            [ Ref Nothing
+              ( Local ( Name "Pair$p1$316" ) ), Ref Nothing
+              ( Local ( Name "Pair$p2$317" ) )
+            ]
           )
         )
       ),
@@ -359,12 +325,14 @@ UberModule
         ( ParamNamed Nothing ( Name "Cons$p1$314" ) :| [] )
         ( AbsN Nothing
           ( ParamNamed Nothing ( Name "Cons$p2$315" ) :| [] )
-          ( AppN Nothing
-            ( Ref Nothing ( Imported ( ModuleName "Golden.UncurryCtor.Test" ) ( Name "Cons$w" ) ) )
-            ( Ref Nothing
-              ( Local ( Name "Cons$p1$314" ) ) :|
-              [ Ref Nothing ( Local ( Name "Cons$p2$315" ) ) ]
-            )
+          ( Ctor Nothing SumType
+            ( ModuleName "Golden.UncurryCtor.Test" )
+            ( TyName "IntList" )
+            ( CtorName "Cons" )
+            [ Ref Nothing
+              ( Local ( Name "Cons$p1$314" ) ), Ref Nothing
+              ( Local ( Name "Cons$p2$315" ) )
+            ]
           )
         )
       ),

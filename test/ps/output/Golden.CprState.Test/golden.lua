@@ -4,9 +4,6 @@ local Data_Show_foreign = { showIntImpl = function(n) return tostring(n) end }
 local Effect_Console_foreign = {
   log = function(s) return function() print(s) end end
 }
-local Data_Tuple_Tuple_S_w = function(value0, value1)
-  return { value0, value1 }
-end
 local Data_Identity_applyIdentity = {
   apply = function(v) return function(v1) return v(v1) end end,
   Functor0 = function()
@@ -79,7 +76,7 @@ Control_Monad_State_Trans_applyStateT = function(dictMonad)
           return function(v_S_1)
             return function(s_S_0)
               return (((dictMonad.Bind1()).Apply0()).Functor0()).map(function( v1_S_0 )
-                return Data_Tuple_Tuple_S_w(f_S_3(v1_S_0[1]), v1_S_0[2])
+                return { f_S_3(v1_S_0[1]), v1_S_0[2] }
               end)(v_S_1(s_S_0))
             end
           end
@@ -91,9 +88,7 @@ end
 Control_Monad_State_Trans_applicativeStateT = function(dictMonad)
   return {
     pure = function(a)
-      return function(s)
-        return (dictMonad.Applicative0()).pure(Data_Tuple_Tuple_S_w(a, s))
-      end
+      return function(s) return (dictMonad.Applicative0()).pure({ a, s }) end
     end,
     Apply0 = function()
       return Control_Monad_State_Trans_applyStateT(dictMonad)
@@ -101,48 +96,46 @@ Control_Monad_State_Trans_applicativeStateT = function(dictMonad)
   }
 end
 local Golden_CprState_Test_bindStateT = Control_Monad_State_Trans_bindStateT(Data_Identity_monadIdentity)
-local Golden_CprState_Test_get = function(x_S_1)
-  return Data_Tuple_Tuple_S_w(x_S_1, x_S_1)
-end
+local Golden_CprState_Test_get = function(x_S_1) return { x_S_1, x_S_1 } end
 local Golden_CprState_Test_go = Golden_CprState_Test_bindStateT.bind(Golden_CprState_Test_get)(function( x1 )
   return Golden_CprState_Test_bindStateT.bind(function()
-    return Data_Tuple_Tuple_S_w(Data_Unit_unit, x1 + 1)
+    return { Data_Unit_unit, x1 + 1 }
   end)(function()
     return Golden_CprState_Test_bindStateT.bind(Golden_CprState_Test_get)(function( x2 )
       return Golden_CprState_Test_bindStateT.bind(function()
-        return Data_Tuple_Tuple_S_w(Data_Unit_unit, x2 + 1)
+        return { Data_Unit_unit, x2 + 1 }
       end)(function()
         return Golden_CprState_Test_bindStateT.bind(Golden_CprState_Test_get)(function( x3 )
           return Golden_CprState_Test_bindStateT.bind(function()
-            return Data_Tuple_Tuple_S_w(Data_Unit_unit, x3 + 1)
+            return { Data_Unit_unit, x3 + 1 }
           end)(function()
             return Golden_CprState_Test_bindStateT.bind(Golden_CprState_Test_get)(function( x4 )
               return Golden_CprState_Test_bindStateT.bind(function()
-                return Data_Tuple_Tuple_S_w(Data_Unit_unit, x4 + 1)
+                return { Data_Unit_unit, x4 + 1 }
               end)(function()
                 return Golden_CprState_Test_bindStateT.bind(Golden_CprState_Test_get)(function( x5 )
                   return Golden_CprState_Test_bindStateT.bind(function()
-                    return Data_Tuple_Tuple_S_w(Data_Unit_unit, x5 + 1)
+                    return { Data_Unit_unit, x5 + 1 }
                   end)(function()
                     return Golden_CprState_Test_bindStateT.bind(Golden_CprState_Test_get)(function( x6 )
                       return Golden_CprState_Test_bindStateT.bind(function()
-                        return Data_Tuple_Tuple_S_w(Data_Unit_unit, x6 + 1)
+                        return { Data_Unit_unit, x6 + 1 }
                       end)(function()
                         return Golden_CprState_Test_bindStateT.bind(Golden_CprState_Test_get)(function( x7 )
                           return Golden_CprState_Test_bindStateT.bind(function()
-                            return Data_Tuple_Tuple_S_w(Data_Unit_unit, x7 + 1)
+                            return { Data_Unit_unit, x7 + 1 }
                           end)(function()
                             return Golden_CprState_Test_bindStateT.bind(Golden_CprState_Test_get)(function( x8 )
                               return Golden_CprState_Test_bindStateT.bind(function(  )
-                                return Data_Tuple_Tuple_S_w(Data_Unit_unit, x8 + 1)
+                                return { Data_Unit_unit, x8 + 1 }
                               end)(function()
                                 return Golden_CprState_Test_bindStateT.bind(Golden_CprState_Test_get)(function( x9 )
                                   return Golden_CprState_Test_bindStateT.bind(function(  )
-                                    return Data_Tuple_Tuple_S_w(Data_Unit_unit, x9 + 1)
+                                    return { Data_Unit_unit, x9 + 1 }
                                   end)(function()
                                     return Golden_CprState_Test_bindStateT.bind(Golden_CprState_Test_get)(function( x10 )
                                       return Golden_CprState_Test_bindStateT.bind(function(  )
-                                        return Data_Tuple_Tuple_S_w(Data_Unit_unit, x10 + 1)
+                                        return { Data_Unit_unit, x10 + 1 }
                                       end)(function()
                                         return Golden_CprState_Test_bindStateT.bind(Golden_CprState_Test_get)(function( final )
                                           return (Control_Monad_State_Trans_applicativeStateT(Data_Identity_monadIdentity)).pure(x1 + x5 + final)
