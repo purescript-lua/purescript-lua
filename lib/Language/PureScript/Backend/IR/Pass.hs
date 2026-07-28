@@ -163,13 +163,16 @@ renderPassCheckFailure = \case
         <> (show <$> toList violations)
 
 {- | Iteration backstop for 'RunFixpoint'. Convergence normally takes a
-handful of rounds, so this is far above anything legitimate: hitting it
-means a pass over-reports changes or genuinely loops — a bug, which the
-checked runner turns into a 'FixpointDivergence' while the production
-runner accepts the (correct, possibly under-optimized) module reached.
+handful of rounds, but directive-driven inlining folds a constant chain
+one layer per round, so legitimate rounds scale with the deepest such
+chain in the module (the ~300-deep golden stress chains need several
+hundred). Hitting the backstop anyway means a pass over-reports changes
+or genuinely loops — a bug, which the checked runner turns into a
+'FixpointDivergence' while the production runner accepts the (correct,
+possibly under-optimized) module reached.
 -}
 maxFixpointIterations ∷ Natural
-maxFixpointIterations = 100
+maxFixpointIterations = 1000
 
 --------------------------------------------------------------------------------
 -- Runners ---------------------------------------------------------------------
