@@ -76,6 +76,41 @@ spec = describe "CSE" do
             (application (application f cse0) cse0)
     cseExpression expr `shouldBe` expected
 
+  it "hoists Lets whose Standalone RHS references an outer binder (#349)" do
+    -- See Note [Sequential scoping of Let bindings]: a Standalone binding
+    -- is non-recursive, so the right-hand-side x is a free occurrence of
+    -- the enclosing x in both copies below — which therefore differ only
+    -- in the name chosen for the binder. Wrapping in a lambda makes each
+    -- copy a candidate.
+    let shadowing name =
+          abstraction (paramNamed (Name "$p")) $
+            lets
+              (pure (Standalone (noAnn, Name name, refLocal (Name "x"))))
+              (refLocal (Name name))
+        expr = application (application f (shadowing "x")) (shadowing "y")
+        expected =
+          lets
+            (pure (bind0 (shadowing "x")))
+            (application (application f cse0) cse0)
+    cseExpression expr `shouldBe` expected
+
+  it "hoists recursive groups differing only in the member name" do
+    -- The contrast to the case above: a RecursiveGroup member's
+    -- right-hand side does see its own binder, so the self-reference is
+    -- bound in both copies and the two are alpha-equivalent.
+    let recursive name =
+          let self = Name name
+           in abstraction (paramNamed (Name "$p")) $
+                lets
+                  (pure (RecursiveGroup ((noAnn, self, refLocal self) :| [])))
+                  (refLocal self)
+        expr = application (application g (recursive "a")) (recursive "b")
+        expected =
+          lets
+            (pure (bind0 (recursive "a")))
+            (application (application g cse0) cse0)
+    cseExpression expr `shouldBe` expected
+
   it "hoists a repeat sitting in both branches of an if" do
     let expr =
           ifThenElse cond (application f (lam "a")) (application g (lam "b"))
