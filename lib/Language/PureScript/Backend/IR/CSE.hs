@@ -99,8 +99,9 @@ converged block re-analyzes to no eligible groups at all.
 Requires and preserves the global-uniqueness condition (GUC =
 @UniqueBinders@, issue #139): the kept copy is one of the original
 occurrences (its binders stay unique — the deleted copies' binders are
-gone), the minted @$cse@ names are supply-fresh, and 'alphaKey' resolves
-references to binders by name, which GUC makes unambiguous.
+gone) and the minted @$cse@ names are supply-fresh. What GUC buys the
+analysis is the exactness of the scope guard above; 'alphaKey' itself
+threads binders in scope order and so needs no uniqueness assumption.
 
 == Pipeline placement
 
@@ -423,13 +424,15 @@ two expressions have equal keys iff they are alpha-equivalent up to
 annotations (the 'Language.PureScript.Backend.IR.Types.alphaEq' relation
 weakened by ignoring the annotations optimization sheds unevenly).
 
-Binders are resolved to their references by name, so the key is correct
-under the GUC discipline the pass runs under: binders are unique, so a
-reference belongs to a binder iff the names match (the discard binder
-@_@ is exempt from uniqueness and referenced by nothing, so it stays
-unrenamed). Free references keep their names; a positional
-@$key\<n\>@ name cannot collide with one, because @$@ never occurs in a
-source identifier and every supply-minted name uses another prefix.
+Binders are resolved to their references by name (the discard binder
+@_@ is the one exception: it stays unrenamed). Free references — bound
+outside the expression — keep their
+names, one that happens to share a binder's name included: the rename
+map is threaded in scope order, so a reference is renamed only by a
+binder that encloses it, and the innermost such one (Note [Sequential
+scoping of Let bindings]). A positional @$key\<n\>@ name cannot collide
+with a surviving free name, because @$@ never occurs in a source
+identifier and every supply-minted name uses another prefix.
 -}
 alphaKey ∷ RawExp ann → RawExp ()
 alphaKey = canonicalize . void
@@ -447,21 +450,10 @@ alphaKey = canonicalize . void
     AbsN ann params body → do
       (renames', params') ← mapAccumM renameParam renames params
       AbsN ann params' <$> go renames' body
+    -- The groupings bind sequentially, so the map grows left to right.
     Let ann binds body → do
-      -- Under unique binders no Let name can be referenced before it is
-      -- bound, so all the groupings can enter the rename map up front.
-      renames' ←
-        foldlM
-          ( \rs name → do
-              name' ← mint
-              pure (Map.insert name name' rs)
-          )
-          renames
-          (filter (/= discardName) (bindingNames =<< toList binds))
-      let renameBound (bindAnn, name, expr) =
-            (bindAnn,Map.findWithDefault name name renames',)
-              <$> go renames' expr
-      Let ann <$> traverse (traverse renameBound) binds <*> go renames' body
+      (renames', binds') ← mapAccumM keyGrouping renames binds
+      Let ann binds' <$> go renames' body
     -- The RHS is canonicalized under the incoming map — the binders
     -- scope over the body only (Note [Multi-value results]).
     LetValues ann params rhs body → do
@@ -469,6 +461,46 @@ alphaKey = canonicalize . void
       (renames', params') ← mapAccumM renameParam renames params
       LetValues ann params' rhs' <$> go renames' body
     other → traverseOf subexpressions (go renames) other
+
+  keyGrouping
+    ∷ Map Name Name
+    → Grouping ((), Name, RawExp ())
+    → State Natural (Map Name Name, Grouping ((), Name, RawExp ()))
+  keyGrouping renames = \case
+    -- A Standalone binding is non-recursive: its RHS does not see its
+    -- own binder, so the RHS is canonicalized under the incoming map and
+    -- the binder enters only afterwards. A RHS reference sharing the
+    -- binder's name is therefore an occurrence of an outer binder and
+    -- keeps its name, as it must.
+    Standalone (bindAnn, name, expr) → do
+      expr' ← go renames expr
+      (renames', name') ← bindMinted renames name
+      pure (renames', Standalone (bindAnn, name', expr'))
+    -- Every member of a recursive group is in scope in every member's
+    -- RHS, so the whole group enters the map before any RHS is walked.
+    RecursiveGroup members → do
+      (renames', rebound) ←
+        mapAccumM
+          ( \rs (bindAnn, name, expr) → do
+              (rs', name') ← bindMinted rs name
+              pure (rs', (bindAnn, name', expr))
+          )
+          renames
+          members
+      members' ← forM rebound \(bindAnn, name, expr) →
+        (bindAnn,name,) <$> go renames' expr
+      pure (renames', RecursiveGroup members')
+
+  -- The discard binder is exempt from the uniqueness invariant — one Let
+  -- can bind it several times (magic-do's discard statements) — and
+  -- nothing may reference it, so it takes no positional name and stays
+  -- out of the map.
+  bindMinted ∷ Map Name Name → Name → State Natural (Map Name Name, Name)
+  bindMinted rs name
+    | name == discardName = pure (rs, name)
+    | otherwise = do
+        name' ← mint
+        pure (Map.insert name name' rs, name')
 
   renameParam
     ∷ Map Name Name
