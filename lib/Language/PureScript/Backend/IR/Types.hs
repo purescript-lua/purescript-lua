@@ -8,8 +8,8 @@ import Control.Lens
   , foldMapOf
   , makePrisms
   , prism'
-  , rewriteMOf
   , toListOf
+  , transformMOf
   , traverseOf
   )
 import Control.Monad.Writer.CPS (runWriterT, tell)
@@ -850,20 +850,49 @@ thenRewrite rewrite1 rewrite2 e =
     Just e' → Just . fromMaybe e' <$> rewrite2 e'
     Nothing → rewrite2 e
 
+{- | Backstop for the re-application loop of 'rewriteExpBottomUpM': how
+many nested rewrites one path down the expression may take before the
+driver stops re-applying the rule and returns the term it has reached.
+
+The bound is what makes the driver total, because beta reduction has no
+terminating strategy on an arbitrary untyped term: Ω = @(λx. x x) (λy. y
+y)@ reduces to itself modulo binder names, so the loop would re-apply
+forever. The IR is assumed well-typed (Note [IR is assumed well-typed])
+and PureScript's type system rejects every such term, so only the
+untyped terms the property-test generators draw reach the bound.
+
+Stopping early costs optimization and nothing else: each rewrite
+preserves semantics and the IR invariants on its own, so a term the
+driver abandons mid-reduction is as valid as a fully reduced one, and
+'WasRewritten' stays precise (it reports 'Rewritten' iff a rule fired,
+whether or not the loop ran to exhaustion). A converging rule chain
+needs a handful of nested rewrites — the whole test suite, the ~300-deep
+golden constant chains included, peaks at five — so the bound sits two
+orders of magnitude clear of legitimate work.
+-}
+maxNestedRewrites ∷ Natural
+maxNestedRewrites = 100
+
 {- | Rewrite bottom-up: every node's children are fully rewritten before
 the rule sees the node, and the rule is re-applied to its own result
-until it no longer fires ('rewriteMOf' semantics). One pass is
-therefore complete and idempotent — the result contains no node the
-rule still fires on — which is what makes the returned 'WasRewritten'
-precise, and what closes the Recurse-escape bug class (issue #149)
-structurally: a node exposed by a collapsing parent has already been
-fully rewritten.
+until it no longer fires, bounded by 'maxNestedRewrites'. Short of that
+bound one pass is complete and idempotent — the result contains no node
+the rule still fires on — which closes the Recurse-escape bug class
+(issue #149) structurally: a node exposed by a collapsing parent has
+already been fully rewritten.
 -}
 rewriteExpBottomUpM
   ∷ Monad m ⇒ RewriteRuleM m ann → RawExp ann → m (RawExp ann, WasRewritten)
-rewriteExpBottomUpM rule expr =
-  runWriterT $ flip (rewriteMOf subexpressions) expr \e →
-    lift (rule e) >>= traverse \e' → e' <$ tell Rewritten
+rewriteExpBottomUpM rule = runWriterT . reapply maxNestedRewrites
+ where
+  reapply budget = transformMOf subexpressions \e →
+    lift (rule e) >>= \case
+      Nothing → pure e
+      Just e' → do
+        tell Rewritten
+        case budget of
+          0 → pure e'
+          _ → reapply (budget - 1) e'
 
 -- | Pure 'rewriteExpBottomUpM'.
 rewriteExpBottomUp ∷ RewriteRule ann → RawExp ann → (RawExp ann, WasRewritten)
