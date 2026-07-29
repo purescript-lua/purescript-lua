@@ -1,0 +1,158 @@
+#!/usr/bin/env bash
+# Pins the verdict logic of bench/tools/diff_counters: which oracle mismatch
+# is re-measured as trace-formation noise, which one fails outright, and how
+# many regenerations each costs. Synthetic reports stand in for real ones, so
+# the checks run in milliseconds instead of spawning the ~100 fresh LuaJIT
+# processes a real set of canonical reports needs -- and a marginal spot can
+# be staged deterministically, which is impossible with the real tool.
+set -euo pipefail
+cd "$(dirname "$0")/../.."
+
+diff_counters=bench/tools/diff_counters
+failures=0
+
+# A plausible canonical report for bench/macro/ref_loop.lua: three header
+# lines derived from the spec and a deterministic checksum, then the two
+# measured sets, then their tallies.
+golden_report() {
+  cat <<'EOF'
+spec: ref_loop
+runtime: LuaJIT 2.1.1741730670
+workload: n=100000 reps=4 result=4999950000
+aborts (distinct site -- reason):
+  Bench.RefLoop.lua:40 -- NYI: bytecode FNEW
+bytecode end state (J*=compiled, I*=blacklisted):
+  Bench.RefLoop.lua:10 JFUNCF
+  Bench.RefLoop.lua:34 JFORI
+  Bench.RefLoop.lua:34 JFORL
+counts: aborts=1 compiled=3 blacklisted=0
+EOF
+}
+
+# The same report with one extra function-entry trace: the shape a marginal
+# spot takes when its per-process formation lands on the reported side.
+marginal_report() {
+  golden_report \
+    | sed 's/^  Bench.RefLoop.lua:34 JFORI$/  Bench.RefLoop.lua:32 JFUNCF\n&/' \
+    | sed 's/^counts: aborts=1 compiled=3/counts: aborts=1 compiled=4/'
+}
+
+# A toolchain bump: nothing about the measured sets changed, but the report
+# is pinned to a specific LuaJIT snapshot.
+bumped_runtime_report() {
+  golden_report | sed 's/^runtime: .*/runtime: LuaJIT 2.1.9999999999/'
+}
+
+# One synthetic bench tree: matching goldens and output, plus a stand-in for
+# `luajit trace_report.lua <spec>` that counts its invocations and prints
+# whatever the case under test staged as the next canonical report.
+fixture() {
+  local dir=$1
+  mkdir -p "$dir/goldens" "$dir/out" "$dir/macro"
+  printf 'main chunk: 1\nfunction bodies: 0\n' >"$dir/goldens/fnew_Bench.RefLoop.txt"
+  cp "$dir/goldens/fnew_Bench.RefLoop.txt" "$dir/out/fnew_Bench.RefLoop.txt"
+  golden_report >"$dir/goldens/trace_ref_loop.txt"
+  golden_report >"$dir/out/trace_ref_loop.txt"
+  : >"$dir/macro/ref_loop.lua"
+  cat >"$dir/report" <<'EOF'
+#!/usr/bin/env bash
+set -eu
+here=$(dirname "$0")
+echo "$1" >>"$here/regen.log"
+# trace_report.lua exits non-zero when a trial process fails or the
+# deterministic part of a report diverges between its own trials; `broken`
+# stages that.
+[ -e "$here/broken" ] && exit 1
+cat "$here/next_report.txt"
+EOF
+  chmod +x "$dir/report"
+  golden_report >"$dir/next_report.txt"
+  : >"$dir/regen.log"
+}
+
+# Run diff_counters over a fixture and pin both its verdict and its cost: a
+# retry budget spent on something deterministic is as much a defect as a
+# wrong verdict, because the whole point of the classification is to spend
+# fresh processes only where a second measurement can differ.
+check() {
+  local name=$1 retries=$2 want_exit=$3 want_regens=$4 dir=$5
+  local got_exit=0 got_regens
+  BENCH_TRACE_RETRIES=$retries "$diff_counters" \
+    "$dir/goldens" "$dir/out" "$dir/macro" "$dir/report" \
+    >"$dir/log" 2>&1 || got_exit=$?
+  got_regens=$(wc -l <"$dir/regen.log")
+  if [ "$got_exit" -ne "$want_exit" ] || [ "$got_regens" -ne "$want_regens" ]; then
+    printf 'FAIL %s\n       exit %d (want %d), regenerations %d (want %d)\n' \
+      "$name" "$got_exit" "$want_exit" "$got_regens" "$want_regens"
+    sed 's/^/       | /' "$dir/log"
+    failures=$((failures + 1))
+  else
+    printf 'ok   %s (exit %d, %d regenerations)\n' \
+      "$name" "$got_exit" "$got_regens"
+  fi
+}
+
+root=$(mktemp -d)
+trap 'rm -rf "$root"' EXIT
+
+case_dir() {
+  local dir=$root/$1
+  fixture "$dir"
+  printf '%s' "$dir"
+}
+
+dir=$(case_dir matching)
+check 'matching reports pass without re-measuring' 2 0 0 "$dir"
+
+# The failure this exists to absorb: a spot whose per-process trace-formation
+# probability sits between 0 and 1 shows up in this run and not in the golden.
+dir=$(case_dir marginal-absorbed)
+marginal_report >"$dir/out/trace_ref_loop.txt"
+check 'marginal trace entry absorbed by a re-measurement' 2 0 1 "$dir"
+
+# With no retry budget the same fixture reddens, which is the pre-retry
+# behaviour and the reason the knob is worth keeping addressable.
+dir=$(case_dir marginal-no-retry)
+marginal_report >"$dir/out/trace_ref_loop.txt"
+check 'marginal trace entry reddens with the retry budget at zero' 0 1 0 "$dir"
+
+# A genuine codegen change re-measures to the same thing every time, so it
+# spends the whole budget and still fails.
+dir=$(case_dir codegen-change)
+marginal_report >"$dir/out/trace_ref_loop.txt"
+marginal_report >"$dir/next_report.txt"
+check 'reproducible trace change fails after spending the budget' 2 1 2 "$dir"
+
+# The censuses never run the artifact, so a difference there is a real change
+# with nothing to re-measure.
+dir=$(case_dir census-change)
+printf 'main chunk: 2\nfunction bodies: 0\n' >"$dir/out/fnew_Bench.RefLoop.txt"
+check 'census difference fails without re-measuring' 2 1 0 "$dir"
+
+# A trace report's header is derived from the spec and a deterministic
+# checksum, so it is as fixed as a census.
+dir=$(case_dir runtime-bump)
+bumped_runtime_report >"$dir/out/trace_ref_loop.txt"
+check 'trace header change fails without re-measuring' 2 1 0 "$dir"
+
+dir=$(case_dir report-missing)
+rm "$dir/out/trace_ref_loop.txt"
+check 'report missing from the output fails without re-measuring' 2 1 0 "$dir"
+
+dir=$(case_dir report-added)
+golden_report >"$dir/out/trace_tuple_fold.txt"
+check 'report absent from the goldens fails without re-measuring' 2 1 0 "$dir"
+
+# A measurement that did not happen is not a spent attempt. Burning the rest of
+# the budget on it would end in "still differs after N re-measurements",
+# blaming the counters for what the measuring tool reported about itself.
+dir=$(case_dir regen-broken)
+marginal_report >"$dir/out/trace_ref_loop.txt"
+: >"$dir/broken"
+check 'a failed re-measurement aborts instead of spending the budget' 2 1 1 "$dir"
+
+if [ "$failures" -ne 0 ]; then
+  printf '\n%d check(s) failed\n' "$failures"
+  exit 1
+fi
+printf '\nbench counter verdict logic behaves as pinned\n'
