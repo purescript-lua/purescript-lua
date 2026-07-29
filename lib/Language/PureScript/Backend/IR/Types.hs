@@ -1255,12 +1255,11 @@ alphaEq = go 0 Map.empty Map.empty
 supply-minted name (@\<original\>$\<n\>@ — the @$@ cannot occur in a
 source identifier, so a mint can never collide with one), rewriting the
 references each binder binds. Free references — bound outside the
-expression — are untouched.
+expression — are untouched, one that happens to share a binder's name
+included: the rename map is threaded in scope order, so a reference is
+renamed only by a binder that encloses it, and the innermost such one
+(Note [Sequential scoping of Let bindings]).
 
-Correct only under the GUC discipline (@UniqueBinders@): binders
-within the expression are unique, so a reference belongs to a binder
-iff the names match, and the sequential scoping subtleties of
-Note [Sequential scoping of Let bindings] cannot be observed.
 'ParamUnused' binds nothing, and the name list of a 'ForeignImport'
 holds the export keys of the foreign source file, not binders —
 neither is renamed.
@@ -1284,30 +1283,40 @@ freshenBinders = go Map.empty
       rhs' ← go renames rhs
       (renames', params') ← mapAccumM freshenParam renames params
       LetValues ann params' rhs' <$> go renames' body
+    -- The groupings bind sequentially, so the map grows left to right.
     Let ann binds body → do
-      -- Under unique binders no Let name can be referenced before it is
-      -- bound, so all the groupings can enter the rename map up front.
-      -- The discard binder `_` stays out of the map: it is exempt from
-      -- the uniqueness invariant, so one Let can bind it several times
-      -- (magic-do's discard statements), and a single name-keyed entry
-      -- would rename every one of them to the same fresh name — a
-      -- genuine duplicate the exemption no longer covers. Nothing may
-      -- reference it, so it needs no rename at all.
-      renames' ←
-        foldlM
-          ( \rs name → do
-              name' ← freshNameFor name
-              pure (Map.insert name name' rs)
-          )
-          renames
-          (filter (/= discardName) (bindingNames =<< toList binds))
-      let renameBound (bindAnn, name, expr) =
-            (bindAnn,Map.findWithDefault name name renames',)
-              <$> go renames' expr
-      Let ann <$> traverse (traverse renameBound) binds <*> go renames' body
+      (renames', binds') ← mapAccumM freshenGrouping renames binds
+      Let ann binds' <$> go renames' body
     -- No other constructor binds or references names ('ForeignImport'
     -- included: its name list holds export keys, not binders):
     other → traverseOf subexpressions (go renames) other
+
+  freshenGrouping
+    ∷ Map Name Name
+    → Grouping (ann, Name, RawExp ann)
+    → SupplyM (Map Name Name, Grouping (ann, Name, RawExp ann))
+  freshenGrouping renames = \case
+    -- A Standalone binding is non-recursive: its RHS does not see its
+    -- own binder, so the RHS is renamed under the incoming map and the
+    -- binder enters only afterwards.
+    Standalone (bindAnn, name, expr) → do
+      expr' ← go renames expr
+      (renames', name') ← bindFresh renames name
+      pure (renames', Standalone (bindAnn, name', expr'))
+    -- Every member of a recursive group is in scope in every member's
+    -- RHS, so the whole group enters the map before any RHS is walked.
+    RecursiveGroup members → do
+      (renames', rebound) ←
+        mapAccumM
+          ( \rs (bindAnn, name, expr) → do
+              (rs', name') ← bindFresh rs name
+              pure (rs', (bindAnn, name', expr))
+          )
+          renames
+          members
+      members' ← forM rebound \(bindAnn, name, expr) →
+        (bindAnn,name,) <$> go renames' expr
+      pure (renames', RecursiveGroup members')
 
   freshenParam
     ∷ Map Name Name
@@ -1318,6 +1327,19 @@ freshenBinders = go Map.empty
     ParamNamed paramAnn name → do
       name' ← freshNameFor name
       pure (Map.insert name name' rs, ParamNamed paramAnn name')
+
+  -- The discard binder @_@ stays out of the rename map: it is exempt
+  -- from the uniqueness invariant, so one Let can bind it several times
+  -- (magic-do's discard statements), and a single name-keyed entry
+  -- would rename every one of them to the same fresh name — a genuine
+  -- duplicate the exemption no longer covers. Nothing may reference it,
+  -- so it needs no rename at all.
+  bindFresh ∷ Map Name Name → Name → SupplyM (Map Name Name, Name)
+  bindFresh rs name
+    | name == discardName = pure (rs, name)
+    | otherwise = do
+        name' ← freshNameFor name
+        pure (Map.insert name name' rs, name')
 
   freshNameFor ∷ Name → SupplyM Name
   freshNameFor name = freshName (stripFreshSuffix (nameToText name) <> "$")
