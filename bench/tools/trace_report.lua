@@ -32,8 +32,11 @@
 -- allocation addresses enough to move counter aliasing -- the same
 -- artifact measures p ~ 0.05 when loaded through a shorter relative path.
 -- ./bench/ci runs everything from the repository root, so the goldens pin
--- the counters for that layout. The canonical report is stable by
--- construction, so ./bench/ci verifies each report once.
+-- the counters for that layout. What the vote cannot pin is a p sitting near
+-- one half, and a codegen change that merely shifts artifact lines can put
+-- one there; the comparison against the goldens absorbs that by re-measuring
+-- a report that differs only in the measured sets (bench/tools/diff_counters,
+-- and "Marginal trace spots" in bench/README.md).
 --
 -- usage:
 --   luajit trace_report.lua <bench/macro/NAME.lua>          canonical report

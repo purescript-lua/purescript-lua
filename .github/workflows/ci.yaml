@@ -23,6 +23,13 @@ jobs:
       - name: "🔨 Build & test"
         run: >-
           nix develop --accept-flake-config --allow-import-from-derivation --command cabal test all --test-show-details=direct
+      # Which counter mismatch is re-measured as trace-formation noise and
+      # which fails outright is a judgement the oracle makes on every run, so
+      # it is pinned against synthetic reports first: a broken verdict then
+      # reads as itself instead of as a mystery counter diff. Milliseconds.
+      - name: "🧪 Bench oracle self-test"
+        run: >-
+          nix develop --accept-flake-config --allow-import-from-derivation --command ./bench/tools/counters_selftest
       # Deterministic LuaJIT counters over freshly linked bench artifacts
       # (FNEW census, trace abort/blacklist state). Wall-clock benchmarks
       # stay local — shared runners are too noisy; see bench/README.md.

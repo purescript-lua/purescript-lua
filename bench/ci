@@ -6,8 +6,11 @@
 # prove byte-stability outright. The trace report is nondeterministic per process (hot-count
 # aliasing plus an entropy-seeded penalty PRNG), so trace_report.lua makes it
 # stable by majority vote over independent trials rather than by hoping two
-# runs agree. Pass --accept after a deliberate codegen change to rewrite the
-# oracles from the current output.
+# runs agree. A spot whose per-process formation probability sits between 0
+# and 1 outlasts even the vote, so the comparison itself re-measures such a
+# report a bounded number of times before failing (diff_counters, which also
+# decides what counts as re-measurable). Pass --accept after a deliberate
+# codegen change to rewrite the oracles from the current output.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
@@ -46,6 +49,6 @@ if [ "$accept" = 1 ]; then
   cp "$out"/*.txt bench/goldens/
   echo "accepted $(find "$out" -name '*.txt' | wc -l) counter files into bench/goldens/"
 else
-  diff -ru bench/goldens "$out"
-  echo "bench counters match goldens"
+  ./bench/tools/diff_counters bench/goldens "$out" bench/macro \
+    luajit bench/tools/trace_report.lua
 fi

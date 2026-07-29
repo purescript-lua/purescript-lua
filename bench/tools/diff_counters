@@ -1,0 +1,163 @@
+#!/usr/bin/env bash
+# Compares a freshly generated directory of LuaJIT counter reports against the
+# committed oracles, re-measuring only what a second run of the same artifact
+# can legitimately change.
+#
+# usage: diff_counters <goldens-dir> <output-dir> <spec-dir> <regen-cmd...>
+#
+# <regen-cmd> is invoked as `<regen-cmd> <spec-dir>/<spec>.lua` and must print
+# a canonical trace report on stdout; its output replaces
+# <output-dir>/trace_<spec>.txt before the comparison is repeated.
+#
+# Why a re-measurement is worth a fresh set of processes at all: a trace
+# report records which source locations of the artifact ended up carrying a
+# compiled trace or a blacklist, and whether a given location does is a
+# per-process dice roll for spots sitting on LuaJIT's hot-count boundary --
+# its hot counters live in a small hashed table keyed by bytecode address, so
+# removing one `local` from an artifact reshuffles which counters collide.
+# trace_report.lua already votes over independent trials, which pins any spot
+# whose per-process formation probability p sits near 0 or 1; a spot in
+# between stays unpinnable, and a codegen change that merely shifts lines can
+# create one out of nothing.
+#
+# For such a spot, spending the process budget on a second vote beats spending
+# it on a longer one, because a longer vote only sharpens an estimate of a p
+# that is not near one half to begin with. With the default nine trials, the
+# chance one vote lands on the wrong side of the golden is P(Binom(9,p) <= 4):
+#
+#   p     one vote   +1 re-measurement   +2 (the default)   25 trials, one vote
+#   0.60  26.7%      7.1%                1.9%               15.4%
+#   0.70   9.9%      1.0%                0.1%                1.8%
+#   0.80   2.0%      0.04%               0.001%             0.04%
+#
+# The re-measurements are conjunctive -- every attempt must differ for the
+# oracle to fail -- which is what squares the odds where pooling the same
+# processes into one larger vote would not. Their independence is genuine
+# within a run: p is a property of the artifact plus the process layout, and
+# each trial is a fresh process, so the retry budget resamples the layout
+# while the artifact bytes and the LuaJIT binary stay fixed.
+#
+# The trade is that a regression landing near p = 0.5 is masked -- but such a
+# regression has no pinnable golden on either side even with one vote, so
+# nothing previously catchable becomes uncatchable. Everything else is
+# deterministic and re-measures to the same thing every time, so it spends the
+# budget and still fails.
+#
+# The retry budget is per report and overridable with BENCH_TRACE_RETRIES
+# (0 disables re-measurement, restoring a plain diff).
+set -euo pipefail
+
+goldens=$1
+out=$2
+specs=$3
+shift 3
+regen=("$@")
+
+# Clamped rather than validated, the way trace_report.lua treats its own trial
+# count: a knob that reads as garbage falls back to the documented default.
+retries=${BENCH_TRACE_RETRIES:-2}
+case $retries in
+'' | *[!0-9]*) retries=2 ;;
+esac
+
+report_names() {
+  local path
+  for path in "$1"/*.txt; do
+    [ -e "$path" ] || continue
+    basename "$path"
+  done | sort
+}
+
+# The censuses are static walks over the artifact and never run it, and a
+# trace report's header lines are derived from the spec plus a deterministic
+# checksum. Only a trace report's entries -- indented one level under their
+# section -- and the `counts:` line tallying them can differ between two runs
+# of the same artifact, so a difference anywhere else has nothing to
+# re-measure and must fail on the spot rather than buy fresh processes.
+noise_only() {
+  local line
+  while IFS= read -r line; do
+    case $line in
+    '  '* | 'counts: '*) ;;
+    *) return 1 ;;
+    esac
+  done < <(diff "$1" "$2" | sed -n 's/^[<>] \{0,1\}//p')
+}
+
+note() {
+  printf '%s\n' "$*" >&2
+}
+
+fail=0
+
+# A report on one side only means a spec or an artifact was added or removed,
+# which is a structural change to the oracle rather than a measurement.
+for name in $(comm -23 <(report_names "$goldens") <(report_names "$out")); do
+  note "$name: in the goldens but not in the output"
+  fail=1
+done
+for name in $(comm -13 <(report_names "$goldens") <(report_names "$out")); do
+  note "$name: in the output but not in the goldens"
+  fail=1
+done
+
+for name in $(comm -12 <(report_names "$goldens") <(report_names "$out")); do
+  if cmp -s "$goldens/$name" "$out/$name"; then
+    continue
+  fi
+
+  case $name in
+  trace_*.txt) ;;
+  *)
+    note "$name: differs from the golden"
+    diff -u "$goldens/$name" "$out/$name" >&2 || true
+    fail=1
+    continue
+    ;;
+  esac
+
+  if ! noise_only "$goldens/$name" "$out/$name"; then
+    note "$name: differs from the golden outside the measured sets"
+    diff -u "$goldens/$name" "$out/$name" >&2 || true
+    fail=1
+    continue
+  fi
+
+  first_diff=$(diff -u "$goldens/$name" "$out/$name" || true)
+  spec=${name#trace_}
+  spec=${spec%.txt}
+  attempt=0
+  matched=0
+  while [ "$attempt" -lt "$retries" ]; do
+    attempt=$((attempt + 1))
+    note "$name: differs in the measured sets; re-measuring ($attempt of $retries)"
+    "${regen[@]}" "$specs/$spec.lua" >"$out/$name.remeasured"
+    mv "$out/$name.remeasured" "$out/$name"
+    if cmp -s "$goldens/$name" "$out/$name"; then
+      matched=1
+      break
+    fi
+  done
+
+  if [ "$matched" = 1 ]; then
+    # Green, but never silently: a spot that resolves in some processes and
+    # not others is the one thing a reviewer cannot see in the committed
+    # goldens.
+    note "$name: matched on re-measurement $attempt -- the entries below are" \
+      "trace-formation noise, not a codegen change"
+    printf '%s\n' "$first_diff" >&2
+  else
+    if [ "$attempt" = 0 ]; then
+      note "$name: differs in the measured sets (re-measurement disabled)"
+    else
+      note "$name: still differs after $attempt re-measurement(s)"
+    fi
+    diff -u "$goldens/$name" "$out/$name" >&2 || true
+    fail=1
+  fi
+done
+
+if [ "$fail" != 0 ]; then
+  exit 1
+fi
+echo "bench counters match goldens"
