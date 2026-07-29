@@ -424,10 +424,10 @@ annotations (the 'Language.PureScript.Backend.IR.Types.alphaEq' relation
 weakened by ignoring the annotations optimization sheds unevenly).
 
 Binders are resolved to their references by name, so the key is correct
-under the GUC discipline the pass runs under (the blind descent of
-'Language.PureScript.Backend.IR.Types.freshenBinders'; the discard
-binder @_@ is exempt from uniqueness and referenced by nothing, so it
-stays unrenamed). Free references keep their names; a positional
+under the GUC discipline the pass runs under: binders are unique, so a
+reference belongs to a binder iff the names match (the discard binder
+@_@ is exempt from uniqueness and referenced by nothing, so it stays
+unrenamed). Free references keep their names; a positional
 @$key\<n\>@ name cannot collide with one, because @$@ never occurs in a
 source identifier and every supply-minted name uses another prefix.
 -}
@@ -449,8 +449,7 @@ alphaKey = canonicalize . void
       AbsN ann params' <$> go renames' body
     Let ann binds body → do
       -- Under unique binders no Let name can be referenced before it is
-      -- bound, so all the groupings can enter the rename map up front
-      -- (as in 'freshenBinders').
+      -- bound, so all the groupings can enter the rename map up front.
       renames' ←
         foldlM
           ( \rs name → do

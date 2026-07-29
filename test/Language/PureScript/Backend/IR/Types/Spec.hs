@@ -354,6 +354,37 @@ spec = describe "Types" do
       annotateShow freshened
       alphaEq guc freshened === True
 
+    it "leaves a free reference alone in the RHS of its own binder" do
+      -- let x = x in y: a Standalone binding is non-recursive, so the
+      -- RHS x is a free occurrence of an outer x (Note [Sequential
+      -- scoping of Let bindings]); only the binder is freshened.
+      runSupply
+        ( freshenBinders
+            (lets (Standalone (noAnn, x, refLocal x) :| []) (refLocal y))
+        )
+        `shouldBe` lets
+          (Standalone (noAnn, Name "x$0", refLocal x) :| [])
+          (refLocal y)
+
+    it "brings a Let's binders into scope left to right" do
+      -- let x = y; y = x in y: the RHS of the first binding predates the
+      -- y binder, so its y is free, while the RHS of the second sees the
+      -- freshened x and the body sees the freshened y.
+      runSupply
+        ( freshenBinders
+            ( lets
+                ( Standalone (noAnn, x, refLocal y)
+                    :| [Standalone (noAnn, y, refLocal x)]
+                )
+                (refLocal y)
+            )
+        )
+        `shouldBe` lets
+          ( Standalone (noAnn, Name "x$0", refLocal y)
+              :| [Standalone (noAnn, Name "y$1", refLocal (Name "x$0"))]
+          )
+          (refLocal (Name "y$1"))
+
     it "keeps the discard binders of a Let apart" do
       -- A magic-do-lowered thunk binds several Let statements to the
       -- GUC-exempt discard binder `_`. One name-keyed rename entry
