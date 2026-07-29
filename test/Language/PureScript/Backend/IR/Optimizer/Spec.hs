@@ -43,6 +43,10 @@ import Language.PureScript.Backend.IR.Optimizer
   , shareForeignAccessors
   , sinkProjectionIntoLet
   )
+import Language.PureScript.Backend.IR.Pass
+  ( PassCheckFailure (FixpointDivergence)
+  , maxFixpointIterations
+  )
 import Language.PureScript.Backend.IR.Supply (runSupply)
 import Language.PureScript.Backend.IR.Types
   ( AlgebraicType (ProductType, SumType)
@@ -4014,6 +4018,41 @@ spec = describe "IR Optimizer" do
               }
       annotateShow original
       optimizedUberModule mempty original === expected
+
+  -- Issue #348: Ω = (λx. x x) (λy. y y) is the smallest untyped term with
+  -- no normal form — every beta step reproduces it modulo binder names —
+  -- so the bottom-up driver's "re-apply the rule at this node until it
+  -- stops firing" loop must be bounded ('maxNestedRewrites'). PureScript's
+  -- type system rejects Ω, so no compiled program contains one; the
+  -- generator behind the properties below draws untyped terms and does.
+  describe "terminates on a term with no normal form (#348)" do
+    let selfApplication name =
+          abstraction (paramNamed name) $
+            application (refLocal name) (refLocal name)
+        omega =
+          application
+            (selfApplication (Name "x"))
+            (selfApplication (Name "y"))
+        original =
+          Linker.UberModule
+            { uberModuleForeigns = []
+            , uberModuleBindings = []
+            , uberModuleExports = [(Name "omega", omega)]
+            }
+
+    test "the pipeline gives up on a diverging redex" do
+      let optimized = optimizedUberModule mempty original
+      annotateShow optimized
+      -- Reaching an assertion at all is what this pins: the pipeline
+      -- returned rather than spinning. Abandoning a redex mid-reduction
+      -- leaves the term un-normalized but breaks no invariant, because
+      -- every step taken so far was semantics- and invariant-preserving.
+      lintWellScoped optimized === []
+      lintUniqueBinders optimized === []
+
+    test "the checked pipeline names the fixpoint that keeps firing" do
+      optimizedUberModuleChecked mempty original
+        === Left (FixpointDivergence "optimize+dce" maxFixpointIterations)
 
   describe "scoping invariants" do
     -- Mimics issue #37: an inlined binding contains a let with a
