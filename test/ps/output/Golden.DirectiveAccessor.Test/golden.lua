@@ -1,9 +1,5 @@
-local Data_Show_foreign = { showIntImpl = function(n) return tostring(n) end }
-local Data_Show_showIntImpl = Data_Show_foreign.showIntImpl
-local Effect_Console_foreign = {
-  log = function(s) return function() print(s) end end
-}
-local Effect_Console_log = Effect_Console_foreign.log
+local Data_Show_showIntImpl = function(n) return tostring(n) end
+local Effect_Console_log = function(s) return function() print(s) end end
 local Golden_DirectiveAccessor_Test_ops = {
   add = function(a) return function(b) return a + b end end,
   mul = function(a0) return function(b0) return a0 * b0 end end

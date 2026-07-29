@@ -69,8 +69,7 @@ local Data_EuclideanRing_foreign = {
     end
   end
 }
-local Partial_Unsafe_foreign = { _unsafePartial = function(f) return f() end }
-local Partial_Unsafe__unsafePartial = Partial_Unsafe_foreign._unsafePartial
+local Partial_Unsafe__unsafePartial = function(f) return f() end
 local Data_Unfoldable_foreign = {
   unfoldrArrayImpl = function(isNothing)
     return function(fromJust)
@@ -128,15 +127,12 @@ local Data_Enum_foreign = {
   end
 }
 local Data_Enum_toCharCode = Data_Enum_foreign.toCharCode
-local Data_String_Unsafe_foreign = {
-  charAt = function(i)
-    return function(s)
-      if i >= 0 and i < #(s) then return s:sub(i + 1, i + 1) end
-      error("Data.String.Unsafe.charAt: Invalid index.")
-    end
+local Data_String_Unsafe_charAt = function(i)
+  return function(s)
+    if i >= 0 and i < #(s) then return s:sub(i + 1, i + 1) end
+    error("Data.String.Unsafe.charAt: Invalid index.")
   end
-}
-local Data_String_Unsafe_charAt = Data_String_Unsafe_foreign.charAt
+end
 local Data_String_CodeUnits_foreign = {
   -- PureScript indices are 0-based, Lua string positions are 1-based;
   -- the exports below convert between the two. Pattern arguments are
@@ -251,10 +247,7 @@ local Data_String_CodePoints_foreign = (function()
     end
   }
 end)()
-local Effect_Console_foreign = {
-  log = function(s) return function() print(s) end end
-}
-local Effect_Console_log = Effect_Console_foreign.log
+local Effect_Console_log = function(s) return function() print(s) end end
 local Data_HeytingAlgebra_heytingAlgebraBoolean
 Data_HeytingAlgebra_heytingAlgebraBoolean = {
   ff = false,

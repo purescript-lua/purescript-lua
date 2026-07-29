@@ -2,40 +2,29 @@ UberModule
   { uberModuleBindings =
     [ Standalone
       ( QName
-        { qnameModuleName = ModuleName "Data.Show", qnameName = Name "foreign"
-        }, ForeignImport Nothing
-        ( ModuleName "Data.Show" ) ".spago/p/prelude/5718c84fdde6247749cb053e816df696c30fe691/src/Data/Show.purs"
-        [ ( Nothing, Name "showIntImpl" ) ]
-      ), Standalone
-      ( QName
         { qnameModuleName = ModuleName "Data.Show", qnameName = Name "showIntImpl"
         }, ObjectProp Nothing
-        ( Ref Nothing ( Imported ( ModuleName "Data.Show" ) ( Name "foreign" ) ) )
+        ( ForeignImport Nothing
+          ( ModuleName "Data.Show" ) ".spago/p/prelude/5718c84fdde6247749cb053e816df696c30fe691/src/Data/Show.purs"
+          [ ( Nothing, Name "showIntImpl" ) ]
+        )
         ( PropName "showIntImpl" )
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "foreign"
-        }, ForeignImport Nothing
-        ( ModuleName "Effect.Console" ) ".spago/p/console/f82835a0b873aafe6bd7b14dd30cc150553d4ab9/src/Effect/Console.purs"
-        [ ( Nothing, Name "log" ) ]
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "log"
         }, ObjectProp Nothing
-        ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
+        ( ForeignImport Nothing
+          ( ModuleName "Effect.Console" ) ".spago/p/console/f82835a0b873aafe6bd7b14dd30cc150553d4ab9/src/Effect/Console.purs"
+          [ ( Nothing, Name "log" ) ]
+        )
         ( PropName "log" )
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Golden.DistributeIntoIf.Test", qnameName = Name "foreign"
-        }, ForeignImport Nothing
-        ( ModuleName "Golden.DistributeIntoIf.Test" ) "src/Golden/DistributeIntoIf/Test.purs"
-        [ ( Nothing, Name "flag" ) ]
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Golden.DistributeIntoIf.Test", qnameName = Name "flag"
         }, ObjectProp Nothing
-        ( Ref Nothing
-          ( Imported ( ModuleName "Golden.DistributeIntoIf.Test" ) ( Name "foreign" ) )
+        ( ForeignImport Nothing
+          ( ModuleName "Golden.DistributeIntoIf.Test" ) "src/Golden/DistributeIntoIf/Test.purs"
+          [ ( Nothing, Name "flag" ) ]
         )
         ( PropName "flag" )
       ), RecursiveGroup

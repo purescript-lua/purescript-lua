@@ -21,10 +21,7 @@ local Data_Functor_foreign = {
     end
   end
 }
-local Effect_Console_foreign = {
-  log = function(s) return function() print(s) end end
-}
-local Effect_Console_log = Effect_Console_foreign.log
+local Effect_Console_log = function(s) return function() print(s) end end
 local Data_Show_showInt = { show = Data_Show_showIntImpl }
 local Data_Show_show = function(dict) return dict.show end
 local Effect_Console_logShow_S_w = function(dictShow, a)

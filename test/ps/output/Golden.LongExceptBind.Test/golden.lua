@@ -40,9 +40,6 @@ local Data_Show_foreign = {
     return table.concat(out)
   end
 }
-local Effect_Console_foreign = {
-  log = function(s) return function() print(s) end end
-}
 local Data_Identity_applyIdentity = {
   apply = function(v) return function(v1) return v(v1) end end,
   Functor0 = function()
@@ -1163,11 +1160,12 @@ local Golden_LongExceptBind_Test_go = (function()
 end)()
 return (function()
   local _S_cse2 = Golden_LongExceptBind_Test_go[2]
-  return Effect_Console_foreign.log((function()
+  local s = (function()
     if "Data.Either∷Either.Left" == Golden_LongExceptBind_Test_go[1] then
       return "(Left " .. Data_Show_foreign.showStringImpl(_S_cse2) .. ")"
     else
       return "(Right " .. Data_Show_foreign.showIntImpl(_S_cse2) .. ")"
     end
-  end)())()
+  end)()
+  print(s)
 end)()

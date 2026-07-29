@@ -10,20 +10,7 @@ local Data_Show_foreign = {
   end
 }
 local Data_Show_showIntImpl = Data_Show_foreign.showIntImpl
-local Data_Functor_foreign = {
-  arrayMap = function(f)
-    return function(arr)
-      local l = #(arr)
-      local result = {}
-      for i = 1, l do result[i] = f(arr[i]) end
-      return result
-    end
-  end
-}
-local Effect_Console_foreign = {
-  log = function(s) return function() print(s) end end
-}
-local Effect_Console_log = Effect_Console_foreign.log
+local Effect_Console_log = function(s) return function() print(s) end end
 local Data_Show_showInt = { show = Data_Show_showIntImpl }
 local Data_Show_show = function(dict) return dict.show end
 local Effect_Console_logShow_S_w = function(dictShow, a)
@@ -32,7 +19,14 @@ end
 local Golden_UncurryCtor_Test_logShow = function(logShow_S_p2_S_0)
   return Effect_Console_log(Data_Show_showIntImpl(logShow_S_p2_S_0))
 end
-local Golden_UncurryCtor_Test_map = Data_Functor_foreign.arrayMap
+local Golden_UncurryCtor_Test_map = function(f)
+  return function(arr)
+    local l = #(arr)
+    local result = {}
+    for i = 1, l do result[i] = f(arr[i]) end
+    return result
+  end
+end
 local Golden_UncurryCtor_Test_Origin = {
   "Golden.UncurryCtor.Test∷Shape.Origin"
 }

@@ -17,10 +17,7 @@ local Control_Monad_ST_Internal_foreign = {
     end
   end
 }
-local Effect_Console_foreign = {
-  log = function(s) return function() print(s) end end
-}
-local Effect_Console_log = Effect_Console_foreign.log
+local Effect_Console_log = function(s) return function() print(s) end end
 local Golden_MixedEffectSTDo_Test_tally = function(start)
   return Control_Monad_ST_Internal_foreign.run(function()
     local ref = start

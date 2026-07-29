@@ -2,27 +2,21 @@ UberModule
   { uberModuleBindings =
     [ Standalone
       ( QName
-        { qnameModuleName = ModuleName "Record.Unsafe", qnameName = Name "foreign"
-        }, ForeignImport Nothing
-        ( ModuleName "Record.Unsafe" ) ".spago/p/prelude/5718c84fdde6247749cb053e816df696c30fe691/src/Record/Unsafe.purs"
-        [ ( Nothing, Name "unsafeGet" ) ]
-      ), Standalone
-      ( QName
         { qnameModuleName = ModuleName "Record.Unsafe", qnameName = Name "unsafeGet"
         }, ObjectProp Nothing
-        ( Ref Nothing ( Imported ( ModuleName "Record.Unsafe" ) ( Name "foreign" ) ) )
+        ( ForeignImport Nothing
+          ( ModuleName "Record.Unsafe" ) ".spago/p/prelude/5718c84fdde6247749cb053e816df696c30fe691/src/Record/Unsafe.purs"
+          [ ( Nothing, Name "unsafeGet" ) ]
+        )
         ( PropName "unsafeGet" )
-      ), Standalone
-      ( QName
-        { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "foreign"
-        }, ForeignImport Nothing
-        ( ModuleName "Effect.Console" ) ".spago/p/console/f82835a0b873aafe6bd7b14dd30cc150553d4ab9/src/Effect/Console.purs"
-        [ ( Nothing, Name "log" ) ]
       ), Standalone
       ( QName
         { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "log"
         }, ObjectProp Nothing
-        ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
+        ( ForeignImport Nothing
+          ( ModuleName "Effect.Console" ) ".spago/p/console/f82835a0b873aafe6bd7b14dd30cc150553d4ab9/src/Effect/Console.purs"
+          [ ( Nothing, Name "log" ) ]
+        )
         ( PropName "log" )
       ), RecursiveGroup
       (

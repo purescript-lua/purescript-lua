@@ -2,6 +2,7 @@ module Language.PureScript.Backend.IR.Optimizer.Spec where
 
 import Control.Lens (toListOf)
 import Data.Map qualified as Map
+import Data.Set qualified as Set
 import Data.Text qualified as Text
 import Hedgehog (PropertyT, annotateShow, diff, evalEither, forAll, (===))
 import Hedgehog.Gen qualified as Gen
@@ -19,6 +20,7 @@ import Language.PureScript.Backend.IR.Linter
   )
 import Language.PureScript.Backend.IR.Names
   ( CtorName (..)
+  , ModuleName
   , Name (..)
   , PropName (..)
   , QName (..)
@@ -28,6 +30,7 @@ import Language.PureScript.Backend.IR.Names
   )
 import Language.PureScript.Backend.IR.Optimizer
   ( CallSiteInlining (SkipCallSites)
+  , ProgramFacts (..)
   , optimizeModule
   , optimizedExpression
   , optimizedExpressionWithCanon
@@ -106,6 +109,14 @@ import Test.Hspec
   )
 import Test.Hspec.Hedgehog (hedgehog, modifyMaxShrinks, modifyMaxSuccess)
 import Test.Hspec.Hedgehog.Extended (test)
+
+{- | 'ProgramFacts' asserting that one module's FFI source is header-free,
+the precondition of the single-use foreign-import fold (see Note [Inlining
+a single-use foreign import]).
+-}
+headerFreeFacts ∷ ModuleName → ProgramFacts
+headerFreeFacts modname =
+  mempty {factsHeaderFreeForeigns = Set.singleton modname}
 
 -- | Like 'test', but runs the property over many generated inputs.
 prop ∷ String → PropertyT IO () → SpecWith ()
@@ -3571,7 +3582,9 @@ spec = describe "IR Optimizer" do
     -- identity, e.g. `unit = {}`) are invisible to the IR, so pasting the
     -- 'ForeignImport' into its use site can multiply allocations and
     -- change identity. Here the only use sits under a lambda: inlining
-    -- would re-create the table on every call.
+    -- would re-create the table on every call, so it stays hoisted even
+    -- with the source declared header-free — the one condition the
+    -- single-use fold cannot waive.
     test "does not inline a used-once foreign import" do
       let mainModule = moduleNameFromString "Main"
           original =
@@ -3591,7 +3604,7 @@ spec = describe "IR Optimizer" do
               , modulePath = "Main.purs"
               }
           optimized =
-            optimizedUberModule mempty $
+            optimizedUberModule (headerFreeFacts mainModule) $
               Linker.makeUberModule (LinkAsModule mainModule) [original]
           foreignKept =
             [ qn
@@ -3600,6 +3613,125 @@ spec = describe "IR Optimizer" do
             ]
       annotateShow optimized
       foreignKept === [QName mainModule (Name "foreign")]
+
+  describe "dissolves a single-use foreign import (issue #251)" do
+    -- A header-free FFI source is a bare `return { … }`, so its import
+    -- lowers to a plain table constructor whose evaluation may move
+    -- freely among the module-init statements. Read exactly once, from a
+    -- position evaluated exactly once, it is folded into that read: the
+    -- table is still built once, and the Lua backend takes the field out
+    -- of the constructor.
+    let mainModule = moduleNameFromString "Main"
+        foreignQName = QName mainModule Linker.foreignName
+        -- The linker's foreign shapes for a module declaring `x` (and,
+        -- with two names, `y`): see Note [Foreign bindings structure
+        -- emitted by the Linker].
+        moduleWith
+          ∷ [(Ann, Name)] → [Grouping (Ann, Name, Exp)] → [Name] → Module
+        moduleWith foreigns bindings exports =
+          Module
+            { moduleName = mainModule
+            , moduleBindings = bindings
+            , moduleImports = []
+            , moduleExports = exports
+            , moduleReExports = Map.empty
+            , moduleForeigns = foreigns
+            , modulePath = "Main.purs"
+            }
+        optimizeWith ∷ ProgramFacts → Module → Linker.UberModule
+        optimizeWith facts =
+          optimizedUberModule facts
+            . Linker.makeUberModule (LinkAsModule mainModule)
+            . pure
+        importsKept ∷ Linker.UberModule → [QName]
+        importsKept optimized =
+          [ qn
+          | Standalone (qn, ForeignImport {}) ←
+              Linker.uberModuleBindings optimized
+          ]
+        -- The import as the linker builds it, carrying the one reachable
+        -- name and the pragma declared on it.
+        theImport ∷ Ann → Exp
+        theImport nameAnn =
+          ForeignImport noAnn mainModule "Main.purs" [(nameAnn, Name "x")]
+
+    test "folds the import into the export that reads it" do
+      -- `foreign import x` re-exported: the accessor dissolves into the
+      -- export, leaving the import read once at the export's root.
+      let optimized =
+            optimizeWith
+              (headerFreeFacts mainModule)
+              (moduleWith [(noAnn, Name "x")] [] [Name "x"])
+      annotateShow optimized
+      Linker.uberModuleBindings optimized === []
+      Linker.uberModuleExports optimized
+        === [(Name "x", objectProp (theImport noAnn) (PropName "x"))]
+
+    test "collapses the import into a kept accessor binding" do
+      -- `@inline never` keeps the accessor a shared binding, whose
+      -- right-hand side is then the import's one reference — itself a
+      -- once-evaluated root, so the pair collapses into one binding.
+      let optimized =
+            optimizeWith
+              (headerFreeFacts mainModule)
+              (moduleWith [(Just Never, Name "x")] [] [Name "x"])
+      annotateShow optimized
+      Linker.uberModuleBindings optimized
+        === [ Standalone
+                ( QName mainModule (Name "x")
+                , setAnn
+                    (Just Never)
+                    (objectProp (theImport (Just Never)) (PropName "x"))
+                )
+            ]
+
+    test "keeps an import whose source has header statements" do
+      -- Absent from the header-free set: the header's side effects would
+      -- move against the other module-init statements.
+      let optimized =
+            optimizeWith mempty (moduleWith [(noAnn, Name "x")] [] [Name "x"])
+      annotateShow optimized
+      importsKept optimized === [foreignQName]
+
+    test "keeps an import read at two sites" do
+      -- Two foreign names dissolve into two reads of the table; folding
+      -- either would duplicate the constructor.
+      let optimized =
+            optimizeWith
+              (headerFreeFacts mainModule)
+              ( moduleWith
+                  [(noAnn, Name "x"), (noAnn, Name "y")]
+                  []
+                  [Name "x", Name "y"]
+              )
+      annotateShow optimized
+      importsKept optimized === [foreignQName]
+
+    test "keeps an import read from an if branch" do
+      -- The single read is evaluated zero or one times per evaluation of
+      -- the export, so the fold declines even though the count is one.
+      let ext = moduleNameFromString "Ext"
+          optimized =
+            optimizedUberModule (headerFreeFacts mainModule) $
+              Linker.UberModule
+                { uberModuleForeigns = []
+                , uberModuleBindings =
+                    [Standalone (foreignQName, theImport noAnn)]
+                , uberModuleExports =
+                    [
+                      ( Name "main"
+                      , ifThenElse
+                          (refImported ext (Name "c"))
+                          ( objectProp
+                              (refImported mainModule Linker.foreignName)
+                              (PropName "x")
+                          )
+                          (literalInt 0)
+                      )
+                    ]
+                }
+      annotateShow optimized
+      importsKept optimized === [foreignQName]
 
   describe "respects @inline never on foreign export names (issue #175)" do
     -- The pragma annotation drained into 'moduleForeigns' must reach the

@@ -40,17 +40,15 @@ local Data_Show_foreign = {
     return table.concat(out)
   end
 }
-local Effect_Console_foreign = {
-  log = function(s) return function() print(s) end end
-}
 local Golden_LongEitherBind_Test_compute = { "Data.Either∷Either.Right", 451 }
 return (function()
   local _S_cse0 = Golden_LongEitherBind_Test_compute[2]
-  return Effect_Console_foreign.log((function()
+  local s = (function()
     if "Data.Either∷Either.Left" == Golden_LongEitherBind_Test_compute[1] then
       return "(Left " .. Data_Show_foreign.showStringImpl(_S_cse0) .. ")"
     else
       return "(Right " .. Data_Show_foreign.showIntImpl(_S_cse0) .. ")"
     end
-  end)())()
+  end)()
+  print(s)
 end)()

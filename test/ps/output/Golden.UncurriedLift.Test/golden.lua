@@ -3,10 +3,7 @@ local Control_Monad_ST_Internal_foreign = {
   pure_ = function(a) return function() return a end end,
   run = function(f) return f() end
 }
-local Effect_Console_foreign = {
-  log = function(s) return function() print(s) end end
-}
-local Effect_Console_log = Effect_Console_foreign.log
+local Effect_Console_log = function(s) return function() print(s) end end
 local Golden_UncurriedLift_Test_logShow = function(a_S_0)
   return Effect_Console_log(Data_Show_foreign.showIntImpl(a_S_0))
 end

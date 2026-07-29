@@ -8,12 +8,6 @@ UberModule
         [ ( Nothing, Name "showIntImpl" ) ]
       ), Standalone
       ( QName
-        { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "foreign"
-        }, ForeignImport Nothing
-        ( ModuleName "Effect.Console" ) ".spago/p/console/f82835a0b873aafe6bd7b14dd30cc150553d4ab9/src/Effect/Console.purs"
-        [ ( Nothing, Name "log" ) ]
-      ), Standalone
-      ( QName
         { qnameModuleName = ModuleName "Golden.LongMaybeBind.Test", qnameName = Name "compute"
         }, Ctor Nothing SumType
         ( ModuleName "Data.Maybe" )
@@ -28,7 +22,10 @@ UberModule
       ),
       ( Name "main", AppN Nothing
         ( ObjectProp Nothing
-          ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "foreign" ) ) )
+          ( ForeignImport Nothing
+            ( ModuleName "Effect.Console" ) ".spago/p/console/f82835a0b873aafe6bd7b14dd30cc150553d4ab9/src/Effect/Console.purs"
+            [ ( Nothing, Name "log" ) ]
+          )
           ( PropName "log" )
         )
         ( IfThenElse Nothing

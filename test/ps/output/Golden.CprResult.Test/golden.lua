@@ -1,10 +1,6 @@
 local M = {}
-local Data_Show_foreign = { showIntImpl = function(n) return tostring(n) end }
-local Data_Show_showIntImpl = Data_Show_foreign.showIntImpl
-local Effect_Console_foreign = {
-  log = function(s) return function() print(s) end end
-}
-local Effect_Console_log = Effect_Console_foreign.log
+local Data_Show_showIntImpl = function(n) return tostring(n) end
+local Effect_Console_log = function(s) return function() print(s) end end
 local Golden_CprResult_Test_sub_S_w = function(x_S_0, y_S_0)
   return x_S_0 - y_S_0
 end

@@ -1,9 +1,4 @@
-local Data_Unit_foreign = { unit = {} }
-local Data_Unit_unit = Data_Unit_foreign.unit
-local Data_Show_foreign = { showIntImpl = function(n) return tostring(n) end }
-local Effect_Console_foreign = {
-  log = function(s) return function() print(s) end end
-}
+local Data_Unit_unit = {}
 local Data_Identity_applyIdentity = {
   apply = function(v) return function(v1) return v(v1) end end,
   Functor0 = function()
@@ -160,4 +155,6 @@ local Golden_CprState_Test_go = Golden_CprState_Test_bindStateT.bind(Golden_CprS
     end)
   end)
 end)
-return Effect_Console_foreign.log(Data_Show_foreign.showIntImpl((Golden_CprState_Test_go(0))[1]))()
+return (function(s) return function() print(s) end end)((function(n)
+  return tostring(n)
+end)((Golden_CprState_Test_go(0))[1]))()

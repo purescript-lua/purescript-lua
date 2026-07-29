@@ -96,29 +96,46 @@ import Language.PureScript.Backend.IR.Types
 import Language.PureScript.Backend.IR.Uncurry (uncurryWorkerWrapper)
 import Language.PureScript.Backend.IR.Uniquify (uniquifyNames)
 
-optimizedUberModule ∷ DataTypes → UberModule → UberModule
-optimizedUberModule dataTypes uber = runSupply do
+{- | What the optimizer knows about the program beyond the IR it is handed:
+the data-type table collected from CoreFn
+('Language.PureScript.Backend.IR.collectDataDeclarations'), read by the
+exhaustiveness-driven rewrite ('removeUnreachableMatchDefault'), and the
+foreign modules whose FFI source is header-free
+('Language.PureScript.Backend.Lua.ForeignLift.headerFreeForeigns'), read by
+the single-use foreign-import fold (Note [Inlining a single-use foreign
+import]). Both are facts the IR itself does not carry, so the caller supplies
+them; 'mempty' asserts neither, and the rules that read them decline.
+-}
+data ProgramFacts = ProgramFacts
+  { factsDataTypes ∷ DataTypes
+  , factsHeaderFreeForeigns ∷ Set ModuleName
+  }
+  deriving stock (Generic)
+  deriving (Semigroup, Monoid) via Generically ProgramFacts
+
+optimizedUberModule ∷ ProgramFacts → UberModule → UberModule
+optimizedUberModule facts uber = runSupply do
   let policy = collectInlinePolicy uber
-  settled ← runSteps (settlePhase (optimizerPipeline dataTypes policy)) uber
+  settled ← runSteps (settlePhase (optimizerPipeline facts policy)) uber
   -- See Note [Derived inline directives]
   let extended = policy <> derivedInlinePolicy policy settled
-  runSteps (lowerPhase (optimizerPipeline dataTypes extended)) settled
+  runSteps (lowerPhase (optimizerPipeline facts extended)) settled
 
 {- | 'optimizedUberModule' with every pass's contract checked by the
 linter, failing with the name of the offending pass. Used by the test
 suite always, and by the CLI behind the @--lint-ir@ flag.
 -}
 optimizedUberModuleChecked
-  ∷ DataTypes → UberModule → Either PassCheckFailure UberModule
-optimizedUberModuleChecked dataTypes uber = runSupply $ runExceptT do
+  ∷ ProgramFacts → UberModule → Either PassCheckFailure UberModule
+optimizedUberModuleChecked facts uber = runSupply $ runExceptT do
   let policy = collectInlinePolicy uber
   settled ←
     ExceptT
-      (runStepsChecked (settlePhase (optimizerPipeline dataTypes policy)) uber)
+      (runStepsChecked (settlePhase (optimizerPipeline facts policy)) uber)
   -- See Note [Derived inline directives]
   let extended = policy <> derivedInlinePolicy policy settled
   ExceptT
-    (runStepsChecked (lowerPhase (optimizerPipeline dataTypes extended)) settled)
+    (runStepsChecked (lowerPhase (optimizerPipeline facts extended)) settled)
 
 {- | The optimizer pipeline, split at the directive-derivation point:
 the settle phase brings every binding to the shape
@@ -131,19 +148,18 @@ data OptimizerPhases = OptimizerPhases
   , lowerPhase ∷ [Step]
   }
 
-{- | The IR optimization pipeline. The first argument is the data-type
-table collected from CoreFn ('collectDataDeclarations'), consulted by
-the exhaustiveness-driven rewrite ('removeUnreachableMatchDefault');
-the second is the inlining policy collected once from the pristine
-module before any pass runs: later rewrites may strip annotations, so
-every directive keys off a name (see Note [Inline annotations and
-inlining heuristics]). The result is phase-split so the caller can
-extend the policy with derived directives between the phases
-('OptimizerPhases').
+{- | The IR optimization pipeline. The first argument is what the caller
+knows about the program beyond the IR ('ProgramFacts'); the second is the
+inlining policy collected once from the pristine module before any pass
+runs: later rewrites may strip annotations, so every directive keys off a
+name (see Note [Inline annotations and inlining heuristics]). The result
+is phase-split so the caller can extend the policy with derived
+directives between the phases ('OptimizerPhases').
 -}
-optimizerPipeline ∷ DataTypes → InlinePolicy → OptimizerPhases
-optimizerPipeline dataTypes policy = OptimizerPhases {settlePhase, lowerPhase}
+optimizerPipeline ∷ ProgramFacts → InlinePolicy → OptimizerPhases
+optimizerPipeline facts policy = OptimizerPhases {settlePhase, lowerPhase}
  where
+  ProgramFacts {factsDataTypes = dataTypes, factsHeaderFreeForeigns} = facts
   settlePhase =
     [ -- The entry pass (issue #139): establishes the global-uniqueness
       -- condition (GUC = 'UniqueBinders') that every
@@ -237,6 +253,14 @@ optimizerPipeline dataTypes policy = OptimizerPhases {settlePhase, lowerPhase}
       -- the last pass that can multiply reads and before the final
       -- flattening. See 'shareForeignAccessors'.
       RunPass shareAccessorsPass
+    , -- Dissolve the foreign table of a header-free FFI module read at a
+      -- single, once-evaluated site into that site. Runs directly after
+      -- share-accessors, the last pass that moves a foreign read: only
+      -- here is the reference count of an import final, and only here
+      -- does the accessor a shared read was just re-bound to count as
+      -- the import's one reference. See Note [Inlining a single-use
+      -- foreign import].
+      RunPass inlineSingleUseForeignsPass
     , -- Rebuild sharing within one body for the pure repeats the pastes
       -- above left behind (issue #183): alpha-equivalent effect-free
       -- subexpressions of a block are hoisted into a shared Let. Runs
@@ -339,6 +363,10 @@ optimizerPipeline dataTypes policy = OptimizerPhases {settlePhase, lowerPhase}
   floatInPass = gucPass "float-in" floatIn
   shareAccessorsPass =
     gucPass "share-accessors" (shareForeignAccessors policy)
+  inlineSingleUseForeignsPass =
+    gucPass
+      "inline-single-use-foreigns"
+      (inlineSingleUseForeignImports factsHeaderFreeForeigns)
   csePass =
     Pass
       { passName = "cse"
@@ -493,6 +521,182 @@ shareForeignAccessors policy uber
           , qnameModuleName accessor == qnameModuleName qname
           ]
     grouping → [grouping]
+
+{- Note [Inlining a single-use foreign import]
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+A 'ForeignImport' is the table of one foreign module's exports, and the
+inliner refuses to paste one into its use sites however few they are
+(Note [Inline annotations and inlining heuristics]): the export values are
+opaque to the IR and some are Lua table constructors with identity
+(@unit = {}@ in the prelude), so a copy landing under a lambda would
+allocate a fresh table per call where every site is meant to share one.
+
+'inlineSingleUseForeignImports' admits the shapes where that cannot happen.
+It folds an import into its use site when
+
+  (1) exactly one reference to the import is left;
+  (2) its FFI source is header-free — a bare @return { … }@ with nothing
+      before it (Note [Foreign module source format] in
+      "Language.PureScript.Backend.Lua.Linker.Foreign", decided by
+      'Language.PureScript.Backend.Lua.ForeignLift.headerFreeForeigns');
+  (3) the path from the top-level right-hand side (or export) holding that
+      reference down to it crosses only positions evaluated exactly once
+      per evaluation of the root ('evaluatedExactlyOnce').
+
+Identity is minted per evaluation of the constructor, so preserving the
+number of evaluations preserves identity: (1) and (3) together say the
+table is still built exactly once after the fold. (2) is about /when/ it
+is built — header statements may carry side effects whose order against
+the other module-init statements the fold would move, whereas a
+header-free source lowers to a plain table constructor whose evaluation
+commutes with them.
+
+Every top-level right-hand side and export is a once-evaluated root, since
+module init runs each exactly once, so the walk starts there and declines
+at an 'AbsN' (a body runs zero to many times per evaluation of the lambda,
+and an IR thunk is a lambda, so laziness is covered by the same test), at
+either branch of an 'IfThenElse', and at the right operand of Lua's
+short-circuiting @and@/@or@ (zero or one).
+
+The pass runs directly after 'shareForeignAccessors' because that is the
+last pass to change an import's reference count, and it moves the count in
+both directions: dissolving an accessor multiplies the import's references
+over the use sites, and re-binding a read shared by several sites
+collapses them back to one — the accessor binding's right-hand side, which
+is a once-evaluated root. Nothing further happens at the IR level; the
+payoff is in the Lua backend, where the pasted import lowers to a field
+access into a table constructor that 'reduceTableDefinitionAccessor'
+(issue #140) and the scope-call fold (issue #159) reduce to the field's
+value.
+
+That last fold keeps one row and discards the rest, so a name still on the
+folded import's list but no longer read loses its allocation — the shape
+left behind when the last reader of a second export disappears after
+'mergeForeignsIntoBindings', past the point where dead-code elimination
+re-prunes the list. Dropping the row is the same licence dead-code
+elimination already takes when it prunes an unreferenced name out of a
+hoisted import, and it is why an FFI file's effects belong in its header,
+which condition (2) keeps out of the fold altogether.
+-}
+
+{- | Fold a foreign module's export table into the single, once-evaluated
+site that reads it. See Note [Inlining a single-use foreign import]; the
+argument is the set of modules whose FFI source is header-free.
+-}
+inlineSingleUseForeignImports ∷ Set ModuleName → UberModule → UberModule
+inlineSingleUseForeignImports headerFree uber
+  | Map.null folded = uber
+  | otherwise =
+      uber
+        { uberModuleBindings =
+            [ fmap (fmap pasteImports) grouping
+            | grouping ← uberModuleBindings
+            , not (dissolved grouping)
+            ]
+        , uberModuleExports = fmap (fmap pasteImports) uberModuleExports
+        }
+ where
+  UberModule {uberModuleBindings, uberModuleExports} = uber
+
+  -- The linker never puts an import in a recursive group, so only a
+  -- 'Standalone' binding can be the one the paste replaces.
+  dissolved ∷ Grouping (QName, Exp) → Bool
+  dissolved = \case
+    Standalone (qname, _rhs) → qname `Map.member` folded
+    RecursiveGroup {} → False
+
+  -- Every top-level right-hand side and export: the once-evaluated roots
+  -- the reference must be reachable from, and the sites the fold rewrites.
+  roots ∷ [Exp]
+  roots =
+    (snd <$> (listGrouping =<< uberModuleBindings))
+      <> (snd <$> uberModuleExports)
+
+  referenceCounts ∷ Map (Qualified Name) Natural
+  referenceCounts = Map.unionsWith (+) (countFreeRefs <$> roots)
+
+  -- The imports to dissolve, keyed by the name their binding holds. An
+  -- import's right-hand side names nothing, so no folded import can occur
+  -- inside another and the pastes are independent of each other.
+  folded ∷ Map QName Exp
+  folded =
+    Map.fromList
+      [ (qname, expr)
+      | Standalone (qname, expr@(ForeignImport _ann modname _path _names)) ←
+          uberModuleBindings
+      , modname `Set.member` headerFree
+      , let ref = qualifiedQName qname
+      , Map.lookup ref referenceCounts == Just 1
+      , all (evaluatedExactlyOnce ref) roots
+      ]
+
+  pasteImports ∷ Exp → Exp
+  pasteImports = transformOf subexpressions \node → case node of
+    Ref _ann (Imported modname name) →
+      fromMaybe node (Map.lookup (QName modname name) folded)
+    _ → node
+
+{- | Whether every free occurrence of the name within the expression sits
+in a position evaluated exactly once per evaluation of the expression.
+See Note [Inlining a single-use foreign import].
+-}
+evaluatedExactlyOnce ∷ Qualified Name → Exp → Bool
+evaluatedExactlyOnce name = go
+ where
+  go ∷ Exp → Bool
+  go expr
+    | occurrences expr == 0 = True
+    | Ref {} ← expr = True
+    | otherwise =
+        let children = onceEvaluatedSubexpressions expr
+         in sum (occurrences <$> children) == occurrences expr
+              && all go children
+
+  occurrences ∷ Exp → Natural
+  occurrences = countFreeRef name
+
+{- | The subexpressions a node evaluates exactly once per evaluation of
+itself. The complement — a lambda body, an 'IfThenElse' branch, the right
+operand of Lua's short-circuiting @and@/@or@ — is evaluated zero to many
+times and is therefore absent, which is how 'evaluatedExactlyOnce' spots a
+reference it must not move. See Note [Inlining a single-use foreign
+import].
+-}
+onceEvaluatedSubexpressions ∷ RawExp ann → [RawExp ann]
+onceEvaluatedSubexpressions = \case
+  LiteralInt {} → []
+  LiteralFloat {} → []
+  LiteralString {} → []
+  LiteralChar {} → []
+  LiteralBool {} → []
+  LiteralArray _ann elems → elems
+  LiteralObject _ann props → snd <$> props
+  Ctor _ann _algTy _modname _tyName _ctorName fields → fields
+  ReflectCtor _ann e → [e]
+  Eq _ann a b → [a, b]
+  PrimBinOp _ann op a b
+    | op == PrimAnd || op == PrimOr → [a]
+    | otherwise → [a, b]
+  PrimNot _ann e → [e]
+  DataArgumentByIndex _ann _algTy _idx e → [e]
+  PrimLen _ann e → [e]
+  ArrayIndex _ann e _idx → [e]
+  ObjectProp _ann e _prop → [e]
+  ObjectUpdate _ann e props → e : (snd <$> toList props)
+  AbsN {} → []
+  AppN _ann f args → f : toList args
+  Ref {} → []
+  Let _ann groupings body →
+    [ rhs
+    | grouping ← toList groupings
+    , (_bindAnn, _name, rhs) ← listGrouping grouping
+    ]
+      <> [body]
+  Values _ann es → toList es
+  LetValues _ann _params rhs body → [rhs, body]
+  IfThenElse _ann cond _then _else → [cond]
+  Exception {} → []
+  ForeignImport {} → []
 
 {- | Every inlining directive of the module, keyed by binding name.
 Collected once from the pristine module: later rewrites can drop an

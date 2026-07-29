@@ -1,10 +1,6 @@
 local M = {}
-local Data_Show_foreign = { showIntImpl = function(n) return tostring(n) end }
-local Data_Show_showIntImpl = Data_Show_foreign.showIntImpl
-local Effect_Console_foreign = {
-  log = function(s) return function() print(s) end end
-}
-local Effect_Console_log = Effect_Console_foreign.log
+local Data_Show_showIntImpl = function(n) return tostring(n) end
+local Effect_Console_log = function(s) return function() print(s) end end
 M.Golden_DirectiveArity_Test_Op = function(value0) return { value0 } end
 M.Golden_DirectiveArity_Test_runOp = function(op)
   return function(x) return op[1](x) end

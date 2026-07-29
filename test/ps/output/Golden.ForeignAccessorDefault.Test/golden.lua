@@ -1,9 +1,5 @@
-local Data_Show_foreign = { showIntImpl = function(n) return tostring(n) end }
-local Data_Show_showIntImpl = Data_Show_foreign.showIntImpl
-local Effect_Console_foreign = {
-  log = function(s) return function() print(s) end end
-}
-local Effect_Console_log = Effect_Console_foreign.log
+local Data_Show_showIntImpl = function(n) return tostring(n) end
+local Effect_Console_log = function(s) return function() print(s) end end
 local Golden_ForeignAccessorDefault_Test_foreign = {
   double = function(n) return n * 2 end,
   bump = function(n) return n + 1 end

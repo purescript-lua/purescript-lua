@@ -11,13 +11,6 @@ local Data_Show_foreign = {
   end
 }
 local Data_Show_showIntImpl = Data_Show_foreign.showIntImpl
-local Control_Monad_ST_Internal_foreign = {
-  pure_ = function(a) return function() return a end end,
-  bind_ = function(a)
-    return function(f) return function() return f(a())() end end
-  end,
-  run = function(f) return f() end
-}
 local Data_Array_ST_foreign = (function()
   -- Lua 5.1 has no table.move, so provide an overlap-safe equivalent with the
   -- same semantics as Lua 5.3's table.move(a1, f, e, t, a2): copy a1[f..e] to
@@ -42,12 +35,11 @@ local Data_Array_ST_foreign = (function()
   }
 end)()
 local Data_Array_ST_lengthImpl = Data_Array_ST_foreign.lengthImpl
-local Effect_Console_foreign = {
-  log = function(s) return function() print(s) end end
-}
-local Effect_Console_log = Effect_Console_foreign.log
+local Effect_Console_log = function(s) return function() print(s) end end
 M.Golden_LengthLift_Test_widthOf = function(s_S_0) return #(s_S_0) end
-local Golden_LengthLift_Test_lengthsAroundPush = Control_Monad_ST_Internal_foreign.run(function(  )
+local Golden_LengthLift_Test_lengthsAroundPush = (function(f)
+  return f()
+end)(function()
   local arr = Data_Array_ST_foreign.thawImpl({ [1] = 1, [2] = 2, [3] = 3 })
   local before = Data_Array_ST_lengthImpl(arr)
   local _ = Data_Array_ST_foreign.pushImpl(4, arr)

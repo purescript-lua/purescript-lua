@@ -1,0 +1,56 @@
+UberModule
+  { uberModuleBindings =
+    [ Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Effect.Console", qnameName = Name "log"
+        }, ObjectProp Nothing
+        ( ForeignImport Nothing
+          ( ModuleName "Effect.Console" ) ".spago/p/console/f82835a0b873aafe6bd7b14dd30cc150553d4ab9/src/Effect/Console.purs"
+          [ ( Nothing, Name "log" ) ]
+        )
+        ( PropName "log" )
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.ForeignHeader.Test", qnameName = Name "foreign"
+        }, ForeignImport Nothing
+        ( ModuleName "Golden.ForeignHeader.Test" ) "src/Golden/ForeignHeader/Test.purs"
+        [ ( Nothing, Name "tag" ) ]
+      ), Standalone
+      ( QName
+        { qnameModuleName = ModuleName "Golden.ForeignHeader.Test", qnameName = Name "tag"
+        }, ObjectProp Nothing
+        ( Ref Nothing ( Imported ( ModuleName "Golden.ForeignHeader.Test" ) ( Name "foreign" ) ) )
+        ( PropName "tag" )
+      )
+    ], uberModuleForeigns = [], uberModuleExports =
+    [
+      ( Name "tag", Ref Nothing
+        ( Imported ( ModuleName "Golden.ForeignHeader.Test" ) ( Name "tag" ) )
+      ),
+      ( Name "main", AbsN Nothing
+        ( ParamUnused Nothing :| [] )
+        ( Let Nothing
+          ( Standalone
+            ( Nothing, Name "_", AppN Nothing
+              ( AppN Nothing
+                ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+                ( Ref Nothing
+                  ( Imported ( ModuleName "Golden.ForeignHeader.Test" ) ( Name "tag" ) ) :| []
+                )
+              )
+              ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+            ) :| []
+          )
+          ( AppN Nothing
+            ( AppN Nothing
+              ( Ref Nothing ( Imported ( ModuleName "Effect.Console" ) ( Name "log" ) ) )
+              ( Ref Nothing
+                ( Imported ( ModuleName "Golden.ForeignHeader.Test" ) ( Name "tag" ) ) :| []
+              )
+            )
+            ( Ref Nothing ( Imported ( ModuleName "Prim" ) ( Name "$magicDoRun" ) ) :| [] )
+          )
+        )
+      )
+    ]
+  }

@@ -17,10 +17,8 @@ local function PSLUA_runtime_lazy(name)
   end
 end
 local M = {}
-local Data_Unit_foreign = { unit = {} }
-local Data_Unit_unit = Data_Unit_foreign.unit
-local Data_Show_foreign = { showIntImpl = function(n) return tostring(n) end }
-local Data_Show_showIntImpl = Data_Show_foreign.showIntImpl
+local Data_Unit_unit = {}
+local Data_Show_showIntImpl = function(n) return tostring(n) end
 local Effect_foreign = {
   pureE = function(a) return function() return a end end,
   bindE = function(a)
@@ -44,10 +42,7 @@ local Effect_foreign = {
 }
 M.Effect_forE = Effect_foreign.forE
 M.Effect_foreachE = Effect_foreign.foreachE
-local Effect_Console_foreign = {
-  log = function(s) return function() print(s) end end
-}
-local Effect_Console_log = Effect_Console_foreign.log
+local Effect_Console_log = function(s) return function() print(s) end end
 local Effect_Ref_foreign = {
   _new = function(val) return function() return { value = val } end end,
   read = function(ref) return function() return ref.value end end,

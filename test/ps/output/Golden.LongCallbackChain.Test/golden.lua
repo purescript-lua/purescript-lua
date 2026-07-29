@@ -1,8 +1,4 @@
 local M = {}
-local Data_Show_foreign = { showIntImpl = function(n) return tostring(n) end }
-local Effect_Console_foreign = {
-  log = function(s) return function() print(s) end end
-}
 local Golden_LongCallbackChain_Test_withInc_S_w = function(n, k)
   while true do if n < 0 then n, k = n + 1, k else return k(n + 1) end end
 end
@@ -635,4 +631,6 @@ local Golden_LongCallbackChain_Test_compute = (function()
     end)
   end)
 end)()
-return Effect_Console_foreign.log(Data_Show_foreign.showIntImpl(Golden_LongCallbackChain_Test_compute))()
+return (function(s) return function() print(s) end end)((function(n)
+  return tostring(n)
+end)(Golden_LongCallbackChain_Test_compute))()

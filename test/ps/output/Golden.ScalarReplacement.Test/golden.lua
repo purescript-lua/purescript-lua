@@ -7,12 +7,8 @@ local function PSLUA_object_update(o, patches)
   return o_copy
 end
 local M = {}
-local Data_Show_foreign = { showIntImpl = function(n) return tostring(n) end }
-local Data_Show_showIntImpl = Data_Show_foreign.showIntImpl
-local Effect_Console_foreign = {
-  log = function(s) return function() print(s) end end
-}
-local Effect_Console_log = Effect_Console_foreign.log
+local Data_Show_showIntImpl = function(n) return tostring(n) end
+local Effect_Console_log = function(s) return function() print(s) end end
 local Golden_ScalarReplacement_Test_wholeValue = function(n)
   local r = { a = n, b = n + 1 }
   local s = (function()

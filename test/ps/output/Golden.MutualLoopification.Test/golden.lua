@@ -1,9 +1,6 @@
 local M = {}
 local Data_Show_foreign = { showIntImpl = function(n) return tostring(n) end }
-local Effect_Console_foreign = {
-  log = function(s) return function() print(s) end end
-}
-local Effect_Console_log = Effect_Console_foreign.log
+local Effect_Console_log = function(s) return function() print(s) end end
 local Golden_MutualLoopification_Test_logShow = function(a_S_0)
   return Effect_Console_log((function()
     if a_S_0 then return "true" else return "false" end

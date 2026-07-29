@@ -17,8 +17,7 @@ local function PSLUA_runtime_lazy(name)
   end
 end
 local M = {}
-local Data_Unit_foreign = { unit = {} }
-local Data_Unit_unit = Data_Unit_foreign.unit
+local Data_Unit_unit = {}
 local Data_Semigroup_foreign = {
   concatArray = function(xs)
     return function(ys)
@@ -32,8 +31,7 @@ local Data_Semigroup_foreign = {
     end
   end
 }
-local Data_Show_foreign = { showIntImpl = function(n) return tostring(n) end }
-local Data_Show_showIntImpl = Data_Show_foreign.showIntImpl
+local Data_Show_showIntImpl = function(n) return tostring(n) end
 local Data_EuclideanRing_foreign = {
   -- math.maxinteger is Lua 5.3+; PureScript Int is 32-bit, hence the
   -- literal bound in intDegree.
@@ -65,10 +63,7 @@ local Effect_foreign = {
     return function(f) return function() return f(a())() end end
   end
 }
-local Effect_Console_foreign = {
-  log = function(s) return function() print(s) end end
-}
-local Effect_Console_log = Effect_Console_foreign.log
+local Effect_Console_log = function(s) return function() print(s) end end
 local Effect_Ref_foreign = {
   _new = function(val) return function() return { value = val } end end,
   read = function(ref) return function() return ref.value end end,
