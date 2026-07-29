@@ -7,7 +7,13 @@
 #
 # <regen-cmd> is invoked as `<regen-cmd> <spec-dir>/<spec>.lua` and must print
 # a canonical trace report on stdout; its output replaces
-# <output-dir>/trace_<spec>.txt before the comparison is repeated.
+# <output-dir>/trace_<spec>.txt before the comparison is repeated. A regen that
+# exits non-zero aborts the comparison there and then rather than counting as a
+# spent attempt: trace_report.lua exits non-zero when a trial process fails or
+# when the deterministic part of a report diverges between its own trials, and
+# both mean the measurement did not happen. Retrying past that would report a
+# tool failure as "still differs after N re-measurements", attributing it to
+# the counters instead of to the measurement.
 #
 # Why a re-measurement is worth a fresh set of processes at all: a trace
 # report records which source locations of the artifact ended up carrying a

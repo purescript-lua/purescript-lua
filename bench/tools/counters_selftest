@@ -59,6 +59,10 @@ fixture() {
 set -eu
 here=$(dirname "$0")
 echo "$1" >>"$here/regen.log"
+# trace_report.lua exits non-zero when a trial process fails or the
+# deterministic part of a report diverges between its own trials; `broken`
+# stages that.
+[ -e "$here/broken" ] && exit 1
 cat "$here/next_report.txt"
 EOF
   chmod +x "$dir/report"
@@ -138,6 +142,14 @@ check 'report missing from the output fails without re-measuring' 2 1 0 "$dir"
 dir=$(case_dir report-added)
 golden_report >"$dir/out/trace_tuple_fold.txt"
 check 'report absent from the goldens fails without re-measuring' 2 1 0 "$dir"
+
+# A measurement that did not happen is not a spent attempt. Burning the rest of
+# the budget on it would end in "still differs after N re-measurements",
+# blaming the counters for what the measuring tool reported about itself.
+dir=$(case_dir regen-broken)
+marginal_report >"$dir/out/trace_ref_loop.txt"
+: >"$dir/broken"
+check 'a failed re-measurement aborts instead of spending the budget' 2 1 1 "$dir"
 
 if [ "$failures" -ne 0 ]; then
   printf '\n%d check(s) failed\n' "$failures"
