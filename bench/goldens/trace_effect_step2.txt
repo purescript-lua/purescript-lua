@@ -3,9 +3,7 @@ runtime: LuaJIT 2.1.1741730670
 workload: n=100000 reps=4 result=1500000
 aborts (distinct site -- reason):
   Bench.EffectStep2.lua:11 -- NYI: bytecode FNEW
-  Bench.EffectStep2.lua:29 -- NYI: bytecode FNEW
-  Bench.EffectStep2.lua:40 -- NYI: bytecode FNEW
-  Bench.EffectStep2.lua:56 -- NYI: bytecode FNEW
+  Bench.EffectStep2.lua:59 -- NYI: bytecode FNEW
   Bench.EffectStep2.lua:8 -- NYI: bytecode FNEW
   Bench.EffectStep2.lua:9 -- NYI: bytecode FNEW
 bytecode end state (J*=compiled, I*=blacklisted):
@@ -13,10 +11,8 @@ bytecode end state (J*=compiled, I*=blacklisted):
   Bench.EffectStep2.lua:11 IFUNCF
   Bench.EffectStep2.lua:11 JFUNCF
   Bench.EffectStep2.lua:16 IFUNCF
-  Bench.EffectStep2.lua:17 IFUNCF
-  Bench.EffectStep2.lua:32 IFUNCF
-  Bench.EffectStep2.lua:33 IFUNCF
+  Bench.EffectStep2.lua:30 ILOOP
   Bench.EffectStep2.lua:8 JFUNCF
   Bench.EffectStep2.lua:9 IFUNCF
   Bench.EffectStep2.lua:9 JFUNCF
-counts: aborts=6 compiled=3 blacklisted=7
+counts: aborts=4 compiled=3 blacklisted=5

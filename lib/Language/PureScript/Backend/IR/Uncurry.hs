@@ -104,6 +104,11 @@ idempotent.
 -}
 module Language.PureScript.Backend.IR.Uncurry
   ( uncurryWorkerWrapper
+
+    -- * Shapes of the split
+    -- $shapes
+  , manifestChain
+  , delegatesTo
   ) where
 
 import Control.Lens (cosmosOf, toListOf, transformOf)
@@ -136,6 +141,13 @@ import Language.PureScript.Backend.IR.Types
   , unwindApp
   , pattern Abs
   )
+
+{- $shapes
+The two recognisers of the split's own output.
+"Language.PureScript.Backend.IR.AbsorbEffectThunk" consumes the same
+shapes — it widens a worker's arity, so it must agree with this pass on
+what a worker's curried chain and its delegate call look like.
+-}
 
 {- | Split every qualifying binding into worker and wrapper and rewrite
 the saturated call sites to direct worker calls. The 'Set' argument is
