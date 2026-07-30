@@ -10,6 +10,7 @@ import Data.Map qualified as Map
 import Data.Set qualified as Set
 import Data.Text qualified as Text
 import GHC.Generics (Generically (..))
+import Language.PureScript.Backend.IR.AbsorbEffectThunk (absorbEffectThunk)
 import Language.PureScript.Backend.IR.CSE (eliminateCommonSubexpressions)
 import Language.PureScript.Backend.IR.Cpr (cprWorkerWrapper)
 import Language.PureScript.Backend.IR.DCE (eliminateDeadCode)
@@ -293,6 +294,16 @@ optimizerPipeline facts policy = OptimizerPhases {settlePhase, lowerPhase}
       -- (each is called exactly once) back into their call sites round by
       -- round, re-nesting exactly what flattenDeepBinds just flattened.
       RunPass dcePass
+    , -- Widen the effect workers the early uncurry run split at their
+      -- real arity, whose bodies magicDo then turned into thunks: the
+      -- thunk's parameter joins the worker, so a forced statement site
+      -- is one n-ary call instead of a worker call plus a run, with no
+      -- closure in between. Runs last — nothing after it moves a call,
+      -- so the reference census the precondition needs is final, and
+      -- the dce above has already dropped the wrappers whose sites all
+      -- went to their workers, so none of those is grown for nothing.
+      -- See Language.PureScript.Backend.IR.AbsorbEffectThunk.
+      RunPass absorbEffectThunkPass
     ]
   ctorTags ∷ CtorTagSets
   ctorTags = ctorTagSets dataTypes
@@ -376,6 +387,8 @@ optimizerPipeline facts policy = OptimizerPhases {settlePhase, lowerPhase}
       , passEnsures = guc
       }
   magicDoPass = gucPass "magicDo" magicDo
+  absorbEffectThunkPass =
+    gucPass "absorb-effect-thunk" absorbEffectThunk
   flattenDeepBindsPass =
     Pass
       { passName = "flattenDeepBinds"

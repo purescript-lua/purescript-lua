@@ -91,13 +91,11 @@ local Golden_NativeLoopsGuard_Test_logShow = function(a_S_2)
   return Effect_Console_log(Data_Show_showIntImpl(a_S_2))
 end
 local Golden_NativeLoopsGuard_Test_whileE_S_w = function(cond, act)
-  return function()
-    local b = cond()
-    if b then
-      return act()
-    else
-      return Effect_applicativeEffect.pure(Data_Unit_unit)()
-    end
+  local b = cond()
+  if b then
+    return act()
+  else
+    return Effect_applicativeEffect.pure(Data_Unit_unit)()
   end
 end
 local Golden_NativeLoopsGuard_Test_foreachE_S_w = function(xs, f)
@@ -135,6 +133,6 @@ return (function()
       local sPrime_S_0 = s_S_0 - 1
       return { state = sPrime_S_0, value = sPrime_S_0 }
     end)(r_S_0))()
-  end)()
+  end)
   return Effect_Console_log("guard done")()
 end)()

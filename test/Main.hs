@@ -1,5 +1,6 @@
 module Main where
 
+import Language.PureScript.Backend.IR.AbsorbEffectThunk.Spec qualified as AbsorbEffectThunk
 import Language.PureScript.Backend.IR.CSE.Spec qualified as CSE
 import Language.PureScript.Backend.IR.Cpr.Spec qualified as IRCpr
 import Language.PureScript.Backend.IR.DCE.Spec qualified as IrDce
@@ -48,6 +49,7 @@ main = hspec do
   IRPass.spec
   IRCpr.spec
   IRUncurry.spec
+  AbsorbEffectThunk.spec
   IRUniquify.spec
   IRRenumber.spec
   LuaOptimizer.spec
