@@ -1457,6 +1457,7 @@ optimizedExpressionWithPastes ctorTags canon pastes policy env =
         `thenRewrite` pushIfCondIntoBranches
         `thenRewrite` pushEliminatorIntoIfBranches
         `thenRewrite` inlineLocalBindings
+        `thenRewrite` removeUnusedLetBindings
     )
 
 {- | Tier 2 of Note [Canonical Effect/ST heads]: rewrite an Effect/ST
@@ -3423,6 +3424,64 @@ inlineLocalBinding rhsRefCounts grouping (body, inlined) =
       usage = countFreeRefUsage name body
       occurrences ∷ Natural
       occurrences = usageTotal usage
+
+{- | Drop the 'Standalone' bindings of a Let that nothing reads any more.
+
+Dead local bindings are the residue of the folds around them: the
+constructor propagation of 'propagateKnownCtorThroughLet' binds each
+read field to a fresh field-binder, 'inlineLocalBindings' then pastes a
+trivial one into its reads, and a pruned branch takes its reads with it
+— each leaving a binding no reference names. Dropping them is dead-code
+elimination, which the @dce@ pass also does; doing it here as a rewrite
+is what lets a /cascade/ complete inside one sweep. A layer of a
+constant chain folds to its result wrapped in the spent field-binder
+Let, and the enclosing layer's right-hand side is then a Let rather
+than the constructor it wraps, so the fold there declines: while the
+residue survives to the end of the sweep, one whole-module round
+advances the chain by exactly one layer, and rounds scale with chain
+depth (issue #328).
+
+The licence to discard an unread binding's right-hand side is the one
+dead-code elimination already takes
+('Language.PureScript.Backend.IR.DCE.eliminateDeadCode'): an effect run
+stays, because dropping it would silently discard the effect
+('isEffectRun'), and anything else is evaluated for a value nothing
+wants. Bindings are decided right to left, so one that is kept alive
+only by a binding itself dropped goes with it; sequential scoping puts a
+binder in scope for the groupings after it and the body, never the ones
+before (Note [Sequential scoping of Let bindings]).
+
+Recursive groups are left alone. Their members reference each other, so
+a dead group is only recognisable as a whole, and the shapes that block
+a cascade bind values rather than recursive closures — the @dce@ pass
+collects a group nothing calls at the end of the round.
+-}
+removeUnusedLetBindings ∷ Applicative m ⇒ RewriteRuleM m Ann
+removeUnusedLetBindings =
+  pure . \case
+    Let ann groupings body
+      | let kept = snd (foldr keep (countFreeRefs body, []) groupings)
+      , length kept < length groupings →
+          Just case nonEmpty kept of
+            Nothing → body
+            Just keptNE → Let ann keptNE body
+    _ → Nothing
+ where
+  keep
+    ∷ Grouping (Ann, Name, Exp)
+    → (Map (Qualified Name) Natural, [Grouping (Ann, Name, Exp)])
+    → (Map (Qualified Name) Natural, [Grouping (Ann, Name, Exp)])
+  keep grouping (refs, kept) = case grouping of
+    Standalone (_ann, name, rhs)
+      | Local name `Map.notMember` refs
+      , not (isEffectRun rhs) →
+          (refs, kept)
+    _ →
+      ( Map.unionsWith
+          (+)
+          (refs : [countFreeRefs rhs | (_ann, _n, rhs) ← listGrouping grouping])
+      , grouping : kept
+      )
 
 {- Note [Complexity and Capture gate inlining]
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -17,7 +17,3 @@
 - Directive targets may now contain `_` and `'`, matching PureScript
   identifier syntax (previously `Effect.Ref.modify_` or a primed name could
   not be named by any pragma or directives file).
-- The optimizer fixpoint iteration backstop is raised from 100 to 1000
-  rounds: directive-driven inlining folds a constant chain one layer per
-  round, so legitimate iteration counts scale with the deepest such chain
-  in the module (the ~300-deep golden stress chains need several hundred).
