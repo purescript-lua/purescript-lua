@@ -861,6 +861,30 @@ spec = describe "IR Optimizer" do
               )
       optimizedExpression original `shouldSatisfy` alphaEq expected
 
+    it "collapses a chain of nested let-bound constructors in one sweep" do
+      -- Folding one layer leaves the payload behind in a spent field-binder
+      -- Let: the binder's reads are folded and then inlined, so nothing
+      -- reads it any more, yet the Let node stands. The enclosing layer's
+      -- right-hand side is then that Let rather than the constructor it
+      -- wraps, so the fold declines there — and a chain of depth N advances
+      -- one layer per whole-module sweep instead of collapsing in this one.
+      let layer ∷ Int → Exp → Exp
+          layer i inner =
+            let v = Name ("v" <> show i)
+             in let1 v inner $
+                  ifThenElse
+                    (eq (literalString justTag) (reflectCtor (refLocal v)))
+                    ( just
+                        ( primBinOp
+                            PrimAdd
+                            (dataArgumentByIndex SumType 0 (refLocal v))
+                            (literalInt 1)
+                        )
+                    )
+                    nothingCtor
+      optimizedExpression (foldr layer (just (literalInt 0)) [1 .. 8])
+        `shouldBe` just (literalInt 8)
+
     it "declines when the binder is read as a whole value" do
       -- v flows into a function as a whole value, so it cannot be dropped
       -- (nor is it inlinable, so the binding survives untouched).
