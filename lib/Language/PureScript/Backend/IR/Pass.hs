@@ -162,17 +162,23 @@ renderPassCheckFailure = \case
       ["Optimized module contains dangling imported references:"]
         <> (show <$> toList violations)
 
-{- | Iteration backstop for 'RunFixpoint'. Convergence normally takes a
-handful of rounds, but directive-driven inlining folds a constant chain
-one layer per round, so legitimate rounds scale with the deepest such
-chain in the module (the ~300-deep golden stress chains need several
-hundred). Hitting the backstop anyway means a pass over-reports changes
-or genuinely loops — a bug, which the checked runner turns into a
+{- | Iteration backstop for 'RunFixpoint'. Legitimate rounds do not
+scale with the size or shape of the module: a rewrite cascade completes
+inside one sweep, so the deepest golden stress chains (~300 constant
+folds nested one in another) converge in as many rounds as a three-deep
+one. The whole golden corpus peaks at four, so this sits far clear of
+real work, and hitting it means a pass over-reports changes or genuinely
+loops — a bug, which the checked runner turns into a
 'FixpointDivergence' while the production runner accepts the (correct,
 possibly under-optimized) module reached.
+
+The bound is what keeps that bug cheap to find: each round is a sweep of
+the whole module, so a backstop generous enough to hide depth-scaled
+convergence would also make a loop burn hundreds of sweeps before
+reporting.
 -}
 maxFixpointIterations ∷ Natural
-maxFixpointIterations = 1000
+maxFixpointIterations = 100
 
 --------------------------------------------------------------------------------
 -- Runners ---------------------------------------------------------------------

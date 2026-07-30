@@ -861,6 +861,30 @@ spec = describe "IR Optimizer" do
               )
       optimizedExpression original `shouldSatisfy` alphaEq expected
 
+    it "collapses a chain of nested let-bound constructors in one sweep" do
+      -- Folding one layer leaves the payload behind in a spent field-binder
+      -- Let: the binder's reads are folded and then inlined, so nothing
+      -- reads it any more, yet the Let node stands. The enclosing layer's
+      -- right-hand side is then that Let rather than the constructor it
+      -- wraps, so the fold declines there — and a chain of depth N advances
+      -- one layer per whole-module sweep instead of collapsing in this one.
+      let layer ∷ Int → Exp → Exp
+          layer i inner =
+            let v = Name ("v" <> show i)
+             in let1 v inner $
+                  ifThenElse
+                    (eq (literalString justTag) (reflectCtor (refLocal v)))
+                    ( just
+                        ( primBinOp
+                            PrimAdd
+                            (dataArgumentByIndex SumType 0 (refLocal v))
+                            (literalInt 1)
+                        )
+                    )
+                    nothingCtor
+      optimizedExpression (foldr layer (just (literalInt 0)) [1 .. 8])
+        `shouldBe` just (literalInt 8)
+
     it "declines when the binder is read as a whole value" do
       -- v flows into a function as a whole value, so it cannot be dropped
       -- (nor is it inlinable, so the binding survives untouched).
@@ -2123,12 +2147,14 @@ spec = describe "IR Optimizer" do
       runIdentity (pushEliminatorIntoIfBranches original) `shouldBe` Nothing
 
   describe "inlines expressions" do
+    -- The Let itself is gone from each result below: pasting the body's
+    -- only reference leaves the binding unread, and an unread binding is
+    -- dropped in the same sweep ('removeUnusedLetBindings'). A result
+    -- still carrying the Let would mean the paste never happened.
     test "inlines literals" do
       name ← forAll Gen.name
       inlinee ← forAll Gen.scalarExp
-      let original = let1 name inlinee (refLocal name)
-          expected = let1 name inlinee inlinee
-      optimizedExpression original === expected
+      optimizedExpression (let1 name inlinee (refLocal name)) === inlinee
 
     test "inlines references" do
       name ← forAll Gen.name
@@ -2136,9 +2162,7 @@ spec = describe "IR Optimizer" do
       -- must NOT be inlined (see the self-inlining test below), so the
       -- inlinee is drawn from the other names.
       inlinee ← refLocal <$> forAll (mfilter (/= name) Gen.name)
-      let original = let1 name inlinee (refLocal name)
-          expected = let1 name inlinee inlinee
-      optimizedExpression original === expected
+      optimizedExpression (let1 name inlinee (refLocal name)) === inlinee
 
     -- Regression: substituting @x := x@ is a textual no-op, so the
     -- occurrence count of @x@ never reaches zero and an unguarded rule
@@ -2164,13 +2188,11 @@ spec = describe "IR Optimizer" do
                 && countFreeRef (Local name) e == 0
           )
           Gen.exp
-      let body = refLocal name
-          original = let1 name inlinee body
-          expected = let1 name inlinee inlinee
-      annotateShow body
+      let original = let1 name inlinee (refLocal name)
+      annotateShow original
       -- The inserted copy gets fresh binder names ('substituteCopyM'
       -- freshens every insertion), so compare up to alpha-equivalence.
-      diff (optimizedExpression original) alphaEq expected
+      diff (optimizedExpression original) alphaEq inlinee
 
     test "doesn't inline expressions referenced more than once" do
       name ← forAll Gen.name
@@ -2383,8 +2405,9 @@ spec = describe "IR Optimizer" do
                 PrimAdd
                 (application (refLocal incName) (literalInt 1))
                 (application (refLocal incName) (literalInt 2))
-      optimizedExpression original
-        `shouldSatisfy` alphaEq (let1 incName incExpr (literalInt 5))
+      -- Both call sites fold, so nothing reads the binding and it goes
+      -- with them — the same result the beta-reduced spelling below has.
+      optimizedExpression original `shouldSatisfy` alphaEq (literalInt 5)
 
     it "beta-reduces a small closed lambda argument used twice" do
       let body =
